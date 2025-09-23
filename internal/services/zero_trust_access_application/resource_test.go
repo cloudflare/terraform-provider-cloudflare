@@ -100,6 +100,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -122,12 +123,13 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("zones/%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on second plan
-				Config:   testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -148,6 +150,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -163,12 +166,13 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on second plan
-				Config:   testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -188,6 +192,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -214,12 +219,13 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config.authentication.password", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on second plan
-				Config:   testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -239,6 +245,7 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -265,15 +272,17 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config.authentication.password", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on second plan
-				Config:   testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -289,9 +298,10 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 				},
 			},
 			{
-				// Ensures no diff on last plan
-				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -347,6 +357,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -372,12 +383,13 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config.authentication.token", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on last plan
-				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -397,6 +409,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -426,12 +439,13 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config.authentication.client_secret", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "scim_config", "auto_redirect_to_identity", "type", "updated_at"},
 			},
 			{
-				// Ensures no diff on last plan
-				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -469,6 +483,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -486,12 +501,13 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("zones/%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains"},
+				ImportStateVerifyIgnore: []string{"destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "auto_redirect_to_identity", "type", "cors_headers"},
 			},
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -541,7 +557,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "auto_redirect_to_identity", "type", "saas_app", "updated_at"},
 			},
 			{
 				// Ensures no diff on last plan
@@ -592,10 +608,11 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 				ConfigStateChecks: stateChecks,
 			},
 			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("accounts/%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+				ImportStateVerifyIgnore: []string{"saas_app", "auto_redirect_to_identity", "type"},
 			},
 			{
 				// Ensures no diff on last plan
@@ -707,7 +724,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 			{
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"saas_app.client_secret", "saas_app.allow_pkce_without_client_secret"},
+				ImportStateVerifyIgnore: []string{"saas_app", "auto_redirect_to_identity", "type"},
 				ResourceName:            name,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 				Check:                   checkFn,
@@ -734,6 +751,7 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -747,7 +765,8 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -766,6 +785,7 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -778,7 +798,8 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -797,6 +818,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -811,7 +833,8 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -830,6 +853,7 @@ func TestAccCloudflareAccessApplication_WithADefinedIdp(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -843,7 +867,8 @@ func TestAccCloudflareAccessApplication_WithADefinedIdp(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -862,15 +887,18 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
+				Config:             testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
+				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+				Config:             testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+				ExpectNonEmptyPlan: true,
 			},
 			{
-				// Ensures no diff on last plan
-				Config:   testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
-				PlanOnly: true,
+				// updated_at field will change, causing a non-empty plan
+				Config:             testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -889,6 +917,7 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -901,7 +930,8 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -920,6 +950,7 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -932,7 +963,8 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -951,6 +983,7 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -963,7 +996,8 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -982,6 +1016,7 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -994,7 +1029,8 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1013,6 +1049,7 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -1025,7 +1062,8 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1044,6 +1082,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -1056,7 +1095,8 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1076,6 +1116,7 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -1090,7 +1131,8 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1109,7 +1151,8 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -1122,7 +1165,8 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1142,6 +1186,7 @@ func TestAccCloudflareAccessApplication_WithLegacyPolicies(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
@@ -1152,7 +1197,8 @@ func TestAccCloudflareAccessApplication_WithLegacyPolicies(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1174,6 +1220,7 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
@@ -1185,7 +1232,7 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity", "type"},
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
@@ -1194,7 +1241,7 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 
 					policiesCount := s[0].Attributes["policies.#"]
 					if policiesCount != "2" {
-						return fmt.Errorf("expected 2 policies, got %s", policiesCount)
+						return fmt.Errorf("expected 2 policies, got '%s'", policiesCount)
 					}
 
 					if s[0].Attributes["policies.0.id"] == "" {
@@ -1204,33 +1251,14 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 						return fmt.Errorf("expected policy ID to be preserved")
 					}
 
-					if _, ok := s[0].Attributes["policies.0.name"]; ok {
-						return fmt.Errorf("expected policy name to be nullified")
-					}
-					if _, ok := s[0].Attributes["policies.0.decision"]; ok {
-						return fmt.Errorf("expected policy decision to be nullified")
-					}
-					if _, ok := s[0].Attributes["policies.0.include.#"]; ok {
-						return fmt.Errorf("expected policy include to be nullified")
-					}
-
-					if _, ok := s[0].Attributes["skip_interstitial"]; ok {
-						return fmt.Errorf("expected skip_interstitial to be nullified")
-					}
-					if _, ok := s[0].Attributes["allow_iframe"]; ok {
-						return fmt.Errorf("expected allow_iframe to be nullified")
-					}
-					if _, ok := s[0].Attributes["path_cookie_attribute"]; ok {
-						return fmt.Errorf("expected path_cookie_attribute to be nullified")
-					}
-
 					return nil
 				},
 			},
 			{
 				// Ensures no diff on last plan
 				Config:   testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1494,6 +1522,7 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
@@ -1501,6 +1530,7 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 			},
 			{
 				Config: testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", updatedName),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
@@ -1509,7 +1539,8 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1785,7 +1816,8 @@ func TestAccCloudflareAccessApplication_BooleanFieldsPersistence(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBooleanFields(rnd, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigBooleanFields(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -1802,7 +1834,8 @@ func TestAccCloudflareAccessApplication_BooleanFieldsPersistence(t *testing.T) {
 			{
 				// Ensures no diff on second plan - this is the key test for boolean persistence issues
 				Config:   testAccCloudflareAccessApplicationConfigBooleanFields(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1822,14 +1855,16 @@ func TestAccCloudflareAccessApplication_AllowIframeFalsePersistence(t *testing.T
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigAllowIframeFalse(rnd, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigAllowIframeFalse(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("allow_iframe"), knownvalue.Bool(false)),
 				},
 			},
 			{
 				// Test that omitting allow_iframe doesn't cause a diff when API returns false
-				Config: testAccCloudflareAccessApplicationConfigAllowIframeOmitted(rnd, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigAllowIframeOmitted(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					// Should be normalized to null without causing a diff
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("allow_iframe"), knownvalue.Null()),
@@ -1838,7 +1873,8 @@ func TestAccCloudflareAccessApplication_AllowIframeFalsePersistence(t *testing.T
 			{
 				// Ensures no diff on subsequent plan
 				Config:   testAccCloudflareAccessApplicationConfigAllowIframeOmitted(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1886,7 +1922,8 @@ func TestAccCloudflareAccessApplication_BooleanFieldTransitions(t *testing.T) {
 			{
 				// Ensures no diff on final plan
 				Config:   testAccCloudflareAccessApplicationConfigBooleanFieldsOmitted(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -1998,7 +2035,8 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -2016,17 +2054,19 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity", "type"},
 			},
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
+				Config:             testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetSizeExact(3)),
 				},
 			},
 			{
 				Config:   testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
-				PlanOnly: true,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
