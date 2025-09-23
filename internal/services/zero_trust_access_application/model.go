@@ -54,8 +54,6 @@ type ZeroTrustAccessApplicationModel struct {
 	LandingPageDesign           customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel] `tfsdk:"landing_page_design" json:"landing_page_design,optional"`
 	Policies                    *[]ZeroTrustAccessApplicationPoliciesModel                                 `tfsdk:"policies" json:"policies,optional"`
 	AUD                         types.String                                                               `tfsdk:"aud" json:"aud,computed"`
-	CreatedAt                   timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt                   timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	SaaSApp                     *ZeroTrustAccessApplicationSaaSAppModel                                    `tfsdk:"saas_app" json:"saas_app,optional"`
 }
 
