@@ -212,7 +212,7 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -305,37 +305,12 @@ func (r *ZeroTrustAccessApplicationResource) ImportState(ctx context.Context, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
-
-	// The Cloudflare GET application API doesn't return policies, so we need to fetch them
-	// separately using the application policies endpoint
-	if data.Policies == nil || len(*data.Policies) == 0 {
-		appPoliciesParams := zero_trust.AccessApplicationPolicyListParams{}
-		if !data.AccountID.IsNull() {
-			appPoliciesParams.AccountID = cloudflare.F(data.AccountID.ValueString())
-		} else {
-			appPoliciesParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-		}
-		
-		appPoliciesPage, err := r.client.ZeroTrust.Access.Applications.Policies.List(ctx, path_app_id, appPoliciesParams)
-		if err == nil && appPoliciesPage != nil && len(appPoliciesPage.Result) > 0 {
-			var policies []ZeroTrustAccessApplicationPoliciesModel
-			for _, policy := range appPoliciesPage.Result {
-				appPolicy := ZeroTrustAccessApplicationPoliciesModel{
-					ID:         types.StringValue(policy.ID),
-					Precedence: types.Int64Value(policy.Precedence),
-					// Other fields will be nullified by normalization
-				}
-				policies = append(policies, appPolicy)
-			}
-			data.Policies = &policies
-		}
-	}
 
 	resp.Diagnostics.Append(normalizeImportZeroTrustAccessApplicationAPIData(ctx, data)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
