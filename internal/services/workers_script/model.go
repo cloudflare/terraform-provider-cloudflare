@@ -146,11 +146,11 @@ type WorkersScriptMetadataBindingsModel struct {
 	StoreID                     types.String                                `tfsdk:"store_id" json:"store_id,optional"`
 	Algorithm                   jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format                      types.String                                `tfsdk:"format" json:"format,optional"`
-	Usages        customfield.Set[types.String]               `tfsdk:"usages" json:"usages,optional"`
+	Usages                      customfield.Set[types.String]               `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64                   types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk                      jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
 	WorkflowName                types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
-	VersionID     types.String                                `tfsdk:"version_id" json:"version_id,computed_optional"`
+	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,optional"`
 	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
 	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Environment                 types.String                                `tfsdk:"environment" json:"environment,optional"`

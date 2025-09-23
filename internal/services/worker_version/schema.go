@@ -430,9 +430,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
-							Computed:    true,
 							Optional:    true,
-							Default:     stringdefault.StaticString("latest"),
 						},
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
