@@ -1756,6 +1756,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						ElementType: types.StringType,
 					},
+					"created_at": schema.StringAttribute{
+						Description: "The time the SaaS application was created.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
+					"updated_at": schema.StringAttribute{
+						Description: "The time the SaaS application was last updated.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
 				},
 			},
 			"aud": schema.StringAttribute{
@@ -1777,9 +1790,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The time the application was last updated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 	}
