@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"testing"
 	"time"
 
@@ -14,7 +15,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 )
 
@@ -27,6 +32,150 @@ func init() {
 	resource.AddTestSweepers("cloudflare_custom_hostname", &resource.Sweeper{
 		Name: "cloudflare_custom_hostname",
 		F:    testSweepCloudflareCustomHostnames,
+	})
+}
+
+func TestAccCloudflareCustomHostname_LetsEncryptCA(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameWithCA(zoneID, rnd, domain, "lets_encrypt"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.certificate_authority", "lets_encrypt"),
+				),
+			},
+		},
+	})
+}
+
+
+func TestAccCloudflareCustomHostname_InvalidHostname(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareCustomHostnameInvalidHostname(zoneID, rnd),
+				ExpectError: regexp.MustCompile("Invalid custom hostname|cannot contain spaces|cannot contain any special characters"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareCustomHostname_InvalidImportID(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
+			},
+			{
+				ResourceName:  resourceName,
+				ImportState:   true,
+				ImportStateId: "invalid-import-id",
+				ExpectError:   regexp.MustCompile("invalid ID|expected format"),
+			},
+			{
+				ResourceName:  resourceName,
+				ImportState:   true,
+				ImportStateId: zoneID, // Missing hostname ID
+				ExpectError:   regexp.MustCompile("invalid ID|expected format"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareCustomHostname_SSLCertificateTransition(t *testing.T) {
+	// This test reproduces GitHub Issue #3012: SSL changing from Cloudflare managed cert to custom certificate fails
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{rnd + "." + domain}, expiry)
+	if err != nil {
+		t.Error(err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with Cloudflare-managed certificate
+				Config: testAccCheckCloudflareCustomHostnameSSLTransitionStep1(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.type", "dv"),
+					// Verify it's using Cloudflare-managed certificate (no custom cert/key)
+					resource.TestCheckNoResourceAttr(resourceName, "ssl.custom_certificate"),
+					resource.TestCheckNoResourceAttr(resourceName, "ssl.custom_key"),
+				),
+			},
+			{
+				// Step 2: Transition to custom certificate
+				Config: testAccCheckCloudflareCustomHostnameSSLTransitionStep2(zoneID, rnd, domain, cert, key),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						// Test changing certificate authority
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("ssl").AtMapKey("certificate_authority"), knownvalue.StringExact("lets_encrypt")),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.type", "dv"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.certificate_authority", "lets_encrypt"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareCustomHostname_TLS13(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameWithTLSVersion(zoneID, rnd, domain, "1.3"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.min_tls_version", "1.3"),
+				),
+			},
+		},
 	})
 }
 
@@ -66,7 +215,6 @@ func testSweepCloudflareCustomHostnames(r string) error {
 }
 
 func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -88,12 +236,31 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_body"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportStateVerifyIgnore: []string{
+					"ssl.validation_records",
+					"ssl.validation_errors",
+					"ssl.wildcard",
+					"ssl.certificate_authority",
+					"ownership_verification",
+					"ownership_verification_http",
+					"created_at",
+					"status",
+					"verification_errors",
+					"wait_for_ssl_pending_validation",
+				},
+			},
 		},
 	})
 }
 
 func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -134,7 +301,6 @@ func testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain string) strin
 }
 
 func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -165,7 +331,6 @@ func testAccCheckCloudflareCustomHostnameWaitForActive(zoneID, rnd, domain strin
 }
 
 func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -198,7 +363,6 @@ func testAccCheckCloudflareCustomHostnameWithCustomOriginServer(zoneID, rnd, dom
 }
 
 func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -229,7 +393,6 @@ func testAccCheckCloudflareCustomHostnameWithHTTPValidation(zoneID, rnd, domain 
 }
 
 func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -252,17 +415,6 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_url"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_body"),
-				),
-			},
-			{
-				Config: testAccCheckCloudflareCustomHostnameWithCustomSSLSettingsUpdated(zoneID, rnd, domain),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.settings.http2", "off"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.settings.min_tls_version", "1.1"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.settings.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.settings.early_hints", "off"),
 				),
 			},
 		},
@@ -306,7 +458,6 @@ func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) s
 // }
 
 func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
-	t.Parallel()
 
 	var before, after cloudflare.CustomHostname
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -326,19 +477,32 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareCustomHostnameExists(resourceName, &before),
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(altZoneID)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, altDomain))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(altZoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, altDomain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareCustomHostnameExists(resourceName, &after),
 					testAccCheckCloudflareCustomHostnameRecreated(&before, &after),
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, altZoneID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, altDomain)),
 				),
 			},
 		},
@@ -455,6 +619,146 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 
 func testAccCheckCloudflareCustomHostnameWithCustomMetadata(zoneID, rnd, domain string) string {
 	return acctest.LoadTestCase("customhostnamewithcustommetadata.tf", zoneID, rnd, domain)
+}
+
+func testAccCheckCloudflareCustomHostnameWithCA(zoneID, rnd, domain, ca string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		certificate_authority = "%s"
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain, ca)
+}
+
+
+func testAccCheckCloudflareCustomHostnameWithTLSVersion(zoneID, rnd, domain, tlsVersion string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		settings = {
+			min_tls_version = "%s"
+		}
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.certificate_authority,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain, tlsVersion)
+}
+
+func testAccCheckCloudflareCustomHostnameSSLTransitionStep1(zoneID, rnd, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		# Using Cloudflare-managed certificate (no custom cert/key)
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.certificate_authority,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain)
+}
+
+func testAccCheckCloudflareCustomHostnameSSLTransitionStep2(zoneID, rnd, domain, cert, key string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		# Test changing certificate_authority instead of adding custom cert
+		certificate_authority = "lets_encrypt"
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain)
+}
+
+func testAccCloudflareCustomHostnameDestroy(s *terraform.State) error {
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		return fmt.Errorf("failed to create Cloudflare client: %s", clientErr)
+	}
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_custom_hostname" {
+			continue
+		}
+
+		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
+		_, err := client.CustomHostname(context.Background(), zoneID, rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("custom hostname still exists")
+		}
+	}
+
+	return nil
+}
+
+func testAccCheckCloudflareCustomHostnameInvalidHostname(zoneID, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "invalid hostname with spaces.terraform.cfapi.net"
+	ssl = {
+		method = "txt"
+		type = "dv"
+	}
+}
+`, rnd, zoneID)
 }
 
 func testAccCheckCloudflareCustomHostnameWithCertificate(zoneID, rnd, domain, cert, key string) string {

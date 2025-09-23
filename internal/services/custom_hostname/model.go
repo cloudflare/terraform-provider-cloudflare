@@ -33,6 +33,13 @@ func (m CustomHostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CustomHostnameModel) MarshalJSONForUpdate(state CustomHostnameModel) (data []byte, err error) {
+	// Custom marshaling for updates to handle SSL field requirements
+	// The Cloudflare API requires both validation type and method for SSL updates
+	// Issue #3012: Use full marshaling for SSL to ensure all required fields are present
+	if m.SSL != nil {
+		// For SSL updates, use full marshaling instead of patch to include all required fields
+		return apijson.MarshalRoot(m)
+	}
 	return apijson.MarshalForPatch(m, state)
 }
 
