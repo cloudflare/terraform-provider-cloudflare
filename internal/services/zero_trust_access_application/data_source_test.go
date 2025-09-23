@@ -19,7 +19,6 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessApplicationAccountName(accountID, rnd, domain),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -44,7 +43,6 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessApplicationAccountDomain(accountID, rnd, domain),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -69,7 +67,6 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessApplicationZoneName(zoneID, rnd, domain),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -94,7 +91,6 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, rnd, domain),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
