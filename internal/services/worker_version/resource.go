@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -20,10 +21,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -84,24 +81,21 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		}
 	}
 
-	assets := data.Assets
-	if assets != nil {
-		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
+	if !assets.IsNull() {
+		// "assets.jwt" is write-only, get from config
+		var assetsValue WorkerVersionAssetsModel
+		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &assetsValue.JWT)...)
+		if !resp.Diagnostics.HasError() {
+			obj, diags := customfield.NewObject(ctx, &assetsValue)
+			resp.Diagnostics.Append(diags...)
+			if !resp.Diagnostics.HasError() {
+				data.Assets = obj
+			}
+		}
 	}
 
 	if resp.Diagnostics.HasError() {
 		return
-	}
-
-	modules := data.Modules
-	if modules != nil {
-		for _, mod := range *data.Modules {
-			content, err := readFile(mod.ContentFile.ValueString())
-			if err != nil {
-				resp.Diagnostics.AddError("Error reading file", err.Error())
-			}
-			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
-		}
 	}
 
 	dataBytes, err := data.MarshalJSON()
