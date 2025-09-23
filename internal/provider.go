@@ -28,6 +28,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tiered_caching"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
@@ -120,6 +121,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
@@ -136,6 +138,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_live_input"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
@@ -209,6 +212,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dns_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
@@ -339,9 +344,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		load_balancer.NewResource,
 		load_balancer_monitor.NewResource,
 		load_balancer_pool.NewResource,
+		zone_cache_reserve.NewResource,
+		tiered_cache.NewResource,
+		zone_cache_variants.NewResource,
+		regional_tiered_cache.NewResource,
 		certificate_pack.NewResource,
 		total_tls.NewResource,
 		argo_smart_routing.NewResource,
+		argo_tiered_caching.NewResource,
 		custom_ssl.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
@@ -549,10 +559,15 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		load_balancer_monitor.NewLoadBalancerMonitorsDataSource,
 		load_balancer_pool.NewLoadBalancerPoolDataSource,
 		load_balancer_pool.NewLoadBalancerPoolsDataSource,
+		zone_cache_reserve.NewZoneCacheReserveDataSource,
+		tiered_cache.NewTieredCacheDataSource,
+		zone_cache_variants.NewZoneCacheVariantsDataSource,
+		regional_tiered_cache.NewRegionalTieredCacheDataSource,
 		certificate_pack.NewCertificatePackDataSource,
 		certificate_pack.NewCertificatePacksDataSource,
 		total_tls.NewTotalTLSDataSource,
 		argo_smart_routing.NewArgoSmartRoutingDataSource,
+		argo_tiered_caching.NewArgoTieredCachingDataSource,
 		custom_ssl.NewCustomSSLDataSource,
 		custom_ssl.NewCustomSSLsDataSource,
 		custom_hostname.NewCustomHostnameDataSource,
