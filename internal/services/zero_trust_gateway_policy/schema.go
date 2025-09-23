@@ -180,17 +180,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dcp": schema.BoolAttribute{
 								Description: "Set to false to enable copy-pasting. Only applies when `version == \"v1\"`.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"dd": schema.BoolAttribute{
 								Description: "Set to false to enable downloading. Only applies when `version == \"v1\"`.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"dk": schema.BoolAttribute{
 								Description: "Set to false to enable keyboard usage. Only applies when `version == \"v1\"`.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"download": schema.StringAttribute{
@@ -206,12 +203,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dp": schema.BoolAttribute{
 								Description: "Set to false to enable printing. Only applies when `version == \"v1\"`.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"du": schema.BoolAttribute{
 								Description: "Set to false to enable uploading. Only applies when `version == \"v1\"`.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"keyboard": schema.StringAttribute{
