@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -132,7 +133,13 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.Modules = modules
-	data.Assets = assets
+	
+	// Set assets to null if it was unknown in the plan (API doesn't return assets)
+	if assets.IsUnknown() {
+		data.Assets = data.Assets.NullValue(ctx).(customfield.NestedObject[WorkerVersionAssetsModel])
+	} else {
+		data.Assets = assets
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
