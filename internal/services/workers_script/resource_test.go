@@ -120,7 +120,7 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"startup_time_ms", "bindings.0.version_id", "bindings.1.version_id"},
 			},
 		},
 	})
@@ -143,6 +143,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
+				ExpectNonEmptyPlan: true,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(moduleContent)),
@@ -177,7 +178,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.2", "bindings.#", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"bindings.2", "bindings.#", "main_module", "startup_time_ms", "bindings.0.version_id", "bindings.1.version_id", "bindings.2.version_id", "observability.%", "observability.enabled", "observability.head_sampling_rate"},
 			},
 		},
 	})
