@@ -597,7 +597,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 													Validators: []validator.String{
 														stringvalidator.ExactlyOneOf(path.MatchRelative().AtParent().AtName("expression")),
-														stringvalidator.LengthAtLeast(1),
 													},
 												},
 												"expression": schema.StringAttribute{
