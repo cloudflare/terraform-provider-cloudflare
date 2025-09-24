@@ -426,3 +426,136 @@ func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile strin
 func testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentFile string) string {
 	return acctest.LoadTestCase("module_with_invalid_content_sha256.tf", rnd, accountID, contentFile)
 }
+
+func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstBoolean(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, "true"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, "false"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content_type", "has_modules", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstList(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, `["/api/*", "!/api/health"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+						knownvalue.StringExact("!/api/health"),
+					})),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, `["/admin/*", "/api/v1/*", "!/api/v1/health"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/admin/*"),
+						knownvalue.StringExact("/api/v1/*"),
+						knownvalue.StringExact("!/api/v1/health"),
+					})),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content_type", "has_modules", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstMigration(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Start with boolean value
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, "true"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(true)),
+				},
+			},
+			// Migrate to list value
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, `["/api/*"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+					})),
+				},
+			},
+			// Migrate back to boolean value
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, "false"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
+				},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareWorkerScriptConfigAssetsRunWorkerFirst(rnd, accountID, runWorkerFirst string) string {
+	return acctest.LoadTestCase("assets_config_run_worker_first.tf", rnd, accountID, scriptContent1, runWorkerFirst)
+}
