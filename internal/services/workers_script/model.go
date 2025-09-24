@@ -60,22 +60,25 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	var metadata WorkersScriptMetadataModel
-	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	contentType := r.ContentType.ValueString()
+	if r.Content.ValueString() != "" {
+		workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	if r.MainModule.ValueString() != "" {
-		if contentType == "" {
-			contentType = "application/javascript+module"
+		contentType := r.ContentType.ValueString()
+
+		if r.MainModule.ValueString() != "" {
+			if contentType == "" {
+				contentType = "application/javascript+module"
+			}
+			mainModuleName := r.MainModule.ValueString()
+			writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
+		} else {
+			if contentType == "" {
+				contentType = "application/javascript"
+			}
+			writeFileBytes("script", "script", contentType, workerBody, writer)
+			r.BodyPart = types.StringValue("script")
 		}
-		mainModuleName := r.MainModule.ValueString()
-		writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
-	} else {
-		if contentType == "" {
-			contentType = "application/javascript"
-		}
-		writeFileBytes("script", "script", contentType, workerBody, writer)
-		r.BodyPart = types.StringValue("script")
 	}
 
 	topLevelMetadata := r.WorkersScriptMetadataModel
@@ -112,8 +115,10 @@ type WorkersScriptMetadataModel struct {
 }
 
 type WorkersScriptMetadataAssetsModel struct {
-	Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Config              *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
+	JWT                 types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Directory           types.String                            `tfsdk:"directory" json:"-,optional"`
+	AssetManifestSHA256 types.String                            `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
