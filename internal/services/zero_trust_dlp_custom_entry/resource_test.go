@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
+	t.Skip("Will fail until open api changes are made")
 	// Generate a random resource name to avoid conflicts during testing
 	rnd := utils.GenerateRandomResourceName()
 	// Define the full resource name for checks
