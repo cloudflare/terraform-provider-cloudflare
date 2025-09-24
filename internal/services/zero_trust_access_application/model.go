@@ -3,7 +3,6 @@
 package zero_trust_access_application
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
@@ -84,7 +83,6 @@ type ZeroTrustAccessApplicationFooterLinksModel struct {
 type ZeroTrustAccessApplicationSaaSAppModel struct {
 	AuthType                      types.String                                                    `tfsdk:"auth_type" json:"auth_type,computed_optional"`
 	ConsumerServiceURL            types.String                                                    `tfsdk:"consumer_service_url" json:"consumer_service_url,optional"`
-	CreatedAt                     timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomAttributes              *[]*ZeroTrustAccessApplicationSaaSAppCustomAttributesModel      `tfsdk:"custom_attributes" json:"custom_attributes,optional"`
 	DefaultRelayState             types.String                                                    `tfsdk:"default_relay_state" json:"default_relay_state,optional"`
 	IdPEntityID                   types.String                                                    `tfsdk:"idp_entity_id" json:"idp_entity_id,computed_optional"`
@@ -94,7 +92,6 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 	SAMLAttributeTransformJsonata types.String                                                    `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,optional"`
 	SPEntityID                    types.String                                                    `tfsdk:"sp_entity_id" json:"sp_entity_id,optional"`
 	SSOEndpoint                   types.String                                                    `tfsdk:"sso_endpoint" json:"sso_endpoint,computed_optional"`
-	UpdatedAt                     timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AccessTokenLifetime           types.String                                                    `tfsdk:"access_token_lifetime" json:"access_token_lifetime,computed_optional"`
 	AllowPKCEWithoutClientSecret  types.Bool                                                      `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret,optional"`
 	AppLauncherURL                types.String                                                    `tfsdk:"app_launcher_url" json:"app_launcher_url,optional"`
