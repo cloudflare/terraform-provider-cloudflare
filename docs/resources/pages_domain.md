@@ -2,7 +2,7 @@
 page_title: "cloudflare_pages_domain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+
 ---
 
 # cloudflare_pages_domain (Resource)
@@ -10,7 +10,7 @@ description: |-
 
 
 -> A DNS record for the domain is not automatically created. You need to create
-   a `cloudflare_record` resource for the domain you want to use.
+   a `cloudflare_dns_record` resource for the domain you want to use.
 
 ## Example Usage
 
