@@ -240,7 +240,7 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 
 	bytes, _ := io.ReadAll(res.Body)
 	var service WorkersServiceResultEnvelope
-	err = apijson.UnmarshalComputed(bytes, &service)
+	err = apijson.Unmarshal(bytes, &service)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -268,7 +268,7 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	bytes, _ = io.ReadAll(res.Body)
 	var metadata WorkersScriptMetadataResultEnvelope
-	err = apijson.UnmarshalComputed(bytes, &metadata)
+	err = apijson.Unmarshal(bytes, &metadata)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
