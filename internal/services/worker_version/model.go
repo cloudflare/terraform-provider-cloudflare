@@ -26,7 +26,7 @@ type WorkerVersionModel struct {
 	UsageModel         types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 	CompatibilityFlags customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	Annotations        customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Assets             customfield.NestedObject[WorkerVersionAssetsModel]       `tfsdk:"assets" json:"assets,computed_optional"`
+	Assets             *WorkerVersionAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
 	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
 	Limits             customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
 	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -102,8 +102,10 @@ type WorkerVersionAnnotationsModel struct {
 }
 
 type WorkerVersionAssetsModel struct {
-	Config customfield.NestedObject[WorkerVersionAssetsConfigModel] `tfsdk:"config" json:"config,computed_optional"`
-	JWT    types.String                                             `tfsdk:"jwt" json:"jwt,optional"`
+	Config              customfield.NestedObject[WorkerVersionAssetsConfigModel] `tfsdk:"config" json:"config,computed_optional"`
+	JWT                 types.String                                             `tfsdk:"jwt" json:"jwt,optional"`
+	Directory           types.String                                             `tfsdk:"directory" json:"-,optional"`
+	AssetManifestSHA256 types.String                                             `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkerVersionAssetsConfigModel struct {
