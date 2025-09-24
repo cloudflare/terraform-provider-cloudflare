@@ -5,7 +5,6 @@ package account_token
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,6 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*AccountTokenResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Token identifier tag.",
@@ -35,62 +35,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token name.",
 				Required:    true,
 			},
-			"policies": schema.ListNestedAttribute{
+			"policies": schema.DynamicAttribute{
 				Description: "List of access policies assigned to the token.",
 				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Policy identifier.",
-							Computed:    true,
-							PlanModifiers: []planmodifier.String{
-								stringplanmodifier.UseStateForUnknown(),
-							},
-						},
-						"effect": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
-							},
-						},
-						"permission_groups": schema.SetNestedAttribute{
-							Description: "A set of permission groups that are specified to the policy.",
-							Required:    true,
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"id": schema.StringAttribute{
-										Description: "Identifier of the permission group.",
-										Required:    true,
-									},
-									"meta": schema.SingleNestedAttribute{
-										Description: "Attributes associated to the permission group.",
-										Optional:    true,
-										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[AccountTokenPoliciesPermissionGroupsMetaModel](ctx),
-										Attributes: map[string]schema.Attribute{
-											"key": schema.StringAttribute{
-												Optional: true,
-											},
-											"value": schema.StringAttribute{
-												Optional: true,
-											},
-										},
-									},
-									"name": schema.StringAttribute{
-										Description: "Name of the permission group.",
-										Computed:    true,
-									},
-								},
-							},
-						},
-						"resources": schema.MapAttribute{
-							Description: "A list of resource names that the policy applies to.",
-							Required:    true,
-							ElementType: types.StringType,
-						},
-					},
-				},
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
