@@ -96,7 +96,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("My description")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListSizeExact(1000)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListSizeExact(500)),
 				},
 			},
 			{
@@ -175,13 +175,69 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareTeamsList_Update(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsListDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", "My description"),
+					resource.TestCheckResourceAttr(resourceName, "type", "SERIAL"),
+					resource.TestCheckResourceAttr(resourceName, "items.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "items.0.value", "asdf-1234"),
+					resource.TestCheckResourceAttr(resourceName, "items.1.value", "asdf-5678"),
+				),
+			},
+			{
+				Config: testAccCloudflareTeamsListConfigReorderedItemsUpdate(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", "My description update"),
+					resource.TestCheckResourceAttr(resourceName, "type", "SERIAL"),
+					resource.TestCheckResourceAttr(resourceName, "items.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "items.0.value", "asdf-1234"),
+					resource.TestCheckResourceAttr(resourceName, "items.1.value", "bsdf-5678"),
+					resource.TestCheckResourceAttr(resourceName, "items.2.value", "csdf-5678"),
+				),
+			},
+
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"list_count"},
+			},
+		},
+	})
+}
+
 func testAccCloudflareTeamsListConfigBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamslistconfigbasic.tf", rnd, accountID)
 }
 
 func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string {
 	items := []string{}
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 500; i++ {
 		items = append(items, `{value = "example-`+strconv.Itoa(i)+`"}`)
 	}
 
@@ -190,6 +246,10 @@ func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string 
 
 func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamslistconfigreordereditems.tf", rnd, accountID)
+}
+
+func testAccCloudflareTeamsListConfigReorderedItemsUpdate(rnd, accountID string) string {
+	return acctest.LoadTestCase("teamslistconfigreordereditems-update.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {

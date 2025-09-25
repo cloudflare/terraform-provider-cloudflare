@@ -182,19 +182,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Set to false to enable copy-pasting. Only applies when `version == \"v1\"`.",
 								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"dd": schema.BoolAttribute{
 								Description: "Set to false to enable downloading. Only applies when `version == \"v1\"`.",
 								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"dk": schema.BoolAttribute{
 								Description: "Set to false to enable keyboard usage. Only applies when `version == \"v1\"`.",
 								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"download": schema.StringAttribute{
 								Description: "Configure download behavior. When set to remote_only, users can view downloads but cannot save them. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
@@ -211,13 +208,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Set to false to enable printing. Only applies when `version == \"v1\"`.",
 								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"du": schema.BoolAttribute{
 								Description: "Set to false to enable uploading. Only applies when `version == \"v1\"`.",
 								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"keyboard": schema.StringAttribute{
 								Description: "Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\".",
