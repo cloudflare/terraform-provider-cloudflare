@@ -4,6 +4,7 @@ package zero_trust_tunnel_cloudflared_config
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -34,6 +35,10 @@ type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
 	Ingress       *[]*ZeroTrustTunnelCloudflaredConfigConfigIngressModel                           `tfsdk:"ingress" json:"ingress,optional"`
 	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel                        `tfsdk:"origin_request" json:"originRequest,optional"`
 	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel] `tfsdk:"warp_routing" json:"warp-routing,computed_optional"`
+}
+
+type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
