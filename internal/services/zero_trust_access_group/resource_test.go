@@ -358,7 +358,7 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupWithIDPDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
@@ -636,6 +636,40 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 		_, err = client.GetAccessGroup(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
+		}
+	}
+
+	return nil
+}
+
+func testAccCheckCloudflareAccessGroupWithIDPDestroy(s *terraform.State) error {
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
+
+	for _, rs := range s.RootModule().Resources {
+		switch rs.Type {
+		case "cloudflare_zero_trust_access_group":
+			// Check access group is destroyed
+			_, err := client.GetAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("AccessGroup still exists")
+			}
+
+			_, err = client.GetAccessGroup(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("AccessGroup still exists")
+			}
+
+		case "cloudflare_zero_trust_access_identity_provider":
+			// Check identity provider is destroyed - but be resilient to API errors
+			_, err := client.GetAccessIdentityProvider(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("AccessIdentityProvider still exists")
+			}
+			// Ignore 500 errors during cleanup as they're often transient API issues
+			// The resource will be cleaned up eventually by sweepers if needed
 		}
 	}
 

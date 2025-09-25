@@ -3,7 +3,6 @@ package load_balancer_monitor_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -48,7 +47,7 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 	}
 
 	if len(monitors) == 0 {
-		log.Print("[DEBUG] No Cloudflare Load Balancer Monitors to sweep")
+		tflog.Debug(ctx, "[DEBUG] No Cloudflare Load Balancer Monitors to sweep")
 		return nil
 	}
 

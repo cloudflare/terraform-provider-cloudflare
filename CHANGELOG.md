@@ -1,5 +1,163 @@
 # Changelog
 
+## 5.10.1 (2025-09-17)
+
+Full Changelog: [v5.10.0...v5.10.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.10.0...v5.10.1)
+
+### Features
+
+* grit to go ([#6162](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6162)) ([b3c4779](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b3c47796075888b92723ee8888bd8de9e3ab00b3))
+
+
+### Bug Fixes
+
+* cloudflare_load_balancer transformation issues ([#6171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6171)) ([92f4a4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/92f4a4ac3cdf493d0c543a6a234d74772f349236))
+* fix grit in migration tests ([#6175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6175)) ([0a25a5e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0a25a5e05c3f63866e493839419a0a253ac19fee))
+* fix zero trust access application state migration ([07a5d06](https://github.com/cloudflare/terraform-provider-cloudflare/commit/07a5d06b6ef6a8b1513ffb74ec7ce501e7c42b33))
+* handling of nested arrays in ruleset migration ([#6187](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6187)) ([a00b67f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a00b67f55cf19a0a7d963c16e29530a27e75983e))
+* lb and lb pool config migration ([#6170](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6170)) ([2af41f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2af41f86cd166578f227f27ef4edbbb0d2feb4eb))
+* lb monitor state migration ([#6180](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6180)) ([c9811ba](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c9811bad042a8cb312b7c4db1c734db65730140b))
+* **migrate:** block transformations ([#6203](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6203)) ([245166d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/245166d6f4b3e348d9d3b7f5cca55d9fc51e3f60))
+* **migrate:** fix main_module value migration ([#6204](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6204)) ([fd24c07](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fd24c0743e745a5954ecc1e4a94a4415fbb5aa8f))
+* **migrate:** improve `zone_setting` migrations ([#6169](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6169)) ([6ba251f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6ba251f7c99e04588534399bd03d34aa7e88fd7b))
+* remove 'disable_railgun' from state after v4 migration ([#6186](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6186)) ([453d774](https://github.com/cloudflare/terraform-provider-cloudflare/commit/453d774ee162565e2b080ba2291cb2f319eac3d1))
+* remove zone settings with null values ([#6201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6201)) ([f99bac4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f99bac421f6ba694312357a963dfffb6fe431cc6))
+* ruleset migration in nogrit ([#6174](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6174)) ([ecb450d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ecb450d4adde5adb19a49bbbf5026d1995792705))
+* ruleset migration issues ([#6163](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6163)) ([44b653c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/44b653c81b591b3e865fe3d9cae6b88033914c48))
+* ruleset migration issues ([#6168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6168)) ([11b3961](https://github.com/cloudflare/terraform-provider-cloudflare/commit/11b396108147fdad462bb0fb839f1f0766a7fc9b))
+* ruleset state ([#6191](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6191)) ([dfd36a2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dfd36a22b9c45f7d7a13855cfb8bbcdb0fa9ac3b))
+* variable interpolation ([#6193](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6193)) ([332de8d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/332de8dd71f5526cf55087428f5f069378198730))
+* **workers_script:** fix incorect model type of `run_worker_first` attribute ([#6199](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6199)) ([13bf28d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/13bf28d11e16eebcbc7ef5c31e7152e47fd02df7))
+* **zone_setting:** ensure clean state after migrate ([#6190](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6190)) ([41ae093](https://github.com/cloudflare/terraform-provider-cloudflare/commit/41ae0938374a3a8bde92c002b4a69ba06a60c73f))
+
+
+### Chores
+
+* compare better ([#6192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6192)) ([ff67b9e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ff67b9ee390e7964ce0e79fc6cdaadee606d9486))
+* enable mconn tests ([#6166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6166)) ([9c6653b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9c6653bab8b8b4ca35fe14bb24bdc68e4d39c268))
+* limit max retries ([#6173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6173)) ([8c1c81c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8c1c81c76d97e932e91287700c44c844d15040cd))
+* point transformations to gh/next ([#6177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6177)) ([c35109a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c35109a5d11d1e03b56f043e1491ccde577d8467))
+* zero trust config issues ([#6179](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6179)) ([07a5d06](https://github.com/cloudflare/terraform-provider-cloudflare/commit/07a5d06b6ef6a8b1513ffb74ec7ce501e7c42b33))
+
+
+### Documentation
+
+* **list_item:** add import documentation ([#6202](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6202)) ([55e12bc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/55e12bc5b1faed26af312ddd129b9111073b21a7))
+
+## 5.10.0 (2025-09-12)
+
+Full Changelog: [v5.9.0...v5.10.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.9.0...v5.10.0)
+
+### Features
+
+* add 'ruleset' support in migration tool ([#6104](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6104)) ([82158eb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/82158ebe9c2805b4cfe7533eda70008fbb5fcb12))
+* add migration tool support for cloudflare_snippet ([79e19d3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/79e19d31e7637e3f2904325d2f19ddbf17072829))
+* add migration tool support for cloudflare_snippet_rules ([b1d4e92](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b1d4e92a4e8eca623713465085eefee4ef03b7ab))
+* **cloudflare_list:** add nested list items to data source ([0818c2d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0818c2dc98aea55e6777054040ebd131bf8dc370))
+* **cloudflare_list:** add nested set list items ([f96b922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f96b92263421221105b973d506db71793ebe4c26))
+* handle list items in v4 ([5c315f2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5c315f207f6c269ea6fd05509088e52bb50462d5))
+* **internal:** support CustomMarshaler interface for encoding types ([3ce3cbc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3ce3cbc758bed234da930cbab5e21611850807b5))
+* Merge branch 'vaishak/bump-sdk-version' into 'main' ([2d4ae17](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2d4ae176bc2668af22f36c93f99f296bf671d017))
+* merge items into list ([0709233](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0709233a0d590f60fdf8f4cc66c3444fe12b7010))
+* migrate list with embedded items from v4 to v5 ([40ff2dd](https://github.com/cloudflare/terraform-provider-cloudflare/commit/40ff2dd685dbcf2d4301d6c96c84f0df761001c7))
+* **migrate:** add comprehensive workers cross-resource reference support ([39032e3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/39032e3811883fc0e7c41de47fd9c2175de5ecb6))
+* **migrate:** fix load_balancer migration test ([#6148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6148)) ([1d21133](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1d2113344f04e88fea08449ab9f8db2f484f048b))
+* **migrate:** implement comprehensive workers_script v4→v5 bindings migration ([59d436b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/59d436bb1188180190c5abdea70ed556839604fe))
+* **migrate:** implement remaining workers_script binding migration fixes ([6324582](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6324582362020b435cd0da44fe225d577551970a))
+* **migrate:** support migrations for workers_route and workers_script ([3308fa5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3308fa50c601ce533edf49a2625592cf47b99f4f))
+* migration tests ([1e35d38](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1e35d38bfb048726717efe2e22dad796b6c0524a))
+* migration tests ([8ec2d24](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8ec2d246cdb149dbc729572f844d594e020a47db))
+* modernize healthcheck tests ([74a358d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/74a358d018e66a2373ac6bb07d461c6841c30717))
+* modernize notification_policy_webhooks tests ([bbab7d5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bbab7d571dda978540c6cb6b0f20021be6bc8929))
+* modernize r2_bucket tests ([ecf2609](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ecf2609108e1a408b0ce049c0b68f170c834f6d5))
+* modernize zero_trust_dlp_custom_profile tests ([cb11079](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cb11079fc2ab25b214aeb5184a633d1a9deb85c0))
+* modernize zero_trust_dlp_entry tests ([6f0a6b1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6f0a6b1efa72b2028235eb74bb7590e684fdda92))
+* modernize zero_trust_list tests ([27e8cab](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27e8cabaa116afba22318e11bafc1169893fd727))
+* **ruleset:** validate action parameters are used with correct action ([578879e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/578879ee9b5475a8c4d9e0ed11152f490bd4bb47))
+* **workers_route, workers_script:** implement migration for workers_(script|route) ([ff3e68e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ff3e68e6fd1714084a97d29e694860d8a2603f53))
+* **zone:** add v4 -&gt; v5 migrations ([279070c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/279070c1f677a0bdc91bfdebb42c17e202bb54fe))
+* **zone:** implement migrations ([717787a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/717787a5990fd07a4e603874835c18caa04cb2b5))
+
+
+### Bug Fixes
+
+* broken test data and block attribute conversion ([#6138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6138)) ([6a07ac2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6a07ac20e6c919b1a4daaf27a4464711b20dc870))
+* ci workflows ([ee2117a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ee2117a390f9e0deba1e9a8a09af9f5f8c189a0e))
+* comment_modified_on drift in DNS records ([b5bdee4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b5bdee4baf0c6a30264306b23ec7aa1b89ea03da))
+* discord failure ([8b8eb19](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8b8eb195f3209b58269b075fdd46be47b7df46c2))
+* dns record empty states ([e8f418e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e8f418e608e7cb463cf6aaaa403c10861e1c67c3))
+* don't announce to discord ([9e7a495](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9e7a495ebb7c8f263a64c1dcd9f5067261159b75))
+* dynamic 'origins' blocks migrations ([8d5de51](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8d5de517638d39293a1ef80728a4a45bf638badc))
+* dynamic blocks and tests ([4d6855c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4d6855cc71bcc00331a50e2f2684150af09bfce3))
+* fix snippets tests ([52dfe49](https://github.com/cloudflare/terraform-provider-cloudflare/commit/52dfe49e665354509a82dce898d24cf9c07b82fd))
+* fix zero_trust_dlp_entry acceptance tests ([5007122](https://github.com/cloudflare/terraform-provider-cloudflare/commit/50071226f18a74e58ed7e4eb87bd9b66ccb02611))
+* inconsistent apply Issue [#6076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6076) ([#6139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6139)) ([0e9650f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0e9650fc1112739a315cdaebcd6157d8451251d2))
+* **migrate:** add missing hyperdrive binding attribute renames ([fc6b137](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fc6b1376bc56cf945f36ff1d95f87c03c526bdb6))
+* **migrate:** correct module transformation and clean up dead code tests ([c364035](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c36403502a8b55e7d3ee646e168e0157d9552010))
+* **migrate:** custom_pages state migrations ([8b4e1cf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8b4e1cf913cc6e3f6afd05fa579b53cb614ecdb3))
+* **migrate:** implement dispatch_namespace attribute to binding migration ([3a432dd](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3a432dd532647f6a02723d52eb7c8d50a278eb0c))
+* **migrate:** implement module attribute to main_module/body_part migration ([dd94222](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dd9422222ed36a608c552c41f35a11f00ce0be75))
+* **migrate:** implement workers_secret cross-resource migration to secret_text bindings ([5ff5c6c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5ff5c6c9971b416b91675291c14d7b227539b93d))
+* migrations for config and state ([24e44b0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/24e44b0bd72f03974d1195bb3a9d3931a933d52b))
+* more roboust retry logic for certificate tests ([#6154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6154)) ([25039bc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/25039bc51edb81b2ea20d132eea8da46be3535b2))
+* nil dereference in `cloudflare_workers_script` resource ([#6158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6158)) ([bcfc129](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bcfc12947857b8a742b068b32707af4fcf86476a)), closes [#6147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6147)
+* prevent resource type corruption in workers_secret state migration ([abc0548](https://github.com/cloudflare/terraform-provider-cloudflare/commit/abc0548e62f82d7aa27122ce607ee501c063ee15))
+* prevent resource type corruption in workers_secret state migration ([adbbae2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/adbbae282527fff3f2afc9422e593072b77f5ecd))
+* required field ttl ([b88e5b8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b88e5b8d4cf23ecca319d0b2807213d2e053db3a))
+* resolve race condition in zero_trust_access_mtls_hostname_settings migration tests ([#6152](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6152)) ([9c6deef](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9c6deef26dcb8c1141f7494517ee63aae5761e87))
+* run spinnets in sequence ([0789979](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0789979eacf3d7350c4958bf12d260609aae6d56))
+* skip acceptance tests in unit test scope ([#6155](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6155)) ([e860eb5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e860eb515f334fc44f5df2d50cc5530f672a320c))
+* snippet and load balancer migration tests ([#6149](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6149)) ([a347ebc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a347ebccdb5b08a66a5ba98ba36b30b053d43955))
+* state ([5742920](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5742920c0afafac57ee3f15da951661fc347d990))
+* state test ([16c5fc2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/16c5fc2ec0b0fbcae1f048a134287c8d4a1eedd4))
+* tests ([84f27a3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/84f27a375e4e11192dbc19902e0f28755af1cae6))
+* tiered cache test ([408a4b6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/408a4b6fc9a47fa21dc94aada71144e89115dc10))
+* **workers_script:** fix/improve bindings tests ([fca02f3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fca02f34d358d7d2f20a9ecbb5bb87718a4fe2bc))
+* **workers_script:** get tests passing again ([404a241](https://github.com/cloudflare/terraform-provider-cloudflare/commit/404a24114484ee16541875a96f5f1ed69ff01891))
+* **workers_script:** referenced attribute renames ([#6136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6136)) ([29d686c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/29d686c2ed811591522202ce28812b2c80771028))
+* **workers_script:** resolve binding order infinite loop in v5 provider ([a05f552](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a05f552a51ee3138cf584f4b7a36eeb90db1706c))
+* zero trust access indetity provider migration ([7bc2a5d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7bc2a5d3e9dc0dfbb4621f99dd3657ac37732d58))
+* zero trust access mtls certificate acceptance tests ([7e91d44](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7e91d44c17fa429c750ad05e9018f8df2806dbca))
+* zero trust migrations ([ddc8642](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ddc8642939a84e9a7a71def40d5852f38146f2b1))
+* zero_trust_access_mtls_certificate acceptance tests ([b163147](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b16314700cc13a3535304f0db4ba53f406fcec21))
+* zero_trust_device_custom_profile sweeper ([f0ed7ca](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f0ed7caa94a44ee8b4fbc803875387c3de7022ff))
+
+
+### Chores
+
+* **account_member:** remove bad test ([21c670d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/21c670d3da4dd30d55b7a5ef68160b55139baa23))
+* **account_member:** update acceptance tests ([1988556](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1988556b720e4f7ab608d28709972c1837ced47c))
+* **account_token:** update acceptance tests ([1f6be84](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1f6be843ca4b8d516fd7dcd2a9e3d532ab94ed0f))
+* **account:** update acceptance tests ([1f49327](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1f49327a607052f4efed1bc052ebfab11ad39a69))
+* add migration tool support for load_balancer and load_balancer_pool ([a985fa0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a985fa0980c19940ed9ddb1b999c78a85a0be09a))
+* **api_token:** update acceptance tests ([5d02104](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5d02104c772bfa31428827e2c337e529ce4b8338))
+* ci tests dependencies and job tracking ([a2142fb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a2142fb0d7c188df0a64f4bf3133d34586defc7e))
+* enable more ci tests ([cd96052](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cd96052cfff30a17c8bc80baadd87dbf99644dd3))
+* fix list item state migration ([#6146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6146)) ([7cc6425](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7cc6425756210ab2803fb3844fe1f27cc4cce47d))
+* fix transformation source ([#6157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6157)) ([6cc2cfb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6cc2cfb2b2642bacb10d952a6826c854b6b77077))
+* grit to go ([#6143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6143)) ([548f097](https://github.com/cloudflare/terraform-provider-cloudflare/commit/548f0974413728c5091b856967d4a2be3c7dbdf4))
+* increase parallel jobs ([9f1a098](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9f1a098b378868c54865ddd9dd846fa6851c922c))
+* increase retries ([#6156](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6156)) ([309397c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/309397c3b2f074ce4eb55670eed6a0483e9d5b5c))
+* remove files that are not needed ([064c780](https://github.com/cloudflare/terraform-provider-cloudflare/commit/064c780896778d03813d2fe86f4dea121ef34b3b))
+* remove grit ([d840087](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d840087e04d87b146fb4677e387512b54bb659c6))
+* remove grit for lists ([f7d6229](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f7d62295002beb894c5b4e2df24083cd08170720))
+* remove skips ([adee34c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/adee34c10d4e009387f542de1ad6a4f23552852e))
+* retry tests ([#6150](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6150)) ([fc88bf8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fc88bf855232fcdfeec535692048391a0f8e1107))
+* revert grit to go ([#6159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6159)) ([09bfa12](https://github.com/cloudflare/terraform-provider-cloudflare/commit/09bfa12a51658b0b3879d2916d703de46e661637))
+* run goimport ([f837802](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f8378026a3283ee350503f98471f71ba2e0a9d7d))
+* sequence magic tests ([#6145](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6145)) ([156694c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/156694ccdb4326e0326385eba48f931fac3dd8a3))
+* skip mconn test ([#6161](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6161)) ([e181aef](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e181aef8531e4ad75d2bcaaccb5aed27bc9c8567))
+* tests ([47a4330](https://github.com/cloudflare/terraform-provider-cloudflare/commit/47a4330a2efd1f3d210f6a5e839295d9939aab87))
+* **workers_script:** add lots of missing bindings tests ([dc27751](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dc2775112f61adfd7e29ac56b5a7231ee6adc333))
+* **workers_script:** remove unused tests ([505c840](https://github.com/cloudflare/terraform-provider-cloudflare/commit/505c8405f93822f1d1a0acb2831eef0751c26ae0))
+* **zone:** add migration tests ([b02bf9b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b02bf9b0fa8a40897f56dd33f68c80084c3122be))
+
+
+### Refactors
+
+* **migrate:** add resource rename support to workers_route and workers_script ([35eaca1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/35eaca1b009cffb755e6700564f91af70bd2d78a))
+* **migrate:** clean up duplicate bindings maps ([2393057](https://github.com/cloudflare/terraform-provider-cloudflare/commit/23930572971917df85bda1d7361bb8d91944d402))
+
 ## 5.9.0 (2025-08-29)
 
 Full Changelog: [v5.8.4...v5.9.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.4...v5.9.0)

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+	
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
@@ -257,9 +259,16 @@ func extractStringValue(expr hclwrite.Expression) string {
 		result += string(token.Bytes)
 	}
 	
-	// Remove surrounding quotes if present
+	// Remove surrounding quotes if present and unescape
 	if len(result) >= 2 && result[0] == '"' && result[len(result)-1] == '"' {
-		return result[1 : len(result)-1]
+		unquoted := result[1 : len(result)-1]
+		// Unescape common escape sequences
+		unquoted = strings.ReplaceAll(unquoted, `\"`, `"`)
+		unquoted = strings.ReplaceAll(unquoted, `\\`, `\`)
+		unquoted = strings.ReplaceAll(unquoted, `\n`, "\n")
+		unquoted = strings.ReplaceAll(unquoted, `\r`, "\r")
+		unquoted = strings.ReplaceAll(unquoted, `\t`, "\t")
+		return unquoted
 	}
 	return result
 }

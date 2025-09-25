@@ -9,120 +9,291 @@
 # have that support.
 # TODO: support tenant admin auth for acceptance tests
 
+# Product group definitions - services that need special handling
+# Using functions instead of associative arrays for broader bash compatibility
+get_product_group_services() {
+    local group="$1"
+    case "$group" in
+        magic)
+            echo "magic_wan_ipsec_tunnel magic_wan_gre_tunnel magic_wan_static_route magic_transit_connector"
+            ;;
+        *)
+            echo ""
+            ;;
+    esac
+}
+
+get_available_product_groups() {
+    echo "magic"
+}
+
 # List of services with their parallel test configuration
-# Each service is defined as: resource=<path> parallel=<number>
-# parallel=1 means sequential execution, parallel=0 means use default (GOMAXPROCS)
-declare -a SERVICES=(
-    "resource=./internal/services/account parallel=0"
-    "resource=./internal/services/account_api_token_permission_groups parallel=0"
-    "resource=./internal/services/account_dns_settings parallel=0"
-    "resource=./internal/services/account_dns_settings_internal_view parallel=0"
-    "resource=./internal/services/account_member parallel=0"
-    "resource=./internal/services/account_permission_group parallel=0"
-    "resource=./internal/services/account_role parallel=0"
-    "resource=./internal/services/account_subscription parallel=0"
-    "resource=./internal/services/account_token parallel=0"
-    "resource=./internal/services/address_map parallel=0"
-    "resource=./internal/services/api_shield parallel=0"
-    "resource=./internal/services/api_token parallel=0"
-    "resource=./internal/services/argo_smart_routing parallel=0"
-    "resource=./internal/services/argo_tiered_caching parallel=0"
-    "resource=./internal/services/authenticated_origin_pulls parallel=0"
-    "resource=./internal/services/authenticated_origin_pulls_certificate parallel=0"
-    "resource=./internal/services/byo_ip_prefix parallel=0"
-    "resource=./internal/services/certificate_pack parallel=0"
-    "resource=./internal/services/cloud_connector_rules parallel=0"
-    "resource=./internal/services/custom_pages parallel=0"
-    "resource=./internal/services/custom_ssl parallel=0"
-    "resource=./internal/services/dns_record parallel=0"
-    "resource=./internal/services/dns_settings_internal_view parallel=0"
-    "resource=./internal/services/dns_zone_transfers_acl parallel=0"
-    "resource=./internal/services/dns_zone_transfers_tsig parallel=0"
-    "resource=./internal/services/email_routing_catch_all parallel=0"
-    "resource=./internal/services/email_routing_dns parallel=0"
-    "resource=./internal/services/email_routing_rule parallel=0"
-    "resource=./internal/services/email_security_impersonation_registry parallel=0"
-    "resource=./internal/services/email_security_trusted_domains parallel=0"
-    "resource=./internal/services/ip_ranges parallel=0"
-    "resource=./internal/services/list parallel=0"
+# Each service is defined as: resource=<path> [parallel=<number>] [depends_on=<service1,service2>]
+# parallel=1 means sequential execution, parallel=0 (default) means use default (GOMAXPROCS)
+# Only specify parallel= if different from default (0)
+# depends_on is optional and specifies services that must complete before this one starts
+# Dependencies use service names (basename of path), comma-separated for multiple dependencies
+declare -a ALL_SERVICES=(
+    "resource=./internal/services/account"
+    "resource=./internal/services/account_api_token_permission_groups"
+    "resource=./internal/services/account_dns_settings"
+    "resource=./internal/services/account_dns_settings_internal_view"
+    "resource=./internal/services/account_member"
+    "resource=./internal/services/account_permission_group"
+    "resource=./internal/services/account_role"
+    "resource=./internal/services/account_subscription"
+    "resource=./internal/services/account_token"
+    "resource=./internal/services/address_map"
+    "resource=./internal/services/api_shield"
+    "resource=./internal/services/api_token"
+    "resource=./internal/services/argo_smart_routing"
+    "resource=./internal/services/argo_tiered_caching"
+    "resource=./internal/services/authenticated_origin_pulls"
+    "resource=./internal/services/authenticated_origin_pulls_certificate"
+    "resource=./internal/services/bot_management"
+    "resource=./internal/services/byo_ip_prefix"
+    "resource=./internal/services/certificate_pack"
+    "resource=./internal/services/cloud_connector_rules"
+    "resource=./internal/services/custom_pages"
+    "resource=./internal/services/custom_ssl"
+    "resource=./internal/services/dns_record"
+    "resource=./internal/services/dns_settings_internal_view"
+    "resource=./internal/services/dns_zone_transfers_acl"
+    "resource=./internal/services/dns_zone_transfers_tsig"
+    "resource=./internal/services/email_routing_catch_all"
+    "resource=./internal/services/email_routing_dns"
+    "resource=./internal/services/email_routing_rule"
+    "resource=./internal/services/email_security_impersonation_registry"
+    "resource=./internal/services/email_security_trusted_domains"
+    "resource=./internal/services/healthcheck"
+    "resource=./internal/services/ip_ranges"
+    "resource=./internal/services/list parallel=1"
     "resource=./internal/services/list_item parallel=1"
-    "resource=./internal/services/load_balancer parallel=0"
-    "resource=./internal/services/load_balancer_monitor parallel=0"
-    "resource=./internal/services/load_balancer_pool parallel=0"
-    "resource=./internal/services/logpull_retention parallel=0"
-    "resource=./internal/services/logpush_job parallel=0"
-    "resource=./internal/services/logpush_ownership_challenge parallel=0"
-    "resource=./internal/services/magic_transit_connector parallel=0"
+    "resource=./internal/services/load_balancer"
+    "resource=./internal/services/load_balancer_monitor"
+    "resource=./internal/services/load_balancer_pool"
+    "resource=./internal/services/logpull_retention"
+    "resource=./internal/services/logpush_job"
+    "resource=./internal/services/logpush_ownership_challenge"
     "resource=./internal/services/magic_wan_ipsec_tunnel parallel=1"
-    "resource=./internal/services/magic_wan_gre_tunnel parallel=1"
-    "resource=./internal/services/magic_wan_static_route parallel=1"
+    "resource=./internal/services/magic_wan_gre_tunnel parallel=1 depends_on=magic_wan_ipsec_tunnel"
+    "resource=./internal/services/magic_wan_static_route parallel=1 depends_on=magic_wan_gre_tunnel"
+    "resource=./internal/services/magic_transit_connector parallel=1 depends_on=magic_wan_static_route"
     "resource=./internal/services/managed_transforms parallel=1"
-    "resource=./internal/services/observatory_scheduled_test parallel=0"
-    "resource=./internal/services/origin_ca_certificate parallel=0"
-    "resource=./internal/services/page_rule parallel=0"
-    "resource=./internal/services/pages_domain parallel=0"
-    "resource=./internal/services/pages_project parallel=0"
-    "resource=./internal/services/queue parallel=0"
-    "resource=./internal/services/r2_bucket parallel=0"
-    "resource=./internal/services/regional_tiered_cache parallel=0"
-    "resource=./internal/services/ruleset parallel=0"
-    "resource=./internal/services/spectrum_application parallel=0"
-    "resource=./internal/services/tiered_cache parallel=0"
-    "resource=./internal/services/turnstile_widget parallel=0"
-    "resource=./internal/services/url_normalization_settings parallel=0"
-    "resource=./internal/services/waiting_room_settings parallel=0"
-    "resource=./internal/services/workers_cron_trigger parallel=0"
-    "resource=./internal/services/workers_custom_domain parallel=0"
-    "resource=./internal/services/workers_for_platforms_dispatch_namespace parallel=0"
-    "resource=./internal/services/workers_kv_namespace parallel=0"
-    "resource=./internal/services/workers_route parallel=0"
-    "resource=./internal/services/workers_script parallel=0"
-    "resource=./internal/services/zero_trust_access_application parallel=0"
-    "resource=./internal/services/zero_trust_access_custom_page parallel=0"
-    "resource=./internal/services/zero_trust_access_group parallel=0"
-    "resource=./internal/services/zero_trust_access_identity_provider parallel=0"
-    "resource=./internal/services/zero_trust_access_key_configuration parallel=0"
-    "resource=./internal/services/zero_trust_access_mtls_certificate parallel=0"
-    "resource=./internal/services/zero_trust_access_mtls_hostname_settings parallel=0"
-    "resource=./internal/services/zero_trust_access_policy parallel=0"
-    "resource=./internal/services/zero_trust_access_service_token parallel=0"
-    "resource=./internal/services/zero_trust_access_short_lived_certificate parallel=0"
-    "resource=./internal/services/zero_trust_access_tag parallel=0"
-    "resource=./internal/services/zero_trust_device_custom_profile parallel=0"
-    "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback parallel=0"
-    "resource=./internal/services/zero_trust_device_default_profile_certificates parallel=0"
-    "resource=./internal/services/zero_trust_device_managed_networks parallel=0"
-    "resource=./internal/services/zero_trust_gateway_proxy_endpoint parallel=0"
-    "resource=./internal/services/zero_trust_gateway_settings parallel=0"
-    "resource=./internal/services/zero_trust_list parallel=0"
-    "resource=./internal/services/zero_trust_organization parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared_route parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared_token parallel=0"
-    "resource=./internal/services/zone parallel=0"
-    "resource=./internal/services/zone_cache_reserve parallel=0"
-    "resource=./internal/services/zone_cache_variants parallel=0"
-    "resource=./internal/services/zone_hold parallel=0"
-    "resource=./internal/services/zone_lockdown parallel=0"
-    "resource=./internal/services/zone_setting parallel=0"
-    "resource=./internal/services/zone_subscription parallel=0"
+    "resource=./internal/services/notification_policy_webhooks"
+    "resource=./internal/services/observatory_scheduled_test"
+    "resource=./internal/services/origin_ca_certificate"
+    "resource=./internal/services/page_rule parallel=1"
+    "resource=./internal/services/pages_domain"
+    "resource=./internal/services/pages_project"
+    "resource=./internal/services/queue"
+    "resource=./internal/services/r2_bucket"
+    "resource=./internal/services/regional_tiered_cache"
+    "resource=./internal/services/ruleset"
+    "resource=./internal/services/snippet"
+    "resource=./internal/services/snippet_rules depends_on=snippet"
+    "resource=./internal/services/snippets depends_on=snippet_rules"
+    "resource=./internal/services/spectrum_application"
+    "resource=./internal/services/tiered_cache"
+    "resource=./internal/services/turnstile_widget"
+    "resource=./internal/services/url_normalization_settings"
+    "resource=./internal/services/waiting_room_settings"
+    "resource=./internal/services/worker"
+    "resource=./internal/services/worker_version"
+    "resource=./internal/services/workers_cron_trigger"
+    "resource=./internal/services/workers_custom_domain"
+    "resource=./internal/services/workers_for_platforms_dispatch_namespace"
+    "resource=./internal/services/workers_kv_namespace"
+    "resource=./internal/services/workers_route"
+    "resource=./internal/services/workers_script"
+    "resource=./internal/services/zero_trust_access_application"
+    "resource=./internal/services/zero_trust_access_custom_page"
+    "resource=./internal/services/zero_trust_access_group"
+    "resource=./internal/services/zero_trust_access_identity_provider"
+    "resource=./internal/services/zero_trust_access_key_configuration"
+    "resource=./internal/services/zero_trust_access_mtls_certificate parallel=1"
+    "resource=./internal/services/zero_trust_access_mtls_hostname_settings parallel=1 depends_on=zero_trust_access_mtls_certificate"
+    "resource=./internal/services/zero_trust_access_policy"
+    "resource=./internal/services/zero_trust_access_service_token"
+    "resource=./internal/services/zero_trust_access_short_lived_certificate depends_on=zero_trust_access_mtls_hostname_settings"
+    "resource=./internal/services/zero_trust_access_tag"
+    "resource=./internal/services/zero_trust_device_custom_profile"
+    "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback"
+    "resource=./internal/services/zero_trust_device_default_profile_certificates"
+    "resource=./internal/services/zero_trust_device_managed_networks"
+    "resource=./internal/services/zero_trust_dlp_custom_profile"
+    "resource=./internal/services/zero_trust_dlp_entry"
+    "resource=./internal/services/zero_trust_gateway_proxy_endpoint"
+    "resource=./internal/services/zero_trust_gateway_settings"
+    "resource=./internal/services/zero_trust_list"
+    "resource=./internal/services/zero_trust_organization"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_route"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_token"
+    "resource=./internal/services/zone"
+    "resource=./internal/services/zone_cache_reserve"
+    "resource=./internal/services/zone_cache_variants"
+    "resource=./internal/services/zone_hold"
+    "resource=./internal/services/zone_lockdown"
+    "resource=./internal/services/zone_setting"
+    "resource=./internal/services/zone_subscription"
 )
+
+# Global variable to hold filtered services based on product group
+declare -a SERVICES=()
 
 # Helper function to parse service configuration
 parse_service_config() {
     local config="$1"
     local key="$2"
-    echo "$config" | grep -o "$key=[^ ]*" | cut -d= -f2-
+    local value=$(echo "$config" | grep -o "$key=[^ ]*" | cut -d= -f2-)
+    
+    # Set default for parallel if not specified
+    if [ "$key" = "parallel" ] && [ -z "$value" ]; then
+        echo "0"
+    else
+        echo "$value"
+    fi
+}
+
+# Function to get service name from path
+get_service_name() {
+    local service_path="$1"
+    basename "$service_path"
+}
+
+# Function to filter services by product group
+filter_services_by_group() {
+    local group="$1"
+    SERVICES=()
+    
+    if [ "$group" = "default" ]; then
+        # Default group: all services NOT in any product group
+        all_product_groups="$(get_available_product_groups)"
+        for service_config in "${ALL_SERVICES[@]}"; do
+            local service_path=$(parse_service_config "$service_config" "resource")
+            local service_name=$(get_service_name "$service_path")
+            local in_product_group=false
+            
+            # Check if this service is in any product group
+            for product_group in $all_product_groups; do
+                group_services="$(get_product_group_services "$product_group")"
+                if [[ " $group_services " =~ " $service_name " ]]; then
+                    in_product_group=true
+                    break
+                fi
+            done
+            
+            if [ "$in_product_group" = "false" ]; then
+                SERVICES+=("$service_config")
+            fi
+        done
+    else
+        # Specific product group: only services in that group
+        group_services="$(get_product_group_services "$group")"
+        if [ -z "$group_services" ]; then
+            echo "Error: Unknown product group '$group'"
+            echo "Available groups: default, $(get_available_product_groups)"
+            exit 1
+        fi
+        
+        for service_config in "${ALL_SERVICES[@]}"; do
+            local service_path=$(parse_service_config "$service_config" "resource")
+            local service_name=$(get_service_name "$service_path")
+            
+            if [[ " $group_services " =~ " $service_name " ]]; then
+                SERVICES+=("$service_config")
+            fi
+        done
+    fi
+}
+
+# Function to check if service has dependencies satisfied
+check_dependencies_satisfied() {
+    local service_config="$1"
+    local completed_file="$2"
+    
+    local depends_on=$(parse_service_config "$service_config" "depends_on")
+    if [ -z "$depends_on" ] || [ "$depends_on" = "" ]; then
+        return 0  # No dependencies
+    fi
+    
+    # Split dependencies by comma and check each one
+    IFS=',' read -ra deps <<< "$depends_on"
+    for dep in "${deps[@]}"; do
+        dep=$(echo "$dep" | xargs)  # trim whitespace
+        if ! grep -q "^$dep$" "$completed_file" 2>/dev/null; then
+            return 1  # Dependency not satisfied
+        fi
+    done
+    
+    return 0  # All dependencies satisfied
+}
+
+# Simple dependency-aware ordering (processes services with no unsatisfied dependencies first)
+resolve_dependencies() {
+    # For bash compatibility, use simple approach:
+    # 1. First, output all services with no dependencies
+    # 2. Then output services whose dependencies have been satisfied
+    # This is less sophisticated than full topological sort but works for simple chains
+    
+    local completed_file="/tmp/dependency_completion_$$"
+    touch "$completed_file"
+    local remaining_services=("${SERVICES[@]}")
+    
+    local iteration=0
+    while [ ${#remaining_services[@]} -gt 0 ]; do
+        iteration=$((iteration + 1))
+        # Safety check to prevent infinite loops
+        if [ $iteration -gt 100 ]; then
+            log "${RED}ERROR: Dependency resolution exceeded maximum iterations${NC}" >&2
+            rm -f "$completed_file"
+            exit 1
+        fi
+        
+        local made_progress=false
+        local new_remaining=()
+        
+        for service_config in "${remaining_services[@]}"; do
+            if check_dependencies_satisfied "$service_config" "$completed_file"; then
+                echo "$service_config"
+                local service=$(parse_service_config "$service_config" "resource")
+                local service_name=$(get_service_name "$service")
+                echo "$service_name" >> "$completed_file"
+                made_progress=true
+            else
+                new_remaining+=("$service_config")
+            fi
+        done
+        
+        remaining_services=("${new_remaining[@]}")
+        
+        if [ "$made_progress" = "false" ] && [ ${#remaining_services[@]} -gt 0 ]; then
+            log "${RED}ERROR: Circular dependency or missing dependency detected${NC}" >&2
+            log "${RED}Remaining services with unresolved dependencies:${NC}" >&2
+            for service_config in "${remaining_services[@]}"; do
+                local service=$(parse_service_config "$service_config" "resource")
+                local service_name=$(get_service_name "$service")
+                local depends_on=$(parse_service_config "$service_config" "depends_on")
+                log "${RED}  - $service_name (depends on: $depends_on)${NC}" >&2
+            done
+            rm -f "$completed_file"
+            exit 1
+        fi
+    done
+    
+    rm -f "$completed_file"
 }
 
 set -e
 
 # Configuration
-PARALLEL_JOBS=${PARALLEL_JOBS:-3}  # Number of parallel jobs (can be overridden)
+PARALLEL_JOBS=${PARALLEL_JOBS:-10}  # Number of parallel jobs (can be overridden)
 LOG_DIR="./test-logs"
 SWEEP_TIMEOUT="5m"
 TEST_TIMEOUT="15m"
 TEST_TYPE="acceptance"  # Default test type
+DEBUG_LOGS=${DEBUG_LOGS:-false}  # Enable debug logging (can be overridden)
 
 # Colors for output
 RED='\033[0;31m'
@@ -138,6 +309,13 @@ mkdir -p "$LOG_DIR"
 log() {
     local job_id="${JOB_ID:-MAIN}"
     echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] [${job_id}] $1"
+}
+
+# Function for debug logging (only outputs when DEBUG_LOGS=true)
+debug_log() {
+    if [ "$DEBUG_LOGS" = "true" ]; then
+        log "$1"
+    fi
 }
 
 # Function to check if a service has a sweeper by grepping for AddTestSweepers
@@ -208,19 +386,52 @@ run_sweeper() {
         test_cmd="$test_cmd -parallel $parallel_count"
     fi
     
-    if eval "$test_cmd" >> "$log_file" 2>&1; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
-        log "✓ Sweeper completed: $service (${duration}s total)"
-        return 0
-    else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${RED}✗ Sweeper failed: $service (${duration}s total) - check $log_file${NC}" >> "$log_file"
-        log "✗ Sweeper failed: $service (${duration}s total) - check $log_file"
-        return 1
-    fi
+    # Retry logic for sweeper failures
+    local max_retries=3
+    local retry_delay=2
+    
+    for retry in $(seq 1 $max_retries); do
+        # Clear the log file for this attempt (but keep previous attempts)
+        if [ "$retry" -gt 1 ]; then
+            echo "" >> "$log_file"
+            echo "=== Retry attempt $retry of $max_retries ===" >> "$log_file"
+            log "${YELLOW}Retry attempt $retry of $max_retries for sweeper $service${NC}"
+        fi
+        
+        # Run the sweeper command
+        if eval "$test_cmd" >> "$log_file" 2>&1; then
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            if [ "$retry" -gt 1 ]; then
+                log "${GREEN}✓ Sweeper completed: $service after $retry attempts (${duration}s total)${NC}" >> "$log_file"
+                log "✓ Sweeper completed: $service after $retry attempts (${duration}s total)"
+            else
+                log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
+                log "✓ Sweeper completed: $service (${duration}s total)"
+            fi
+            return 0
+        else
+            # Sweeper failed - check if we should retry
+            if [ "$retry" -lt "$max_retries" ]; then
+                log "${YELLOW}⚠ Sweeper failed for $service, retrying in ${retry_delay}s...${NC}"
+                echo "⚠ Sweeper failed, retrying in ${retry_delay}s..." >> "$log_file"
+                sleep "$retry_delay"
+                # Exponential backoff for retry delay
+                retry_delay=$((retry_delay * 2))
+                continue
+            else
+                # Final failure after all retries
+                local end_time=$(date +%s)
+                local duration=$((end_time - start_time))
+                log "${RED}✗ Sweeper failed for $service after $max_retries attempts (${duration}s total) - check $log_file${NC}" >> "$log_file"
+                log "✗ Sweeper failed for $service after $max_retries attempts (${duration}s total) - check $log_file"
+                return 1
+            fi
+        fi
+    done
+    
+    # Should not reach here, but just in case
+    return 1
 }
 
 # Function to run tests for a service
@@ -260,19 +471,52 @@ run_tests() {
     
     test_cmd="$test_cmd \"$service\""
     
-    if eval "$test_cmd" >> "$log_file" 2>&1; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
-        log "✓ Tests completed successfully for $service (${duration}s)"
-        return 0
-    else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${RED}✗ Tests failed for $service (${duration}s) - check $log_file${NC}" >> "$log_file"
-        log "✗ Tests failed for $service (${duration}s) - check $log_file"
-        return 1
-    fi
+    # Retry logic for test failures
+    local max_retries=3
+    local retry_delay=2
+    
+    for retry in $(seq 1 $max_retries); do
+        # Clear the log file for this attempt (but keep previous attempts)
+        if [ "$retry" -gt 1 ]; then
+            echo "" >> "$log_file"
+            echo "=== Retry attempt $retry of $max_retries ===" >> "$log_file"
+            log "${YELLOW}Retry attempt $retry of $max_retries for $service${NC}"
+        fi
+        
+        # Run the test command and capture output
+        if eval "$test_cmd" >> "$log_file" 2>&1; then
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            if [ "$retry" -gt 1 ]; then
+                log "${GREEN}✓ Tests completed successfully for $service after $retry attempts (${duration}s)${NC}" >> "$log_file"
+                log "✓ Tests completed successfully for $service after $retry attempts (${duration}s)"
+            else
+                log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
+                log "✓ Tests completed successfully for $service (${duration}s)"
+            fi
+            return 0
+        else
+            # Test failed - check if we should retry
+            if [ "$retry" -lt "$max_retries" ]; then
+                log "${YELLOW}⚠ Tests failed for $service, retrying in ${retry_delay}s...${NC}"
+                echo "⚠ Tests failed, retrying in ${retry_delay}s..." >> "$log_file"
+                sleep "$retry_delay"
+                # Exponential backoff for retry delay
+                retry_delay=$((retry_delay * 2))
+                continue
+            else
+                # Final failure after all retries
+                local end_time=$(date +%s)
+                local duration=$((end_time - start_time))
+                log "${RED}✗ Tests failed for $service after $max_retries attempts (${duration}s) - check $log_file${NC}" >> "$log_file"
+                log "✗ Tests failed for $service after $max_retries attempts (${duration}s) - check $log_file"
+                return 1
+            fi
+        fi
+    done
+    
+    # Should not reach here, but just in case
+    return 1
 }
 
 # Function to process a single service (sweeper + tests)
@@ -332,9 +576,13 @@ process_service() {
     return $?
 }
 
+# Global arrays to track process PIDs for cleanup
+declare -a background_pids=()
+declare -a test_pids=()
+
 # Export function so it can be used by xargs
-export -f process_service run_sweeper run_tests log has_sweeper has_migration_tests parse_service_config
-export LOG_DIR SWEEP_TIMEOUT TEST_TIMEOUT TEST_TYPE RED GREEN YELLOW WHITE NC JOB_ID
+export -f process_service run_sweeper run_tests log debug_log has_sweeper has_migration_tests parse_service_config get_service_name check_dependencies_satisfied
+export LOG_DIR SWEEP_TIMEOUT TEST_TIMEOUT TEST_TYPE DEBUG_LOGS RED GREEN YELLOW WHITE NC JOB_ID
 
 # Main execution
 main() {
@@ -351,16 +599,24 @@ main() {
     fi
     
     log "${GREEN}Starting parallel CI $test_name_display with $PARALLEL_JOBS jobs${NC}"
+    if [ "$TEST_TYPE" != "migration" ]; then
+        log "${WHITE}Product group: $PRODUCT_GROUP${NC}"
+    fi
     log "${WHITE}Total services to test: ${#SERVICES[@]}${NC}"
     log "${WHITE}Logs will be written to: $LOG_DIR${NC}"
     log "${WHITE}Sweeper timeout: $SWEEP_TIMEOUT, Test timeout: $TEST_TIMEOUT${NC}"
+    debug_log "${WHITE}DEBUG: Script PID: $$, bash version: $BASH_VERSION${NC}"
     echo ""
     
     # Clean up old logs
     rm -f "$LOG_DIR"/*.log
     
-    log "${WHITE}Running tests with xargs. Real-time output will be shown below:${NC}"
+    log "${WHITE}Running tests with manual parallel job management. Real-time output will be shown below:${NC}"
     echo ""
+    
+    # Reset global PID tracking arrays
+    background_pids=()
+    test_pids=()
     
     # Start a background job to show progress counts
     (
@@ -372,6 +628,7 @@ main() {
         done
     ) &
     progress_pid=$!
+    background_pids+=($progress_pid)
     
     # Start a background job to tail log output and show all detailed progress
     (
@@ -394,9 +651,286 @@ main() {
         done
     ) &
     tail_monitor_pid=$!
+    background_pids+=($tail_monitor_pid)
     
-    printf '%s\n' "${SERVICES[@]}" | xargs -I {} -P "$PARALLEL_JOBS" bash -c 'process_service "$@"' _ {}
-    parallel_result=$?
+    # Resolve dependencies and get ordered service list
+    log "${WHITE}Resolving service dependencies...${NC}"
+    local -a ordered_services=()
+    
+    # Debug: Check if resolve_dependencies function exists and works
+    if type resolve_dependencies >/dev/null 2>&1; then
+        debug_log "${WHITE}DEBUG: resolve_dependencies function found${NC}"
+        
+        # Capture dependency resolution output with error handling
+        set +e  # Temporarily disable exit on error
+        local dep_output
+        dep_output=$(resolve_dependencies 2>&1)
+        local dep_exit_code=$?
+        set -e  # Re-enable exit on error
+        
+        if [ $dep_exit_code -eq 0 ]; then
+            debug_log "${WHITE}DEBUG: Dependency resolution succeeded${NC}"
+            while IFS= read -r line; do
+                if [ -n "$line" ]; then
+                    ordered_services+=("$line")
+                fi
+            done <<< "$dep_output"
+        else
+            log "${RED}ERROR: Dependency resolution failed with exit code $dep_exit_code${NC}"
+            log "${RED}Error output: $dep_output${NC}"
+            exit 1
+        fi
+    else
+        log "${RED}ERROR: resolve_dependencies function not found${NC}"
+        exit 1
+    fi
+    
+    log "${WHITE}Dependency resolution complete. Processing ${#ordered_services[@]} services...${NC}"
+    
+    # Critical: Always show if we have services (for CI debugging)
+    if [ ${#ordered_services[@]} -eq 0 ]; then
+        log "${RED}CRITICAL ERROR: No services resolved from dependency resolution${NC}"
+        exit 1
+    fi
+    
+    debug_log "${WHITE}INFO: Successfully resolved ${#ordered_services[@]} services in dependency order${NC}"
+    
+    # Debug: Show first few resolved services
+    if [ "$DEBUG_LOGS" = "true" ]; then
+        debug_log "${WHITE}DEBUG: First 3 resolved services:${NC}"
+        for i in 0 1 2; do
+            if [ $i -lt ${#ordered_services[@]} ]; then
+                local service=$(parse_service_config "${ordered_services[$i]}" "resource")
+                local service_name=$(get_service_name "$service")
+                local depends_on=$(parse_service_config "${ordered_services[$i]}" "depends_on")
+                if [ -n "$depends_on" ]; then
+                    debug_log "${WHITE}  $((i+1)). $service_name (depends on: $depends_on)${NC}"
+                else
+                    debug_log "${WHITE}  $((i+1)). $service_name${NC}"
+                fi
+            fi
+        done
+    fi
+    
+    # Track service completion using a simple file-based approach (bash compatibility)
+    local completed_file="/tmp/completed_services_$$"
+    local running_file="/tmp/running_services_$$"
+    touch "$completed_file" "$running_file"
+    debug_log "${WHITE}INFO: Created tracking files: $completed_file, $running_file${NC}"
+    
+    # Start test processes with dependency-aware scheduling
+    local active_jobs=0
+    local service_index=0
+    local total_services=${#ordered_services[@]}
+    
+    debug_log "${WHITE}INFO: Starting execution loop with $total_services services, max $PARALLEL_JOBS parallel jobs${NC}"
+    debug_log "${WHITE}DEBUG: Starting main execution loop with $total_services services${NC}"
+    
+    debug_log "${WHITE}INFO: Entering main execution loop...${NC}"
+    while [ $service_index -lt $total_services ] || [ $active_jobs -gt 0 ]; do
+        debug_log "${WHITE}INFO: Loop check - service_index=$service_index, total=$total_services, active_jobs=$active_jobs${NC}"
+        debug_log "${WHITE}DEBUG: Loop iteration - service_index=$service_index/$total_services, active_jobs=$active_jobs/$PARALLEL_JOBS${NC}"
+        
+        # Start new jobs if we have capacity and dependencies are satisfied
+        while [ $active_jobs -lt $PARALLEL_JOBS ] && [ $service_index -lt $total_services ]; do
+            debug_log "${WHITE}INFO: Inner loop - trying to start job $service_index${NC}"
+            
+            local service_config="${ordered_services[$service_index]}"
+            debug_log "${WHITE}INFO: Got service config: $service_config${NC}"
+            
+            set +e  # Temporarily disable exit on error for parsing
+            local service=$(parse_service_config "$service_config" "resource")
+            local parse_exit=$?
+            set -e
+            
+            if [ $parse_exit -ne 0 ] || [ -z "$service" ]; then
+                log "${RED}ERROR: Failed to parse service from config: $service_config${NC}"
+                exit 1
+            fi
+            
+            local service_name=$(get_service_name "$service")
+            if [ -z "$service_name" ]; then
+                log "${RED}ERROR: Failed to get service name from: $service${NC}"
+                exit 1
+            fi
+            
+            debug_log "${WHITE}INFO: Processing service $service_name (index $service_index)${NC}"
+            debug_log "${WHITE}DEBUG: Checking service $service_name (index $service_index)${NC}"
+            
+            # Check if dependencies are satisfied using the completed file
+            set +e  # Temporarily disable exit on error for dependency check
+            check_dependencies_satisfied "$service_config" "$completed_file"
+            local dep_satisfied=$?
+            set -e
+            
+            if [ $dep_satisfied -eq 0 ]; then
+                debug_log "${WHITE}INFO: Dependencies satisfied for $service_name${NC}"
+                debug_log "${WHITE}DEBUG: Dependencies satisfied for $service_name, starting process${NC}"
+                
+                # Ensure log directory exists
+                if [ ! -d "$LOG_DIR" ]; then
+                    debug_log "${WHITE}INFO: Creating log directory $LOG_DIR${NC}"
+                    mkdir -p "$LOG_DIR"
+                fi
+                
+                # Check if process_service function is available
+                if ! type process_service >/dev/null 2>&1; then
+                    log "${RED}ERROR: process_service function not found${NC}"
+                    exit 1
+                fi
+                
+                debug_log "${WHITE}INFO: Starting background process for $service_name${NC}"
+                
+                # Start process in background and capture PID
+                set +e  # Temporarily disable exit on error for process spawning
+                (
+                    process_service "$service_config"
+                    echo "$service_name" > "$LOG_DIR/$(get_service_name "$service")-completion-marker"
+                ) &
+                local test_pid=$!
+                local spawn_exit=$?
+                set -e
+                
+                if [ $spawn_exit -ne 0 ]; then
+                    log "${RED}ERROR: Failed to spawn process for $service_name (exit code: $spawn_exit)${NC}"
+                    exit 1
+                fi
+                
+                debug_log "${WHITE}INFO: Successfully spawned process for $service_name (PID: $test_pid)${NC}"
+                
+                debug_log "${WHITE}INFO: Adding PID $test_pid to tracking arrays${NC}"
+                test_pids+=($test_pid)
+                
+                debug_log "${WHITE}INFO: Writing to running file: $running_file${NC}"
+                set +e  # Temporarily disable exit on error for file operations
+                echo "$service_name:$test_pid" >> "$running_file"
+                local write_exit=$?
+                set -e
+                
+                if [ $write_exit -ne 0 ]; then
+                    log "${RED}ERROR: Failed to write to running file $running_file${NC}"
+                    exit 1
+                fi
+                
+                debug_log "${WHITE}INFO: Incrementing counters${NC}"
+                debug_log "${WHITE}INFO: Before increment - active_jobs=$active_jobs, service_index=$service_index${NC}"
+                
+                active_jobs=$((active_jobs + 1))
+                service_index=$((service_index + 1))
+                
+                debug_log "${WHITE}INFO: After increment - active_jobs=$active_jobs, service_index=$service_index${NC}"
+                
+                debug_log "${WHITE}INFO: Counters incremented - active_jobs=$active_jobs, service_index=$service_index${NC}"
+                
+                debug_log "${WHITE}INFO: About to log job start message${NC}"
+                debug_log "${WHITE}INFO: Variables - service_index=$service_index, total_services=$total_services, service_name=$service_name, test_pid=$test_pid${NC}"
+                
+                set +e  # Temporarily disable exit on error for the problematic log
+                log "Started job ${service_index}/${total_services}: $service_name (PID $test_pid)"
+                local log_exit=$?
+                set -e
+                
+                if [ $log_exit -ne 0 ]; then
+                    log "${RED}ERROR: Failed to log job start message${NC}"
+                    exit 1
+                fi
+                
+                debug_log "${WHITE}INFO: Job start message logged successfully${NC}"
+                
+                debug_log "${WHITE}INFO: Getting depends_on for final logging${NC}"
+                set +e  # Temporarily disable exit on error for dependency parsing
+                local depends_on=$(parse_service_config "$service_config" "depends_on")
+                local dep_parse_exit=$?
+                set -e
+                
+                if [ $dep_parse_exit -ne 0 ]; then
+                    log "${RED}ERROR: Failed to parse depends_on from config${NC}"
+                    exit 1
+                fi
+                
+                if [ -n "$depends_on" ] && [ "$depends_on" != "" ]; then
+                    log "  └─ Dependencies satisfied: $depends_on"
+                fi
+            else
+                local depends_on=$(parse_service_config "$service_config" "depends_on")
+                debug_log "${WHITE}DEBUG: Dependencies NOT satisfied for $service_name (depends on: $depends_on)${NC}"
+                # Can't start this service yet, check if any running jobs have completed
+                break
+            fi
+        done
+        
+        # Wait for any job to complete and update completion status
+        if [ $active_jobs -gt 0 ]; then
+            debug_log "${WHITE}DEBUG: Waiting for job completion (active_jobs=$active_jobs)${NC}"
+            
+            # Use wait -n to wait for any background job to complete (bash 4.3+)
+            # If wait -n is not available, fall back to polling
+            local job_completed=false
+            set +e  # Temporarily disable exit on error for wait command
+            if wait -n 2>/dev/null; then
+                debug_log "${WHITE}DEBUG: wait -n succeeded${NC}"
+                job_completed=true
+            else
+                debug_log "${WHITE}DEBUG: wait -n failed, using fallback polling${NC}"
+                # Fallback: check if any PIDs have exited
+                if [ -f "$running_file" ]; then
+                    while IFS=: read -r service_name pid; do
+                        if ! kill -0 "$pid" 2>/dev/null; then
+                            debug_log "${WHITE}DEBUG: Service $service_name (PID $pid) has completed${NC}"
+                            # Remove from running file
+                            grep -v "^$service_name:$pid$" "$running_file" > "${running_file}.tmp" && mv "${running_file}.tmp" "$running_file"
+                            job_completed=true
+                            break
+                        fi
+                    done < "$running_file"
+                fi
+                if [ "$job_completed" = "false" ]; then
+                    sleep 1
+                fi
+            fi
+            set -e  # Re-enable exit on error
+            
+            if [ "$job_completed" = "true" ]; then
+                active_jobs=$((active_jobs - 1))
+                debug_log "${WHITE}DEBUG: Job completed, active_jobs now $active_jobs${NC}"
+                
+                # Check for completion markers and update completed file
+                for completion_file in "$LOG_DIR"/*-completion-marker; do
+                    if [ -f "$completion_file" ]; then
+                        local completed_service=$(cat "$completion_file")
+                        echo "$completed_service" >> "$completed_file"
+                        rm "$completion_file"
+                        log "Marked $completed_service as completed"
+                    fi
+                done
+            fi
+        else
+            debug_log "${WHITE}DEBUG: No active jobs, checking if all services processed${NC}"
+        fi
+    done
+    
+    debug_log "${WHITE}DEBUG: Main execution loop completed${NC}"
+    debug_log "${WHITE}DEBUG: Processed $service_index services, $active_jobs active jobs remaining${NC}"
+    
+    # Cleanup temporary files
+    rm -f "$completed_file" "$running_file"
+    
+    # Wait for any remaining test processes to complete
+    log "Waiting for all test processes to complete..."
+    debug_log "${WHITE}DEBUG: Waiting for ${#test_pids[@]} test processes${NC}"
+    
+    local remaining_pids=0
+    for pid in "${test_pids[@]}"; do
+        if kill -0 "$pid" 2>/dev/null; then
+            debug_log "${WHITE}DEBUG: Waiting for PID $pid${NC}"
+            wait "$pid" 2>/dev/null || true
+            remaining_pids=$((remaining_pids + 1))
+        fi
+    done
+    
+    debug_log "${WHITE}DEBUG: Waited for $remaining_pids processes${NC}"
+    
+    parallel_result=0
     
     # Calculate timing and count results first (outside the atomic block)
     local end_time=$(date +%s)
@@ -409,33 +943,50 @@ main() {
     local failed=0
     local failed_list=""
     
+    debug_log "${WHITE}DEBUG: Starting result counting for ${#ordered_services[@]} services${NC}"
+    
     # Temporarily disable exit on error during counting
     set +e
     
-    for service_config in "${SERVICES[@]}"; do
+    for service_config in "${ordered_services[@]}"; do
         local service=$(parse_service_config "$service_config" "resource")
         local service_name=$(basename "$service")
         local combined_log="$LOG_DIR/${service_name}-combined.log"
         
-        if [ -f "$combined_log" ] && grep -q "✓ Completed:" "$combined_log" 2>/dev/null; then
-            ((passed++))
+        debug_log "${WHITE}DEBUG: Checking results for $service_name${NC}"
+        
+        if [ -f "$combined_log" ]; then
+            if grep -q "✓ Completed:" "$combined_log" 2>/dev/null; then
+                passed=$((passed + 1))
+                debug_log "${WHITE}DEBUG: $service_name marked as PASSED${NC}"
+            else
+                failed=$((failed + 1))
+                failed_list="$failed_list$service "
+                debug_log "${WHITE}DEBUG: $service_name marked as FAILED${NC}"
+            fi
         else
             ((failed++))
             failed_list="$failed_list$service "
+            debug_log "${WHITE}DEBUG: $service_name marked as FAILED (no log file)${NC}"
         fi
     done
+    
+    debug_log "${WHITE}DEBUG: Result counting complete - passed=$passed, failed=$failed${NC}"
     
     # Re-enable exit on error
     set -e
     
     # Stop background processes first to prevent "Terminated" messages
     log "${WHITE}Stopping background monitoring...${NC}"
-    kill $progress_pid 2>/dev/null || true
-    kill $tail_monitor_pid 2>/dev/null || true
+    for pid in "${background_pids[@]}"; do
+        kill "$pid" 2>/dev/null || true
+    done
     # Give processes time to exit cleanly
     sleep 2
     # Kill any remaining child processes silently
-    pkill -P $tail_monitor_pid >/dev/null 2>&1 || true
+    for pid in "${background_pids[@]}"; do
+        pkill -P "$pid" >/dev/null 2>&1 || true
+    done
     
     # Reset to main Job ID for summary
     export JOB_ID="MAIN"
@@ -470,22 +1021,52 @@ main() {
     log "${GREEN}All tests completed successfully!${NC}"
 }
 
-# Simple cleanup function for any remaining background processes
+# Enhanced cleanup function to handle all tracked processes
 cleanup() {
     # Quietly clean up any remaining background processes
+    if [ ${#background_pids[@]} -gt 0 ]; then
+        for pid in "${background_pids[@]}"; do
+            kill -TERM "$pid" >/dev/null 2>&1 || true
+            # Kill any children of background processes
+            pkill -P "$pid" >/dev/null 2>&1 || true
+        done
+    fi
+    
+    if [ ${#test_pids[@]} -gt 0 ]; then
+        for pid in "${test_pids[@]}"; do
+            kill -TERM "$pid" >/dev/null 2>&1 || true
+        done
+    fi
+    
+    # Additional cleanup for any orphaned processes
     jobs -p | xargs -r kill -TERM >/dev/null 2>&1 || true
     pkill -f "tail -f.*$LOG_DIR" >/dev/null 2>&1 || true
-    # Give processes a moment to exit
+    
+    # Give processes a moment to exit gracefully
     sleep 1
+    
+    # Force kill if still running
+    if [ ${#background_pids[@]} -gt 0 ]; then
+        for pid in "${background_pids[@]}"; do
+            kill -KILL "$pid" >/dev/null 2>&1 || true
+        done
+    fi
+    
+    if [ ${#test_pids[@]} -gt 0 ]; then
+        for pid in "${test_pids[@]}"; do
+            kill -KILL "$pid" >/dev/null 2>&1 || true
+        done
+    fi
 }
 
 trap cleanup EXIT
 
 # Usage information
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "Usage: $0 [test-type] [options]"
+    echo "Usage: $0 [product-group] [test-type] [options]"
     echo ""
     echo "Arguments:"
+    echo "  product-group      Product group to test: 'default', '$(get_available_product_groups)' (default: default)"
     echo "  test-type          Type of tests to run: 'acceptance' or 'migration' (default: acceptance)"
     echo ""
     echo "Options:"
@@ -493,44 +1074,94 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  --jobs N           Number of parallel jobs (default: $PARALLEL_JOBS)"
     echo "  --sweep-timeout T  Timeout for sweeper operations (default: $SWEEP_TIMEOUT)"
     echo "  --test-timeout T   Timeout for test operations (default: $TEST_TIMEOUT)"
+    echo "  --debug            Enable debug logging (default: disabled)"
     echo ""
     echo "Environment variables:"
     echo "  PARALLEL_JOBS      Override default parallel job count"
     echo ""
+    echo "Product Groups:"
+    for group in $(get_available_product_groups); do
+        echo "  $group: $(get_product_group_services "$group")"
+    done
+    echo "  default: all services not in any product group"
+    echo ""
+    echo "Dependencies:"
+    echo "  Services can specify dependencies using depends_on=service1,service2"
+    echo "  Dependencies must complete successfully before dependent services start"
+    echo "  Service names are the basename of the resource path (e.g., 'account' for './internal/services/account')"
+    echo "  Circular dependencies are detected and will cause the script to exit with an error"
+    echo ""
     echo "Examples:"
-    echo "  $0                                    # Run acceptance tests with default settings"
-    echo "  $0 migration                         # Run migration tests"
-    echo "  $0 acceptance --jobs 4               # Run acceptance tests with 4 parallel jobs"
-    echo "  $0 migration --test-timeout 20m      # Run migration tests with 20 minute timeout"
-    echo "  PARALLEL_JOBS=8 $0 acceptance        # Run with 8 parallel jobs"
+    echo "  $0                                    # Run default group acceptance tests"
+    echo "  $0 default acceptance                # Run default group acceptance tests"
+    echo "  $0 magic acceptance                  # Run magic group acceptance tests"
+    echo "  $0 migration                         # Run migration tests (all groups)"
+    echo "  $0 default acceptance --jobs 4       # Run default group with 4 parallel jobs"
+    echo "  $0 magic acceptance --debug          # Run magic group with debug logging"
+    echo "  PARALLEL_JOBS=8 $0 default acceptance # Run with 8 parallel jobs"
     exit 0
 fi
 
-# Parse test type first
+# Initialize defaults
+PRODUCT_GROUP="default"
+TEST_TYPE="acceptance"
+LEGACY_SYNTAX=false
+
+# Parse product group and test type
 if [[ $# -gt 0 && ! "$1" =~ ^-- ]]; then
-    case $1 in
-        acceptance|migration)
-            TEST_TYPE="$1"
-            shift
-            ;;
-        --dry-run)
-            # Keep handling --dry-run as before, but will handle below
-            ;;
-        *)
-            echo "Unknown test type: $1"
-            echo "Valid test types: acceptance, migration"
-            echo "Use --help for usage information"
-            exit 1
-            ;;
-    esac
+    # Check if first argument is a product group
+    available_groups="$(get_available_product_groups)"
+    if [[ "$1" == "migration" ]] || [[ "$1" == "acceptance" ]]; then
+        # Legacy syntax: just test type specified
+        TEST_TYPE="$1"
+        LEGACY_SYNTAX=true
+        shift
+    elif [[ "$1" == "default" ]] || [[ " $available_groups " =~ " $1 " ]]; then
+        # New syntax: product group specified
+        PRODUCT_GROUP="$1"
+        shift
+        
+        # Check for test type as second argument
+        if [[ $# -gt 0 && ! "$1" =~ ^-- ]]; then
+            case $1 in
+                acceptance|migration)
+                    TEST_TYPE="$1"
+                    shift
+                    ;;
+                --dry-run)
+                    # Keep handling --dry-run as before
+                    ;;
+                *)
+                    echo "Unknown test type: $1"
+                    echo "Valid test types: acceptance, migration"
+                    echo "Use --help for usage information"
+                    exit 1
+                    ;;
+            esac
+        fi
+    else
+        echo "Unknown argument: $1"
+        echo "Valid product groups: default, $(get_available_product_groups)"
+        echo "Valid test types: acceptance, migration"
+        echo "Use --help for usage information"
+        exit 1
+    fi
 fi
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --dry-run)
-            echo "Would run ${#SERVICES[@]} services with $PARALLEL_JOBS parallel jobs ($TEST_TYPE tests)"
-            for service_config in "${SERVICES[@]}"; do
+            # Filter services first for dry run using same logic as main execution
+            if [ "$TEST_TYPE" = "migration" ] && [ "$LEGACY_SYNTAX" = "true" ]; then
+                dry_services=("${ALL_SERVICES[@]}")
+                echo "Would run ${#dry_services[@]} services with $PARALLEL_JOBS parallel jobs (all services, migration tests)"
+            else
+                filter_services_by_group "$PRODUCT_GROUP"
+                dry_services=("${SERVICES[@]}")
+                echo "Would run ${#dry_services[@]} services with $PARALLEL_JOBS parallel jobs ($PRODUCT_GROUP group, $TEST_TYPE tests)"
+            fi
+            for service_config in "${dry_services[@]}"; do
                 service=$(parse_service_config "$service_config" "resource")
                 parallel_count=$(parse_service_config "$service_config" "parallel")
                 echo "$service (parallel=$parallel_count)"
@@ -549,6 +1180,10 @@ while [[ $# -gt 0 ]]; do
             TEST_TIMEOUT="$2"
             shift 2
             ;;
+        --debug)
+            DEBUG_LOGS="true"
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
             echo "Use --help for usage information"
@@ -561,6 +1196,16 @@ done
 if ! [[ "$PARALLEL_JOBS" =~ ^[0-9]+$ ]] || [ "$PARALLEL_JOBS" -lt 1 ]; then
     log "${RED}Error: PARALLEL_JOBS must be a positive integer${NC}"
     exit 1
+fi
+
+# Filter services by product group
+# Special case: legacy "migration" syntax should use all services for backward compatibility
+if [ "$TEST_TYPE" = "migration" ] && [ "$LEGACY_SYNTAX" = "true" ]; then
+    # Legacy syntax: "./scripts/run-ci-tests migration" should run all services
+    SERVICES=("${ALL_SERVICES[@]}")
+else
+    # Normal product group filtering (including explicit "default migration")
+    filter_services_by_group "$PRODUCT_GROUP"
 fi
 
 # Run main function

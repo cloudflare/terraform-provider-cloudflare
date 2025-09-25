@@ -19,4 +19,6 @@ resource "cloudflare_zero_trust_access_group" "%[2]s" {
       identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[2]s.id
     }
   }]
+
+  depends_on = [cloudflare_zero_trust_access_identity_provider.%[2]s]
 }

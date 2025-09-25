@@ -68,11 +68,6 @@ func testSweepCloudflareList(r string) error {
 }
 
 func TestAccCloudflareList(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rndIP := utils.GenerateRandomResourceName()
 	rndRedirect := utils.GenerateRandomResourceName()
@@ -342,8 +337,270 @@ func TestAccCloudflareList(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareListWithItems_IP(t *testing.T) {
+
+	rndIP := utils.GenerateRandomResourceName()
+
+	resourceNameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
+
+	descriptionIP := fmt.Sprintf("description.%s", rndIP)
+
+	descriptionIPNew := fmt.Sprintf("%s.new", descriptionIP)
+
+	listNameIP := fmt.Sprintf("%s%s", listTestPrefix, rndIP)
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list rules.ListsList
+	var initialID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIP, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "kind", "ip"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"ip": "1.1.1.1",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"ip": "1.1.1.2",
+					}),
+					checkListAndPopulate(resourceNameIP, &list),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIPNew, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
+					checkListAndPopulate(resourceNameIP, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+				),
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateVerify: true,
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateKind: resource.ImportBlockWithID,
+			},
+			// unset items to clear list
+			{
+				Config: testAccCheckCloudflareListWithNullIPItems(rndIP, listNameIP, descriptionIP, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceNameIP, "items"),
+				),
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceNameIP, "items"),
+				),
+				ImportStateKind: resource.ImportBlockWithID,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListWithItems_Hostname(t *testing.T) {
+
+	rndIP := utils.GenerateRandomResourceName()
+
+	resourceNameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
+
+	descriptionIP := fmt.Sprintf("description.%s", rndIP)
+
+	descriptionIPNew := fmt.Sprintf("%s.new", descriptionIP)
+
+	listNameIP := fmt.Sprintf("%s%s", listTestPrefix, rndIP)
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list rules.ListsList
+	var initialID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIP, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "kind", "hostname"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"hostname.url_hostname": "example.com",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"hostname.url_hostname": "*.a.example.com",
+					}),
+					checkListAndPopulate(resourceNameIP, &list),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIPNew, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
+					checkListAndPopulate(resourceNameIP, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+				),
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateVerify: true,
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateKind: resource.ImportBlockWithID,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListWithItems_Redirect(t *testing.T) {
+
+	rndIP := utils.GenerateRandomResourceName()
+
+	resourceNameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
+
+	descriptionIP := fmt.Sprintf("description.%s", rndIP)
+
+	descriptionIPNew := fmt.Sprintf("%s.new", descriptionIP)
+
+	listNameIP := fmt.Sprintf("%s%s", listTestPrefix, rndIP)
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list rules.ListsList
+	var initialID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIP, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIP),
+					resource.TestCheckResourceAttr(resourceNameIP, "kind", "redirect"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"redirect.source_url": "example.com/1",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceNameIP, "items.*", map[string]string{
+						"redirect.source_url": "example.com/2",
+					}),
+					checkListAndPopulate(resourceNameIP, &list),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIPNew, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
+					checkListAndPopulate(resourceNameIP, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+				),
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateVerify: true,
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				ImportStateKind: resource.ImportBlockWithID,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareList(resourceName, listName, description, accountID, kind string) string {
 	return acctest.LoadTestCase("list.tf", resourceName, listName, description, accountID, kind)
+}
+
+func testAccCheckCloudflareListWithIPItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithipitems.tf", resourceName, listName, description, accountID)
+}
+
+func testAccCheckCloudflareListWithNullIPItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithnullipitems.tf", resourceName, listName, description, accountID)
+}
+
+func testAccCheckCloudflareListWithHostnameItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithhostnameitems.tf", resourceName, listName, description, accountID)
+}
+
+func testAccCheckCloudflareListWithRedirectItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithredirectitems.tf", resourceName, listName, description, accountID)
 }
 
 func testAccCheckCloudflareListDataSource(resourceName, accountID, listName, description, kind string) string {

@@ -85,6 +85,7 @@ func init() {
 }
 
 func TestAccCloudflareAccessMutualTLSHostnameSettings_Account(t *testing.T) {
+	t.Skip(`Skipping due to consistent conflicts: "access.api.error.conflict: previous certificate settings still being updated"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -193,6 +194,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_MultipleHostnames(t *testi
 }
 
 func TestAccCloudflareAccessMutualTLSHostnameSettings_Update(t *testing.T) {
+	t.Skip(`Skipping due to consistent conflicts: "access.api.error.conflict: previous certificate settings still being updated"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -235,6 +237,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Update(t *testing.T) {
 }
 
 func TestAccCloudflareAccessMutualTLSHostnameSettings_BooleanCombinations(t *testing.T) {
+	t.Skip(`Skipping due to consistent conflicts: "access.api.error.conflict: previous certificate settings still being updated"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -283,6 +286,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_BooleanCombinations(t *tes
 }
 
 func TestAccCloudflareAccessMutualTLSHostnameSettings_Import(t *testing.T) {
+	t.Skip(`Skipping due to consistent conflicts: "access.api.error.conflict: previous certificate settings still being updated"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.

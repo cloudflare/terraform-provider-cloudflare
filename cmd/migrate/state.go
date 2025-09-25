@@ -36,22 +36,33 @@ func transformStateFile(filename string) error {
 func transformStateJSON(data []byte) ([]byte, error) {
 	jsonStr := string(data)
 	result := jsonStr
-
 	// Process each resource
 	resources := gjson.Get(jsonStr, "resources")
 	if !resources.Exists() {
 		return data, nil
 	}
 
-	resources.ForEach(func(ridx, resource gjson.Result) bool {
-		resourceType := resource.Get("type").String()
-		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
+	// This is deleting resources from state which changes the indices of remaining resources
+	// Iterate backwards to avoid index shifting issues when deleting
+	resourcesArray := resources.Array()
+	for i := len(resourcesArray) - 1; i >= 0; i-- {
+		resourcePath := fmt.Sprintf("resources.%d", i)
+		resourceType := gjson.Get(result, resourcePath+".type").String()
 
 		// Handle zone_settings_override -> zone_setting transformation
 		if resourceType == "cloudflare_zone_settings_override" {
 			result = transformZoneSettingsStateJSON(result, resourcePath)
-			return true // Continue to next resource
 		}
+	}
+
+	resources = gjson.Get(result, "resources")
+
+	resources.ForEach(func(ridx, resource gjson.Result) bool {
+		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
+
+		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
+		// The ForEach iteration data can be stale/cached and not match current JSON positions
+		resourceType := gjson.Get(result, resourcePath+".type").String()
 
 		// Handle resource type renames
 		if resourceType == "cloudflare_record" {
@@ -82,7 +93,13 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			// Rename cloudflare_access_identity_provider to cloudflare_zero_trust_access_identity_provider
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_identity_provider")
 			resourceType = "cloudflare_zero_trust_access_identity_provider"
-    }
+		}
+
+		if resourceType == "cloudflare_access_mutual_tls_certificate" {
+			// Rename to cloudflare_zero_trust_access_mtls_certificate
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_certificate")
+			resourceType = "cloudflare_zero_trust_access_mtls_certificate"
+		}
 
 		if resourceType == "cloudflare_access_application" {
 			// Rename cloudflare_access_application to cloudflare_zero_trust_access_application
@@ -90,11 +107,22 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_application"
 		}
 
+		if resourceType == "cloudflare_worker_script" {
+			// Rename cloudflare_worker_script to cloudflare_workers_script
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_script")
+			resourceType = "cloudflare_workers_script"
+		}
+
+		if resourceType == "cloudflare_worker_route" {
+			// Rename cloudflare_worker_route to cloudflare_workers_route
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_route")
+			resourceType = "cloudflare_workers_route"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
 			path := fmt.Sprintf("resources.%d.instances.%d", ridx.Int(), iidx.Int())
-
 			switch resourceType {
 			case "cloudflare_load_balancer_pool":
 				result = transformLoadBalancerPoolStateJSON(result, path)
@@ -103,6 +131,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_load_balancer":
 				result = transformLoadBalancerStateJSON(result, path)
+
+			case "cloudflare_load_balancer_monitor":
+				result = transformLoadBalancerMonitorStateJSON(result, path)
 
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
@@ -113,8 +144,13 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_zero_trust_access_policy":
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
 
+			case "cloudflare_zone":
+				result = transformZoneInstanceStateJSON(result, path)
+
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
+			case "cloudflare_ruleset":
+				result = transformCloudflareRulesetStateJSON(result, path)
 
 			case "cloudflare_argo":
 				// cloudflare_argo needs special handling as it may split into multiple resources
@@ -131,6 +167,36 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_group", "cloudflare_access_group":
 				result = transformZeroTrustAccessGroupStateJSON(result, path)
+
+			case "cloudflare_snippet":
+				result = transformSnippetStateJSON(result, path)
+
+			case "cloudflare_snippet_rules":
+				result = transformSnippetRulesStateJSON(result, path)
+
+			case "cloudflare_custom_pages":
+				result = transformCustomPagesStateJSON(result, path)
+
+			case "cloudflare_spectrum_application":
+				result = transformSpectrumApplicationStateJSON(result, path)
+
+			case "cloudflare_workers_route", "cloudflare_worker_route":
+				result = transformWorkersRouteStateJSON(result, path)
+
+			case "cloudflare_workers_script", "cloudflare_worker_script":
+				result = transformWorkersScriptStateJSON(result, path)
+
+			case "cloudflare_workers_cron_trigger", "cloudflare_worker_cron_trigger":
+				result = transformWorkersCronTriggerStateJSON(result, path)
+
+			case "cloudflare_workers_custom_domain", "cloudflare_worker_domain":
+				result = transformWorkersDomainStateJSON(result, path)
+
+			case "cloudflare_workers_secret", "cloudflare_worker_secret":
+				result = transformWorkersSecretStateJSON(result, path)
+
+			case "cloudflare_list":
+				result = transformCloudflareListStateJSON(result, path)
 			}
 
 			return true
@@ -139,11 +205,424 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		return true
 	})
 
+	// Perform cross-resource state migration for workers_secret -> workers_script bindings
+	// This must happen after all individual resource state transformations
+	result = migrateWorkersSecretsInState(result)
+
+	// Perform cross-resource state migration for cloudflare_list_item -> cloudflare_list items
+	// This must happen after all individual resource state transformations
+	result = migrateListItemsInState(result)
+
 	// Pretty format with proper indentation
-	return pretty.PrettyOptions([]byte(result), &pretty.Options{
+	j := pretty.PrettyOptions([]byte(result), &pretty.Options{
 		Indent:   "  ",
 		SortKeys: false,
-	}), nil
+	})
+	return j, nil
+}
+
+// transformSnippetStateJSON handles v4 to v5 state migration for cloudflare_snippet
+// This function replicates the logic from the StateUpgrader in migrations.go
+func transformSnippetStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+	result := json
+
+	// Set schema_version to 0 for v5
+	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+
+	// Handle name transformation (v4: name, v5: snippet_name)
+	snippetName := gjson.Get(json, attrPath+".snippet_name")
+	if snippetName.Exists() {
+		// Already in v5 format, keep as-is
+		result, _ = sjson.Set(result, attrPath+".snippet_name", snippetName.Value())
+	} else if name := gjson.Get(json, attrPath+".name"); name.Exists() {
+		// v4 format - rename to snippet_name
+		result, _ = sjson.Set(result, attrPath+".snippet_name", name.Value())
+		result, _ = sjson.Delete(result, attrPath+".name")
+	}
+
+	// Handle metadata transformation
+	metadata := gjson.Get(json, attrPath+".metadata")
+	if metadata.Exists() && metadata.IsObject() {
+		// v5 format - metadata is already an object, keep as-is
+		// The StateUpgrader will handle this properly
+	} else if mainModule := gjson.Get(json, attrPath+".main_module"); mainModule.Exists() {
+		// v4 format - main_module is top-level, move to metadata
+		metadataObj := map[string]interface{}{
+			"main_module": mainModule.String(),
+		}
+		result, _ = sjson.Set(result, attrPath+".metadata", metadataObj)
+		result, _ = sjson.Delete(result, attrPath+".main_module")
+	}
+
+	// Handle files transformation
+	// First check if files exist as an array in the original JSON
+	files := gjson.Get(json, attrPath+".files")
+
+	if files.Exists() && files.IsArray() {
+		// Already in v5 array format (from previous migration or native v5)
+		// Keep as-is, the StateUpgrader will handle final processing
+		result, _ = sjson.Set(result, attrPath+".files", files.Value())
+	} else {
+		// Check for v4 indexed format (files.#, files.0.name, files.0.content, etc.)
+		// Look in the original json, not result, since we haven't transformed it yet
+		// Note: # is a special character in gjson, so we need to escape it
+		filesCount := gjson.Get(json, attrPath+`.files\.#`)
+
+		if filesCount.Exists() {
+			count := filesCount.Int()
+			if count > 0 {
+				// v4 stores files as indexed attributes
+				var filesList []map[string]interface{}
+
+				for i := int64(0); i < count; i++ {
+					fileMap := make(map[string]interface{})
+
+					// Get name from files.X.name (from original json)
+					// Need to escape dots in the path for gjson
+					nameKey := fmt.Sprintf(`%s.files\.%d\.name`, attrPath, i)
+					if nameVal := gjson.Get(json, nameKey); nameVal.Exists() {
+						fileMap["name"] = nameVal.String()
+					} else {
+						fileMap["name"] = ""
+					}
+
+					// Get content from files.X.content (from original json)
+					// Need to escape dots in the path for gjson
+					contentKey := fmt.Sprintf(`%s.files\.%d\.content`, attrPath, i)
+					if contentVal := gjson.Get(json, contentKey); contentVal.Exists() {
+						fileMap["content"] = contentVal.String()
+					} else {
+						fileMap["content"] = ""
+					}
+
+					filesList = append(filesList, fileMap)
+				}
+
+				// Now set files as an actual array
+				result, _ = sjson.Set(result, attrPath+".files", filesList)
+
+				// Clean up the indexed format by removing all the individual keys
+				// This ensures we don't have both array and indexed formats
+				// Since sjson.Delete doesn't handle keys with dots well, we need to
+				// parse and rewrite the entire attributes object
+				result = cleanupIndexedFileKeys(result, attrPath, count)
+			} else {
+				// files.# exists but is 0, set empty array
+				result, _ = sjson.Set(result, attrPath+".files", []interface{}{})
+				// Use the cleanup function to remove the indexed keys
+				result = cleanupIndexedFileKeys(result, attrPath, 0)
+			}
+		} else {
+			// No files found in any format, set empty array to match v5 schema
+			result, _ = sjson.Set(result, attrPath+".files", []interface{}{})
+		}
+	}
+
+	// Handle computed timestamps (these may or may not exist in v4)
+	// The StateUpgrader expects these as strings or missing
+	createdOn := gjson.Get(json, attrPath+".created_on")
+	if createdOn.Exists() && createdOn.String() != "" {
+		// Keep existing timestamp
+		result, _ = sjson.Set(result, attrPath+".created_on", createdOn.String())
+	}
+
+	modifiedOn := gjson.Get(json, attrPath+".modified_on")
+	if modifiedOn.Exists() && modifiedOn.String() != "" {
+		// Keep existing timestamp
+		result, _ = sjson.Set(result, attrPath+".modified_on", modifiedOn.String())
+	}
+
+	// Remove the implicit "id" field if it exists (v4 had this, v5 doesn't)
+	if id := gjson.Get(json, attrPath+".id"); id.Exists() {
+		result, _ = sjson.Delete(result, attrPath+".id")
+	}
+
+	return result
+}
+
+// transformSnippetRulesStateJSON handles v4 to v5 state migration for cloudflare_snippet_rules
+func transformSnippetRulesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+	result := json
+
+	// Don't set schema_version since v5 provider's UpgradeState is disabled
+	// We handle all transformations here instead
+
+	// Handle rules transformation from blocks to list attribute
+	// In v4, rules are stored as indexed attributes like blocks
+	// Check for rules.# to determine if rules exist
+	rulesCount := gjson.Get(json, attrPath+`.rules\.#`)
+
+	if rulesCount.Exists() {
+		count := rulesCount.Int()
+		if count > 0 {
+			// v4 stores rules as indexed attributes
+			var rulesList []map[string]interface{}
+
+			for i := int64(0); i < count; i++ {
+				ruleMap := make(map[string]interface{})
+
+				// Get enabled field (handle default change from true to false)
+				enabledKey := fmt.Sprintf(`%s.rules\.%d\.enabled`, attrPath, i)
+				if enabledVal := gjson.Get(json, enabledKey); enabledVal.Exists() {
+					// Explicit value, keep as-is
+					ruleMap["enabled"] = enabledVal.Bool()
+				} else {
+					// In v4, missing enabled defaults to true
+					// We need to make this explicit for v5 where it defaults to false
+					ruleMap["enabled"] = true
+				}
+
+				// Get expression field
+				expressionKey := fmt.Sprintf(`%s.rules\.%d\.expression`, attrPath, i)
+				if expressionVal := gjson.Get(json, expressionKey); expressionVal.Exists() {
+					ruleMap["expression"] = expressionVal.String()
+				}
+
+				// Get snippet_name field
+				snippetNameKey := fmt.Sprintf(`%s.rules\.%d\.snippet_name`, attrPath, i)
+				if snippetNameVal := gjson.Get(json, snippetNameKey); snippetNameVal.Exists() {
+					ruleMap["snippet_name"] = snippetNameVal.String()
+				}
+
+				// Get description field
+				descriptionKey := fmt.Sprintf(`%s.rules\.%d\.description`, attrPath, i)
+				if descriptionVal := gjson.Get(json, descriptionKey); descriptionVal.Exists() {
+					ruleMap["description"] = descriptionVal.String()
+				} else {
+					// v5 defaults to empty string for missing description
+					ruleMap["description"] = ""
+				}
+
+				// Note: id and last_updated are computed fields that will be set by the provider
+
+				rulesList = append(rulesList, ruleMap)
+			}
+
+			// Set rules as an actual array
+			result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+
+			// Clean up the indexed format
+			result = cleanupIndexedRulesKeys(result, attrPath, count)
+		} else {
+			// rules.# exists but is 0, set empty array
+			result, _ = sjson.Set(result, attrPath+".rules", []interface{}{})
+			// Clean up the indexed keys
+			result = cleanupIndexedRulesKeys(result, attrPath, 0)
+		}
+	} else {
+		// Check if rules already exists as an array (v5 format or already migrated)
+		rules := gjson.Get(json, attrPath+".rules")
+		if rules.Exists() && rules.IsArray() {
+			// Already in v5 format, ensure enabled defaults are handled
+			var rulesList []map[string]interface{}
+			rules.ForEach(func(_, rule gjson.Result) bool {
+				ruleMap := make(map[string]interface{})
+
+				// Copy all fields
+				rule.ForEach(func(key, value gjson.Result) bool {
+					ruleMap[key.String()] = value.Value()
+					return true
+				})
+
+				// Ensure enabled field has explicit value
+				if _, hasEnabled := ruleMap["enabled"]; !hasEnabled {
+					// In v4, missing enabled defaults to true
+					ruleMap["enabled"] = true
+				}
+
+				// Ensure description has value
+				if _, hasDescription := ruleMap["description"]; !hasDescription {
+					ruleMap["description"] = ""
+				}
+
+				rulesList = append(rulesList, ruleMap)
+				return true
+			})
+
+			if len(rulesList) > 0 {
+				result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+			}
+		}
+	}
+
+	return result
+}
+
+// cleanupIndexedRulesKeys removes the indexed rules attributes from the state
+func cleanupIndexedRulesKeys(json string, attrPath string, ruleCount int64) string {
+	// Get the entire attributes object
+	attrs := gjson.Get(json, attrPath)
+	if !attrs.Exists() || !attrs.IsObject() {
+		return json
+	}
+
+	// Convert to a map for manipulation
+	attrsMap := make(map[string]interface{})
+	attrs.ForEach(func(key, value gjson.Result) bool {
+		keyStr := key.String()
+
+		// Skip indexed rules keys
+		if keyStr == "rules.#" || keyStr == "rules.%" {
+			return true // skip
+		}
+
+		// Skip individual rule fields
+		for i := int64(0); i < ruleCount; i++ {
+			if keyStr == fmt.Sprintf("rules.%d.enabled", i) ||
+				keyStr == fmt.Sprintf("rules.%d.expression", i) ||
+				keyStr == fmt.Sprintf("rules.%d.snippet_name", i) ||
+				keyStr == fmt.Sprintf("rules.%d.description", i) ||
+				keyStr == fmt.Sprintf("rules.%d", i) {
+				return true // skip
+			}
+		}
+
+		// Keep everything else
+		attrsMap[keyStr] = value.Value()
+		return true
+	})
+
+	// Set the cleaned attributes back
+	result, _ := sjson.Set(json, attrPath, attrsMap)
+	return result
+}
+
+// cleanupIndexedFileKeys removes the indexed file attributes from the state
+// This is needed because sjson.Delete doesn't handle keys with dots properly
+func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) string {
+	// Get the entire attributes object
+	attrs := gjson.Get(json, attrPath)
+	if !attrs.Exists() || !attrs.IsObject() {
+		return json
+	}
+
+	// Convert to a map for manipulation
+	attrsMap := make(map[string]interface{})
+	attrs.ForEach(func(key, value gjson.Result) bool {
+		keyStr := key.String()
+
+		// Skip indexed file keys - these are the old v4 format that needs to be removed
+		if keyStr == "files.#" || keyStr == "files.%" {
+			return true // skip
+		}
+
+		// Skip individual file fields (files.0.name, files.0.content, etc.)
+		// Also check for any numeric index pattern to be thorough
+		for i := int64(0); i < fileCount+10; i++ { // Check a few extra indices to be safe
+			if keyStr == fmt.Sprintf("files.%d.name", i) ||
+				keyStr == fmt.Sprintf("files.%d.content", i) ||
+				keyStr == fmt.Sprintf("files.%d.%%", i) ||
+				keyStr == fmt.Sprintf("files.%d.#", i) ||
+				keyStr == fmt.Sprintf("files.%d", i) {
+				return true // skip
+			}
+		}
+
+		// Keep everything else (including the new files array)
+		attrsMap[keyStr] = value.Value()
+		return true
+	})
+
+	// Set the cleaned attributes back
+	result, _ := sjson.Set(json, attrPath, attrsMap)
+	return result
+}
+
+// transformSpectrumApplicationStateJSON handles v4 to v5 state migration for cloudflare_spectrum_application
+func transformSpectrumApplicationStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// 1. Transform dns from array to object (v4: dns=[{...}], v5: dns={...})
+	dns := gjson.Get(json, attrPath+".dns")
+	if dns.IsArray() {
+		if len(dns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".dns", dns.Array()[0].Value())
+		}
+	}
+
+	// 2. Transform edge_ips from array to object (v4: edge_ips=[{...}], v5: edge_ips={...})
+	edgeIps := gjson.Get(json, attrPath+".edge_ips")
+	if edgeIps.IsArray() {
+		if len(edgeIps.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".edge_ips")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".edge_ips", edgeIps.Array()[0].Value())
+		}
+	}
+
+	// 3. Transform origin_dns from array to object (v4: origin_dns=[{...}], v5: origin_dns={...})
+	originDns := gjson.Get(json, attrPath+".origin_dns")
+	if originDns.IsArray() {
+		if len(originDns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".origin_dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".origin_dns", originDns.Array()[0].Value())
+		}
+	}
+
+	// 4. Handle origin_port_range conversion (v4: origin_port_range=[{start:X, end:Y}], v5: origin_port="X-Y")
+	originPortRange := gjson.Get(json, attrPath+".origin_port_range")
+	if originPortRange.IsArray() && len(originPortRange.Array()) > 0 {
+		firstRange := originPortRange.Array()[0]
+		start := firstRange.Get("start")
+		end := firstRange.Get("end")
+
+		if start.Exists() && end.Exists() {
+			// Convert to string format: "start-end" and wrap for NormalizedDynamicType
+			rangeStr := fmt.Sprintf("%d-%d", start.Int(), end.Int())
+			wrappedValue := map[string]interface{}{
+				"value": rangeStr,
+				"type":  "string",
+			}
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+
+		// Remove the origin_port_range attribute
+		json, _ = sjson.Delete(json, attrPath+".origin_port_range")
+	}
+
+	// 5. Handle origin_port conversion for NormalizedDynamicType
+	// V4 stored origin_port as raw values, V5 uses NormalizedDynamicType which requires
+	// wrapping in {"value": <val>, "type": <type>} format
+	originPort := gjson.Get(json, attrPath+".origin_port")
+	if originPort.Exists() {
+		// Check if it's already in the NormalizedDynamicType format
+		if !originPort.IsObject() || !gjson.Get(json, attrPath+".origin_port.value").Exists() {
+			var wrappedValue map[string]interface{}
+
+			switch originPort.Type {
+			case gjson.Number:
+				// Integer port value - wrap as number type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.Int(),
+					"type":  "number",
+				}
+			case gjson.String:
+				// String port range - wrap as string type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			default:
+				// Fallback - wrap as string
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			}
+
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+	}
+
+	return json
 }
 
 // transformLoadBalancerPoolStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_pool
@@ -260,25 +739,171 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 		json, _ = sjson.Delete(json, attrPath+".default_pool_ids")
 	}
 
-	// Remove empty arrays for single-object attributes
+	// Transform arrays to single objects for single-object attributes
+	// v4 stores these as arrays with 0 or 1 element, v5 expects them as objects or missing
 	singleObjectAttrs := []string{
 		"adaptive_routing", "location_strategy",
 		"random_steering", "session_affinity_attributes",
 	}
 	for _, attr := range singleObjectAttrs {
 		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Delete(json, attrPath+"."+attr)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - remove the attribute
+				json, _ = sjson.Delete(json, attrPath+"."+attr)
+			} else if len(val.Array()) == 1 {
+				// Array with one element - convert to object
+				json, _ = sjson.Set(json, attrPath+"."+attr, val.Array()[0].Value())
+			}
 		}
 	}
 
-	// Convert empty arrays to empty maps for map attributes
-	mapAttrs := []string{"country_pools", "pop_pools", "region_pools"}
-	for _, attr := range mapAttrs {
-		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Set(json, attrPath+"."+attr, map[string]interface{}{})
+	// Transform rules array - fixed_response and overrides need to be objects not arrays
+	rules := gjson.Get(json, attrPath+".rules")
+	if rules.IsArray() {
+		for i, rule := range rules.Array() {
+			rulePath := fmt.Sprintf("%s.rules.%d", attrPath, i)
+
+			// Transform fixed_response from array to object
+			fixedResponse := rule.Get("fixed_response")
+			if fixedResponse.IsArray() {
+				if len(fixedResponse.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".fixed_response")
+				} else if len(fixedResponse.Array()) == 1 {
+					json, _ = sjson.Set(json, rulePath+".fixed_response", fixedResponse.Array()[0].Value())
+				}
+			}
+
+			// Remove terminates field if it's false (the default)
+			terminates := rule.Get("terminates")
+			if terminates.IsBool() && !terminates.Bool() {
+				json, _ = sjson.Delete(json, rulePath+".terminates")
+			}
+
+			// Transform overrides from array to object
+			overrides := rule.Get("overrides")
+			if overrides.IsArray() {
+				if len(overrides.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".overrides")
+				} else if len(overrides.Array()) == 1 {
+					// Set the object and update overrides to point to it for nested processing
+					json, _ = sjson.Set(json, rulePath+".overrides", overrides.Array()[0].Value())
+					overrides = overrides.Array()[0]
+				}
+			}
+
+			// Transform nested single-object attributes within overrides
+			// This handles both the case where overrides was just transformed and where it was already an object
+			if overrides.IsObject() || overrides.Type == gjson.JSON {
+				nestedSingleObjectAttrs := []string{
+					"adaptive_routing", "location_strategy",
+					"random_steering", "session_affinity_attributes",
+				}
+				for _, attr := range nestedSingleObjectAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					nestedVal := gjson.Get(json, nestedPath)
+					if nestedVal.IsArray() {
+						if len(nestedVal.Array()) == 0 {
+							json, _ = sjson.Delete(json, nestedPath)
+						} else if len(nestedVal.Array()) == 1 {
+							json, _ = sjson.Set(json, nestedPath, nestedVal.Array()[0].Value())
+						}
+					}
+				}
+
+				// Also transform pool attributes within overrides from arrays to maps
+				poolAttrs := []struct {
+					attrName string
+					keyField string
+				}{
+					{"country_pools", "country"},
+					{"region_pools", "region"},
+					{"pop_pools", "pop"},
+				}
+
+				for _, poolAttr := range poolAttrs {
+					nestedPath := rulePath + ".overrides." + poolAttr.attrName
+					poolVal := gjson.Get(json, nestedPath)
+					if poolVal.IsArray() {
+						if len(poolVal.Array()) == 0 {
+							// Empty array - remove it entirely
+							json, _ = sjson.Delete(json, nestedPath)
+						} else {
+							// Array of objects - convert to map
+							poolMap := make(map[string]interface{})
+							for _, item := range poolVal.Array() {
+								key := item.Get(poolAttr.keyField).String()
+								poolIDs := item.Get("pool_ids").Value()
+								if key != "" && poolIDs != nil {
+									poolMap[key] = poolIDs
+								}
+							}
+							if len(poolMap) == 0 {
+								// If the map is empty after conversion, remove the attribute
+								json, _ = sjson.Delete(json, nestedPath)
+							} else {
+								json, _ = sjson.Set(json, nestedPath, poolMap)
+							}
+						}
+					} else if poolVal.Type == gjson.JSON {
+						// Check if it's an empty map and remove it
+						if poolVal.Raw == "{}" || poolVal.Raw == "[]" {
+							json, _ = sjson.Delete(json, nestedPath)
+						}
+					}
+				}
+
+				// Clean up null/empty/default values in overrides
+				cleanupAttrs := []string{
+					"steering_policy", "ttl", "session_affinity_ttl",
+				}
+				for _, attr := range cleanupAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					val := gjson.Get(json, nestedPath)
+					// Remove empty strings, zeros, and null values
+					if val.Type == gjson.Null || val.String() == "" ||
+						(attr == "ttl" && val.Int() == 0) ||
+						(attr == "session_affinity_ttl" && val.Int() == 0) {
+						json, _ = sjson.Delete(json, nestedPath)
+					}
+				}
+			}
 		}
+	}
+
+	// Transform pool attributes from v4 array of objects to v5 map format
+	// v4: [{"country": "US", "pool_ids": ["id1"]}, {"country": "GB", "pool_ids": ["id2"]}]
+	// v5: {"US": ["id1"], "GB": ["id2"]}
+	poolAttrs := []struct {
+		attrName string
+		keyField string
+	}{
+		{"country_pools", "country"},
+		{"region_pools", "region"},
+		{"pop_pools", "pop"},
+	}
+
+	for _, poolAttr := range poolAttrs {
+		val := gjson.Get(json, attrPath+"."+poolAttr.attrName)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - convert to empty map
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, map[string]interface{}{})
+			} else {
+				// Array of objects - convert to map
+				poolMap := make(map[string]interface{})
+				for _, item := range val.Array() {
+					key := item.Get(poolAttr.keyField).String()
+					poolIDs := item.Get("pool_ids").Value()
+					if key != "" && poolIDs != nil {
+						poolMap[key] = poolIDs
+					}
+				}
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, poolMap)
+			}
+		}
+		// If it's already a map with resolved IDs, leave it alone - it's already in correct V5 format
+		// This happens when V4 state already has resolved pool IDs in map format
 	}
 
 	return json
@@ -407,6 +1032,51 @@ func transformLoadBalancerState(attributes map[string]interface{}) {
 			}
 		}
 	}
+}
+
+// transformLoadBalancerMonitorStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_monitor
+// Transforms the header field from array format to map format
+func transformLoadBalancerMonitorStateJSON(json string, instancePath string) string {
+	// Handle both full path and relative path scenarios
+	attrPath := instancePath
+	if instancePath != "" {
+		attrPath = instancePath + ".attributes"
+	} else {
+		attrPath = "attributes"
+	}
+
+	// Transform header from array format to map format
+	// v4: header = [{"header": "Host", "values": ["example.com"]}]
+	// v5: header = {"Host": ["example.com"]}
+	header := gjson.Get(json, attrPath+".header")
+	if header.IsArray() {
+		headerMap := make(map[string]interface{})
+		for _, item := range header.Array() {
+			if item.IsObject() {
+				headerName := item.Get("header").String()
+				values := item.Get("values")
+				if headerName != "" && values.Exists() {
+					// Convert values to string array
+					var stringValues []string
+					if values.IsArray() {
+						for _, v := range values.Array() {
+							stringValues = append(stringValues, v.String())
+						}
+					}
+					headerMap[headerName] = stringValues
+				}
+			}
+		}
+		// Set the transformed header
+		if len(headerMap) > 0 {
+			json, _ = sjson.Set(json, attrPath+".header", headerMap)
+		} else {
+			// Empty array -> remove the attribute
+			json, _ = sjson.Delete(json, attrPath+".header")
+		}
+	}
+
+	return json
 }
 
 // transformZeroTrustAccessIdentityProviderStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_identity_provider
@@ -887,6 +1557,66 @@ func transformZeroTrustAccessApplicationStateJSON(json string, path string) stri
 		json, _ = sjson.Set(json, attrPath+".custom_pages", customPages.Value())
 	}
 
+	// Transform cors_headers from array format to object format
+	// In v4, cors_headers was stored as an array: [{"allowed_methods": [...], ...}]
+	// In v5, it should be a single object: {"allowed_methods": [...], ...}
+	corsHeaders := gjson.Get(json, attrPath+".cors_headers")
+	if corsHeaders.Exists() && corsHeaders.IsArray() {
+		corsArray := corsHeaders.Array()
+		if len(corsArray) > 0 && corsArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".cors_headers", corsArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".cors_headers", nil)
+		}
+	}
+
+	// Transform landing_page_design from array format to object format
+	// In v4, landing_page_design was stored as an array: [{"title": "...", "message": "...", ...}]
+	// In v5, it should be a single object: {"title": "...", "message": "...", ...}
+	landingPageDesign := gjson.Get(json, attrPath+".landing_page_design")
+	if landingPageDesign.Exists() && landingPageDesign.IsArray() {
+		landingArray := landingPageDesign.Array()
+		if len(landingArray) > 0 && landingArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".landing_page_design", landingArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".landing_page_design", nil)
+		}
+	}
+
+	// Transform saas_app from array format to object format
+	// In v4, saas_app was stored as an array: [{"consumer_service_url": "...", "sp_entity_id": "...", ...}]
+	// In v5, it should be a single object: {"consumer_service_url": "...", "sp_entity_id": "...", ...}
+	saasApp := gjson.Get(json, attrPath+".saas_app")
+	if saasApp.Exists() && saasApp.IsArray() {
+		saasArray := saasApp.Array()
+		if len(saasArray) > 0 && saasArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".saas_app", saasArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".saas_app", nil)
+		}
+	}
+
+	// Transform scim_config from array format to object format
+	// In v4, scim_config was stored as an array: [{"enabled": true, "remote_uri": "...", ...}]
+	// In v5, it should be a single object: {"enabled": true, "remote_uri": "...", ...}
+	scimConfig := gjson.Get(json, attrPath+".scim_config")
+	if scimConfig.Exists() && scimConfig.IsArray() {
+		scimArray := scimConfig.Array()
+		if len(scimArray) > 0 && scimArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".scim_config", scimArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".scim_config", nil)
+		}
+	}
+
 	// Transform policies from simple string list to complex object list
 	policies := gjson.Get(json, attrPath+".policies")
 	if policies.IsArray() {
@@ -1052,9 +1782,122 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 						}
 					}
 
-					// Note: More complex transformations like azure->azure_ad, github->github_organization, etc.
-					// are not needed here since those are handled by the config transformation
-					// and the state will already have the correct structure from the API
+				// Complex transformations for nested objects
+				case "azure":
+					// Transform azure blocks -> azure_ad objects
+					if value.IsArray() {
+						for _, azureBlock := range value.Array() {
+							idArray := gjson.Get(azureBlock.Raw, "id")
+							identityProviderID := gjson.Get(azureBlock.Raw, "identity_provider_id")
+
+							if idArray.IsArray() {
+								for _, id := range idArray.Array() {
+									rule := map[string]interface{}{
+										"azure_ad": map[string]interface{}{
+											"id": id.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["azure_ad"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "github":
+					// Transform github blocks -> github_organization objects
+					if value.IsArray() {
+						for _, githubBlock := range value.Array() {
+							name := gjson.Get(githubBlock.Raw, "name")
+							teamsArray := gjson.Get(githubBlock.Raw, "teams")
+							identityProviderID := gjson.Get(githubBlock.Raw, "identity_provider_id")
+
+							if teamsArray.IsArray() {
+								for _, team := range teamsArray.Array() {
+									rule := map[string]interface{}{
+										"github_organization": map[string]interface{}{
+											"team": team.String(),
+										},
+									}
+									if name.Exists() {
+										rule["github_organization"].(map[string]interface{})["name"] = name.String()
+									}
+									if identityProviderID.Exists() {
+										rule["github_organization"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "gsuite":
+					// Transform gsuite blocks
+					if value.IsArray() {
+						for _, gsuiteBlock := range value.Array() {
+							emailArray := gjson.Get(gsuiteBlock.Raw, "email")
+							identityProviderID := gjson.Get(gsuiteBlock.Raw, "identity_provider_id")
+
+							if emailArray.IsArray() {
+								for _, email := range emailArray.Array() {
+									rule := map[string]interface{}{
+										"gsuite": map[string]interface{}{
+											"email": email.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["gsuite"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "okta":
+					// Transform okta blocks
+					if value.IsArray() {
+						for _, oktaBlock := range value.Array() {
+							nameArray := gjson.Get(oktaBlock.Raw, "name")
+							identityProviderID := gjson.Get(oktaBlock.Raw, "identity_provider_id")
+
+							if nameArray.IsArray() {
+								for _, name := range nameArray.Array() {
+									rule := map[string]interface{}{
+										"okta": map[string]interface{}{
+											"name": name.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["okta"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "saml":
+					// Transform saml blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, samlBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"saml": samlBlock.Value(),
+							})
+						}
+					}
+
+				case "external_evaluation":
+					// Transform external_evaluation blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, evalBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"external_evaluation": evalBlock.Value(),
+							})
+						}
+					}
 				}
 
 				return true // continue iteration
@@ -1065,6 +1908,155 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 		if len(newRules) > 0 {
 			json, _ = sjson.Set(json, rulesPath, newRules)
 		}
+	}
+
+	// Apply boolean field transformations to handle false values that need to be removed
+	// This handles the case where any_valid_service_token = false in state needs to be removed
+	ruleFields := []string{"include", "exclude", "require"}
+	for _, field := range ruleFields {
+		rules := gjson.Get(json, attrPath+"."+field)
+		if rules.IsArray() {
+			rules.ForEach(func(idx, rule gjson.Result) bool {
+				if rule.IsObject() {
+					rulePath := fmt.Sprintf("%s.%s.%d", attrPath, field, idx.Int())
+					json = transformRuleBooleans(json, rulePath)
+				}
+				return true
+			})
+		}
+	}
+
+	return json
+}
+
+// transformCustomPagesStateJSON handles v4 to v5 state migration for cloudflare_custom_pages
+func transformCustomPagesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Transform type -> identifier attribute rename
+	typeValue := gjson.Get(json, attrPath+".type")
+	if typeValue.Exists() {
+		json, _ = sjson.Set(json, attrPath+".identifier", typeValue.Value())
+		json, _ = sjson.Delete(json, attrPath+".type")
+	}
+
+	return json
+}
+
+// transformCloudflareListStateJSON handles v4 to v5 state migration for cloudflare_list
+func transformCloudflareListStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Get the kind to determine item structure
+	kind := gjson.Get(json, attrPath+".kind").String()
+	if kind == "" {
+		return json // Can't transform without knowing the kind
+	}
+
+	// Transform item blocks to items array
+	items := gjson.Get(json, attrPath+".item")
+	if !items.Exists() || !items.IsArray() {
+		return json // No items to transform
+	}
+
+	var transformedItems []map[string]interface{}
+
+	items.ForEach(func(idx, item gjson.Result) bool {
+		transformedItem := make(map[string]interface{})
+
+		// Copy comment if present
+		comment := item.Get("comment")
+		if comment.Exists() && comment.String() != "" {
+			transformedItem["comment"] = comment.Value()
+		}
+
+		// Extract value block (it's usually an array with one element in v4 state)
+		values := item.Get("value")
+		if values.IsArray() && len(values.Array()) > 0 {
+			value := values.Array()[0]
+
+			switch kind {
+			case "ip":
+				ip := value.Get("ip")
+				if ip.Exists() {
+					transformedItem["ip"] = ip.Value()
+				}
+
+			case "asn":
+				asn := value.Get("asn")
+				if asn.Exists() {
+					transformedItem["asn"] = asn.Value()
+				}
+
+			case "hostname":
+				// Hostname was a nested block in v4
+				hostname := value.Get("hostname")
+				if hostname.IsArray() && len(hostname.Array()) > 0 {
+					transformedItem["hostname"] = hostname.Array()[0].Value()
+				}
+
+			case "redirect":
+				// Redirect was a nested block in v4
+				redirect := value.Get("redirect")
+				if redirect.IsArray() && len(redirect.Array()) > 0 {
+					redirectObj := redirect.Array()[0]
+					redirectMap := make(map[string]interface{})
+
+					// Copy required fields
+					if sourceURL := redirectObj.Get("source_url"); sourceURL.Exists() {
+						redirectMap["source_url"] = sourceURL.Value()
+					}
+					if targetURL := redirectObj.Get("target_url"); targetURL.Exists() {
+						redirectMap["target_url"] = targetURL.Value()
+					}
+
+					// Transform string booleans to actual booleans
+					transformBoolField := func(fieldName string) {
+						field := redirectObj.Get(fieldName)
+						if field.Exists() {
+							if field.String() == "enabled" {
+								redirectMap[fieldName] = true
+							} else if field.String() == "disabled" {
+								redirectMap[fieldName] = false
+							}
+						}
+					}
+
+					transformBoolField("include_subdomains")
+					transformBoolField("subpath_matching")
+					transformBoolField("preserve_query_string")
+					transformBoolField("preserve_path_suffix")
+
+					// Copy status code if present
+					if statusCode := redirectObj.Get("status_code"); statusCode.Exists() {
+						redirectMap["status_code"] = statusCode.Value()
+					}
+
+					if len(redirectMap) > 0 {
+						transformedItem["redirect"] = redirectMap
+					}
+				}
+			}
+		}
+
+		if len(transformedItem) > 0 {
+			transformedItems = append(transformedItems, transformedItem)
+		}
+
+		return true
+	})
+
+	// Replace item with items
+	if len(transformedItems) > 0 {
+		json, _ = sjson.Delete(json, attrPath+".item")
+		json, _ = sjson.Set(json, attrPath+".items", transformedItems)
+		// Set num_items to match the count of items
+		json, _ = sjson.Set(json, attrPath+".num_items", float64(len(transformedItems)))
+	} else {
+		// Remove empty item array
+		json, _ = sjson.Delete(json, attrPath+".item")
+		// Set num_items to 0 for empty lists
+		json, _ = sjson.Set(json, attrPath+".num_items", float64(0))
 	}
 
 	return json

@@ -3,7 +3,6 @@ package load_balancer_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -11,13 +10,14 @@ import (
 	cfold "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -40,6 +40,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -50,19 +51,35 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	lbs, err := client.ListLoadBalancers(ctx, cfold.ZoneIdentifier(zoneID), cfold.ListLoadBalancerParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancers: %s", err))
+		return err
 	}
 
 	if len(lbs) == 0 {
-		log.Print("[DEBUG] No Cloudflare Load Balancers to sweep")
+		tflog.Debug(ctx, "[DEBUG] No Cloudflare Load Balancers to sweep")
 		return nil
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Found %d Cloudflare Load Balancers to sweep", len(lbs)))
+
+	// Track deletion results
+	deleted := 0
+	failed := 0
+
 	for _, lb := range lbs {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s", lb.ID))
-		//nolint:errcheck
-		client.DeleteLoadBalancer(ctx, cfold.ZoneIdentifier(zoneID), lb.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s, Name: %s", lb.ID, lb.Name))
+
+		err := client.DeleteLoadBalancer(ctx, cfold.ZoneIdentifier(zoneID), lb.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer %s (%s): %v", lb.ID, lb.Name, err))
+			failed++
+			// Continue with other load balancers
+		} else {
+			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Load Balancer %s (%s)", lb.ID, lb.Name))
+			deleted++
+		}
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Load Balancer sweep completed: %d deleted, %d failed", deleted, failed))
 	return nil
 }
 
@@ -785,17 +802,16 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 }
 
 func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_load_balancer" {
 			continue
 		}
 
-		_, err := client.GetLoadBalancer(context.Background(), cfold.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+		_, err := client.LoadBalancers.Get(context.Background(), rs.Primary.ID, load_balancers.LoadBalancerGetParams{
+			ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
+		})
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}

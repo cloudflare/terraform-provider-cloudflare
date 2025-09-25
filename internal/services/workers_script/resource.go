@@ -66,6 +66,11 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	var data *WorkersScriptModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("migrations"), &data.Migrations)...)
 
 	if resp.Diagnostics.HasError() {
@@ -128,6 +133,11 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	var data *WorkersScriptModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("migrations"), &data.Migrations)...)
 
 	if resp.Diagnostics.HasError() {

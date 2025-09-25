@@ -78,7 +78,7 @@ resource "cloudflare_tiered_cache" "example" {
 			Name: "multiple resources including tiered_cache",
 			Config: `
 resource "cloudflare_zone" "example" {
-  zone = "example.com"
+  name = "example.com"
 }
 
 resource "cloudflare_tiered_cache" "example" {
@@ -98,7 +98,7 @@ resource "cloudflare_record" "example" {
   zone_id = cloudflare_zone.example.id
   value   = "on"
 }`,
-				`resource "cloudflare_record" "example"`,
+				`resource "cloudflare_dns_record" "example"`,
 			},
 		},
 		{
@@ -194,7 +194,7 @@ resource "cloudflare_tiered_cache" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 // State transformation tests
@@ -512,7 +512,7 @@ func TestTieredCacheStateTransformation(t *testing.T) {
 						"instances": [
 							{
 								"attributes": {
-									"zone": "example.com",
+									"name": "example.com",
 									"id": "test-id"
 								}
 							}
@@ -528,7 +528,7 @@ func TestTieredCacheStateTransformation(t *testing.T) {
 						"instances": [
 							{
 								"attributes": {
-									"zone": "example.com",
+									"name": "example.com",
 									"id": "test-id"
 								}
 							}

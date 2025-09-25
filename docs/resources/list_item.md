@@ -70,4 +70,10 @@ Optional:
 - `status_code` (Number) Available values: 301, 302, 307, 308.
 - `subpath_matching` (Boolean)
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_list_item.example '<account_id>/<list_id>/<item_id>'
+```

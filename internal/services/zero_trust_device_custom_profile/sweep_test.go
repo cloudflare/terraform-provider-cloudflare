@@ -45,6 +45,11 @@ func testSweepCloudflareZeroTrustDeviceCustomProfile(region string) error {
 	log.Printf("[DEBUG] Found %d device custom profiles to sweep", len(profiles.Result))
 
 	for _, profile := range profiles.Result {
+		if profile.PolicyID == "" {
+			log.Printf("[DEBUG] Skipping device custom profile with empty policy_id: %s", profile.Name)
+			continue
+		}
+
 		log.Printf("[INFO] Deleting device custom profile: %s (%s)", profile.Name, profile.PolicyID)
 
 		_, err := client.ZeroTrust.Devices.Policies.Custom.Delete(

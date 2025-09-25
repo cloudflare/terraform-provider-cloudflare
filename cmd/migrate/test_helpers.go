@@ -2,10 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/transformations"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
@@ -320,4 +323,97 @@ func normalizeWhitespace(s string) string {
 		s = strings.ReplaceAll(s, r.old, r.new)
 	}
 	return strings.TrimSpace(s)
+}
+
+// transformFileWithYAML applies both YAML and Go transformations for testing
+func transformFileWithYAML(content []byte, filename string) ([]byte, error) {
+	// Create a temporary directory for the test
+	tempDir, err := os.MkdirTemp("", "migrate-test-*")
+	if err != nil {
+		return nil, err
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Write the content to a temporary file
+	tempFile := filepath.Join(tempDir, filename)
+	if err := os.WriteFile(tempFile, content, 0644); err != nil {
+		return nil, err
+	}
+
+	// Apply YAML transformations using the actual transformer
+	if err := applyYAMLTransformationsToFile(tempFile); err != nil {
+		return nil, err
+	}
+
+	// Read the transformed content
+	transformed, err := os.ReadFile(tempFile)
+	if err != nil {
+		return nil, err
+	}
+
+	// Then apply Go transformations
+	return transformFileDefault(transformed, filename)
+}
+
+// applyYAMLTransformationsToFile applies all YAML transformations to a file
+func applyYAMLTransformationsToFile(filePath string) error {
+	// Get the path to the YAML config files
+	configDir := filepath.Join(filepath.Dir(filePath), "..", "transformations", "config")
+	
+	// If the config directory doesn't exist relative to the test, try finding it from the module root
+	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+		// Try to find the config directory from the current working directory
+		cwd, _ := os.Getwd()
+		configDir = filepath.Join(cwd, "transformations", "config")
+	}
+
+	// List of transformation configs to apply in order
+	transformationConfigs := []string{
+		"cloudflare_terraform_v5_resource_renames_configuration.yaml",
+		"cloudflare_terraform_v5_block_to_attribute_configuration.yaml",
+		"cloudflare_terraform_v5_attribute_renames_configuration.yaml",
+	}
+
+	for _, configFile := range transformationConfigs {
+		configPath := filepath.Join(configDir, configFile)
+		
+		// Check if the config file exists
+		if _, err := os.Stat(configPath); os.IsNotExist(err) {
+			// Skip if config doesn't exist (tests may not need all transformations)
+			continue
+		}
+
+		// Create the appropriate transformer
+		var transformer interface {
+			TransformFile(input, output string) error
+		}
+
+		if strings.Contains(configFile, "resource_renames") {
+			t, err := transformations.NewResourceRenameTransformer(configPath)
+			if err != nil {
+				return err
+			}
+			transformer = t
+		} else if strings.Contains(configFile, "block_to_attribute") || strings.Contains(configFile, "attribute_renames") {
+			t, err := transformations.NewHCLTransformer(configPath)
+			if err != nil {
+				return err
+			}
+			transformer = t
+		}
+
+		if transformer != nil {
+			// Apply the transformation in-place
+			if err := transformer.TransformFile(filePath, filePath); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// RunFullTransformationTests executes test cases with both YAML and Go transformations
+func RunFullTransformationTests(t *testing.T, tests []TestCase) {
+	RunTransformationTests(t, tests, transformFileWithYAML)
 }

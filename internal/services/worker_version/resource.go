@@ -169,26 +169,30 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	data.Assets = assets
 
 	// Refresh content_sha256 on each module
-	moduleNameMap := make(map[string]*WorkerVersionModulesModel, len(*stateModules))
-	for _, mod := range *stateModules {
-		moduleNameMap[mod.Name.ValueString()] = mod
+	moduleNameMap := make(map[string]*WorkerVersionModulesModel)
+	if stateModules != nil {
+		for _, mod := range *stateModules {
+			moduleNameMap[mod.Name.ValueString()] = mod
+		}
 	}
-	for _, mod := range *data.Modules {
-		contentBase64 := mod.ContentBase64.ValueString()
-		content, err := base64.StdEncoding.DecodeString(contentBase64)
-		if err != nil {
-			resp.Diagnostics.AddError("Refresh Error", err.Error())
-			return
-		}
-		contentSHA256, err := calculateStringHash(string(content))
-		if err != nil {
-			resp.Diagnostics.AddError("Refresh Error", err.Error())
-			return
-		}
+	if data.Modules != nil {
+		for _, mod := range *data.Modules {
+			contentBase64 := mod.ContentBase64.ValueString()
+			content, err := base64.StdEncoding.DecodeString(contentBase64)
+			if err != nil {
+				resp.Diagnostics.AddError("Refresh Error", err.Error())
+				return
+			}
+			contentSHA256, err := calculateStringHash(string(content))
+			if err != nil {
+				resp.Diagnostics.AddError("Refresh Error", err.Error())
+				return
+			}
 
-		mod.ContentSHA256 = types.StringValue(contentSHA256)
-		if stateMod, ok := moduleNameMap[mod.Name.ValueString()]; ok {
-			mod.ContentFile = stateMod.ContentFile
+			mod.ContentSHA256 = types.StringValue(contentSHA256)
+			if stateMod, ok := moduleNameMap[mod.Name.ValueString()]; ok {
+				mod.ContentFile = stateMod.ContentFile
+			}
 		}
 	}
 

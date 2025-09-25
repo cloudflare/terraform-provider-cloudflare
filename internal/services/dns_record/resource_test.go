@@ -1121,6 +1121,86 @@ func testAccCheckCloudflareRecordConfigCommentModified(zoneID, name, rnd, domain
 	return acctest.LoadTestCase("dnsrecordcommentmodified.tf", zoneID, name, rnd, domain)
 }
 
+// TestAccCloudflareRecord_ModifiedOnDrift tests for issues for drift
+func TestAccCloudflareRecord_ModifiedOnDrift(t *testing.T) {
+	var record cfold.DNSRecord
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("tf-acctest-%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", name)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create a record with settings and tags
+				Config: testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestCheckResourceAttr(resourceName, "proxied", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
+					resource.TestCheckResourceAttrSet(resourceName, "modified_on"),
+				),
+			},
+			{
+				// Apply the same config again - should show no changes
+				Config:             testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // This should pass with our fix, fail without it
+			},
+			{
+				// Test with explicit empty settings
+				Config: testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.11"),
+					resource.TestCheckResourceAttrSet(resourceName, "modified_on"),
+				),
+			},
+			{
+				// Apply the same config again - should show no changes
+				Config:             testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // This should pass with our fix, fail without it
+			},
+		},
+	})
+}
+
+func testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[2]s" {
+  zone_id = "%[1]s"
+  name    = "%[2]s"
+  type    = "A"
+  content = "192.168.0.10"
+  ttl     = 1
+  proxied = false
+  tags    = []
+}`, zoneID, name, domain)
+}
+
+func testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[2]s" {
+  zone_id  = "%[1]s"
+  name     = "%[2]s"
+  type     = "A"
+  content  = "192.168.0.11"
+  ttl      = 1
+  proxied  = false
+  tags     = []
+  settings = {}
+}`, zoneID, name, domain)
+}
+
 func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
 	newTrimmed := strings.TrimSuffix(new, ".")
 

@@ -26,8 +26,7 @@ resource "cloudflare_load_balancer_pool" "test" {
     name    = "test"
     address = "192.0.2.1"
     header = {
-      header = "Host"
-      values = ["example.com"]
+      host = ["example.com"]
     }
   }]
 }`},
@@ -72,9 +71,171 @@ resource "cloudflare_load_balancer_pool" "test" {
   }]
 }`},
 		},
+		{
+			Name: "dynamic_origins_block_simple",
+			Config: `
+locals {
+  origin_list = ["192.0.2.1", "192.0.2.2"]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.origin_list
+    content {
+      name    = "origin-${origins.key}"
+      address = origins.value
+      enabled = true
+    }
+  }
+}`,
+			Expected: []string{`
+locals {
+  origin_list = ["192.0.2.1", "192.0.2.2"]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+
+  origins = [for key, value in local.origin_list : {
+    address = value
+    enabled = true
+    name    = "origin-${key}"
+  }]
+}`},
+		},
+		{
+			Name: "dynamic_origins_with_header_block",
+			Config: `
+locals {
+  origin_configs = [
+    {
+      name    = "origin1"
+      address = "192.0.2.1"
+      host    = "example1.com"
+    },
+    {
+      name    = "origin2"
+      address = "192.0.2.2"
+      host    = "example2.com"
+    }
+  ]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.origin_configs
+    content {
+      name    = origins.value.name
+      address = origins.value.address
+      enabled = true
+      
+      header {
+        header = "Host"
+        values = [origins.value.host]
+      }
+    }
+  }
+}`,
+			Expected: []string{`
+locals {
+  origin_configs = [
+    {
+      name    = "origin1"
+      address = "192.0.2.1"
+      host    = "example1.com"
+    },
+    {
+      name    = "origin2"
+      address = "192.0.2.2"
+      host    = "example2.com"
+    }
+  ]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+
+  origins = [for key, value in local.origin_configs : {
+    address = value.address
+    enabled = true
+    header = {
+      host = [value.host]
+    }
+    name = value.name
+  }]
+}`},
+		},
+		{
+			Name: "dynamic_origins_with_custom_iterator",
+			Config: `
+locals {
+  origins_data = ["192.0.2.1", "192.0.2.2"]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.origins_data
+    iterator = origin
+    content {
+      name    = "origin-${origin.key}"
+      address = origin.value
+      enabled = true
+    }
+  }
+}`,
+			Expected: []string{`
+locals {
+  origins_data = ["192.0.2.1", "192.0.2.2"]
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+
+  origins = [for key, value in local.origins_data : {
+    address = value
+    enabled = true
+    name    = "origin-${key}"
+  }]
+}`},
+		},
+		{
+			Name: "static_origins_unchanged",
+			Config: `
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+  origins = [{
+    name    = "origin1"
+    address = "192.0.2.1"
+    enabled = true
+  }]
+}`,
+			Expected: []string{`
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "test-pool"
+  origins = [{
+    name    = "origin1"
+    address = "192.0.2.1"
+    enabled = true
+  }]
+}`},
+		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 // State transformation tests
@@ -261,4 +422,84 @@ func TestLoadBalancerPoolStateTransformation(t *testing.T) {
 	}
 
 	RunStateTransformationTests(t, tests, transformLoadBalancerPoolState)
+}
+
+func TestLoadBalancerPoolMapIteration(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "dynamic block with map iteration using key reference",
+			Config: `
+locals {
+  origins_map = {
+    "backup1" = { address = "1.1.1.1" }
+    "backup2" = { address = "2.2.2.2" }
+  }
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.origins_map
+    content {
+      address = origins.value.address
+      name = "prefix-${origins.key}"
+      header {
+        header = "Host"
+        values = [origins.value.address]
+      }
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in local.origins_map : {
+    address = value.address
+    header = {
+      host = [value.address]
+    }
+    name = "prefix-${key}"
+  }]
+}`},
+		},
+		{
+			Name: "dynamic block with both key and value references",
+			Config: `
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.transceiver_map
+    content {
+      address = origins.value.host
+      name = origins.key
+      weight = origins.value.weight
+      header {
+        header = "Host"
+        values = [origins.value.host]
+      }
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in local.transceiver_map : {
+    address = value.host
+    header = {
+      host = [value.host]
+    }
+    name   = key
+    weight = value.weight
+  }]
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
 }
