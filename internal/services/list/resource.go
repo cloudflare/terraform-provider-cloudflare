@@ -309,22 +309,6 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 	}
 	data = &env.Result
 
-	itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var items customfield.NestedObjectSet[ListItemModel]
-
-	if len(itemsSet) == 0 {
-		items = customfield.NullObjectSet[ListItemModel](ctx)
-	} else {
-		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
-		resp.Diagnostics.Append(diags...)
-	}
-	data.Items = items
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
