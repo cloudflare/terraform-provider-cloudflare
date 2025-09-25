@@ -68,6 +68,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 				Computed:    true,
 			},
+			"monitor_group": schema.StringAttribute{
+				Description: "The ID of the Monitor Group to use for checking the health of origins within this pool.",
+				Computed:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
 				Computed:    true,

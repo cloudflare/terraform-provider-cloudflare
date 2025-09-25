@@ -114,6 +114,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 				Optional:    true,
 			},
+			"monitor_group": schema.StringAttribute{
+				Description: "The ID of the Monitor Group to use for checking the health of origins within this pool.",
+				Optional:    true,
+			},
 			"notification_email": schema.StringAttribute{
 				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
 				Optional:    true,

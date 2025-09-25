@@ -69,6 +69,14 @@ func testSweepCloudflareRecord(r string) error {
 			shouldDelete = true
 		}
 
+		// Clean up PTR records used in tests (reverse DNS records)
+		if record.Type == "PTR" && (strings.Contains(record.Name, ".in-addr.arpa") || strings.Contains(record.Name, ".ip6.arpa")) {
+			// Delete PTR records that are clearly test records
+			if strings.Contains(record.Content, "example.com") || strings.Contains(record.Content, "test") {
+				shouldDelete = true
+			}
+		}
+
 		// Also clean up apex domain records if they are A/AAAA/CNAME records that could conflict with tests
 		// Only delete apex records that are likely from tests (A/AAAA records pointing to test IPs or CNAME records)
 		if domain != "" && record.Name == domain {

@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Provide the identifier string.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -36,11 +36,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Description: "The identifier for this application. There is only one application per ID.",
+							Description: "Identify this application. Only one application per ID.",
 							Computed:    true,
 						},
 						"application_type_id": schema.Int64Attribute{
-							Description: "The identifier for the type of this application. There can be many applications with the same type. This refers to the `id` of a returned application type.",
+							Description: "Identify the type of this application. Multiple applications can share the same type. Refers to the `id` of a returned application type.",
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
@@ -48,11 +48,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the application or application type.",
+							Description: "Specify the name of the application or application type.",
 							Computed:    true,
 						},
 						"description": schema.StringAttribute{
-							Description: "A short summary of applications with this type.",
+							Description: "Provide a short summary of applications with this type.",
 							Computed:    true,
 						},
 					},

@@ -90,7 +90,6 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 
 // TransformDirectory transforms all .tf files in a directory
 func (ht *HCLTransformer) TransformDirectory(dirPath string, recursive bool) error {
-	fmt.Printf("      DEBUG: TransformDirectory called on %s (recursive=%v)\n", dirPath, recursive)
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return fmt.Errorf("failed to read directory: %w", err)
@@ -101,13 +100,11 @@ func (ht *HCLTransformer) TransformDirectory(dirPath string, recursive bool) err
 
 		if entry.IsDir() {
 			if recursive {
-				fmt.Printf("      DEBUG: Recursing into subdirectory %s\n", fullPath)
 				// Recursively process subdirectories
 				if err := ht.TransformDirectory(fullPath, recursive); err != nil {
 					return err
 				}
 			} else {
-				fmt.Printf("      DEBUG: Skipping subdirectory %s (recursive=false)\n", fullPath)
 			}
 			continue
 		}
@@ -121,7 +118,6 @@ func (ht *HCLTransformer) TransformDirectory(dirPath string, recursive bool) err
 			}
 			fmt.Printf("      SUCCESS: Transformed %s\n", fullPath)
 		} else if !entry.IsDir() {
-			fmt.Printf("      DEBUG: Skipping non-.tf file: %s\n", fullPath)
 		}
 	}
 

@@ -3,5 +3,4 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
   custom_html = "<html><body><h1>Access Denied</h1></body></html>"
   name = "name"
   type = "identity_denied"
-  app_count = 0
 }

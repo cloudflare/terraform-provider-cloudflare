@@ -34,23 +34,44 @@ func isAccessApplicationResource(block *hclwrite.Block) bool {
 // Phase 3 - Remove unsupported attributes and convert blocks to attributes:
 // Before: domain_type = "public" (removed - not supported in v5)
 // Before: destinations { ... } (converted from blocks to list attribute)
+//
+// Phase 4 - Add default type if missing:
+// Before: (no type attribute)
+// After: type = "self_hosted"
 func transformAccessApplicationBlock(block *hclwrite.Block, diags ast.Diagnostics) {
-	// STEP 1: Auto-populate policies from collected access_policy mappings
+	// STEP 1: Add default type attribute if missing (v4 defaulted to "self_hosted")
+	addDefaultTypeAttribute(block)
+
+	// STEP 2: Auto-populate policies from collected access_policy mappings
 	injectCollectedPolicies(block, diags)
-	
-	// STEP 2: Remove unsupported attributes
+
+	// STEP 3: Remove unsupported attributes
 	removeUnsupportedAttributes(block)
-	
-	// STEP 3: Convert destinations blocks to list attribute
+
+	// STEP 4: Convert destinations blocks to list attribute
 	convertDestinationsBlocksToAttribute(block, diags)
-	
-	// STEP 4: Transform existing attribute formats
+
+	// STEP 5: Transform existing attribute formats
 	transforms := map[string]ast.ExprTransformer{
 		"policies":       transformPoliciesAttribute,
 		"allowed_idps":   transformSetToListAttribute,
 		"custom_pages":   transformSetToListAttribute,
 	}
 	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
+}
+
+// addDefaultTypeAttribute adds type = "self_hosted" if the type attribute is missing
+// This is needed because v4 had a default value of "self_hosted" for the type attribute,
+// but v5 requires it to be explicitly set
+func addDefaultTypeAttribute(block *hclwrite.Block) {
+	body := block.Body()
+
+	// Check if type attribute exists
+	typeAttr := body.GetAttribute("type")
+	if typeAttr == nil {
+		// Add default type = "self_hosted" as this was the v4 default
+		body.SetAttributeValue("type", cty.StringVal("self_hosted"))
+	}
 }
 
 // transformPoliciesAttribute transforms a policies list from strings/references to objects
@@ -333,6 +354,6 @@ func convertDestinationBlockToObject(block *hclwrite.Block) string {
 	
 	// Sort for consistent output
 	sort.Strings(attrStrings)
-	
+
 	return fmt.Sprintf("{\n%s\n  }", strings.Join(attrStrings, "\n"))
 }

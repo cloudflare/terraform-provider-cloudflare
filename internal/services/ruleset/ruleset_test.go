@@ -4610,6 +4610,78 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 										"uri": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"path": knownvalue.Null(),
 											"query": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"value":      knownvalue.StringExact(""),
+												"expression": knownvalue.Null(),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("rewrite"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"headers": knownvalue.Null(),
+									"uri": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"path": knownvalue.Null(),
+										"query": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"value":      knownvalue.StringExact(""),
+											"expression": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("rewrite"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"headers": knownvalue.Null(),
+									"uri": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"path": knownvalue.Null(),
+										"query": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"value":      knownvalue.StringExact(""),
+											"expression": knownvalue.Null(),
+										}),
+										"origin": knownvalue.Null(),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("6.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("rewrite"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"headers": knownvalue.Null(),
+										"uri": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"path": knownvalue.Null(),
+											"query": knownvalue.ObjectExact(map[string]knownvalue.Check{
 												"value":      knownvalue.StringExact("foo=bar"),
 												"expression": knownvalue.Null(),
 											}),
@@ -4663,7 +4735,7 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("6.tf"),
+				ConfigFile:      config.TestNameFile("7.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{

@@ -12,13 +12,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -67,12 +67,18 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	assets := data.Assets
-	if assets != nil {
-		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
+	var assets *WorkerVersionAssetsModel
+	if data.Assets != nil {
+		assets = &WorkerVersionAssetsModel{
+			Config:              data.Assets.Config,
+			JWT:                 data.Assets.JWT,
+			Directory:           data.Assets.Directory,
+			AssetManifestSHA256: data.Assets.AssetManifestSHA256,
+		}
 	}
-
-	if resp.Diagnostics.HasError() {
+	err := handleAssets(ctx, r.client, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to upload assets", err.Error())
 		return
 	}
 
@@ -85,6 +91,10 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 			}
 			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
 		}
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	dataBytes, err := data.MarshalJSON()
@@ -116,6 +126,11 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.Modules = modules
+
+	if assets != nil && data.Assets != nil {
+		assets.Config = data.Assets.Config
+	}
+
 	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -134,15 +149,15 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	stateModules := data.Modules
 	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
+	stateModules := data.Modules
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionGetParamsVersionID(data.ID.ValueString()),
+		data.ID.ValueString(),
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			Include:   cloudflare.F(workers.BetaWorkerVersionGetParamsIncludeModules),
@@ -241,7 +256,7 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		path_worker_id,
-		workers.BetaWorkerVersionGetParamsVersionID(path_version_id),
+		path_version_id,
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},

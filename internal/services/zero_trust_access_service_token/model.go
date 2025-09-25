@@ -13,14 +13,16 @@ type ZeroTrustAccessServiceTokenResultEnvelope struct {
 }
 
 type ZeroTrustAccessServiceTokenModel struct {
-	ID           types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String      `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID       types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name         types.String      `tfsdk:"name" json:"name,required"`
-	Duration     types.String      `tfsdk:"duration" json:"duration,computed_optional"`
-	ClientID     types.String      `tfsdk:"client_id" json:"client_id,computed"`
-	ClientSecret types.String      `tfsdk:"client_secret" json:"client_secret,computed,no_refresh"`
-	ExpiresAt    timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	ID                            types.String      `tfsdk:"id" json:"id,computed"`
+	AccountID                     types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                        types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name                          types.String      `tfsdk:"name" json:"name,required"`
+	PreviousClientSecretExpiresAt timetypes.RFC3339 `tfsdk:"previous_client_secret_expires_at" json:"previous_client_secret_expires_at,optional,no_refresh" format:"date-time"`
+	ClientSecretVersion           types.Float64     `tfsdk:"client_secret_version" json:"client_secret_version,computed_optional,no_refresh"`
+	Duration                      types.String      `tfsdk:"duration" json:"duration,computed_optional"`
+	ClientID                      types.String      `tfsdk:"client_id" json:"client_id,computed"`
+	ClientSecret                  types.String      `tfsdk:"client_secret" json:"client_secret,computed,no_refresh"`
+	ExpiresAt                     timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessServiceTokenModel) MarshalJSON() (data []byte, err error) {

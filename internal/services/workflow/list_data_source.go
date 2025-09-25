@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package content_scanning_expression
+package workflow
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type ContentScanningExpressionsDataSource struct {
+type WorkflowsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*ContentScanningExpressionsDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*WorkflowsDataSource)(nil)
 
-func NewContentScanningExpressionsDataSource() datasource.DataSource {
-	return &ContentScanningExpressionsDataSource{}
+func NewWorkflowsDataSource() datasource.DataSource {
+	return &WorkflowsDataSource{}
 }
 
-func (d *ContentScanningExpressionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_content_scanning_expressions"
+func (d *WorkflowsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_workflows"
 }
 
-func (d *ContentScanningExpressionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkflowsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *ContentScanningExpressionsDataSource) Configure(ctx context.Context, re
 	d.client = client
 }
 
-func (d *ContentScanningExpressionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *ContentScanningExpressionsDataSourceModel
+func (d *WorkflowsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *WorkflowsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *ContentScanningExpressionsDataSource) Read(ctx context.Context, req dat
 		return
 	}
 
-	env := ContentScanningExpressionsResultListDataSourceEnvelope{}
+	env := WorkflowsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.ContentScanning.Payloads.List(ctx, params)
+	page, err := d.client.Workflows.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *ContentScanningExpressionsDataSource) Read(ctx context.Context, req dat
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[ContentScanningExpressionsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[WorkflowsResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 

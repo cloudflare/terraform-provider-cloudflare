@@ -32,21 +32,23 @@ func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams(_ context.Context) (pa
 }
 
 type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {
-	ID                 types.String                                                                       `tfsdk:"id" json:"id,computed"`
-	CloudflareEndpoint types.String                                                                       `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,computed"`
-	InterfaceAddress   types.String                                                                       `tfsdk:"interface_address" json:"interface_address,computed"`
-	Name               types.String                                                                       `tfsdk:"name" json:"name,computed"`
-	AllowNullCipher    types.Bool                                                                         `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed"`
-	BGP                customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelBGPDataSourceModel]         `tfsdk:"bgp" json:"bgp,computed"`
-	BGPStatus          customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelBGPStatusDataSourceModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
-	CreatedOn          timetypes.RFC3339                                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	CustomerEndpoint   types.String                                                                       `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`
-	Description        types.String                                                                       `tfsdk:"description" json:"description,computed"`
-	HealthCheck        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
-	InterfaceAddress6  types.String                                                                       `tfsdk:"interface_address6" json:"interface_address6,computed"`
-	ModifiedOn         timetypes.RFC3339                                                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel] `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
-	ReplayProtection   types.Bool                                                                         `tfsdk:"replay_protection" json:"replay_protection,computed"`
+	ID                     types.String                                                                                  `tfsdk:"id" json:"id,computed"`
+	CloudflareEndpoint     types.String                                                                                  `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,computed"`
+	InterfaceAddress       types.String                                                                                  `tfsdk:"interface_address" json:"interface_address,computed"`
+	Name                   types.String                                                                                  `tfsdk:"name" json:"name,computed"`
+	AllowNullCipher        types.Bool                                                                                    `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed"`
+	AutomaticReturnRouting types.Bool                                                                                    `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed"`
+	BGP                    customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelBGPDataSourceModel]                    `tfsdk:"bgp" json:"bgp,computed"`
+	BGPStatus              customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelBGPStatusDataSourceModel]              `tfsdk:"bgp_status" json:"bgp_status,computed"`
+	CreatedOn              timetypes.RFC3339                                                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CustomRemoteIdentities customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelCustomRemoteIdentitiesDataSourceModel] `tfsdk:"custom_remote_identities" json:"custom_remote_identities,computed"`
+	CustomerEndpoint       types.String                                                                                  `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`
+	Description            types.String                                                                                  `tfsdk:"description" json:"description,computed"`
+	HealthCheck            customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel]            `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6      types.String                                                                                  `tfsdk:"interface_address6" json:"interface_address6,computed"`
+	ModifiedOn             timetypes.RFC3339                                                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PSKMetadata            customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel]            `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
+	ReplayProtection       types.Bool                                                                                    `tfsdk:"replay_protection" json:"replay_protection,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelBGPDataSourceModel struct {
@@ -64,6 +66,10 @@ type MagicWANIPSECTunnelIPSECTunnelBGPStatusDataSourceModel struct {
 	CfSpeakerPort       types.Int64       `tfsdk:"cf_speaker_port" json:"cf_speaker_port,computed"`
 	CustomerSpeakerIP   types.String      `tfsdk:"customer_speaker_ip" json:"customer_speaker_ip,computed"`
 	CustomerSpeakerPort types.Int64       `tfsdk:"customer_speaker_port" json:"customer_speaker_port,computed"`
+}
+
+type MagicWANIPSECTunnelIPSECTunnelCustomRemoteIdentitiesDataSourceModel struct {
+	FqdnID types.String `tfsdk:"fqdn_id" json:"fqdn_id,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel struct {

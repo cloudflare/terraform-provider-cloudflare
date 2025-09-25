@@ -14,24 +14,25 @@ type MagicWANGRETunnelResultEnvelope struct {
 }
 
 type MagicWANGRETunnelModel struct {
-	ID                    types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	BGP                   *MagicWANGRETunnelBGPModel                                        `tfsdk:"bgp" json:"bgp,optional,no_refresh"`
-	CloudflareGREEndpoint types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required,no_refresh"`
-	CustomerGREEndpoint   types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required,no_refresh"`
-	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
-	Name                  types.String                                                      `tfsdk:"name" json:"name,required,no_refresh"`
-	Description           types.String                                                      `tfsdk:"description" json:"description,optional,no_refresh"`
-	InterfaceAddress6     types.String                                                      `tfsdk:"interface_address6" json:"interface_address6,optional,no_refresh"`
-	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional,no_refresh"`
-	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional,no_refresh"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
-	CreatedOn             timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
-	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed,no_refresh"`
-	ModifiedOn            timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
-	BGPStatus             customfield.NestedObject[MagicWANGRETunnelBGPStatusModel]         `tfsdk:"bgp_status" json:"bgp_status,computed,no_refresh"`
-	GRETunnel             customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
-	ModifiedGRETunnel     customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed,no_refresh"`
+	ID                     types.String                                                      `tfsdk:"id" json:"id,computed"`
+	AccountID              types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	BGP                    *MagicWANGRETunnelBGPModel                                        `tfsdk:"bgp" json:"bgp,optional,no_refresh"`
+	CloudflareGREEndpoint  types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required,no_refresh"`
+	CustomerGREEndpoint    types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required,no_refresh"`
+	InterfaceAddress       types.String                                                      `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
+	Name                   types.String                                                      `tfsdk:"name" json:"name,required,no_refresh"`
+	Description            types.String                                                      `tfsdk:"description" json:"description,optional,no_refresh"`
+	InterfaceAddress6      types.String                                                      `tfsdk:"interface_address6" json:"interface_address6,optional,no_refresh"`
+	AutomaticReturnRouting types.Bool                                                        `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed_optional,no_refresh"`
+	Mtu                    types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional,no_refresh"`
+	TTL                    types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional,no_refresh"`
+	HealthCheck            customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
+	CreatedOn              timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
+	Modified               types.Bool                                                        `tfsdk:"modified" json:"modified,computed,no_refresh"`
+	ModifiedOn             timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
+	BGPStatus              customfield.NestedObject[MagicWANGRETunnelBGPStatusModel]         `tfsdk:"bgp_status" json:"bgp_status,computed,no_refresh"`
+	GRETunnel              customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
+	ModifiedGRETunnel      customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed,no_refresh"`
 }
 
 func (m MagicWANGRETunnelModel) MarshalJSON() (data []byte, err error) {
@@ -73,20 +74,21 @@ type MagicWANGRETunnelBGPStatusModel struct {
 }
 
 type MagicWANGRETunnelGRETunnelModel struct {
-	ID                    types.String                                                         `tfsdk:"id" json:"id,computed"`
-	CloudflareGREEndpoint types.String                                                         `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
-	CustomerGREEndpoint   types.String                                                         `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
-	InterfaceAddress      types.String                                                         `tfsdk:"interface_address" json:"interface_address,computed"`
-	Name                  types.String                                                         `tfsdk:"name" json:"name,computed"`
-	BGP                   customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPModel]         `tfsdk:"bgp" json:"bgp,computed"`
-	BGPStatus             customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPStatusModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
-	CreatedOn             timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description           types.String                                                         `tfsdk:"description" json:"description,computed"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
-	InterfaceAddress6     types.String                                                         `tfsdk:"interface_address6" json:"interface_address6,computed"`
-	ModifiedOn            timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Mtu                   types.Int64                                                          `tfsdk:"mtu" json:"mtu,computed"`
-	TTL                   types.Int64                                                          `tfsdk:"ttl" json:"ttl,computed"`
+	ID                     types.String                                                         `tfsdk:"id" json:"id,computed"`
+	CloudflareGREEndpoint  types.String                                                         `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
+	CustomerGREEndpoint    types.String                                                         `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
+	InterfaceAddress       types.String                                                         `tfsdk:"interface_address" json:"interface_address,computed"`
+	Name                   types.String                                                         `tfsdk:"name" json:"name,computed"`
+	AutomaticReturnRouting types.Bool                                                           `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed"`
+	BGP                    customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPModel]         `tfsdk:"bgp" json:"bgp,computed"`
+	BGPStatus              customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPStatusModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
+	CreatedOn              timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description            types.String                                                         `tfsdk:"description" json:"description,computed"`
+	HealthCheck            customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6      types.String                                                         `tfsdk:"interface_address6" json:"interface_address6,computed"`
+	ModifiedOn             timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Mtu                    types.Int64                                                          `tfsdk:"mtu" json:"mtu,computed"`
+	TTL                    types.Int64                                                          `tfsdk:"ttl" json:"ttl,computed"`
 }
 
 type MagicWANGRETunnelGRETunnelBGPModel struct {
@@ -120,20 +122,21 @@ type MagicWANGRETunnelGRETunnelHealthCheckTargetModel struct {
 }
 
 type MagicWANGRETunnelModifiedGRETunnelModel struct {
-	ID                    types.String                                                                 `tfsdk:"id" json:"id,computed"`
-	CloudflareGREEndpoint types.String                                                                 `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
-	CustomerGREEndpoint   types.String                                                                 `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
-	InterfaceAddress      types.String                                                                 `tfsdk:"interface_address" json:"interface_address,computed"`
-	Name                  types.String                                                                 `tfsdk:"name" json:"name,computed"`
-	BGP                   customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelBGPModel]         `tfsdk:"bgp" json:"bgp,computed"`
-	BGPStatus             customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelBGPStatusModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
-	CreatedOn             timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description           types.String                                                                 `tfsdk:"description" json:"description,computed"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
-	InterfaceAddress6     types.String                                                                 `tfsdk:"interface_address6" json:"interface_address6,computed"`
-	ModifiedOn            timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Mtu                   types.Int64                                                                  `tfsdk:"mtu" json:"mtu,computed"`
-	TTL                   types.Int64                                                                  `tfsdk:"ttl" json:"ttl,computed"`
+	ID                     types.String                                                                 `tfsdk:"id" json:"id,computed"`
+	CloudflareGREEndpoint  types.String                                                                 `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
+	CustomerGREEndpoint    types.String                                                                 `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
+	InterfaceAddress       types.String                                                                 `tfsdk:"interface_address" json:"interface_address,computed"`
+	Name                   types.String                                                                 `tfsdk:"name" json:"name,computed"`
+	AutomaticReturnRouting types.Bool                                                                   `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed"`
+	BGP                    customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelBGPModel]         `tfsdk:"bgp" json:"bgp,computed"`
+	BGPStatus              customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelBGPStatusModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
+	CreatedOn              timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description            types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	HealthCheck            customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6      types.String                                                                 `tfsdk:"interface_address6" json:"interface_address6,computed"`
+	ModifiedOn             timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Mtu                    types.Int64                                                                  `tfsdk:"mtu" json:"mtu,computed"`
+	TTL                    types.Int64                                                                  `tfsdk:"ttl" json:"ttl,computed"`
 }
 
 type MagicWANGRETunnelModifiedGRETunnelBGPModel struct {

@@ -168,6 +168,7 @@ func setupMigrationTest(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic tests basic migration from v4 to v5
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -210,6 +211,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple tests migration with multiple hostnames
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -255,6 +257,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults tests migration when optional booleans are not specified
 // Note: Works around v4 provider issues by using ExpectError to handle the plan diff
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -300,6 +303,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations tests all combinations of boolean values
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -359,6 +363,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope tests account-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -399,6 +404,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope tests zone-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
+	t.Skip("access.api.error.conflict: previous certificate settings still being updated")
 	setupMigrationTest(t)
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

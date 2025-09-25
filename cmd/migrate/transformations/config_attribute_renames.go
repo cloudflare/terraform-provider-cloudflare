@@ -2,33 +2,51 @@ package transformations
 
 import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/zclconf/go-cty/cty"
 )
 
 // ApplyAttributeRenames applies simple attribute renames to a resource block
 func ApplyAttributeRenames(config *TransformationConfig, block *hclwrite.Block, resourceType string) error {
 	renames, exists := config.AttributeRenames[resourceType]
-	if !exists {
+	if !exists && resourceType != "cloudflare_page_rule" {
 		return nil // No renames for this resource type
 	}
 
 	body := block.Body()
 
-	for oldName, newName := range renames {
-		attr := body.GetAttribute(oldName)
-		if attr != nil {
-			// Get the expression tokens
-			expr := attr.Expr()
-			tokens := expr.BuildTokens(nil)
+	// Apply renames if they exist
+	if exists {
+		for oldName, newName := range renames {
+			attr := body.GetAttribute(oldName)
+			if attr != nil {
+				// Get the expression tokens
+				expr := attr.Expr()
+				tokens := expr.BuildTokens(nil)
 
-			// Remove old attribute
-			body.RemoveAttribute(oldName)
+				// Remove old attribute
+				body.RemoveAttribute(oldName)
 
-			// Set new attribute with same value
-			body.SetAttributeRaw(newName, tokens)
+				// Set new attribute with same value
+				body.SetAttributeRaw(newName, tokens)
+			}
 		}
 	}
 
+	// Special handling for cloudflare_page_rule to add status attribute if not present
+	if resourceType == "cloudflare_page_rule" {
+		applyPageRuleStatusDefault(body)
+	}
+
 	return nil
+}
+
+// applyPageRuleStatusDefault adds status = "active" if the attribute is not set
+func applyPageRuleStatusDefault(body *hclwrite.Body) {
+	// Check if status attribute exists
+	if body.GetAttribute("status") == nil {
+		// Add status = "active" as default for v5
+		body.SetAttributeValue("status", cty.StringVal("active"))
+	}
 }
 
 // ApplyAttributeRemovals removes specified attributes from a resource block
