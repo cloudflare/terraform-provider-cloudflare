@@ -4,13 +4,12 @@ import (
 	"context"
 	"slices"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 func normalizeEmptyAndNullString(data *basetypes.StringValue, stateData basetypes.StringValue) {

@@ -60,22 +60,25 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	var metadata WorkersScriptMetadataModel
-	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	contentType := r.ContentType.ValueString()
+	if r.Content.ValueString() != "" {
+		workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	if r.MainModule.ValueString() != "" {
-		if contentType == "" {
-			contentType = "application/javascript+module"
+		contentType := r.ContentType.ValueString()
+
+		if r.MainModule.ValueString() != "" {
+			if contentType == "" {
+				contentType = "application/javascript+module"
+			}
+			mainModuleName := r.MainModule.ValueString()
+			writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
+		} else {
+			if contentType == "" {
+				contentType = "application/javascript"
+			}
+			writeFileBytes("script", "script", contentType, workerBody, writer)
+			r.BodyPart = types.StringValue("script")
 		}
-		mainModuleName := r.MainModule.ValueString()
-		writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
-	} else {
-		if contentType == "" {
-			contentType = "application/javascript"
-		}
-		writeFileBytes("script", "script", contentType, workerBody, writer)
-		r.BodyPart = types.StringValue("script")
 	}
 
 	topLevelMetadata := r.WorkersScriptMetadataModel
@@ -112,8 +115,10 @@ type WorkersScriptMetadataModel struct {
 }
 
 type WorkersScriptMetadataAssetsModel struct {
-	Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Config              *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
+	JWT                 types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Directory           types.String                            `tfsdk:"directory" json:"-,optional"`
+	AssetManifestSHA256 types.String                            `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
@@ -146,11 +151,11 @@ type WorkersScriptMetadataBindingsModel struct {
 	StoreID                     types.String                                `tfsdk:"store_id" json:"store_id,optional"`
 	Algorithm                   jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format                      types.String                                `tfsdk:"format" json:"format,optional"`
-	Usages        customfield.Set[types.String]               `tfsdk:"usages" json:"usages,optional"`
+	Usages                      customfield.Set[types.String]               `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64                   types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk                      jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
 	WorkflowName                types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
-	VersionID     types.String                                `tfsdk:"version_id" json:"version_id,computed_optional"`
+	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,optional"`
 	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
 	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Environment                 types.String                                `tfsdk:"environment" json:"environment,optional"`

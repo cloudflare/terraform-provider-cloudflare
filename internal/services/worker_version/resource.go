@@ -66,7 +66,21 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	assets := data.Assets
+
+	var assets *WorkerVersionAssetsModel
+	if data.Assets != nil {
+		assets = &WorkerVersionAssetsModel{
+			Config:              data.Assets.Config,
+			JWT:                 data.Assets.JWT,
+			Directory:           data.Assets.Directory,
+			AssetManifestSHA256: data.Assets.AssetManifestSHA256,
+		}
+	}
+	err := handleAssets(ctx, r.client, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to upload assets", err.Error())
+		return
+	}
 
 	modules := data.Modules
 	if modules != nil {
@@ -77,6 +91,10 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 			}
 			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
 		}
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	dataBytes, err := data.MarshalJSON()
@@ -108,6 +126,11 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.Modules = modules
+
+	if assets != nil && data.Assets != nil {
+		assets.Config = data.Assets.Config
+	}
+
 	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -126,8 +149,8 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	stateModules := data.Modules
 	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
+	stateModules := data.Modules
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}

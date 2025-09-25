@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -43,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"content": schema.StringAttribute{
-				Description: "Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.",
+				Description: "Module or Service Worker contents of the Worker. Conflicts with `content_file`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"content_file": schema.StringAttribute{
-				Description: "Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.",
+				Description: "Path to a file containing the Module or Service Worker contents of the Worker. Conflicts with `content`. Must be paired with `content_sha256`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -139,6 +139,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
 						Sensitive:   true,
+					},
+					"directory": schema.StringAttribute{
+						Description: "Path to the directory containing asset files to upload.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRoot("assets").AtName("jwt")),
+						},
+					},
+					"asset_manifest_sha256": schema.StringAttribute{
+						Description: "The SHA-256 hash of the asset manifest of files to upload.",
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							ComputeSHA256HashOfAssetManifest(),
+						},
 					},
 				},
 			},
@@ -355,8 +369,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
 							Optional:    true,
-							Computed:    true,
-							Default:     stringdefault.StaticString("latest"),
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
 							Description: "List of allowed destination addresses.",
@@ -745,7 +757,12 @@ func (r *WorkersScriptResource) Schema(ctx context.Context, req resource.SchemaR
 
 func (r *WorkersScriptResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{
-		resourcevalidator.ExactlyOneOf(
+		resourcevalidator.AtLeastOneOf(
+			path.MatchRoot("content"),
+			path.MatchRoot("content_file"),
+			path.MatchRoot("assets"),
+		),
+		resourcevalidator.Conflicting(
 			path.MatchRoot("content"),
 			path.MatchRoot("content_file"),
 		),
