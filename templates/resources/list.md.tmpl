@@ -26,6 +26,10 @@ description: |-
 {{ if .HasImport -}}
 ## Import
 
+~> To import `cloudflare_list` resource with the nested `items` attribute, use the
+  `<account_id>/<list_id>/items` import id format. To import `cloudflare_list` resource for use with
+  `cloudflare_list_items`, use the `<account_id>/<list_id>/no_items` import id format.
+
 Import is supported using the following syntax:
 
 {{codefile "shell" .ImportFile}}

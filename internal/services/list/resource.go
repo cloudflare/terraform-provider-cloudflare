@@ -272,14 +272,21 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 
 	path_account_id := ""
 	path_list_id := ""
+	import_nested_items := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<list_id>",
+		"<account_id>/<list_id>/<items>",
 		&path_account_id,
 		&path_list_id,
+		&import_nested_items,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if import_nested_items != "items" && import_nested_items != "no_items" {
+		resp.Diagnostics.AddError("invalid import path", "Invalid import path. Must be <account_id>/<list_id>/items or <account_id>/<list_id>/no_items")
 		return
 	}
 
@@ -309,21 +316,22 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 	}
 	data = &env.Result
 
-	itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var items customfield.NestedObjectSet[ListItemModel]
-
-	if len(itemsSet) == 0 {
-		items = customfield.NullObjectSet[ListItemModel](ctx)
-	} else {
-		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+	if import_nested_items == "items" {
+		resp.Diagnostics.AddWarning("imported cloudflare_list with nested items", "Imported cloudflare_list with nested items. This will cause drift if used with cloudflare_list_item.")
+		itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
 		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		items, diags := customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+		resp.Diagnostics.Append(diags...)
+		data.Items = items
+	} else {
+		resp.Diagnostics.AddWarning("imported cloudflare_list without nested items", "Imported cloudflare_list without nested items. Using nested cloudflare_list.items will destroy existing items. You must import individual items via cloudflare_list_item. ")
+
+		data.Items = customfield.NullObjectSet[ListItemModel](ctx)
 	}
-	data.Items = items
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
