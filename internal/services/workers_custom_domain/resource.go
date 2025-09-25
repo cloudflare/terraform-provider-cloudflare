@@ -122,7 +122,7 @@ func (r *WorkersCustomDomainResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.Workers.Domains.Update(
 		ctx,
 		workers.DomainUpdateParams{
-			AccountID: cloudflare.F(data.ID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
