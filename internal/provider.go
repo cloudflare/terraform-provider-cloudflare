@@ -197,6 +197,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_network_hostname_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_scoring_integration"
@@ -491,6 +492,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_certificate.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
+		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
 		turnstile_widget.NewResource,
@@ -797,6 +799,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
+		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRouteDataSource,
+		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRoutesDataSource,
 		zero_trust_risk_behavior.NewZeroTrustRiskBehaviorDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationsDataSource,
