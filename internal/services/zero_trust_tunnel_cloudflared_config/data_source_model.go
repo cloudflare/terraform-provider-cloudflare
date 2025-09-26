@@ -37,7 +37,6 @@ func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context
 type ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel struct {
 	Ingress       customfield.NestedObjectList[ZeroTrustTunnelCloudflaredConfigConfigIngressDataSourceModel]   `tfsdk:"ingress" json:"ingress,computed"`
 	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel] `tfsdk:"origin_request" json:"originRequest,computed"`
-	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel]   `tfsdk:"warp_routing" json:"warp-routing,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressDataSourceModel struct {
@@ -91,8 +90,4 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessDataSourceModel st
 	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed"`
 	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed"`
 	Required types.Bool                     `tfsdk:"required" json:"required,computed"`
-}
-
-type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }

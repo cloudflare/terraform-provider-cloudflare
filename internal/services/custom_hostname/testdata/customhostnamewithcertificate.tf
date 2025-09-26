@@ -13,4 +13,20 @@ resource "cloudflare_custom_hostname" "%[2]s" {
 %[5]s
 	EOT
   }
+  
+  lifecycle {
+    ignore_changes = [
+      created_at,
+      ownership_verification,
+      ownership_verification_http,
+      ssl.certificate_authority,
+      ssl.custom_certificate,
+      ssl.custom_key,
+      ssl.method,
+      ssl.type,
+      ssl.wildcard,
+      status,
+      verification_errors
+    ]
+  }
 }

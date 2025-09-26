@@ -199,7 +199,6 @@ func processStateFile(stateFile string, dryRun bool) error {
 }
 
 func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImports bool) error {
-	fmt.Printf("    DEBUG: Processing file %s\n", filename)
 
 	// Read the file
 	originalBytes, err := os.ReadFile(filename)
@@ -214,7 +213,6 @@ func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImpo
 	}
 
 	if string(originalBytes) == string(transformedBytes) {
-		fmt.Printf("    DEBUG: No changes needed for %s\n", filename)
 		return nil
 	}
 
@@ -248,6 +246,8 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 	contentStr = transformLoadBalancerPoolHeaders(contentStr)
 	// Also transform tiered_cache values at the string level
 	contentStr = transformTieredCacheValues(contentStr)
+	// Transform page_rule configuration (remove minify, fix cache_ttl_by_status format)
+	contentStr = transformPageRuleConfig(contentStr)
 	content = []byte(contentStr)
 
 	file, hcl_diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
@@ -330,6 +330,7 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 		if isAccessMutualTLSHostnameSettingsResource(block) {
 			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
 		}
+
 
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)

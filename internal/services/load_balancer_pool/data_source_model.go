@@ -30,6 +30,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	MinimumOrigins     types.Int64                                                                 `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
 	ModifiedOn         types.String                                                                `tfsdk:"modified_on" json:"modified_on,computed"`
 	Monitor            types.String                                                                `tfsdk:"monitor" json:"monitor,computed"`
+	MonitorGroup       types.String                                                                `tfsdk:"monitor_group" json:"monitor_group,computed"`
 	Name               types.String                                                                `tfsdk:"name" json:"name,computed"`
 	NotificationEmail  types.String                                                                `tfsdk:"notification_email" json:"notification_email,computed"`
 	CheckRegions       customfield.List[types.String]                                              `tfsdk:"check_regions" json:"check_regions,computed"`

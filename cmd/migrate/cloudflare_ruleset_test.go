@@ -840,3 +840,101 @@ func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) 
 	RunTransformationTests(t, tests, transformFileWithYAML)
 }
 
+func TestCloudflareRulesetMixedStaticDynamic(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "mixed static and dynamic rule blocks should concatenate into single rules attribute",
+			Config: `
+resource "cloudflare_ruleset" "http-request-transform" {
+  kind    = "zone"
+  name    = "default"
+  phase   = "http_request_transform"
+  zone_id = cloudflare_zone.usercontent_com.id
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        path {
+          expression = "concat(\"/files\",http.request.uri.path)"
+        }
+      }
+    }
+    description = "Add container prefix"
+    enabled     = true
+    expression  = "http.host in {${local.rewritten_hosts_expr}}"
+  }
+  dynamic "rules" {
+    for_each = local.request_origin_rules_web_sandbox
+    content {
+      action = "rewrite"
+      action_parameters {
+        uri {
+          path {
+            expression = "concat(\"/${rules.value.container_name}\",http.request.uri.path)"
+          }
+        }
+      }
+      description = "Add container prefix for ${rules.value.cname}"
+      enabled     = true
+      expression  = "(http.host eq \"${rules.value.cname}.usercontent.com\")"
+    }
+  }
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        query {
+          expression = "http.request.headers[\"authorization\"][0]"
+        }
+      }
+    }
+    description = "Test auth rewrite"
+    enabled     = true
+    expression  = "(http.cookie eq \"test=test\")"
+  }
+}
+`,
+			Expected: []string{`rules = concat([{
+    action = "rewrite"
+    action_parameters = {
+      uri = {
+        path = {
+          expression = "concat(\"/files\",http.request.uri.path)"
+        }
+      }
+    }
+    description = "Add container prefix"
+    enabled     = true
+    expression  = "http.host in {${local.rewritten_hosts_expr}}"
+    }, {
+    action = "rewrite"
+    action_parameters = {
+      uri = {
+        query = {
+          expression = "http.request.headers[\"authorization\"][0]"
+        }
+      }
+    }
+    description = "Test auth rewrite"
+    enabled     = true
+    expression  = "(http.cookie eq \"test=test\")"
+    }], [for rules in local.request_origin_rules_web_sandbox : {
+    action      = "rewrite"
+    description = "Add container prefix for ${rules.cname}"
+    enabled     = true
+    expression  = "(http.host eq \"${rules.cname}.usercontent.com\")"
+    action_parameters = {
+      uri = {
+        path = {
+          expression = "concat(\"/${rules.container_name}\",http.request.uri.path)"
+        }
+      }
+    }
+  }])`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileWithYAML)
+}
+

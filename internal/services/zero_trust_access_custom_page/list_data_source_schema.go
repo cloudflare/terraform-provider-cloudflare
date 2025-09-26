@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -47,21 +46,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),
 							},
 						},
-						"app_count": schema.Int64Attribute{
-							Description: "Number of apps the custom page is assigned to.",
-							Computed:    true,
-						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
 						"uid": schema.StringAttribute{
 							Description: "UUID.",
 							Computed:    true,
-						},
-						"updated_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

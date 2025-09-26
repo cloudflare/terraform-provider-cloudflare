@@ -3,7 +3,8 @@ package zero_trust_access_application
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -19,9 +20,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessApplicationResource)(nil)
@@ -1476,13 +1474,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
 						},
 					},
-					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
 					"custom_attributes": schema.ListNestedAttribute{
 						Optional: true,
 						Validators: []validator.List{
@@ -1609,10 +1600,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.UseStateForUnknown(),
 						},
-					},
-					"updated_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
 					},
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

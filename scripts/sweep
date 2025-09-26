@@ -1,0 +1,664 @@
+#!/usr/bin/env bash
+
+# Account-based sweeper script for Terraform Cloudflare Provider
+# This script runs sweepers for all zones under a specified account
+# Usage: ./scripts/run-account-sweeper <account_id>
+
+set -e
+
+# Configuration
+SWEEP_TIMEOUT="10m"
+DEBUG_LOGS=${DEBUG_LOGS:-false}
+LOG_DIR="./sweep-logs"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
+
+# Create log directory
+mkdir -p "$LOG_DIR"
+
+# Function to log with timestamp
+log() {
+    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+# Function for debug logging (only outputs when DEBUG_LOGS=true)
+debug_log() {
+    if [ "$DEBUG_LOGS" = "true" ]; then
+        log "$1"
+    fi
+}
+
+# Usage information
+show_usage() {
+    echo "Usage: $0 --account <account_id> [options]"
+    echo "       $0 <account_id> [options]  (legacy format)"
+    echo ""
+    echo "Arguments:"
+    echo "  --account ID       Cloudflare Account ID to sweep resources for"
+    echo ""
+    echo "Options:"
+    echo "  --help, -h         Show this help message"
+    echo "  --zone ID          Target a specific zone ID (filters zone-level sweepers)"
+    echo "  --resource NAME    Target a specific resource type (e.g., load_balancer, dns_record)"
+    echo "  --sweep-timeout T  Timeout for sweeper operations (default: $SWEEP_TIMEOUT)"
+    echo "  --debug            Enable debug logging (default: disabled)"
+    echo "  --dry-run          Show what would be swept without executing"
+    echo ""
+    echo "Environment variables:"
+    echo "  CLOUDFLARE_API_TOKEN    Required - Your Cloudflare API token"
+    echo "  DEBUG_LOGS             Enable debug logging (default: false)"
+    echo ""
+    echo "Examples:"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b --debug"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b --resource load_balancer"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b --zone 32b08b824a1707e468c6e839df23e57f --resource ruleset"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b --sweep-timeout 15m"
+    echo "  $0 c03814971cc44525d34173ca738b615b --resource dns_record --debug  # Legacy format"
+    echo "  DEBUG_LOGS=true $0 --account c03814971cc44525d34173ca738b615b"
+    exit 0
+}
+
+# Function to check if a resource is account-level
+is_account_level_resource() {
+    local resource="$1"
+    local account_services
+    account_services=$(get_account_level_services)
+    
+    echo "$account_services" | grep -q "^$resource$"
+}
+
+# Function to check if a resource is zone-level
+is_zone_level_resource() {
+    local resource="$1"
+    local zone_services
+    zone_services=$(get_zone_level_services)
+    
+    echo "$zone_services" | grep -q "^$resource$"
+}
+
+# Function to validate prerequisites
+validate_prerequisites() {
+    local account_id="$1"
+    local target_resource="$2"
+    
+    # Check if account_id is provided and looks like a valid Cloudflare account ID
+    if [ -z "$account_id" ]; then
+        log "${RED}Error: Account ID is required${NC}"
+        show_usage
+    fi
+    
+    # Validate account ID format (32 character hex string)
+    if ! [[ "$account_id" =~ ^[a-f0-9]{32}$ ]]; then
+        log "${RED}Error: Account ID should be a 32-character hexadecimal string${NC}"
+        exit 1
+    fi
+    
+    # Validate target zone format if specified (32 character hex string)
+    if [ -n "$TARGET_ZONE" ] && ! [[ "$TARGET_ZONE" =~ ^[a-f0-9]{32}$ ]]; then
+        log "${RED}Error: Zone ID should be a 32-character hexadecimal string${NC}"
+        exit 1
+    fi
+    
+    # Validate target resource if specified
+    if [ -n "$target_resource" ]; then
+        if ! is_account_level_resource "$target_resource" && ! is_zone_level_resource "$target_resource"; then
+            log "${RED}Error: Unknown resource type '$target_resource'${NC}"
+            log "${WHITE}Available account-level resources:${NC}"
+            get_account_level_services | sed 's/^/  /'
+            log "${WHITE}Available zone-level resources:${NC}"
+            get_zone_level_services | sed 's/^/  /'
+            exit 1
+        fi
+        
+        # Check if the resource has a sweeper
+        if ! has_sweeper "$target_resource"; then
+            log "${RED}Error: Resource '$target_resource' does not have a sweeper implementation${NC}"
+            exit 1
+        fi
+        
+        log "${GREEN}Target resource '$target_resource' validated${NC}"
+    fi
+    
+    # Check if CLOUDFLARE_API_TOKEN is set
+    if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+        log "${RED}Error: CLOUDFLARE_API_TOKEN environment variable is required${NC}"
+        exit 1
+    fi
+    
+    # Check if curl is available for API calls
+    if ! command -v curl >/dev/null 2>&1; then
+        log "${RED}Error: curl is required but not installed${NC}"
+        exit 1
+    fi
+    
+    # Check if jq is available for JSON parsing
+    if ! command -v jq >/dev/null 2>&1; then
+        log "${RED}Error: jq is required but not installed${NC}"
+        exit 1
+    fi
+    
+    # Check if go is available
+    if ! command -v go >/dev/null 2>&1; then
+        log "${RED}Error: go is required but not installed${NC}"
+        exit 1
+    fi
+    
+    log "${GREEN}Prerequisites validated successfully${NC}"
+}
+
+# Function to fetch zones for an account using Cloudflare API
+fetch_zones_for_account() {
+    local account_id="$1"
+    local zones_file="$LOG_DIR/zones_${account_id}.json"
+    
+    log "${WHITE}Fetching zones for account: $account_id${NC}" >&2
+    
+    # Make API request to list zones for the account
+    local api_response=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?account.id=${account_id}" \
+        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+        -H "Content-Type: application/json")
+    
+    # Check if we got any response
+    if [ -z "$api_response" ]; then
+        log "${RED}Error: No response from Cloudflare API${NC}" >&2
+        exit 1
+    fi
+    
+    # Check if the response is valid JSON and successful
+    local success=$(echo "$api_response" | jq -r '.success // false' 2>/dev/null)
+    if [ "$success" != "true" ]; then
+        local errors=$(echo "$api_response" | jq -r '.errors[]?.message // "Unknown error"' 2>/dev/null || echo "Invalid API response")
+        log "${RED}Error fetching zones from Cloudflare API: $errors${NC}" >&2
+        debug_log "${WHITE}API Response: $api_response${NC}" >&2
+        # Create empty zones file and return it instead of exiting
+        echo "[]" > "$zones_file"
+        echo "$zones_file"
+        return
+    fi
+    
+    # Save zones to file and ensure it's written before continuing
+    echo "$api_response" | jq '.result' > "$zones_file"
+    
+    # Verify the file was created and is readable
+    if [ ! -f "$zones_file" ]; then
+        log "${RED}Error: Failed to create zones file: $zones_file${NC}" >&2
+        exit 1
+    fi
+    
+    # Count zones
+    local zone_count=$(jq length "$zones_file" 2>/dev/null || echo "0")
+    log "${GREEN}Found $zone_count zones for account $account_id${NC}" >&2
+    
+    if [ "$DEBUG_LOGS" = "true" ] && [ "$zone_count" -gt 0 ]; then
+        log "${WHITE}Zone IDs:${NC}" >&2
+        jq -r '.[].id' "$zones_file" 2>/dev/null | while read -r zone_id; do
+            local zone_name=$(jq -r ".[] | select(.id==\"$zone_id\") | .name" "$zones_file" 2>/dev/null || echo "unknown")
+            log "  - $zone_id ($zone_name)" >&2
+        done
+    fi
+    
+    echo "$zones_file"
+}
+
+# Define account-level services (resources that use CLOUDFLARE_ACCOUNT_ID)
+get_account_level_services() {
+    cat << 'EOF'
+account
+account_member
+account_role
+account_token
+r2_bucket
+workers_kv_namespace
+workers_script
+workers_route
+workers_cron_trigger
+workers_custom_domain
+workers_for_platforms_dispatch_namespace
+zero_trust_access_application
+zero_trust_access_group
+zero_trust_access_identity_provider
+zero_trust_access_policy
+zero_trust_access_service_token
+zero_trust_access_custom_page
+zero_trust_access_key_configuration
+zero_trust_access_mtls_certificate
+zero_trust_access_mtls_hostname_settings
+zero_trust_access_short_lived_certificate
+zero_trust_access_tag
+zero_trust_device_custom_profile
+zero_trust_device_custom_profile_local_domain_fallback
+zero_trust_device_default_profile_certificates
+zero_trust_device_managed_networks
+zero_trust_dlp_custom_profile
+zero_trust_dlp_entry
+zero_trust_gateway_proxy_endpoint
+zero_trust_gateway_settings
+zero_trust_list
+zero_trust_organization
+zero_trust_tunnel_cloudflared
+zero_trust_tunnel_cloudflared_route
+zero_trust_tunnel_cloudflared_token
+list
+list_item
+address_map
+api_shield
+api_token
+load_balancer
+load_balancer_monitor
+load_balancer_pool
+logpull_retention
+logpush_job
+logpush_ownership_challenge
+magic_wan_ipsec_tunnel
+magic_wan_gre_tunnel
+magic_wan_static_route
+magic_transit_connector
+notification_policy_webhooks
+observatory_scheduled_test
+origin_ca_certificate
+pages_domain
+pages_project
+queue
+turnstile_widget
+EOF
+}
+
+# Define zone-level services (resources that use CLOUDFLARE_ZONE_ID)
+get_zone_level_services() {
+    cat << 'EOF'
+dns_record
+page_rule
+zone_lockdown
+zone_setting
+zone_cache_variants
+zone_cache_reserve
+zone_subscription
+zone_hold
+ruleset
+snippet
+snippet_rules
+snippets
+spectrum_application
+custom_ssl
+custom_pages
+authenticated_origin_pulls
+authenticated_origin_pulls_certificate
+bot_management
+certificate_pack
+argo_smart_routing
+argo_tiered_caching
+tiered_cache
+regional_tiered_cache
+url_normalization_settings
+waiting_room_settings
+dns_settings_internal_view
+dns_zone_transfers_acl
+dns_zone_transfers_tsig
+email_routing_catch_all
+email_routing_dns
+email_routing_rule
+healthcheck
+managed_transforms
+cloud_connector_rules
+EOF
+}
+
+# Function to check if a service has a sweeper implementation
+has_sweeper() {
+    local service="$1"
+    local service_path="./internal/services/$service"
+    
+    # Look for AddTestSweepers in test files
+    local test_files=("$service_path"/*_test.go)
+    
+    for test_file in "${test_files[@]}"; do
+        if [ -f "$test_file" ]; then
+            # Look for uncommented AddTestSweepers calls
+            if grep -q "^[[:space:]]*resource\.AddTestSweepers" "$test_file" 2>/dev/null; then
+                return 0
+            fi
+        fi
+    done
+    
+    return 1
+}
+
+# Function to run sweeper for a service
+run_sweeper() {
+    local service="$1"
+    local account_id="$2"
+    local zone_id="$3"  # Optional, empty for account-level services
+    local log_file="$LOG_DIR/${service}-sweeper.log"
+    local start_time=$(date +%s)
+    
+    # Check if this service has a sweeper implementation
+    if ! has_sweeper "$service"; then
+        log "${YELLOW}Skipping sweeper for $service (no sweeper implemented)${NC}"
+        return 0
+    fi
+    
+    # Set environment variables
+    export CLOUDFLARE_ACCOUNT_ID="$account_id"
+    if [ -n "$zone_id" ]; then
+        export CLOUDFLARE_ZONE_ID="$zone_id"
+        log "${WHITE}Sweeping zone-level service: $service (zone: $zone_id)${NC}"
+    else
+        log "${WHITE}Sweeping account-level service: $service (account: $account_id)${NC}"
+    fi
+    
+    # Build sweeper command
+    local service_path="./internal/services/$service"
+    local sweeper_name="cloudflare_${service}"
+    local test_cmd="TF_LOG=debug TF_ACC=1 go test -v \"$service_path\" -sweep=all -sweep-run=\"$sweeper_name\" -timeout \"$SWEEP_TIMEOUT\""
+    
+    debug_log "${WHITE}Running command: $test_cmd${NC}"
+    
+    # Run the sweeper command
+    log "Running sweeper..." > "$log_file"
+    if eval "$test_cmd" >> "$log_file" 2>&1; then
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        log "${GREEN}✓ Sweeper completed: $service (${duration}s)${NC}"
+        return 0
+    else
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        log "${RED}✗ Sweeper failed: $service (${duration}s) - check $log_file${NC}"
+        return 1
+    fi
+}
+
+# Function to run account-level sweepers
+run_account_sweepers() {
+    local account_id="$1"
+    local dry_run="$2"
+    local target_resource="$3"
+    
+    log "${WHITE}=== Running Account-Level Sweepers ===${NC}"
+    
+    local account_services
+    if [ -n "$target_resource" ]; then
+        # Only run the specific target resource if it's account-level
+        if is_account_level_resource "$target_resource"; then
+            account_services="$target_resource"
+            log "${WHITE}Targeting specific account-level resource: $target_resource${NC}"
+        else
+            log "${WHITE}Target resource '$target_resource' is not account-level, skipping account sweepers${NC}"
+            echo ""
+            return
+        fi
+    else
+        account_services=$(get_account_level_services)
+    fi
+    
+    local total=0
+    local success=0
+    local failed=0
+    
+    for service in $account_services; do
+        if ! has_sweeper "$service"; then
+            debug_log "Skipping $service (no sweeper)"
+            continue
+        fi
+        
+        total=$((total + 1))
+        
+        if [ "$dry_run" = "true" ]; then
+            log "${WHITE}[DRY-RUN] Would sweep account-level service: $service${NC}"
+            continue
+        fi
+        
+        if run_sweeper "$service" "$account_id" ""; then
+            success=$((success + 1))
+        else
+            failed=$((failed + 1))
+        fi
+    done
+    
+    if [ "$dry_run" != "true" ]; then
+        log "${WHITE}Account sweepers complete: $success success, $failed failed (of $total total)${NC}"
+    else
+        log "${WHITE}[DRY-RUN] Would run $total account-level sweepers${NC}"
+    fi
+    echo ""
+}
+
+# Function to run zone-level sweepers
+run_zone_sweepers() {
+    local account_id="$1" 
+    local zones_file="$2"
+    local dry_run="$3"
+    local target_resource="$4"
+    local target_zone="$5"
+    
+    log "${WHITE}=== Running Zone-Level Sweepers ===${NC}"
+    
+    local zone_services
+    if [ -n "$target_resource" ]; then
+        # Only run the specific target resource if it's zone-level
+        if is_zone_level_resource "$target_resource"; then
+            zone_services="$target_resource"
+            log "${WHITE}Targeting specific zone-level resource: $target_resource${NC}"
+        else
+            log "${WHITE}Target resource '$target_resource' is not zone-level, skipping zone sweepers${NC}"
+            return
+        fi
+    else
+        zone_services=$(get_zone_level_services)
+    fi
+    
+    # Get zone count
+    local zone_count=$(jq length "$zones_file" 2>/dev/null || echo "0")
+    
+    if [ -z "$zone_count" ]; then
+        log "${RED}Error: zone_count is empty, zones_file='$zones_file'${NC}"
+        zone_count=0
+    fi
+    
+    if [ "$zone_count" -eq 0 ]; then
+        log "${YELLOW}No zones found for account $account_id${NC}"
+        return
+    fi
+    
+    local total_sweeps=0
+    local successful_sweeps=0
+    local failed_sweeps=0
+    
+    # Process each zone
+    for ((i = 0; i < zone_count; i++)); do
+        local zone_id=$(jq -r ".[$i].id" "$zones_file")
+        local zone_name=$(jq -r ".[$i].name" "$zones_file")
+        
+        # Skip zones not matching target zone if specified
+        if [ -n "$target_zone" ] && [ "$zone_id" != "$target_zone" ]; then
+            debug_log "Skipping zone $zone_name ($zone_id) - not matching target zone $target_zone"
+            continue
+        fi
+        
+        log "${WHITE}Processing zone: $zone_name ($zone_id)${NC}"
+        
+        for service in $zone_services; do
+            if ! has_sweeper "$service"; then
+                debug_log "Skipping $service (no sweeper)"
+                continue
+            fi
+            
+            total_sweeps=$((total_sweeps + 1))
+            
+            if [ "$dry_run" = "true" ]; then
+                log "${WHITE}[DRY-RUN] Would sweep zone-level service: $service for zone $zone_name${NC}"
+                continue
+            fi
+            
+            if run_sweeper "$service" "$account_id" "$zone_id"; then
+                successful_sweeps=$((successful_sweeps + 1))
+            else
+                failed_sweeps=$((failed_sweeps + 1))
+            fi
+        done
+        
+        if [ "$dry_run" != "true" ]; then
+            echo ""
+        fi
+    done
+    
+    if [ "$dry_run" != "true" ]; then
+        if [ -n "$target_resource" ]; then
+            log "${WHITE}Zone sweepers complete for '$target_resource': $successful_sweeps success, $failed_sweeps failed (across $zone_count zones)${NC}"
+        else
+            log "${WHITE}Zone sweepers complete: $successful_sweeps success, $failed_sweeps failed (of $total_sweeps total across $zone_count zones)${NC}"
+        fi
+    else
+        if [ -n "$target_resource" ]; then
+            log "${WHITE}[DRY-RUN] Would sweep '$target_resource' for $zone_count zones${NC}"
+        else
+            log "${WHITE}[DRY-RUN] Would run sweepers for $zone_count zones${NC}"
+        fi
+    fi
+}
+
+# Main execution function
+main() {
+    local account_id="$1"
+    local dry_run="$2"
+    local target_resource="$3"
+    local target_zone="$4"
+    local start_time=$(date +%s)
+    
+    log "${GREEN}Starting account-based sweeper for account: $account_id${NC}"
+    if [ -n "$target_resource" ]; then
+        log "${WHITE}Targeting specific resource: $target_resource${NC}"
+    fi
+    if [ "$dry_run" = "true" ]; then
+        log "${YELLOW}DRY-RUN MODE: No sweepers will be executed${NC}"
+    fi
+    log "${WHITE}Logs will be written to: $LOG_DIR${NC}"
+    log "${WHITE}Sweeper timeout: $SWEEP_TIMEOUT${NC}"
+    echo ""
+    
+    # Clean up old logs
+    rm -f "$LOG_DIR"/*.log "$LOG_DIR"/zones_*.json
+    
+    # Determine if we need to fetch zones
+    local need_zones=true
+    local zones_file=""
+    local zone_count=0
+    
+    if [ -n "$target_resource" ] && is_account_level_resource "$target_resource"; then
+        # If targeting only an account-level resource, no need to fetch zones
+        log "${WHITE}Target resource is account-level only, skipping zone fetch${NC}"
+        need_zones=false
+        zone_count=0
+        echo ""
+    elif [ -n "$target_zone" ]; then
+        # If targeting a specific zone, create a minimal zones file with just that zone
+        log "${WHITE}Targeting specific zone: $target_zone${NC}"
+        zones_file="$LOG_DIR/zones_${account_id}.json"
+        # Create a minimal zones file with just the target zone
+        echo "[{\"id\":\"$target_zone\",\"name\":\"target-zone\"}]" > "$zones_file"
+        zone_count=1
+        echo ""
+    else
+        # Fetch zones for the account
+        zones_file=$(fetch_zones_for_account "$account_id")
+        debug_log "${WHITE}fetch_zones_for_account returned: '$zones_file'${NC}"
+        debug_log "${WHITE}File exists check: [ -f '$zones_file' ] = $([ -f "$zones_file" ] && echo 'true' || echo 'false')${NC}"
+        if [ -n "$zones_file" ] && [ -f "$zones_file" ]; then
+            zone_count=$(jq length "$zones_file" 2>/dev/null || echo "0")
+            debug_log "${WHITE}Zone count from jq: '$zone_count'${NC}"
+        else
+            log "${RED}Error: Zones file not created properly${NC}"
+            log "${RED}zones_file='$zones_file', exists=$([ -f "$zones_file" ] && echo 'yes' || echo 'no')${NC}"
+            zone_count=0
+        fi
+        echo ""
+    fi
+    
+    # Run account-level sweepers first
+    run_account_sweepers "$account_id" "$dry_run" "$target_resource"
+    
+    # Run zone-level sweepers for each zone (only if we have zones or need to run zone sweepers)
+    if [ "$need_zones" = "true" ]; then
+        run_zone_sweepers "$account_id" "$zones_file" "$dry_run" "$target_resource" "$target_zone"
+    fi
+    
+    # Final summary
+    local end_time=$(date +%s)
+    local total_duration=$((end_time - start_time))
+    local minutes=$((total_duration / 60))
+    local seconds=$((total_duration % 60))
+    
+    echo ""
+    log "=== FINAL SUMMARY ==="
+    log "Total execution time: ${minutes}m ${seconds}s"
+    log "Account ID: $account_id"
+    log "Zones processed: $zone_count"
+    if [ "$dry_run" != "true" ]; then
+        log "Check individual log files in $LOG_DIR for detailed results"
+    fi
+    
+    if [ "$dry_run" != "true" ]; then
+        log "${GREEN}Account sweep completed!${NC}"
+    else
+        log "${GREEN}Dry run completed!${NC}"
+    fi
+}
+
+# Parse command line arguments
+ACCOUNT_ID=""
+DRY_RUN="false"
+TARGET_RESOURCE=""
+TARGET_ZONE=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help|-h)
+            show_usage
+            ;;
+        --account)
+            ACCOUNT_ID="$2"
+            shift 2
+            ;;
+        --zone)
+            TARGET_ZONE="$2"
+            shift 2
+            ;;
+        --resource)
+            TARGET_RESOURCE="$2"
+            shift 2
+            ;;
+        --sweep-timeout)
+            SWEEP_TIMEOUT="$2"
+            shift 2
+            ;;
+        --debug)
+            DEBUG_LOGS="true"
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN="true"
+            shift
+            ;;
+        *)
+            if [ -z "$ACCOUNT_ID" ]; then
+                ACCOUNT_ID="$1"  # Legacy format support
+            else
+                log "${RED}Error: Unknown argument '$1'${NC}"
+                show_usage
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Validate arguments and prerequisites
+validate_prerequisites "$ACCOUNT_ID" "$TARGET_RESOURCE"
+
+# Run main function
+main "$ACCOUNT_ID" "$DRY_RUN" "$TARGET_RESOURCE" "$TARGET_ZONE"

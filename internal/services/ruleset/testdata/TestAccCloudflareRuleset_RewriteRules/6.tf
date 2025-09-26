@@ -11,11 +11,8 @@ resource "cloudflare_ruleset" "my_ruleset" {
       action     = "rewrite"
       action_parameters = {
         uri = {
-          path = {
-            expression = "regex_replace(http.request.uri.path, \"/foo$\", \"/bar\")"
-          }
           query = {
-            expression = "regex_replace(http.request.uri.query, \"foo=bar\", \"\")"
+            value = "foo=bar"
           }
         }
       }

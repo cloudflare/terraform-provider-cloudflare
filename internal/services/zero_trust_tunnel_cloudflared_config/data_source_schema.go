@@ -226,16 +226,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"warp_routing": schema.SingleNestedAttribute{
-						Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-						},
-					},
 				},
 			},
 		},

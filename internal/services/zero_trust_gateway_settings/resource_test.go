@@ -53,6 +53,44 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "settings.antivirus.notification_settings.support_url", "https://hello.com/"),
 					resource.TestCheckResourceAttr(name, "settings.body_scanning.inspection_mode", "deep"),
 					resource.TestCheckResourceAttr(name, "settings.browser_isolation.non_identity_enabled", "false"),
+					resource.TestCheckResourceAttr(name, "settings.host_selector.enabled", "false"),
+					resource.TestCheckResourceAttr(name, "settings.inspection.mode", "static"),
+				),
+			},
+			{
+				Config: testAccCloudflareTeamsAccountBasicMinimal1(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "settings.tls_decrypt.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.protocol_detection.enabled", "false"),
+					resource.TestCheckResourceAttr(name, "settings.activity_log.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.enabled_download_phase", "false"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.enabled_upload_phase", "false"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.fail_closed", "true"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.notification_settings.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.notification_settings.msg", "msg"),
+					resource.TestCheckResourceAttr(name, "settings.antivirus.notification_settings.support_url", "https://hello.com/"),
+					resource.TestCheckResourceAttr(name, "settings.extended_email_matching.enabled", "true"),
+				),
+			},
+			{
+				Config: testAccCloudflareTeamsAccountBasicMinimal2(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "settings.browser_isolation.url_browser_isolation_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.browser_isolation.non_identity_enabled", "false"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.name", rnd),
+					resource.TestCheckResourceAttr(name, "settings.block_page.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.footer_text", "footer"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.header_text", "header"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.mailto_subject", "hello"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.mailto_address", "test@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.background_color", "#000000"),
+					resource.TestCheckResourceAttr(name, "settings.block_page.logo_path", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "settings.body_scanning.inspection_mode", "deep"),
+					resource.TestCheckResourceAttr(name, "settings.extended_email_matching.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "settings.host_selector.enabled", "false"),
+					resource.TestCheckResourceAttr(name, "settings.extended_email_matching.enabled", "true"),
 				),
 			},
 		},
@@ -61,4 +99,12 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 
 func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamsaccountbasic.tf", rnd, accountID)
+}
+
+func testAccCloudflareTeamsAccountBasicMinimal1(rnd, accountID string) string {
+	return acctest.LoadTestCase("teamsaccountminimal1.tf", rnd, accountID)
+}
+
+func testAccCloudflareTeamsAccountBasicMinimal2(rnd, accountID string) string {
+	return acctest.LoadTestCase("teamsaccountminimal2.tf", rnd, accountID)
 }
