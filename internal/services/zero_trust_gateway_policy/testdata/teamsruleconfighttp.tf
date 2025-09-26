@@ -8,7 +8,6 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   traffic = "any(http.request.uri.security_category[*] in {22}) or any(http.request.uri.content_category[*] in {34})"
   rule_settings = {
     add_headers = {"Xhello": ["abcd", "efg"]}
-    untrusted_cert ={ "action": "pass_through"}
     check_session = {
       duration = "1h2m9s"
       enforce = true
