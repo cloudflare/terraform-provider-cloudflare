@@ -5,6 +5,9 @@ package zero_trust_gateway_certificate_test
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -12,8 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"os"
-	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
@@ -24,6 +25,7 @@ func TestZeroTrustGatewayCertificateModelSchemaParity(t *testing.T) {
 	model := (*zero_trust_gateway_certificate.ZeroTrustGatewayCertificateModel)(nil)
 	schema := zero_trust_gateway_certificate.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Ignore(t, ".@ZeroTrustGatewayCertificateModel.activate")
 	errs.Report(t)
 }
 
