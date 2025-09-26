@@ -37,5 +37,5 @@ type R2BucketLockRulesModel struct {
 type R2BucketLockRulesConditionModel struct {
 	MaxAgeSeconds types.Int64       `tfsdk:"max_age_seconds" json:"maxAgeSeconds,optional"`
 	Type          types.String      `tfsdk:"type" json:"type,required"`
-	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date"`
+	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date-time"`
 }
