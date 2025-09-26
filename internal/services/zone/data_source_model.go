@@ -18,7 +18,7 @@ type ZoneResultDataSourceEnvelope struct {
 }
 
 type ZoneDataSourceModel struct {
-	ID                  types.String                                            `tfsdk:"id" path:"zone_id,computed"`
+	ID                  types.String                                            `tfsdk:"id" json:"id,computed"`
 	ZoneID              types.String                                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	ActivatedOn         timetypes.RFC3339                                       `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
 	CNAMESuffix         types.String                                            `tfsdk:"cname_suffix" json:"cname_suffix,computed"`
