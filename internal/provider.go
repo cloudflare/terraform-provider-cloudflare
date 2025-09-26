@@ -109,6 +109,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -491,6 +493,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
 		mtls_certificate.NewResource,
+		pages_project.NewResource,
+		pages_domain.NewResource,
 		registrar_domain.NewResource,
 		list.NewResource,
 		list_item.NewResource,
@@ -763,6 +767,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
 		mtls_certificate.NewMTLSCertificateDataSource,
 		mtls_certificate.NewMTLSCertificatesDataSource,
+		pages_project.NewPagesProjectDataSource,
+		pages_project.NewPagesProjectsDataSource,
+		pages_domain.NewPagesDomainDataSource,
+		pages_domain.NewPagesDomainsDataSource,
 		registrar_domain.NewRegistrarDomainDataSource,
 		registrar_domain.NewRegistrarDomainsDataSource,
 		list.NewListDataSource,
