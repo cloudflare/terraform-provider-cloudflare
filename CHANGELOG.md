@@ -1,5 +1,82 @@
 # Changelog
 
+## 5.11.0 (2025-09-26)
+
+Full Changelog: [v5.10.1...v5.11.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.10.1...v5.11.0)
+
+### Features
+
+* add `assets.directory` attribute for handling assets uploads in `cloudflare_workers_script` and `cloudflare_worker_version`  resources ([#6160](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6160)) ([50168e5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/50168e591001f93e21250419dd4953b602a2f952))
+* add comprehensive test coverage for cloudflare_zero_trust_list types and ([#6258](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6258)) ([6d2746c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6d2746c8903ee50b14b72491e8f074659de9b11a))
+* **api:** api update ([c889ef1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c889ef143db19299190ab1947a43dd8d169ea49e))
+* **api:** api update ([ed096e0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ed096e0a5309bd08bb12c046043457b3a3ba34db))
+* **api:** api update ([c6be1c6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c6be1c6d5388b5c867f86ebb57e8e25dea3a2e75))
+* Merge branch 'dianatran/SECENG-8771' into 'main' ([175f4f5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/175f4f5b049d62ac9ec8a830d96bba5c346577df))
+* Merge branch 'mpeterson/IAC-224-workflow' into 'main' ([7533c05](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7533c054484b6993fcef60d4beb9ab2787474d32))
+* Merge branch 'vaishak/update-version' into 'main' ([ac09de9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ac09de93f8bde47288cdaadb2fc413afcadae4b4))
+* modernize and expand cloudflare_zero_trust_access_service_token test ([#6260](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6260)) ([79e891e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/79e891e2e2f3f948224bcf06c118e08904f7ccd1))
+* Modernize and expand test coverage for zero_trust_tunnel_cloudflared_route ([#6264](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6264)) ([2c4a1e3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2c4a1e316dd13fa6cbe4e22c2070cd70215e2c5c))
+* modernize and fix cloudflare_zone_dnssec tests with comprehensive ([#6254](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6254)) ([d70cdd1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d70cdd1193c06549a517b41c93a9c28f990599c1))
+
+
+### Bug Fixes
+
+* case-insensitive location handling for R2 bucket resources ([#6026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6026)) ([78c33ff](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78c33ff9a2028c064c42f74b87eb8e9ecc7129e8))
+* cloudflare_workers_custom_domain failing to update ([#6082](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6082)) ([46203a3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/46203a3d7045d529697b357c8c4d1f3e07201619))
+* Fix zero trust access application acceptance tests ([#6243](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6243)) ([4a2cbdb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4a2cbdba426906e310be791c309ebda4d66935b5))
+* **migrate:** concatenate static and dynamic rules blocks ([#6215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6215)) ([be571d8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/be571d890da1cd2dabac44d649edd55a9ba4949c))
+* **migrate:** page rules status defaults ([#6212](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6212)) ([42a83d1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/42a83d1a1f03264a3a67124c78abef16027d6c05))
+* **migrate:** zt access app default type ([#6218](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6218)) ([cea98f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cea98f8705d40ac2cf4b83171212b33d6a97fa4b))
+* **r2_bucket:** case-insensitive location comparison and preserve state case in R2 bucket resource ([#6211](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6211)) ([5babbb1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5babbb109a968f8d18c78e2ad5a3dd52ac47fd2c))
+* resolve compilation and schema parity errors across multiple services ([#6241](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6241)) ([052cab8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/052cab85afa97d2b0637578af85e75aeff40d0f8))
+* resolve compilation errors in zero_trust_access_application and workers_script ([#6230](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6230)) ([2b78333](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2b78333e76ac7a9eec9c06796fe396451100274b))
+* resolve provider schema validation errors and R2 bucket test failures ([#6222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6222)) ([2df6eb1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2df6eb168aae57f85a2553490f7e79e19e19a57c))
+* resolve zero trust test failures from computed attribute refresh drift ([#6224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6224)) ([5351c6a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5351c6a041f2cdb0f160438b862088509f3a3c2d))
+* **ruleset:** allow rewrite rules to set an empty URL query string ([#6256](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6256)) ([b177cc0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b177cc0ad8e6fd9a0f48687e4ad078656f1ef86b))
+* workers script migration ([#6210](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6210)) ([dca249e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dca249eb5737fdb76a958cbe0ad72967031666d9))
+
+
+### Chores
+
+* add easy sweeper script ([#6220](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6220)) ([7fe36e5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7fe36e5d453663cb3885bc104588c3baec0283f6))
+* **api:** update composite API spec ([fc1f691](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fc1f691bdab2ab9596f96d722c00447486e930d4))
+* **api:** update composite API spec ([7139af1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7139af1ace30e984d2033f5153276383454ad074))
+* **api:** update composite API spec ([81d79a5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/81d79a54d14b26ce7f33e4bb48c4a6910b7b9aba))
+* **api:** update composite API spec ([fcb14b6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fcb14b63e771a88de7c423f0629a001752969d7e))
+* **api:** update composite API spec ([efebe55](https://github.com/cloudflare/terraform-provider-cloudflare/commit/efebe5571d49bcc4eab520e6094913bcc4603702))
+* **api:** update composite API spec ([c0fb2a4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c0fb2a47f2a8befafa7169df8e119257012caac5))
+* **api:** update composite API spec ([2978db8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2978db81702e425f7f8e4d17a64c1f6058e58426))
+* **api:** update composite API spec ([ced7790](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ced7790f730997ce51f8f10fbaea0f41e5d09427))
+* **api:** update composite API spec ([0ff7a11](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0ff7a1133179d0f7ed944cd838419779e88561db))
+* **api:** update composite API spec ([04c89cb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/04c89cb6a22d7cc36636b47b2d772a77e0ef240a))
+* **api:** update composite API spec ([4acb7ab](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4acb7ab62079e7c140111e236833772b8bc424ae))
+* **api:** update composite API spec ([04236ca](https://github.com/cloudflare/terraform-provider-cloudflare/commit/04236ca9926ed8c84242a69053116f82e58a75cf))
+* **api:** update composite API spec ([7636b30](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7636b3077e49a7b7a303f7ecf11cee01edacf0de))
+* **api:** update composite API spec ([5c2d985](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5c2d985a1c1de384de89c0f03d02219535951f57))
+* **api:** update composite API spec ([e52ffb1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e52ffb190c251376ed585f273b7ccba8636687eb))
+* **api:** update composite API spec ([133bb02](https://github.com/cloudflare/terraform-provider-cloudflare/commit/133bb020d8adc9e8e180f2c9d830e323522140b9))
+* **api:** update composite API spec ([3fd9175](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3fd91759c7b4214047a1469ec78394843a86c3ef))
+* **api:** update composite API spec ([b5f2c46](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b5f2c46ba266fb1cd3a392f438359e823ddf1699))
+* **api:** update composite API spec ([f52687d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f52687d91db396787ca0d150cb83f0c5b3415a41))
+* **api:** update composite API spec ([f1164d2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f1164d20453d9cce8f5b0a2effe37afc1f0e9afd))
+* **api:** update composite API spec ([e4a44a8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e4a44a8af68e89ac6ce82ac2aeb66149b1e6f09f))
+* **api:** update composite API spec ([da6a341](https://github.com/cloudflare/terraform-provider-cloudflare/commit/da6a341e9912b9a128f5edcc674c91b982282972))
+* **api:** update composite API spec ([002316c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/002316ca9c4ebf5816b352ed61fc7bf0933a1f79))
+* do not install brew dependencies in ./scripts/bootstrap by default ([44f11c3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/44f11c339bf4d86a5a0cdcdf75c746c17675bd66))
+* ensure `tfplugindocs` always use `/var/tmp` for compilation on linux ([3ccb727](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3ccb727887e38def156f225983cc1c5b1cdec004))
+* improve example values ([1ac2c1e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1ac2c1e71426edace6009b9a4a5b018c92cc7122))
+* **internal:** codegen related update ([7fb69e9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7fb69e978e01823fada800f94f203adb4f760e7e))
+* **internal:** codegen related update ([1f20a56](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1f20a5669a2ed63e279bf16f3863cea91e1ea7f4))
+* **internal:** codegen related update ([4a181d7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4a181d7ba0b8e3e75881f1b221c2b27599fd93db))
+* **internal:** codegen related update ([c800edc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c800edc5e7f0c3bed3edc521c19add6e9099b74b))
+* **internal:** codegen related update ([3a74bdd](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3a74bdde6bb1d58b17fa621b58f0da727d0b0ca9))
+* **internal:** codegen related update ([5fe113d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5fe113dcb36a8d1d390f5394d9c7d4925d8ea8a7))
+* **migrate:** remove debug statements from migration tool ([#6223](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6223)) ([b50ee7c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b50ee7cc3d9c0b310d63c0c452d053d306234ef1))
+* run migration tests with sweepers ([#6209](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6209)) ([489795d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/489795d1a78f8a41c12701c253088f5ea9d4abc4))
+* run workers_kv and regional_hostname tests in CI ([#6240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6240)) ([5433d6b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5433d6b2b69c8e0e71a5327cabf2b1589d63518c))
+* skip mtls migration test ([#6207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6207)) ([1730fa2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1730fa26cb6ad6739f99ad3ec6b9989b434f1812))
+* **test:** use no-grit by default when running migration tests ([#6214](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6214)) ([267dfc2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/267dfc2e3d13311e0b60afd205006ca0c5785e8b))
+
 ## 5.10.1 (2025-09-17)
 
 Full Changelog: [v5.10.0...v5.10.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.10.0...v5.10.1)
