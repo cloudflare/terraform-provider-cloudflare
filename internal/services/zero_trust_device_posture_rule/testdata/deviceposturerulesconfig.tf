@@ -11,6 +11,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 
   input = {
   path = "/dev/random"
+  exists = true
 }
 }
 
