@@ -10,14 +10,14 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
 
   config = {
     origin_request = {
-      no_tls_verify = true
+      no_tls_verify = false
     }
     ingress = [{
-      hostname = "foo"
-      service  = "https://10.0.0.1:8006"
+      hostname = "bar"
+      service  = "https://10.0.0.10:8006"
     },
     {
-      service = "http_status:501"
+      service = "http_status:502"
     }]
   }
 }
