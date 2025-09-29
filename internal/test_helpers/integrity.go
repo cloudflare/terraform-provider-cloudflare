@@ -126,7 +126,7 @@ func (errs *codingerrors) Report(t *testing.T) {
 		t.Error(err.Error())
 	}
 	if len(*errs) > 0 {
-		t.Logf("If you are implementing a custom solution, you can suppress these warning(s) by adding the following to the test, as an example:\n + errs.Ignore(%q)\n", (*errs)[0].id())
+		t.Logf("If you are implementing a custom solution, you can suppress these warning(s) by adding the following to the test, as an example:\n + errs.Ignore(t, %q)\n", (*errs)[0].id())
 	}
 }
 
