@@ -426,6 +426,83 @@ func testCloudflareLogpushJobFull(resourceID string, logpushJobConfig *logpushJo
 	return acctest.LoadTestCase("full.tf", params...)
 }
 
+// This tests with all fields to create / update a Logpush job, except
+// ownership_challenge (tested in logpush_ownership_challenge).
+// Some field values or their combination is not realistic, but it is just for
+// testing the schema and Logpush API behavior here.
+func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_logpush_job." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	// Logpush job config to create, with minimal fields.
+	logpushJobConfigCreate := &logpushJobConfig{
+		accountID:       accountID,
+		dataset:         "gateway_dns", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+	}
+
+	// Logpush job config to update, with different values (where possible).
+	logpushJobConfigUpdate := &logpushJobConfig{
+		accountID:                accountID,
+		dataset:                  "gateway_dns", // cannot be changed
+		destinationConf:          `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		enabled:                  true,
+		name:                     "terraform-test-job-updated",
+		filter:                   `{"where":{"and":[{"key":"ColoCode","operator":"!eq","value":"IAD"}]}}`,
+		kind:                     "", // cannot be changed
+		maxUploadBytes:           5000000,
+		maxUploadRecords:         1000,
+		maxUploadIntervalSeconds: 30,
+		frequency:                "low",                                                   // deprecated, but testing
+		logpullOptions:           "fields=AccountID,Datetime,ColoCode&timestamps=rfc3339", // deprecated, but testing
+		outputOptions: &logpushJobConfigOutputOptions{
+			batchPrefix:     `FirstColumn\tAccountID\tDatetime\tColoCode\tLastColumn\n`,
+			batchSuffix:     `\n`,
+			cve2021_44228:   true,
+			fieldDelimiter:  `\t`,
+			fieldNames:      []string{"AccountID", "Datetime", "ColoCode"},
+			outputType:      "csv",
+			recordDelimiter: `\n`,
+			recordPrefix:    `FirstColumn\t`,
+			recordSuffix:    `\tLastColumn`,
+			recordTemplate:  `FirstColumn\t{{.ClientIP}}\t{{.Datetime}}\t{{.ColoCode}}\tLastColumn`,
+			sampleRate:      0.01,
+			timestampFormat: "rfc3339",
+		},
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareLogpushJobBasic(rnd, logpushJobConfigCreate),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+				},
+			},
+			{
+				Config: testCloudflareLogpushJobFull(rnd, logpushJobConfigUpdate),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigUpdate),
+			},
+		},
+	})
+}
+
 // This tests with immutable fields to create / update a Logpush job.
 // dataset cannot be tested, as it has PlanModifiers in schema.go to replace.
 // This needs to bes tested on a zone, to test both kinds with http_requests.
@@ -442,7 +519,7 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 		kind:            "edge", // cannot be changed
 	}
 
-	// Logpush job config to update, with different values (where possible).
+	// Logpush job config to update, with an attempt to change immutable fields.
 	logpushJobConfigUpdate := &logpushJobConfig{
 		zoneID:          zoneID,
 		dataset:         "http_requests", // cannot be changed
@@ -486,4 +563,90 @@ func testCloudflareLogpushJobImmutableFields(resourceID string, logpushJobConfig
 		logpushJobConfig.kind,
 	}
 	return acctest.LoadTestCase("immutable_fields.tf", params...)
+}
+
+func TestAccCloudflareLogpushJob_OmitemptyField(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_logpush_job." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	// Logpush job config to create, with minimal fields, and omit value.
+	logpushJobConfigOmit := &logpushJobConfig{
+		zoneID:           zoneID,
+		dataset:          "http_requests", // cannot be changed
+		destinationConf:  `https://logpush-receiver.sd.cfplat.com`,
+		maxUploadRecords: 0,
+	}
+
+	// Logpush job config to update, , and non-omit value.
+	logpushJobConfigNonOmit := &logpushJobConfig{
+		zoneID:           zoneID,
+		dataset:          "http_requests", // cannot be changed
+		destinationConf:  `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		maxUploadRecords: 1000,
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Create a Logpush job with omit value.
+			{
+				Config: testCloudflareLogpushJobOmitemptyField(rnd, logpushJobConfigOmit),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigOmit.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigOmit.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigOmit.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_records"), knownvalue.Int64Exact(int64(logpushJobConfigOmit.maxUploadRecords))),
+				},
+			},
+			// Update the Logpush job with non-omit value.
+			{
+				Config: testCloudflareLogpushJobOmitemptyField(rnd, logpushJobConfigNonOmit),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigNonOmit.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigNonOmit.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigNonOmit.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_records"), knownvalue.Int64Exact(int64(logpushJobConfigNonOmit.maxUploadRecords))),
+				},
+			},
+			// Update the Logpush job with omit value.
+			{
+				Config: testCloudflareLogpushJobOmitemptyField(rnd, logpushJobConfigOmit),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigOmit.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigOmit.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigOmit.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_records"), knownvalue.Int64Exact(int64(logpushJobConfigOmit.maxUploadRecords))),
+				},
+			},
+		},
+	})
+}
+
+func testCloudflareLogpushJobOmitemptyField(resourceID string, logpushJobConfig *logpushJobConfig) string {
+	// Values must be ordered to match the .tf file exactly.
+	params := []any{
+		resourceID,
+		logpushJobConfig.zoneID,
+		logpushJobConfig.dataset,
+		logpushJobConfig.destinationConf,
+		logpushJobConfig.maxUploadRecords,
+	}
+	return acctest.LoadTestCase("omitempty_field.tf", params...)
 }
