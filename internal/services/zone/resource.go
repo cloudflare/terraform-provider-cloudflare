@@ -90,6 +90,22 @@ func (r *ZoneResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	data = &env.Result
 
+	// Handle tags if provided
+	if !data.Tags.IsNull() && !data.Tags.IsUnknown() {
+		tagMap := make(map[string]string)
+		data.Tags.ElementsAs(ctx, &tagMap, false)
+
+		// Call imaginary cloudflare-go function
+		_, err = r.client.Zones.UpdateTags(ctx, zones.ZoneUpdateTagsParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+			Tags:   tagMap,
+		})
+		if err != nil {
+			resp.Diagnostics.AddError("failed to set zone tags", err.Error())
+			return
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -138,6 +154,23 @@ func (r *ZoneResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	data = &env.Result
 
+	// Handle tag changes
+	if !data.Tags.Equal(state.Tags) {
+		tagMap := make(map[string]string)
+		if !data.Tags.IsNull() {
+			data.Tags.ElementsAs(ctx, &tagMap, false)
+		}
+
+		_, err = r.client.Zones.UpdateTags(ctx, zones.ZoneUpdateTagsParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+			Tags:   tagMap,
+		})
+		if err != nil {
+			resp.Diagnostics.AddError("failed to update zone tags", err.Error())
+			return
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -176,6 +209,21 @@ func (r *ZoneResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 	data = &env.Result
+
+	// Read zone tags
+	tagsResp, err := r.client.Zones.GetTags(ctx, zones.ZoneGetTagsParams{
+		ZoneID: cloudflare.F(data.ID.ValueString()),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read zone tags", err.Error())
+		return
+	}
+
+	if len(tagsResp.Tags) > 0 {
+		data.Tags, _ = types.MapValueFrom(ctx, types.StringType, tagsResp.Tags)
+	} else {
+		data.Tags = types.MapNull(types.StringType)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

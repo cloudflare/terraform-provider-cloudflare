@@ -264,6 +264,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"tags": schema.MapAttribute{
+				Description: "A map of tags to assign to the zone.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 		},
 	}
 }

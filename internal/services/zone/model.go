@@ -37,6 +37,7 @@ type ZoneModel struct {
 	Plan                customfield.NestedObject[ZonePlanModel]       `tfsdk:"plan" json:"plan,computed"`
 	Tenant              customfield.NestedObject[ZoneTenantModel]     `tfsdk:"tenant" json:"tenant,computed"`
 	TenantUnit          customfield.NestedObject[ZoneTenantUnitModel] `tfsdk:"tenant_unit" json:"tenant_unit,computed"`
+	Tags                types.Map                                     `tfsdk:"tags" json:"tags,optional"`
 }
 
 func (m ZoneModel) MarshalJSON() (data []byte, err error) {

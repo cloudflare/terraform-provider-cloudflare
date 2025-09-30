@@ -359,3 +359,45 @@ func testZoneConfigWithTypeVanityNameServersSetup(resourceID, accountID, zoneNam
 func testZoneConfigWithPaused(resourceID, accountID, zoneName string, paused bool) string {
 	return acctest.LoadTestCase("zoneconfigwithpaused.tf", resourceID, accountID, zoneName, paused)
 }
+
+// Example test for Option A - inline tags (not runnable, just for demonstration)
+func TestAccCloudflareZone_tags(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		Steps: []resource.TestStep{
+			{
+				Config: `
+resource "cloudflare_zone" "example" {
+  account = { id = "023e105f4ecef8ad9ca31a8372d0c353" }
+  name = "example.com"
+  type = "full"
+  tags = {
+    env = "production"
+    CostCenter = "4300-systems-engineering"
+  }
+}`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("cloudflare_zone.example", "tags.env", "production"),
+					resource.TestCheckResourceAttr("cloudflare_zone.example", "tags.CostCenter", "4300-systems-engineering"),
+				),
+			},
+			{
+				Config: `
+resource "cloudflare_zone" "example" {
+  account = { id = "023e105f4ecef8ad9ca31a8372d0c353" }
+  name = "example.com"
+  type = "full"
+  tags = {
+    env = "staging"
+    CostCenter = "4300-systems-engineering"
+    Project = "terraform-poc"
+  }
+}`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("cloudflare_zone.example", "tags.env", "staging"),
+					resource.TestCheckResourceAttr("cloudflare_zone.example", "tags.CostCenter", "4300-systems-engineering"),
+					resource.TestCheckResourceAttr("cloudflare_zone.example", "tags.Project", "terraform-poc"),
+				),
+			},
+		},
+	})
+}
