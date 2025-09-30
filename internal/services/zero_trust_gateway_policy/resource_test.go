@@ -18,6 +18,65 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_gateway_policy", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_gateway_policy",
+		F:    testSweepCloudflareZeroTrustGatewayPolicy,
+	})
+}
+
+func testSweepCloudflareZeroTrustGatewayPolicy(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return fmt.Errorf("failed to create Cloudflare client: %w", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	tflog.Info(ctx, "Starting to list Teams Rules for sweeping")
+	rules, err := client.TeamsRules(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Teams Rules: %s", err))
+		return fmt.Errorf("failed to fetch Teams Rules: %w", err)
+	}
+
+	if len(rules) == 0 {
+		tflog.Info(ctx, "No Teams Rules to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Found %d Teams Rules to sweep", len(rules)))
+
+	deletedCount := 0
+	failedCount := 0
+
+	for _, rule := range rules {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Teams Rule: %s (%s)", rule.Name, rule.ID))
+		
+		err := client.TeamsDeleteRule(ctx, accountID, rule.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Teams Rule %s: %s", rule.ID, err))
+			failedCount++
+			continue
+		}
+		
+		deletedCount++
+		tflog.Info(ctx, fmt.Sprintf("Successfully deleted Teams Rule: %s", rule.ID))
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Completed sweeping Teams Rules: deleted %d, failed %d", deletedCount, failedCount))
+	return nil
+}
+
 func testAccCloudflareTeamsRuleConfigDns(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamsruleconfigdns.tf", rnd, accountID)
 }

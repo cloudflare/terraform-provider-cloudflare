@@ -18,6 +18,65 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_posture_rule", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_posture_rule",
+		F:    testSweepCloudflareDevicePostureRule,
+	})
+}
+
+func testSweepCloudflareDevicePostureRule(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return fmt.Errorf("failed to create Cloudflare client: %w", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	tflog.Info(ctx, "Starting to list Device Posture Rules for sweeping")
+	rules, _, err := client.DevicePostureRules(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Device Posture Rules: %s", err))
+		return fmt.Errorf("failed to fetch Device Posture Rules: %w", err)
+	}
+
+	if len(rules) == 0 {
+		tflog.Info(ctx, "No Device Posture Rules to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Found %d Device Posture Rules to sweep", len(rules)))
+
+	deletedCount := 0
+	failedCount := 0
+
+	for _, rule := range rules {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Device Posture Rule: %s (%s)", rule.Name, rule.ID))
+		
+		err := client.DeleteDevicePostureRule(ctx, accountID, rule.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Device Posture Rule %s: %s", rule.ID, err))
+			failedCount++
+			continue
+		}
+		
+		deletedCount++
+		tflog.Info(ctx, fmt.Sprintf("Successfully deleted Device Posture Rule: %s", rule.ID))
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Completed sweeping Device Posture Rules: deleted %d, failed %d", deletedCount, failedCount))
+	return nil
+}
+
 var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
