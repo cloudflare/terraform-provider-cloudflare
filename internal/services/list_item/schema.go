@@ -161,6 +161,10 @@ func (v SourceUrlValidator) MarkdownDescription(ctx context.Context) string {
 }
 
 func (v SourceUrlValidator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+
 	rawUrl := req.ConfigValue.ValueString()
 	if !strings.HasPrefix(rawUrl, "http://") && !strings.HasPrefix(rawUrl, "https://") {
 		rawUrl = "https://" + rawUrl

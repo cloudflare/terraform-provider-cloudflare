@@ -324,6 +324,35 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareListItem_RedirectWithLocalsMap(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	redirect1Resource := fmt.Sprintf("cloudflare_list_item.%s[\"redirect1\"]", rnd)
+	redirect2Resource := fmt.Sprintf("cloudflare_list_item.%s[\"redirect2\"]", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameRedirectItemLocalsMap(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(redirect1Resource, "redirect.source_url", "example1.com/"),
+					resource.TestCheckResourceAttr(redirect1Resource, "redirect.target_url", "https://target1.com"),
+					resource.TestCheckResourceAttr(redirect1Resource, "redirect.status_code", "301"),
+					resource.TestCheckResourceAttr(redirect1Resource, "comment", rnd+"-redirect1"),
+					resource.TestCheckResourceAttr(redirect2Resource, "redirect.source_url", "example2.com/"),
+					resource.TestCheckResourceAttr(redirect2Resource, "redirect.target_url", "https://target2.com"),
+					resource.TestCheckResourceAttr(redirect2Resource, "redirect.status_code", "302"),
+					resource.TestCheckResourceAttr(redirect2Resource, "comment", rnd+"-redirect2"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) string {
 	return acctest.LoadTestCase("iplistitem.tf", ID, name, comment, accountID)
 }
@@ -385,4 +414,8 @@ func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
 
 func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, comment, accountID string) string {
 	return acctest.LoadTestCase("hostnameredirectwithoverlappingsourceurl.tf", ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareHostnameRedirectItemLocalsMap(ID, name, comment, accountID string) string {
+	return acctest.LoadTestCase("hostnameredirectitemlocalsmap.tf", ID, name, comment, accountID)
 }
