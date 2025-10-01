@@ -326,8 +326,8 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 
 func TestAccCloudflareListItem_RedirectWithLocalsMap(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	redirect1Resource := fmt.Sprintf("cloudflare_list_item.%s[\"redirect1\"]", rnd)
-	redirect2Resource := fmt.Sprintf("cloudflare_list_item.%s[\"redirect2\"]", rnd)
+	redirect1Resource := fmt.Sprintf("cloudflare_list_item.%s_redirect1", rnd)
+	redirect2Resource := fmt.Sprintf("cloudflare_list_item.%s_redirect2", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -339,11 +339,11 @@ func TestAccCloudflareListItem_RedirectWithLocalsMap(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareHostnameRedirectItemLocalsMap(rnd, rnd, rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(redirect1Resource, "redirect.source_url", "example1.com/"),
+					resource.TestCheckResourceAttr(redirect1Resource, "redirect.source_url", rnd+"-redirect1.cfapi.net/"),
 					resource.TestCheckResourceAttr(redirect1Resource, "redirect.target_url", "https://target1.com"),
 					resource.TestCheckResourceAttr(redirect1Resource, "redirect.status_code", "301"),
 					resource.TestCheckResourceAttr(redirect1Resource, "comment", rnd+"-redirect1"),
-					resource.TestCheckResourceAttr(redirect2Resource, "redirect.source_url", "example2.com/"),
+					resource.TestCheckResourceAttr(redirect2Resource, "redirect.source_url", rnd+"-redirect2.cfapi.net/"),
 					resource.TestCheckResourceAttr(redirect2Resource, "redirect.target_url", "https://target2.com"),
 					resource.TestCheckResourceAttr(redirect2Resource, "redirect.status_code", "302"),
 					resource.TestCheckResourceAttr(redirect2Resource, "comment", rnd+"-redirect2"),

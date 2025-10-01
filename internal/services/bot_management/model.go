@@ -170,6 +170,11 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	updateStringField(&m.SBFMDefinitelyAutomated, api.SBFMDefinitelyAutomated)
 	updateStringField(&m.SBFMLikelyAutomated, api.SBFMLikelyAutomated)
 	updateStringField(&m.SBFMVerifiedBots, api.SBFMVerifiedBots)
+	
+	// cf_robots_variant is not returned by API, set to null if unknown
+	if m.CfRobotsVariant.IsUnknown() {
+		m.CfRobotsVariant = types.StringNull()
+	}
 
 	// Handle nested stale zone configuration
 	if api.StaleZoneConfiguration != nil {
