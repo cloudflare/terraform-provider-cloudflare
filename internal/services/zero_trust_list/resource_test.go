@@ -3,12 +3,15 @@ package zero_trust_list_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	cfv6 "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -20,6 +23,48 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_list", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_list",
+		F:    testSweepCloudflareZeroTrustList,
+	})
+}
+
+func testSweepCloudflareZeroTrustList(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	
+	if accountID == "" {
+		return nil
+	}
+	
+	// List all zero trust lists
+	page, err := client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
+		AccountID: cfv6.F(accountID),
+	})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch zero trust lists: %s", err)
+		return err
+	}
+
+	// Delete all lists (sweepers clean up everything from test accounts)
+	for _, list := range page.Result {
+		_, err := client.ZeroTrust.Gateway.Lists.Delete(ctx, list.ID, zero_trust.GatewayListDeleteParams{
+			AccountID: cfv6.F(accountID),
+		})
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete zero trust list %s (%s): %s", list.Name, list.ID, err)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
