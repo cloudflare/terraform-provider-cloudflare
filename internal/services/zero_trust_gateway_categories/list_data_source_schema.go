@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Provide the identifier string.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -36,15 +36,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Description: "The identifier for this category. There is only one category per ID.",
+							Description: "Identify this category. Only one category per ID.",
 							Computed:    true,
 						},
 						"beta": schema.BoolAttribute{
-							Description: "True if the category is in beta and subject to change.",
+							Description: "Indicate whether the category is in beta and subject to change.",
 							Computed:    true,
 						},
 						"class": schema.StringAttribute{
-							Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
+							Description: "Specify which account types can create policies for this category. `blocked` Blocks unconditionally for all accounts. `removalPending` Allows removal from policies but disables addition. `noBlock` Prevents blocking.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -57,29 +57,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"description": schema.StringAttribute{
-							Description: "A short summary of domains in the category.",
+							Description: "Provide a short summary of domains in the category.",
 							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the category.",
+							Description: "Specify the category name.",
 							Computed:    true,
 						},
 						"subcategories": schema.ListNestedAttribute{
-							Description: "All subcategories for this category.",
+							Description: "Provide all subcategories for this category.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectListType[ZeroTrustGatewayCategoriesListSubcategoriesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.Int64Attribute{
-										Description: "The identifier for this category. There is only one category per ID.",
+										Description: "Identify this category. Only one category per ID.",
 										Computed:    true,
 									},
 									"beta": schema.BoolAttribute{
-										Description: "True if the category is in beta and subject to change.",
+										Description: "Indicate whether the category is in beta and subject to change.",
 										Computed:    true,
 									},
 									"class": schema.StringAttribute{
-										Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
+										Description: "Specify which account types can create policies for this category. `blocked` Blocks unconditionally for all accounts. `removalPending` Allows removal from policies but disables addition. `noBlock` Prevents blocking.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -92,11 +92,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"description": schema.StringAttribute{
-										Description: "A short summary of domains in the category.",
+										Description: "Provide a short summary of domains in the category.",
 										Computed:    true,
 									},
 									"name": schema.StringAttribute{
-										Description: "The name of the category.",
+										Description: "Specify the category name.",
 										Computed:    true,
 									},
 								},

@@ -69,32 +69,39 @@ type WorkerVersionsAssetsConfigDataSourceModel struct {
 }
 
 type WorkerVersionsBindingsDataSourceModel struct {
-	Name          types.String                                                            `tfsdk:"name" json:"name,computed"`
-	Type          types.String                                                            `tfsdk:"type" json:"type,computed"`
-	Dataset       types.String                                                            `tfsdk:"dataset" json:"dataset,computed"`
-	ID            types.String                                                            `tfsdk:"id" json:"id,computed"`
-	Namespace     types.String                                                            `tfsdk:"namespace" json:"namespace,computed"`
-	Outbound      customfield.NestedObject[WorkerVersionsBindingsOutboundDataSourceModel] `tfsdk:"outbound" json:"outbound,computed"`
-	ClassName     types.String                                                            `tfsdk:"class_name" json:"class_name,computed"`
-	Environment   types.String                                                            `tfsdk:"environment" json:"environment,computed"`
-	NamespaceID   types.String                                                            `tfsdk:"namespace_id" json:"namespace_id,computed"`
-	ScriptName    types.String                                                            `tfsdk:"script_name" json:"script_name,computed"`
-	Json          types.String                                                            `tfsdk:"json" json:"json,computed"`
-	CertificateID types.String                                                            `tfsdk:"certificate_id" json:"certificate_id,computed"`
-	Text          types.String                                                            `tfsdk:"text" json:"text,computed"`
-	Pipeline      types.String                                                            `tfsdk:"pipeline" json:"pipeline,computed"`
-	QueueName     types.String                                                            `tfsdk:"queue_name" json:"queue_name,computed"`
-	BucketName    types.String                                                            `tfsdk:"bucket_name" json:"bucket_name,computed"`
-	Service       types.String                                                            `tfsdk:"service" json:"service,computed"`
-	IndexName     types.String                                                            `tfsdk:"index_name" json:"index_name,computed"`
-	SecretName    types.String                                                            `tfsdk:"secret_name" json:"secret_name,computed"`
-	StoreID       types.String                                                            `tfsdk:"store_id" json:"store_id,computed"`
-	Algorithm     jsontypes.Normalized                                                    `tfsdk:"algorithm" json:"algorithm,computed"`
-	Format        types.String                                                            `tfsdk:"format" json:"format,computed"`
-	Usages        customfield.Set[types.String]                                           `tfsdk:"usages" json:"usages,computed"`
-	KeyBase64     types.String                                                            `tfsdk:"key_base64" json:"key_base64,computed"`
-	KeyJwk        jsontypes.Normalized                                                    `tfsdk:"key_jwk" json:"key_jwk,computed"`
-	WorkflowName  types.String                                                            `tfsdk:"workflow_name" json:"workflow_name,computed"`
+	Name                        types.String                                                            `tfsdk:"name" json:"name,computed"`
+	Type                        types.String                                                            `tfsdk:"type" json:"type,computed"`
+	Dataset                     types.String                                                            `tfsdk:"dataset" json:"dataset,computed"`
+	ID                          types.String                                                            `tfsdk:"id" json:"id,computed"`
+	Part                        types.String                                                            `tfsdk:"part" json:"part,computed"`
+	Namespace                   types.String                                                            `tfsdk:"namespace" json:"namespace,computed"`
+	Outbound                    customfield.NestedObject[WorkerVersionsBindingsOutboundDataSourceModel] `tfsdk:"outbound" json:"outbound,computed"`
+	ClassName                   types.String                                                            `tfsdk:"class_name" json:"class_name,computed"`
+	Environment                 types.String                                                            `tfsdk:"environment" json:"environment,computed"`
+	NamespaceID                 types.String                                                            `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	ScriptName                  types.String                                                            `tfsdk:"script_name" json:"script_name,computed"`
+	OldName                     types.String                                                            `tfsdk:"old_name" json:"old_name,computed"`
+	VersionID                   types.String                                                            `tfsdk:"version_id" json:"version_id,computed"`
+	Json                        types.String                                                            `tfsdk:"json" json:"json,computed"`
+	CertificateID               types.String                                                            `tfsdk:"certificate_id" json:"certificate_id,computed"`
+	Text                        types.String                                                            `tfsdk:"text" json:"text,computed"`
+	Pipeline                    types.String                                                            `tfsdk:"pipeline" json:"pipeline,computed"`
+	QueueName                   types.String                                                            `tfsdk:"queue_name" json:"queue_name,computed"`
+	BucketName                  types.String                                                            `tfsdk:"bucket_name" json:"bucket_name,computed"`
+	Jurisdiction                types.String                                                            `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
+	AllowedDestinationAddresses customfield.List[types.String]                                          `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,computed"`
+	AllowedSenderAddresses      customfield.List[types.String]                                          `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,computed"`
+	DestinationAddress          types.String                                                            `tfsdk:"destination_address" json:"destination_address,computed"`
+	Service                     types.String                                                            `tfsdk:"service" json:"service,computed"`
+	IndexName                   types.String                                                            `tfsdk:"index_name" json:"index_name,computed"`
+	SecretName                  types.String                                                            `tfsdk:"secret_name" json:"secret_name,computed"`
+	StoreID                     types.String                                                            `tfsdk:"store_id" json:"store_id,computed"`
+	Algorithm                   jsontypes.Normalized                                                    `tfsdk:"algorithm" json:"algorithm,computed"`
+	Format                      types.String                                                            `tfsdk:"format" json:"format,computed"`
+	Usages                      customfield.Set[types.String]                                           `tfsdk:"usages" json:"usages,computed"`
+	KeyBase64                   types.String                                                            `tfsdk:"key_base64" json:"key_base64,computed"`
+	KeyJwk                      jsontypes.Normalized                                                    `tfsdk:"key_jwk" json:"key_jwk,computed"`
+	WorkflowName                types.String                                                            `tfsdk:"workflow_name" json:"workflow_name,computed"`
 }
 
 type WorkerVersionsBindingsOutboundDataSourceModel struct {

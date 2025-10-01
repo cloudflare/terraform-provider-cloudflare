@@ -45,9 +45,13 @@ func transformCloudflareRulesetBlock(block *hclwrite.Block, diags ast.Diagnostic
 // transformDynamicRulesBlocks converts dynamic "rules" blocks to for expressions
 // V4: dynamic "rules" { for_each = local.rule_configs; content { ... } }
 // V5: rules = [for rule in local.rule_configs : { ... }]
+// When mixed with static rules blocks (already converted to list), use concat()
 func transformDynamicRulesBlocks(block *hclwrite.Block, diags ast.Diagnostics) {
 	body := block.Body()
 	dynamicRulesBlocks := []*hclwrite.Block{}
+
+	// Check if there's already a rules attribute (from converted static blocks)
+	existingRulesAttr := body.GetAttribute("rules")
 
 	// Find all dynamic blocks with label "rules"
 	for _, childBlock := range body.Blocks() {
@@ -55,6 +59,14 @@ func transformDynamicRulesBlocks(block *hclwrite.Block, diags ast.Diagnostics) {
 			dynamicRulesBlocks = append(dynamicRulesBlocks, childBlock)
 		}
 	}
+
+	// If no dynamic blocks, nothing to do
+	if len(dynamicRulesBlocks) == 0 {
+		return
+	}
+
+	// Collect all dynamic block expressions
+	var dynamicExpressions []hclwrite.Tokens
 
 	// Process each dynamic rules block
 	for _, dynBlock := range dynamicRulesBlocks {
@@ -138,37 +150,8 @@ func transformDynamicRulesBlocks(block *hclwrite.Block, diags ast.Diagnostics) {
 		// Handle nested blocks within content (e.g., action_parameters, ratelimit, etc.)
 		// These need to be converted to attribute format as well
 		for _, nestedBlock := range contentBlock.Body().Blocks() {
-			blockType := nestedBlock.Type()
-			
-			// Add the block as an attribute with object value
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    " + blockType)})
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")})
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
-
-			// Process nested block attributes
-			nestedAttrs := nestedBlock.Body().Attributes()
-			nestedAttrNames := make([]string, 0, len(nestedAttrs))
-			for name := range nestedAttrs {
-				nestedAttrNames = append(nestedAttrNames, name)
-			}
-			sort.Strings(nestedAttrNames)
-
-			for _, name := range nestedAttrNames {
-				attr := nestedAttrs[name]
-				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      " + name)})
-				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
-				
-				attrTokens := attr.Expr().BuildTokens(nil)
-				processedTokens := replaceRulesIteratorReferences(attrTokens, iteratorName)
-				tokens = append(tokens, processedTokens...)
-				
-				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
-			}
-
-			// Close the nested object
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    }")})
-			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+			blockTokens := convertBlockToAttributeTokens(nestedBlock, iteratorName, 2)
+			tokens = append(tokens, blockTokens...)
 		}
 
 		// Close object
@@ -180,9 +163,101 @@ func transformDynamicRulesBlocks(block *hclwrite.Block, diags ast.Diagnostics) {
 		// Remove the dynamic block
 		body.RemoveBlock(dynBlock)
 
-		// Add the new attribute with the for expression
-		body.SetAttributeRaw("rules", tokens)
+		// Store the dynamic expression for later combination
+		dynamicExpressions = append(dynamicExpressions, tokens)
 	}
+
+	// Now combine all expressions
+	if len(dynamicExpressions) == 0 {
+		return
+	}
+
+	// Build the final rules expression
+	var finalTokens hclwrite.Tokens
+
+	// If we have existing rules (from static blocks), use concat()
+	if existingRulesAttr != nil {
+		// Start with concat(
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("concat")})
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenOParen, Bytes: []byte("(")})
+
+		// Add existing rules expression
+		finalTokens = append(finalTokens, existingRulesAttr.Expr().BuildTokens(nil)...)
+
+		// Add each dynamic expression
+		for _, dynTokens := range dynamicExpressions {
+			finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(", ")})
+			finalTokens = append(finalTokens, dynTokens...)
+		}
+
+		// Close concat
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenCParen, Bytes: []byte(")")})
+	} else if len(dynamicExpressions) == 1 {
+		// Just one dynamic expression, use it directly
+		finalTokens = dynamicExpressions[0]
+	} else {
+		// Multiple dynamic expressions without static rules, use concat()
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("concat")})
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenOParen, Bytes: []byte("(")})
+
+		for i, dynTokens := range dynamicExpressions {
+			if i > 0 {
+				finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(", ")})
+			}
+			finalTokens = append(finalTokens, dynTokens...)
+		}
+
+		finalTokens = append(finalTokens, &hclwrite.Token{Type: hclsyntax.TokenCParen, Bytes: []byte(")")})
+	}
+
+	// Set the final rules attribute
+	body.SetAttributeRaw("rules", finalTokens)
+}
+
+// convertBlockToAttributeTokens recursively converts a block and all its nested blocks to attribute format
+func convertBlockToAttributeTokens(block *hclwrite.Block, iteratorName string, indentLevel int) hclwrite.Tokens {
+	var tokens hclwrite.Tokens
+	indent := strings.Repeat("  ", indentLevel)
+
+	blockType := block.Type()
+
+	// Add the block as an attribute with object value
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(indent + blockType)})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+	// Process attributes
+	attrs := block.Body().Attributes()
+	attrNames := make([]string, 0, len(attrs))
+	for name := range attrs {
+		attrNames = append(attrNames, name)
+	}
+	sort.Strings(attrNames)
+
+	for _, name := range attrNames {
+		attr := attrs[name]
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(indent + "  " + name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		attrTokens := attr.Expr().BuildTokens(nil)
+		processedTokens := replaceRulesIteratorReferences(attrTokens, iteratorName)
+		tokens = append(tokens, processedTokens...)
+
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	}
+
+	// Recursively process nested blocks
+	for _, nestedBlock := range block.Body().Blocks() {
+		nestedTokens := convertBlockToAttributeTokens(nestedBlock, iteratorName, indentLevel+1)
+		tokens = append(tokens, nestedTokens...)
+	}
+
+	// Close the object
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(indent + "}")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+	return tokens
 }
 
 // replaceRulesIteratorReferences replaces iterator.value references with just iterator

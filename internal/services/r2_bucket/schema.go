@@ -4,6 +4,7 @@ package r2_bucket
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,6 +16,42 @@ import (
 )
 
 var _ resource.ResourceWithConfigValidators = (*R2BucketResource)(nil)
+
+// locationNormalizePlanModifier normalizes location values to lowercase
+func locationNormalizePlanModifier() planmodifier.String {
+	return &locationNormalizer{}
+}
+
+type locationNormalizer struct{}
+
+func (m *locationNormalizer) Description(ctx context.Context) string {
+	return "Normalizes location to lowercase"
+}
+
+func (m *locationNormalizer) MarkdownDescription(ctx context.Context) string {
+	return "Normalizes location to lowercase"
+}
+
+func (m *locationNormalizer) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+	
+	// If state exists and values are case-insensitively equal, preserve state value
+	if !req.StateValue.IsNull() {
+		configVal := req.ConfigValue.ValueString()
+		stateVal := req.StateValue.ValueString()
+		
+		// If they're case-insensitively equal but different case, preserve state
+		if strings.EqualFold(configVal, stateVal) && configVal != stateVal {
+			resp.PlanValue = req.StateValue
+			return
+		}
+	}
+	
+	// Otherwise, use the config value as-is (no normalization)
+	resp.PlanValue = req.ConfigValue
+}
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -48,7 +85,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"oc",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+					locationNormalizePlanModifier(),
+				},
 			},
 			"jurisdiction": schema.StringAttribute{
 				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
@@ -73,8 +113,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("Standard"),
 			},
 			"creation_date": schema.StringAttribute{
-				Description: "Creation timestamp.",
-				Computed:    true,
+				Description:   "Creation timestamp.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

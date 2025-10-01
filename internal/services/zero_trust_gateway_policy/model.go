@@ -30,8 +30,8 @@ type ZeroTrustGatewayPolicyModel struct {
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleModel]     `tfsdk:"schedule" json:"schedule,computed_optional"`
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
-	NotSharable   types.Bool                                                        `tfsdk:"not_sharable" json:"not_sharable,computed"`
 	ReadOnly      types.Bool                                                        `tfsdk:"read_only" json:"read_only,computed"`
+	Sharable      types.Bool                                                        `tfsdk:"sharable" json:"sharable,computed"`
 	SourceAccount types.String                                                      `tfsdk:"source_account" json:"source_account,computed"`
 	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                       `tfsdk:"version" json:"version,computed"`
@@ -86,12 +86,12 @@ type ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 	Copy     types.String `tfsdk:"copy" json:"copy,optional"`
-	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,computed_optional"`
-	DD       types.Bool   `tfsdk:"dd" json:"dd,computed_optional"`
-	DK       types.Bool   `tfsdk:"dk" json:"dk,computed_optional"`
+	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,optional"`
+	DD       types.Bool   `tfsdk:"dd" json:"dd,optional"`
+	DK       types.Bool   `tfsdk:"dk" json:"dk,optional"`
 	Download types.String `tfsdk:"download" json:"download,optional"`
-	DP       types.Bool   `tfsdk:"dp" json:"dp,computed_optional"`
-	DU       types.Bool   `tfsdk:"du" json:"du,computed_optional"`
+	DP       types.Bool   `tfsdk:"dp" json:"dp,optional"`
+	DU       types.Bool   `tfsdk:"du" json:"du,optional"`
 	Keyboard types.String `tfsdk:"keyboard" json:"keyboard,optional"`
 	Paste    types.String `tfsdk:"paste" json:"paste,optional"`
 	Printing types.String `tfsdk:"printing" json:"printing,optional"`

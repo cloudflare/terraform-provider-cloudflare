@@ -54,6 +54,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/byo_ip_prefix"
     "resource=./internal/services/certificate_pack"
     "resource=./internal/services/cloud_connector_rules"
+    "resource=./internal/services/custom_hostname"
     "resource=./internal/services/custom_pages"
     "resource=./internal/services/custom_ssl"
     "resource=./internal/services/dns_record"
@@ -88,6 +89,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/pages_project"
     "resource=./internal/services/queue"
     "resource=./internal/services/r2_bucket"
+    "resource=./internal/services/regional_hostname"
     "resource=./internal/services/regional_tiered_cache"
     "resource=./internal/services/ruleset"
     "resource=./internal/services/snippet"
@@ -103,9 +105,11 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/workers_cron_trigger"
     "resource=./internal/services/workers_custom_domain"
     "resource=./internal/services/workers_for_platforms_dispatch_namespace"
+    "resource=./internal/services/workers_kv"
     "resource=./internal/services/workers_kv_namespace"
     "resource=./internal/services/workers_route"
     "resource=./internal/services/workers_script"
+#    "resource=./internal/services/workflow" 
     "resource=./internal/services/zero_trust_access_application"
     "resource=./internal/services/zero_trust_access_custom_page"
     "resource=./internal/services/zero_trust_access_group"
@@ -121,9 +125,11 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback"
     "resource=./internal/services/zero_trust_device_default_profile_certificates"
     "resource=./internal/services/zero_trust_device_managed_networks"
+    "resource=./internal/services/zero_trust_device_posture_rule"
     "resource=./internal/services/zero_trust_dlp_custom_profile"
     "resource=./internal/services/zero_trust_dlp_entry"
     "resource=./internal/services/zero_trust_gateway_proxy_endpoint"
+    "resource=./internal/services/zero_trust_gateway_policy"
     "resource=./internal/services/zero_trust_gateway_settings"
     "resource=./internal/services/zero_trust_list"
     "resource=./internal/services/zero_trust_organization"
@@ -133,6 +139,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/zone"
     "resource=./internal/services/zone_cache_reserve"
     "resource=./internal/services/zone_cache_variants"
+    "resource=./internal/services/zone_dnssec"
     "resource=./internal/services/zone_hold"
     "resource=./internal/services/zone_lockdown"
     "resource=./internal/services/zone_setting"
@@ -545,14 +552,9 @@ process_service() {
     
     {
         log "${WHITE}Processing service: $service (parallel=$parallel_count)${NC}"
-        
-        # Only run sweepers for acceptance tests, not migration tests
-        if [ "$TEST_TYPE" != "migration" ]; then
-            if ! run_sweeper "$service" "$parallel_count"; then
-                log "${YELLOW}Sweeper issues for $service, continuing with tests...${NC}"
-            fi
-        else
-            log "${YELLOW}Skipping sweeper for migration tests: $service${NC}"
+
+        if ! run_sweeper "$service" "$parallel_count"; then
+          log "${YELLOW}Sweeper issues for $service, continuing with tests...${NC}"
         fi
         
         # Run tests

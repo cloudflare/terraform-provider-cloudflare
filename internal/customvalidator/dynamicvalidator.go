@@ -9,45 +9,85 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	t "github.com/cloudflare/terraform-provider-cloudflare/internal/types"
 )
 
 var _ validator.Dynamic = subtypesValidator{}
-
-var compatTypes = map[attr.Type][]attr.Type{
-	basetypes.Int64Type{}:   {basetypes.Int32Type{}},
-	basetypes.Float64Type{}: {basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.NumberType{}},
-	basetypes.NumberType{}:  {basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.Float64Type{}},
-}
 
 type subtypesValidator struct {
 	allowedTypes []attr.Type
 }
 
-func compatibleTypes(ty attr.Type) (types []attr.Type) {
-	types = append(types, ty)
-	if tps, ok := compatTypes[ty]; ok {
-		types = append(types, tps...)
-	}
-	return
-}
-
 func compatible(ctx context.Context, ty attr.Type, val attr.Value) bool {
-	valTy := val.Type(ctx)
-	if slices.ContainsFunc(compatibleTypes(ty), valTy.Equal) {
-		return true
-	}
-
-	if v, ok := val.(basetypes.NumberValue); ok {
-		big := v.ValueBigFloat()
-		switch ty.(type) {
-		case basetypes.Int32Type:
-			return big.IsInt()
-		case basetypes.Int64Type:
-			return big.IsInt()
+	switch tty := ty.(type) {
+	case basetypes.Int32Typable:
+		if ok, _ := t.IntValue(val); ok {
+			return true
 		}
+	case basetypes.Int64Typable:
+		if ok, _ := t.IntValue(val); ok {
+			return true
+		}
+	case basetypes.Float32Typable:
+		if ok, _ := t.FloatValue(val); ok {
+			return true
+		}
+	case basetypes.Float64Typable:
+		if ok, _ := t.FloatValue(val); ok {
+			return true
+		}
+	case basetypes.NumberTypable:
+		if ok, _ := t.FloatValue(val); ok {
+			return true
+		}
+	case basetypes.TupleType:
+		if ok, items := t.ChildItems(val); ok {
+			return slices.CompareFunc(tty.ElemTypes, items, func(lhs attr.Type, rhs attr.Value) int {
+				if compatible(ctx, lhs, rhs) {
+					return 0
+				}
+				return 1
+			}) == 0
+		}
+	case basetypes.ListType:
+		if ok, items := t.ChildItems(val); ok {
+			return !slices.ContainsFunc(items, func(value attr.Value) bool {
+				return !compatible(ctx, tty.ElemType, value)
+			})
+		}
+	case basetypes.SetType:
+		if ok, items := t.ChildItems(val); ok {
+			return !slices.ContainsFunc(items, func(value attr.Value) bool {
+				return !compatible(ctx, tty.ElemType, value)
+			})
+		}
+	case basetypes.MapType:
+		if ok, attrs := t.ChildAttributes(val); ok {
+			for _, v := range attrs {
+				if !compatible(ctx, tty.ElemType, v) {
+					return false
+				}
+			}
+			return true
+		}
+	case basetypes.ObjectType:
+		if ok, attrs := t.ChildAttributes(val); ok {
+			if len(attrs) != len(tty.AttrTypes) {
+				return false
+			}
+			for name, attrType := range tty.AttrTypes {
+				actualValue, exists := attrs[name]
+				if !exists || !compatible(ctx, attrType, actualValue) {
+					return false
+				}
+			}
+			return true
+		}
+	default:
 	}
 
-	return false
+	return ty.Equal(val.Type(ctx))
 }
 
 func (v subtypesValidator) ValidateDynamic(ctx context.Context, req validator.DynamicRequest, resp *validator.DynamicResponse) {
