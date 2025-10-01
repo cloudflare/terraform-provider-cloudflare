@@ -52,3 +52,9 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
     }
   ]}
 }
+
+data "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
+  account_id    = cloudflare_zero_trust_tunnel_cloudflared_config.%[1]s.account_id
+  tunnel_id     = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
+  depends_on = ["cloudflare_zero_trust_tunnel_cloudflared.%[1]s", "cloudflare_zero_trust_tunnel_cloudflared_config.%[1]s"]
+}
