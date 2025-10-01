@@ -16,7 +16,6 @@ func TestAccCloudflareTunnelVirtualNetworkDatasource_MatchName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_tunnel_cloudflared_virtual_network." + rnd
 	dataSourceName := "data.cloudflare_zero_trust_tunnel_cloudflared_virtual_network." + rnd
-	acctest.TestAccPreCheck_AccountID(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
