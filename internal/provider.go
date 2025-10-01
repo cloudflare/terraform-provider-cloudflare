@@ -5,11 +5,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
-	"regexp"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -167,6 +165,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider"
@@ -233,6 +232,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"os"
+	"regexp"
 )
 
 var _ provider.ProviderWithConfigValidators = (*CloudflareProvider)(nil)
@@ -535,6 +536,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_short_lived_certificate.NewResource,
 		zero_trust_access_mtls_certificate.NewResource,
 		zero_trust_access_mtls_hostname_settings.NewResource,
+		zero_trust_access_application.NewResource,
 		zero_trust_access_group.NewResource,
 		zero_trust_access_service_token.NewResource,
 		zero_trust_access_key_configuration.NewResource,
@@ -829,6 +831,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificateDataSource,
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificatesDataSource,
 		zero_trust_access_mtls_hostname_settings.NewZeroTrustAccessMTLSHostnameSettingsDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationsDataSource,
 		zero_trust_access_group.NewZeroTrustAccessGroupDataSource,
 		zero_trust_access_group.NewZeroTrustAccessGroupsDataSource,
 		zero_trust_access_service_token.NewZeroTrustAccessServiceTokenDataSource,
