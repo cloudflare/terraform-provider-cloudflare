@@ -3,6 +3,7 @@ package workers_kv_namespace_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -20,6 +21,48 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_workers_kv_namespace", &resource.Sweeper{
+		Name: "cloudflare_workers_kv_namespace",
+		F:    testSweepCloudflareWorkersKVNamespace,
+	})
+}
+
+func testSweepCloudflareWorkersKVNamespace(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	
+	if accountID == "" {
+		return nil
+	}
+
+	// List all KV namespaces
+	namespaces, err := client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
+		AccountID: cloudflare.F(accountID),
+	})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch KV namespaces: %s", err)
+		return err
+	}
+
+	// Delete all namespaces (sweepers clean up everything from test accounts)
+	for _, namespace := range namespaces.Result {
+		_, err := client.KV.Namespaces.Delete(ctx, namespace.ID, kv.NamespaceDeleteParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete KV namespace %s (%s): %s", namespace.Title, namespace.ID, err)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
