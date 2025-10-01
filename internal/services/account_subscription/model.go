@@ -15,7 +15,7 @@ type AccountSubscriptionResultEnvelope struct {
 type AccountSubscriptionModel struct {
 	ID                 types.String                      `tfsdk:"id" json:"id,computed"`
 	AccountID          types.String                      `tfsdk:"account_id" path:"account_id,required"`
-	Frequency          types.String                      `tfsdk:"frequency" json:"frequency,optional"`
+	Frequency          types.String                      `tfsdk:"frequency" json:"frequency,computed_optional"`
 	RatePlan           *AccountSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
 	Currency           types.String                      `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                 `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
@@ -34,10 +34,10 @@ func (m AccountSubscriptionModel) MarshalJSONForUpdate(state AccountSubscription
 
 type AccountSubscriptionRatePlanModel struct {
 	ID                types.String    `tfsdk:"id" json:"id,optional"`
-	Currency          types.String    `tfsdk:"currency" json:"currency,optional"`
-	ExternallyManaged types.Bool      `tfsdk:"externally_managed" json:"externally_managed,optional"`
-	IsContract        types.Bool      `tfsdk:"is_contract" json:"is_contract,optional"`
-	PublicName        types.String    `tfsdk:"public_name" json:"public_name,optional"`
-	Scope             types.String    `tfsdk:"scope" json:"scope,optional"`
+	Currency          types.String    `tfsdk:"currency" json:"currency,computed_optional"`
+	ExternallyManaged types.Bool      `tfsdk:"externally_managed" json:"externally_managed,computed_optional"`
+	IsContract        types.Bool      `tfsdk:"is_contract" json:"is_contract,computed_optional"`
+	PublicName        types.String    `tfsdk:"public_name" json:"public_name,computed_optional"`
+	Scope             types.String    `tfsdk:"scope" json:"scope,computed_optional"`
 	Sets              *[]types.String `tfsdk:"sets" json:"sets,optional"`
 }
