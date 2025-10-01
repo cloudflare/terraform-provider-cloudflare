@@ -36,7 +36,6 @@ func TestAccCloudflareTunnelCloudflaredConfigDatasource(t *testing.T) {
 	dataSourceName := "data.cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
-	acctest.TestAccPreCheck_AccountID(t)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
