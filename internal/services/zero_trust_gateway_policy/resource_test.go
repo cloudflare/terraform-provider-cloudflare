@@ -567,13 +567,6 @@ func TestAccCloudflareTeamsRule_HTTP_Quarantine(t *testing.T) {
 	// - Enterprise plan requirement
 	// - DLP (Data Loss Prevention) feature flag
 	// - Malware scanning feature enablement  
-	// - Account-specific quarantine feature flag
-	//
-	// TODO: Enable required feature flag and re-enable this test
-	t.Skip("quarantine action not available on test account - requires feature flag enablement")
-	
-	// Test implementation preserved for when feature is enabled:
-	/*
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -595,9 +588,7 @@ func TestAccCloudflareTeamsRule_HTTP_Quarantine(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("action"), knownvalue.StringExact("quarantine")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("filters").AtSliceIndex(0), knownvalue.StringExact("http")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("traffic"), knownvalue.StringExact("any(http.request.uri.content_category[*] in {35})")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("quarantine").AtMapKey("file_types").AtSliceIndex(0), knownvalue.StringExact("exe")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("quarantine").AtMapKey("file_types").AtSliceIndex(1), knownvalue.StringExact("pdf")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("quarantine").AtMapKey("file_types").AtSliceIndex(2), knownvalue.StringExact("zip")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("quarantine").AtMapKey("file_types").AtSliceIndex(0), knownvalue.StringExact("pdf")),
 				},
 			},
 			{
@@ -609,7 +600,6 @@ func TestAccCloudflareTeamsRule_HTTP_Quarantine(t *testing.T) {
 			},
 		},
 	})
-	*/
 }
 
 func TestAccCloudflareTeamsRule_HTTP_Scan(t *testing.T) {
@@ -715,14 +705,6 @@ func TestAccCloudflareTeamsRule_EgressDedicated(t *testing.T) {
 	// 
 	// Alternative: Basic egress policies work without dedicated IPs (use WARP IPs)
 	//
-	// To enable dedicated IP testing:
-	// 1. Purchase dedicated egress IPs for test account
-	// 2. Update testdata with actual allocated IP addresses
-	// 3. Remove this skip
-	t.Skip("dedicated egress IPs not configured on test account - requires Enterprise feature purchase")
-	
-	// Test implementation preserved for when dedicated IPs are configured:
-	/*
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -737,13 +719,19 @@ func TestAccCloudflareTeamsRule_EgressDedicated(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsRuleConfigEgressDedicated(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("egress").AtMapKey("ipv4"), knownvalue.StringExact("YOUR_DEDICATED_IPV4")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("egress").AtMapKey("ipv6"), knownvalue.StringExact("YOUR_DEDICATED_IPV6_RANGE")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("Egress policy")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("precedence"), knownvalue.Int64Exact(12403)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("action"), knownvalue.StringExact("egress")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("filters").AtSliceIndex(0), knownvalue.StringExact("egress")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("traffic"), knownvalue.StringExact("net.dst.port in {443 80}")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("egress").AtMapKey("ipv4"), knownvalue.StringExact("8.29.231.206")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("egress").AtMapKey("ipv6"), knownvalue.StringExact("2a09:bac0:1001:3e::/64")),
 				},
 			},
 		},
 	})
-	*/
 }
 
 
@@ -978,10 +966,9 @@ func testAccCloudflareTeamsRuleConfigEgressLocal(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamsruleconfigegress-local.tf", rnd, accountID)
 }
 
-// testAccCloudflareTeamsRuleConfigEgressDedicated - DISABLED (requires dedicated IPv4/IPv6)
-// func testAccCloudflareTeamsRuleConfigEgressDedicated(rnd, accountID string) string {
-// 	return acctest.LoadTestCase("teamsruleconfigegress.tf", rnd, accountID)
-// }
+func testAccCloudflareTeamsRuleConfigEgressDedicated(rnd, accountID string) string {
+	return acctest.LoadTestCase("teamsruleconfigegress.tf", rnd, accountID)
+}
 
 func testAccCloudflareTeamsRuleConfigSafeSearch(rnd, accountID string) string {
 	return acctest.LoadTestCase("teamsruleconfigsafesearch.tf", rnd, accountID)
