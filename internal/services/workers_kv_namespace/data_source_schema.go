@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"supports_url_encoding": schema.BoolAttribute{
