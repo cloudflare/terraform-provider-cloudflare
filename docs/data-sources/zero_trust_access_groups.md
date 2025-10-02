@@ -40,14 +40,12 @@ data "cloudflare_zero_trust_access_groups" "example_zero_trust_access_groups" {
 
 Read-Only:
 
-- `created_at` (String)
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--exclude))
 - `id` (String) UUID.
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--include))
 - `is_default` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--is_default))
 - `name` (String) The name of the Access group.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--require))
-- `updated_at` (String)
 
 <a id="nestedatt--result--exclude"></a>
 ### Nested Schema for `result.exclude`

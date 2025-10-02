@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_gateway_app_types_list" "example_zero_trust_gateway_
 
 ### Required
 
-- `account_id` (String) Identifier.
+- `account_id` (String) Provide the identifier string.
 
 ### Optional
 
@@ -37,10 +37,10 @@ data "cloudflare_zero_trust_gateway_app_types_list" "example_zero_trust_gateway_
 
 Read-Only:
 
-- `application_type_id` (Number) The identifier for the type of this application. There can be many applications with the same type. This refers to the `id` of a returned application type.
+- `application_type_id` (Number) Identify the type of this application. Multiple applications can share the same type. Refers to the `id` of a returned application type.
 - `created_at` (String)
-- `description` (String) A short summary of applications with this type.
-- `id` (Number) The identifier for this application. There is only one application per ID.
-- `name` (String) The name of the application or application type.
+- `description` (String) Provide a short summary of applications with this type.
+- `id` (Number) Identify this application. Only one application per ID.
+- `name` (String) Specify the name of the application or application type.
 
 

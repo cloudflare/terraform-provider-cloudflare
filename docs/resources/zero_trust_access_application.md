@@ -959,9 +959,7 @@ Read-Only:
 
 - `client_id` (String) The application client id
 - `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
-- `created_at` (String)
 - `public_key` (String) The Access public certificate that will be used to verify your identity.
-- `updated_at` (String)
 
 <a id="nestedatt--saas_app--custom_attributes"></a>
 ### Nested Schema for `saas_app.custom_attributes`

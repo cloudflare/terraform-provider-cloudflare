@@ -47,30 +47,36 @@ resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 
 - `description` (String) Additional details about the test.
 - `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
-- `targeted` (Boolean)
 
 ### Read-Only
 
 - `id` (String) The unique identifier for the test.
+- `targeted` (Boolean)
 - `test_id` (String) The unique identifier for the test.
 
 <a id="nestedatt--data"></a>
 ### Nested Schema for `data`
 
-Optional:
+Required:
 
 - `host` (String) The desired endpoint to test.
 - `kind` (String) The type of test.
+
+Optional:
+
 - `method` (String) The HTTP request method type.
 
 
 <a id="nestedatt--target_policies"></a>
 ### Nested Schema for `target_policies`
 
-Optional:
+Required:
+
+- `id` (String) The id of the DEX rule
+
+Read-Only:
 
 - `default` (Boolean) Whether the DEX rule is the account default
-- `id` (String) The id of the DEX rule
 - `name` (String) The name of the DEX rule
 
 ## Import

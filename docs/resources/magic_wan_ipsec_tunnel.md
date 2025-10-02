@@ -17,6 +17,7 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
   cloudflare_endpoint = "203.0.113.1"
   interface_address = "192.0.2.0/31"
   name = "IPsec_1"
+  automatic_return_routing = true
   bgp = {
     customer_asn = 0
     extra_prefixes = ["string"]

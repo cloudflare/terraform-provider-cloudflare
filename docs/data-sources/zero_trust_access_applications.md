@@ -55,7 +55,6 @@ Read-Only:
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.
 - `bg_color` (String) The background color of the App Launcher page.
 - `cors_headers` (Attributes) (see [below for nested schema](#nestedatt--result--cors_headers))
-- `created_at` (String)
 - `custom_deny_message` (String) The custom error message shown to a user when they are denied access to the application.
 - `custom_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing identity-based rules.
 - `custom_non_identity_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.
@@ -92,7 +91,6 @@ The header value will be interpreted as a json object similar to:
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--result--target_criteria))
 - `type` (String) The application type.
 Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp".
-- `updated_at` (String)
 
 <a id="nestedatt--result--cors_headers"></a>
 ### Nested Schema for `result.cors_headers`
@@ -878,7 +876,6 @@ Available values: "saml", "oidc".
 - `client_id` (String) The application client id
 - `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
-- `created_at` (String)
 - `custom_attributes` (Attributes List) (see [below for nested schema](#nestedatt--result--saas_app--custom_attributes))
 - `custom_claims` (Attributes List) (see [below for nested schema](#nestedatt--result--saas_app--custom_claims))
 - `default_relay_state` (String) The URL that the user will be redirected to after a successful login for IDP initiated logins.
@@ -896,7 +893,6 @@ Available values: "id", "email".
 - `scopes` (List of String) Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
 - `sso_endpoint` (String) The endpoint where your SaaS application will send login requests.
-- `updated_at` (String)
 
 <a id="nestedatt--result--saas_app--custom_attributes"></a>
 ### Nested Schema for `result.saas_app.custom_attributes`

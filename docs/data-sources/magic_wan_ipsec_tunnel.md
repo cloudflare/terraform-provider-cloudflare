@@ -36,10 +36,12 @@ data "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 Read-Only:
 
 - `allow_null_cipher` (Boolean) When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).
+- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise.
 - `bgp` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--bgp))
 - `bgp_status` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--bgp_status))
 - `cloudflare_endpoint` (String) The IP address assigned to the Cloudflare side of the IPsec tunnel.
 - `created_on` (String) The date and time the tunnel was created.
+- `custom_remote_identities` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--custom_remote_identities))
 - `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
 - `description` (String) An optional description forthe IPsec tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--health_check))
@@ -89,6 +91,21 @@ Read-Only:
 - `state` (String) Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".
 - `tcp_established` (Boolean)
 - `updated_at` (String)
+
+
+<a id="nestedatt--ipsec_tunnel--custom_remote_identities"></a>
+### Nested Schema for `ipsec_tunnel.custom_remote_identities`
+
+Read-Only:
+
+- `fqdn_id` (String) A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The
+generated IKE IDs can still be used even if this custom value is specified.
+
+Must be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.
+
+This custom ID does not need to be unique. Two IPsec tunnels may have the same custom 
+fqdn_id. However, if another IPsec tunnel has the same value then the two tunnels 
+cannot have the same cloudflare_endpoint.
 
 
 <a id="nestedatt--ipsec_tunnel--health_check"></a>

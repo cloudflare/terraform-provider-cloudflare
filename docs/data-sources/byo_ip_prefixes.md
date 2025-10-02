@@ -38,8 +38,8 @@ data "cloudflare_byo_ip_prefixes" "example_byo_ip_prefixes" {
 Read-Only:
 
 - `account_id` (String) Identifier of a Cloudflare account.
-- `advertised` (Boolean) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
-- `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
+- `advertised` (Boolean, Deprecated) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
+- `advertised_modified_at` (String, Deprecated) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
@@ -48,7 +48,7 @@ Read-Only:
 - `id` (String) Identifier of an IP Prefix.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
-- `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
-- `on_demand_locked` (Boolean) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
+- `on_demand_enabled` (Boolean, Deprecated) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
+- `on_demand_locked` (Boolean, Deprecated) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
 
 

@@ -37,9 +37,6 @@ data "cloudflare_zero_trust_access_tags" "example_zero_trust_access_tags" {
 
 Read-Only:
 
-- `app_count` (Number) The number of applications that have this tag
-- `created_at` (String)
 - `name` (String) The name of the tag
-- `updated_at` (String)
 
 
