@@ -19,19 +19,24 @@ cmd/migrate-v2/
 │   ├── backup.go                    # Backup/rollback system
 │   └── progress.go                  # Progress tracking
 ├── transformations/                 # Transformation functions
-│   ├── common/                      # Common transformations
-│   │   ├── attribute_renames.go     
-│   │   ├── field_removals.go       
-│   │   ├── default_injector.go     
-│   │   └── type_conversions.go     
-│   ├── config/                      # Config-specific transformations
-│   │   ├── blocks_to_lists.go      
-│   │   ├── list_to_blocks.go       
-│   │   ├── flatten_nested.go       
-│   │   ├── split_object.go         
-│   │   └── merge_attributes.go     
+│   ├── config/                      # HCL configuration transformations
+│   │   ├── basic/                   # Simple transformations
+│   │   │   ├── attribute_renames.go
+│   │   │   ├── field_removals.go
+│   │   │   ├── default_injector.go
+│   │   │   └── type_conversions.go
+│   │   ├── structural/              # Complex structural transformations
+│   │   │   ├── blocks_to_lists.go
+│   │   │   ├── list_to_blocks.go
+│   │   │   ├── flatten_nested.go
+│   │   │   ├── split_object.go
+│   │   │   └── merge_attributes.go
+│   │   └── conditional/             # Conditional transformations
+│   │       └── conditional_attribute_remover.go
 │   └── state/                       # State transformations
-│       └── (state-specific transformers)
+│       ├── attribute_renames.go
+│       ├── field_removals.go
+│       └── schema_updater.go
 └── resources/                       # Resource-specific migrations
     └── <resource_name>/
         └── migrations/
@@ -112,15 +117,15 @@ default_values:
 
 ## Transformation Types
 
-### Common Transformations
+### Config Transformations
 
+#### Basic (`config/basic`)
 - **AttributeRenamer**: Renames attributes while preserving values
 - **AttributeRemover**: Removes specified attributes
 - **DefaultValueSetter**: Sets default values for missing attributes
 - **SetToListConverter**: Converts `toset()` to list syntax
 
-### Config Transformations
-
+#### Structural (`config/structural`)
 - **BlocksToListConverter**: Converts HCL blocks to list attributes
 - **ListToBlocksConverter**: Converts list attributes to multiple blocks
 - **ListToBlocksWithMapping**: Converts lists to blocks with field renaming
@@ -128,9 +133,14 @@ default_values:
 - **SplitObjectTransformer**: Splits object attributes into flat attributes
 - **MergeAttributesTransformer**: Merges multiple attributes into objects/lists
 
-### State Transformations
+#### Conditional (`config/conditional`)
+- **ConditionalAttributeRemover**: Removes attributes based on conditions
 
-State transformations operate on JSON structures in the Terraform state file, handling schema version updates and structural changes.
+### State Transformations (`state`)
+- **AttributeRenamer**: Renames fields in state JSON
+- **FieldRemover**: Removes fields from state
+- **SchemaVersionUpdater**: Updates schema version
+- **DefaultValueSetter**: Sets defaults for missing state fields
 
 ## Migration Process
 

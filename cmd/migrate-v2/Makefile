@@ -12,7 +12,7 @@ test: test-unit test-integration
 # Run unit tests only
 test-unit:
 	@echo "Running unit tests..."
-	@go test -v ./core/... ./transformations/... ./utils/...
+	@go test -v ./internal/... ./transformations/... ./utils/...
 
 # Run integration tests for all resources
 test-integration:

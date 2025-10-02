@@ -52,9 +52,10 @@ Executes transformations:
 - Validates results
 
 ### Transformers
-Reusable transformation functions:
-- **Common**: Work on both config and state
-- **Config**: HCL-specific transformations
+Reusable transformation functions organized by type:
+- **Config/Basic**: Simple HCL transformations (renames, removals, defaults)
+- **Config/Structural**: Complex HCL structure changes (flatten, merge, split)
+- **Config/Conditional**: Conditional HCL transformations
 - **State**: JSON state file transformations
 
 ## Data Flow

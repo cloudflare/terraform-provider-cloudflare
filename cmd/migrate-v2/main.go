@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/core"
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/resources/access_application"
 )
 
@@ -68,8 +68,8 @@ func main() {
 	}
 
 	// Initialize migration registry
-	registry := core.NewDefaultRegistry()
-	
+	registry := internal.NewDefaultRegistry()
+
 	// Register resource migrations
 	if err := access_application.RegisterMigrations(registry); err != nil {
 		fmt.Fprintf(os.Stderr, "Error registering migrations: %v\n", err)
@@ -77,16 +77,16 @@ func main() {
 	}
 
 	// Create migration context
-	ctx := &core.MigrationContext{
+	ctx := &internal.MigrationContext{
 		SourceVersion: sourceVersion,
 		TargetVersion: targetVersion,
 		DryRun:        dryRun,
 		Verbose:       verbose,
 		WorkingDir:    configDir,
 		StateFile:     stateFile,
-		Diagnostics:   []core.Diagnostic{},
-		Metrics:       &core.MigrationMetrics{},
-		Options: core.MigrationOptions{
+		Diagnostics:   []internal.Diagnostic{},
+		Metrics:       &internal.MigrationMetrics{},
+		Options: internal.MigrationOptions{
 			DryRun:       dryRun,
 			Verbose:      verbose,
 			Parallel:     parallel,
@@ -96,15 +96,15 @@ func main() {
 			AutoRollback: false, // Could be added as a flag later
 			WorkingDir:   configDir,
 		},
-		Progress: core.NewProgressTracker(),
+		Progress: internal.NewProgressTracker(),
 		Output:   os.Stdout,
 	}
-	
+
 	// Configure progress tracker
 	ctx.Progress.SetVerbose(verbose)
 
 	// Create orchestrator
-	orchestrator := core.NewOrchestrator(registry, ctx.Options)
+	orchestrator := internal.NewOrchestrator(registry, ctx.Options)
 
 	// Process configuration files
 	if err := orchestrator.MigrateDirectory(configDir, ctx); err != nil {
@@ -138,11 +138,11 @@ type MigrationReport struct {
 	MigratedResources int
 	FailedResources   int
 	Warnings          int
-	Diagnostics       []core.Diagnostic
+	Diagnostics       []internal.Diagnostic
 	DryRun            bool
 }
 
-func generateReport(ctx *core.MigrationContext) MigrationReport {
+func generateReport(ctx *internal.MigrationContext) MigrationReport {
 	report := MigrationReport{
 		Timestamp:         time.Now(),
 		SourceVersion:     sourceVersion,
@@ -162,13 +162,13 @@ func displayReport(report MigrationReport) {
 	fmt.Println("\n=== Migration Report ===")
 	fmt.Printf("Timestamp: %s\n", report.Timestamp.Format("2006-01-02 15:04:05"))
 	fmt.Printf("Migration: %s -> %s\n", report.SourceVersion, report.TargetVersion)
-	
+
 	if report.DryRun {
 		fmt.Println("Mode: DRY RUN (no changes applied)")
 	} else {
 		fmt.Println("Mode: APPLIED")
 	}
-	
+
 	fmt.Println("\nStatistics:")
 	fmt.Printf("  Total resources found: %d\n", report.TotalResources)
 	fmt.Printf("  Successfully migrated: %d\n", report.MigratedResources)
@@ -180,9 +180,9 @@ func displayReport(report MigrationReport) {
 		for _, diag := range report.Diagnostics {
 			severity := "INFO"
 			switch diag.Severity {
-			case core.DiagnosticSeverityError:
+			case internal.DiagnosticSeverityError:
 				severity = "ERROR"
-			case core.DiagnosticSeverityWarning:
+			case internal.DiagnosticSeverityWarning:
 				severity = "WARNING"
 			}
 			fmt.Printf("  [%s] %s: %s\n", severity, diag.Summary, diag.Detail)

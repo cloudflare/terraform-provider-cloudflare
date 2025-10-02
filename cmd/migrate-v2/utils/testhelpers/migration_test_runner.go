@@ -4,11 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/core"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/internal"
 )
 
 // MigrationTestCase represents a test case for migration testing
@@ -21,12 +22,12 @@ type MigrationTestCase struct {
 
 // MigrationTestRunner provides utilities for testing migrations
 type MigrationTestRunner struct {
-	migration    core.ResourceMigration
+	migration    internal.ResourceMigration
 	resourceType string
 }
 
 // NewMigrationTestRunner creates a new test runner for a migration
-func NewMigrationTestRunner(migration core.ResourceMigration, resourceType string) *MigrationTestRunner {
+func NewMigrationTestRunner(migration internal.ResourceMigration, resourceType string) *MigrationTestRunner {
 	return &MigrationTestRunner{
 		migration:    migration,
 		resourceType: resourceType,
@@ -54,11 +55,11 @@ func (r *MigrationTestRunner) RunConfigTests(t *testing.T, tests []MigrationTest
 
 			// Format and compare output
 			output := string(hclwrite.Format(file.Bytes()))
-			
+
 			// Normalize whitespace for comparison
 			expected := NormalizeHCL(tt.Expected)
 			actual := NormalizeHCL(output)
-			
+
 			assert.Equal(t, expected, actual, "Migration output doesn't match expected")
 		})
 	}
@@ -69,13 +70,13 @@ func (r *MigrationTestRunner) RunStateTests(t *testing.T, tests []StateTestCase)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			ctx := NewTestContext()
-			
+
 			// Make a copy of the input state to avoid mutation
 			stateCopy := CopyState(tt.Input)
-			
+
 			err := r.migration.MigrateState(stateCopy, ctx)
 			require.NoError(t, err)
-			
+
 			assert.Equal(t, tt.Expected, stateCopy, "State migration output doesn't match expected")
 		})
 	}
@@ -101,11 +102,11 @@ type StateTestCase struct {
 }
 
 // NewTestContext creates a new migration context for testing
-func NewTestContext() *core.MigrationContext {
-	return &core.MigrationContext{
-		Diagnostics: []core.Diagnostic{},
-		Metrics:     &core.MigrationMetrics{},
-		Options: core.MigrationOptions{
+func NewTestContext() *internal.MigrationContext {
+	return &internal.MigrationContext{
+		Diagnostics: []internal.Diagnostic{},
+		Metrics:     &internal.MigrationMetrics{},
+		Options: internal.MigrationOptions{
 			Verbose: false,
 			DryRun:  false,
 		},
@@ -138,15 +139,15 @@ func NormalizeHCL(hclStr string) string {
 		// If parsing fails, return original
 		return hclStr
 	}
-	
+
 	formatted := string(hclwrite.Format(file.Bytes()))
-	
+
 	// Clean up excessive blank lines (more than one consecutive blank line)
 	// This is a workaround for hclwrite not properly cleaning up whitespace after block removal
 	lines := strings.Split(formatted, "\n")
 	var cleaned []string
 	blankCount := 0
-	
+
 	for _, line := range lines {
 		if strings.TrimSpace(line) == "" {
 			blankCount++
@@ -159,23 +160,23 @@ func NormalizeHCL(hclStr string) string {
 			cleaned = append(cleaned, line)
 		}
 	}
-	
+
 	return strings.Join(cleaned, "\n")
 }
 
 // AssertNoDiagnosticErrors checks that no error diagnostics were generated
-func AssertNoDiagnosticErrors(t *testing.T, ctx *core.MigrationContext) {
+func AssertNoDiagnosticErrors(t *testing.T, ctx *internal.MigrationContext) {
 	for _, diag := range ctx.Diagnostics {
-		if diag.Severity == core.DiagnosticSeverityError {
+		if diag.Severity == internal.DiagnosticSeverityError {
 			t.Errorf("Unexpected error diagnostic: %s - %s", diag.Summary, diag.Detail)
 		}
 	}
 }
 
 // AssertDiagnosticWarning checks that a specific warning was generated
-func AssertDiagnosticWarning(t *testing.T, ctx *core.MigrationContext, summary string) {
+func AssertDiagnosticWarning(t *testing.T, ctx *internal.MigrationContext, summary string) {
 	for _, diag := range ctx.Diagnostics {
-		if diag.Severity == core.DiagnosticSeverityWarning && strings.Contains(diag.Summary, summary) {
+		if diag.Severity == internal.DiagnosticSeverityWarning && strings.Contains(diag.Summary, summary) {
 			return // Found it
 		}
 	}

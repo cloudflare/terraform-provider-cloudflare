@@ -4,32 +4,37 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/core"
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/internal"
 )
 
 //go:embed v4_to_v5.yaml
-var migrationConfig []byte
+var v4ToV5Config []byte
 
-// V4ToV5Migration handles the v4 to v5 migration for zero_trust_access_application
+// AccessApplicationMigration handles migrations for zero_trust_access_application resource
 // All transformation logic is defined in the embedded YAML configuration
-type V4ToV5Migration struct {
-	*core.BaseMigration
+type AccessApplicationMigration struct {
+	*internal.Migration
 }
 
-// NewV4ToV5Migration creates a new v4 to v5 migration
-func NewV4ToV5Migration() (*V4ToV5Migration, error) {
-	base, err := core.NewBaseMigration(migrationConfig)
+// NewAccessApplicationMigration creates a new access application migration
+func NewAccessApplicationMigration(config []byte) (*AccessApplicationMigration, error) {
+	migration, err := internal.NewMigration(config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create base migration: %w", err)
 	}
 
-	return &V4ToV5Migration{
-		BaseMigration: base,
+	return &AccessApplicationMigration{
+		Migration: migration,
 	}, nil
 }
 
+// NewV4ToV5Migration creates a new v4 to v5 migration for access_application
+func NewV4ToV5Migration() (*AccessApplicationMigration, error) {
+	return NewAccessApplicationMigration(v4ToV5Config)
+}
+
 // RegisterV4ToV5 registers the v4 to v5 migration
-func RegisterV4ToV5(registry core.MigrationRegistry) error {
+func RegisterV4ToV5(registry internal.MigrationRegistry) error {
 	migration, err := NewV4ToV5Migration()
 	if err != nil {
 		return err
