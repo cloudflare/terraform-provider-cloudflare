@@ -23,8 +23,11 @@ resource "cloudflare_email_routing_dns" "example_email_routing_dns" {
 
 ### Required
 
-- `name` (String) Domain of your zone.
 - `zone_id` (String) Identifier.
+
+### Optional
+
+- `name` (String) Domain of your zone.
 
 ### Read-Only
 

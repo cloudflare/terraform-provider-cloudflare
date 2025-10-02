@@ -37,12 +37,9 @@ data "cloudflare_zero_trust_access_custom_pages" "example_zero_trust_access_cust
 
 Read-Only:
 
-- `app_count` (Number) Number of apps the custom page is assigned to.
-- `created_at` (String)
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
 Available values: "identity_denied", "forbidden".
 - `uid` (String) UUID.
-- `updated_at` (String)
 
 

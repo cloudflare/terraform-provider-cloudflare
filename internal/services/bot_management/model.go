@@ -45,23 +45,24 @@ type BotManagementStaleZoneConfigurationAPIModel struct {
 
 // BotManagementModel represents the Terraform state model
 type BotManagementModel struct {
-	ID                           types.String                                                       `tfsdk:"id"`
-	ZoneID                       types.String                                                       `tfsdk:"zone_id"`
-	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection"`
-	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model"`
-	BmCookieEnabled              types.Bool                                                         `tfsdk:"bm_cookie_enabled"`
-	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection"`
-	EnableJS                     types.Bool                                                         `tfsdk:"enable_js"`
-	FightMode                    types.Bool                                                         `tfsdk:"fight_mode"`
-	IsRobotsTXTManaged           types.Bool                                                         `tfsdk:"is_robots_txt_managed"`
-	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress"`
-	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated"`
-	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated"`
-	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection"`
-	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots"`
-	SuppressSessionScore         types.Bool                                                         `tfsdk:"suppress_session_score"`
-	UsingLatestModel             types.Bool                                                         `tfsdk:"using_latest_model"`
-	StaleZoneConfiguration       customfield.NestedObject[BotManagementStaleZoneConfigurationModel] `tfsdk:"stale_zone_configuration"`
+	ID                           types.String                                                       `tfsdk:"id" json:"-,computed"`
+	ZoneID                       types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed_optional"`
+	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,computed_optional"`
+	BmCookieEnabled              types.Bool                                                         `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed_optional"`
+	CfRobotsVariant              types.String                                                       `tfsdk:"cf_robots_variant" json:"cf_robots_variant,computed_optional"`
+	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection" json:"crawler_protection,computed_optional"`
+	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,computed_optional"`
+	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,computed_optional"`
+	IsRobotsTXTManaged           types.Bool                                                         `tfsdk:"is_robots_txt_managed" json:"is_robots_txt_managed,computed_optional"`
+	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed_optional"`
+	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed_optional"`
+	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed_optional"`
+	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,computed_optional"`
+	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,computed_optional"`
+	SuppressSessionScore         types.Bool                                                         `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
+	UsingLatestModel             types.Bool                                                         `tfsdk:"using_latest_model" json:"using_latest_model,computed"`
+	StaleZoneConfiguration       customfield.NestedObject[BotManagementStaleZoneConfigurationModel] `tfsdk:"stale_zone_configuration" json:"stale_zone_configuration,computed"`
 }
 
 // Helper functions for ToAPIModel conversion
@@ -169,6 +170,11 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	updateStringField(&m.SBFMDefinitelyAutomated, api.SBFMDefinitelyAutomated)
 	updateStringField(&m.SBFMLikelyAutomated, api.SBFMLikelyAutomated)
 	updateStringField(&m.SBFMVerifiedBots, api.SBFMVerifiedBots)
+	
+	// cf_robots_variant is not returned by API, set to null if unknown
+	if m.CfRobotsVariant.IsUnknown() {
+		m.CfRobotsVariant = types.StringNull()
+	}
 
 	// Handle nested stale zone configuration
 	if api.StaleZoneConfiguration != nil {

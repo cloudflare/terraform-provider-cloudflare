@@ -22,11 +22,9 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
-  
-  policies = [
-    { id = cloudflare_zero_trust_access_policy.allow.id },
-    { id = cloudflare_zero_trust_access_policy.deny.id }
-  ]
+
+  policies = [{ id = cloudflare_zero_trust_access_policy.allow.id }, { id = cloudflare_zero_trust_access_policy.deny.id }]
+  type     = "self_hosted"
 }`},
 		},
 		{
@@ -42,8 +40,9 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
-  
+
   policies = [{ id = "policy-id-1" }, { id = "policy-id-2" }]
+  type     = "self_hosted"
 }`},
 		},
 		{
@@ -63,12 +62,9 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
-  
-  policies = [
-    { id = cloudflare_zero_trust_access_policy.allow.id },
-    { id = "literal-policy-id" },
-    { id = cloudflare_zero_trust_access_policy.deny.id }
-  ]
+
+  policies = [{ id = cloudflare_zero_trust_access_policy.allow.id }, { id = "literal-policy-id" }, { id = cloudflare_zero_trust_access_policy.deny.id }]
+  type     = "self_hosted"
 }`},
 		},
 		{
@@ -86,12 +82,13 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
-  
-  policies = [ { id = cloudflare_zero_trust_access_policy.old_style.id } ]
+
+  policies = [{ id = cloudflare_zero_trust_access_policy.old_style.id }]
+  type     = "self_hosted"
 }`},
 		},
 		{
-			Name: "no policies attribute",
+			Name: "no policies attribute but add default type",
 			Config: `resource "cloudflare_zero_trust_access_application" "test" {
   account_id = "abc123"
   name       = "Test App"
@@ -101,6 +98,7 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
+  type       = "self_hosted"
 }`},
 		},
 	}
@@ -424,7 +422,7 @@ func TestAccessApplicationSkipAppLauncherLoginPageRemoval(t *testing.T) {
 }`},
 		},
 		{
-			Name: "remove skip_app_launcher_login_page when no type attribute",
+			Name: "remove skip_app_launcher_login_page when no type attribute and add default type",
 			Config: `resource "cloudflare_zero_trust_access_application" "test" {
   account_id                  = "abc123"
   name                        = "Test App"
@@ -435,6 +433,7 @@ func TestAccessApplicationSkipAppLauncherLoginPageRemoval(t *testing.T) {
   account_id = "abc123"
   name       = "Test App"
   domain     = "test.example.com"
+  type       = "self_hosted"
 }`},
 		},
 		{

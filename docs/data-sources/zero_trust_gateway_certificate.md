@@ -27,21 +27,21 @@ data "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway_cer
 
 ### Optional
 
-- `certificate_id` (String) Certificate UUID tag.
+- `certificate_id` (String) Identify the certificate with a UUID.
 
 ### Read-Only
 
-- `binding_status` (String) The read only deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.
+- `binding_status` (String) Indicate the read-only deployment status of the certificate on Cloudflare's edge. Gateway TLS interception can use certificates in the 'available' (previously called 'active') state.
 Available values: "pending_deployment", "available", "pending_deletion", "inactive".
-- `certificate` (String) The CA certificate(read only).
+- `certificate` (String) Provide the CA certificate (read-only).
 - `created_at` (String)
 - `expires_on` (String)
-- `fingerprint` (String) The SHA256 fingerprint of the certificate(read only).
-- `id` (String) Certificate UUID tag.
-- `in_use` (Boolean) Read-only field that shows whether Gateway TLS interception is using this certificate. This value cannot be set directly. To configure the certificate for interception, use the Gateway configuration setting named certificate.
-- `issuer_org` (String) The organization that issued the certificate(read only).
-- `issuer_raw` (String) The entire issuer field of the certificate(read only).
-- `type` (String) The type of certificate, either BYO-PKI (custom) or Gateway-managed(read only).
+- `fingerprint` (String) Provide the SHA256 fingerprint of the certificate (read-only).
+- `id` (String) Identify the certificate with a UUID.
+- `in_use` (Boolean) Indicate whether Gateway TLS interception uses this certificate (read-only). You cannot set this value directly. To configure interception, use the Gateway configuration setting named `certificate` (read-only).
+- `issuer_org` (String) Indicate the organization that issued the certificate (read-only).
+- `issuer_raw` (String) Provide the entire issuer field of the certificate (read-only).
+- `type` (String) Indicate the read-only certificate type, BYO-PKI (custom) or Gateway-managed.
 Available values: "custom", "gateway_managed".
 - `updated_at` (String)
 - `uploaded_on` (String)

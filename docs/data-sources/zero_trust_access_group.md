@@ -31,14 +31,12 @@ data "cloudflare_zero_trust_access_group" "example_zero_trust_access_group" {
 
 ### Read-Only
 
-- `created_at` (String)
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
 - `id` (String) UUID.
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `is_default` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--is_default))
 - `name` (String) The name of the Access group.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
-- `updated_at` (String)
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

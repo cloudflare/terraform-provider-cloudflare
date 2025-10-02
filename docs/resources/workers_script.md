@@ -75,7 +75,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
     logs = {
       enabled = true
       invocation_logs = true
+      destinations = ["cloudflare"]
       head_sampling_rate = 0.1
+      persist = true
     }
   }
   placement = {
@@ -100,18 +102,18 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
-- `body_part` (String) Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
+- `body_part` (String) Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
-- `content` (String) Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.
-- `content_file` (String) Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.
+- `content` (String) Module or Service Worker contents of the Worker. Conflicts with `content_file`.
+- `content_file` (String) Path to a file containing the Module or Service Worker contents of the Worker. Conflicts with `content`. Must be paired with `content_sha256`.
 - `content_sha256` (String) SHA-256 hash of the Worker contents. Used to trigger updates when source code changes. Must be provided when `content_file` is specified.
 - `content_type` (String) Content-Type of the Worker. Required if uploading a non-JavaScript Worker (e.g. "text/x-python").
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (Set of String) List of binding types to keep from previous_upload.
 - `limits` (Attributes) Limits to apply for this Worker. (see [below for nested schema](#nestedatt--limits))
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
-- `main_module` (String) Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
+- `main_module` (String) Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
@@ -139,7 +141,12 @@ Available values: "standard", "bundled", "unbound".
 Optional:
 
 - `config` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets--config))
+- `directory` (String) Path to the directory containing asset files to upload.
 - `jwt` (String, Sensitive) Token provided upon successful upload of all files from a registered manifest.
+
+Read-Only:
+
+- `asset_manifest_sha256` (String) The SHA-256 hash of the asset manifest of files to upload.
 
 <a id="nestedatt--assets--config"></a>
 ### Nested Schema for `assets.config`
@@ -164,26 +171,33 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "tail_consumer", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 
 Optional:
 
 - `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
+- `allowed_destination_addresses` (List of String) List of allowed destination addresses.
+- `allowed_sender_addresses` (List of String) List of allowed sender addresses.
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
 - `dataset` (String) The name of the dataset to bind to.
+- `destination_address` (String) Destination address for the email.
 - `environment` (String) The environment of the script_name to bind to.
 - `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
 - `index_name` (String) Name of the Vectorize index to bind to.
 - `json` (String) JSON data to use.
+- `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
+Available values: "eu", "fedramp".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `namespace` (String) Namespace to bind to.
 - `namespace_id` (String) Namespace identifier tag.
+- `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
+- `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
 - `pipeline` (String) Name of the Pipeline to bind to.
 - `queue_name` (String) Name of the Queue to bind to.
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
@@ -192,6 +206,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
+- `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
 - `workflow_name` (String) Name of the Workflow to bind to.
 
 <a id="nestedatt--bindings--outbound"></a>
@@ -308,7 +323,9 @@ Required:
 
 Optional:
 
+- `destinations` (List of String) A list of destinations where logs will be exported to.
 - `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
 
 
 

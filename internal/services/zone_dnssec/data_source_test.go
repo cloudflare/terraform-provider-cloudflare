@@ -10,7 +10,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareZoneDNSSEC(t *testing.T) {
@@ -24,39 +26,25 @@ func TestAccCloudflareZoneDNSSEC(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneDNSSECConfig(zoneID, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
-					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|disabled|pending")),
-					resource.TestCheckResourceAttrSet(name, "flags"),
-					resource.TestCheckResourceAttrSet(name, "algorithm"),
-					resource.TestCheckResourceAttrSet(name, "key_type"),
-					resource.TestCheckResourceAttrSet(name, "digest_type"),
-					resource.TestCheckResourceAttrSet(name, "digest_algorithm"),
-					resource.TestCheckResourceAttrSet(name, "digest"),
-					resource.TestCheckResourceAttrSet(name, "ds"),
-					resource.TestCheckResourceAttrSet(name, "key_tag"),
-					resource.TestCheckResourceAttrSet(name, "public_key"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("status"), knownvalue.StringRegexp(regexp.MustCompile("active|disabled|pending"))),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("flags"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("algorithm"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("key_type"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("digest_type"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("digest_algorithm"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("digest"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("ds"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("key_tag"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("public_key"), knownvalue.NotNull()),
+				},
+				ExpectNonEmptyPlan: true, // Data source depends on DNSSEC resource with changing computed values
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareZoneDNSSECDataSourceID(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		all := s.RootModule().Resources
-		rs, ok := all[n]
-		if !ok {
-			return fmt.Errorf("can't find Zone DNSSEC data source: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("Snapshot Zone DNSSEC ID not set")
-		}
-		return nil
-	}
-}
 
 func testAccCloudflareZoneDNSSECConfig(zoneID string, name string) string {
 	return fmt.Sprintf(`

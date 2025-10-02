@@ -38,6 +38,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   longitude = 0
   minimum_origins = 0
   monitor = "monitor"
+  monitor_group = "monitor_group"
   notification_email = "someone@example.com,sometwo@example.com"
   notification_filter = {
     origin = {
@@ -74,6 +75,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 - `longitude` (Number) The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
 - `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
 - `monitor` (String) The ID of the Monitor to use for checking the health of origins within this pool.
+- `monitor_group` (String) The ID of the Monitor Group to use for checking the health of origins within this pool.
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
 - `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--notification_filter))
 - `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--origin_steering))

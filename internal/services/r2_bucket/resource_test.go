@@ -15,15 +15,16 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/r2"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -154,12 +155,12 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
+				ResourceName: resourceName,
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -187,12 +188,12 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
+				ResourceName: resourceName,
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -237,12 +238,12 @@ func TestAccCloudflareR2Bucket_AllLocations(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	locations := []string{"apac", "eeur", "enam", "weur", "wnam", "oc"}
-	
+
 	for _, location := range locations {
 		t.Run(location, func(t *testing.T) {
 			testRnd := rnd + location
 			testResourceName := "cloudflare_r2_bucket." + testRnd
-			
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -253,14 +254,13 @@ func TestAccCloudflareR2Bucket_AllLocations(t *testing.T) {
 				Steps: []resource.TestStep{
 					{
 						Config: testAccCheckCloudflareR2BucketLocation(testRnd, accountID, location),
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("name"), knownvalue.StringExact(testRnd)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("location"), knownvalue.StringExact(location)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
-						},
-						ExpectNonEmptyPlan: true,
+						Check: resource.ComposeTestCheckFunc(
+							resource.TestCheckResourceAttr(testResourceName, "name", testRnd),
+							resource.TestCheckResourceAttr(testResourceName, "location", location),
+							resource.TestCheckResourceAttr(testResourceName, "account_id", accountID),
+							resource.TestCheckResourceAttr(testResourceName, "jurisdiction", "default"),
+							resource.TestCheckResourceAttr(testResourceName, "storage_class", "Standard"),
+						),
 					},
 				},
 			})
@@ -273,12 +273,12 @@ func TestAccCloudflareR2Bucket_AllJurisdictions(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	jurisdictions := []string{"default", "fedramp"}
-	
+
 	for _, jurisdiction := range jurisdictions {
 		t.Run(jurisdiction, func(t *testing.T) {
 			testRnd := rnd + jurisdiction
 			testResourceName := "cloudflare_r2_bucket." + testRnd
-			
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -409,6 +409,78 @@ func TestAccCloudflareR2Bucket_StorageClassUpdate(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+
+				// Apply with uppercase - should be treated as no change (case-insensitive)
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Apply with mixed case - should be treated as no change (case-insensitive)
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WeUr"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Now actually apply with uppercase to set it in state
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+			},
+			{
+				// Reapply same uppercase - should not cause a plan change
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Apply with different case - should be treated as no change (case-insensitive)
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketminimum.tf", rnd, accountID)
 }
@@ -465,4 +537,13 @@ func testAccCheckCloudflareR2BucketDestroy(s *terraform.State) error {
 	}
 
 	return nil
+}
+
+func testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, location string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_r2_bucket" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  location   = "%[3]s"
+}`, rnd, accountID, location)
 }

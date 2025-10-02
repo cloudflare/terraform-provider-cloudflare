@@ -27,6 +27,10 @@ import (
 var explicitJsonNull = []byte("null")
 var encoders sync.Map // map[encoderEntry]encoderFunc
 
+// If we want to set a literal key value into JSON using sjson, we need to make sure it doesn't have
+// special characters that sjson interprets as a path.
+var EscapeSJSONKey = strings.NewReplacer("\\", "\\\\", "|", "\\|", "#", "\\#", "@", "\\@", "*", "\\*", ".", "\\.", ":", "\\:", "?", "\\?").Replace
+
 // CustomMarshaler allows types to override their JSON encoding behavior while supporting
 // plan/state diffing for Terraform operations. This is checked before standard encoding.
 type CustomMarshaler interface {
@@ -620,7 +624,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 				continue
 			}
 			someFieldsSet = true
-			json, err = sjson.SetRawBytes(json, ef.tag.name, encoded)
+			json, err = sjson.SetRawBytes(json, EscapeSJSONKey(ef.tag.name), encoded)
 			if err != nil {
 				return nil, err
 			}
@@ -703,7 +707,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 				return nil, err
 			}
 		}
-		encodedKey := []byte(sjsonReplacer.Replace(encodedKeyString))
+		encodedKey := []byte(encodedKeyString)
 		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value()})
 	}
 
@@ -722,7 +726,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 			// encode a nil for the property rather than omitting the key entirely
 			encodedValue = explicitJsonNull
 		}
-		json, err = sjson.SetRawBytes(json, string(pair.key), encodedValue)
+		json, err = sjson.SetRawBytes(json, EscapeSJSONKey(string(pair.key)), encodedValue)
 		if err != nil {
 			return nil, err
 		}
@@ -753,7 +757,3 @@ func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 		return json, nil
 	}
 }
-
-// If we want to set a literal key value into JSON using sjson, we need to make sure it doesn't have
-// special characters that sjson interprets as a path.
-var sjsonReplacer *strings.Replacer = strings.NewReplacer(".", "\\.", ":", "\\:", "*", "\\*")

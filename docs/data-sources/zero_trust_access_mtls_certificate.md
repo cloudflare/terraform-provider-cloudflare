@@ -31,11 +31,9 @@ data "cloudflare_zero_trust_access_mtls_certificate" "example_zero_trust_access_
 ### Read-Only
 
 - `associated_hostnames` (List of String) The hostnames of the applications that will use this certificate.
-- `created_at` (String)
 - `expires_on` (String)
 - `fingerprint` (String) The MD5 fingerprint of the certificate.
 - `id` (String) UUID.
 - `name` (String) The name of the certificate.
-- `updated_at` (String)
 
 

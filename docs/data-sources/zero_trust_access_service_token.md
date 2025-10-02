@@ -32,13 +32,10 @@ data "cloudflare_zero_trust_access_service_token" "example_zero_trust_access_ser
 ### Read-Only
 
 - `client_id` (String) The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.
-- `created_at` (String)
 - `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
 - `expires_at` (String)
 - `id` (String) UUID.
-- `last_seen_at` (String)
 - `name` (String) The name of the service token.
-- `updated_at` (String)
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

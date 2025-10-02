@@ -28,7 +28,7 @@ data "cloudflare_zero_trust_lists" "example_zero_trust_lists" {
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
-- `type` (String) The type of list.
+- `type` (String) Specify the list type.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 ### Read-Only
@@ -41,12 +41,12 @@ Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 Read-Only:
 
 - `created_at` (String)
-- `description` (String) The description of the list.
-- `id` (String) API Resource UUID tag.
-- `items` (Attributes Set) The items in the list. (see [below for nested schema](#nestedatt--result--items))
-- `list_count` (Number) The number of items in the list.
-- `name` (String) The name of the list.
-- `type` (String) The type of list.
+- `description` (String) Provide the list description.
+- `id` (String) Identify the API resource with a UUID.
+- `items` (Attributes Set) Provide the list items. (see [below for nested schema](#nestedatt--result--items))
+- `list_count` (Number) Indicate the number of items in the list.
+- `name` (String) Specify the list name.
+- `type` (String) Specify the list type.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 - `updated_at` (String)
 
@@ -56,7 +56,7 @@ Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 Read-Only:
 
 - `created_at` (String)
-- `description` (String) The description of the list item, if present.
-- `value` (String) The value of the item in a list.
+- `description` (String) Provide the list item description (optional).
+- `value` (String) Specify the item value.
 
 

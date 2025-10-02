@@ -38,7 +38,7 @@ data "cloudflare_workers" "example_workers" {
 Read-Only:
 
 - `created_on` (String) When the Worker was created.
-- `id` (String) Identifier.
+- `id` (String) Immutable ID of the Worker.
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `name` (String) Name of the Worker.
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--result--observability))

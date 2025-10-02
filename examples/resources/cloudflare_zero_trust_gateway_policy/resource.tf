@@ -23,12 +23,12 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     biso_admin_controls = {
       copy = "remote_only"
-      dcp = false
-      dd = false
-      dk = false
+      dcp = true
+      dd = true
+      dk = true
       download = "enabled"
       dp = false
-      du = false
+      du = true
       keyboard = "enabled"
       paste = "enabled"
       printing = "enabled"
