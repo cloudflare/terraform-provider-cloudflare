@@ -282,77 +282,94 @@ func (r *ZeroTrustGatewayPolicyResource) ModifyPlan(_ context.Context, _ resourc
 
 }
 
-// detectDriftOnUpdate compares the current API state with the planned configuration and returns diagnostic messages
-// showing the differences between what's configured vs what exists in the API
+// detectDriftOnUpdate compares Terraform planned config vs API without filtering computed fields.
 func (r *ZeroTrustGatewayPolicyResource) detectDriftOnUpdate(ctx context.Context, apiState, plannedConfig *ZeroTrustGatewayPolicyModel) diag.Diagnostics {
+	header := "detectDriftOnUpdate@UPDATE"
+	return r.detectDrift(ctx, plannedConfig, apiState, false, header, "Terraform", "API")
+}
+
+// detectConfigurationDriftOnRead compares Terraform state vs API and filters computed-only fields.
+func (r *ZeroTrustGatewayPolicyResource) detectConfigurationDriftOnRead(ctx context.Context, apiState, terraformState *ZeroTrustGatewayPolicyModel) diag.Diagnostics {
+	header := "detectConfigurationDriftOnRead@READ"
+	return r.detectDrift(ctx, terraformState, apiState, true, header, "Terraform", "API")
+}
+
+// detectDrift normalizes two models to JSON, optionally filters computed-only keys,
+// pretty-prints them, and emits a side-by-side diff if they differ.
+func (r *ZeroTrustGatewayPolicyResource) detectDrift(
+	ctx context.Context,
+	left, right *ZeroTrustGatewayPolicyModel,
+	filterComputed bool,
+	header string,
+	leftLabel string,
+	rightLabel string,
+) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if apiState == nil || plannedConfig == nil {
+	if left == nil || right == nil {
 		return diags
 	}
 
-	differences := r.compareModels(apiState, plannedConfig)
-
-	if len(differences) > 0 {
-		var driftDetails strings.Builder
-		driftDetails.WriteString("Configuration drift detected between API state and Terraform configuration.\n\n")
-		// We expect a single consolidated difference (policy JSON)
-		diff := differences[0]
-		driftDetails.WriteString("detectDriftOnUpdate@UPDATE")
-		driftDetails.WriteString("Side-by-side (Terraform | API):\n")
-		driftDetails.WriteString(sideBySideDiff(diff.ConfigValue, diff.APIValue, 60))
-
-		driftDetails.WriteString("\n\nTo fix the drift, update your terraform declaration to match the current API state.")
-
+	// Serialize both objects using model-aware JSON marshaling
+	leftBytes, errL := left.MarshalJSON()
+	rightBytes, errR := right.MarshalJSON()
+	if errL != nil || errR != nil {
 		diags.AddWarning(
 			"Configuration Drift Detected",
-			driftDetails.String(),
+			fmt.Sprintf("error marshalling for drift detection (left=%v, right=%v)", errL, errR),
 		)
+		return diags
 	}
 
-	return diags
-}
+	// Normalize into maps for optional filtering
+	var leftMap map[string]any
+	var rightMap map[string]any
+	if err := json.Unmarshal(leftBytes, &leftMap); err != nil {
+		diags.AddWarning("Configuration Drift Detected", "failed to parse left object for drift detection")
+		return diags
+	}
+	if err := json.Unmarshal(rightBytes, &rightMap); err != nil {
+		diags.AddWarning("Configuration Drift Detected", "failed to parse right object for drift detection")
+		return diags
+	}
 
-// DriftDifference represents a single field difference between API state and configuration
-type DriftDifference struct {
-	Field       string
-	APIValue    string
-	ConfigValue string
-}
-
-// compareModels performs a detailed comparison between API state and planned configuration
-func (r *ZeroTrustGatewayPolicyResource) compareModels(apiState, plannedConfig *ZeroTrustGatewayPolicyModel) []DriftDifference {
-	// Marshal using model's JSON to respect tags/omissions
-	apiBytes, errA := apiState.MarshalJSON()
-	cfgBytes, errC := plannedConfig.MarshalJSON()
-
-	if errA != nil || errC != nil {
-		return []DriftDifference{
-			{
-				Field:       "policy",
-				APIValue:    fmt.Sprintf("error marshalling api state: %v", errA),
-				ConfigValue: fmt.Sprintf("error marshalling config: %v", errC),
-			},
+	if filterComputed {
+		remove := func(m map[string]any) {
+			delete(m, "id")
+			delete(m, "account_id")
+			delete(m, "created_at")
+			delete(m, "deleted_at")
+			delete(m, "read_only")
+			delete(m, "sharable")
+			delete(m, "source_account")
+			delete(m, "updated_at")
+			delete(m, "version")
+			delete(m, "warning_status")
 		}
+		remove(leftMap)
+		remove(rightMap)
 	}
 
-	// Normalize JSON for stable comparison
-	var apiObj any
-	var cfgObj any
-	if err := json.Unmarshal(apiBytes, &apiObj); err != nil {
-		return []DriftDifference{{Field: "policy", APIValue: string(apiBytes), ConfigValue: string(cfgBytes)}}
-	}
-	if err := json.Unmarshal(cfgBytes, &cfgObj); err != nil {
-		return []DriftDifference{{Field: "policy", APIValue: string(apiBytes), ConfigValue: string(cfgBytes)}}
-	}
-	normAPI, _ := json.MarshalIndent(apiObj, "", "  ")
-	normCfg, _ := json.MarshalIndent(cfgObj, "", "  ")
+	normLeft, _ := json.MarshalIndent(leftMap, "", "  ")
+	normRight, _ := json.MarshalIndent(rightMap, "", "  ")
 
-	if string(normAPI) == string(normCfg) {
-		return nil
+	if string(normLeft) == string(normRight) {
+		return diags
 	}
 
-	return []DriftDifference{{Field: "policy", APIValue: string(normAPI), ConfigValue: string(normCfg)}}
+	var msg strings.Builder
+	if header != "" {
+		msg.WriteString(header)
+		msg.WriteString("\nConfiguration drift detected between API state and Terraform configuration.")
+		msg.WriteString("\n\n")
+	}
+
+	msg.WriteString(fmt.Sprintf("Side-by-side (%s | %s):\n", leftLabel, rightLabel))
+	msg.WriteString(sideBySideDiff(string(normLeft), string(normRight), 60))
+	msg.WriteString("\n\nTo fix the drift, update your terraform declaration to match the current API state.")
+
+	diags.AddWarning("Configuration Drift Detected", msg.String())
+	return diags
 }
 
 // getCurrentAPIState retrieves the current state of the resource from the API
@@ -392,75 +409,6 @@ func (r *ZeroTrustGatewayPolicyResource) getCurrentAPIState(ctx context.Context,
 	return &env.Result, nil
 }
 
-// This is used during Read operations to detect drift in the configuration
-func (r *ZeroTrustGatewayPolicyResource) detectConfigurationDriftOnRead(ctx context.Context, apiState, terraformState *ZeroTrustGatewayPolicyModel) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if apiState == nil || terraformState == nil {
-		return diags
-	}
-
-	// Serialize both objects using model-aware JSON marshaling
-	apiBytes, errA := apiState.MarshalJSON()
-	cfgBytes, errC := terraformState.MarshalJSON()
-
-	if errA != nil || errC != nil {
-		diags.AddWarning(
-			"Configuration Drift Detected",
-			fmt.Sprintf("error marshalling for drift detection (api=%v, config=%v)", errA, errC),
-		)
-		return diags
-	}
-
-	// Normalize: drop computed-only fields, then pretty-print
-	var apiMap map[string]any
-	var cfgMap map[string]any
-	if err := json.Unmarshal(apiBytes, &apiMap); err != nil {
-		diags.AddWarning("Configuration Drift Detected", "failed to parse API state for drift detection")
-		return diags
-	}
-	if err := json.Unmarshal(cfgBytes, &cfgMap); err != nil {
-		diags.AddWarning("Configuration Drift Detected", "failed to parse Terraform state for drift detection")
-		return diags
-	}
-
-	// Remove computed-only keys to focus on user-configurable fields
-	remove := func(m map[string]any) {
-		delete(m, "id")
-		delete(m, "account_id")
-		delete(m, "created_at")
-		delete(m, "deleted_at")
-		delete(m, "read_only")
-		delete(m, "sharable")
-		delete(m, "source_account")
-		delete(m, "updated_at")
-		delete(m, "version")
-		delete(m, "warning_status")
-	}
-	remove(apiMap)
-	remove(cfgMap)
-
-	normAPI, _ := json.MarshalIndent(apiMap, "", "  ")
-	normCfg, _ := json.MarshalIndent(cfgMap, "", "  ")
-
-	if string(normAPI) == string(normCfg) {
-		return diags
-	}
-
-	var msg strings.Builder
-
-	msg.WriteString("detectConfigurationDriftOnRead@READ")
-
-	msg.WriteString("Configuration drift detected! The actual API state differs from your Terraform configuration.\n\n")
-	msg.WriteString("Side-by-side (Terraform | API) for user-configurable fields:\n")
-	msg.WriteString(sideBySideDiff(string(normCfg), string(normAPI), 60))
-
-	msg.WriteString("\n\nTo fix the drift, update your terraform declaration to match the current API state.")
-
-	diags.AddWarning("Configuration Drift Detected", msg.String())
-	return diags
-}
-
 // sideBySideDiff renders a simple side-by-side view of two multi-line strings.
 // leftWidth controls the width of the left column (API). Differences are marked with '≠'.
 func sideBySideDiff(right, left string, leftWidth int) string {
@@ -489,7 +437,8 @@ func sideBySideDiff(right, left string, leftWidth int) string {
 		}
 		marker := " "
 		if L != R {
-			marker = "≠"
+			// Red color for difference marker
+			marker = "\x1b[31m≠\x1b[0m"
 		}
 		// Truncate to fit columns
 		if leftWidth > 1 && len(L) > leftWidth {
