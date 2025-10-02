@@ -27,8 +27,8 @@ jobs:
       CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
       CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
       CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
-      CLOUDFLARE_PAGES_OWNER: jacobbednarz
-      CLOUDFLARE_PAGES_REPO: pages-example
+      CLOUDFLARE_PAGES_OWNER: cloudflare
+      CLOUDFLARE_PAGES_REPO: cf-pages-terraform-acceptance-testing
       CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
       CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
       CLOUDFLARE_HYPERDRIVE_DATABASE_NAME: neondb
@@ -82,7 +82,7 @@ jobs:
         id: default_migration_tests
         run: ./scripts/run-ci-tests default migration
         env:
-         TF_ACC: 1
+          TF_ACC: 1
         continue-on-error: true
 
       - name: Check Test Status
