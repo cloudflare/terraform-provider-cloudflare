@@ -1,0 +1,49 @@
+resource_type: cloudflare_zero_trust_access_application
+source_version: v4
+target_version: v5
+description: Migrate Zero Trust Access Application from v4 to v5
+
+config:
+  attribute_renames:
+    # No direct renames for access_application
+    
+  attribute_removals:
+    - domain_type  # Always remove domain_type attribute
+    
+  conditional_removals:
+    - attribute: skip_app_launcher_login_page
+      condition:
+        type: "!app_launcher"  # Remove if type is not app_launcher
+        
+  type_conversions:
+    - attribute: allowed_idps
+      from_type: set
+      to_type: list
+      
+  blocks_to_lists:
+    - destinations  # Convert destinations blocks to list attribute
+    
+  default_values:
+    type: "self_hosted"  # Add default type if missing
+    
+  structural_changes:
+    - type: policies_transformation
+      source: policies
+      target: policies
+      transform: string_list_to_object_list
+      parameters:
+        object_key: id
+        update_references:
+          - from: cloudflare_access_policy
+            to: cloudflare_zero_trust_access_policy
+
+state:
+  attribute_renames:
+    # State attribute renames if needed
+    
+  type_conversions:
+    - attribute: allowed_idps
+      from_type: set
+      to_type: list
+      
+  schema_version: 1  # Update schema version
