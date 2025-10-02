@@ -41,5 +41,5 @@ type R2BucketLockRulesDataSourceModel struct {
 type R2BucketLockRulesConditionDataSourceModel struct {
 	MaxAgeSeconds types.Int64       `tfsdk:"max_age_seconds" json:"maxAgeSeconds,computed"`
 	Type          types.String      `tfsdk:"type" json:"type,computed"`
-	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,computed" format:"date-time"`
+	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,computed" format:"date"`
 }
