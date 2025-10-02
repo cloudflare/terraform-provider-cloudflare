@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"entries": schema.ListNestedAttribute{
 				Description:        "Custom entries from this profile.\nIf this field is omitted, entries owned by this profile will not be changed.",
 				Optional:           true,
-				DeprecationMessage: "This attribute will be deprecated on 01/01/2026",
+				DeprecationMessage: "This attribute will be sunset on 01/01/2026",
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
