@@ -4,13 +4,13 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
   enabled = true
   mechanisms = {
     email = [{
-      id = "id"
+      id = "test@example.com"
     }]
     pagerduty = [{
-      id = "f174e90afafe4643bbbc4a0ed4fc8415"
+      id = "e8133a15-00a4-4d69-aec1-32f70c51f6e5"
     }]
     webhooks = [{
-      id = "f174e90afafe4643bbbc4a0ed4fc8415"
+      id = "14cc1190-5d2b-4b98-a696-c424cb2ad05f"
     }]
   }
   name = "SSL Notification Event Policy"
