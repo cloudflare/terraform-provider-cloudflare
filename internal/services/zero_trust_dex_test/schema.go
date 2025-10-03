@@ -82,7 +82,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "DEX rules targeted by this test",
 				Computed:    true,
 				Optional:    true,
-				Computed:    true,
 				Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []ZeroTrustDEXTestTargetPoliciesModel{}).ListValue),
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
@@ -103,9 +102,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
 			},
 		},
 	}
