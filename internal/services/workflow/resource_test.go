@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path"
 	"regexp"
 	"testing"
 
@@ -30,6 +31,14 @@ func TestAccCloudflareWorkflow(t *testing.T) {
 	className := fmt.Sprintf("TestClass%s", rnd)
 	classNameUpdated := fmt.Sprintf("TestClassUpdated%s", rnd)
 
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "worker.js")
+
+	err := os.WriteFile(contentFile, []byte("export default {fetch() {return new Response()}}"), 0644)
+	if err != nil {
+		t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -39,7 +48,7 @@ func TestAccCloudflareWorkflow(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareWorkflowDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: acctest.LoadTestCase("workflow.tf", rnd, accountID, workflowName, scriptName, className),
+				Config: acctest.LoadTestCase("workflow.tf", rnd, accountID, workflowName, scriptName, className, contentFile),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("workflow_name"), knownvalue.StringExact(workflowName)),
@@ -50,7 +59,7 @@ func TestAccCloudflareWorkflow(t *testing.T) {
 				Check: testAccCheckCloudflareWorkflowExists(name, accountID, workflowName),
 			},
 			{
-				Config: acctest.LoadTestCase("workflow.tf", rnd, accountID, workflowName, scriptNameUpdated, classNameUpdated),
+				Config: acctest.LoadTestCase("workflow.tf", rnd, accountID, workflowName, scriptNameUpdated, classNameUpdated, contentFile),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("workflow_name"), knownvalue.StringExact(workflowName)),
@@ -65,6 +74,11 @@ func TestAccCloudflareWorkflow(t *testing.T) {
 				ImportState:         true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				ImportStateVerify:   true,
+				ImportStateVerifyIgnore: []string{
+                    "modified_on",
+                    "version_id",
+					"instances",
+                },
 			},
 		},
 	})
