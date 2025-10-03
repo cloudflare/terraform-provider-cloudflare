@@ -394,6 +394,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
+								"type": schema.ListAttribute{
+									Description: "Usage depends on specific alert type",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								"where": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
