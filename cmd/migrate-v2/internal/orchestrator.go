@@ -306,8 +306,39 @@ func (o *Orchestrator) MigrateFile(filename string, ctx *MigrationContext) error
 	}
 
 	modified := false
+	
+	// Collect all unique resource types that need file-level transformations
+	resourceTypesInFile := make(map[string]bool)
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" && len(block.Labels()) >= 2 {
+			resourceTypesInFile[block.Labels()[0]] = true
+		}
+	}
+	
+	// Check if any resource types have file-level transformations
+	fileTransformersApplied := make(map[string]bool)
+	for resourceType := range resourceTypesInFile {
+		migration, err := o.registry.Get(resourceType, "v4", "v5")
+		if err != nil || migration == nil {
+			continue
+		}
+		
+		// Check if this migration implements FileTransformer
+		if transformer, ok := migration.(FileTransformer); ok {
+			if ctx.Options.Verbose {
+				ctx.Log("Applying file-level transformation for %s resources", resourceType)
+			}
+			
+			if err := transformer.TransformFile(file); err != nil {
+				ctx.AddError("File transformation failed", err.Error(), resourceType)
+			} else {
+				modified = true
+				fileTransformersApplied[resourceType] = true
+			}
+		}
+	}
 
-	// Process each resource block
+	// Process remaining resource blocks individually
 	for _, block := range file.Body().Blocks() {
 		if block.Type() != "resource" {
 			continue
@@ -319,6 +350,11 @@ func (o *Orchestrator) MigrateFile(filename string, ctx *MigrationContext) error
 		}
 
 		resourceType := labels[0]
+		
+		// Skip resources that had file-level transformations
+		if fileTransformersApplied[resourceType] {
+			continue
+		}
 
 		if ctx.Options.Verbose {
 			ctx.Log("Found resource: %s", resourceType)

@@ -9,6 +9,38 @@ import (
 )
 
 // FlattenNestedTransformer flattens nested object structures
+//
+// Example YAML configuration:
+//   structural_changes:
+//     - type: flatten_nested
+//       parameters:
+//         source: address
+//         separator: "_"
+//         max_depth: 2
+//
+// Transforms:
+//   resource "example" "test" {
+//     name = "test"
+//     address = {
+//       street = "123 Main St"
+//       city = "San Francisco"
+//       state = "CA"
+//       location = {
+//         lat = 37.7749
+//         lng = -122.4194
+//       }
+//     }
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     name = "test"
+//     address_street = "123 Main St"
+//     address_city = "San Francisco"
+//     address_state = "CA"
+//     address_location_lat = 37.7749
+//     address_location_lng = -122.4194
+//   }
 func FlattenNestedTransformer(source string, separator string, maxDepth int) basic.TransformerFunc {
 	// Don't default separator - allow empty separator for concatenation
 	if maxDepth <= 0 {

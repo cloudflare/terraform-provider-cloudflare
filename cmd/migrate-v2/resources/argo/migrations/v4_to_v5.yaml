@@ -1,0 +1,60 @@
+resource_type: cloudflare_argo
+source_version: v4
+target_version: v5
+description: Split cloudflare_argo into separate smart_routing and tiered_caching resources
+requires_file_transformation: true  # Indicates this migration needs file-level processing
+
+config:
+  # Resource splitting configuration
+  resource_splits:
+    - source_resource: cloudflare_argo
+      splits:
+        # Create smart_routing resource if smart_routing attribute exists
+        - when_attribute_exists: smart_routing
+          create_resource: cloudflare_argo_smart_routing
+          attribute_mappings:
+            smart_routing: value  # Map smart_routing attribute to value
+          copy_attributes:
+            - zone_id
+          resource_name_suffix: ""  # Keep same resource name
+          
+        # Create tiered_cache resource if tiered_caching attribute exists  
+        - when_attribute_exists: tiered_caching
+          create_resource: cloudflare_tiered_cache
+          attribute_mappings:
+            tiered_caching: cache_type  # Map tiered_caching to cache_type
+          copy_attributes:
+            - zone_id
+          resource_name_suffix: "_tiered"  # Add suffix when both attributes exist
+          
+      # When neither attribute exists, default to smart_routing with value = "off"
+      fallback:
+        create_resource: cloudflare_argo_smart_routing
+        set_attributes:
+          value: "off"
+        copy_attributes:
+          - zone_id
+        
+      generate_moved_blocks: true
+      remove_original: true
+
+  # Value mappings for tiered_cache
+  value_mappings:
+    - attribute: cache_type
+      mappings:
+        "on": "smart"
+        "off": "off"
+
+state:
+  # State transformations for split resources
+  attribute_renames:
+    smart_routing: value
+    tiered_caching: cache_type
+    
+  type_conversions:
+    - attribute: cache_type
+      from_type: string
+      to_type: string
+      pattern: "on->smart"
+  
+  schema_version: 0

@@ -1,0 +1,62 @@
+# Complete tiered_cache migration using extended YAML capabilities
+# No custom Go code required!
+
+resource_type: cloudflare_tiered_cache
+source_version: v4
+target_version: v5
+description: Complete tiered_cache migration using YAML extensions
+
+config:
+  # Step 1: Rename the attribute
+  attribute_renames:
+    cache_type: value
+    
+  # Step 2: Transform values for non-generic cases
+  value_mappings:
+    - attribute: value
+      mappings:
+        "smart": "on"
+        "off": "off"
+        # "generic" is handled by conditional resource creation below
+        
+  # Step 3: Handle "generic" value by creating new resource type
+  conditional_resources:
+    - condition:
+        attribute: value
+        operator: equals
+        value: "generic"
+      actions:
+        - type: create_new_resource
+          resource_type: cloudflare_argo_tiered_caching
+          copy_attributes: ["zone_id"]
+          set_attributes:
+            value: "on"
+          generate_moved_block: true
+          remove_original: true
+
+state:
+  # State transformation: rename attribute
+  attribute_renames:
+    cache_type: value
+    
+  # Transform values
+  value_mappings:
+    - attribute: value
+      mappings:
+        "smart": "on"
+        "off": "off"
+        
+  # Handle resource type change for "generic" value
+  conditional_resources:
+    - condition:
+        attribute: value
+        operator: equals
+        value: "generic"
+      actions:
+        - type: change_resource_type
+          to: cloudflare_argo_tiered_caching
+        - type: set_attribute
+          attribute: value
+          value: "on"
+  
+  schema_version: 0

@@ -25,6 +25,13 @@ type ResourceMigration interface {
 	Validate(block *hclwrite.Block) error
 }
 
+// FileTransformer is an optional interface that migrations can implement
+// to perform file-level transformations (like resource splitting)
+type FileTransformer interface {
+	// TransformFile performs file-level transformations
+	TransformFile(file *hclwrite.File) error
+}
+
 // Diagnostic represents a warning or error during migration
 type Diagnostic struct {
 	Severity DiagnosticSeverity

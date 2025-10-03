@@ -8,6 +8,27 @@ import (
 )
 
 // SetToListConverter converts set attributes to lists
+//
+// Example YAML configuration:
+//   type_conversions:
+//     set_to_list:
+//       - allowed_methods
+//       - allowed_origins
+//       - exposed_headers
+//
+// Transforms:
+//   resource "example" "test" {
+//     allowed_methods = toset(["GET", "POST", "PUT"])
+//     allowed_origins = toset(["https://example.com"])
+//     exposed_headers = toset(["Content-Type", "X-Custom-Header"])
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     allowed_methods = ["GET", "POST", "PUT"]
+//     allowed_origins = ["https://example.com"]
+//     exposed_headers = ["Content-Type", "X-Custom-Header"]
+//   }
 func SetToListConverter(attributes ...string) TransformerFunc {
 	return func(block *hclwrite.Block, ctx *TransformContext) error {
 		body := block.Body()

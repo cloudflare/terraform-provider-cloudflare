@@ -13,12 +13,13 @@ import (
 
 // MigrationConfig defines the YAML configuration for a migration
 type MigrationConfig struct {
-	ResourceType  string                `yaml:"resource_type"`
-	SourceVersion string                `yaml:"source_version"`
-	TargetVersion string                `yaml:"target_version"`
-	Description   string                `yaml:"description"`
-	Config        ConfigTransformations `yaml:"config"`
-	State         StateTransformations  `yaml:"state"`
+	ResourceType               string                `yaml:"resource_type"`
+	SourceVersion              string                `yaml:"source_version"`
+	TargetVersion              string                `yaml:"target_version"`
+	Description                string                `yaml:"description"`
+	RequiresFileTransformation bool                  `yaml:"requires_file_transformation"`
+	Config                     ConfigTransformations `yaml:"config"`
+	State                      StateTransformations  `yaml:"state"`
 }
 
 // ConfigTransformations defines configuration transformations
@@ -62,6 +63,7 @@ type StructuralChange struct {
 	Transform  string                 `yaml:"transform"`
 	Parameters map[string]interface{} `yaml:"parameters,omitempty"`
 }
+
 
 // Migration provides base functionality for migrations
 type Migration struct {
@@ -187,6 +189,7 @@ func (m *Migration) MigrateConfig(block *hclwrite.Block, ctx *MigrationContext) 
 		}
 	}
 
+
 	return nil
 }
 
@@ -195,8 +198,16 @@ func (m *Migration) MigrateState(state map[string]interface{}, ctx *MigrationCon
 	// First apply config-level transformations that also affect state
 
 	// Apply attribute removals from config section
-	for _, attrName := range m.config.Config.AttributeRemovals {
-		delete(state, attrName)
+	// Check both top-level and nested attributes
+	if attrs, ok := state["attributes"].(map[string]interface{}); ok {
+		for _, attrName := range m.config.Config.AttributeRemovals {
+			delete(attrs, attrName)
+		}
+	} else {
+		// Fallback to top-level if no nested attributes
+		for _, attrName := range m.config.Config.AttributeRemovals {
+			delete(state, attrName)
+		}
 	}
 
 	// Apply conditional removals from config section
@@ -249,10 +260,13 @@ func (m *Migration) MigrateState(state map[string]interface{}, ctx *MigrationCon
 	// Now apply state-specific transformations
 
 	// Apply attribute renames in state
-	for oldName, newName := range m.config.State.AttributeRenames {
-		if val, exists := state[oldName]; exists {
-			state[newName] = val
-			delete(state, oldName)
+	// State attributes are nested under "attributes" key
+	if attrs, ok := state["attributes"].(map[string]interface{}); ok {
+		for oldName, newName := range m.config.State.AttributeRenames {
+			if val, exists := attrs[oldName]; exists {
+				attrs[newName] = val
+				delete(attrs, oldName)
+			}
 		}
 	}
 
@@ -273,6 +287,11 @@ func (m *Migration) MigrateState(state map[string]interface{}, ctx *MigrationCon
 func (m *Migration) Validate(block *hclwrite.Block) error {
 	// Basic validation - check if resource type matches
 	return nil
+}
+
+// RequiresFileTransformation returns whether this migration needs file-level processing
+func (m *Migration) RequiresFileTransformation() bool {
+	return m.config.RequiresFileTransformation
 }
 
 // createConditionFunc creates a condition function for ConditionalRemover
@@ -356,21 +375,40 @@ func (m *Migration) applyTypeConversion(block *hclwrite.Block, conversion TypeCo
 
 // applyStateTypeConversion applies type conversion in state
 func (m *Migration) applyStateTypeConversion(state map[string]interface{}, conversion TypeConversion, ctx *MigrationContext) {
-	if val, exists := state[conversion.Attribute]; exists {
+	// Check both top-level and nested attributes
+	attrs, hasAttrs := state["attributes"].(map[string]interface{})
+	
+	// Try to find the attribute in nested attributes first
+	var val interface{}
+	var exists bool
+	var targetMap map[string]interface{}
+	
+	if hasAttrs {
+		val, exists = attrs[conversion.Attribute]
+		targetMap = attrs
+	}
+	
+	// Fall back to top-level if not found in attributes
+	if !exists {
+		val, exists = state[conversion.Attribute]
+		targetMap = state
+	}
+	
+	if exists {
 		switch conversion.ToType {
 		case "list":
 			if conversion.FromType == "set" {
 				// Sets and lists are often the same in JSON state
 				// Just ensure it's an array
 				if _, ok := val.([]interface{}); !ok {
-					state[conversion.Attribute] = []interface{}{val}
+					targetMap[conversion.Attribute] = []interface{}{val}
 				}
 			}
 		case "string":
 			if conversion.FromType == "list" {
 				// Convert single-element list to string
 				if list, ok := val.([]interface{}); ok && len(list) == 1 {
-					state[conversion.Attribute] = list[0]
+					targetMap[conversion.Attribute] = list[0]
 				}
 			}
 		}

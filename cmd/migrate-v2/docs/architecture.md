@@ -2,112 +2,61 @@
 
 ## System Design
 
-The migration tool follows a modular, extensible architecture:
-
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│     CLI     │────▶│ Orchestrator │────▶│  Registry   │
-└─────────────┘     └──────────────┘     └─────────────┘
-                            │                     │
-                            ▼                     ▼
-                    ┌──────────────┐     ┌─────────────┐
-                    │  Migration   │◀────│  Resources  │
-                    │    Engine    │     │ (v4→v5, etc)│
-                    └──────────────┘     └─────────────┘
-                            │
-                            ▼
-                    ┌──────────────┐
-                    │Transformers  │
-                    │ (HCL & JSON) │
-                    └──────────────┘
+┌─────────┐     ┌──────────────┐     ┌──────────┐
+│   CLI   │────▶│  Orchestrator │────▶│ Registry │
+└─────────┘     └──────────────┘     └──────────┘
+                        │                    │
+                        ▼                    ▼
+            ┌──────────────────┐     ┌──────────┐
+            │ Resource Imports │────▶│Migration │
+            └──────────────────┘     └──────────┘
 ```
 
 ## Core Components
 
-### CLI
-Entry point that handles:
-- Command-line arguments
-- File discovery
-- Progress reporting
-- Error handling
+### CLI (`main.go`)
+- Parses command-line arguments
+- Calls `resources.RegisterAll()` to auto-register resources
+- Creates migration context and runs orchestrator
 
 ### Orchestrator
-Coordinates the migration process:
-- Identifies resources and versions
-- Finds migration paths (direct or multi-hop)
-- Manages backup and rollback
-- Applies migrations in order
+- Finds and processes all .tf files
+- Applies file-level transformations (for resource splitting)
+- Handles backup and rollback
+- Generates migration reports
 
-### Registry
-Maintains available migrations:
-- Resource type → migration mapping
-- Version routing (v4→v5, v5→v6)
-- Path finding for multi-hop migrations
+### Registry & Auto-Registration
+- Resources auto-register via `resources/imports.go`
+- Each resource implements `RegisterMigrations()`
+- No need to modify main.go for new resources
 
-### Migration Engine
-Executes transformations:
-- Loads YAML configuration
-- Builds transformation pipeline
-- Applies transformers in order
-- Validates results
-
-### Transformers
-Reusable transformation functions organized by type:
-- **Config/Basic**: Simple HCL transformations (renames, removals, defaults)
-- **Config/Structural**: Complex HCL structure changes (flatten, merge, split)
-- **Config/Conditional**: Conditional HCL transformations
-- **State**: JSON state file transformations
-
-## Data Flow
-
-1. **Input**: Terraform configuration files (.tf)
-2. **Parsing**: Convert to HCL AST using hclwrite
-3. **Transformation**: Apply migrations via transformers
-4. **Output**: Write transformed configuration
-5. **State**: Optionally update state files
+### Migrations
+- YAML configuration defines transformation rules
+- Custom Go code only when necessary (e.g., resource splitting)
+- Support both config and state transformations
 
 ## Extension Points
 
 ### Adding New Resources
+1. Create `resources/<name>/` with YAML config
+2. Add import and registration to `resources/imports.go`
+3. Done! See [resources/README.md](../resources/README.md)
 
-1. Create directory: `resources/<resource_name>/migrations/`
-2. Add YAML configuration: `v4_to_v5.yaml`
-3. Write tests: `v4_to_v5_test.go`
-4. Register in: `resources/<resource_name>/registry.go`
-
-### Adding New Transformers
-
-1. Implement `TransformerFunc` interface
-2. Add to appropriate package (`common/`, `config/`, or `state/`)
-3. Register in migration pipeline
-4. Add tests
-
-### Custom Migrations
-
-For complex scenarios beyond YAML:
-
+### Custom Transformations
+When YAML isn't enough:
 ```go
 type CustomMigration struct {
-    *core.Migration
+    *internal.Migration
 }
 
-func (m *CustomMigration) MigrateConfig(block *hclwrite.Block, ctx *MigrationContext) error {
-    // Apply YAML transformations first
-    if err := m.Migration.MigrateConfig(block, ctx); err != nil {
-        return err
-    }
-    
-    // Add custom logic
-    // ...
-    
-    return nil
+func (m *CustomMigration) TransformFile(file *hclwrite.File) error {
+    // File-level transformations (e.g., resource splitting)
 }
 ```
 
 ## Design Principles
-
-1. **Non-destructive**: Always backup before changes
-2. **Predictable**: Transformations apply in consistent order
-3. **Extensible**: Easy to add new resources and transformations
-4. **Testable**: Comprehensive test coverage
-5. **User-friendly**: Clear error messages and progress reporting
+- **YAML-first**: Minimize custom code
+- **Safe**: Preview mode and automatic backups
+- **Modular**: Each resource manages its own migrations
+- **Testable**: Unit and integration tests for all migrations

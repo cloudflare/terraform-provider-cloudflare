@@ -316,9 +316,11 @@ state:
 	require.NoError(t, err)
 
 	state := map[string]interface{}{
-		"id":             "resource-123",
-		"old_state_attr": "value",
-		"keep_attr":      "keep",
+		"id": "resource-123",
+		"attributes": map[string]interface{}{
+			"old_state_attr": "value",
+			"keep_attr":      "keep",
+		},
 	}
 
 	ctx := &MigrationContext{
@@ -330,10 +332,11 @@ state:
 	err = migration.MigrateState(state, ctx)
 	require.NoError(t, err)
 
-	// Check state changes
-	assert.Equal(t, "value", state["new_state_attr"])
-	assert.Nil(t, state["old_state_attr"])
-	assert.Equal(t, "keep", state["keep_attr"])
+	// Check state changes - attributes are nested under "attributes" key
+	attrs := state["attributes"].(map[string]interface{})
+	assert.Equal(t, "value", attrs["new_state_attr"])
+	assert.Nil(t, attrs["old_state_attr"])
+	assert.Equal(t, "keep", attrs["keep_attr"])
 	assert.Equal(t, 2, state["schema_version"])
 }
 

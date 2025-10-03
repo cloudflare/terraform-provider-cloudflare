@@ -1,0 +1,16 @@
+# Complete regional_hostname migration using extended YAML capabilities
+# No custom Go code required!
+
+resource_type: cloudflare_regional_hostname
+source_version: v4
+target_version: v5
+description: Complete Regional Hostname migration using YAML extensions
+
+config:
+  # Remove timeouts blocks (not supported in v5)
+  block_removals:
+    - timeouts
+
+state:
+  # No state transformations needed for regional_hostname
+  schema_version: 0

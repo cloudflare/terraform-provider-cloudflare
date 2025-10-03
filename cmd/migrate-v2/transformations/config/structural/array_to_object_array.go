@@ -10,7 +10,28 @@ import (
 )
 
 // ArrayToObjectArrayConverter transforms array attributes from simple values to objects
-// For example: ["id1", "id2"] becomes [{ id = "id1" }, { id = "id2" }]
+//
+// Example YAML configuration:
+//   structural_changes:
+//     - type: array_to_object_array
+//       attribute: pool_ids
+//       wrapper_field: pool
+//
+// Transforms:
+//   resource "example" "test" {
+//     name = "test"
+//     pool_ids = ["abc123", "def456", "ghi789"]
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     name = "test"
+//     pool_ids = [
+//       { pool = "abc123" },
+//       { pool = "def456" },
+//       { pool = "ghi789" }
+//     ]
+//   }
 func ArrayToObjectArrayConverter(attributeName string, wrapperField string) basic.TransformerFunc {
 	return func(block *hclwrite.Block, ctx *basic.TransformContext) error {
 		body := block.Body()
@@ -37,7 +58,32 @@ func ArrayToObjectArrayConverter(attributeName string, wrapperField string) basi
 }
 
 // StringArrayToObjectArrayWithRename is similar but also handles resource renaming
-// For example: cloudflare_access_policy.foo becomes cloudflare_zero_trust_access_policy.foo
+//
+// Example YAML configuration:
+//   structural_changes:
+//     - type: string_array_to_object_array_with_rename
+//       attribute: policies
+//       wrapper_field: policy
+//       old_prefix: cloudflare_access_policy
+//       new_prefix: cloudflare_zero_trust_access_policy
+//
+// Transforms:
+//   resource "example" "test" {
+//     name = "test"
+//     policies = [
+//       cloudflare_access_policy.foo.id,
+//       cloudflare_access_policy.bar.id
+//     ]
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     name = "test"
+//     policies = [
+//       { policy = cloudflare_zero_trust_access_policy.foo.id },
+//       { policy = cloudflare_zero_trust_access_policy.bar.id }
+//     ]
+//   }
 func StringArrayToObjectArrayWithRename(attributeName string, wrapperField string, oldPrefix string, newPrefix string) basic.TransformerFunc {
 	return func(block *hclwrite.Block, ctx *basic.TransformContext) error {
 		body := block.Body()

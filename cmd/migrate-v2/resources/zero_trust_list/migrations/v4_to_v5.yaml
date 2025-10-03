@@ -1,0 +1,38 @@
+# Complete zero_trust_list migration using extended YAML capabilities
+# No custom Go code required!
+
+resource_type: cloudflare_zero_trust_list
+source_version: v4
+target_version: v5
+description: Complete Zero Trust List migration with resource rename and list transformation
+
+config:
+  # Step 1: Change resource type from teams_list to zero_trust_list
+  resource_type_change:
+    from: cloudflare_teams_list
+    to: cloudflare_zero_trust_list
+    generate_moved_block: true
+    
+  # Step 2: Transform items from simple strings to objects with value key
+  # Before: items = ["item1", "item2"]
+  # After:  items = [{ value = "item1" }, { value = "item2" }]
+  list_transforms:
+    - attribute: items
+      type: string_to_object
+      object_template:
+        value: "${item}"  # ${item} gets replaced with each list item
+
+state:
+  # Change resource type in state
+  resource_type_change:
+    from: cloudflare_teams_list
+    to: cloudflare_zero_trust_list
+    
+  # Transform the items list in state as well
+  list_transforms:
+    - attribute: items
+      type: string_to_object
+      object_template:
+        value: "${item}"
+  
+  schema_version: 0

@@ -1,0 +1,32 @@
+# Complete managed_transforms migration using extended YAML capabilities
+# No custom Go code required!
+
+resource_type: cloudflare_managed_transforms  
+source_version: v4
+target_version: v5
+description: Complete Managed Transforms migration using YAML extensions
+
+config:
+  # Step 1: Change resource type
+  resource_type_change:
+    from: cloudflare_managed_headers
+    to: cloudflare_managed_transforms
+    generate_moved_block: true
+    
+  # Step 2: Convert blocks to lists
+  blocks_to_lists:
+    - managed_request_headers
+    - managed_response_headers
+  
+  # Step 3: Add default empty lists if attributes are missing (required in v5)
+  default_values:
+    managed_request_headers: []
+    managed_response_headers: []
+  
+state:
+  # Change resource type in state
+  resource_type_change:
+    from: cloudflare_managed_headers
+    to: cloudflare_managed_transforms
+  
+  schema_version: 0

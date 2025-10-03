@@ -8,7 +8,29 @@ import (
 )
 
 // ConditionalAttributeRemover removes an attribute based on another attribute's value
-// For example: Remove "skip_app_launcher_login_page" if "type" != "app_launcher"
+//
+// Example YAML configuration:
+//   conditional_removals:
+//     - target_attribute: skip_app_launcher_login_page
+//       condition_attribute: type
+//       allowed_values:
+//         - app_launcher
+//         - bookmark
+//       add_diagnostic: true
+//
+// Transforms (when type is "saml"):
+//   resource "example" "test" {
+//     name = "test"
+//     type = "saml"
+//     skip_app_launcher_login_page = true
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     name = "test"
+//     type = "saml"
+//   }
+//   # With diagnostic: "Removed skip_app_launcher_login_page (only valid for types: app_launcher, bookmark)"
 func ConditionalAttributeRemover(targetAttr string, conditionAttr string, allowedValues []string, addDiagnostic bool) basic.TransformerFunc {
 	return func(block *hclwrite.Block, ctx *basic.TransformContext) error {
 		body := block.Body()

@@ -1,136 +1,69 @@
 # Terraform Cloudflare Provider Migration Tool (v2)
 
-A powerful tool for automatically migrating Terraform configurations between different versions of the Cloudflare provider.
+Automatically migrate Terraform configurations between Cloudflare provider versions (v4 → v5).
 
 ## Quick Start
 
 ```bash
 # Build the tool
-make build
+go build -o ./bin/migrate-v2 .
 
-# Migrate a single file
-./bin/migrate-v2 migrate -f terraform.tf
+# Migrate all .tf files in a directory
+./bin/migrate-v2 -config ./terraform
 
-# Migrate all files in a directory
-./bin/migrate-v2 migrate -d ./infrastructure
+# Preview changes without applying
+./bin/migrate-v2 -config ./terraform -dry-run -preview
 
-# Preview changes without applying them
-./bin/migrate-v2 migrate -f terraform.tf --dry-run
-
-# Show available migrations
-./bin/migrate-v2 list
+# Migrate with state file
+./bin/migrate-v2 -config ./terraform -state terraform.tfstate
 ```
 
 ## Features
 
-- **Automatic Migration**: Transforms both configuration files and state files between provider versions
-- **YAML-Driven**: Most migrations require only YAML configuration, no custom code needed
-- **Version Chaining**: Automatically finds migration paths (e.g., v4→v5→v6)
-- **Safe by Default**: Built-in backup and rollback capabilities
-- **Preview Mode**: See what will change before applying migrations
-- **Extensible**: Easy to add custom migrations for complex scenarios
+- **YAML-Driven**: Define migrations with simple YAML configuration
+- **Automatic Resource Discovery**: Resources auto-register when added to `resources/imports.go`
+- **Safe by Default**: Preview mode and automatic backups
+- **Resource Splitting**: Handle complex cases like splitting one resource into multiple
+- **State Migration**: Updates both configuration and state files
 
-## How It Works
+## Adding New Resources
 
-The migration tool uses a registry-based system where each resource type registers its migration logic. When you run a migration:
+1. Create your resource structure under `resources/<resource_name>/`
+2. Define migration rules in YAML (e.g., `migrations/v4_to_v5.yaml`)
+3. Add two lines to `resources/imports.go`
+4. That's it! See [resources/README.md](resources/README.md) for details.
 
-1. The tool identifies resource types and their current versions
-2. Finds the appropriate migration path (direct or multi-hop)
-3. Applies transformations defined in YAML or custom code
-4. Creates backups before making changes
-5. Updates both configuration and state files
+## Command Line Options
 
-## Configuration
-
-Migrations are primarily configured through YAML files that define transformations:
-
-```yaml
-version: "1.0"
-resource_type: cloudflare_access_application
-migration:
-  from: "4.*"
-  to: "5.*"
-
-# Simple attribute renames
-attribute_renames:
-  domain: hostname
-  
-# Convert blocks to lists
-blocks_to_lists:
-  - cors_headers
-
-# Add default values for new required fields  
-default_values:
-  type: "self_hosted"
 ```
-
-See [docs/yaml-configuration.md](docs/yaml-configuration.md) for the full YAML reference.
-
-## Writing Custom Migrations
-
-For complex scenarios that can't be handled by YAML alone, you can write custom migrations:
-
-```go
-type MyMigration struct {
-    *core.Migration
-}
-
-func (m *MyMigration) MigrateConfig(block *hclwrite.Block, ctx *core.MigrationContext) error {
-    // Custom transformation logic
-    return m.Migration.MigrateConfig(block, ctx) // Apply YAML transformations
-}
+-config string     Directory with Terraform files (required)
+-state string      Path to Terraform state file (optional)
+-dry-run          Preview changes without applying
+-preview          Show detailed change preview
+-verbose          Enable verbose output
+-backup           Create backups (default: true)
+-from string      Source version (default: "v4")
+-to string        Target version (default: "v5")
 ```
-
-See [docs/custom-migrations.md](docs/custom-migrations.md) for details.
-
-## Available Transformations
-
-### Common Transformations
-- **Attribute Renames**: Rename fields while preserving values
-- **Field Removals**: Remove deprecated attributes
-- **Default Values**: Add defaults for new required fields
-- **Type Conversions**: Convert between data types
-
-### Structural Transformations
-- **Blocks to Lists**: Convert HCL blocks to list attributes
-- **List to Blocks**: Convert list attributes to multiple blocks
-- **Flatten Nested**: Flatten nested object structures
-- **Split/Merge Objects**: Reorganize object attributes
-
-See [docs/transformations.md](docs/transformations.md) for the complete list.
 
 ## Testing
 
-The tool includes comprehensive testing support:
-
 ```bash
-# Run unit tests
-make test
+# Run all tests
+go test ./...
 
-# Run integration tests
-make test-integration
+# Test specific resource
+go test ./resources/argo/...
 
-# Test a specific migration
-go test ./resources/access_application/migrations -v
+# Run with verbose output
+go test -v ./resources/access_application/migrations/...
 ```
-
-See [docs/testing.md](docs/testing.md) for testing guidelines.
 
 ## Documentation
 
-- [Architecture Overview](docs/architecture.md) - System design and components
-- [YAML Configuration](docs/yaml-configuration.md) - Complete YAML reference
-- [Transformations Guide](docs/transformations.md) - Available transformations
-- [Custom Migrations](docs/custom-migrations.md) - Writing custom migration logic
-- [Testing Guide](docs/testing.md) - Testing migrations
-- [Examples](docs/examples.md) - Real-world migration examples
-
-## Contributing
-
-1. Add your resource migration to `resources/<resource_name>/migrations/`
-2. Create a YAML configuration file (e.g., `v4_to_v5.yaml`)
-3. Write tests to verify the migration
-4. Register the migration in `resources/<resource_name>/registry.go`
+- [Adding Resources](resources/README.md) - How to add new resource migrations
+- [Architecture](docs/architecture.md) - System design overview
+- [YAML Schema](docs/yaml-configuration.md) - YAML configuration reference
 
 ## License
 

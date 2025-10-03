@@ -9,6 +9,43 @@ import (
 )
 
 // BlocksToListConverter converts multiple blocks of a type to a list attribute
+//
+// Example YAML configuration:
+//   structural_changes:
+//     - type: blocks_to_list
+//       parameters:
+//         block_type: rule
+//
+// Transforms:
+//   resource "example" "test" {
+//     name = "test"
+//     
+//     rule {
+//       expression = "ip.src eq 1.2.3.4"
+//       action = "allow"
+//     }
+//     
+//     rule {
+//       expression = "ip.src eq 5.6.7.8"
+//       action = "block"
+//     }
+//   }
+//
+// Into:
+//   resource "example" "test" {
+//     name = "test"
+//     
+//     rule = [
+//       {
+//         expression = "ip.src eq 1.2.3.4"
+//         action = "allow"
+//       },
+//       {
+//         expression = "ip.src eq 5.6.7.8"
+//         action = "block"
+//       }
+//     ]
+//   }
 func BlocksToListConverter(blockType string) basic.TransformerFunc {
 	return func(block *hclwrite.Block, ctx *basic.TransformContext) error {
 		body := block.Body()

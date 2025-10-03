@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/internal"
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/resources/access_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate-v2/resources"
 )
 
 var (
@@ -70,9 +70,10 @@ func main() {
 	// Initialize migration registry
 	registry := internal.NewDefaultRegistry()
 
-	// Register resource migrations
-	if err := access_application.RegisterMigrations(registry); err != nil {
-		fmt.Fprintf(os.Stderr, "Error registering migrations: %v\n", err)
+	// Automatically register all resource migrations
+	// This uses the init() functions in each resource package
+	if err := resources.RegisterAll(registry); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to register migrations: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -115,7 +116,7 @@ func main() {
 	// Generate and display report
 	report := generateReport(ctx)
 	displayReport(report)
-	
+
 	// Write report to file if requested
 	if reportFile != "" {
 		if err := writeReportToFile(report, reportFile); err != nil {
