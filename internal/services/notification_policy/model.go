@@ -93,7 +93,6 @@ type NotificationPolicyFiltersModel struct {
 	TrafficExclusions            *[]types.String `tfsdk:"traffic_exclusions" json:"traffic_exclusions,optional"`
 	TunnelID                     *[]types.String `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 	TunnelName                   *[]types.String `tfsdk:"tunnel_name" json:"tunnel_name,optional"`
-	Type                         *[]types.String `tfsdk:"type" json:"type,optional"`
 	Where                        *[]types.String `tfsdk:"where" json:"where,optional"`
 	Zones                        *[]types.String `tfsdk:"zones" json:"zones,optional"`
 }
