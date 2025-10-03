@@ -57,8 +57,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.",
+						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
 						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+						},
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
@@ -73,10 +76,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",
 				Optional:    true,
-			},
-			"targeted": schema.BoolAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
@@ -102,6 +101,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"targeted": schema.BoolAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
