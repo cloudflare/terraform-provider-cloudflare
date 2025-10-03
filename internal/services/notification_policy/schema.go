@@ -378,6 +378,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+					"type": schema.ListAttribute{
+						Description: "Usage depends on specific alert type",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
 					"where": schema.ListAttribute{
 						Description: "Usage depends on specific alert type",
 						Optional:    true,
