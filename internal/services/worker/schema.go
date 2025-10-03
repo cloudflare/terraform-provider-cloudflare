@@ -138,6 +138,130 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"references": schema.SingleNestedAttribute{
+				Description: "Other resources that reference the Worker and depend on it existing.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerReferencesModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"dispatch_namespace_outbounds": schema.ListNestedAttribute{
+						Description: "Other Workers that reference the Worker as an outbound for a dispatch namespace.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerReferencesDispatchNamespaceOutboundsModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"namespace_id": schema.StringAttribute{
+									Description: "ID of the dispatch namespace.",
+									Computed:    true,
+								},
+								"namespace_name": schema.StringAttribute{
+									Description: "Name of the dispatch namespace.",
+									Computed:    true,
+								},
+								"worker_id": schema.StringAttribute{
+									Description: "ID of the Worker using the dispatch namespace.",
+									Computed:    true,
+								},
+								"worker_name": schema.StringAttribute{
+									Description: "Name of the Worker using the dispatch namespace.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"domains": schema.ListNestedAttribute{
+						Description: "Custom domains connected to the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerReferencesDomainsModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "ID of the custom domain.",
+									Computed:    true,
+								},
+								"certificate_id": schema.StringAttribute{
+									Description: "ID of the TLS certificate issued for the custom domain.",
+									Computed:    true,
+								},
+								"hostname": schema.StringAttribute{
+									Description: "Full hostname of the custom domain, including the zone name.",
+									Computed:    true,
+								},
+								"zone_id": schema.StringAttribute{
+									Description: "ID of the zone.",
+									Computed:    true,
+								},
+								"zone_name": schema.StringAttribute{
+									Description: "Name of the zone.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"durable_objects": schema.ListNestedAttribute{
+						Description: "Other Workers that reference Durable Object classes implemented by the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerReferencesDurableObjectsModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"namespace_id": schema.StringAttribute{
+									Description: "ID of the Durable Object namespace being used.",
+									Computed:    true,
+								},
+								"namespace_name": schema.StringAttribute{
+									Description: "Name of the Durable Object namespace being used.",
+									Computed:    true,
+								},
+								"worker_id": schema.StringAttribute{
+									Description: "ID of the Worker using the Durable Object implementation.",
+									Computed:    true,
+								},
+								"worker_name": schema.StringAttribute{
+									Description: "Name of the Worker using the Durable Object implementation.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"queues": schema.ListNestedAttribute{
+						Description: "Queues that send messages to the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerReferencesQueuesModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"queue_consumer_id": schema.StringAttribute{
+									Description: "ID of the queue consumer configuration.",
+									Computed:    true,
+								},
+								"queue_id": schema.StringAttribute{
+									Description: "ID of the queue.",
+									Computed:    true,
+								},
+								"queue_name": schema.StringAttribute{
+									Description: "Name of the queue.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"workers": schema.ListNestedAttribute{
+						Description: "Other Workers that reference the Worker using [service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/).",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerReferencesWorkersModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "ID of the referencing Worker.",
+									Computed:    true,
+								},
+								"name": schema.StringAttribute{
+									Description: "Name of the referencing Worker.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
