@@ -80,6 +80,7 @@ func (d *APIShieldSchemaValidationSettingsDataSource) Read(ctx context.Context, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -21,9 +21,24 @@ var _ datasource.DataSourceWithConfigValidators = (*CustomPagesDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"waf_block",
+						"ip_block",
+						"country_challenge",
+						"500_errors",
+						"1000_errors",
+						"managed_challenge",
+						"ratelimit_block",
+					),
+				},
+			},
 			"identifier": schema.StringAttribute{
 				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"waf_block",
@@ -49,9 +64,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
-			},
-			"id": schema.StringAttribute{
 				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{

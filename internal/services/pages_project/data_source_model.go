@@ -18,10 +18,10 @@ type PagesProjectResultDataSourceEnvelope struct {
 }
 
 type PagesProjectDataSourceModel struct {
+	ID                  types.String                                                             `tfsdk:"id" path:"project_name,computed"`
+	ProjectName         types.String                                                             `tfsdk:"project_name" path:"project_name,optional"`
 	AccountID           types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
-	ProjectName         types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
 	CreatedOn           timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID                  types.String                                                             `tfsdk:"id" json:"id,computed"`
 	Name                types.String                                                             `tfsdk:"name" json:"name,computed"`
 	ProductionBranch    types.String                                                             `tfsdk:"production_branch" json:"production_branch,computed"`
 	Subdomain           types.String                                                             `tfsdk:"subdomain" json:"subdomain,computed"`

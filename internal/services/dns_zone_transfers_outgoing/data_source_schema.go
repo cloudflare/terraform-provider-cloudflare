@@ -16,6 +16,9 @@ var _ datasource.DataSourceWithConfigValidators = (*DNSZoneTransfersOutgoingData
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
 			"zone_id": schema.StringAttribute{
 				Required: true,
 			},
@@ -26,9 +29,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_time": schema.StringAttribute{
 				Description: "The time for a specific event.",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
 			},
 			"last_transferred_time": schema.StringAttribute{
 				Description: "The time for a specific event.",

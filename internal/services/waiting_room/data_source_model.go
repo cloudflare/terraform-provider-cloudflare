@@ -19,7 +19,7 @@ type WaitingRoomResultDataSourceEnvelope struct {
 
 type WaitingRoomDataSourceModel struct {
 	ID                         types.String                                                             `tfsdk:"id" path:"waiting_room_id,computed"`
-	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`
+	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
 	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
 	CreatedOn                  timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

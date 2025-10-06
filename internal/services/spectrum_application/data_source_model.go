@@ -18,11 +18,11 @@ type SpectrumApplicationResultDataSourceEnvelope struct {
 }
 
 type SpectrumApplicationDataSourceModel struct {
+	ID               types.String                                                          `tfsdk:"id" path:"app_id,computed"`
 	AppID            types.String                                                          `tfsdk:"app_id" path:"app_id,required"`
 	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	ArgoSmartRouting types.Bool                                                            `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed"`
 	CreatedOn        timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID               types.String                                                          `tfsdk:"id" json:"id,computed"`
 	IPFirewall       types.Bool                                                            `tfsdk:"ip_firewall" json:"ip_firewall,computed"`
 	ModifiedOn       timetypes.RFC3339                                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Protocol         types.String                                                          `tfsdk:"protocol" json:"protocol,computed"`

@@ -113,6 +113,7 @@ func (d *MagicTransitSiteDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 	data = &env.Result
+	data.ID = data.SiteID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
