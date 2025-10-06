@@ -83,6 +83,7 @@ func (d *ImageDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ImageID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

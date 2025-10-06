@@ -82,6 +82,7 @@ func (d *APIShieldDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

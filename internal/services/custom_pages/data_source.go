@@ -84,6 +84,7 @@ func (d *CustomPagesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Identifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

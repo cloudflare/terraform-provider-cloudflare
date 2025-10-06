@@ -31,5 +31,6 @@ func (m *ZeroTrustAccessTagsDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type ZeroTrustAccessTagsResultDataSourceModel struct {
+	ID   types.String `tfsdk:"id" json:"name,computed"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
 }

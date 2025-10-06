@@ -22,6 +22,10 @@ var _ datasource.DataSourceWithConfigValidators = (*SpectrumApplicationDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "App identifier.",
+				Computed:    true,
+			},
 			"app_id": schema.StringAttribute{
 				Description: "App identifier.",
 				Required:    true,
@@ -38,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the Application was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "App identifier.",
-				Computed:    true,
 			},
 			"ip_firewall": schema.BoolAttribute{
 				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",

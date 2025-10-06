@@ -83,6 +83,7 @@ func (d *WorkersCronTriggerDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
