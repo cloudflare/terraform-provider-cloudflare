@@ -21,7 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"prefix_id": schema.StringAttribute{
 				Description: "Identifier of an IP Prefix.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",

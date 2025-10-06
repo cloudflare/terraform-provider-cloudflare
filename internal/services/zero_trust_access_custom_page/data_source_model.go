@@ -17,7 +17,7 @@ type ZeroTrustAccessCustomPageResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessCustomPageDataSourceModel struct {
 	ID           types.String `tfsdk:"id" path:"custom_page_id,computed"`
-	CustomPageID types.String `tfsdk:"custom_page_id" path:"custom_page_id,optional"`
+	CustomPageID types.String `tfsdk:"custom_page_id" path:"custom_page_id,required"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
 	CustomHTML   types.String `tfsdk:"custom_html" json:"custom_html,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
