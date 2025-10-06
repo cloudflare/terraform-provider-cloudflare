@@ -43,6 +43,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
@@ -585,6 +586,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workflow.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
+		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
@@ -919,6 +921,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workflow.NewWorkflowsDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
+		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
