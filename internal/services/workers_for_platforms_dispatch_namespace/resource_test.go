@@ -6,99 +6,102 @@ import (
 	"os"
 	"testing"
 
-	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
+func TestAccCloudflareWorkersForPlatformsDispatchNamespace(t *testing.T) {
+	t.Parallel()
 
-func init() {
-	resource.AddTestSweepers("cloudflare_workers_for_platforms_dispatch_namespace", &resource.Sweeper{
-		Name: "cloudflare_workers_for_platforms_dispatch_namespace",
-		F: func(region string) error {
-			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-			if err != nil {
-				return fmt.Errorf("error establishing client: %w", err)
-			}
-
-			ctx := context.Background()
-			resp, err := client.ListWorkersForPlatformsDispatchNamespaces(ctx, cfv1.AccountIdentifier(accountID))
-			if err != nil {
-				return err
-			}
-
-			for _, namespace := range resp.Result {
-				err := client.DeleteWorkersForPlatformsDispatchNamespace(ctx, cfv1.AccountIdentifier(accountID), namespace.NamespaceName)
-				if err != nil {
-					return err
-				}
-			}
-
-			return nil
-		},
-	})
-}
-
-func TestAccCloudflareWorkersForPlatforms_NamespaceManagement(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkersForPlatformsDispatchNamespaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-				),
+				Config: acctest.LoadTestCase("workersforplatformsnamespacemanagement.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				},
+				Check: testAccCheckCloudflareWorkersForPlatformsDispatchNamespaceExists(name, accountID, rnd),
 			},
-			// {
-			// 	ResourceName:        resourceName,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// },
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name"},
+			},
 		},
 	})
 }
 
-func testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID string) string {
-	return acctest.LoadTestCase("workersforplatformsnamespacemanagement.tf", rnd, accountID)
-}
-
-func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+func testAccCheckCloudflareWorkersForPlatformsDispatchNamespaceDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_workers_script" {
+		if rs.Type != "cloudflare_workers_for_platforms_dispatch_namespace" {
 			continue
 		}
 
-		client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if err != nil {
-			return fmt.Errorf("error establishing client: %w", err)
-		}
-		r, _ := client.GetWorkerWithDispatchNamespace(
+		accountID := rs.Primary.Attributes["account_id"]
+		namespaceName := rs.Primary.Attributes["name"]
+
+		_, err := client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 			context.Background(),
-			cfv1.AccountIdentifier(accountID),
-			rs.Primary.Attributes["name"],
-			rs.Primary.Attributes["dispatch_namespace"],
+			namespaceName,
+			workers_for_platforms.DispatchNamespaceGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
 		)
 
-		if r.Script != "" {
-			return fmt.Errorf("namespaced worker script with id %s still exists", rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("dispatch namespace %s still exists", namespaceName)
 		}
 	}
 
 	return nil
+}
+
+func testAccCheckCloudflareWorkersForPlatformsDispatchNamespaceExists(resourceName, accountID, namespaceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("no dispatch namespace ID is set")
+		}
+
+		client := acctest.SharedClient()
+		_, err := client.WorkersForPlatforms.Dispatch.Namespaces.Get(
+			context.Background(),
+			namespaceName,
+			workers_for_platforms.DispatchNamespaceGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+
+		if err != nil {
+			return fmt.Errorf("dispatch namespace not found: %s", err)
+		}
+
+		return nil
+	}
 }
