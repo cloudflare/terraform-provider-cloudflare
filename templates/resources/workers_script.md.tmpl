@@ -9,7 +9,7 @@ description: |-
 
 {{ .Description | trimspace }}
 
-!> This resource is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
+-> For more direct control over Workers resources, we recommend the beta `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 
 {{ if .HasExample -}}
