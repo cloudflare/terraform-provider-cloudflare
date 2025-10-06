@@ -18,13 +18,14 @@ type AccountResultDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	ID        types.String                                             `tfsdk:"id" path:"account_id,computed"`
-	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
-	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Name      types.String                                             `tfsdk:"name" json:"name,computed"`
-	Type      types.String                                             `tfsdk:"type" json:"type,computed"`
-	Settings  customfield.NestedObject[AccountSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
-	Filter    *AccountFindOneByDataSourceModel                         `tfsdk:"filter"`
+	ID        types.String                                              `tfsdk:"id" path:"account_id,computed"`
+	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
+	CreatedOn timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Name      types.String                                              `tfsdk:"name" json:"name,computed"`
+	Type      types.String                                              `tfsdk:"type" json:"type,computed"`
+	ManagedBy customfield.NestedObject[AccountManagedByDataSourceModel] `tfsdk:"managed_by" json:"managed_by,computed"`
+	Settings  customfield.NestedObject[AccountSettingsDataSourceModel]  `tfsdk:"settings" json:"settings,computed"`
+	Filter    *AccountFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *AccountDataSourceModel) toReadParams(_ context.Context) (params accounts.AccountGetParams, diags diag.Diagnostics) {
@@ -46,6 +47,11 @@ func (m *AccountDataSourceModel) toListParams(_ context.Context) (params account
 	}
 
 	return
+}
+
+type AccountManagedByDataSourceModel struct {
+	ParentOrgID   types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
+	ParentOrgName types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
 }
 
 type AccountSettingsDataSourceModel struct {
