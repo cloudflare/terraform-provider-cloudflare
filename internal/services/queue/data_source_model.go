@@ -18,7 +18,7 @@ type QueueResultDataSourceEnvelope struct {
 
 type QueueDataSourceModel struct {
 	ID                  types.String                                                `tfsdk:"id" path:"queue_id,computed"`
-	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,computed_optional"`
+	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,required"`
 	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`

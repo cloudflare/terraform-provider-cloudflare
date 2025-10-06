@@ -18,7 +18,7 @@ type MagicTransitSiteWANResultDataSourceEnvelope struct {
 
 type MagicTransitSiteWANDataSourceModel struct {
 	ID               types.String                                                                 `tfsdk:"id" path:"wan_id,computed"`
-	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,optional"`
+	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,required"`
 	AccountID        types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                                 `tfsdk:"site_id" path:"site_id,required"`
 	HealthCheckRate  types.String                                                                 `tfsdk:"health_check_rate" json:"health_check_rate,computed"`

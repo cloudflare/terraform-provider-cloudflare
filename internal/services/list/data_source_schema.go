@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID for this resource.",

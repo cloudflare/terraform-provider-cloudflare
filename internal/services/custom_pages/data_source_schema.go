@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"identifier": schema.StringAttribute{
 				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"waf_block",

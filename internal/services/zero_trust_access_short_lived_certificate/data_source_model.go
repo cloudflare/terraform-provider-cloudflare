@@ -17,7 +17,7 @@ type ZeroTrustAccessShortLivedCertificateResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"app_id,computed"`
-	AppID     types.String `tfsdk:"app_id" path:"app_id,optional"`
+	AppID     types.String `tfsdk:"app_id" path:"app_id,required"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	AUD       types.String `tfsdk:"aud" json:"aud,computed"`

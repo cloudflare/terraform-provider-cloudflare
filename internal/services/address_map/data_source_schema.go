@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"address_map_id": schema.StringAttribute{
 				Description: "Identifier of an Address Map.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",
