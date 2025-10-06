@@ -17,7 +17,7 @@ func TestAccCloudflareR2CustomDomain_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -50,6 +50,19 @@ func TestAccCloudflareR2CustomDomain_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ciphers"), knownvalue.Null()),
 				},
 			},
+			{
+				Config: testAccR2CustomDomainConfig(rnd, accountID, zoneID, domainName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ciphers"), knownvalue.Null()),
+				},
+			},
 		},
 	})
 }
@@ -58,7 +71,7 @@ func TestAccCloudflareR2CustomDomain_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -97,6 +110,19 @@ func TestAccCloudflareR2CustomDomain_Update(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ciphers"), knownvalue.ListSizeExact(2)),
 				},
 			},
+			{
+				Config: testAccR2CustomDomainUpdateConfig(rnd, accountID, zoneID, domainName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.2")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ciphers"), knownvalue.ListSizeExact(2)),
+				},
+			},
 		},
 	})
 }
@@ -105,7 +131,7 @@ func TestAccCloudflareR2CustomDomain_JurisdictionEU(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -138,7 +164,7 @@ func TestAccCloudflareR2CustomDomain_JurisdictionFedramp(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -158,7 +184,7 @@ func TestAccCloudflareR2CustomDomain_JurisdictionFedramp(t *testing.T) {
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("eu")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("fedramp")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.3")),
 				},
@@ -171,7 +197,7 @@ func TestAccCloudflareR2CustomDomain_Minimal(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{

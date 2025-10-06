@@ -16,7 +16,7 @@ func TestAccCloudflareR2CustomDomainDataSource_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domainName := os.Getenv("CLOUDFLARE_DOMAIN")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
 	dataSourceName := "data.cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
