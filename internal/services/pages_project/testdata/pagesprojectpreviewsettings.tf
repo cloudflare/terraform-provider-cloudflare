@@ -6,11 +6,11 @@ resource "cloudflare_pages_project" "%[1]s" {
 	source = {
 		type = "github"
 		config = {
-			owner = "%[3]s"
-			repo_name = "%[4]s"
+			owner = "%[4]s"
+			repo_name = "%[5]s"
 			production_branch = "main"
-			preview_deployment_setting = "%[5]s"
-			%[6]s
+			preview_deployment_setting = "%[6]s"
+			%[7]s
 		}
 	}
 }
