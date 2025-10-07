@@ -20,7 +20,7 @@ type ZeroTrustDEXTestModel struct {
 	Name           types.String                            `tfsdk:"name" json:"name,required"`
 	Data           *ZeroTrustDEXTestDataModel              `tfsdk:"data" json:"data,required"`
 	Description    types.String                            `tfsdk:"description" json:"description,optional"`
-	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted,optional"`
+	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted,computed"`
 	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies,optional"`
 }
 
