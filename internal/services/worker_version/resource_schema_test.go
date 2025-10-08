@@ -15,7 +15,8 @@ func TestWorkerVersionModelSchemaParity(t *testing.T) {
 	model := (*worker_version.WorkerVersionModel)(nil)
 	schema := worker_version.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	// Schema is Computed+Optional with default, model is optional - default is set via JSON preprocessing
+	// Schema must be Computed+Optional for proper Terraform behavior, but model uses "optional" (not "computed_optional")
+	// because apijson.UnmarshalComputed panics on null dynamic values. Default is set via setRunWorkerFirstDefault().
 	errs.Ignore(t, ".@WorkerVersionModel.assets.@WorkerVersionAssetsModel.config.@WorkerVersionAssetsConfigModel.run_worker_first")
 	errs.Report(t)
 }
