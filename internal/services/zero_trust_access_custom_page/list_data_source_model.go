@@ -31,7 +31,6 @@ func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams(_ context.Conte
 }
 
 type ZeroTrustAccessCustomPagesResultDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"uid,computed"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
 	Type types.String `tfsdk:"type" json:"type,computed"`
 	UID  types.String `tfsdk:"uid" json:"uid,computed"`

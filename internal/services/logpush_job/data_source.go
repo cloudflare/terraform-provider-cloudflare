@@ -83,7 +83,6 @@ func (d *LogpushJobDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	data = &env.Result
-	data.ID = data.JobID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

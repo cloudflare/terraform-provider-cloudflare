@@ -15,10 +15,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ManagedTransformsDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the zone.",
-				Computed:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "The unique ID of the zone.",
 				Required:    true,

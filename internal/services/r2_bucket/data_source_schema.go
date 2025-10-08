@@ -16,16 +16,12 @@ var _ datasource.DataSourceWithConfigValidators = (*R2BucketDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Name of the bucket.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Account ID.",
+				Required:    true,
 			},
 			"bucket_name": schema.StringAttribute{
 				Description: "Name of the bucket.",
-				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
 				Required:    true,
 			},
 			"creation_date": schema.StringAttribute{

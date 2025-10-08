@@ -106,7 +106,6 @@ func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 	data = &env.Result
-	data.ID = data.TokenID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

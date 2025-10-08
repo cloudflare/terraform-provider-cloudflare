@@ -19,15 +19,12 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersDeploymentDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-			"deployment_id": schema.StringAttribute{
-				Required: true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
+			},
+			"deployment_id": schema.StringAttribute{
+				Required: true,
 			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
@@ -39,6 +36,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"source": schema.StringAttribute{
 				Computed: true,

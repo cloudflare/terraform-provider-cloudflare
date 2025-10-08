@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"custom_page_id": schema.StringAttribute{
 				Description: "UUID.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

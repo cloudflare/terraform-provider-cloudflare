@@ -82,7 +82,6 @@ func (d *EmailRoutingCatchAllDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

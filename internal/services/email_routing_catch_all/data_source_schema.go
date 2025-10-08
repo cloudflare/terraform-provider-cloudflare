@@ -18,16 +18,16 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingCatchAllDataSour
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Routing rule identifier.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{

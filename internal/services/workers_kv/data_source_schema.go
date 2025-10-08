@@ -14,16 +14,12 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersKVDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Required:    true,
 			},
 			"key_name": schema.StringAttribute{
 				Description: "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
-				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
 				Required:    true,
 			},
 			"namespace_id": schema.StringAttribute{

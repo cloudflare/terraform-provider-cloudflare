@@ -113,7 +113,6 @@ func (d *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 	data = &env.Result
-	data.ID = data.UARuleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

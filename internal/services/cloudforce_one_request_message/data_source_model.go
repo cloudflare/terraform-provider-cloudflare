@@ -17,8 +17,8 @@ type CloudforceOneRequestMessageResultDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestMessageDataSourceModel struct {
-	RequestID         types.String      `tfsdk:"request_id" path:"request_id,required"`
 	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
+	RequestID         types.String      `tfsdk:"request_id" path:"request_id,required"`
 	Page              types.Int64       `tfsdk:"page" json:"page,required"`
 	PerPage           types.Int64       `tfsdk:"per_page" json:"per_page,required"`
 	After             timetypes.RFC3339 `tfsdk:"after" json:"after,optional" format:"date-time"`
@@ -28,6 +28,7 @@ type CloudforceOneRequestMessageDataSourceModel struct {
 	Author            types.String      `tfsdk:"author" json:"author,computed"`
 	Content           types.String      `tfsdk:"content" json:"content,computed"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
+	ID                types.Int64       `tfsdk:"id" json:"id,computed"`
 	IsFollowOnRequest types.Bool        `tfsdk:"is_follow_on_request" json:"is_follow_on_request,computed"`
 	Updated           timetypes.RFC3339 `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 }

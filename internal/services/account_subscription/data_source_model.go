@@ -18,12 +18,12 @@ type AccountSubscriptionResultDataSourceEnvelope struct {
 }
 
 type AccountSubscriptionDataSourceModel struct {
-	ID                 types.String                                                         `tfsdk:"id" path:"account_id,computed"`
 	AccountID          types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Currency           types.String                                                         `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                                                    `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
 	CurrentPeriodStart timetypes.RFC3339                                                    `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
 	Frequency          types.String                                                         `tfsdk:"frequency" json:"frequency,computed"`
+	ID                 types.String                                                         `tfsdk:"id" json:"id,computed"`
 	Price              types.Float64                                                        `tfsdk:"price" json:"price,computed"`
 	State              types.String                                                         `tfsdk:"state" json:"state,computed"`
 	RatePlan           customfield.NestedObject[AccountSubscriptionRatePlanDataSourceModel] `tfsdk:"rate_plan" json:"rate_plan,computed"`

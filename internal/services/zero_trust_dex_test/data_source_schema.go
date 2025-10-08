@@ -21,7 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"dex_test_id": schema.StringAttribute{
 				Description: "The unique identifier for the test.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

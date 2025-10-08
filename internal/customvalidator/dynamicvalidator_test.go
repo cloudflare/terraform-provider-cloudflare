@@ -208,7 +208,6 @@ var testcases = map[string](struct {
 		[]attr.Value{
 			basetypes.NewListValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("")}),
 			basetypes.NewListValueMust(basetypes.StringType{}, []attr.Value{}),
-			basetypes.NewTupleValueMust([]attr.Type{basetypes.StringType{}, basetypes.StringType{}}, []attr.Value{basetypes.NewStringValue(""), basetypes.NewStringValue("")}),
 			basetypes.NewSetValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("")}),
 		},
 		[]attr.Value{

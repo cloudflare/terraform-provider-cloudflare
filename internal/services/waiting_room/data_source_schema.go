@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"waiting_room_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",

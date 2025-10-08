@@ -83,7 +83,6 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Read(ctx context.Context, req
 		return
 	}
 	data = &env.Result
-	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

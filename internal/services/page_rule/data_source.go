@@ -83,7 +83,6 @@ func (d *PageRuleDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 	data = &env.Result
-	data.ID = data.PageruleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

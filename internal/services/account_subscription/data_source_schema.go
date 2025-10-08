@@ -19,10 +19,6 @@ var _ datasource.DataSourceWithConfigValidators = (*AccountSubscriptionDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
@@ -52,6 +48,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"yearly",
 					),
 				},
+			},
+			"id": schema.StringAttribute{
+				Description: "Subscription identifier tag.",
+				Computed:    true,
 			},
 			"price": schema.Float64Attribute{
 				Description: "The price of the subscription that will be billed, in US dollars.",

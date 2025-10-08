@@ -17,17 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = (*HostnameTLSSettingDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "The TLS Setting name.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"ciphers",
-						"min_tls_version",
-						"http2",
-					),
-				},
-			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
 				Required:    true,

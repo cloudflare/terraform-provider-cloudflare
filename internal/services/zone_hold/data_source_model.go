@@ -16,7 +16,6 @@ type ZoneHoldResultDataSourceEnvelope struct {
 }
 
 type ZoneHoldDataSourceModel struct {
-	ID                types.String `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
 	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed"`

@@ -16,7 +16,6 @@ type URLNormalizationSettingsResultDataSourceEnvelope struct {
 }
 
 type URLNormalizationSettingsDataSourceModel struct {
-	ID     types.String `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Scope  types.String `tfsdk:"scope" json:"scope,computed"`
 	Type   types.String `tfsdk:"type" json:"type,computed"`

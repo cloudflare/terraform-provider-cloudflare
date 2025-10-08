@@ -19,14 +19,14 @@ type ZeroTrustDLPCustomProfileResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPCustomProfileDataSourceModel struct {
-	ID                  types.String                                                                       `tfsdk:"id" path:"profile_id,computed"`
-	ProfileID           types.String                                                                       `tfsdk:"profile_id" path:"profile_id,required"`
 	AccountID           types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	ProfileID           types.String                                                                       `tfsdk:"profile_id" path:"profile_id,required"`
 	AIContextEnabled    types.Bool                                                                         `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed"`
 	AllowedMatchCount   types.Int64                                                                        `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
 	ConfidenceThreshold types.String                                                                       `tfsdk:"confidence_threshold" json:"confidence_threshold,computed"`
 	CreatedAt           timetypes.RFC3339                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description         types.String                                                                       `tfsdk:"description" json:"description,computed"`
+	ID                  types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	Name                types.String                                                                       `tfsdk:"name" json:"name,computed"`
 	OCREnabled          types.Bool                                                                         `tfsdk:"ocr_enabled" json:"ocr_enabled,computed"`
 	OpenAccess          types.Bool                                                                         `tfsdk:"open_access" json:"open_access,computed"`

@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"identifier": schema.StringAttribute{
 				Description: "Specify the identifier of the hostname.",
-				Required:    true,
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Specify the identifier of the hostname.",

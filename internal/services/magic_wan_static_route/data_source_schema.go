@@ -17,15 +17,11 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicWANStaticRouteDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-			},
-			"route_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
-			"account_id": schema.StringAttribute{
+			"route_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

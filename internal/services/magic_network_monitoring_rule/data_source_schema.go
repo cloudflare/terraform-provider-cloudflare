@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "The id of the rule. Must be unique.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

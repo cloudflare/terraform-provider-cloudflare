@@ -17,9 +17,8 @@ type WorkersCronTriggerResultDataSourceEnvelope struct {
 }
 
 type WorkersCronTriggerDataSourceModel struct {
-	ID         types.String                                                             `tfsdk:"id" path:"script_name,computed"`
-	ScriptName types.String                                                             `tfsdk:"script_name" path:"script_name,required"`
 	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName types.String                                                             `tfsdk:"script_name" path:"script_name,required"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 

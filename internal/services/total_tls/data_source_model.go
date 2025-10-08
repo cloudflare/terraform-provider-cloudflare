@@ -16,7 +16,6 @@ type TotalTLSResultDataSourceEnvelope struct {
 }
 
 type TotalTLSDataSourceModel struct {
-	ID                   types.String `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled,computed"`

@@ -20,15 +20,11 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicWANGRETunnelDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-			},
-			"gre_tunnel_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
-			"account_id": schema.StringAttribute{
+			"gre_tunnel_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

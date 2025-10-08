@@ -113,7 +113,6 @@ func (d *DNSRecordDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	data = &env.Result
-	data.ID = data.DNSRecordID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

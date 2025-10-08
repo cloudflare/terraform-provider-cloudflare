@@ -17,10 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessKeyConfigurat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,

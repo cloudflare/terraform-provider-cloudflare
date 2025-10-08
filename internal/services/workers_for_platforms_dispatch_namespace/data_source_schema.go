@@ -21,7 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"dispatch_namespace": schema.StringAttribute{
 				Description: "Name of the Workers for Platforms dispatch namespace.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

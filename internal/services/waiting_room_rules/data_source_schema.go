@@ -17,9 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = (*WaitingRoomRulesDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
 			"waiting_room_id": schema.StringAttribute{
 				Required: true,
 			},
@@ -44,6 +41,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expression": schema.StringAttribute{
 				Description: "Criteria defining when there is a match for the current rule.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the rule.",
 				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{

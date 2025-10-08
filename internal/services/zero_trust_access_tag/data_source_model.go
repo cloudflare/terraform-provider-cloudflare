@@ -17,7 +17,7 @@ type ZeroTrustAccessTagResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessTagDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"tag_name,computed"`
-	TagName   types.String `tfsdk:"tag_name" path:"tag_name,required"`
+	TagName   types.String `tfsdk:"tag_name" path:"tag_name,optional"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Name      types.String `tfsdk:"name" json:"name,computed"`
 }

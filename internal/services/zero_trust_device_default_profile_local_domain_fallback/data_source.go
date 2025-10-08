@@ -82,7 +82,6 @@ func (d *ZeroTrustDeviceDefaultProfileLocalDomainFallbackDataSource) Read(ctx co
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

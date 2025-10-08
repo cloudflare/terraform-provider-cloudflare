@@ -113,7 +113,6 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Read(ctx context.Context, re
 		return
 	}
 	data = &env.Result
-	data.ID = data.IdentityProviderID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -113,7 +113,6 @@ func (d *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 	data = &env.Result
-	data.ID = data.DestinationAddressIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

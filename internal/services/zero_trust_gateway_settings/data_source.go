@@ -82,7 +82,6 @@ func (d *ZeroTrustGatewaySettingsDataSource) Read(ctx context.Context, req datas
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

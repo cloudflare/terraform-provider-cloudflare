@@ -113,7 +113,6 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 	data = &env.Result
-	data.ID = data.GroupID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -84,7 +84,6 @@ func (d *WorkerVersionDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 	data = &env.Result
-	data.ID = data.VersionID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

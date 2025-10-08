@@ -113,7 +113,6 @@ func (d *ZeroTrustTunnelWARPConnectorDataSource) Read(ctx context.Context, req d
 		return
 	}
 	data = &env.Result
-	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

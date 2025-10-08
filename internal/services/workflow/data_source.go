@@ -113,7 +113,6 @@ func (d *WorkflowDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 	data = &env.Result
-	data.ID = data.WorkflowName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

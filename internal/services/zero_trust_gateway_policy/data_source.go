@@ -83,7 +83,6 @@ func (d *ZeroTrustGatewayPolicyDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 	data = &env.Result
-	data.ID = data.RuleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

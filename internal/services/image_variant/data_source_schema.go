@@ -18,15 +18,12 @@ var _ datasource.DataSourceWithConfigValidators = (*ImageVariantDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-			"variant_id": schema.StringAttribute{
-				Required: true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
 				Required:    true,
+			},
+			"variant_id": schema.StringAttribute{
+				Required: true,
 			},
 			"variant": schema.SingleNestedAttribute{
 				Computed:   true,

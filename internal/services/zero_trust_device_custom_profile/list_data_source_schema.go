@@ -34,9 +34,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Computed: true,
-						},
 						"allow_mode_switch": schema.BoolAttribute{
 							Description: "Whether to allow the user to switch WARP between modes.",
 							Computed:    true,

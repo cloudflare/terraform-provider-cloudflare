@@ -17,16 +17,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ArgoSmartRoutingDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Specifies the zone associated with the API call.",
-				Computed:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "Specifies the zone associated with the API call.",
 				Required:    true,
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Specifies if the setting is editable.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Specifies the identifier of the Argo Smart Routing setting.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{

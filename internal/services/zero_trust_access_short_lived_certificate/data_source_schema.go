@@ -16,10 +16,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessShortLivedCer
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "UUID.",
-				Computed:    true,
-			},
 			"app_id": schema.StringAttribute{
 				Description: "UUID.",
 				Required:    true,
@@ -34,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"aud": schema.StringAttribute{
 				Description: "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the CA.",
 				Computed:    true,
 			},
 			"public_key": schema.StringAttribute{

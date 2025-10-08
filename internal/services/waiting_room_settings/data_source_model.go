@@ -16,7 +16,6 @@ type WaitingRoomSettingsResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomSettingsDataSourceModel struct {
-	ID                        types.String `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID                    types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass,computed"`
 }

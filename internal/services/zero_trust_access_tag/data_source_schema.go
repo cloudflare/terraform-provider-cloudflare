@@ -20,7 +20,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tag_name": schema.StringAttribute{
 				Description: "The name of the tag",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

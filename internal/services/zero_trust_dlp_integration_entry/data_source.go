@@ -83,7 +83,6 @@ func (d *ZeroTrustDLPIntegrationEntryDataSource) Read(ctx context.Context, req d
 		return
 	}
 	data = &env.Result
-	data.ID = data.EntryID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
