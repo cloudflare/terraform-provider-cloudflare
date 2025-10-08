@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

@@ -18,9 +18,8 @@ type MagicWANIPSECTunnelResultDataSourceEnvelope struct {
 }
 
 type MagicWANIPSECTunnelDataSourceModel struct {
-	ID            types.String                                                            `tfsdk:"id" path:"ipsec_tunnel_id,computed"`
-	IPSECTunnelID types.String                                                            `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,required"`
 	AccountID     types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	IPSECTunnelID types.String                                                            `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,required"`
 	IPSECTunnel   customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelDataSourceModel] `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 }
 

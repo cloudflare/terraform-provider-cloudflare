@@ -17,16 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestPriority
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "UUID.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Required:    true,
 			},
 			"priority_id": schema.StringAttribute{
 				Description: "UUID.",
-				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
 				Required:    true,
 			},
 			"completed": schema.StringAttribute{
@@ -40,6 +36,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "UUID.",
+				Computed:    true,
 			},
 			"message_tokens": schema.Int64Attribute{
 				Description: "Tokens for the request messages.",

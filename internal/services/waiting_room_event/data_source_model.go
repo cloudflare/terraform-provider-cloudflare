@@ -18,7 +18,7 @@ type WaitingRoomEventResultDataSourceEnvelope struct {
 
 type WaitingRoomEventDataSourceModel struct {
 	ID                    types.String      `tfsdk:"id" path:"event_id,computed"`
-	EventID               types.String      `tfsdk:"event_id" path:"event_id,required"`
+	EventID               types.String      `tfsdk:"event_id" path:"event_id,optional"`
 	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
 	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn             timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

@@ -18,7 +18,7 @@ type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
 
 type NotificationPolicyWebhooksDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" path:"webhook_id,computed"`
-	WebhookID   types.String      `tfsdk:"webhook_id" path:"webhook_id,required"`
+	WebhookID   types.String      `tfsdk:"webhook_id" path:"webhook_id,optional"`
 	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastFailure timetypes.RFC3339 `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`

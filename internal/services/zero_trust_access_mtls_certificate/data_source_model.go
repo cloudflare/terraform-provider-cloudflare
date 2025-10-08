@@ -19,7 +19,7 @@ type ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 	ID                  types.String                   `tfsdk:"id" path:"certificate_id,computed"`
-	CertificateID       types.String                   `tfsdk:"certificate_id" path:"certificate_id,required"`
+	CertificateID       types.String                   `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	AccountID           types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID              types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	ExpiresOn           timetypes.RFC3339              `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`

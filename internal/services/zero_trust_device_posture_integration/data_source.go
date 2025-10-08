@@ -83,7 +83,6 @@ func (d *ZeroTrustDevicePostureIntegrationDataSource) Read(ctx context.Context, 
 		return
 	}
 	data = &env.Result
-	data.ID = data.IntegrationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

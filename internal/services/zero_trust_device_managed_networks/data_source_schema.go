@@ -23,7 +23,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"network_id": schema.StringAttribute{
 				Description: "API UUID.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

@@ -20,7 +20,7 @@ type ZeroTrustDLPCustomEntryResultDataSourceEnvelope struct {
 
 type ZeroTrustDLPCustomEntryDataSourceModel struct {
 	ID            types.String                                                               `tfsdk:"id" path:"entry_id,computed"`
-	EntryID       types.String                                                               `tfsdk:"entry_id" path:"entry_id,required"`
+	EntryID       types.String                                                               `tfsdk:"entry_id" path:"entry_id,optional"`
 	AccountID     types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
 	CaseSensitive types.Bool                                                                 `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

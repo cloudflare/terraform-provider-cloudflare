@@ -83,7 +83,6 @@ func (d *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 		return
 	}
 	data = &env.Result
-	data.ID = data.WebhookID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

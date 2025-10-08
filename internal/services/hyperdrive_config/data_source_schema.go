@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hyperdrive_id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",

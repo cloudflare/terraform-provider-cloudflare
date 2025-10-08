@@ -113,7 +113,6 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	data = &env.Result
-	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

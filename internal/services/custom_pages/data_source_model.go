@@ -18,12 +18,12 @@ type CustomPagesResultDataSourceEnvelope struct {
 }
 
 type CustomPagesDataSourceModel struct {
-	ID             types.String                   `tfsdk:"id" path:"identifier,computed"`
 	Identifier     types.String                   `tfsdk:"identifier" path:"identifier,required"`
 	AccountID      types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID         types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn      timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                   `tfsdk:"description" json:"description,computed"`
+	ID             types.String                   `tfsdk:"id" json:"id,computed"`
 	ModifiedOn     timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PreviewTarget  types.String                   `tfsdk:"preview_target" json:"preview_target,computed"`
 	State          types.String                   `tfsdk:"state" json:"state,computed"`

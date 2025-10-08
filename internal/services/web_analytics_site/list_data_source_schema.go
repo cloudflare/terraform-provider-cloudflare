@@ -44,10 +44,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[WebAnalyticsSitesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "The Web Analytics site identifier.",
-							Computed:    true,
-						},
 						"auto_install": schema.BoolAttribute{
 							Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
 							Computed:    true,

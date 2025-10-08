@@ -16,10 +16,6 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudConnectorRulesDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,

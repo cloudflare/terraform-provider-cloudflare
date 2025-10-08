@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "API UUID.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

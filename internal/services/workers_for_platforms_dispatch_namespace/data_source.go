@@ -83,7 +83,6 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Read(ctx context.Contex
 		return
 	}
 	data = &env.Result
-	data.ID = data.DispatchNamespace
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

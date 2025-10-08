@@ -18,9 +18,8 @@ type MagicWANStaticRouteResultDataSourceEnvelope struct {
 }
 
 type MagicWANStaticRouteDataSourceModel struct {
-	ID        types.String                                                      `tfsdk:"id" path:"route_id,computed"`
-	RouteID   types.String                                                      `tfsdk:"route_id" path:"route_id,required"`
 	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	RouteID   types.String                                                      `tfsdk:"route_id" path:"route_id,required"`
 	Route     customfield.NestedObject[MagicWANStaticRouteRouteDataSourceModel] `tfsdk:"route" json:"route,computed"`
 }
 

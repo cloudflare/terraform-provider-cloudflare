@@ -83,7 +83,6 @@ func (d *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 	data = &env.Result
-	data.ID = data.PrefixID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

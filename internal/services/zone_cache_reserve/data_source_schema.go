@@ -17,10 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ZoneCacheReserveDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -28,6 +24,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"editable": schema.BoolAttribute{
 				Description: "Whether the setting is editable.",
 				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The identifier of the caching setting.\nAvailable values: \"cache_reserve\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
+				},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time this setting was modified.",

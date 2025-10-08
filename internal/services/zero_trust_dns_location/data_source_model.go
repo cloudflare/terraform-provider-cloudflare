@@ -19,7 +19,7 @@ type ZeroTrustDNSLocationResultDataSourceEnvelope struct {
 
 type ZeroTrustDNSLocationDataSourceModel struct {
 	ID                        types.String                                                              `tfsdk:"id" path:"location_id,computed"`
-	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,required"`
+	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,optional"`
 	AccountID                 types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
 	ClientDefault             types.Bool                                                                `tfsdk:"client_default" json:"client_default,computed"`
 	CreatedAt                 timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

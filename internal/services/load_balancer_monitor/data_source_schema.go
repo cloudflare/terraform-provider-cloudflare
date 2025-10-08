@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"monitor_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

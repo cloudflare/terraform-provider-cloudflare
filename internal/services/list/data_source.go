@@ -84,7 +84,6 @@ func (d *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 	data = &env.Result
-	data.ID = data.ListID
 
 	itemsSet, diags := getAllListItems[ListItemDataSourceModel](ctx, d.client, data.AccountID.ValueString(), data.ListID.ValueString(), data.Search.ValueString())
 	resp.Diagnostics.Append(diags...)

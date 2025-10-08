@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_id": schema.StringAttribute{
 				Description: "Identify the certificate with a UUID.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

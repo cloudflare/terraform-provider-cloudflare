@@ -113,7 +113,6 @@ func (d *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 	data = &env.Result
-	data.ID = data.RuleIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

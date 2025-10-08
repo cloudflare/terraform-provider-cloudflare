@@ -82,7 +82,6 @@ func (d *StreamKeyDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

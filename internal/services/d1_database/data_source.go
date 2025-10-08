@@ -113,7 +113,6 @@ func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	data = &env.Result
-	data.ID = data.DatabaseID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

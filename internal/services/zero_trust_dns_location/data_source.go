@@ -83,7 +83,6 @@ func (d *ZeroTrustDNSLocationDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 	data = &env.Result
-	data.ID = data.LocationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -20,7 +20,7 @@ type WorkerVersionResultDataSourceEnvelope struct {
 
 type WorkerVersionDataSourceModel struct {
 	ID                 types.String                                                       `tfsdk:"id" path:"version_id,computed"`
-	VersionID          types.String                                                       `tfsdk:"version_id" path:"version_id,required"`
+	VersionID          types.String                                                       `tfsdk:"version_id" path:"version_id,optional"`
 	AccountID          types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID           types.String                                                       `tfsdk:"worker_id" path:"worker_id,required"`
 	Include            types.String                                                       `tfsdk:"include" query:"include,optional"`

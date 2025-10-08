@@ -82,7 +82,6 @@ func (d *DNSZoneTransfersIncomingDataSource) Read(ctx context.Context, req datas
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

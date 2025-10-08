@@ -17,18 +17,18 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustGatewayProxyEndpoin
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-			"proxy_endpoint_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_id": schema.StringAttribute{
+			"proxy_endpoint_id": schema.StringAttribute{
 				Required: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Specify the name of the proxy endpoint.",

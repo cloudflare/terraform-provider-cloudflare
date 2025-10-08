@@ -113,7 +113,6 @@ func (d *EmailSecurityBlockSenderDataSource) Read(ctx context.Context, req datas
 		return
 	}
 	data = &env.Result
-	data.ID = data.PatternID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -19,7 +19,7 @@ type ZeroTrustGatewayPolicyResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewayPolicyDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"rule_id,computed"`
-	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,required"`
+	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,optional"`
 	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

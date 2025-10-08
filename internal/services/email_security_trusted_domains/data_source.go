@@ -113,7 +113,6 @@ func (d *EmailSecurityTrustedDomainsDataSource) Read(ctx context.Context, req da
 		return
 	}
 	data = &env.Result
-	data.ID = data.TrustedDomainID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

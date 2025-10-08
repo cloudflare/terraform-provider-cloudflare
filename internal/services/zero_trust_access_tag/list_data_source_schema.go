@@ -34,10 +34,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessTagsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "The name of the tag",
-							Computed:    true,
-						},
 						"name": schema.StringAttribute{
 							Description: "The name of the tag",
 							Computed:    true,

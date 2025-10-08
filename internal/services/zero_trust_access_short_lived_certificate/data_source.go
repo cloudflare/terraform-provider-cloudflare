@@ -83,7 +83,6 @@ func (d *ZeroTrustAccessShortLivedCertificateDataSource) Read(ctx context.Contex
 		return
 	}
 	data = &env.Result
-	data.ID = data.AppID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

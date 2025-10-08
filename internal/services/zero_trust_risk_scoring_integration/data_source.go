@@ -83,7 +83,6 @@ func (d *ZeroTrustRiskScoringIntegrationDataSource) Read(ctx context.Context, re
 		return
 	}
 	data = &env.Result
-	data.ID = data.IntegrationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
