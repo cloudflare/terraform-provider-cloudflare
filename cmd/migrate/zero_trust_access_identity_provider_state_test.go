@@ -373,7 +373,7 @@ func TestTransformZeroTrustAccessIdentityProviderStateJSON(t *testing.T) {
 			require.NoError(t, err)
 
 			// Transform the state
-			outputJSON, err := transformStateJSON(inputJSON)
+			outputJSON, err := transformStateJSON(inputJSON, nil)
 			require.NoError(t, err)
 
 			// Parse the output
@@ -440,7 +440,7 @@ func TestTransformZeroTrustAccessIdentityProviderStateJSON_ComplexScenarios(t *t
 		inputJSON, err := json.Marshal(input)
 		require.NoError(t, err)
 
-		outputJSON, err := transformStateJSON(inputJSON)
+		outputJSON, err := transformStateJSON(inputJSON, nil)
 		require.NoError(t, err)
 
 		// Verify the transformation
@@ -503,7 +503,7 @@ func TestTransformZeroTrustAccessIdentityProviderStateJSON_ComplexScenarios(t *t
 		inputJSON, err := json.Marshal(input)
 		require.NoError(t, err)
 
-		outputJSON, err := transformStateJSON(inputJSON)
+		outputJSON, err := transformStateJSON(inputJSON, nil)
 		require.NoError(t, err)
 
 		output := gjson.ParseBytes(outputJSON)
