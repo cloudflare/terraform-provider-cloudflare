@@ -235,6 +235,7 @@ func TestAccCloudflareWorkerVersion_WithAssets(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.StringExact(assetsDir)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("asset_manifest_sha256"), knownvalue.StringExact("b098d2898ca7ae5677c7291d97323e7894137515043f3e560f3bd155870eea9e")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
 				},
 			},
 			{

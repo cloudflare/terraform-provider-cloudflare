@@ -15,6 +15,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
@@ -132,7 +134,12 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	bytes, err = setRunWorkerFirstDefault(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to set defaults", err.Error())
+		return
+	}
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -196,6 +203,11 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = setRunWorkerFirstDefault(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to set defaults", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -295,6 +307,11 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = setRunWorkerFirstDefault(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to set defaults", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -307,4 +324,18 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 
 func (r *WorkerVersionResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+// setRunWorkerFirstDefault sets a default value of false for run_worker_first if it's null or missing in the JSON response.
+func setRunWorkerFirstDefault(data []byte) ([]byte, error) {
+	assetsConfig := gjson.GetBytes(data, "result.assets.config")
+	if !assetsConfig.Exists() {
+		return data, nil
+	}
+
+	runWorkerFirst := gjson.GetBytes(data, "result.assets.config.run_worker_first")
+	if !runWorkerFirst.Exists() || runWorkerFirst.Type == gjson.Null {
+		return sjson.SetBytes(data, "result.assets.config.run_worker_first", false)
+	}
+	return data, nil
 }
