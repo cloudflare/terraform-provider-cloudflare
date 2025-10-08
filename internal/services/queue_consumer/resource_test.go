@@ -23,9 +23,6 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-func init() {
-}
-
 func testSweepCloudflareQueueConsumer(r string) error {
 	ctx := context.Background()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -66,7 +63,7 @@ func testSweepCloudflareQueueConsumer(r string) error {
 	return nil
 }
 
-func TestAccCloudflareQueueConsumer_Basic(t *testing.T) {
+func TestAccCloudflareQueueConsumer_Worker(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -82,7 +79,7 @@ func TestAccCloudflareQueueConsumer_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareQueueConsumerBasic(rnd, accountID, queueName),
+				Config: testAccCheckCloudflareQueueConsumerWorker(rnd, accountID, queueName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
@@ -186,55 +183,14 @@ func testAccCheckCloudflareQueueConsumerDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareQueueConsumerBasic(rnd, accountID, queueName string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_queue" "test_queue" {
-  account_id = "%s"
-  name       = "%s"
-}
-
-resource "cloudflare_queue_consumer" "%s" {
-  account_id  = "%s"
-  queue_id    = cloudflare_queue.test_queue.id
-  type        = "worker"
-  script_name = "test-worker"
-}
-`, accountID, queueName, rnd, accountID)
+func testAccCheckCloudflareQueueConsumerWorker(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queue_consumer_worker.tf", accountID, queueName, rnd, accountID)
 }
 
 func testAccCheckCloudflareQueueConsumerHttpPull(rnd, accountID, queueName string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_queue" "test_queue" {
-  account_id = "%s"
-  name       = "%s"
-}
-
-resource "cloudflare_queue_consumer" "%s" {
-  account_id = "%s"
-  queue_id   = cloudflare_queue.test_queue.id
-  type       = "http_pull"
-}
-`, accountID, queueName, rnd, accountID)
+	return acctest.LoadTestCase("queue_consumer_http.tf", accountID, queueName, rnd, accountID)
 }
 
 func testAccCheckCloudflareQueueConsumerWithSettings(rnd, accountID, queueName string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_queue" "test_queue" {
-  account_id = "%s"
-  name       = "%s"
-}
-
-resource "cloudflare_queue_consumer" "%s" {
-  account_id  = "%s"
-  queue_id    = cloudflare_queue.test_queue.id
-  type        = "worker"
-  script_name = "test-worker"
-  
-  settings {
-    batch_size        = 10
-    max_retries       = 3
-    max_wait_time_ms  = 5000
-  }
-}
-`, accountID, queueName, rnd, accountID)
+	return acctest.LoadTestCase("queue_consumer_with_settings.tf", accountID, queueName, rnd, accountID)
 }
