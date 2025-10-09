@@ -126,12 +126,12 @@ resource "cloudflare_pages_project" "%[1]s" {
 	source = {
 		type = "github"
 		config = {
-			owner = "%[3]s"
-			repo_name = "%[4]s"
+			owner = "%[4]s"
+			repo_name = "%[5]s"
 			production_branch = "main"
 			pr_comments_enabled = true
 			deployments_enabled = true
-			production_deployment_enabled = true
+			production_deployments_enabled = true
 			preview_deployment_setting = "all"
 			path_includes = ["src/**", "public/**"]
 			path_excludes = ["*.test.js", "node_modules/**"]
