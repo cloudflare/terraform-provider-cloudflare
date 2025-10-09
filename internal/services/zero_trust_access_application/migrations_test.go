@@ -17,7 +17,7 @@ import (
 )
 
 // TestMigrateZeroTrustAccessApplication_Basic tests basic state schema migration within v5 provider
-// Note: This tests the state migration (v0->v1) within the same resource type, 
+// Note: This tests the state migration (v0->v1) within the same resource type,
 // not the resource type migration (cloudflare_access_application -> cloudflare_zero_trust_access_application)
 // which requires the cmd/migrate tool and terraform state mv commands.
 func TestMigrateZeroTrustAccessApplication_Basic(t *testing.T) {
@@ -439,7 +439,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID") 
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	appResourceName := "cloudflare_zero_trust_access_application." + rnd
@@ -681,7 +681,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 	})
 }
 
-// TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual tests recovery from cors_headers 
+// TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual tests recovery from cors_headers
 // array-to-object state corruption by manual state editing
 func TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual(t *testing.T) {
 	t.Skip("Manual test: This test demonstrates the cors_headers state issue. " +
