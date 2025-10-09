@@ -92,6 +92,7 @@ func (r *OrganizationResource) Create(ctx context.Context, req resource.CreateRe
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	time.Sleep(30 * time.Second)
 }
 
 func (r *OrganizationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
