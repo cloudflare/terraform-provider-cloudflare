@@ -102,6 +102,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
@@ -397,6 +399,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		account_member.NewResource,
 		account_subscription.NewResource,
 		account_token.NewResource,
+		organization.NewResource,
+		organization_profile.NewResource,
 		origin_ca_certificate.NewResource,
 		user.NewResource,
 		api_token.NewResource,
@@ -608,6 +612,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_token.NewAccountTokensDataSource,
 		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsDataSource,
 		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsListDataSource,
+		organization.NewOrganizationDataSource,
+		organization.NewOrganizationsDataSource,
+		organization_profile.NewOrganizationProfileDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
 		ip_ranges.NewIPRangesDataSource,
