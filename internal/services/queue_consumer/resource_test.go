@@ -23,6 +23,115 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
+func TestAccCloudflareQueueConsumer_Worker_UpdateDeadLetterQueue(t *testing.T) {
+    t.Parallel()
+    accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+    rnd := utils.GenerateRandomResourceName()
+    queueName := "test-queue-" + rnd
+    dlq1 := "dlq-1-" + rnd
+    dlq2 := "dlq-2-" + rnd
+    resourceName := "cloudflare_queue_consumer." + rnd
+
+    resource.Test(t, resource.TestCase{
+        PreCheck: func() {
+            acctest.TestAccPreCheck(t)
+            acctest.TestAccPreCheck_AccountID(t)
+        },
+        ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+        CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+        Steps: []resource.TestStep{
+            {
+                Config: testAccCheckCloudflareQueueConsumerWorkerWithDeadLetter(rnd, accountID, queueName, dlq1),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("worker")),
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dead_letter_queue"), knownvalue.StringExact(dlq1)),
+                },
+            },
+            {
+                Config: testAccCheckCloudflareQueueConsumerWorkerWithDeadLetterUpdate(rnd, accountID, queueName, dlq1, dlq2),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("worker")),
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dead_letter_queue"), knownvalue.StringExact(dlq2)),
+                },
+            },
+        },
+    })
+}
+
+func TestAccCloudflareQueueConsumer_HttpPull_UpdateDeadLetterQueue(t *testing.T) {
+    t.Parallel()
+    accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+    rnd := utils.GenerateRandomResourceName()
+    queueName := "test-queue-" + rnd
+    dlq1 := "dlq-1-" + rnd
+    dlq2 := "dlq-2-" + rnd
+    resourceName := "cloudflare_queue_consumer." + rnd
+
+    resource.Test(t, resource.TestCase{
+        PreCheck: func() {
+            acctest.TestAccPreCheck(t)
+            acctest.TestAccPreCheck_AccountID(t)
+        },
+        ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+        CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+        Steps: []resource.TestStep{
+            {
+                Config: testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetter(rnd, accountID, queueName, dlq1),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dead_letter_queue"), knownvalue.StringExact(dlq1)),
+                },
+            },
+            {
+                Config: testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetterUpdate(rnd, accountID, queueName, dlq1, dlq2),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
+                    statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dead_letter_queue"), knownvalue.StringExact(dlq2)),
+                },
+            },
+        },
+    })
+}
+
+func TestAccCloudflareQueueConsumer_HttpPull_UpdateSettings(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	queueName := "test-queue-" + rnd
+	resourceName := "cloudflare_queue_consumer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullWithSettings(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(10)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(3)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(5000)),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullWithSettingsUpdate(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(20)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(5)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(8000)),
+				},
+			},
+		},
+	})
+}
+
 func testSweepCloudflareQueueConsumer(r string) error {
 	ctx := context.Background()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -138,7 +247,7 @@ func TestAccCloudflareQueueConsumer_WithSettings(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareQueueConsumerWithSettings(rnd, accountID, queueName),
+				Config: testAccCheckCloudflareQueueConsumerWorkerWithSettings(rnd, accountID, queueName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
@@ -149,6 +258,78 @@ func TestAccCloudflareQueueConsumer_WithSettings(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(3)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(5000)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareQueueConsumer_Worker_Update(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	queueName := "test-queue-" + rnd
+	resourceName := "cloudflare_queue_consumer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareQueueConsumerWorker(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("consumer_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("worker")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact("test-worker")),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareQueueConsumerWorkerUpdate(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("worker")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact("test-worker-2")),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareQueueConsumer_Worker_UpdateSettings(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	queueName := "test-queue-" + rnd
+	resourceName := "cloudflare_queue_consumer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareQueueConsumerWorkerWithSettings(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(10)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(3)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(5000)),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareQueueConsumerWorkerWithSettingsUpdate(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(20)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(5)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(8000)),
 				},
 			},
 		},
@@ -184,13 +365,45 @@ func testAccCheckCloudflareQueueConsumerDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareQueueConsumerWorker(rnd, accountID, queueName string) string {
-	return acctest.LoadTestCase("queue_consumer_worker.tf", accountID, queueName, rnd, accountID)
+	return acctest.LoadTestCase("queueconsumer_worker.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerWorkerUpdate(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_worker_update.tf", accountID, queueName, rnd, accountID)
 }
 
 func testAccCheckCloudflareQueueConsumerHttpPull(rnd, accountID, queueName string) string {
-	return acctest.LoadTestCase("queue_consumer_http.tf", accountID, queueName, rnd, accountID)
+	return acctest.LoadTestCase("queueconsumer_http.tf", accountID, queueName, rnd, accountID)
 }
 
-func testAccCheckCloudflareQueueConsumerWithSettings(rnd, accountID, queueName string) string {
-	return acctest.LoadTestCase("queue_consumer_with_settings.tf", accountID, queueName, rnd, accountID)
+func testAccCheckCloudflareQueueConsumerWorkerWithSettings(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_worker_with_settings.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerWorkerWithSettingsUpdate(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_worker_with_settings_update.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullWithSettings(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_http_with_settings.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullWithSettingsUpdate(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_http_with_settings_update.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerWorkerWithDeadLetter(rnd, accountID, queueName, dlqName string) string {
+	return acctest.LoadTestCase("queueconsumer_worker_with_dead_letter.tf", accountID, queueName, accountID, dlqName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerWorkerWithDeadLetterUpdate(rnd, accountID, queueName, dlqName1, dlqName2 string) string {
+	return acctest.LoadTestCase("queueconsumer_worker_with_dead_letter_update.tf", accountID, queueName, accountID, dlqName1, accountID, dlqName2, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetter(rnd, accountID, queueName, dlqName string) string {
+	return acctest.LoadTestCase("queueconsumer_http_with_dead_letter.tf", accountID, queueName, accountID, dlqName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetterUpdate(rnd, accountID, queueName, dlqName1, dlqName2 string) string {
+	return acctest.LoadTestCase("queueconsumer_http_with_dead_letter_update.tf", accountID, queueName, accountID, dlqName1, accountID, dlqName2, rnd, accountID)
 }
