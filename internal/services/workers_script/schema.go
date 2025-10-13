@@ -160,7 +160,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"namespace": schema.StringAttribute{
-									Description: "Namespace to bind to.",
+									Description: "The name of the dispatch namespace.",
 									Optional:    true,
 								},
 								"outbound": schema.SingleNestedAttribute{

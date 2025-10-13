@@ -37,6 +37,7 @@ type WorkersResultDataSourceModel struct {
 	Logpush       types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed"`
 	Name          types.String                                                     `tfsdk:"name" json:"name,computed"`
 	Observability customfield.NestedObject[WorkersObservabilityDataSourceModel]    `tfsdk:"observability" json:"observability,computed"`
+	References    customfield.NestedObject[WorkersReferencesDataSourceModel]       `tfsdk:"references" json:"references,computed"`
 	Subdomain     customfield.NestedObject[WorkersSubdomainDataSourceModel]        `tfsdk:"subdomain" json:"subdomain,computed"`
 	Tags          customfield.Set[types.String]                                    `tfsdk:"tags" json:"tags,computed"`
 	TailConsumers customfield.NestedObjectSet[WorkersTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
@@ -53,6 +54,47 @@ type WorkersObservabilityLogsDataSourceModel struct {
 	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
+}
+
+type WorkersReferencesDataSourceModel struct {
+	DispatchNamespaceOutbounds customfield.NestedObjectList[WorkersReferencesDispatchNamespaceOutboundsDataSourceModel] `tfsdk:"dispatch_namespace_outbounds" json:"dispatch_namespace_outbounds,computed"`
+	Domains                    customfield.NestedObjectList[WorkersReferencesDomainsDataSourceModel]                    `tfsdk:"domains" json:"domains,computed"`
+	DurableObjects             customfield.NestedObjectList[WorkersReferencesDurableObjectsDataSourceModel]             `tfsdk:"durable_objects" json:"durable_objects,computed"`
+	Queues                     customfield.NestedObjectList[WorkersReferencesQueuesDataSourceModel]                     `tfsdk:"queues" json:"queues,computed"`
+	Workers                    customfield.NestedObjectList[WorkersReferencesWorkersDataSourceModel]                    `tfsdk:"workers" json:"workers,computed"`
+}
+
+type WorkersReferencesDispatchNamespaceOutboundsDataSourceModel struct {
+	NamespaceID   types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	NamespaceName types.String `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	WorkerID      types.String `tfsdk:"worker_id" json:"worker_id,computed"`
+	WorkerName    types.String `tfsdk:"worker_name" json:"worker_name,computed"`
+}
+
+type WorkersReferencesDomainsDataSourceModel struct {
+	ID            types.String `tfsdk:"id" json:"id,computed"`
+	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,computed"`
+	Hostname      types.String `tfsdk:"hostname" json:"hostname,computed"`
+	ZoneID        types.String `tfsdk:"zone_id" json:"zone_id,computed"`
+	ZoneName      types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+}
+
+type WorkersReferencesDurableObjectsDataSourceModel struct {
+	NamespaceID   types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	NamespaceName types.String `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	WorkerID      types.String `tfsdk:"worker_id" json:"worker_id,computed"`
+	WorkerName    types.String `tfsdk:"worker_name" json:"worker_name,computed"`
+}
+
+type WorkersReferencesQueuesDataSourceModel struct {
+	QueueConsumerID types.String `tfsdk:"queue_consumer_id" json:"queue_consumer_id,computed"`
+	QueueID         types.String `tfsdk:"queue_id" json:"queue_id,computed"`
+	QueueName       types.String `tfsdk:"queue_name" json:"queue_name,computed"`
+}
+
+type WorkersReferencesWorkersDataSourceModel struct {
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type WorkersSubdomainDataSourceModel struct {

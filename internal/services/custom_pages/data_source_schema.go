@@ -22,17 +22,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
-						"waf_block",
-						"ip_block",
-						"country_challenge",
-						"500_errors",
 						"1000_errors",
+						"500_errors",
+						"basic_challenge",
+						"country_challenge",
+						"ip_block",
 						"managed_challenge",
 						"ratelimit_block",
+						"under_attack",
+						"waf_block",
 					),
 				},
 			},
