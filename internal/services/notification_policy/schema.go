@@ -5,6 +5,7 @@ package notification_policy
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -116,8 +117,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
-					"email": schema.ListNestedAttribute{
-						Optional: true,
+					"email": schema.SetNestedAttribute{
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectSetType[NotificationPolicyMechanismsEmailModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
@@ -127,8 +129,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"pagerduty": schema.ListNestedAttribute{
-						Optional: true,
+					"pagerduty": schema.SetNestedAttribute{
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectSetType[NotificationPolicyMechanismsPagerdutyModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
@@ -138,8 +141,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"webhooks": schema.ListNestedAttribute{
-						Optional: true,
+					"webhooks": schema.SetNestedAttribute{
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectSetType[NotificationPolicyMechanismsWebhooksModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
