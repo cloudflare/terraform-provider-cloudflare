@@ -9,9 +9,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
   tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
 
   config = {
-    warp_routing = {
-      enabled = true
-    }
     origin_request = {
       no_tls_verify = true
     }

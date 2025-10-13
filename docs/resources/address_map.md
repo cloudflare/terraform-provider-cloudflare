@@ -56,11 +56,6 @@ Optional:
 - `kind` (String) The type of the membership.
 Available values: "zone", "account".
 
-Read-Only:
-
-- `can_delete` (Boolean) Controls whether the membership can be deleted via the API or not.
-- `created_at` (String)
-
 ## Import
 
 Import is supported using the following syntax:

@@ -44,7 +44,7 @@ Available values: "asc", "desc".
 content matches and they share the same url host and zone hostname. In such case, we return the most
 recent script for the URL host and zone hostname combination.
 - `exclude_urls` (String) Excludes scripts whose URL contains one of the URL-encoded URLs separated by commas.
-- `export` (String) Export the list of scripts as a file.
+- `export` (String) Export the list of scripts as a file, limited to 50000 entries.
 Available values: "csv".
 - `hosts` (String) Includes scripts that match one or more URL-encoded hostnames separated by commas.
 

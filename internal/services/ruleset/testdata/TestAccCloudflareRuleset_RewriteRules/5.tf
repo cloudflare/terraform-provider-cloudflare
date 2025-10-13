@@ -12,7 +12,7 @@ resource "cloudflare_ruleset" "my_ruleset" {
       action_parameters = {
         uri = {
           query = {
-            value = "foo=bar"
+            value = ""
           }
         }
       }

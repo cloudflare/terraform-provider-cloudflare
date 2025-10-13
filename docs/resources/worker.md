@@ -18,10 +18,10 @@ resource "cloudflare_worker" "example_worker" {
   logpush = true
   observability = {
     enabled = true
-    head_sampling_rate = 0
+    head_sampling_rate = 1
     logs = {
       enabled = true
-      head_sampling_rate = 0
+      head_sampling_rate = 1
       invocation_logs = true
     }
   }
@@ -55,7 +55,7 @@ resource "cloudflare_worker" "example_worker" {
 ### Read-Only
 
 - `created_on` (String) When the Worker was created.
-- `id` (String) Identifier.
+- `id` (String) Immutable ID of the Worker.
 - `updated_on` (String) When the Worker was most recently updated.
 
 <a id="nestedatt--observability"></a>

@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_worker" "example_worker" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  worker_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  worker_id = "worker_id"
 }
 ```
 
@@ -27,12 +27,12 @@ data "cloudflare_worker" "example_worker" {
 
 ### Optional
 
-- `worker_id` (String) Identifier.
+- `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Read-Only
 
 - `created_on` (String) When the Worker was created.
-- `id` (String) Identifier.
+- `id` (String) Identifier for the Worker, which can be ID or name.
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `name` (String) Name of the Worker.
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))

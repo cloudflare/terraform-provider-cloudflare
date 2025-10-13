@@ -26,7 +26,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"worker_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier for the Worker, which can be ID or name.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -75,7 +75,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"assets": schema.SingleNestedAttribute{
-							Description: "Configuration for assets within a Worker.",
+							Description: "Configuration for assets within a Worker.\n\n[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[WorkerVersionsAssetsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
@@ -133,7 +133,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"type": schema.StringAttribute{
-										Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\".",
+										Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -142,9 +142,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												"assets",
 												"browser",
 												"d1",
+												"data_blob",
 												"dispatch_namespace",
 												"durable_object_namespace",
 												"hyperdrive",
+												"inherit",
+												"images",
 												"json",
 												"kv_namespace",
 												"mtls_certificate",
@@ -153,13 +156,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												"queue",
 												"r2_bucket",
 												"secret_text",
+												"send_email",
 												"service",
 												"tail_consumer",
+												"text_blob",
 												"vectorize",
 												"version_metadata",
 												"secrets_store_secret",
 												"secret_key",
 												"workflow",
+												"wasm_module",
 											),
 										},
 									},
@@ -169,6 +175,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"id": schema.StringAttribute{
 										Description: "Identifier of the D1 database to bind to.",
+										Computed:    true,
+									},
+									"part": schema.StringAttribute{
+										Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
 										Computed:    true,
 									},
 									"namespace": schema.StringAttribute{
@@ -219,6 +229,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "The script where the Durable Object is defined, if it is external to this Worker.",
 										Computed:    true,
 									},
+									"old_name": schema.StringAttribute{
+										Description: "The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
+										Computed:    true,
+									},
+									"version_id": schema.StringAttribute{
+										Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+										Computed:    true,
+									},
 									"json": schema.StringAttribute{
 										Description: "JSON data to use.",
 										Computed:    true,
@@ -242,6 +260,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"bucket_name": schema.StringAttribute{
 										Description: "R2 bucket to bind to.",
+										Computed:    true,
+									},
+									"jurisdiction": schema.StringAttribute{
+										Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+										},
+									},
+									"allowed_destination_addresses": schema.ListAttribute{
+										Description: "List of allowed destination addresses.",
+										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
+										ElementType: types.StringType,
+									},
+									"allowed_sender_addresses": schema.ListAttribute{
+										Description: "List of allowed sender addresses.",
+										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
+										ElementType: types.StringType,
+									},
+									"destination_address": schema.StringAttribute{
+										Description: "Destination address for the email.",
 										Computed:    true,
 									},
 									"service": schema.StringAttribute{
@@ -453,7 +494,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"modules": schema.SetNestedAttribute{
-							Description: "Code, sourcemaps, and other content used at runtime.",
+							Description: "Code, sourcemaps, and other content used at runtime.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure \n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be \nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectSetType[WorkerVersionsModulesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{

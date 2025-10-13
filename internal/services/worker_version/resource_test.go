@@ -13,12 +13,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_worker." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	workerName := "cloudflare_worker." + rnd
 	resourceName := "cloudflare_worker_version." + rnd
@@ -137,10 +137,87 @@ func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:            resourceName,
+				ImportStateIdFunc:       testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modules.0.content_file"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerVersion_WithAssets(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_worker_version." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	assetsDir := t.TempDir()
+	assetFile := path.Join(assetsDir, "index.html")
+
+	writeAssetFile := func(t *testing.T, content string) {
+		err := os.WriteFile(assetFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(assetFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeAssetFile(t, "v1")
+				},
+				Config: testAccCloudflareWorkerVersionConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.StringExact(assetsDir)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("asset_manifest_sha256"), knownvalue.StringExact("b098d2898ca7ae5677c7291d97323e7894137515043f3e560f3bd155870eea9e")),
+				},
+			},
+			{
+				PreConfig: func() {
+					writeAssetFile(t, "v2")
+				},
+				Config: testAccCloudflareWorkerVersionConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.StringExact(assetsDir)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("asset_manifest_sha256"), knownvalue.StringExact("46f07eb8a3fa881af81ce2b6b3fc1627edccf115526aa5c631308c45c75d2fb1")),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareWorkerVersionConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportStateIdFunc: testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
+				ImportState:       true,
+				ImportStateVerify: true,
+				// FIXME: handle refreshing assets.config
+				ImportStateVerifyIgnore: []string{"assets.%", "assets.directory", "assets.asset_manifest_sha256", "assets.config", "startup_time_ms"},
 			},
 		},
 	})
@@ -152,4 +229,27 @@ func testAccCloudflareWorkerVersionConfig(rnd, accountID, contentFile string) st
 
 func testAccCloudflareWorkerVersionConfigUpdate(rnd, accountID, contentFile string) string {
 	return acctest.LoadTestCase("basic_update.tf", rnd, accountID, contentFile)
+}
+
+func testAccCloudflareWorkerVersionConfigWithAssets(rnd, accountID, assetsDir string) string {
+	return acctest.LoadTestCase("assets.tf", rnd, accountID, assetsDir)
+}
+
+func testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rnd := resourceName[len("cloudflare_worker_version."):]
+		workerResourceName := "cloudflare_worker." + rnd
+
+		worker, ok := s.RootModule().Resources[workerResourceName]
+		if !ok {
+			return "", fmt.Errorf("worker resource not found: %s", workerResourceName)
+		}
+
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("worker_version resource not found: %s", resourceName)
+		}
+
+		return fmt.Sprintf("%s/%s/%s", accountID, worker.Primary.ID, rs.Primary.ID), nil
+	}
 }

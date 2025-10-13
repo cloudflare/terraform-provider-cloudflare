@@ -48,7 +48,7 @@ var tieredCacheSourceSchema = schema.Schema{
 }
 
 // MoveState implements ResourceWithMoveState interface
-// This enables moving state from cloudflare_tiered_cache (with cache_type="generic") 
+// This enables moving state from cloudflare_tiered_cache (with cache_type="generic")
 // to cloudflare_argo_tiered_caching (with value="on")
 func (r *ArgoTieredCachingResource) MoveState(ctx context.Context) []resource.StateMover {
 	return []resource.StateMover{

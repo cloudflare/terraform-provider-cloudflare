@@ -14,7 +14,7 @@ description: |-
 ```terraform
 resource "cloudflare_worker_version" "example_worker_version" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  worker_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  worker_id = "worker_id"
   annotations = {
     workers_message = "Fixed bug."
     workers_tag = "v1.0.1"
@@ -71,19 +71,28 @@ resource "cloudflare_worker_version" "example_worker_version" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `worker_id` (String) Identifier.
+- `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
 - `annotations` (Attributes) Metadata about the version. (see [below for nested schema](#nestedatt--annotations))
-- `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
+- `assets` (Attributes) Configuration for assets within a Worker.
+
+[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
+[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be
+included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
 - `migrations` (Attributes) Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed. (see [below for nested schema](#nestedatt--migrations))
-- `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime. (see [below for nested schema](#nestedatt--modules))
+- `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime.
+
+This includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
+[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure 
+[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
+included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--modules))
 - `placement` (Attributes) Placement settings for the version. (see [below for nested schema](#nestedatt--placement))
 - `usage_model` (String, Deprecated) Usage model for the version.
 Available values: "standard", "bundled", "unbound".
@@ -114,7 +123,12 @@ Read-Only:
 Optional:
 
 - `config` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets--config))
+- `directory` (String) Path to the directory containing asset files to upload.
 - `jwt` (String, Sensitive) Token provided upon successful upload of all files from a registered manifest.
+
+Read-Only:
+
+- `asset_manifest_sha256` (String) The SHA-256 hash of the asset manifest of files to upload.
 
 <a id="nestedatt--assets--config"></a>
 ### Nested Schema for `assets.config`
@@ -136,26 +150,33 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "tail_consumer", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 
 Optional:
 
 - `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
+- `allowed_destination_addresses` (List of String) List of allowed destination addresses.
+- `allowed_sender_addresses` (List of String) List of allowed sender addresses.
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
 - `dataset` (String) The name of the dataset to bind to.
+- `destination_address` (String) Destination address for the email.
 - `environment` (String) The environment of the script_name to bind to.
 - `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
 - `index_name` (String) Name of the Vectorize index to bind to.
 - `json` (String) JSON data to use.
+- `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
+Available values: "eu", "fedramp".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `namespace` (String) Namespace to bind to.
 - `namespace_id` (String) Namespace identifier tag.
+- `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
+- `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
 - `pipeline` (String) Name of the Pipeline to bind to.
 - `queue_name` (String) Name of the Queue to bind to.
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
@@ -164,6 +185,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
+- `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
 - `workflow_name` (String) Name of the Workflow to bind to.
 
 <a id="nestedatt--bindings--outbound"></a>

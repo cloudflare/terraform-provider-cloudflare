@@ -30,20 +30,20 @@ resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
 ### Required
 
 - `account_id` (String)
-- `name` (String) The name of the list.
-- `type` (String) The type of list.
+- `name` (String) Specify the list name.
+- `type` (String) Specify the list type.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 ### Optional
 
-- `description` (String) The description of the list.
-- `items` (Attributes Set) items to add to the list. (see [below for nested schema](#nestedatt--items))
+- `description` (String) Provide the list description.
+- `items` (Attributes Set) Add items to the list. (see [below for nested schema](#nestedatt--items))
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) API Resource UUID tag.
-- `list_count` (Number) The number of items in the list.
+- `id` (String) Identify the API resource with a UUID.
+- `list_count` (Number) Indicate the number of items in the list.
 - `updated_at` (String)
 
 <a id="nestedatt--items"></a>
@@ -51,8 +51,8 @@ Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 Optional:
 
-- `description` (String) The description of the list item, if present.
-- `value` (String) The value of the item in a list.
+- `description` (String) Provide the list item description (optional).
+- `value` (String) Specify the item value.
 
 ## Import
 

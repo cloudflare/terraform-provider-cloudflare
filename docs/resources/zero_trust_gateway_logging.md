@@ -41,25 +41,25 @@ resource "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_log
 
 ### Optional
 
-- `redact_pii` (Boolean) Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).
-- `settings_by_rule_type` (Attributes) Logging settings by rule type. (see [below for nested schema](#nestedatt--settings_by_rule_type))
+- `redact_pii` (Boolean) Indicate whether to redact personally identifiable information from activity logging (PII fields include source IP, user email, user ID, device ID, URL, referrer, and user agent).
+- `settings_by_rule_type` (Attributes) Configure logging settings for each rule type. (see [below for nested schema](#nestedatt--settings_by_rule_type))
 
 <a id="nestedatt--settings_by_rule_type"></a>
 ### Nested Schema for `settings_by_rule_type`
 
 Optional:
 
-- `dns` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--dns))
-- `http` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--http))
-- `l4` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--l4))
+- `dns` (Attributes) Configure logging settings for DNS firewall. (see [below for nested schema](#nestedatt--settings_by_rule_type--dns))
+- `http` (Attributes) Configure logging settings for HTTP/HTTPS firewall. (see [below for nested schema](#nestedatt--settings_by_rule_type--http))
+- `l4` (Attributes) Configure logging settings for Network firewall. (see [below for nested schema](#nestedatt--settings_by_rule_type--l4))
 
 <a id="nestedatt--settings_by_rule_type--dns"></a>
 ### Nested Schema for `settings_by_rule_type.dns`
 
 Optional:
 
-- `log_all` (Boolean) Log all requests to this service.
-- `log_blocks` (Boolean) Log only blocking requests to this service.
+- `log_all` (Boolean) Specify whether to log all requests to this service.
+- `log_blocks` (Boolean) Specify whether to log only blocking requests to this service.
 
 
 <a id="nestedatt--settings_by_rule_type--http"></a>
@@ -67,8 +67,8 @@ Optional:
 
 Optional:
 
-- `log_all` (Boolean) Log all requests to this service.
-- `log_blocks` (Boolean) Log only blocking requests to this service.
+- `log_all` (Boolean) Specify whether to log all requests to this service.
+- `log_blocks` (Boolean) Specify whether to log only blocking requests to this service.
 
 
 <a id="nestedatt--settings_by_rule_type--l4"></a>
@@ -76,7 +76,7 @@ Optional:
 
 Optional:
 
-- `log_all` (Boolean) Log all requests to this service.
-- `log_blocks` (Boolean) Log only blocking requests to this service.
+- `log_all` (Boolean) Specify whether to log all requests to this service.
+- `log_blocks` (Boolean) Specify whether to log only blocking requests to this service.
 
 

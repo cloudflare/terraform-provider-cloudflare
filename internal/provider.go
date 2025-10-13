@@ -5,11 +5,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
-	"regexp"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -166,6 +164,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
@@ -204,6 +203,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_network_hostname_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_scoring_integration"
@@ -232,6 +232,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"os"
+	"regexp"
 )
 
 var _ provider.ProviderWithConfigValidators = (*CloudflareProvider)(nil)
@@ -531,10 +533,10 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_identity_provider.NewResource,
 		zero_trust_organization.NewResource,
 		zero_trust_access_infrastructure_target.NewResource,
-		zero_trust_access_application.NewResource,
 		zero_trust_access_short_lived_certificate.NewResource,
 		zero_trust_access_mtls_certificate.NewResource,
 		zero_trust_access_mtls_hostname_settings.NewResource,
+		zero_trust_access_application.NewResource,
 		zero_trust_access_group.NewResource,
 		zero_trust_access_service_token.NewResource,
 		zero_trust_access_key_configuration.NewResource,
@@ -560,6 +562,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_certificate.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
+		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
 		turnstile_widget.NewResource,
@@ -579,6 +582,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
 		cloud_connector_rules.NewResource,
+		workflow.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
 		content_scanning_expression.NewResource,
@@ -822,13 +826,13 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_organization.NewZeroTrustOrganizationDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetsDataSource,
-		zero_trust_access_application.NewZeroTrustAccessApplicationDataSource,
-		zero_trust_access_application.NewZeroTrustAccessApplicationsDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificateDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificatesDataSource,
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificateDataSource,
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificatesDataSource,
 		zero_trust_access_mtls_hostname_settings.NewZeroTrustAccessMTLSHostnameSettingsDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationsDataSource,
 		zero_trust_access_group.NewZeroTrustAccessGroupDataSource,
 		zero_trust_access_group.NewZeroTrustAccessGroupsDataSource,
 		zero_trust_access_service_token.NewZeroTrustAccessServiceTokenDataSource,
@@ -876,6 +880,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
+		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRouteDataSource,
+		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRoutesDataSource,
 		zero_trust_risk_behavior.NewZeroTrustRiskBehaviorDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationsDataSource,
@@ -909,6 +915,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		resource_group.NewResourceGroupsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
+		workflow.NewWorkflowDataSource,
+		workflow.NewWorkflowsDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,

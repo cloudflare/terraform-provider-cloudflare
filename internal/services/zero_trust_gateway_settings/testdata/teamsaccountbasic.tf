@@ -47,5 +47,11 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
     extended_email_matching = {
       enabled = true
     }
+    host_selector = {
+      enabled = false
+    }
+    inspection = {
+      mode = "static"
+    }
   }
 }

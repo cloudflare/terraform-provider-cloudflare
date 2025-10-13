@@ -147,6 +147,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_zone":
 				result = transformZoneInstanceStateJSON(result, path)
 
+			case "cloudflare_page_rule":
+				result = transformPageRuleStateJSON(result, path)
+
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
 			case "cloudflare_ruleset":
@@ -2058,6 +2061,86 @@ func transformCloudflareListStateJSON(json string, instancePath string) string {
 		// Set num_items to 0 for empty lists
 		json, _ = sjson.Set(json, attrPath+".num_items", float64(0))
 	}
+
+	return json
+}
+
+// transformPageRuleStateJSON handles v4 to v5 state migration for cloudflare_page_rule
+func transformPageRuleStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// 1. Transform actions from array to object (if needed)
+	actions := gjson.Get(json, attrPath+".actions")
+	if actions.IsArray() {
+		if len(actions.Array()) > 0 {
+			// Take first item from array and make it the object
+			actionsObj := actions.Array()[0]
+			json, _ = sjson.Set(json, attrPath+".actions", actionsObj.Value())
+		}
+	}
+
+	// Now handle nested fields within actions (whether it was already an object or we just converted it)
+	if actions.Exists() {
+		// 2. Transform cache_key_fields from array to object if present
+		cacheKeyFields := gjson.Get(json, attrPath+".actions.cache_key_fields")
+		if cacheKeyFields.Exists() {
+			if cacheKeyFields.IsArray() && len(cacheKeyFields.Array()) > 0 {
+				// Convert array to object
+				json, _ = sjson.Set(json, attrPath+".actions.cache_key_fields", cacheKeyFields.Array()[0].Value())
+
+				// Re-read after conversion to process nested fields
+				cacheKeyFieldsPath := attrPath + ".actions.cache_key_fields"
+				nestedFields := []string{"cookie", "header", "host", "user", "query_string"}
+				for _, field := range nestedFields {
+					fieldVal := gjson.Get(json, cacheKeyFieldsPath+"."+field)
+					if fieldVal.IsArray() && len(fieldVal.Array()) > 0 {
+						json, _ = sjson.Set(json, cacheKeyFieldsPath+"."+field, fieldVal.Array()[0].Value())
+					}
+				}
+			}
+		}
+
+		// 3. Transform cache_ttl_by_status from array to map
+		cacheTTLByStatus := gjson.Get(json, attrPath+".actions.cache_ttl_by_status")
+		if cacheTTLByStatus.IsArray() {
+			ttlMap := make(map[string]interface{})
+			for _, item := range cacheTTLByStatus.Array() {
+				codes := item.Get("codes")
+				ttl := item.Get("ttl")
+				if codes.Exists() && ttl.Exists() {
+					// codes can be string or number
+					codeStr := codes.String()
+					if codeStr == "" && codes.Type == gjson.Number {
+						codeStr = fmt.Sprintf("%.0f", codes.Float())
+					}
+					ttlMap[codeStr] = ttl.Value()
+				}
+			}
+			if len(ttlMap) > 0 {
+				json, _ = sjson.Set(json, attrPath+".actions.cache_ttl_by_status", ttlMap)
+			} else {
+				json, _ = sjson.Delete(json, attrPath+".actions.cache_ttl_by_status")
+			}
+		}
+
+		// 4. Transform forwarding_url from array to object if present
+		forwardingURL := gjson.Get(json, attrPath+".actions.forwarding_url")
+		if forwardingURL.IsArray() && len(forwardingURL.Array()) > 0 {
+			json, _ = sjson.Set(json, attrPath+".actions.forwarding_url", forwardingURL.Array()[0].Value())
+		}
+
+		// 5. Remove minify - it's not supported in v5
+		json, _ = sjson.Delete(json, attrPath+".actions.minify")
+
+		// 6. Remove other unsupported attributes from actions
+		unsupportedAttrs := []string{"disable_railgun", "server_side_exclude"}
+		for _, attr := range unsupportedAttrs {
+			json, _ = sjson.Delete(json, attrPath+".actions."+attr)
+		}
+	}
+
+	// 7. Reset schema_version to 0 for v5
+	json, _ = sjson.Set(json, instancePath+".schema_version", 0)
 
 	return json
 }

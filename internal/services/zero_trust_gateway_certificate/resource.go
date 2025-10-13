@@ -96,7 +96,105 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 }
 
 func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Update is not supported for this resource
+	var plan *ZeroTrustGatewayCertificateModel
+	var state *ZeroTrustGatewayCertificateModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// First, get the current certificate resource to check its status
+	res := new(http.Response)
+	env := ZeroTrustGatewayCertificateResultEnvelope{*state}
+	_, err := r.client.ZeroTrust.Gateway.Certificates.Get(
+		ctx,
+		state.ID.ValueString(),
+		zero_trust.GatewayCertificateGetParams{
+			AccountID: cloudflare.F(state.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to get certificate", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize certificate", err.Error())
+		return
+	}
+	
+	// Update state with current certificate data
+	*state = env.Result
+	
+	// Check if activate field has changed and handle activation/deactivation
+	if !plan.Activate.IsNull() {
+		if plan.Activate.ValueBool() {
+			// Activate the certificate
+			_, err := r.client.ZeroTrust.Gateway.Certificates.Activate(
+				ctx,
+				state.ID.ValueString(),
+				zero_trust.GatewayCertificateActivateParams{
+					AccountID: cloudflare.F(state.AccountID.ValueString()),
+					Body:      struct{}{}, // Empty body as required by the API
+				},
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to activate certificate", err.Error())
+				return
+			}
+		} else {
+			// Deactivate the certificate
+			_, err := r.client.ZeroTrust.Gateway.Certificates.Deactivate(
+				ctx,
+				state.ID.ValueString(),
+				zero_trust.GatewayCertificateDeactivateParams{
+					AccountID: cloudflare.F(state.AccountID.ValueString()),
+					Body:      struct{}{}, // Empty body as required by the API
+				},
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to deactivate certificate", err.Error())
+				return
+			}
+		}
+		
+		// After activation/deactivation, get the updated certificate status
+		res = new(http.Response)
+		env = ZeroTrustGatewayCertificateResultEnvelope{*state}
+		_, err = r.client.ZeroTrust.Gateway.Certificates.Get(
+			ctx,
+			state.ID.ValueString(),
+			zero_trust.GatewayCertificateGetParams{
+				AccountID: cloudflare.F(state.AccountID.ValueString()),
+			},
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to get updated certificate", err.Error())
+			return
+		}
+		bytes, _ = io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize updated certificate", err.Error())
+			return
+		}
+		*state = env.Result
+	}
+	
+	// Set the activate field from the plan to maintain user's intended state
+	state.Activate = plan.Activate
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (r *ZeroTrustGatewayCertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -107,6 +205,9 @@ func (r *ZeroTrustGatewayCertificateResource) Read(ctx context.Context, req reso
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Preserve the activate field from current state since it's Terraform-only
+	currentActivate := data.Activate
 
 	res := new(http.Response)
 	env := ZeroTrustGatewayCertificateResultEnvelope{*data}
@@ -135,6 +236,9 @@ func (r *ZeroTrustGatewayCertificateResource) Read(ctx context.Context, req reso
 		return
 	}
 	data = &env.Result
+
+	// Restore the activate field since it's not returned by the API
+	data.Activate = currentActivate
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
