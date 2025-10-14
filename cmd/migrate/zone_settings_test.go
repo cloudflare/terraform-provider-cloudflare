@@ -201,7 +201,7 @@ resource "cloudflare_zone_setting" "zone_settings_ssl" {
 
 	// Create a custom transform function that skips imports
 	transformFuncWithSkipImports := func(content []byte, filename string) ([]byte, error) {
-		return transformFile(content, filename, false, true) // skipImports = true
+		return transformFile(content, filename, false, true, nil) // skipImports = true, targetResources = nil
 	}
 
 	RunTransformationTests(t, tests, transformFuncWithSkipImports)
