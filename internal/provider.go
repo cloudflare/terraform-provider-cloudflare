@@ -863,6 +863,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_connectivity_directory_service.NewZeroTrustConnectivityDirectoryServiceDataSource,
+		zero_trust_connectivity_directory_service.NewZeroTrustConnectivityDirectoryServicesDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
