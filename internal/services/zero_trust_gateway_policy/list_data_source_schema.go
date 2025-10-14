@@ -66,7 +66,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"filters": schema.ListAttribute{
-							Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.",
+							Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 							Computed:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
