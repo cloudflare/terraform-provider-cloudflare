@@ -1,0 +1,3 @@
+* @cloudflare/sdk
+
+/internal/services/ruleset @cloudflare/rulesets
