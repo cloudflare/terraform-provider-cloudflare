@@ -606,7 +606,7 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs"},
 			},
 		},
 	})
