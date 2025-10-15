@@ -90,11 +90,11 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 }
 
 func testPagesProjectDirectUpload(resourceID, accountID, projectName string) string {
-	return acctest.LoadTestCase("pagesprojectdirectupload.tf", resourceID, accountID)
+	return acctest.LoadTestCase("pagesprojectdirectupload.tf", resourceID, accountID, projectName)
 }
 
 func testPagesProjectMinimal(resourceID, accountID, projectName string) string {
-	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID)
+	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID, projectName)
 }
 
 func testPagesProjectFullConfig(resourceID, accountID, projectName, owner, repo string) string {
@@ -331,20 +331,27 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 			{
 				Config: testPagesProjectDirectUpload(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectDirectUpload(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				ResourceName:            name,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
@@ -366,7 +373,7 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 			{
 				Config: testPagesProjectMinimal(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
@@ -375,7 +382,14 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				Config: testPagesProjectUpdated(rnd, accountID, projectName),
@@ -385,20 +399,27 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("yarn build")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectUpdated(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
@@ -424,7 +445,14 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectUpdated(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				Config: testPagesProjectMinimal(rnd, accountID, projectName),
@@ -434,19 +462,26 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.Null()),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
@@ -547,7 +582,7 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 			{
 				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 
 					// Preview env vars - test both types
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("PLAIN_TEXT_VAR").AtMapKey("type"), knownvalue.StringExact("plain_text")),
@@ -557,14 +592,21 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_PLAIN").AtMapKey("type"), knownvalue.StringExact("plain_text")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
 				},
-				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs.preview.compatibility_date", "deployment_configs.production.compatibility_date", "deployment_configs.preview.env_vars.SECRET_VAR.value", "deployment_configs.production.env_vars.PROD_SECRET.value"},
+				ImportStateVerifyIgnore: []string{"production_branch", "build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
