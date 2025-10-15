@@ -291,6 +291,42 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_BoundaryValues(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZeroTrustDlpCustomProfile_SharedEntries(t *testing.T) {
+	rnd, accountID := setupDLPCustomProfileTest(t)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_dlp_custom_profile.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustDlpCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("shared_entries.tf", rnd, accountID, "true"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Test with shared entries")),
+					// Test deprecated custom entries
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("shared_entries"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"enabled":  knownvalue.Bool(true),
+							"entry_id": knownvalue.StringExact("56a8c060-01bb-4f89-ba1e-3ad42770a342"),
+							"entry_type": knownvalue.StringExact("predefined"),
+						}),
+					})),
+				},
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "shared_entries"},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareZeroTrustDlpCustomProfileDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 

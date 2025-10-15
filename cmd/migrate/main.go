@@ -26,6 +26,7 @@ func main() {
 	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
 	zoneSettingsModule := flag.Bool("zone-settings-module", false, "Expand zone_settings module calls to individual resources at call sites")
 	skipImports := flag.Bool("skip-imports", false, "Skip generating import blocks for zone settings resources")
+	target := flag.String("target", "", "Comma-separated list of resource types to migrate (e.g., 'cloudflare_record' or 'cloudflare_record,cloudflare_argo'). If not specified, all resources are migrated. This flag is only relevant when using the transformer and not using grit.")
 	flag.Parse()
 
 	// Default config directory to current working directory if not specified
@@ -57,6 +58,13 @@ func main() {
 		}
 	}
 
+	// Parse target resources if specified
+	var targetResources map[string]bool
+	if *target != "" {
+		targetResources = parseTargetResources(*target)
+		fmt.Printf("Targeting specific resources: %s\n", *target)
+	}
+
 	if *dryRun {
 		fmt.Println("DRY RUN MODE - No files will be modified")
 		fmt.Println(strings.Repeat("=", 50))
@@ -65,6 +73,9 @@ func main() {
 	// Run grit migrations if enabled
 	if *useGrit {
 		fmt.Println("Running grit migrations...")
+		if targetResources != nil {
+			fmt.Println("  Note: Grit transformations will apply to all resources. Target filtering only affects Go-based transformations.")
+		}
 		if err := checkGritInstalled(); err != nil {
 			log.Fatalf("Error: %v", err)
 		}
@@ -101,7 +112,7 @@ func main() {
 		}
 
 		// Run the YAML-based transformations
-		if err := runYAMLTransformations(*configDir, *stateFile, transformerDir, *dryRun); err != nil {
+		if err := runYAMLTransformations(*configDir, *stateFile, transformerDir, *dryRun, targetResources); err != nil {
 			log.Fatalf("Error running YAML transformations: %v", err)
 		}
 		fmt.Println("YAML transformations completed")
@@ -111,14 +122,14 @@ func main() {
 	// Process config directory if specified and not explicitly disabled
 	if *configDir != "" && *configDir != "false" {
 		fmt.Println("Running Go transformations on configuration files...")
-		if err := processConfigDirectory(*configDir, *dryRun, *zoneSettingsModule, *skipImports); err != nil {
+		if err := processConfigDirectory(*configDir, *dryRun, *zoneSettingsModule, *skipImports, targetResources); err != nil {
 			log.Fatalf("Error processing config directory: %v", err)
 		}
 	}
 
 	// Process state file if specified and not explicitly disabled
 	if *stateFile != "" && *stateFile != "false" {
-		if err := processStateFile(*stateFile, *dryRun); err != nil {
+		if err := processStateFile(*stateFile, *dryRun, targetResources); err != nil {
 			log.Fatalf("Error processing state file: %v", err)
 		}
 	}
@@ -128,7 +139,7 @@ func main() {
 	}
 }
 
-func processConfigDirectory(directory string, dryRun bool, zoneSettingsModule bool, skipImports bool) error {
+func processConfigDirectory(directory string, dryRun bool, zoneSettingsModule bool, skipImports bool, targetResources map[string]bool) error {
 	// Check if the directory exists
 	info, err := os.Stat(directory)
 	if err != nil {
@@ -158,7 +169,7 @@ func processConfigDirectory(directory string, dryRun bool, zoneSettingsModule bo
 		}
 
 		// Process the file
-		if err := processFile(path, dryRun, zoneSettingsModule, skipImports); err != nil {
+		if err := processFile(path, dryRun, zoneSettingsModule, skipImports, targetResources); err != nil {
 			log.Printf("Error processing file %s: %v", path, err)
 			// return err
 		}
@@ -167,7 +178,7 @@ func processConfigDirectory(directory string, dryRun bool, zoneSettingsModule bo
 	})
 }
 
-func processStateFile(stateFile string, dryRun bool) error {
+func processStateFile(stateFile string, dryRun bool, targetResources map[string]bool) error {
 	// Check if the state file exists
 	info, err := os.Stat(stateFile)
 	if err != nil {
@@ -189,7 +200,7 @@ func processStateFile(stateFile string, dryRun bool) error {
 		fmt.Printf("    State file size: %d bytes\n", info.Size())
 	} else {
 		// Actually transform the state file
-		if err := transformStateFile(stateFile); err != nil {
+		if err := transformStateFile(stateFile, targetResources); err != nil {
 			return fmt.Errorf("failed to transform state file: %v", err)
 		}
 		fmt.Printf("  ✓ Updated state file %s\n", stateFile)
@@ -198,7 +209,7 @@ func processStateFile(stateFile string, dryRun bool) error {
 	return nil
 }
 
-func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImports bool) error {
+func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImports bool, targetResources map[string]bool) error {
 
 	// Read the file
 	originalBytes, err := os.ReadFile(filename)
@@ -207,7 +218,7 @@ func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImpo
 	}
 
 	// Transform the file
-	transformedBytes, err := transformFile(originalBytes, filename, zoneSettingsModule, skipImports)
+	transformedBytes, err := transformFile(originalBytes, filename, zoneSettingsModule, skipImports, targetResources)
 	if err != nil {
 		return err
 	}
@@ -230,7 +241,7 @@ func processFile(filename string, dryRun bool, zoneSettingsModule bool, skipImpo
 	return nil
 }
 
-func transformFile(content []byte, filename string, zoneSettingsModule bool, skipImports bool) ([]byte, error) {
+func transformFile(content []byte, filename string, zoneSettingsModule bool, skipImports bool, targetResources map[string]bool) ([]byte, error) {
 	// Create new diagnostics collector for this file
 	diags := ast.NewDiagnostics()
 	// Handle zone_settings module expansion if enabled
@@ -240,14 +251,25 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 		content = []byte(contentStr)
 	}
 
-	// First, transform header blocks in load_balancer_pool resources at the string level
-	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
+	// Apply string-level transformations only if the resource type is in the target list (or no target specified)
 	contentStr := string(content)
-	contentStr = transformLoadBalancerPoolHeaders(contentStr)
-	// Also transform tiered_cache values at the string level
-	contentStr = transformTieredCacheValues(contentStr)
+
+	// Transform header blocks in load_balancer_pool resources at the string level
+	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
+	if targetResources == nil || targetResources["cloudflare_load_balancer_pool"] {
+		contentStr = transformLoadBalancerPoolHeaders(contentStr)
+	}
+
+	// Transform tiered_cache values at the string level
+	if targetResources == nil || targetResources["cloudflare_tiered_cache"] {
+		contentStr = transformTieredCacheValues(contentStr)
+	}
+
 	// Transform page_rule configuration (remove minify, fix cache_ttl_by_status format)
-	contentStr = transformPageRuleConfig(contentStr)
+	if targetResources == nil || targetResources["cloudflare_page_rule"] {
+		contentStr = transformPageRuleConfig(contentStr)
+	}
+
 	content = []byte(contentStr)
 
 	file, hcl_diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
@@ -264,6 +286,17 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 	var newBlocks []*hclwrite.Block
 
 	for _, block := range blocks {
+		// Skip blocks that are not in the target resources list
+		if targetResources != nil && block.Type() == "resource" {
+			labels := block.Labels()
+			if len(labels) > 0 {
+				resourceType := labels[0]
+				if !targetResources[resourceType] {
+					continue // Skip this resource as it's not in the target list
+				}
+			}
+		}
+
 		applyRenames(block)
 
 		// TODO declare a map from resource types to transform functions
@@ -330,7 +363,6 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 		if isAccessMutualTLSHostnameSettingsResource(block) {
 			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
 		}
-
 
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
@@ -426,5 +458,18 @@ func transformFile(content []byte, filename string, zoneSettingsModule bool, ski
 // transformFileDefault is a wrapper for transformFile with default settings (no zone settings module expansion, no skip imports)
 // This maintains backward compatibility with existing test functions
 func transformFileDefault(content []byte, filename string) ([]byte, error) {
-	return transformFile(content, filename, false, false)
+	return transformFile(content, filename, false, false, nil)
+}
+
+// parseTargetResources parses a comma-separated list of resource types into a map for quick lookup
+func parseTargetResources(target string) map[string]bool {
+	resources := make(map[string]bool)
+	parts := strings.Split(target, ",")
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			resources[trimmed] = true
+		}
+	}
+	return resources
 }

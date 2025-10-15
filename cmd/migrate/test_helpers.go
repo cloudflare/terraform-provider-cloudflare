@@ -248,7 +248,7 @@ func RunFullStateTransformationTests(t *testing.T, tests []StateTestCase) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Transform using the JSON-based function
-			result, err := transformStateJSON([]byte(tc.Input))
+			result, err := transformStateJSON([]byte(tc.Input), nil)
 			require.NoError(t, err, "Failed to transform state")
 
 			// Parse result and compare

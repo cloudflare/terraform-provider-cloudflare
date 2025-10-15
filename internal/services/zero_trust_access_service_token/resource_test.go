@@ -501,16 +501,17 @@ func TestAccCloudflareAccessServiceToken_ClientSecretBehavior(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
-					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
-					resource.TestCheckResourceAttrSet(name, "expires_at"),
-					resource.TestCheckResourceAttr(name, "duration", "8760h"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_at"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("duration"), knownvalue.StringExact("8760h")),
+				},
 			},
 			{
+				// After import, client_secret should be null (API doesn't return it)
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -521,15 +522,71 @@ func TestAccCloudflareAccessServiceToken_ClientSecretBehavior(t *testing.T) {
 				),
 			},
 			{
+				// Update without changing client_secret_version should preserve client_secret from Step 1
+				// (Import step doesn't actually replace state, so client_secret from Create is still present)
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
-					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
-					resource.TestCheckResourceAttrSet(name, "expires_at"),
-					resource.TestCheckResourceAttr(name, "duration", "8760h"),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName+"-updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("duration"), knownvalue.StringExact("8760h")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_at"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessServiceToken_ClientSecretPersistsAcrossUpdates(t *testing.T) {
+	// Tests that client_secret is preserved during updates when client_secret_version doesn't change
+	// Validates: Update preserves client_secret from state when API doesn't return a new one (resource.go:161-162)
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create - client_secret will be populated from API
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_at"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("duration"), knownvalue.StringExact("8760h")),
+				},
+			},
+			{
+				// Update name without changing client_secret_version
+				// client_secret should be preserved from state since API won't return it
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName+"-updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_id"), knownvalue.NotNull()),
+					// client_secret should still be present and preserved from previous state
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_at"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("duration"), knownvalue.StringExact("8760h")),
+				},
 			},
 		},
 	})
@@ -557,24 +614,24 @@ func TestAccCloudflareAccessServiceToken_ClientSecretNoRefresh(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
-					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
-					resource.TestCheckResourceAttrSet(name, "expires_at"),
-					resource.TestCheckResourceAttr(name, "duration", "8760h"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_at"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("duration"), knownvalue.StringExact("8760h")),
+				},
 			},
 			{
-				// Test that client_secret is preserved during refresh/read operations
-				// This verifies the no_refresh behavior - client_secret should remain in state
-				// even though the API doesn't return it on GET operations
+				// Refresh state to trigger Read operation
+				// client_secret should be preserved from previous state since API doesn't return it
 				RefreshState: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
+					// Validates Read preserves client_secret from state (resource.go:214)
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
@@ -637,7 +694,7 @@ func TestAccCloudflareAccessServiceToken_SecretRotation(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
-	
+
 	// Future timestamps for testing secret rotation
 	futureTime1 := "2025-12-31T23:59:59Z"
 	futureTime2 := "2026-01-31T23:59:59Z"
@@ -713,7 +770,7 @@ func TestAccCloudflareAccessServiceToken_PreviousSecretExpiry(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
-	
+
 	// Future timestamp for testing
 	futureTime := "2025-12-31T23:59:59Z"
 

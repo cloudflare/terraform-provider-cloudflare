@@ -320,7 +320,7 @@ func TestTransformSnippetRulesStateJSON(t *testing.T) {
 			}
 
 			// Transform the state
-			result, err := transformStateJSON([]byte(tt.input))
+			result, err := transformStateJSON([]byte(tt.input), nil)
 			if err != nil {
 				t.Fatalf("transformStateJSON failed: %v", err)
 			}

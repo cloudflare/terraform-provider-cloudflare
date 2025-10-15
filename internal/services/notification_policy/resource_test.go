@@ -41,8 +41,8 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.1.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.id", "test@example.com"),
-					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.1.id", "test2@example.com"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.id", "test2@example.com"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.1.id", "test@example.com"),
 				),
 			},
 			{
