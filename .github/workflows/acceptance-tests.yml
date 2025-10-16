@@ -70,6 +70,18 @@ jobs:
           TF_ACC: 1
         continue-on-error: true
 
+      ######## Organization Tests ########
+      # These tests require a specific user with organization permissions
+      - name: Run Organization Acceptance Tests
+        id: organization_acceptance_tests
+        run: ./scripts/run-ci-tests organization acceptance
+        env:
+          TF_ACC: 1
+          # Override credentials for organization tests
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_ORG_EMAIL }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
+        continue-on-error: true
+
       ######## Everything Else ########
       - name: Run Default Acceptance Tests
         id: default_acceptance_tests
@@ -90,5 +102,6 @@ jobs:
           steps.magic_acceptance_tests.outcome == 'failure' ||
           steps.magic_migration_tests.outcome == 'failure' ||
           steps.default_acceptance_tests.outcome == 'failure' ||
-          steps.default_migration_tests.outcome == 'failure'}}
+          steps.default_migration_tests.outcome == 'failure' ||
+          steps.organization_acceptance_tests.outcome == 'failure'}}
         run: exit 1
