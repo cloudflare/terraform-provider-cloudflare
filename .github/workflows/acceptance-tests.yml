@@ -78,7 +78,7 @@ jobs:
         env:
           TF_ACC: 1
           # Override credentials for organization tests
-          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_ORG_EMAIL }}
+          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
         continue-on-error: true
 
