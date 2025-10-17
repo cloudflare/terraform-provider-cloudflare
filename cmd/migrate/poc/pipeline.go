@@ -4,8 +4,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/poc/handlers"
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/poc/interfaces"
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/poc/registry"
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/poc/struct_transform"
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/poc/struct_transform/resources"
 )
 
 func BuildPipeline(reg *registry.StrategyRegistry) *Pipeline {
@@ -14,31 +12,17 @@ func BuildPipeline(reg *registry.StrategyRegistry) *Pipeline {
 
 // PipelineOptions contains configuration options for the pipeline
 type PipelineOptions struct {
-	// UseStructMode enables the struct-based transformation approach
-	UseStructMode bool
+	// Reserved for future options
 }
 
 // BuildPipelineWithOptions creates a pipeline with specified options
 func BuildPipelineWithOptions(reg *registry.StrategyRegistry, opts PipelineOptions) *Pipeline {
+	// Use a single unified transformation handler
+	// Each strategy in the registry decides internally whether to use AST or struct-based approach
 	builder := NewPipelineBuilder().
 		WithPreprocessing(reg).
-		WithParsing()
-
-	// Choose transformation approach based on options
-	if opts.UseStructMode {
-		// Create a registry with struct-based transformers
-		structReg := registry.NewStrategyRegistry()
-		// Register all struct-based transformers from factory
-		resources.RegisterAllStructTransformers(structReg)
-
-		// Use struct-based transformation handler with struct registry
-		builder = builder.WithStructTransformation(structReg)
-	} else {
-		// Use traditional AST-based transformation
-		builder = builder.WithResourceTransformation(reg)
-	}
-
-	return builder.
+		WithParsing().
+		WithResourceTransformation(reg).
 		// Cross-resource migrations would go here
 		// WithHandler(handlers.NewCrossResourceHandler()).
 		// Import generation for split resources would go here
@@ -47,6 +31,8 @@ func BuildPipelineWithOptions(reg *registry.StrategyRegistry, opts PipelineOptio
 		// WithHandler(handlers.NewValidationHandler()).
 		WithFormatting().
 		Build()
+
+	return builder
 }
 
 type Pipeline struct {
@@ -105,11 +91,6 @@ func (b *PipelineBuilder) WithParsing() *PipelineBuilder {
 func (b *PipelineBuilder) WithResourceTransformation(reg *registry.StrategyRegistry) *PipelineBuilder {
 	b.registry = reg
 	b.handlers = append(b.handlers, handlers.NewResourceTransformHandler(reg))
-	return b
-}
-
-func (b *PipelineBuilder) WithStructTransformation(structReg *registry.StrategyRegistry) *PipelineBuilder {
-	b.handlers = append(b.handlers, struct_transform.NewStructTransformHandler(structReg))
 	return b
 }
 
