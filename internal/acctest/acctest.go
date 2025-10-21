@@ -236,6 +236,11 @@ func SharedV1Client() (*cfv1.API, error) {
 // SharedClient returns a common Cloudflare V2 client setup needed for the
 // sweeper functions.
 func SharedClient() *cloudflare.Client {
+	if apiToken, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
+		return cloudflare.NewClient(
+			option.WithAPIToken(apiToken),
+		)
+	}
 	return cloudflare.NewClient(
 		option.WithAPIKey(os.Getenv("CLOUDFLARE_API_KEY")),
 		option.WithAPIEmail(os.Getenv("CLOUDFLARE_EMAIL")),
@@ -658,8 +663,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
 		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",       // Disable Grit transformations
-		"-transformer=true", // Enable YAML transformations
+		"-grit=false",                      // Disable Grit transformations
+		"-transformer=true",                // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging
