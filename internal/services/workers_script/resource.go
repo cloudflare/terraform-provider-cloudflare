@@ -312,7 +312,6 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	)
 	resp.Diagnostics.Append(diags...)
 
-	// restore migrations from state since they aren't returned by the API
 	if !state.Migrations.IsNull() {
 		data.Migrations = state.Migrations
 	}
