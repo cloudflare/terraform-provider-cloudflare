@@ -72,6 +72,8 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	planMigrations := data.Migrations
+
 	var assets *WorkersScriptMetadataAssetsModel
 	if data.Assets != nil {
 		assets = &WorkersScriptMetadataAssetsModel{
@@ -131,6 +133,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	data.ContentSHA256 = contentSHA256
 	data.ContentType = contentType
 	data.Assets = assets
+	data.Migrations = planMigrations
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
@@ -148,6 +151,8 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	planMigrations := data.Migrations
 
 	var assets *WorkersScriptMetadataAssetsModel
 	if data.Assets != nil {
@@ -216,6 +221,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	data.ContentSHA256 = contentSHA256
 	data.ContentType = contentType
 	data.Assets = assets
+	data.Migrations = planMigrations
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
