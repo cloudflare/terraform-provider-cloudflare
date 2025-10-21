@@ -72,12 +72,6 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("migrations"), &data.Migrations)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
 	var assets *WorkersScriptMetadataAssetsModel
 	if data.Assets != nil {
 		assets = &WorkersScriptMetadataAssetsModel{
@@ -150,12 +144,6 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	var data *WorkersScriptModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("migrations"), &data.Migrations)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -317,6 +305,11 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		state.Bindings,
 	)
 	resp.Diagnostics.Append(diags...)
+
+	// restore migrations from state since they aren't returned by the API
+	if !state.Migrations.IsNull() {
+		data.Migrations = state.Migrations
+	}
 
 	// fetch the script content
 	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(
