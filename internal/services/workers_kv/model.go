@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"mime/multipart"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,11 +26,21 @@ type WorkersKVModel struct {
 func (r WorkersKVModel) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
+
+	err = writer.WriteField("value", r.Value.ValueString())
 	if err != nil {
 		writer.Close()
 		return nil, "", err
 	}
+
+	if !r.Metadata.IsNull() {
+		err = writer.WriteField("metadata", r.Metadata.ValueString())
+		if err != nil {
+			writer.Close()
+			return nil, "", err
+		}
+	}
+
 	err = writer.Close()
 	if err != nil {
 		return nil, "", err

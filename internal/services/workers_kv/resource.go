@@ -67,16 +67,22 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 
 	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
 
+	multipartData, contentType, err := data.MarshalMultipart()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		return
+	}
+
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err := r.client.KV.Namespaces.Values.Update(
+	_, err = r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
+		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -114,16 +120,23 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
+
+	multipartData, contentType, err := data.MarshalMultipart()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		return
+	}
+
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err := r.client.KV.Namespaces.Values.Update(
+	_, err = r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
+		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -172,12 +185,6 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to read response body", err.Error())
-		return
-	}
-	data.Value = types.StringValue(string(bytes))
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -248,11 +255,7 @@ func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
+	data.Value = types.StringValue(string(bytes))
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
