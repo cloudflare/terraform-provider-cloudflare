@@ -5,10 +5,12 @@ package workers_kv
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*WorkersKVResource)(nil)
@@ -39,6 +41,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"metadata": schema.StringAttribute{
 				Description: "Arbitrary JSON to be associated with a key/value pair.",
 				Required:    true,
+				Validators: []validator.String{
+					customvalidator.IsJSONString(),
+				},
 			},
 			"value": schema.StringAttribute{
 				Description: "A byte sequence to be stored, up to 25 MiB in length.",
