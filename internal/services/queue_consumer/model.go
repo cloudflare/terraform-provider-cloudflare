@@ -15,7 +15,7 @@ type QueueConsumerModel struct {
 	AccountID       types.String                `tfsdk:"account_id" path:"account_id,required"`
 	QueueID         types.String                `tfsdk:"queue_id" path:"queue_id,required"`
 	ConsumerID      types.String                `tfsdk:"consumer_id" path:"consumer_id,optional"`
-	DeadLetterQueue types.String                `tfsdk:"dead_letter_queue" json:"dead_letter_queue,optional"`
+	DeadLetterQueue types.String                `tfsdk:"dead_letter_queue" json:"dead_letter_queue,optional,no_refresh"`
 	ScriptName      types.String                `tfsdk:"script_name" json:"script_name,optional"`
 	Type            types.String                `tfsdk:"type" json:"type,optional"`
 	Settings        *QueueConsumerSettingsModel `tfsdk:"settings" json:"settings,optional"`
