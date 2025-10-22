@@ -93,6 +93,19 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		}
 	}
 
+	// Bindings as ordered in the plan. Terraform expects bindings written to
+	// state to appear in the same order as the plan.
+	planBindings := data.Bindings
+
+	var diags diag.Diagnostics
+	// Reorder plan bindings to be sorted in ascending order by name, which
+	// matches the order that the API returns them. This is important for
+	// apijson.UnmarshalComputed to work correctly. If the unmarshal target
+	// doesn't match the order that the API returns the bindings, the unmarshal
+	// operation will assign computed properties to the wrong bindings.
+	data.Bindings, diags = SortBindingsByName(ctx, planBindings)
+	resp.Diagnostics.Append(diags...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -132,6 +145,14 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	data.Assets = assets
+	// Finally, reorder refreshed bindings to match the plan, now that computed
+	// properties have been filled in.
+	data.Bindings, diags = SortRefreshedBindingsToMatchPrevious(
+		ctx,
+		data.Bindings,
+		planBindings,
+	)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -216,6 +237,12 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	var diags diag.Diagnostics
 	data.Bindings, diags = UpdateSecretTextsFromState(
+		ctx,
+		data.Bindings,
+		state.Bindings,
+	)
+	resp.Diagnostics.Append(diags...)
+	data.Bindings, diags = SortRefreshedBindingsToMatchPrevious(
 		ctx,
 		data.Bindings,
 		state.Bindings,

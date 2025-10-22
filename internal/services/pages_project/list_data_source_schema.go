@@ -218,36 +218,44 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectType[PagesProjectsSourceConfigDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"deployments_enabled": schema.BoolAttribute{
-											Computed: true,
+											Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
+											Computed:           true,
+											DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
 										},
 										"owner": schema.StringAttribute{
-											Computed: true,
+											Description: "The owner of the repository.",
+											Computed:    true,
 										},
 										"path_excludes": schema.ListAttribute{
+											Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
 											Computed:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"path_includes": schema.ListAttribute{
+											Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
 											Computed:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"pr_comments_enabled": schema.BoolAttribute{
-											Computed: true,
+											Description: "Whether to enable PR comments.",
+											Computed:    true,
 										},
 										"preview_branch_excludes": schema.ListAttribute{
+											Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 											Computed:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"preview_branch_includes": schema.ListAttribute{
+											Description: "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 											Computed:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"preview_deployment_setting": schema.StringAttribute{
-											Description: `Available values: "all", "none", "custom".`,
+											Description: "Controls whether commits to preview branches trigger a preview deployment.\nAvailable values: \"all\", \"none\", \"custom\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -258,18 +266,25 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"production_branch": schema.StringAttribute{
-											Computed: true,
+											Description: "The production branch of the repository.",
+											Computed:    true,
 										},
 										"production_deployments_enabled": schema.BoolAttribute{
-											Computed: true,
+											Description: "Whether to trigger a production deployment on commits to the production branch.",
+											Computed:    true,
 										},
 										"repo_name": schema.StringAttribute{
-											Computed: true,
+											Description: "The name of the repository.",
+											Computed:    true,
 										},
 									},
 								},
 								"type": schema.StringAttribute{
-									Computed: true,
+									Description: "The source control management provider.\nAvailable values: \"github\", \"gitlab\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
+									},
 								},
 							},
 						},

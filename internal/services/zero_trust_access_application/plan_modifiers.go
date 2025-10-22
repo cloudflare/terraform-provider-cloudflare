@@ -5,19 +5,20 @@ import (
 	"regexp"
 	"slices"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var (
-	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp"}
+	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp", "mcp_portal"}
+	destinationCompatibleAppTypes         = []string{"self_hosted", "ssh", "vnc", "rdp", "mcp_portal", "mcp"}
 	saasAppTypes                          = []string{"saas", "dash_sso"}
 	appLauncherVisibleAppTypes            = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
 	targetCompatibleAppTypes              = []string{"rdp", "infrastructure"}
-	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp"}
+	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp", "mcp_portal", "mcp"}
 	authenticateViaWarpCompatibleAppTypes = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"}
 	durationRegex                         = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
 )
@@ -46,7 +47,6 @@ func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAcces
 
 	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.SelfHostedDomains, customfield.UnknownList[types.String](ctx), customfield.NullList[types.String](ctx))
 	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.Destinations, customfield.UnknownObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx), customfield.NullObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx))
-	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.HTTPOnlyCookieAttribute, types.BoolUnknown(), types.BoolNull())
 
 	// A self_hosted_app's 'domain', 'self_hosted_domains', and 'destinations' are all tied together in the API.
 	// changing one, causes the others to change. So we need to tell TF to set the other two to unknown if any of them
@@ -128,7 +128,7 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 	appType := planApp.Type.ValueString()
 
 	// Add default values for some app type specific attributes
-	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.HTTPOnlyCookieAttribute, types.BoolValue(true), types.BoolNull())
+	setDefaultAccordingToAppTypes(append(selfHostedAppTypes, "mcp"), appType, &planApp.HTTPOnlyCookieAttribute, types.BoolValue(true), types.BoolNull())
 	setDefaultAccordingToAppTypes(appLauncherVisibleAppTypes, appType, &planApp.AppLauncherVisible, types.BoolValue(true), types.BoolNull())
 	setDefaultAccordingToAppType("app_launcher", appType, &planApp.SkipAppLauncherLoginPage, types.BoolValue(false), types.BoolNull())
 	setDefaultAccordingToAppTypes(sessionDurationCompatibleAppTypes, appType, &planApp.SessionDuration, types.StringValue("24h"), types.StringNull())

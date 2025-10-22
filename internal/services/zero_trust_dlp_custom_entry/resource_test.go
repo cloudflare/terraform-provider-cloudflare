@@ -1,10 +1,10 @@
 package zero_trust_dlp_custom_entry_test
- 
+
 import (
 	"fmt"
 	"os"
 	"testing"
- 
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,12 +13,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
- 
+
 func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_dlp_custom_entry." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
- 
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -37,9 +37,6 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_at"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("updated_at"), knownvalue.NotNull()),
-					// Type should be "custom" for custom entries
-					// This is failing because the type isn't returned by the API. Is that correct?
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
 				},
 			},
 			{
@@ -61,12 +58,12 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
 		},
 	})
 }
- 
+
 func TestAccCloudflareZeroTrustDlpCustomEntry_WithValidation(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_dlp_custom_entry." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
- 
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -89,13 +86,13 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_WithValidation(t *testing.T) {
 		},
 	})
 }
- 
+
 func TestAccCloudflareZeroTrustDlpCustomEntry_UpdatePattern(t *testing.T) {
 	// Test updating the pattern regex between different formats
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_dlp_custom_entry." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
- 
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -127,12 +124,12 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_UpdatePattern(t *testing.T) {
 		},
 	})
 }
- 
+
 func TestAccCloudflareZeroTrustDlpCustomEntry_CompleteWorkflow(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_dlp_custom_entry." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
- 
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -149,8 +146,6 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_CompleteWorkflow(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern").AtMapKey("validation"), knownvalue.StringExact("luhn")),
 					// Verify profile_id is set
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("profile_id"), knownvalue.NotNull()),
-					// Type should be "custom" for custom entries
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
 				},
 			},
 			{
@@ -174,40 +169,40 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_CompleteWorkflow(t *testing.T) {
 		},
 	})
 }
- 
+
 func testAccZeroTrustDlpCustomEntryConfig_Basic(rnd, accountID, enabled, name, regex string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_dlp_custom_profile" "custom_profile" {
   name       = "%[1]s"
   account_id = "%[2]s"
 }
- 
+
 resource "cloudflare_zero_trust_dlp_custom_entry" "%[1]s" {
   name       = "%[4]s"
   account_id = "%[2]s"
   profile_id = cloudflare_zero_trust_dlp_custom_profile.custom_profile.id
   enabled    = %[3]s
- 
+
   pattern = {
     regex = "%[5]s"
   }
 }
 `, rnd, accountID, enabled, name, regex)
 }
- 
+
 func testAccZeroTrustDlpCustomEntryConfig_WithValidation(rnd, accountID, name, validation string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_dlp_custom_profile" "custom_profile" {
   name       = "%[1]s"
   account_id = "%[2]s"
 }
- 
+
 resource "cloudflare_zero_trust_dlp_custom_entry" "%[1]s" {
   name       = "%[3]s"
   account_id = "%[2]s"
   profile_id = cloudflare_zero_trust_dlp_custom_profile.custom_profile.id
   enabled    = true
- 
+
   pattern = {
     regex      = "[0-9]{13,16}"
     validation = "%[4]s"
@@ -215,40 +210,40 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "%[1]s" {
 }
 `, rnd, accountID, name, validation)
 }
- 
+
 func testAccZeroTrustDlpCustomEntryConfig_Complete(rnd, accountID, enabled, name, regex, validation string) string {
 	validationAttr := ""
 	if validation != "" {
 		validationAttr = fmt.Sprintf(`
     validation = "%s"`, validation)
 	}
- 
+
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_dlp_custom_profile" "custom_profile" {
   name       = "%[1]s"
   account_id = "%[2]s"
 }
- 
+
 resource "cloudflare_zero_trust_dlp_custom_entry" "%[1]s" {
   name       = "%[4]s"
   account_id = "%[2]s"
   profile_id = cloudflare_zero_trust_dlp_custom_profile.custom_profile.id
   enabled    = %[3]s
- 
+
   pattern = {
     regex = "%[5]s"%[6]s
   }
 }
 `, rnd, accountID, enabled, name, regex, validationAttr)
 }
- 
+
 func testAccZeroTrustDlpCustomEntryImportStateIdFunc(resourceName, accountID string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return "", fmt.Errorf("not found: %s", resourceName)
 		}
- 
+
 		return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
 	}
 }

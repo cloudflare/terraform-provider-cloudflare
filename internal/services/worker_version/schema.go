@@ -189,6 +189,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							PlanModifiers: []planmodifier.String{
 								ComputeSHA256HashOfContentFile(),
+								stringplanmodifier.RequiresReplace(),
 							},
 						},
 					},

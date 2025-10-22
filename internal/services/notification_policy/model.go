@@ -4,6 +4,7 @@ package notification_policy
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,9 +36,9 @@ func (m NotificationPolicyModel) MarshalJSONForUpdate(state NotificationPolicyMo
 }
 
 type NotificationPolicyMechanismsModel struct {
-	Email     *[]*NotificationPolicyMechanismsEmailModel     `tfsdk:"email" json:"email,optional"`
-	Pagerduty *[]*NotificationPolicyMechanismsPagerdutyModel `tfsdk:"pagerduty" json:"pagerduty,optional"`
-	Webhooks  *[]*NotificationPolicyMechanismsWebhooksModel  `tfsdk:"webhooks" json:"webhooks,optional"`
+	Email     customfield.NestedObjectSet[NotificationPolicyMechanismsEmailModel]     `tfsdk:"email" json:"email,optional"`
+	Pagerduty customfield.NestedObjectSet[NotificationPolicyMechanismsPagerdutyModel] `tfsdk:"pagerduty" json:"pagerduty,optional"`
+	Webhooks  customfield.NestedObjectSet[NotificationPolicyMechanismsWebhooksModel]  `tfsdk:"webhooks" json:"webhooks,optional"`
 }
 
 type NotificationPolicyMechanismsEmailModel struct {
@@ -93,6 +94,7 @@ type NotificationPolicyFiltersModel struct {
 	TrafficExclusions            *[]types.String `tfsdk:"traffic_exclusions" json:"traffic_exclusions,optional"`
 	TunnelID                     *[]types.String `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 	TunnelName                   *[]types.String `tfsdk:"tunnel_name" json:"tunnel_name,optional"`
+	Type                         *[]types.String `tfsdk:"type" json:"type,optional"`
 	Where                        *[]types.String `tfsdk:"where" json:"where,optional"`
 	Zones                        *[]types.String `tfsdk:"zones" json:"zones,optional"`
 }

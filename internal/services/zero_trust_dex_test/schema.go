@@ -54,32 +54,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Required:    true,
+						Optional:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
-						},
+						Description: "The type of test.",
+						Optional:    true,
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
+						Description: "The HTTP request method type.",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("GET"),
-						},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
-				Description: "Additional details about the test.",
-				Optional:    true,
+			Description: "Additional details about the test.",
+			Optional:    true,
+		},
+			"targeted": schema.BoolAttribute{
+				Optional: true,
+			},
+			"targeted": schema.BoolAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
-				Computed:    true,
 				Optional:    true,
 				Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []ZeroTrustDEXTestTargetPoliciesModel{}).ListValue),
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesModel](ctx),
@@ -101,10 +101,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
