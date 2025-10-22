@@ -6,8 +6,6 @@ import (
 	"bytes"
 	"mime/multipart"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
