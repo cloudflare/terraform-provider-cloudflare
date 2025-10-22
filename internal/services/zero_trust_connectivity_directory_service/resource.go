@@ -12,16 +12,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustConnectivityDirectoryServiceResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustConnectivityDirectoryServiceResource)(nil)
-var _ resource.ResourceWithImportState = (*ZeroTrustConnectivityDirectoryServiceResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustConnectivityDirectoryServiceResource{}
@@ -70,7 +67,6 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Create(ctx context.Conte
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Connectivity.Directory.Services.New(
 		ctx,
 		zero_trust.ConnectivityDirectoryServiceNewParams{
@@ -85,13 +81,11 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Create(ctx context.Conte
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -119,7 +113,6 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Update(ctx context.Conte
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Connectivity.Directory.Services.Update(
 		ctx,
 		data.ServiceID.ValueString(),
@@ -135,13 +128,11 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Update(ctx context.Conte
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -156,7 +147,6 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Read(ctx context.Context
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
@@ -175,14 +165,6 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Read(ctx context.Context
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -208,53 +190,6 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Delete(ctx context.Conte
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.ServiceID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustConnectivityDirectoryServiceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustConnectivityDirectoryServiceModel = new(ZeroTrustConnectivityDirectoryServiceModel)
-
-	path_account_id := ""
-	path_service_id := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<account_id>/<service_id>",
-		&path_account_id,
-		&path_service_id,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	data.AccountID = types.StringValue(path_account_id)
-	data.ServiceID = types.StringValue(path_service_id)
-
-	res := new(http.Response)
-	env := ZeroTrustConnectivityDirectoryServiceResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Connectivity.Directory.Services.Get(
-		ctx,
-		path_service_id,
-		zero_trust.ConnectivityDirectoryServiceGetParams{
-			AccountID: cloudflare.F(path_account_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
