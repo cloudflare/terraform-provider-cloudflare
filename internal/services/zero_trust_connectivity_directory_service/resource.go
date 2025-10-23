@@ -67,7 +67,7 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Create(ctx context.Conte
 		return
 	}
 	res := new(http.Response)
-	err = r.client.ZeroTrust.Connectivity.Directory.Services.New(
+	_, err = r.client.ZeroTrust.Connectivity.Directory.Services.New(
 		ctx,
 		zero_trust.ConnectivityDirectoryServiceNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -113,7 +113,7 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Update(ctx context.Conte
 		return
 	}
 	res := new(http.Response)
-	err = r.client.ZeroTrust.Connectivity.Directory.Services.Update(
+	_, err = r.client.ZeroTrust.Connectivity.Directory.Services.Update(
 		ctx,
 		data.ServiceID.ValueString(),
 		zero_trust.ConnectivityDirectoryServiceUpdateParams{
@@ -147,7 +147,7 @@ func (r *ZeroTrustConnectivityDirectoryServiceResource) Read(ctx context.Context
 	}
 
 	res := new(http.Response)
-	err := r.client.ZeroTrust.Connectivity.Directory.Services.Get(
+	_, err := r.client.ZeroTrust.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
 		zero_trust.ConnectivityDirectoryServiceGetParams{

@@ -64,7 +64,7 @@ func (d *ZeroTrustConnectivityDirectoryServiceDataSource) Read(ctx context.Conte
 	}
 
 	res := new(http.Response)
-	err := d.client.ZeroTrust.Connectivity.Directory.Services.Get(
+	_, err := d.client.ZeroTrust.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
 		params,
