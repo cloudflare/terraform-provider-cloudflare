@@ -186,6 +186,23 @@ func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 				},
 			},
 			{
+				Config:            testAccCloudflareWorkerVersionConfigUpdate(rnd, accountID, contentFile),
+				ResourceName:      resourceName,
+				ImportStateIdFunc: testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
+				ImportState:       true,
+				ImportStateKind:   resource.ImportBlockWithID,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						// In the import plan, the version will be updated
+						// "in-place" to set content_file in state (this
+						// attribute only exists in the provider and will not be
+						// returned by the API).
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+				ExpectNonEmptyPlan: true,
+			},
+			{
 				ResourceName:            resourceName,
 				ImportStateIdFunc:       testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
 				ImportState:             true,
