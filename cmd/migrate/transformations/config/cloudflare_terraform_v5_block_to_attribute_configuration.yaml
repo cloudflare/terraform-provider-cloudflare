@@ -361,7 +361,6 @@ transformations:
   cloudflare_tunnel_config:
     to_map:
       - config
-      - warp_routing
     to_list:
       - ingress_rule
       - origin_request

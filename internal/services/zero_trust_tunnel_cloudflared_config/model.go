@@ -20,7 +20,6 @@ type ZeroTrustTunnelCloudflaredConfigModel struct {
 	CreatedAt          timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source             types.String                                 `tfsdk:"source" json:"source,computed_optional"`
 	Version            types.Int64                                  `tfsdk:"version" json:"version,computed"`
-	WARPRoutingEnabled types.Bool                                   `tfsdk:"warp_routing_enabled" json:"-,computed_optional"`
 }
 
 func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSON() (data []byte, err error) {
