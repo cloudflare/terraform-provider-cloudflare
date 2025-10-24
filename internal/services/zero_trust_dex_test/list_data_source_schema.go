@@ -70,6 +70,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"target_policies": schema.ListNestedAttribute{
 							Description: "DEX rules targeted by this test",
+							Optional:    true,
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestsTargetPoliciesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
