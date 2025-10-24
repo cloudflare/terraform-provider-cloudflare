@@ -67,16 +67,22 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 
 	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
 
+	multipartData, contentType, err := data.MarshalMultipart()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		return
+	}
+
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err := r.client.KV.Namespaces.Values.Update(
+	_, err = r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
+		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -114,16 +120,23 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
+
+	multipartData, contentType, err := data.MarshalMultipart()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		return
+	}
+
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err := r.client.KV.Namespaces.Values.Update(
+	_, err = r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
+		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
