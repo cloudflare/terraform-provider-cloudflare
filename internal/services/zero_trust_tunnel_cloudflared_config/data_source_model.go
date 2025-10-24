@@ -24,7 +24,6 @@ type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 	Source             types.String                                                                    `tfsdk:"source" json:"source,computed"`
 	Version            types.Int64                                                                     `tfsdk:"version" json:"version,computed"`
 	Config             customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	WARPRoutingEnabled types.Bool                                                                      `tfsdk:"warp_routing_enabled" json:"-,computed"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredConfigurationGetParams, diags diag.Diagnostics) {

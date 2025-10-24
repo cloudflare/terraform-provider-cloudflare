@@ -42,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The version of the Tunnel Configuration.",
 				Computed:    true,
 			},
-			"warp_routing_enabled": schema.BoolAttribute{
-				Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-				Computed:    true,
-			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
 				Computed:    true,

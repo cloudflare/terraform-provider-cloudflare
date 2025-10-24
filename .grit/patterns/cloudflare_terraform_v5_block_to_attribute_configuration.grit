@@ -184,7 +184,6 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_list(`ip_rules`) as $block where { $block <: within `resource "cloudflare_tunnel_config" $_ { $_ }` },
     inline_cloudflare_block_to_map(`origin_request`) as $block where { $block <: within `resource "cloudflare_tunnel_config" $_ { $_ }` },
     inline_cloudflare_block_to_map(`access`) as $block where { $block <: within `resource "cloudflare_tunnel_config" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`warp_routing`) as $block where { $block <: within `resource "cloudflare_tunnel_config" $_ { $_ }` },
     inline_cloudflare_block_to_list(`configuration`) as $block where { $block <: within `resource "cloudflare_user_agent_blocking_rule" $_ { $_ }` },
     inline_cloudflare_block_to_list(`additional_routes`) as $block where { $block <: within `resource "cloudflare_waiting_room" $_ { $_ }` },
     inline_cloudflare_block_to_list(`rules`) as $block where { $block <: within `resource "cloudflare_waiting_room_rules" $_ { $_ }` },
