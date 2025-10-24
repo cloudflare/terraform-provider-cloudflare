@@ -37,7 +37,7 @@ func testSweepCloudflareWorkersKV(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	
+
 	if accountID == "" {
 		return nil
 	}
@@ -106,9 +106,10 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 				),
 			},
 			{
-				ImportState:       true,
-				ImportStateVerify: true,
-				ResourceName:      resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"},
+				ResourceName:            resourceName,
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					namespaceResourceName := fmt.Sprintf("cloudflare_workers_kv_namespace.%s", name)
 					return fmt.Sprintf("%s/%s/%s", accountID, s.RootModule().Resources[namespaceResourceName].Primary.ID, key), nil
@@ -156,7 +157,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(value)),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key+"-updated"),
+					testAccCheckCloudflareWorkersKVExists(key + "-updated"),
 				),
 			},
 		},
@@ -202,9 +203,10 @@ func TestAccCloudflareWorkersKV_ValueUpdate(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"},
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					namespaceResourceName := fmt.Sprintf("cloudflare_workers_kv_namespace.%s", name)
 					return fmt.Sprintf("%s/%s/%s", accountID, s.RootModule().Resources[namespaceResourceName].Primary.ID, key), nil

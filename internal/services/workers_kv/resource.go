@@ -4,6 +4,7 @@ package workers_kv
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -185,12 +187,27 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to read response body", err.Error())
-		return
+
+	metadataRes, err := r.client.KV.Namespaces.Metadata.Get(
+		ctx,
+		data.NamespaceID.ValueString(),
+		data.KeyName.ValueString(),
+		kv.NamespaceMetadataGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err == nil {
+		metadataBytes, err := json.Marshal(metadataRes)
+		if err == nil {
+			if string(metadataBytes) != "null" {
+				data.Metadata = jsontypes.NewNormalizedValue(string(metadataBytes))
+			} else {
+				data.Metadata = jsontypes.NewNormalizedNull()
+			}
+		}
 	}
-	data.Value = types.StringValue(string(bytes))
+
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -260,12 +277,33 @@ func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.Import
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to read response body", err.Error())
 		return
 	}
+	data.Value = types.StringValue(string(bytes))
+
+	metadataRes, err := r.client.KV.Namespaces.Metadata.Get(
+		ctx,
+		path_namespace_id,
+		path_key_name,
+		kv.NamespaceMetadataGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err == nil {
+		metadataBytes, err := json.Marshal(metadataRes)
+		if err == nil {
+			if string(metadataBytes) != "null" {
+				data.Metadata = jsontypes.NewNormalizedValue(string(metadataBytes))
+			} else {
+				data.Metadata = jsontypes.NewNormalizedNull()
+			}
+		}
+	}
+
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
