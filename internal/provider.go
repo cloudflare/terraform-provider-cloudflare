@@ -177,7 +177,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
@@ -488,7 +487,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_tunnel_warp_connector.NewResource,
-		zero_trust_connectivity_directory_service.NewResource,
 		zero_trust_dlp_dataset.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
 		zero_trust_dlp_predefined_profile.NewResource,
@@ -793,8 +791,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorDataSource,
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
-		zero_trust_connectivity_directory_service.NewZeroTrustConnectivityDirectoryServiceDataSource,
-		zero_trust_connectivity_directory_service.NewZeroTrustConnectivityDirectoryServicesDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
