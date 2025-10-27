@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*WorkersScriptSubdomainResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*WorkersScriptSubdomainResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkersScriptSubdomainResource)(nil)
 
 func NewResource() resource.Resource {
 	return &WorkersScriptSubdomainResource{}
@@ -89,6 +92,7 @@ func (r *WorkersScriptSubdomainResource) Create(ctx context.Context, req resourc
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -138,6 +142,7 @@ func (r *WorkersScriptSubdomainResource) Update(ctx context.Context, req resourc
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -178,6 +183,7 @@ func (r *WorkersScriptSubdomainResource) Read(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -203,6 +209,52 @@ func (r *WorkersScriptSubdomainResource) Delete(ctx context.Context, req resourc
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersScriptSubdomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WorkersScriptSubdomainModel = new(WorkersScriptSubdomainModel)
+
+	path_account_id := ""
+	path_script_name := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<script_name>",
+		&path_account_id,
+		&path_script_name,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ScriptName = types.StringValue(path_script_name)
+
+	res := new(http.Response)
+	env := WorkersScriptSubdomainResultEnvelope{*data}
+	_, err := r.client.Workers.Scripts.Subdomain.Get(
+		ctx,
+		path_script_name,
+		workers.ScriptSubdomainGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
