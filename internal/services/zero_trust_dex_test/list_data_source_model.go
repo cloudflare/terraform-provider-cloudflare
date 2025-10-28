@@ -36,7 +36,7 @@ type ZeroTrustDEXTestsResultDataSourceModel struct {
 	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
-	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,computed"`
 	TestID         types.String                                                                 `tfsdk:"test_id" json:"test_id,computed"`
 }

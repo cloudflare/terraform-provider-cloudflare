@@ -15,6 +15,7 @@ type MagicTransitConnectorModel struct {
 	ID                           types.String                      `tfsdk:"id" json:"id,computed"`
 	AccountID                    types.String                      `tfsdk:"account_id" path:"account_id,required"`
 	Device                       *MagicTransitConnectorDeviceModel `tfsdk:"device" json:"device,required"`
+	ProvisionLicense             types.Bool                        `tfsdk:"provision_license" json:"provision_license,optional,no_refresh"`
 	Activated                    types.Bool                        `tfsdk:"activated" json:"activated,computed_optional"`
 	InterruptWindowDurationHours types.Float64                     `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed_optional"`
 	InterruptWindowHourOfDay     types.Float64                     `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed_optional"`
@@ -23,6 +24,7 @@ type MagicTransitConnectorModel struct {
 	LastHeartbeat                types.String                      `tfsdk:"last_heartbeat" json:"last_heartbeat,computed"`
 	LastSeenVersion              types.String                      `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LastUpdated                  types.String                      `tfsdk:"last_updated" json:"last_updated,computed"`
+	LicenseKey                   types.String                      `tfsdk:"license_key" json:"license_key,computed"`
 }
 
 func (m MagicTransitConnectorModel) MarshalJSON() (data []byte, err error) {
@@ -34,6 +36,7 @@ func (m MagicTransitConnectorModel) MarshalJSONForUpdate(state MagicTransitConne
 }
 
 type MagicTransitConnectorDeviceModel struct {
-	ID           types.String `tfsdk:"id" json:"id,computed_optional"`
-	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed_optional"`
+	ID               types.String `tfsdk:"id" json:"id,computed_optional"`
+	ProvisionLicense types.Bool   `tfsdk:"provision_license" json:"provision_license,optional,no_refresh"`
+	SerialNumber     types.String `tfsdk:"serial_number" json:"serial_number,computed_optional"`
 }

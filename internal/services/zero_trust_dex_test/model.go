@@ -4,6 +4,7 @@ package zero_trust_dex_test
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,16 +13,16 @@ type ZeroTrustDEXTestResultEnvelope struct {
 }
 
 type ZeroTrustDEXTestModel struct {
-	ID             types.String                            `tfsdk:"id" json:"-,computed"`
-	TestID         types.String                            `tfsdk:"test_id" json:"test_id,computed"`
-	AccountID      types.String                            `tfsdk:"account_id" path:"account_id,required"`
-	Enabled        types.Bool                              `tfsdk:"enabled" json:"enabled,required"`
-	Interval       types.String                            `tfsdk:"interval" json:"interval,required"`
-	Name           types.String                            `tfsdk:"name" json:"name,required"`
-	Data           *ZeroTrustDEXTestDataModel              `tfsdk:"data" json:"data,required"`
-	Description    types.String                            `tfsdk:"description" json:"description,optional"`
-	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted,computed"`
-	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies,optional"`
+	ID             types.String                                                                 `tfsdk:"id" json:"-,computed"`
+	TestID         types.String                                                                 `tfsdk:"test_id" json:"test_id,computed"`
+	AccountID      types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	Enabled        types.Bool                                                                   `tfsdk:"enabled" json:"enabled,required"`
+	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,required"`
+	Name           types.String                                                                 `tfsdk:"name" json:"name,required"`
+	Data           *ZeroTrustDEXTestDataModel                                                   `tfsdk:"data" json:"data,required"`
+	Description    types.String                                                                 `tfsdk:"description" json:"description,optional"`
+	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,optional"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 
 func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {

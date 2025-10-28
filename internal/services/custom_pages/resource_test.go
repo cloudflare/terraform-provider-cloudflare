@@ -147,9 +147,9 @@ func TestAccCloudflareCustomPages_AccountCustomized(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCustomPagesAccountConfig(rnd, accountID, "waf_challenge", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
+				Config: testAccCustomPagesAccountConfig(rnd, accountID, "waf_block", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_challenge")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_block")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact("https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/")),
@@ -157,9 +157,9 @@ func TestAccCloudflareCustomPages_AccountCustomized(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccCustomPagesAccountConfig(rnd, accountID, "waf_challenge", "default", ""),
+				Config: testAccCustomPagesAccountConfig(rnd, accountID, "waf_block", "default", ""),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_challenge")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_block")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("default")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact("")),
@@ -191,7 +191,7 @@ func TestAccCloudflareCustomPages_AccountMultiplePages(t *testing.T) {
 				Config: testAccCustomPagesAccountMultipleConfig(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					// Challenge page checks
-					statecheck.ExpectKnownValue(resourceName1, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_challenge")),
+					statecheck.ExpectKnownValue(resourceName1, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_block")),
 					statecheck.ExpectKnownValue(resourceName1, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName1, tfjsonpath.New("state"), knownvalue.StringExact("default")),
 					statecheck.ExpectKnownValue(resourceName1, tfjsonpath.New("url"), knownvalue.StringExact("")),

@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -188,6 +189,148 @@ func UpdateSecretTextsFromState[T any](
 	}
 
 	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)
+	diags.Append(d...)
+
+	return customfield.NestedObjectList[T]{
+		ListValue: value,
+	}, diags
+}
+
+// Sorts the list of refreshed bindings to match the order they appear in state
+// (or planned state), with refreshed bindings that don't appear in state
+// ordered last.
+func SortRefreshedBindingsToMatchPrevious[T any](
+	ctx context.Context,
+	refreshedBindings customfield.NestedObjectList[T],
+	previousBindings customfield.NestedObjectList[T],
+) (customfield.NestedObjectList[T], diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if refreshedBindings.IsNull() {
+		return refreshedBindings, diags
+	}
+
+	refreshedBindingElements := refreshedBindings.Elements()
+	// Mapping of binding name to refreshed binding value.
+	refreshedBindingsByName := make(map[string]attr.Value, len(refreshedBindingElements))
+	for _, val := range refreshedBindingElements {
+		refreshedObj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+			return refreshedBindings, diags
+		}
+
+		refreshedAttrs := refreshedObj.Attributes()
+		nameAttr, ok := refreshedAttrs["name"]
+		if !ok {
+			diags.AddError("Invalid element", "Missing 'name' attribute")
+			return refreshedBindings, diags
+		}
+
+		nameString, ok := nameAttr.(types.String)
+		if !ok {
+			diags.AddError("Invalid element", "'name' attribute must be a string")
+			return refreshedBindings, diags
+		}
+		refreshedBindingsByName[nameString.ValueString()] = refreshedObj
+	}
+
+	// Refreshed bindings sorted to match the order they appear in state (or
+	// planned state), with refreshed bindings that don't appear in state
+	// ordered last.
+	sortedBindings := make([]attr.Value, 0, len(refreshedBindingElements))
+	for _, val := range previousBindings.Elements() {
+		stateObj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+			return refreshedBindings, diags
+		}
+
+		stateAttrs := stateObj.Attributes()
+		nameAttr, ok := stateAttrs["name"]
+		if !ok {
+			diags.AddError("Invalid element", "Missing 'name' attribute")
+			return refreshedBindings, diags
+		}
+
+		nameString, ok := nameAttr.(types.String)
+		if !ok {
+			diags.AddError("Invalid element", "'name' attribute must be a string")
+			return refreshedBindings, diags
+		}
+
+		// Reorder refreshed bindings that exist in state (or planned state) to
+		// match the order they appear in state.
+		if refreshedBinding, ok := refreshedBindingsByName[nameString.ValueString()]; ok {
+			sortedBindings = append(sortedBindings, refreshedBinding)
+			// Binding names must be unique, the API will never return multiple
+			// bindings with the same name.
+			delete(refreshedBindingsByName, nameString.ValueString())
+		}
+	}
+
+	// Add any refreshed bindings that don't exist in state (or planned state).
+	for _, refreshedBinding := range refreshedBindingsByName {
+		sortedBindings = append(sortedBindings, refreshedBinding)
+	}
+
+	value, d := types.ListValue(refreshedBindings.ElementType(ctx), sortedBindings)
+	diags.Append(d...)
+
+	return customfield.NestedObjectList[T]{
+		ListValue: value,
+	}, diags
+}
+
+// Sorts the given list of bindings in ascending order by name. This matches the
+// order that the Workers API returns bindings.
+func SortBindingsByName[T any](
+	ctx context.Context,
+	bindings customfield.NestedObjectList[T],
+) (customfield.NestedObjectList[T], diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if bindings.IsNull() {
+		return bindings, diags
+	}
+
+	sortedBindings := bindings.Elements()
+	slices.SortFunc(sortedBindings, func(a, b attr.Value) int {
+		aObj, ok := a.(basetypes.ObjectValue)
+		if !ok {
+			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+			return 0
+		}
+		aAttrs := aObj.Attributes()
+		aNameAttr, ok := aAttrs["name"]
+		if !ok {
+			diags.AddError("Invalid element", "Missing 'name' attribute")
+			return 0
+		}
+		aNameString, ok := aNameAttr.(types.String)
+		if !ok {
+			diags.AddError("Invalid element", "'name' attribute must be a string")
+			return 0
+		}
+
+		bObj, ok := b.(basetypes.ObjectValue)
+		if !ok {
+			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+			return 0
+		}
+		bAttrs := bObj.Attributes()
+		bNameAttr, ok := bAttrs["name"]
+		if !ok {
+			diags.AddError("Invalid element", "Missing 'name' attribute")
+			return 0
+		}
+		bNameString, ok := bNameAttr.(types.String)
+		if !ok {
+			diags.AddError("Invalid element", "'name' attribute must be a string")
+			return 0
+		}
+		return strings.Compare(aNameString.ValueString(), bNameString.ValueString())
+	})
+
+	value, d := types.ListValue(bindings.ElementType(ctx), sortedBindings)
 	diags.Append(d...)
 
 	return customfield.NestedObjectList[T]{
