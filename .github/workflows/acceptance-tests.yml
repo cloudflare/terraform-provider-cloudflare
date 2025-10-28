@@ -80,6 +80,7 @@ jobs:
           # Override credentials for organization tests
           CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
+          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
         continue-on-error: true
 
       ######## Everything Else ########
