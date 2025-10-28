@@ -26,4 +26,6 @@ data "cloudflare_zero_trust_tunnel_warp_connector_token" "example_zero_trust_tun
 - `account_id` (String) Cloudflare account ID
 - `tunnel_id` (String) UUID of the tunnel.
 
+### Read-Only
 
+- `token` (String) The Warp Connector Token is used as a mechanism to authenticate the operation of a tunnel.
