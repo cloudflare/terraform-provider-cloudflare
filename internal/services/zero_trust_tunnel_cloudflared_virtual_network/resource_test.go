@@ -47,6 +47,7 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 		context.Background(), zero_trust.NetworkVirtualNetworkListParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Virtual Networks: %s", err))
+		return err
 	}
 
 	if len(tunnelVirtualNetworks.Result) == 0 {
