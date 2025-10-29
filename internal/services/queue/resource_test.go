@@ -67,7 +67,7 @@ func TestAccCloudflareQueue_Settings_UpdateRetention(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "queue_name", rnd),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(resourceName, "settings.message_retention_period", "30"),
+					resource.TestCheckResourceAttr(resourceName, "settings.message_retention_period", "65"),
 				),
 			},
 			{
