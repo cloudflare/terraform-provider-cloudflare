@@ -56,6 +56,7 @@ resource "cloudflare_worker" "example_worker" {
 
 - `created_on` (String) When the Worker was created.
 - `id` (String) Immutable ID of the Worker.
+- `references` (Attributes) Other resources that reference the Worker and depend on it existing. (see [below for nested schema](#nestedatt--references))
 - `updated_on` (String) When the Worker was most recently updated.
 
 <a id="nestedatt--observability"></a>
@@ -93,6 +94,70 @@ Optional:
 Required:
 
 - `name` (String) Name of the consumer Worker.
+
+
+<a id="nestedatt--references"></a>
+### Nested Schema for `references`
+
+Read-Only:
+
+- `dispatch_namespace_outbounds` (Attributes List) Other Workers that reference the Worker as an outbound for a dispatch namespace. (see [below for nested schema](#nestedatt--references--dispatch_namespace_outbounds))
+- `domains` (Attributes List) Custom domains connected to the Worker. (see [below for nested schema](#nestedatt--references--domains))
+- `durable_objects` (Attributes List) Other Workers that reference Durable Object classes implemented by the Worker. (see [below for nested schema](#nestedatt--references--durable_objects))
+- `queues` (Attributes List) Queues that send messages to the Worker. (see [below for nested schema](#nestedatt--references--queues))
+- `workers` (Attributes List) Other Workers that reference the Worker using [service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/). (see [below for nested schema](#nestedatt--references--workers))
+
+<a id="nestedatt--references--dispatch_namespace_outbounds"></a>
+### Nested Schema for `references.dispatch_namespace_outbounds`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the dispatch namespace.
+- `namespace_name` (String) Name of the dispatch namespace.
+- `worker_id` (String) ID of the Worker using the dispatch namespace.
+- `worker_name` (String) Name of the Worker using the dispatch namespace.
+
+
+<a id="nestedatt--references--domains"></a>
+### Nested Schema for `references.domains`
+
+Read-Only:
+
+- `certificate_id` (String) ID of the TLS certificate issued for the custom domain.
+- `hostname` (String) Full hostname of the custom domain, including the zone name.
+- `id` (String) ID of the custom domain.
+- `zone_id` (String) ID of the zone.
+- `zone_name` (String) Name of the zone.
+
+
+<a id="nestedatt--references--durable_objects"></a>
+### Nested Schema for `references.durable_objects`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the Durable Object namespace being used.
+- `namespace_name` (String) Name of the Durable Object namespace being used.
+- `worker_id` (String) ID of the Worker using the Durable Object implementation.
+- `worker_name` (String) Name of the Worker using the Durable Object implementation.
+
+
+<a id="nestedatt--references--queues"></a>
+### Nested Schema for `references.queues`
+
+Read-Only:
+
+- `queue_consumer_id` (String) ID of the queue consumer configuration.
+- `queue_id` (String) ID of the queue.
+- `queue_name` (String) Name of the queue.
+
+
+<a id="nestedatt--references--workers"></a>
+### Nested Schema for `references.workers`
+
+Read-Only:
+
+- `id` (String) ID of the referencing Worker.
+- `name` (String) Name of the referencing Worker.
 
 ## Import
 

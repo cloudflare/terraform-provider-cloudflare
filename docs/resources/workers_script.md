@@ -9,7 +9,7 @@ description: |-
 
 
 
-!> This resource is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
+-> For more direct control over Workers resources, we recommend the beta `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 
 ## Example Usage
@@ -193,7 +193,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 Available values: "eu", "fedramp".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
-- `namespace` (String) Namespace to bind to.
+- `namespace` (String) The name of the dispatch namespace.
 - `namespace_id` (String) Namespace identifier tag.
 - `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
