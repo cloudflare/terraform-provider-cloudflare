@@ -340,9 +340,8 @@ func TestMigrateCustomPagesMigrationFromV57BasicChallengeDefault(t *testing.T) {
 	})
 }
 
-// Account-level waf_challenge tests
-
-func TestMigrateCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
+// Account-level country_challenge tests
+func TestMigrateCustomPagesMigrationFromV4AccountCountryChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -352,7 +351,7 @@ func TestMigrateCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_custom_pages" "%[1]s" {
   account_id = "%[2]s"
-  type       = "waf_challenge"
+  type       = "country_challenge"
   state      = "customized"
   url        = "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"
 }`, rnd, accountID)
@@ -376,7 +375,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 			},
 			// Step 2: Run migration and verify state
 			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_challenge")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("country_challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact("https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/")),
@@ -385,7 +384,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 	})
 }
 
-func TestMigrateCustomPagesMigrationFromV5WafChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5AccountCountryChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -403,13 +402,13 @@ func TestMigrateCustomPagesMigrationFromV5WafChallengeCustomized(t *testing.T) {
 						Source:            "cloudflare/cloudflare",
 					},
 				},
-				Config: testAccCustomPagesAccountConfig(rnd, accountID, "waf_challenge", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
+				Config: testAccCustomPagesAccountConfig(rnd, accountID, "country_challenge", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
 			},
 			{
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   testAccCustomPagesAccountConfig(rnd, accountID, "waf_challenge", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
+				Config:                   testAccCustomPagesAccountConfig(rnd, accountID, "country_challenge", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_challenge")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("country_challenge")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact("https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/")),
