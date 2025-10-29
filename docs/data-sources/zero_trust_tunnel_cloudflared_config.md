@@ -33,6 +33,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 - `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 Available values: "local", "cloudflare".
 - `version` (Number) The version of the Tunnel Configuration.
+- `warp_routing_enabled` (Boolean) Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`

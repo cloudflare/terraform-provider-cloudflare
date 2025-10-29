@@ -33,6 +33,9 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_zero_trust_dlp_custom
 - `enabled` (Boolean)
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
+
+### Optional
+
 - `profile_id` (String)
 
 ### Read-Only

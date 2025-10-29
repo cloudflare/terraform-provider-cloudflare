@@ -28,8 +28,6 @@ func TestAccCloudflareZeroTrustNetworkHostnameRouteDataSource_Basic(t *testing.T
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_network_hostname_route." + rnd
 	dataSourceName := "data.cloudflare_zero_trust_network_hostname_route." + rnd
-	acctest.TestAccPreCheck_AccountID(t)
-
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	secret := generateRandomTunnelSecret(t)
 

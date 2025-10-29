@@ -13,16 +13,16 @@ type ZeroTrustDEXTestResultEnvelope struct {
 }
 
 type ZeroTrustDEXTestModel struct {
-	ID             types.String                                                                 `tfsdk:"id" json:"-,computed"`
-	TestID         types.String                                                                 `tfsdk:"test_id" json:"test_id,computed"`
-	AccountID      types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	Enabled        types.Bool                                                                   `tfsdk:"enabled" json:"enabled,required"`
-	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,required"`
-	Name           types.String                                                                 `tfsdk:"name" json:"name,required"`
-	Data           *ZeroTrustDEXTestDataModel                                                   `tfsdk:"data" json:"data,required"`
-	Description    types.String                                                                 `tfsdk:"description" json:"description,optional"`
-	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,optional"`
-	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
+	ID             types.String                                                      `tfsdk:"id" json:"-,computed"`
+	TestID         types.String                                                      `tfsdk:"test_id" json:"test_id,computed"`
+	AccountID      types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	Enabled        types.Bool                                                        `tfsdk:"enabled" json:"enabled,required"`
+	Interval       types.String                                                      `tfsdk:"interval" json:"interval,required"`
+	Name           types.String                                                      `tfsdk:"name" json:"name,required"`
+	Data           *ZeroTrustDEXTestDataModel                                        `tfsdk:"data" json:"data,required"`
+	Description    types.String                                                      `tfsdk:"description" json:"description,optional"`
+	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,optional"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 
 func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {
@@ -40,7 +40,7 @@ type ZeroTrustDEXTestDataModel struct {
 }
 
 type ZeroTrustDEXTestTargetPoliciesModel struct {
-	ID      types.String `tfsdk:"id" json:"id,optional"`
-	Default types.Bool   `tfsdk:"default" json:"default,optional"`
-	Name    types.String `tfsdk:"name" json:"name,optional"`
+	ID      types.String `tfsdk:"id" json:"id,required"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed"`
+	Name    types.String `tfsdk:"name" json:"name,computed"`
 }

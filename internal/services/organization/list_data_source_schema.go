@@ -74,7 +74,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Filter the list of organizations to the ones that are a sub-organization\nof the specified organization.\n\n\"null\" is a valid value to provide for this parameter. It means \"where\nan organization has no parent (i.e. it is a 'root' organization).\"",
-						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
