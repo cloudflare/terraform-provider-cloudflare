@@ -150,7 +150,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "tail_consumer", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 
 Optional:
 
@@ -172,7 +172,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 Available values: "eu", "fedramp".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
-- `namespace` (String) Namespace to bind to.
+- `namespace` (String) The name of the dispatch namespace.
 - `namespace_id` (String) Namespace identifier tag.
 - `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
