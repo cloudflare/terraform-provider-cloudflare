@@ -21,6 +21,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestAccCloudflareQueue_Settings_UpdateDeliveryPaused(t *testing.T) {
+	t.Skip(`FIXME: API changes causing state issues with delivery_paused attribute`)
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
