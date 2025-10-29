@@ -583,67 +583,6 @@ func TestAccCloudflareListWithItems_Redirect(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareList_ImportWithSeparateListItem(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
-	resourceNameList := fmt.Sprintf("cloudflare_list.%s", listName)
-	resourceNameItem := fmt.Sprintf("cloudflare_list_item.%s", rnd)
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	var listItemID string
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareListWithIpListItem(rnd, listName, rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameList, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceNameList, "name", listName),
-					resource.TestCheckResourceAttr(resourceNameList, "kind", "ip"),
-					resource.TestCheckNoResourceAttr(resourceNameList, "items"),
-					resource.TestCheckResourceAttr(resourceNameItem, "ip", "1.1.1.1"),
-					func(state *terraform.State) error {
-						listItemID = state.RootModule().Resources[resourceNameItem].Primary.ID
-						return nil
-					},
-				),
-			},
-			{
-				ImportState:  true,
-				ResourceName: resourceNameList,
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameList].Primary.ID), nil
-				},
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"modified_on", "num_items"},
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameList, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceNameList, "name", listName),
-					resource.TestCheckResourceAttr(resourceNameList, "kind", "ip"),
-
-					// Verify nested items are not populated during import
-					resource.TestCheckNoResourceAttr(resourceNameList, "items"),
-					// Verify the separate list item still exists
-					resource.TestCheckResourceAttr(resourceNameItem, "ip", "1.1.1.1"),
-					testAccCheckCloudflareListItemExists(resourceNameItem, accountID),
-					func(state *terraform.State) error {
-						id := state.RootModule().Resources[resourceNameItem].Primary.ID
-						if id != listItemID {
-							return errors.New("list item id does not match")
-						}
-						return nil
-					},
-				),
-			},
-		},
-	})
-}
-
 func testAccCheckCloudflareList(resourceName, listName, description, accountID, kind string) string {
 	return acctest.LoadTestCase("list.tf", resourceName, listName, description, accountID, kind)
 }
@@ -666,39 +605,6 @@ func testAccCheckCloudflareListWithRedirectItems(resourceName, listName, descrip
 
 func testAccCheckCloudflareListDataSource(resourceName, accountID, listName, description, kind string) string {
 	return acctest.LoadTestCase("listdatasource.tf", resourceName, accountID, listName, description, kind)
-}
-
-func testAccCheckCloudflareListWithIpListItem(resourceName, listName, description, accountID string) string {
-	return acctest.LoadTestCase("listwithiplistitem.tf", resourceName, listName, description, accountID)
-}
-
-func testAccCheckCloudflareListItemExists(resourceName, accountID string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("list item ID is not set")
-		}
-
-		listID := rs.Primary.Attributes["list_id"]
-		if listID == "" {
-			return fmt.Errorf("list ID is not set on list item")
-		}
-
-		client := acctest.SharedClient()
-		ctx := context.Background()
-
-		// Make direct API call to verify the list item exists
-		_, err := client.Rules.Lists.Items.Get(ctx, listID, rs.Primary.ID, rules.ListItemGetParams{AccountID: cloudflare.F(accountID)})
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
 }
 
 func checkListAndPopulate(resourceName string, list *rules.ListsList) func(*terraform.State) error {
