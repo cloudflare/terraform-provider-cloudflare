@@ -50,13 +50,9 @@ type WorkersScriptsResultDataSourceModel struct {
 	MigrationTag       types.String                                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	ModifiedOn         timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	NamedHandlers      customfield.NestedObjectList[WorkersScriptsNamedHandlersDataSourceModel] `tfsdk:"named_handlers" json:"named_handlers,computed"`
-	Observability      customfield.NestedObject[WorkersScriptsObservabilityDataSourceModel]     `tfsdk:"observability" json:"observability,computed"`
 	Placement          customfield.NestedObject[WorkersScriptsPlacementDataSourceModel]         `tfsdk:"placement" json:"placement,computed"`
 	PlacementMode      types.String                                                             `tfsdk:"placement_mode" json:"placement_mode,computed"`
 	PlacementStatus    types.String                                                             `tfsdk:"placement_status" json:"placement_status,computed"`
-	Routes             customfield.NestedObjectList[WorkersScriptsRoutesDataSourceModel]        `tfsdk:"routes" json:"routes,computed"`
-	Tag                types.String                                                             `tfsdk:"tag" json:"tag,computed"`
-	Tags               customfield.Set[types.String]                                            `tfsdk:"tags" json:"tags,computed"`
 	TailConsumers      customfield.NestedObjectSet[WorkersScriptsTailConsumersDataSourceModel]  `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UsageModel         types.String                                                             `tfsdk:"usage_model" json:"usage_model,computed"`
 }
@@ -66,30 +62,10 @@ type WorkersScriptsNamedHandlersDataSourceModel struct {
 	Name     types.String                   `tfsdk:"name" json:"name,computed"`
 }
 
-type WorkersScriptsObservabilityDataSourceModel struct {
-	Enabled          types.Bool                                                               `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                            `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptsObservabilityLogsDataSourceModel] `tfsdk:"logs" json:"logs,computed"`
-}
-
-type WorkersScriptsObservabilityLogsDataSourceModel struct {
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
-}
-
 type WorkersScriptsPlacementDataSourceModel struct {
 	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
 	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
 	Status         types.String      `tfsdk:"status" json:"status,computed"`
-}
-
-type WorkersScriptsRoutesDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id,computed"`
-	Pattern types.String `tfsdk:"pattern" json:"pattern,computed"`
-	Script  types.String `tfsdk:"script" json:"script,computed"`
 }
 
 type WorkersScriptsTailConsumersDataSourceModel struct {

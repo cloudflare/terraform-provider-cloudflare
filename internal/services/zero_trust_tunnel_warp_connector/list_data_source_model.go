@@ -77,6 +77,7 @@ func (m *ZeroTrustTunnelWARPConnectorsDataSourceModel) toListParams(_ context.Co
 type ZeroTrustTunnelWARPConnectorsResultDataSourceModel struct {
 	ID              types.String                                                                          `tfsdk:"id" json:"id,computed"`
 	AccountTag      types.String                                                                          `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                                          `tfsdk:"config_src" json:"config_src,computed"`
 	Connections     customfield.NestedObjectList[ZeroTrustTunnelWARPConnectorsConnectionsDataSourceModel] `tfsdk:"connections" json:"connections,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                     `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                     `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
@@ -84,6 +85,7 @@ type ZeroTrustTunnelWARPConnectorsResultDataSourceModel struct {
 	DeletedAt       timetypes.RFC3339                                                                     `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Metadata        jsontypes.Normalized                                                                  `tfsdk:"metadata" json:"metadata,computed"`
 	Name            types.String                                                                          `tfsdk:"name" json:"name,computed"`
+	RemoteConfig    types.Bool                                                                            `tfsdk:"remote_config" json:"remote_config,computed"`
 	Status          types.String                                                                          `tfsdk:"status" json:"status,computed"`
 	TunType         types.String                                                                          `tfsdk:"tun_type" json:"tun_type,computed"`
 }

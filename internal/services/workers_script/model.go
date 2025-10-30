@@ -25,7 +25,6 @@ type WorkersScriptModel struct {
 	Files              *[]types.String                                               `tfsdk:"files" json:"files,optional,no_refresh"`
 	CompatibilityDate  types.String                                                  `tfsdk:"compatibility_date" json:"compatibility_date,computed,no_refresh"`
 	CreatedOn          timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
-	EntryPoint         types.String                                                  `tfsdk:"entry_point" json:"entry_point,computed,no_refresh"`
 	Etag               types.String                                                  `tfsdk:"etag" json:"etag,computed,no_refresh"`
 	HasAssets          types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed,no_refresh"`
 	HasModules         types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed,no_refresh"`
@@ -36,13 +35,10 @@ type WorkersScriptModel struct {
 	PlacementMode      types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed,no_refresh"`
 	PlacementStatus    types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed,no_refresh"`
 	StartupTimeMs      types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed,no_refresh"`
-	Tag                types.String                                                  `tfsdk:"tag" json:"tag,computed,no_refresh"`
 	UsageModel         types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed,no_refresh"`
 	CompatibilityFlags customfield.Set[types.String]                                 `tfsdk:"compatibility_flags" json:"compatibility_flags,computed,no_refresh"`
 	Handlers           customfield.List[types.String]                                `tfsdk:"handlers" json:"handlers,computed,no_refresh"`
-	Tags               customfield.Set[types.String]                                 `tfsdk:"tags" json:"tags,computed,no_refresh"`
 	NamedHandlers      customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed,no_refresh"`
-	Observability      customfield.NestedObject[WorkersScriptObservabilityModel]     `tfsdk:"observability" json:"observability,computed,no_refresh"`
 	Placement          customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed,no_refresh"`
 	TailConsumers      customfield.NestedObjectSet[WorkersScriptTailConsumersModel]  `tfsdk:"tail_consumers" json:"tail_consumers,computed,no_refresh"`
 }
@@ -215,20 +211,6 @@ type WorkersScriptMetadataTailConsumersModel struct {
 type WorkersScriptNamedHandlersModel struct {
 	Handlers customfield.List[types.String] `tfsdk:"handlers" json:"handlers,computed"`
 	Name     types.String                   `tfsdk:"name" json:"name,computed"`
-}
-
-type WorkersScriptObservabilityModel struct {
-	Enabled          types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed"`
-}
-
-type WorkersScriptObservabilityLogsModel struct {
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
 }
 
 type WorkersScriptPlacementModel struct {
