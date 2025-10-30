@@ -64,6 +64,7 @@ jobs:
         run: ./scripts/run-ci-tests magic acceptance
         env:
           TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
       - name: Run Magic Migration Tests
@@ -71,6 +72,7 @@ jobs:
         run: ./scripts/run-ci-tests magic migration
         env:
           TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
       ######## Organization Tests ########
@@ -92,6 +94,7 @@ jobs:
         run: ./scripts/run-ci-tests default acceptance
         env:
           TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
       - name: Run Default Migration Tests
@@ -99,6 +102,7 @@ jobs:
         run: ./scripts/run-ci-tests default migration
         env:
           TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
       - name: Check Test Status
