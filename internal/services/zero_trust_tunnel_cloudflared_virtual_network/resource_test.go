@@ -44,7 +44,9 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 	}
 
 	tunnelVirtualNetworks, err := client.ZeroTrust.Networks.VirtualNetworks.List(
-		context.Background(), zero_trust.NetworkVirtualNetworkListParams{})
+		context.Background(), zero_trust.NetworkVirtualNetworkListParams{
+			AccountID: cloudflare.F(accountID),
+		})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Virtual Networks: %s", err))
 		return err
@@ -59,7 +61,9 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Virtual Network %s", vnet.ID))
 		//nolint:errcheck
 		client.ZeroTrust.Networks.VirtualNetworks.Delete(
-			context.Background(), vnet.ID, zero_trust.NetworkVirtualNetworkDeleteParams{})
+			context.Background(), vnet.ID, zero_trust.NetworkVirtualNetworkDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
 	}
 
 	return nil
