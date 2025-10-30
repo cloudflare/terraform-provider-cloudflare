@@ -88,7 +88,7 @@ particular string.
 <a id="nestedatt--parent"></a>
 ### Nested Schema for `parent`
 
-Optional:
+Read-Only:
 
 - `id` (String) Filter the list of organizations to the ones that are a sub-organization
 of the specified organization.
