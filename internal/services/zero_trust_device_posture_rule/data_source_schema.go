@@ -145,7 +145,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"os_version_extra": schema.StringAttribute{
-						Description: "Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only).",
+						Description: "Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the distribution name and version. (Mac, iOS, and Linux only).",
 						Computed:    true,
 					},
 					"enabled": schema.BoolAttribute{

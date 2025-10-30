@@ -26,6 +26,7 @@ type MagicTransitConnectorDataSourceModel struct {
 	LastHeartbeat                types.String                                                         `tfsdk:"last_heartbeat" json:"last_heartbeat,computed"`
 	LastSeenVersion              types.String                                                         `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LastUpdated                  types.String                                                         `tfsdk:"last_updated" json:"last_updated,computed"`
+	LicenseKey                   types.String                                                         `tfsdk:"license_key" json:"license_key,computed"`
 	Notes                        types.String                                                         `tfsdk:"notes" json:"notes,computed"`
 	Timezone                     types.String                                                         `tfsdk:"timezone" json:"timezone,computed"`
 	Device                       customfield.NestedObject[MagicTransitConnectorDeviceDataSourceModel] `tfsdk:"device" json:"device,computed"`
