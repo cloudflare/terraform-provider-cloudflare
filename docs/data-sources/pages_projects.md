@@ -116,24 +116,27 @@ Available values: "success", "idle", "active", "failure", "canceled".
 Read-Only:
 
 - `config` (Attributes) (see [below for nested schema](#nestedatt--result--source--config))
-- `type` (String)
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
 
 <a id="nestedatt--result--source--config"></a>
 ### Nested Schema for `result.source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_name` (String) The name of the repository.
 
 
 

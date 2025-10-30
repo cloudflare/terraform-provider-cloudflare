@@ -156,7 +156,12 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 	}
 
 	data = &env.Result
-	data.ClientSecret = secret
+
+	// Preserve the old client_secret if the API didn't return a new one
+	// New secret happens on Create and if Version changes
+	if data.ClientSecret.IsNull() {
+		data.ClientSecret = secret
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

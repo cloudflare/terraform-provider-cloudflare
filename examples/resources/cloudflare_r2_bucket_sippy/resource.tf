@@ -9,7 +9,7 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
   source = {
     access_key_id = "accessKeyId"
     bucket = "bucket"
-    provider = "aws"
+    cloud_provider = "aws"
     region = "region"
     secret_access_key = "secretAccessKey"
   }

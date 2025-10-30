@@ -28,6 +28,7 @@ data "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 ### Optional
 
 - `dex_test_id` (String) The unique identifier for the test.
+- `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 
 ### Read-Only
 
@@ -37,19 +38,8 @@ data "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 - `id` (String) The unique identifier for the test.
 - `interval` (String) How often the test will run.
 - `name` (String) The name of the DEX test. Must be unique.
-- `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 - `targeted` (Boolean)
 - `test_id` (String) The unique identifier for the test.
-
-<a id="nestedatt--data"></a>
-### Nested Schema for `data`
-
-Read-Only:
-
-- `host` (String) The desired endpoint to test.
-- `kind` (String) The type of test.
-- `method` (String) The HTTP request method type.
-
 
 <a id="nestedatt--target_policies"></a>
 ### Nested Schema for `target_policies`
@@ -59,5 +49,15 @@ Read-Only:
 - `default` (Boolean) Whether the DEX rule is the account default
 - `id` (String) The id of the DEX rule
 - `name` (String) The name of the DEX rule
+
+
+<a id="nestedatt--data"></a>
+### Nested Schema for `data`
+
+Read-Only:
+
+- `host` (String) The desired endpoint to test.
+- `kind` (String) The type of test.
+- `method` (String) The HTTP request method type.
 
 

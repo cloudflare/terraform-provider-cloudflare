@@ -85,6 +85,7 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 	TrafficExclusions            customfield.List[types.String] `tfsdk:"traffic_exclusions" json:"traffic_exclusions,computed"`
 	TunnelID                     customfield.List[types.String] `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	TunnelName                   customfield.List[types.String] `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
+	Type                         customfield.List[types.String] `tfsdk:"type" json:"type,computed"`
 	Where                        customfield.List[types.String] `tfsdk:"where" json:"where,computed"`
 	Zones                        customfield.List[types.String] `tfsdk:"zones" json:"zones,computed"`
 }

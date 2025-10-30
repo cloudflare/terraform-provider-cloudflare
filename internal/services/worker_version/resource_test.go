@@ -137,11 +137,60 @@ func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 				},
 			},
 			{
+				PreConfig: func() {
+					writeContentFile(t, `export default {fetch() {return new Response("Hello World!")}}`)
+				},
+				Config: testAccCloudflareWorkerVersionConfigBindingOrder(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.SetExact([]knownvalue.Check{
+						// namespace_id should be set for KV bindings, while id
+						// should be null.
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name":         knownvalue.StringExact("KV1"),
+							"type":         knownvalue.StringExact("kv_namespace"),
+							"id":           knownvalue.Null(),
+							"namespace_id": knownvalue.NotNull(),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name":         knownvalue.StringExact("KV2"),
+							"type":         knownvalue.StringExact("kv_namespace"),
+							"id":           knownvalue.Null(),
+							"namespace_id": knownvalue.NotNull(),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name":         knownvalue.StringExact("KV3"),
+							"type":         knownvalue.StringExact("kv_namespace"),
+							"id":           knownvalue.Null(),
+							"namespace_id": knownvalue.NotNull(),
+						}),
+						// id should be set for D1 bindings, while namespace_id
+						// should be null.
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name":         knownvalue.StringExact("DB1"),
+							"type":         knownvalue.StringExact("d1"),
+							"id":           knownvalue.NotNull(),
+							"namespace_id": knownvalue.Null(),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name":         knownvalue.StringExact("DB2"),
+							"type":         knownvalue.StringExact("d1"),
+							"id":           knownvalue.NotNull(),
+							"namespace_id": knownvalue.Null(),
+						}),
+					})),
+				},
+			},
+			{
 				ResourceName:            resourceName,
 				ImportStateIdFunc:       testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"modules.0.content_file"},
+				ImportStateVerifyIgnore: []string{"modules.0.content_file", "bindings"}, // Binding order is different
 			},
 		},
 	})
@@ -233,6 +282,10 @@ func testAccCloudflareWorkerVersionConfigUpdate(rnd, accountID, contentFile stri
 
 func testAccCloudflareWorkerVersionConfigWithAssets(rnd, accountID, assetsDir string) string {
 	return acctest.LoadTestCase("assets.tf", rnd, accountID, assetsDir)
+}
+
+func testAccCloudflareWorkerVersionConfigBindingOrder(rnd, accountID, contentFile string) string {
+	return acctest.LoadTestCase("basic_binding_order.tf", rnd, accountID, contentFile)
 }
 
 func testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID string) resource.ImportStateIdFunc {

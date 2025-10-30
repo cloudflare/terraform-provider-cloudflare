@@ -31,10 +31,7 @@ resource "cloudflare_api_shield" "example_api_shield" {
 
 ### Read-Only
 
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) Identifier.
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
-- `success` (Boolean) Whether the API call was successful.
 
 <a id="nestedatt--auth_id_characteristics"></a>
 ### Nested Schema for `auth_id_characteristics`
@@ -44,43 +41,6 @@ Required:
 - `name` (String) The name of the characteristic field, i.e., the header or cookie name.
 - `type` (String) The type of characteristic.
 Available values: "header", "cookie", "jwt".
-
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `documentation_url` (String)
-- `message` (String)
-- `source` (Attributes) (see [below for nested schema](#nestedatt--errors--source))
-
-<a id="nestedatt--errors--source"></a>
-### Nested Schema for `errors.source`
-
-Read-Only:
-
-- `pointer` (String)
-
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `documentation_url` (String)
-- `message` (String)
-- `source` (Attributes) (see [below for nested schema](#nestedatt--messages--source))
-
-<a id="nestedatt--messages--source"></a>
-### Nested Schema for `messages.source`
-
-Read-Only:
-
-- `pointer` (String)
 
 ## Import
 

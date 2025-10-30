@@ -6486,6 +6486,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_SetConfigRules(t *testing.T) {
+	t.Skip(`FIXME: skip test due to feature deprecations; mirage and disable_apps are deprecated, but have suddenly EOL'd`)
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

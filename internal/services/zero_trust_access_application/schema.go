@@ -140,7 +140,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -155,6 +155,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"dash_sso",
 						"infrastructure",
 						"rdp",
+						"mcp",
+						"mcp_portal",
 					),
 				},
 			},
@@ -490,7 +492,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsModel](ctx),
 				Validators: []validator.List{
-					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), destinationCompatibleAppTypes...),
 					listvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("self_hosted_domains"),
 					}...),
@@ -503,7 +505,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Default:     stringdefault.StaticString("public"),
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("public", "private"),
+								stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal"),
 							},
 						},
 						"uri": schema.StringAttribute{
@@ -547,6 +549,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Validators: []validator.String{
 								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
+						},
+						"mcp_server_id": schema.StringAttribute{
+							Description: "A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.",
+							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "via_mcp_server_portal"),
+								customvalidator.RequiredWhenOtherStringIsOneOf(path.MatchRelative().AtParent().AtName("type"), "via_mcp_server_portal"),
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "mcp"),
 							},
 						},
 					},

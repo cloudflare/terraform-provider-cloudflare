@@ -24,6 +24,7 @@ type WorkerModel struct {
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	CreatedOn     timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	UpdatedOn     timetypes.RFC3339                                     `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	References    customfield.NestedObject[WorkerReferencesModel]       `tfsdk:"references" json:"references,computed"`
 }
 
 func (m WorkerModel) MarshalJSON() (data []byte, err error) {
@@ -53,4 +54,45 @@ type WorkerSubdomainModel struct {
 
 type WorkerTailConsumersModel struct {
 	Name types.String `tfsdk:"name" json:"name,required"`
+}
+
+type WorkerReferencesModel struct {
+	DispatchNamespaceOutbounds customfield.NestedObjectList[WorkerReferencesDispatchNamespaceOutboundsModel] `tfsdk:"dispatch_namespace_outbounds" json:"dispatch_namespace_outbounds,computed"`
+	Domains                    customfield.NestedObjectList[WorkerReferencesDomainsModel]                    `tfsdk:"domains" json:"domains,computed"`
+	DurableObjects             customfield.NestedObjectList[WorkerReferencesDurableObjectsModel]             `tfsdk:"durable_objects" json:"durable_objects,computed"`
+	Queues                     customfield.NestedObjectList[WorkerReferencesQueuesModel]                     `tfsdk:"queues" json:"queues,computed"`
+	Workers                    customfield.NestedObjectList[WorkerReferencesWorkersModel]                    `tfsdk:"workers" json:"workers,computed"`
+}
+
+type WorkerReferencesDispatchNamespaceOutboundsModel struct {
+	NamespaceID   types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	NamespaceName types.String `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	WorkerID      types.String `tfsdk:"worker_id" json:"worker_id,computed"`
+	WorkerName    types.String `tfsdk:"worker_name" json:"worker_name,computed"`
+}
+
+type WorkerReferencesDomainsModel struct {
+	ID            types.String `tfsdk:"id" json:"id,computed"`
+	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,computed"`
+	Hostname      types.String `tfsdk:"hostname" json:"hostname,computed"`
+	ZoneID        types.String `tfsdk:"zone_id" json:"zone_id,computed"`
+	ZoneName      types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+}
+
+type WorkerReferencesDurableObjectsModel struct {
+	NamespaceID   types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	NamespaceName types.String `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	WorkerID      types.String `tfsdk:"worker_id" json:"worker_id,computed"`
+	WorkerName    types.String `tfsdk:"worker_name" json:"worker_name,computed"`
+}
+
+type WorkerReferencesQueuesModel struct {
+	QueueConsumerID types.String `tfsdk:"queue_consumer_id" json:"queue_consumer_id,computed"`
+	QueueID         types.String `tfsdk:"queue_id" json:"queue_id,computed"`
+	QueueName       types.String `tfsdk:"queue_name" json:"queue_name,computed"`
+}
+
+type WorkerReferencesWorkersModel struct {
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
 }

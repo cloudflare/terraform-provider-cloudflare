@@ -39,13 +39,13 @@ Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch",
 - `device_posture` (String) Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `enabled` (Boolean) Specify whether the rule is enabled.
 - `expiration` (Attributes) Defines the expiration time stamp and default duration of a DNS policy. Takes precedence over the policy's `schedule` configuration, if any. This  does not apply to HTTP or network policies. Settable only for `dns` rules. (see [below for nested schema](#nestedatt--expiration))
-- `filters` (List of String) Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions.
+- `filters` (List of String) Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.
 - `id` (String) Identify the API resource with a UUID.
 - `identity` (String) Specify the wirefilter expression used for identity matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `name` (String) Specify the rule name.
 - `precedence` (Number) Set the order of your rules. Lower values indicate higher precedence. At each processing phase, evaluate applicable rules in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) to manage precedence via Terraform.
 - `read_only` (Boolean) Indicate that this rule is shared via the Orgs API and read only.
-- `rule_settings` (Attributes) Set settings related to this rule. Each setting is only valid for specific rule types and can only be used with the appropriate selectors. If Terraform drift is observed in these setting values, verify that the setting is supported for the given rule type and that the API response reflects the requested value. If the API response returns sanitized or modified values that differ from the request, use the API-provided values in Terraform to ensure consistency. (see [below for nested schema](#nestedatt--rule_settings))
+- `rule_settings` (Attributes) Defines settings for this rule. Settings apply only to specific rule types and must use compatible selectors. If Terraform detects drift, confirm the setting supports your rule type and check whether the API modifies the value. Use API-returned values in your configuration to prevent drift. (see [below for nested schema](#nestedatt--rule_settings))
 - `schedule` (Attributes) Defines the schedule for activating DNS policies. Settable only for `dns` and `dns_resolver` rules. (see [below for nested schema](#nestedatt--schedule))
 - `sharable` (Boolean) Indicate that this rule is sharable via the Orgs API.
 - `source_account` (String) Provide the account tag of the account that created the rule.

@@ -5,8 +5,6 @@ package api_shield
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -47,68 +45,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"cookie",
 									"jwt",
 								),
-							},
-						},
-					},
-				},
-			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful.",
-				Computed:    true,
-			},
-			"errors": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[APIShieldErrorsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-						"documentation_url": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[APIShieldErrorsSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"pointer": schema.StringAttribute{
-									Computed: true,
-								},
-							},
-						},
-					},
-				},
-			},
-			"messages": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[APIShieldMessagesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-						"documentation_url": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[APIShieldMessagesSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"pointer": schema.StringAttribute{
-									Computed: true,
-								},
 							},
 						},
 					},
