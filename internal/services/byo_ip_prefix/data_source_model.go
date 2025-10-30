@@ -17,20 +17,25 @@ type ByoIPPrefixResultDataSourceEnvelope struct {
 }
 
 type ByoIPPrefixDataSourceModel struct {
-	ID                   types.String      `tfsdk:"id" path:"prefix_id,computed"`
-	PrefixID             types.String      `tfsdk:"prefix_id" path:"prefix_id,optional"`
-	AccountID            types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Advertised           types.Bool        `tfsdk:"advertised" json:"advertised,computed"`
-	AdvertisedModifiedAt timetypes.RFC3339 `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
-	Approved             types.String      `tfsdk:"approved" json:"approved,computed"`
-	ASN                  types.Int64       `tfsdk:"asn" json:"asn,computed"`
-	CIDR                 types.String      `tfsdk:"cidr" json:"cidr,computed"`
-	CreatedAt            timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Description          types.String      `tfsdk:"description" json:"description,computed"`
-	LOADocumentID        types.String      `tfsdk:"loa_document_id" json:"loa_document_id,computed"`
-	ModifiedAt           timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	OnDemandEnabled      types.Bool        `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
-	OnDemandLocked       types.Bool        `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`
+	ID                       types.String      `tfsdk:"id" path:"prefix_id,computed"`
+	PrefixID                 types.String      `tfsdk:"prefix_id" path:"prefix_id,optional"`
+	AccountID                types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Advertised               types.Bool        `tfsdk:"advertised" json:"advertised,computed"`
+	AdvertisedModifiedAt     timetypes.RFC3339 `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
+	Approved                 types.String      `tfsdk:"approved" json:"approved,computed"`
+	ASN                      types.Int64       `tfsdk:"asn" json:"asn,computed"`
+	CIDR                     types.String      `tfsdk:"cidr" json:"cidr,computed"`
+	CreatedAt                timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DelegateLOACreation      types.Bool        `tfsdk:"delegate_loa_creation" json:"delegate_loa_creation,computed"`
+	Description              types.String      `tfsdk:"description" json:"description,computed"`
+	IrrValidationState       types.String      `tfsdk:"irr_validation_state" json:"irr_validation_state,computed"`
+	LOADocumentID            types.String      `tfsdk:"loa_document_id" json:"loa_document_id,computed"`
+	ModifiedAt               timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	OnDemandEnabled          types.Bool        `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
+	OnDemandLocked           types.Bool        `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`
+	OwnershipValidationState types.String      `tfsdk:"ownership_validation_state" json:"ownership_validation_state,computed"`
+	OwnershipValidationToken types.String      `tfsdk:"ownership_validation_token" json:"ownership_validation_token,computed"`
+	RPKIValidationState      types.String      `tfsdk:"rpki_validation_state" json:"rpki_validation_state,computed"`
 }
 
 func (m *ByoIPPrefixDataSourceModel) toReadParams(_ context.Context) (params addressing.PrefixGetParams, diags diag.Diagnostics) {
