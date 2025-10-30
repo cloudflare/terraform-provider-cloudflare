@@ -174,7 +174,7 @@ func (r *ZeroTrustDLPCustomProfileResource) Read(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -210,8 +210,6 @@ func (r *ZeroTrustDLPCustomProfileResource) Delete(ctx context.Context, req reso
 }
 
 func (r *ZeroTrustDLPCustomProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDLPCustomProfileModel = new(ZeroTrustDLPCustomProfileModel)
-
 	path_account_id := ""
 	path_profile_id := ""
 	diags := importpath.ParseImportID(
@@ -225,11 +223,8 @@ func (r *ZeroTrustDLPCustomProfileResource) ImportState(ctx context.Context, req
 		return
 	}
 
-	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.StringValue(path_profile_id)
-
 	res := new(http.Response)
-	env := ZeroTrustDLPCustomProfileResultEnvelope{*data}
+	env := ZeroTrustDLPCustomProfileResultEnvelope{}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Custom.Get(
 		ctx,
 		path_profile_id,
@@ -249,7 +244,8 @@ func (r *ZeroTrustDLPCustomProfileResource) ImportState(ctx context.Context, req
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data := &env.Result
+	data.AccountID = types.StringValue(path_account_id)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

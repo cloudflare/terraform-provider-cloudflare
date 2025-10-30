@@ -87,7 +87,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_Basic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "ai_context_enabled"},
 			},
 		},
 	})
@@ -149,7 +149,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_MinimalRequired(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "ai_context_enabled"},
 			},
 		},
 	})
@@ -181,7 +181,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_AllSharedEntryTypes(t *testing.T
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "ai_context_enabled"},
 			},
 		},
 	})
@@ -237,7 +237,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_DeprecatedAttributes(t *testing.
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "ai_context_enabled"},
 			},
 		},
 	})
@@ -285,7 +285,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_BoundaryValues(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries", "ai_context_enabled"},
 			},
 		},
 	})
