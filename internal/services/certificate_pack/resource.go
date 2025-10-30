@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -64,6 +65,9 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+	// Store the planned tags for later use
+	plannedTags := data.Tags
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -92,6 +96,23 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 	}
 	data = &env.Result
 
+	// Set tags if provided in plan
+	tagsResp, err := r.client.SSL.CertificatePacks.UpdateTags(
+		ctx,
+		data.ID.ValueString(),
+		ssl.CertificatePackUpdateTagsParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			Tags:   cloudflare.F(utils.ConvertTerraformTagsToAPI(plannedTags)),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddWarning("failed to set tags after creation", err.Error())
+		data.Tags = nil
+	} else {
+		data.Tags = utils.ConvertAPITagsToTerraform(tagsResp.Tags)
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -111,6 +132,9 @@ func (r *CertificatePackResource) Update(ctx context.Context, req resource.Updat
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Store planned tags for later comparison
+	plannedTags := data.Tags
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -141,6 +165,28 @@ func (r *CertificatePackResource) Update(ctx context.Context, req resource.Updat
 	}
 	data = &env.Result
 
+	// Check if tags have changed and update them
+	if utils.TagsChanged(plannedTags, state.Tags) {
+		tagsResp, err := r.client.SSL.CertificatePacks.UpdateTags(
+			ctx,
+			data.ID.ValueString(),
+			ssl.CertificatePackUpdateTagsParams{
+				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+				Tags:   cloudflare.F(utils.ConvertTerraformTagsToAPI(plannedTags)),
+			},
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddWarning("failed to update tags", err.Error())
+			data.Tags = nil
+		} else {
+			data.Tags = utils.ConvertAPITagsToTerraform(tagsResp.Tags)
+		}
+	} else {
+		// No changes, keep state tags
+		data.Tags = state.Tags
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -154,6 +200,7 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 	}
 
 	res := new(http.Response)
+	env := CertificatePackResultEnvelope{*data}
 	_, err := r.client.SSL.CertificatePacks.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -171,6 +218,29 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	// Fetch tags from separate endpoint
+	tagsResp, err := r.client.SSL.CertificatePacks.GetTags(
+		ctx,
+		data.ID.ValueString(),
+		ssl.CertificatePackGetTagsParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddWarning("failed to fetch tags", err.Error())
+		data.Tags = nil
+	} else {
+		data.Tags = utils.ConvertAPITagsToTerraform(tagsResp.Tags)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -242,6 +312,22 @@ func (r *CertificatePackResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+
+	// Fetch tags during import
+	tagsResp, err := r.client.SSL.CertificatePacks.GetTags(
+		ctx,
+		path_certificate_pack_id,
+		ssl.CertificatePackGetTagsParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddWarning("failed to fetch tags during import", err.Error())
+		data.Tags = nil
+	} else {
+		data.Tags = utils.ConvertAPITagsToTerraform(tagsResp.Tags)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

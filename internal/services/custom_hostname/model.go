@@ -26,6 +26,7 @@ type CustomHostnameModel struct {
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
 	OwnershipVerification     customfield.NestedObject[CustomHostnameOwnershipVerificationModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
 	OwnershipVerificationHTTP customfield.NestedObject[CustomHostnameOwnershipVerificationHTTPModel] `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed"`
+	Tags                      *map[string]types.String                                               `tfsdk:"tags" json:"-"`
 }
 
 func (m CustomHostnameModel) MarshalJSON() (data []byte, err error) {

@@ -78,6 +78,10 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
   custom_metadata = {
     foo = "string"
   }
+  tags = {
+    environment = "production"
+    team        = "web-platform"
+  }
 }
 ```
 
@@ -93,8 +97,9 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 ### Optional
 
 - `custom_metadata` (Map of String) Unique key/value metadata for this hostname. These are per-hostname (customer) settings.
-- `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
+- `custom_origin_server` (String) a valid hostname that's been added to your DNS zone as an A, AAAA, or CNAME record.
 - `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
+- `tags` (Map of String) Tags associated with the custom hostname. Tags are key-value pairs that can be used to organize and filter custom hostnames.
 
 ### Read-Only
 

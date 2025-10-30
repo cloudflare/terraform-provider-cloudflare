@@ -161,6 +161,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"tags": schema.MapAttribute{
+				Description: "Tags associated with the certificate pack. Tags are key-value pairs that can be used to organize and filter certificate packs.",
+				Optional:    true,
+				Computed:    true,
+				ElementType: types.StringType,
+			},
 		},
 	}
 }

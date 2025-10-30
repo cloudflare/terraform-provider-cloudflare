@@ -24,6 +24,7 @@ type CertificatePackModel struct {
 	Status               types.String                                                        `tfsdk:"status" json:"status,computed,no_refresh"`
 	ValidationErrors     customfield.NestedObjectList[CertificatePackValidationErrorsModel]  `tfsdk:"validation_errors" json:"validation_errors,computed,no_refresh"`
 	ValidationRecords    customfield.NestedObjectList[CertificatePackValidationRecordsModel] `tfsdk:"validation_records" json:"validation_records,computed,no_refresh"`
+	Tags                 *map[string]types.String                                            `tfsdk:"tags" json:"-"`
 }
 
 func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {

@@ -250,6 +250,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"tags": schema.MapAttribute{
+				Description: "Tags associated with the custom hostname. Tags are key-value pairs that can be used to organize and filter custom hostnames.",
+				Optional:    true,
+				Computed:    true,
+				ElementType: types.StringType,
+			},
 		},
 	}
 }
