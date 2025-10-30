@@ -55,6 +55,9 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
+      - name: Build tf-migrate
+        run: ./scripts/build-tf-migrate.sh
+
       ######## Magic Tests ########
       - name: Run Magic Acceptance Tests
         id: magic_acceptance_tests
