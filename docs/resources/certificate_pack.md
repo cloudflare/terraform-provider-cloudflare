@@ -9,14 +9,11 @@ description: |-
 
 
 
-~> Certificate packs are not able to be updated in place and if
-you require a zero downtime rotation, you need to use Terraform's meta-arguments
-for [`lifecycle`](https://www.terraform.io/docs/configuration/resources.html#lifecycle-lifecycle-customizations) blocks.
-`create_before_destroy` should be suffice for most scenarios (exceptions are
-things like missing entitlements, high ranking domain). To completely
-de-risk rotations, use you can create multiple resources using a 2-phase change
-where you have both resources live at once and you remove the old one once
-you've confirmed the certificate is available.
+~> Certificate packs are not able to be updated in place. If
+you require a zero downtime rotation, you can create multiple
+resources using a 2-phase change where you have both resources
+live at once and you remove the old one once you've confirmed 
+the certificate is available.
 
 ## Example Usage
 
