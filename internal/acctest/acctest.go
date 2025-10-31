@@ -602,6 +602,76 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 
 }
 
+// RunMigrationV2Command runs the new tf-migrate binary to transform config and state
+// NOTE: assumes config and state are already in tmpDir
+func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceVersion string, targetVersion string) {
+	t.Helper()
+
+	// Get the migration binary path from environment variable
+	migratorPath := os.Getenv("TF_MIGRATE_BINARY_PATH")
+	if migratorPath == "" {
+		// Fall back to default location relative to project root
+		cwd, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("Failed to get current working directory: %v", err)
+		}
+		projectRoot := filepath.Join(cwd, "..", "..", "..")
+		migratorPath = filepath.Join(projectRoot, "tf-migrate", "tf-migrate")
+	}
+
+	// Check if the binary exists
+	if _, err := os.Stat(migratorPath); os.IsNotExist(err) {
+		t.Fatalf("tf-migrate binary not found at %s. Please set TF_MIGRATE_BINARY_PATH or ensure the binary is built.", migratorPath)
+	}
+
+	// Find state file in tmpDir
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
+	} else {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
+					}
+				}
+			}
+		}
+	}
+
+	// Build the command
+	args := []string{
+		"migrate",
+		"--config-dir", tmpDir,
+		"--source-version", sourceVersion,
+		"--target-version", targetVersion,
+	}
+
+	// Add state file argument if found
+	if stateDir != "" {
+		args = append(args, "--state-file", filepath.Join(stateDir, "terraform.tfstate"))
+	}
+
+	// Add debug logging if TF_LOG is set
+	if strings.ToLower(os.Getenv("TF_LOG")) == "debug" {
+		args = append(args, "--log-level", "debug")
+	}
+
+	// Run the migration command
+	cmd := exec.Command(migratorPath, args...)
+	cmd.Dir = tmpDir
+
+	// Capture output for debugging
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		t.Fatalf("tf-migrate command failed: %v\nMigration output:\n%s", err, string(output))
+	}
+}
+
 // RunMigrationCommand runs the migration script to transform config and state
 // NOTE: assumes config and state are already in tmpDir
 func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
@@ -707,6 +777,35 @@ func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exa
 	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 
+// MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing
+// This is similar to MigrationTestStepWithPlan but uses the v2 migration command with explicit version parameters
+func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// First step: run migration
+	migrationStep := MigrationV2TestStep(t, v4Config, tmpDir, exactVersion, sourceVersion, targetVersion, nil) // No state checks yet
+
+	// Second step: run plan to process import blocks and state corrections
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true, // Just run plan to process imports/corrections
+	}
+
+	// Third step: verify final plan is clean and state is correct
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+
+	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
 // MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
 func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
 	// Choose the appropriate plan check based on the version
@@ -735,6 +834,47 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 			} else {
 				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
 			}
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
+	}
+}
+
+// MigrationV2TestStep creates a test step that runs the migration command and validates with v5 provider
+// Parameters:
+//   - t: testing context
+//   - v4Config: the configuration to migrate
+//   - tmpDir: temporary directory for the test
+//   - exactVersion: the exact version of the provider used to create the state (e.g., "4.52.1")
+//   - sourceVersion: the source version for migration (e.g., "v4")
+//   - targetVersion: the target version for migration (e.g., "v5")
+//   - stateChecks: state validation checks to run after migration
+func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	// Choose the appropriate plan check based on the source version
+	var planChecks []plancheck.PlanCheck
+	if sourceVersion == "v4" {
+		// When upgrading from v4, allow falsey-to-null changes due to removed defaults
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		// When upgrading from other versions, expect a completely empty plan
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
