@@ -46,10 +46,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"use_fedramp_language": schema.BoolAttribute{
-				Description: "Controls the display of FedRAMP language to the user during SSO login",
-				Computed:    true,
-			},
 			"verification": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[SSOConnectorVerificationDataSourceModel](ctx),

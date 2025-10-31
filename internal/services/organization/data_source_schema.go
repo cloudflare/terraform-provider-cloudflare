@@ -7,13 +7,8 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*OrganizationDataSource)(nil)
@@ -21,15 +16,15 @@ var _ datasource.DataSourceWithConfigValidators = (*OrganizationDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
 			"organization_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"create_time": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
 				Computed: true,
@@ -39,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[OrganizationMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.SingleNestedAttribute{
-						Description: "Enable features for Organizations.",
+						Description: "Organization flags for feature enablement",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[OrganizationMetaFlagsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
@@ -98,70 +93,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"id": schema.ListAttribute{
-						Description: "Only return organizations with the specified IDs (ex. id=foo&id=bar). Send multiple elements\nby repeating the query value.",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
-					"containing": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"account": schema.StringAttribute{
-								Description: "Filter the list of organizations to the ones that contain this particular\naccount.",
-								Optional:    true,
-							},
-							"organization": schema.StringAttribute{
-								Description: "Filter the list of organizations to the ones that contain this particular\norganization.",
-								Optional:    true,
-							},
-							"user": schema.StringAttribute{
-								Description: "Filter the list of organizations to the ones that contain this particular\nuser.\n\nIMPORTANT: Just because an organization \"contains\" a user is not a\nrepresentation of any authorization or privilege to manage any resources\ntherein. An organization \"containing\" a user simply means the user is managed by\nthat organization.",
-								Optional:    true,
-							},
-						},
-					},
-					"name": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"contains": schema.StringAttribute{
-								Description: "(case-insensitive) Filter the list of organizations to where the name contains a particular\nstring.",
-								Optional:    true,
-							},
-							"ends_with": schema.StringAttribute{
-								Description: "(case-insensitive) Filter the list of organizations to where the name ends with a particular\nstring.",
-								Optional:    true,
-							},
-							"starts_with": schema.StringAttribute{
-								Description: "(case-insensitive) Filter the list of organizations to where the name starts with a\nparticular string.",
-								Optional:    true,
-							},
-						},
-					},
-					"page_size": schema.Int64Attribute{
-						Description: "The amount of items to return. Defaults to 10.",
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.Between(0, 1000),
-						},
-					},
-					"page_token": schema.StringAttribute{
-						Description: "An opaque token returned from the last list response that when\nprovided will retrieve the next page.\n\nParameters used to filter the retrieved list must remain in subsequent\nrequests with a page token.",
-						Optional:    true,
-					},
-					"parent": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"id": schema.StringAttribute{
-								Description: "Filter the list of organizations to the ones that are a sub-organization\nof the specified organization.\n\n\"null\" is a valid value to provide for this parameter. It means \"where\nan organization has no parent (i.e. it is a 'root' organization).\"",
-								Optional:    true,
-							},
-						},
-					},
-				},
-			},
 		},
 	}
 }
@@ -171,7 +102,5 @@ func (d *OrganizationDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *OrganizationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("organization_id"), path.MatchRoot("filter")),
-	}
+	return []datasource.ConfigValidator{}
 }

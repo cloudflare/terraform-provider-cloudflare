@@ -55,7 +55,7 @@ type R2BucketLifecycleRulesDeleteObjectsTransitionModel struct {
 type R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel struct {
 	MaxAge types.Int64       `tfsdk:"max_age" json:"maxAge,optional"`
 	Type   types.String      `tfsdk:"type" json:"type,required"`
-	Date   timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date-time"`
+	Date   timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date"`
 }
 
 type R2BucketLifecycleRulesStorageClassTransitionsModel struct {
@@ -66,5 +66,5 @@ type R2BucketLifecycleRulesStorageClassTransitionsModel struct {
 type R2BucketLifecycleRulesStorageClassTransitionsConditionModel struct {
 	MaxAge types.Int64       `tfsdk:"max_age" json:"maxAge,optional"`
 	Type   types.String      `tfsdk:"type" json:"type,required"`
-	Date   timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date-time"`
+	Date   timetypes.RFC3339 `tfsdk:"date" json:"date,optional" format:"date"`
 }
