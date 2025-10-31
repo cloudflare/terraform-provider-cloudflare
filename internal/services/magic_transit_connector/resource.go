@@ -154,6 +154,9 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
+	// Preserve the license_key from state since it's only returned on creation
+	existingLicenseKey := data.LicenseKey
+
 	res := new(http.Response)
 	env := CustomMagicTransitConnectorResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Connectors.Get(
@@ -181,6 +184,9 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 		return
 	}
 	data = &env.Result
+
+	// Restore the license_key from state since the API doesn't return it after creation
+	data.LicenseKey = existingLicenseKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
