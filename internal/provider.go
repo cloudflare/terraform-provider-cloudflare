@@ -144,6 +144,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/universal_ssl_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
@@ -354,6 +355,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_cache_variants.NewResource,
 		regional_tiered_cache.NewResource,
 		certificate_pack.NewResource,
+		universal_ssl_setting.NewResource,
 		total_tls.NewResource,
 		argo_smart_routing.NewResource,
 		argo_tiered_caching.NewResource,
@@ -574,6 +576,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		regional_tiered_cache.NewRegionalTieredCacheDataSource,
 		certificate_pack.NewCertificatePackDataSource,
 		certificate_pack.NewCertificatePacksDataSource,
+		universal_ssl_setting.NewUniversalSSLSettingDataSource,
 		total_tls.NewTotalTLSDataSource,
 		argo_smart_routing.NewArgoSmartRoutingDataSource,
 		argo_tiered_caching.NewArgoTieredCachingDataSource,
