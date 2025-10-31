@@ -55,6 +55,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestDataSourceModel s
 	HTTPHostHeader         types.String                                                                                              `tfsdk:"http_host_header" json:"httpHostHeader,computed"`
 	KeepAliveConnections   types.Int64                                                                                               `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed"`
 	KeepAliveTimeout       types.Int64                                                                                               `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed"`
+	MatchSnItoHost         types.Bool                                                                                                `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,computed"`
 	NoHappyEyeballs        types.Bool                                                                                                `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed"`
 	NoTLSVerify            types.Bool                                                                                                `tfsdk:"no_tls_verify" json:"noTLSVerify,computed"`
 	OriginServerName       types.String                                                                                              `tfsdk:"origin_server_name" json:"originServerName,computed"`
@@ -78,6 +79,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel struct {
 	HTTPHostHeader         types.String                                                                                       `tfsdk:"http_host_header" json:"httpHostHeader,computed"`
 	KeepAliveConnections   types.Int64                                                                                        `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed"`
 	KeepAliveTimeout       types.Int64                                                                                        `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed"`
+	MatchSnItoHost         types.Bool                                                                                         `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,computed"`
 	NoHappyEyeballs        types.Bool                                                                                         `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed"`
 	NoTLSVerify            types.Bool                                                                                         `tfsdk:"no_tls_verify" json:"noTLSVerify,computed"`
 	OriginServerName       types.String                                                                                       `tfsdk:"origin_server_name" json:"originServerName,computed"`
