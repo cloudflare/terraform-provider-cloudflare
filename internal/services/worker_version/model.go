@@ -84,10 +84,10 @@ type WorkerVersionMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkerVersionModulesModel struct {
-	ContentBase64 types.String `tfsdk:"-" json:"content_base64"`
+	ContentBase64 types.String `tfsdk:"content_base64" json:"content_base64,optional"`
 	ContentType   types.String `tfsdk:"content_type" json:"content_type,required"`
 	Name          types.String `tfsdk:"name" json:"name,required"`
-	ContentFile   types.String `tfsdk:"content_file" json:"-,required"`
+	ContentFile   types.String `tfsdk:"content_file" json:"-,optional"`
 	ContentSHA256 types.String `tfsdk:"content_sha256" json:"-,computed"`
 }
 
