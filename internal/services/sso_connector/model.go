@@ -14,14 +14,15 @@ type SSOConnectorResultEnvelope struct {
 }
 
 type SSOConnectorModel struct {
-	ID                types.String                                            `tfsdk:"id" json:"id,computed"`
-	AccountID         types.String                                            `tfsdk:"account_id" path:"account_id,required"`
-	EmailDomain       types.String                                            `tfsdk:"email_domain" json:"email_domain,required"`
-	BeginVerification types.Bool                                              `tfsdk:"begin_verification" json:"begin_verification,computed_optional,no_refresh"`
-	Enabled           types.Bool                                              `tfsdk:"enabled" json:"enabled,optional"`
-	CreatedOn         timetypes.RFC3339                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	UpdatedOn         timetypes.RFC3339                                       `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
-	Verification      customfield.NestedObject[SSOConnectorVerificationModel] `tfsdk:"verification" json:"verification,computed"`
+	ID                 types.String                                            `tfsdk:"id" json:"id,computed"`
+	AccountID          types.String                                            `tfsdk:"account_id" path:"account_id,required"`
+	EmailDomain        types.String                                            `tfsdk:"email_domain" json:"email_domain,required"`
+	BeginVerification  types.Bool                                              `tfsdk:"begin_verification" json:"begin_verification,computed_optional,no_refresh"`
+	Enabled            types.Bool                                              `tfsdk:"enabled" json:"enabled,optional"`
+	UseFedrampLanguage types.Bool                                              `tfsdk:"use_fedramp_language" json:"use_fedramp_language,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	UpdatedOn          timetypes.RFC3339                                       `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	Verification       customfield.NestedObject[SSOConnectorVerificationModel] `tfsdk:"verification" json:"verification,computed"`
 }
 
 func (m SSOConnectorModel) MarshalJSON() (data []byte, err error) {

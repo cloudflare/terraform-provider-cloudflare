@@ -67,7 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[OrganizationMetaModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.SingleNestedAttribute{
-						Description: "Organization flags for feature enablement",
+						Description: "Enable features for Organizations.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[OrganizationMetaFlagsModel](ctx),
 						Attributes: map[string]schema.Attribute{
