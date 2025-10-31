@@ -1323,3 +1323,647 @@ func TestTransformZeroTrustAccessApplicationStateJSON(t *testing.T) {
 
 	RunFullStateTransformationTests(t, tests)
 }
+
+func TestTransformArgoStateJSON(t *testing.T) {
+	tests := []StateTestCase{
+		{
+			Name: "transform argo with smart_routing to cloudflare_argo_smart_routing",
+			Input: `{
+				"resources": [{
+					"type": "cloudflare_argo",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"zone_id": "test-zone",
+							"smart_routing": "on"
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"resources": [{
+					"type": "cloudflare_argo_smart_routing",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"zone_id": "test-zone",
+							"value": "on"
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "transform argo with tiered_caching to cloudflare_argo_tiered_caching",
+			Input: `{
+				"resources": [{
+					"type": "cloudflare_argo",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"zone_id": "test-zone",
+							"tiered_caching": "on"
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"resources": [{
+					"type": "cloudflare_argo_tiered_caching",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"zone_id": "test-zone",
+							"value": "on"
+						}
+					}]
+				}]
+			}`,
+		},
+	}
+
+	RunFullStateTransformationTests(t, tests)
+}
+
+func TestTransformZeroTrustAccessPolicyStateJSON(t *testing.T) {
+	tests := []struct {
+		name         string
+		input        string
+		instancePath string
+		expected     string
+	}{
+		{
+			name:         "remove deprecated attributes",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"decision": "allow",
+							"application_id": "app-456",
+							"precedence": 1,
+							"zone_id": "zone-789",
+							"include": [{"email": {"email": "test@example.com"}}]
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"decision": "allow",
+							"include": [{"email": {"email": "test@example.com"}}]
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "remove v5.7.0 removed attributes",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"app_count": 3,
+							"created_at": "2024-01-01T00:00:00Z",
+							"updated_at": "2024-01-02T00:00:00Z",
+							"reusable": true,
+							"decision": "allow"
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"decision": "allow"
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "transform boolean rules to empty objects",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"decision": "allow",
+							"include": [
+								{"everyone": true}
+							],
+							"exclude": [
+								{"any_valid_service_token": true}
+							]
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "policy-123",
+							"name": "Test Policy",
+							"decision": "allow",
+							"include": [
+								{"everyone": {}}
+							],
+							"exclude": [
+								{"any_valid_service_token": {}}
+							]
+						}
+					}]
+				}]
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := transformZeroTrustAccessPolicyStateJSON(tt.input, tt.instancePath)
+			
+			// Parse both JSONs to compare structure
+			var expectedData, actualData interface{}
+			err := json.Unmarshal([]byte(tt.expected), &expectedData)
+			if err != nil {
+				t.Fatalf("Failed to parse expected JSON: %v", err)
+			}
+			err = json.Unmarshal([]byte(result), &actualData)
+			if err != nil {
+				t.Fatalf("Failed to parse result JSON: %v", err)
+			}
+			
+			if !json.Valid([]byte(result)) {
+				t.Errorf("Invalid JSON output")
+			}
+			
+			// Compare using deep equal
+			expectedJSON, _ := json.MarshalIndent(expectedData, "", "  ")
+			actualJSON, _ := json.MarshalIndent(actualData, "", "  ")
+			if string(expectedJSON) != string(actualJSON) {
+				t.Errorf("JSON mismatch\nExpected:\n%s\n\nActual:\n%s", expectedJSON, actualJSON)
+			}
+		})
+	}
+}
+
+func TestTransformPageRuleStateJSON(t *testing.T) {
+	tests := []struct {
+		name         string
+		input        string
+		instancePath string
+		expected     string
+	}{
+		{
+			name:         "transform actions from array to object",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": [{
+								"always_online": "on",
+								"cache_level": "aggressive"
+							}],
+							"priority": 1
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"always_online": "on",
+								"cache_level": "aggressive"
+							},
+							"priority": 1
+						},
+						"schema_version": 0
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "transform cache_key_fields from array to object",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_key_fields": [{
+									"cookie": [{"include": ["session"]}],
+									"header": [{"include": ["x-api-key"]}],
+									"host": [{"resolved": true}],
+									"query_string": [{"include": "*"}],
+									"user": [{"geo": false, "device_type": true}]
+								}]
+							}
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_key_fields": {
+									"cookie": {"include": ["session"]},
+									"header": {"include": ["x-api-key"]},
+									"host": {"resolved": true},
+									"query_string": {"include": "*"},
+									"user": {"geo": false, "device_type": true}
+								}
+							}
+						},
+						"schema_version": 0
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "transform cache_ttl_by_status from array to map",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_ttl_by_status": [
+									{"codes": "200", "ttl": 86400},
+									{"codes": "404", "ttl": 3600},
+									{"codes": "500-599", "ttl": 0}
+								]
+							}
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_ttl_by_status": {
+									"200": 86400,
+									"404": 3600,
+									"500-599": 0
+								}
+							}
+						},
+						"schema_version": 0
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "transform forwarding_url from array to object",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"forwarding_url": [{
+									"url": "https://new.example.com",
+									"status_code": 301
+								}]
+							}
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"forwarding_url": {
+									"url": "https://new.example.com",
+									"status_code": 301
+								}
+							}
+						},
+						"schema_version": 0
+					}]
+				}]
+			}`,
+		},
+		{
+			name:         "remove minify since it's not supported in v5",
+			instancePath: "resources.0.instances.0",
+			input: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"minify": [{
+									"html": "on",
+									"css": "on",
+									"js": "off"
+								}]
+							}
+						}
+					}]
+				}]
+			}`,
+			expected: `{
+				"resources": [{
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {}
+						},
+						"schema_version": 0
+					}]
+				}]
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := transformPageRuleStateJSON(tt.input, tt.instancePath)
+			
+			// Parse both JSONs to compare structure
+			var expectedData, actualData interface{}
+			err := json.Unmarshal([]byte(tt.expected), &expectedData)
+			if err != nil {
+				t.Fatalf("Failed to parse expected JSON: %v", err)
+			}
+			err = json.Unmarshal([]byte(result), &actualData)
+			if err != nil {
+				t.Fatalf("Failed to parse result JSON: %v", err)
+			}
+			
+			// Compare using deep equal
+			expectedJSON, _ := json.MarshalIndent(expectedData, "", "  ")
+			actualJSON, _ := json.MarshalIndent(actualData, "", "  ")
+			if string(expectedJSON) != string(actualJSON) {
+				t.Errorf("JSON mismatch\nExpected:\n%s\n\nActual:\n%s", expectedJSON, actualJSON)
+			}
+		})
+	}
+}
+
+func TestExpandArraysInRules(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     string
+		rulesPath string
+		expected  string
+	}{
+		{
+			name:      "expand email arrays in include rules",
+			rulesPath: "include",
+			input: `{
+				"include": [{
+					"email": ["user1@example.com", "user2@example.com", "user3@example.com"]
+				}]
+			}`,
+			expected: `{
+				"include": [
+					{"email": {"email": "user1@example.com"}},
+					{"email": {"email": "user2@example.com"}},
+					{"email": {"email": "user3@example.com"}}
+				]
+			}`,
+		},
+		{
+			name:      "expand ip arrays",
+			rulesPath: "exclude",
+			input: `{
+				"exclude": [{
+					"ip": ["192.168.1.1", "10.0.0.1"]
+				}]
+			}`,
+			expected: `{
+				"exclude": [
+					{"ip": {"ip": "192.168.1.1"}},
+					{"ip": {"ip": "10.0.0.1"}}
+				]
+			}`,
+		},
+		{
+			name:      "transform boolean fields to empty objects",
+			rulesPath: "include",
+			input: `{
+				"include": [
+					{"everyone": true},
+					{"certificate": true},
+					{"any_valid_service_token": true}
+				]
+			}`,
+			expected: `{
+				"include": [
+					{"everyone": {}},
+					{"certificate": {}},
+					{"any_valid_service_token": {}}
+				]
+			}`,
+		},
+		{
+			name:      "expand email_domain arrays",
+			rulesPath: "require",
+			input: `{
+				"require": [{
+					"email_domain": ["example.com", "example.org"]
+				}]
+			}`,
+			expected: `{
+				"require": [
+					{"email_domain": {"domain": "example.com"}},
+					{"email_domain": {"domain": "example.org"}}
+				]
+			}`,
+		},
+		{
+			name:      "expand geo arrays",
+			rulesPath: "include",
+			input: `{
+				"include": [{
+					"geo": ["US", "CA", "GB"]
+				}]
+			}`,
+			expected: `{
+				"include": [
+					{"geo": {"country_code": "US"}},
+					{"geo": {"country_code": "CA"}},
+					{"geo": {"country_code": "GB"}}
+				]
+			}`,
+		},
+		{
+			name:      "handle non-array rules path",
+			rulesPath: "include",
+			input: `{
+				"include": "not-an-array"
+			}`,
+			expected: `{
+				"include": "not-an-array"
+			}`,
+		},
+		{
+			name:      "handle empty array",
+			rulesPath: "include",
+			input: `{
+				"include": []
+			}`,
+			expected: `{
+				"include": []
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := expandArraysInRules(tt.input, tt.rulesPath)
+			
+			// Parse both JSONs to compare structure
+			var expectedData, actualData interface{}
+			err := json.Unmarshal([]byte(tt.expected), &expectedData)
+			if err != nil {
+				t.Fatalf("Failed to parse expected JSON: %v", err)
+			}
+			err = json.Unmarshal([]byte(result), &actualData)
+			if err != nil {
+				t.Fatalf("Failed to parse result JSON: %v", err)
+			}
+			
+			// Compare using deep equal
+			expectedJSON, _ := json.MarshalIndent(expectedData, "", "  ")
+			actualJSON, _ := json.MarshalIndent(actualData, "", "  ")
+			if string(expectedJSON) != string(actualJSON) {
+				t.Errorf("JSON mismatch\nExpected:\n%s\n\nActual:\n%s", expectedJSON, actualJSON)
+			}
+		})
+	}
+}
+
+func TestTransformZoneSettingsStateJSON(t *testing.T) {
+	tests := []struct {
+		name         string
+		input        string
+		resourcePath string
+		expected     string
+	}{
+		{
+			name:         "delete zone_settings_override resource",
+			resourcePath: "resources.0",
+			input: `{
+				"version": 4,
+				"resources": [
+					{
+						"type": "cloudflare_zone_settings_override",
+						"name": "test",
+						"instances": [{
+							"attributes": {
+								"zone_id": "test-zone",
+								"settings": {
+									"always_online": "on",
+									"min_tls_version": "1.2"
+								}
+							}
+						}]
+					},
+					{
+						"type": "cloudflare_zone",
+						"name": "example",
+						"instances": [{
+							"attributes": {
+								"zone": "example.com"
+							}
+						}]
+					}
+				]
+			}`,
+			expected: `{
+				"version": 4,
+				"resources": [
+					{
+						"type": "cloudflare_zone",
+						"name": "example",
+						"instances": [{
+							"attributes": {
+								"zone": "example.com"
+							}
+						}]
+					}
+				]
+			}`,
+		},
+		{
+			name:         "handle empty resources",
+			resourcePath: "resources.0",
+			input: `{
+				"version": 4,
+				"resources": []
+			}`,
+			expected: `{
+				"version": 4,
+				"resources": []
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := transformZoneSettingsStateJSON(tt.input, tt.resourcePath)
+			
+			// Parse both JSONs to compare structure
+			var expectedData, actualData interface{}
+			err := json.Unmarshal([]byte(tt.expected), &expectedData)
+			if err != nil {
+				t.Fatalf("Failed to parse expected JSON: %v", err)
+			}
+			err = json.Unmarshal([]byte(result), &actualData)
+			if err != nil {
+				t.Fatalf("Failed to parse result JSON: %v", err)
+			}
+			
+			// Compare using deep equal
+			expectedJSON, _ := json.MarshalIndent(expectedData, "", "  ")
+			actualJSON, _ := json.MarshalIndent(actualData, "", "  ")
+			if string(expectedJSON) != string(actualJSON) {
+				t.Errorf("JSON mismatch\nExpected:\n%s\n\nActual:\n%s", expectedJSON, actualJSON)
+			}
+		})
+	}
+}

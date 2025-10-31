@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+	
+	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
 // Config transformation tests
@@ -498,6 +500,204 @@ resource "cloudflare_load_balancer_pool" "test" {
     weight = value.weight
   }]
 }`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestLoadBalancerPoolOriginBlocks(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "origins block with nested header block",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  origins {
+    name = "origin1"
+    address = "192.0.2.1"
+    
+    header {
+      header = "Host"
+      values = ["example.com"]
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+  
+  origins {
+    name    = "origin1"
+    address = "192.0.2.1"
+    header = {
+      header = "Host"
+      values = ["example.com"]
+    }
+  }
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestIsHostHeaderFunction(t *testing.T) {
+	// Direct unit test for isHostHeader function
+	tests := []struct {
+		name     string
+		input    string
+		expected bool
+	}{
+		{
+			name:     "quoted Host string",
+			input:    `"Host"`,
+			expected: true,
+		},
+		{
+			name:     "unquoted Host string",
+			input:    "Host",
+			expected: true,
+		},
+		{
+			name:     "different header name",
+			input:    `"X-Custom-Header"`,
+			expected: false,
+		},
+		{
+			name:     "empty string",
+			input:    "",
+			expected: false,
+		},
+		{
+			name:     "partial match",
+			input:    `"Hostname"`,
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens := hclwrite.Tokens{
+				&hclwrite.Token{Bytes: []byte(tt.input)},
+			}
+			result := isHostHeader(tokens)
+			if result != tt.expected {
+				t.Errorf("isHostHeader(%s) = %v, want %v", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestLoadBalancerPoolDynamicOriginsEdgeCases(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "dynamic origins with empty iterator",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = []
+    content {
+      name    = origins.value.name
+      address = origins.value.address
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in [] : {
+    address = value.address
+    name    = value.name
+  }]
+}`},
+		},
+		{
+			Name: "dynamic origins with conditional expression",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = var.enable_origins ? var.origin_list : []
+    content {
+      name    = origins.value.name
+      address = origins.value.address
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in var.enable_origins ? var.origin_list : [] : {
+    address = value.address
+    name    = value.name
+  }]
+}`},
+		},
+		{
+			Name: "nested dynamic blocks not supported",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = var.regions
+    content {
+      dynamic "origin" {
+        for_each = origins.value.servers
+        content {
+          name = origin.value.name
+          address = origin.value.address
+        }
+      }
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test"`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestLoadBalancerPoolComplexHeaderTransformations(t *testing.T) {
+	// Skip the first test case with multiple header blocks as it's invalid HCL
+	tests := []TestCase{
+		{
+			Name: "malformed header block",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  origins {
+    name = "origin1"
+    address = "192.0.2.1"
+    
+    header {
+      # Missing values attribute
+      header = "Host"
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test"`},
+		},
+		{
+			Name: "header block with complex values expression",
+			Config: `resource "cloudflare_load_balancer_pool" "test" {
+  origins {
+    name = "origin1"
+    address = "192.0.2.1"
+    
+    header {
+      header = "Host"
+      values = concat(["example.com"], var.additional_hosts)
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test"`},
 		},
 	}
 

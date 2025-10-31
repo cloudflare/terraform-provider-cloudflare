@@ -219,3 +219,131 @@ func contains(s, substr string) bool {
 	return strings.Contains(s, substr)
 }
 
+func TestExtractAttributeString(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "workers_secret with invalid block structure",
+			Config: `resource "cloudflare_workers_secret" {
+  # Missing resource name label
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Invalid workers_secret block structure - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with missing script_name attribute",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract script_name - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with missing name attribute",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract secret name - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with missing secret_text attribute",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  name        = "MY_SECRET"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract secret_text - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with missing account_id attribute",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  script_name = "my-worker"
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract account_id - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with variable reference in script_name",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = var.worker_name
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract script_name - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with local reference in secret_text",
+			Config: `resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  name        = "MY_SECRET"
+  secret_text = local.my_secret_value
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract secret_text - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_secret with resource reference in script_name",
+			Config: `resource "cloudflare_workers_script" "worker" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}
+
+resource "cloudflare_workers_secret" "secret" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = cloudflare_workers_script.worker.script_name
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`# MIGRATION WARNING: Unable to extract script_name - please migrate manually`,
+			},
+		},
+		{
+			Name: "workers_script with no matching secrets (edge case)",
+			Config: `resource "cloudflare_workers_script" "worker" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "worker-without-secrets"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}
+
+resource "cloudflare_workers_secret" "secret" {
+  account_id  = "different-account"
+  script_name = "different-worker"
+  name        = "MY_SECRET"
+  secret_text = "secret-value"
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "worker" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "worker-without-secrets"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`,
+			},
+		},
+	}
+	
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
