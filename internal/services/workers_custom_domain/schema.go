@@ -19,7 +19,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifer of the Worker Domain.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifer of the account.",
@@ -27,20 +27,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"environment": schema.StringAttribute{
-				Description: "Worker environment associated with the zone and hostname.",
-				Required:    true,
+				Description:   "Worker environment associated with the zone and hostname.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostname": schema.StringAttribute{
-				Description: "Hostname of the Worker Domain.",
-				Required:    true,
+				Description:   "Hostname of the Worker Domain.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"service": schema.StringAttribute{
-				Description: "Worker service associated with the zone and hostname.",
-				Required:    true,
+				Description:   "Worker service associated with the zone and hostname.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier of the zone.",
-				Required:    true,
+				Description:   "Identifier of the zone.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_name": schema.StringAttribute{
 				Description: "Name of the zone.",

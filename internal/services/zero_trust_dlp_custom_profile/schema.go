@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"entries": schema.ListNestedAttribute{
 				Description:        "Custom entries from this profile.\nIf this field is omitted, entries owned by this profile will not be changed.",
 				Optional:           true,
-				DeprecationMessage: "This attribute is deprecated.",
+				DeprecationMessage: "This attribute will be sunset on 01/01/2026",
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
@@ -146,17 +146,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(false),
 			},
 			"created_at": schema.StringAttribute{
-				Description: "When the profile was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the profile was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"open_access": schema.BoolAttribute{
 				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration".`,
-				Computed:    true,
+				Description:   `Available values: "custom", "predefined", "integration".`,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"custom",

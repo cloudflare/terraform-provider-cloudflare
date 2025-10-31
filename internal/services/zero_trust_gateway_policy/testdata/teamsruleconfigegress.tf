@@ -9,7 +9,8 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
 
   rule_settings = {
     egress = {
-      ipv6 = "2001:db8::/64"
+      ipv4 = "8.29.231.206"
+      ipv6 = "2a09:bac0:1001:3e::/64"
     }
   }
 }

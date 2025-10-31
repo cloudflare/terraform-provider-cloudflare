@@ -117,7 +117,7 @@ Available values: "eu", "fedramp".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `name` (String) A JavaScript variable name for the binding.
-- `namespace` (String) Namespace to bind to.
+- `namespace` (String) The name of the dispatch namespace.
 - `namespace_id` (String) Namespace identifier tag.
 - `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
@@ -130,7 +130,7 @@ Available values: "eu", "fedramp".
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "tail_consumer", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 - `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
 - `workflow_name` (String) Name of the Workflow to bind to.

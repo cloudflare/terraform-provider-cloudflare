@@ -340,7 +340,7 @@ func TestTransformManagedTransformsState(t *testing.T) {
 	}`
 
 	// Transform the state
-	result, err := transformStateJSON([]byte(testState))
+	result, err := transformStateJSON([]byte(testState), nil)
 	if err != nil {
 		t.Fatalf("Failed to transform state: %v", err)
 	}
@@ -533,7 +533,7 @@ func TestTransformSnippetStateJSON(t *testing.T) {
 			}
 
 			// Transform the state
-			result, err := transformStateJSON([]byte(tt.input))
+			result, err := transformStateJSON([]byte(tt.input), nil)
 			if err != nil {
 				t.Fatalf("transformStateJSON failed: %v", err)
 			}

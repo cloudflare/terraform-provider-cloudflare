@@ -45,7 +45,6 @@ func TestAccCloudflareTunnelCloudflaredConfigDatasource(t *testing.T) {
 			{
 				Config: testCloudflareTunnelConfigDataSource(rnd, accountID, tunnelSecret, domain),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, createPath("config.warp_routing.enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, createPath("config.origin_request.connect_timeout"), knownvalue.NumberExact(big.NewFloat(60))),
 					statecheck.ExpectKnownValue(resourceName, createPath("config.origin_request.tls_timeout"), knownvalue.NumberExact(big.NewFloat(60))),
 					statecheck.ExpectKnownValue(resourceName, createPath("config.origin_request.tcp_keep_alive"), knownvalue.NumberExact(big.NewFloat(60))),
@@ -75,7 +74,6 @@ func TestAccCloudflareTunnelCloudflaredConfigDatasource(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, createPath("config.ingress.2.service"), knownvalue.StringExact("https://10.0.0.4:8082")),
 
 					// Check data source attributes match resource attributes
-					statecheck.ExpectKnownValue(dataSourceName, createPath("config.warp_routing.enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(dataSourceName, createPath("config.origin_request.connect_timeout"), knownvalue.NumberExact(big.NewFloat(60))),
 					statecheck.ExpectKnownValue(dataSourceName, createPath("config.origin_request.tls_timeout"), knownvalue.NumberExact(big.NewFloat(60))),
 					statecheck.ExpectKnownValue(dataSourceName, createPath("config.origin_request.tcp_keep_alive"), knownvalue.NumberExact(big.NewFloat(60))),

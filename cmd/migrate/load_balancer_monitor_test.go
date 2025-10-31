@@ -163,7 +163,7 @@ func TestLoadBalancerMonitorFullStateTransformation(t *testing.T) {
 	}`
 
 	// Transform the state
-	transformedBytes, err := transformStateJSON([]byte(oldState))
+	transformedBytes, err := transformStateJSON([]byte(oldState), nil)
 	if err != nil {
 		t.Fatalf("Failed to transform state: %v", err)
 	}
@@ -398,7 +398,7 @@ func TestComprehensiveLoadBalancerMonitorStateMigration(t *testing.T) {
 	}`
 
 	// Transform the state
-	transformedBytes, err := transformStateJSON([]byte(oldState))
+	transformedBytes, err := transformStateJSON([]byte(oldState), nil)
 	if err != nil {
 		t.Fatalf("Failed to transform state: %v", err)
 	}

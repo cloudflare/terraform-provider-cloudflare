@@ -27,7 +27,7 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	Targeted       types.Bool                                                                  `tfsdk:"targeted" json:"targeted,computed"`
 	TestID         types.String                                                                `tfsdk:"test_id" json:"test_id,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
-	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 
 func (m *ZeroTrustDEXTestDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceDEXTestGetParams, diags diag.Diagnostics) {

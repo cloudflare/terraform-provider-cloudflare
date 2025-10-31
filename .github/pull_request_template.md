@@ -1,10 +1,12 @@
 <!-- Thank you for contributing to this project! -->
-<!-- The code in this repository is all auto-generated, and is not meant to be edited manually. -->
-<!-- We recommend opening an Issue instead, but you are still welcome to open a PR to share for -->
-<!-- an improvement if you wish, just note that we are unlikely to merge it as-is. -->
+<!-- Please note that most the code in this repository is auto-generated. -->
 
 - [ ] I understand that this repository is auto-generated and my pull request may not be merged
 
 ## Changes being requested
+
+## Acceptance test run results
+
+- [ ] I have run acceptance tests for my changes and included the results below 
 
 ## Additional context & links

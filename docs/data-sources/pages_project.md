@@ -29,16 +29,21 @@ data "cloudflare_pages_project" "example_pages_project" {
 ### Read-Only
 
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--build_config))
-- `canonical_deployment` (Attributes) Most recent deployment to the repo. (see [below for nested schema](#nestedatt--canonical_deployment))
+- `canonical_deployment` (Attributes) Most recent production deployment of the project. (see [below for nested schema](#nestedatt--canonical_deployment))
 - `created_on` (String) When the project was created.
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
 - `domains` (List of String) A list of associated custom domains for the project.
-- `id` (String) Id of the project.
-- `latest_deployment` (Attributes) Most recent deployment to the repo. (see [below for nested schema](#nestedatt--latest_deployment))
+- `framework` (String) Framework the project is using.
+- `framework_version` (String) Version of the framework the project is using.
+- `id` (String) ID of the project.
+- `latest_deployment` (Attributes) Most recent deployment of the project. (see [below for nested schema](#nestedatt--latest_deployment))
 - `name` (String) Name of the project.
+- `preview_script_name` (String) Name of the preview script.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
+- `production_script_name` (String) Name of the production script.
 - `source` (Attributes) (see [below for nested schema](#nestedatt--source))
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
+- `uses_functions` (Boolean) Whether the project uses functions.
 
 <a id="nestedatt--build_config"></a>
 ### Nested Schema for `build_config`
@@ -137,24 +142,27 @@ Available values: "success", "idle", "active", "failure", "canceled".
 Read-Only:
 
 - `config` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment--source--config))
-- `type` (String)
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
 
 <a id="nestedatt--canonical_deployment--source--config"></a>
 ### Nested Schema for `canonical_deployment.source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_name` (String) The name of the repository.
 
 
 
@@ -186,21 +194,28 @@ Read-Only:
 Read-Only:
 
 - `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--ai_bindings))
+- `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--analytics_engine_datasets))
 - `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--browsers))
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--d1_databases))
 - `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--durable_object_namespaces))
 - `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--env_vars))
+- `fail_open` (Boolean) Whether to fail open when the deployment config cannot be applied.
 - `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--hyperdrive_bindings))
 - `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--kv_namespaces))
+- `limits` (Attributes) Limits for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--limits))
 - `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--mtls_certificates))
 - `placement` (Attributes) Placement setting used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--placement))
 - `queue_producers` (Attributes Map) Queue Producer bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--queue_producers))
 - `r2_buckets` (Attributes Map) R2 buckets used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--r2_buckets))
 - `services` (Attributes Map) Services used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--services))
+- `usage_model` (String, Deprecated) The usage model for Pages Functions.
+Available values: "standard", "bundled", "unbound".
 - `vectorize_bindings` (Attributes Map) Vectorize bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--vectorize_bindings))
+- `wrangler_config_hash` (String) Hash of the Wrangler configuration used for the deployment.
 
 <a id="nestedatt--deployment_configs--preview--ai_bindings"></a>
 ### Nested Schema for `deployment_configs.preview.ai_bindings`
@@ -263,6 +278,14 @@ Read-Only:
 - `namespace_id` (String) ID of the KV namespace.
 
 
+<a id="nestedatt--deployment_configs--preview--limits"></a>
+### Nested Schema for `deployment_configs.preview.limits`
+
+Read-Only:
+
+- `cpu_ms` (Number) CPU time limit in milliseconds.
+
+
 <a id="nestedatt--deployment_configs--preview--mtls_certificates"></a>
 ### Nested Schema for `deployment_configs.preview.mtls_certificates`
 
@@ -321,21 +344,28 @@ Read-Only:
 Read-Only:
 
 - `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--ai_bindings))
+- `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--analytics_engine_datasets))
 - `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--browsers))
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--d1_databases))
 - `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--durable_object_namespaces))
 - `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--env_vars))
+- `fail_open` (Boolean) Whether to fail open when the deployment config cannot be applied.
 - `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--hyperdrive_bindings))
 - `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--kv_namespaces))
+- `limits` (Attributes) Limits for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--limits))
 - `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--mtls_certificates))
 - `placement` (Attributes) Placement setting used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--placement))
 - `queue_producers` (Attributes Map) Queue Producer bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--queue_producers))
 - `r2_buckets` (Attributes Map) R2 buckets used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--r2_buckets))
 - `services` (Attributes Map) Services used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--services))
+- `usage_model` (String, Deprecated) The usage model for Pages Functions.
+Available values: "standard", "bundled", "unbound".
 - `vectorize_bindings` (Attributes Map) Vectorize bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--vectorize_bindings))
+- `wrangler_config_hash` (String) Hash of the Wrangler configuration used for the deployment.
 
 <a id="nestedatt--deployment_configs--production--ai_bindings"></a>
 ### Nested Schema for `deployment_configs.production.ai_bindings`
@@ -396,6 +426,14 @@ Read-Only:
 Read-Only:
 
 - `namespace_id` (String) ID of the KV namespace.
+
+
+<a id="nestedatt--deployment_configs--production--limits"></a>
+### Nested Schema for `deployment_configs.production.limits`
+
+Read-Only:
+
+- `cpu_ms` (Number) CPU time limit in milliseconds.
 
 
 <a id="nestedatt--deployment_configs--production--mtls_certificates"></a>
@@ -535,24 +573,27 @@ Available values: "success", "idle", "active", "failure", "canceled".
 Read-Only:
 
 - `config` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment--source--config))
-- `type` (String)
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
 
 <a id="nestedatt--latest_deployment--source--config"></a>
 ### Nested Schema for `latest_deployment.source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_name` (String) The name of the repository.
 
 
 
@@ -576,23 +617,26 @@ Available values: "success", "idle", "active", "failure", "canceled".
 Read-Only:
 
 - `config` (Attributes) (see [below for nested schema](#nestedatt--source--config))
-- `type` (String)
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
 
 <a id="nestedatt--source--config"></a>
 ### Nested Schema for `source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_name` (String) The name of the repository.
 
 

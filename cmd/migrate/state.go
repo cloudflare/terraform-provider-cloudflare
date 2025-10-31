@@ -10,7 +10,7 @@ import (
 )
 
 // transformStateFile reads a terraform state file, transforms it, and writes it back
-func transformStateFile(filename string) error {
+func transformStateFile(filename string, targetResources map[string]bool) error {
 	// Read the state file
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -18,7 +18,7 @@ func transformStateFile(filename string) error {
 	}
 
 	// Transform the state
-	transformed, err := transformStateJSON(data)
+	transformed, err := transformStateJSON(data, targetResources)
 	if err != nil {
 		return fmt.Errorf("failed to transform state: %w", err)
 	}
@@ -33,7 +33,7 @@ func transformStateFile(filename string) error {
 }
 
 // transformStateJSON transforms the state JSON using gjson/sjson
-func transformStateJSON(data []byte) ([]byte, error) {
+func transformStateJSON(data []byte, targetResources map[string]bool) ([]byte, error) {
 	jsonStr := string(data)
 	result := jsonStr
 	// Process each resource
@@ -48,6 +48,11 @@ func transformStateJSON(data []byte) ([]byte, error) {
 	for i := len(resourcesArray) - 1; i >= 0; i-- {
 		resourcePath := fmt.Sprintf("resources.%d", i)
 		resourceType := gjson.Get(result, resourcePath+".type").String()
+
+		// Skip resources that are not in the target list
+		if targetResources != nil && !targetResources[resourceType] {
+			continue
+		}
 
 		// Handle zone_settings_override -> zone_setting transformation
 		if resourceType == "cloudflare_zone_settings_override" {

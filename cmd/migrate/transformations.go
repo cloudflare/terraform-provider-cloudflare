@@ -12,7 +12,7 @@ import (
 )
 
 // runYAMLTransformations runs the YAML-based transformations for config and state files
-func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun bool) error {
+func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun bool, targetResources map[string]bool) error {
 	// List of transformation configs to apply
 	transformationConfigs := []struct {
 		configFile  string
@@ -85,13 +85,13 @@ func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun 
 
 		if t.target == "config" {
 			// Apply configuration transformations
-			if err := applyConfigTransformation(configDir, configPath, t.configFile, dryRun); err != nil {
+			if err := applyConfigTransformation(configDir, configPath, t.configFile, dryRun, targetResources); err != nil {
 				fmt.Printf("    ⚠ Warning: Failed to apply %s: %v\n", t.description, err)
 				continue
 			}
 		} else if t.target == "state" {
 			// Apply state transformations
-			if err := applyStateTransformation(stateFile, configPath, t.configFile, dryRun); err != nil {
+			if err := applyStateTransformation(stateFile, configPath, t.configFile, dryRun, targetResources); err != nil {
 				fmt.Printf("    ⚠ Warning: Failed to apply %s: %v\n", t.description, err)
 				continue
 			}
@@ -132,7 +132,7 @@ func downloadFile(url, destPath string) error {
 }
 
 // applyConfigTransformation applies a specific transformation to configuration files
-func applyConfigTransformation(configDir, configPath, configFile string, dryRun bool) error {
+func applyConfigTransformation(configDir, configPath, configFile string, dryRun bool, targetResources map[string]bool) error {
 	// Determine which transformer to use based on the config file name
 	switch {
 	case strings.Contains(configFile, "block_to_attribute"):
@@ -177,7 +177,7 @@ func applyConfigTransformation(configDir, configPath, configFile string, dryRun 
 }
 
 // applyStateTransformation applies a specific transformation to state files
-func applyStateTransformation(stateFile, configPath, configFile string, dryRun bool) error {
+func applyStateTransformation(stateFile, configPath, configFile string, dryRun bool, targetResources map[string]bool) error {
 	// Determine which transformer to use based on the config file name
 	switch {
 	case strings.Contains(configFile, "attribute_renames_state"):

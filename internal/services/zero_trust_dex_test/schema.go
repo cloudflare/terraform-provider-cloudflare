@@ -52,11 +52,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Required:    true,
+						Optional:    true,
 					},
 					"kind": schema.StringAttribute{
 						Description: "The type of test.",
-						Required:    true,
+						Optional:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP request method type.",
@@ -70,7 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"targeted": schema.BoolAttribute{
-				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"target_policies": schema.ListNestedAttribute{
