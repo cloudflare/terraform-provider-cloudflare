@@ -32,12 +32,13 @@ func (m *SSOConnectorsDataSourceModel) toListParams(_ context.Context) (params i
 }
 
 type SSOConnectorsResultDataSourceModel struct {
-	ID           types.String                                                       `tfsdk:"id" json:"id,computed"`
-	CreatedOn    timetypes.RFC3339                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	EmailDomain  types.String                                                       `tfsdk:"email_domain" json:"email_domain,computed"`
-	Enabled      types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
-	UpdatedOn    timetypes.RFC3339                                                  `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
-	Verification customfield.NestedObject[SSOConnectorsVerificationDataSourceModel] `tfsdk:"verification" json:"verification,computed"`
+	ID                 types.String                                                       `tfsdk:"id" json:"id,computed"`
+	CreatedOn          timetypes.RFC3339                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	EmailDomain        types.String                                                       `tfsdk:"email_domain" json:"email_domain,computed"`
+	Enabled            types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
+	UpdatedOn          timetypes.RFC3339                                                  `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	UseFedrampLanguage types.Bool                                                         `tfsdk:"use_fedramp_language" json:"use_fedramp_language,computed"`
+	Verification       customfield.NestedObject[SSOConnectorsVerificationDataSourceModel] `tfsdk:"verification" json:"verification,computed"`
 }
 
 type SSOConnectorsVerificationDataSourceModel struct {

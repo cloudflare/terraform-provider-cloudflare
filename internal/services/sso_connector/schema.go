@@ -48,6 +48,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "SSO Connector enabled state",
 				Optional:    true,
 			},
+			"use_fedramp_language": schema.BoolAttribute{
+				Description: "Controls the display of FedRAMP language to the user during SSO login",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"created_on": schema.StringAttribute{
 				Description: "Timestamp for the creation of the SSO connector",
 				Computed:    true,
