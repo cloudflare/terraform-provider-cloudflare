@@ -137,6 +137,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/sso_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_caption_language"
@@ -588,6 +589,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
 		leaked_credential_check.NewResource,
@@ -925,6 +927,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
+		sso_connector.NewSSOConnectorDataSource,
+		sso_connector.NewSSOConnectorsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		workflow.NewWorkflowDataSource,
