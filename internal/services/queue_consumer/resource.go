@@ -144,44 +144,7 @@ func (r *QueueConsumerResource) Update(ctx context.Context, req resource.UpdateR
 }
 
 func (r *QueueConsumerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *QueueConsumerModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := QueueConsumerResultEnvelope{*data}
-	_, err := r.client.Queues.Consumers.Get(
-		ctx,
-		data.QueueID.ValueString(),
-		data.ConsumerID.ValueString(),
-		queues.ConsumerGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *QueueConsumerResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
