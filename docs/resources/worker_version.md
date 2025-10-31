@@ -285,9 +285,13 @@ Optional:
 
 Required:
 
-- `content_file` (String) The file path of the module content.
 - `content_type` (String) The content type of the module.
 - `name` (String) The name of the module.
+
+Optional:
+
+- `content_base64` (String) The base64-encoded module content.
+- `content_file` (String) The file path of the module content.
 
 Read-Only:
 
