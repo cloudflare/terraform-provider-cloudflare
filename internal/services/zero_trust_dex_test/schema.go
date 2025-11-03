@@ -5,13 +5,10 @@ package zero_trust_dex_test
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDEXTestResource)(nil)
@@ -51,21 +48,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Required:    true,
+						Optional:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
-						},
+						Description: "The type of test.",
+						Optional:    true,
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
+						Description: "The HTTP request method type.",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("GET"),
-						},
 					},
 				},
 			},
@@ -73,30 +64,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Additional details about the test.",
 				Optional:    true,
 			},
+			"targeted": schema.BoolAttribute{
+				Optional: true,
+			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
-							Required:    true,
+							Description: "The id of the DEX rule",
+							Optional:    true,
 						},
 						"default": schema.BoolAttribute{
 							Description: "Whether the DEX rule is the account default",
-							Computed:    true,
+							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the DEX rule",
-							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
 			},
 		},
 	}

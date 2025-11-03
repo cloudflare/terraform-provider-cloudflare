@@ -111,7 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
+									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 									Required:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -136,7 +136,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"secret_text",
 											"send_email",
 											"service",
-											"tail_consumer",
 											"text_blob",
 											"vectorize",
 											"version_metadata",
@@ -603,6 +602,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"entry_point": schema.StringAttribute{
+				Description: "The entry point for the script.",
+				Computed:    true,
+			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
 				Computed:    true,
@@ -656,6 +659,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"startup_time_ms": schema.Int64Attribute{
 				Computed: true,
 			},
+			"tag": schema.StringAttribute{
+				Description: "The immutable ID of the script.",
+				Computed:    true,
+			},
 			"usage_model": schema.StringAttribute{
 				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
 				Computed:    true,
@@ -680,6 +687,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"tags": schema.SetAttribute{
+				Description: "Tags associated with the Worker.",
+				Computed:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
+			},
 			"named_handlers": schema.ListNestedAttribute{
 				Description: "Named exports, such as Durable Object class implementations and named entrypoints.",
 				Computed:    true,
@@ -695,6 +708,51 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the export.",
 							Computed:    true,
+						},
+					},
+				},
+			},
+			"observability": schema.SingleNestedAttribute{
+				Description: "Observability settings for the Worker.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptObservabilityModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether observability is enabled for the Worker.",
+						Computed:    true,
+					},
+					"head_sampling_rate": schema.Float64Attribute{
+						Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+						Computed:    true,
+					},
+					"logs": schema.SingleNestedAttribute{
+						Description: "Log settings for the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkersScriptObservabilityLogsModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether logs are enabled for the Worker.",
+								Computed:    true,
+							},
+							"invocation_logs": schema.BoolAttribute{
+								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+								Computed:    true,
+							},
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where logs will be exported to.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Computed:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether log persistence is enabled for the Worker.",
+								Computed:    true,
+								Default:     booldefault.StaticBool(true),
+							},
 						},
 					},
 				},

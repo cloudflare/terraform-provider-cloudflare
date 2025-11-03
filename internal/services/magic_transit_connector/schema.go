@@ -27,11 +27,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"device": schema.SingleNestedAttribute{
-				Required: true,
+				Description: "Exactly one of id, serial_number, or provision_license must be provided.",
+				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Computed: true,
 						Optional: true,
+					},
+					"provision_license": schema.BoolAttribute{
+						Description: "When true, create and provision a new licence key for the connector.",
+						Optional:    true,
 					},
 					"serial_number": schema.StringAttribute{
 						Computed: true,
@@ -39,6 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+			},
+			"provision_license": schema.BoolAttribute{
+				Description: "When true, regenerate license key for the connector.",
+				Optional:    true,
 			},
 			"activated": schema.BoolAttribute{
 				Computed: true,
@@ -67,6 +76,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"last_updated": schema.StringAttribute{
+				Computed: true,
+			},
+			"license_key": schema.StringAttribute{
 				Computed: true,
 			},
 		},
