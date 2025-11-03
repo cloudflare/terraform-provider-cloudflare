@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package organization
+package leaked_credential_check_rule
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type OrganizationsDataSource struct {
+type LeakedCredentialCheckRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*OrganizationsDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*LeakedCredentialCheckRulesDataSource)(nil)
 
-func NewOrganizationsDataSource() datasource.DataSource {
-	return &OrganizationsDataSource{}
+func NewLeakedCredentialCheckRulesDataSource() datasource.DataSource {
+	return &LeakedCredentialCheckRulesDataSource{}
 }
 
-func (d *OrganizationsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_organizations"
+func (d *LeakedCredentialCheckRulesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_leaked_credential_check_rules"
 }
 
-func (d *OrganizationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LeakedCredentialCheckRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *OrganizationsDataSource) Configure(ctx context.Context, req datasource.
 	d.client = client
 }
 
-func (d *OrganizationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *OrganizationsDataSourceModel
+func (d *LeakedCredentialCheckRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *LeakedCredentialCheckRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *OrganizationsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	env := OrganizationsResultListDataSourceEnvelope{}
+	env := LeakedCredentialCheckRulesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Organizations.List(ctx, params)
+	page, err := d.client.LeakedCredentialChecks.Detections.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *OrganizationsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[OrganizationsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[LeakedCredentialCheckRulesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 
