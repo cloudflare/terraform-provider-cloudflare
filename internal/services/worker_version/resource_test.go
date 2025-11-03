@@ -288,6 +288,91 @@ func testAccCloudflareWorkerVersionConfigBindingOrder(rnd, accountID, contentFil
 	return acctest.LoadTestCase("basic_binding_order.tf", rnd, accountID, contentFile)
 }
 
+func TestAccCloudflareWorkerVersion_AssetsConfigRunWorkerFirst(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_worker_version." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	tmpDir := t.TempDir()
+	assetsDir := path.Join(tmpDir, "assets")
+	err := os.Mkdir(assetsDir, 0755)
+	if err != nil {
+		t.Fatalf("Error creating assets directory: %s", err.Error())
+	}
+
+	assetFile := path.Join(assetsDir, "index.html")
+	workerFile := path.Join(tmpDir, "worker.js")
+
+	writeFiles := func(t *testing.T) {
+		err := os.WriteFile(assetFile, []byte("Hello world"), 0644)
+		if err != nil {
+			t.Fatalf("Error creating asset file at path %s: %s", assetFile, err.Error())
+		}
+		err = os.WriteFile(workerFile, []byte("export default { fetch() { return new Response('Hello from worker'); } };"), 0644)
+		if err != nil {
+			t.Fatalf("Error creating worker file at path %s: %s", workerFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		for _, file := range []string{assetFile, workerFile} {
+			err := os.Remove(file)
+			if err != nil {
+				t.Logf("Error removing temp file at path %s: %s", file, err.Error())
+			}
+		}
+		err := os.Remove(assetsDir)
+		if err != nil {
+			t.Logf("Error removing assets directory: %s", err.Error())
+		}
+	}
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeFiles(t)
+				},
+				Config: testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accountID, assetsDir, workerFile, `false`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				Config: testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accountID, assetsDir, workerFile, `["/api/*"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+					})),
+				},
+			},
+			{
+				Config: testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accountID, assetsDir, workerFile, `true`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				Config: testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accountID, assetsDir, workerFile, `["/api/*", "!/api/health"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+						knownvalue.StringExact("!/api/health"),
+					})),
+				},
+			},
+		},
+	})
+}
+
 func testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		rnd := resourceName[len("cloudflare_worker_version."):]
@@ -305,4 +390,8 @@ func testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID str
 
 		return fmt.Sprintf("%s/%s/%s", accountID, worker.Primary.ID, rs.Primary.ID), nil
 	}
+}
+
+func testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accountID, assetsDir, workerFile, runWorkerFirst string) string {
+	return acctest.LoadTestCase("assets_with_run_worker_first.tf", rnd, accountID, assetsDir, workerFile, runWorkerFirst)
 }
