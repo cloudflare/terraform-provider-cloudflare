@@ -182,7 +182,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"namespace": schema.StringAttribute{
-										Description: "The name of the dispatch namespace.",
+										Description: "Namespace to bind to.",
 										Computed:    true,
 									},
 									"outbound": schema.SingleNestedAttribute{
