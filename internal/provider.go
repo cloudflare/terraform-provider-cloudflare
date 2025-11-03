@@ -143,6 +143,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_config"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/universal_ssl_setting"
@@ -535,6 +537,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
+		token_validation_config.NewResource,
+		token_validation_rules.NewResource,
 	}
 }
 
@@ -873,6 +877,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsListDataSource,
+		token_validation_config.NewTokenValidationConfigDataSource,
+		token_validation_config.NewTokenValidationConfigsDataSource,
+		token_validation_rules.NewTokenValidationRulesDataSource,
+		token_validation_rules.NewTokenValidationRulesListDataSource,
 	}
 }
 
