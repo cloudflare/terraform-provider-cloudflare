@@ -5,13 +5,8 @@ package sso_connector
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -49,40 +44,8 @@ func (d *SSOConnectorDataSource) Configure(ctx context.Context, req datasource.C
 }
 
 func (d *SSOConnectorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *SSOConnectorDataSourceModel
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	params, diags := data.toReadParams(ctx)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := SSOConnectorResultDataSourceEnvelope{*data}
-	_, err := d.client.IAM.SSO.Get(
-		ctx,
-		data.SSOConnectorID.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
+	resp.Diagnostics.AddError(
+		"SSO Connector not supported",
+		"The SSO Connector data source is not currently supported as the SSO service is not available in the cloudflare-go SDK.",
 	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

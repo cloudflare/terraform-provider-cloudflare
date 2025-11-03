@@ -79,10 +79,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		},
 			"targeted": schema.BoolAttribute{
 				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",

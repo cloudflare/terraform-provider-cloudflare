@@ -3,13 +3,8 @@
 package sso_connector
 
 import (
-	"context"
-
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/iam"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,14 +22,6 @@ type SSOConnectorDataSourceModel struct {
 	UpdatedOn          timetypes.RFC3339                                                 `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
 	UseFedrampLanguage types.Bool                                                        `tfsdk:"use_fedramp_language" json:"use_fedramp_language,computed"`
 	Verification       customfield.NestedObject[SSOConnectorVerificationDataSourceModel] `tfsdk:"verification" json:"verification,computed"`
-}
-
-func (m *SSOConnectorDataSourceModel) toReadParams(_ context.Context) (params iam.SSOGetParams, diags diag.Diagnostics) {
-	params = iam.SSOGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
 }
 
 type SSOConnectorVerificationDataSourceModel struct {

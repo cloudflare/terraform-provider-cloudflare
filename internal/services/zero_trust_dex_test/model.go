@@ -22,7 +22,7 @@ type ZeroTrustDEXTestModel struct {
 	Data           *ZeroTrustDEXTestDataModel                                        `tfsdk:"data" json:"data,required"`
 	Description    types.String                                                      `tfsdk:"description" json:"description,optional"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
-	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,computed"`
+	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,computed_optional"`
 }
 
 func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {
