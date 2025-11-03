@@ -92,7 +92,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("tf-testacc-lb-%s.%s", rnd, zone))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fallback_pool"), knownvalue.NotNull()),
@@ -196,7 +196,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVers
 						ExpectNonEmptyPlan: tc.ExpectNonEmptyPlan,
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("tf-testacc-lb-%s.%s", rnd, zone))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("test load balancer")),
@@ -285,7 +285,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 
 			// Create migration steps - use standard migration approach for all versions
 			migrationSteps := []resource.TestStep{
-				acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+				acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
 				}),
 				{
@@ -378,7 +378,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
 					}),
 					{
@@ -444,7 +444,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{}),
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{}),
 			{
 				// Step 3: Apply migrated config with v5 provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -504,7 +504,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *test
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{}),
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{}),
 			{
 				// Step 3: Apply migrated config with v5 provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

@@ -71,7 +71,7 @@ func TestMigrateCloudflarePageRule_Basic(t *testing.T) {
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("active")),
@@ -145,7 +145,7 @@ func TestMigrateCloudflarePageRule_CacheDeceptionArmor(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("priority"), knownvalue.Float64Exact(1)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -329,7 +329,7 @@ func TestMigrateCloudflarePageRule_ForwardingURL(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -408,7 +408,7 @@ func TestMigrateCloudflarePageRule_CompleteSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("priority"), knownvalue.NotNull()),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{

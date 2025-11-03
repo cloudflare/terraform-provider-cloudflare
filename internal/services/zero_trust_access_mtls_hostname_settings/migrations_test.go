@@ -198,7 +198,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -242,7 +242,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
 				// Accept plan diff - v4 provider doesn't handle multiple hostname settings in state properly
 				ExpectNonEmptyPlan: true,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// API merges multiple hostnames, so we expect list with both
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(2)),
@@ -289,7 +289,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 			},
 			// Migration step - this tests that our migration logic handles the scenario correctly
 			// even if v4 provider has state management issues
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -348,7 +348,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -391,7 +391,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// Verify zone_id is not set for account-scoped resource
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.Null()),
@@ -434,7 +434,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
 				// TODO:: ErrorCheck does not exist. Not sure what the intent is here. Commenting for now
 				//ErrorCheck: checkForAPIConflictAndSkip(t),
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				// Verify account_id is not set for zone-scoped resource
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.Null()),

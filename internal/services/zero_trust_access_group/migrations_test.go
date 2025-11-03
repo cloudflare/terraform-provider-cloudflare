@@ -204,7 +204,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_Basic(t *testing.T) {
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
 			// Use special migration function for access group
 			steps = append(steps,
-				acctest.ZeroTrustAccessGroupMigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
+				acctest.ZeroTrustAccessGroupMigrationV2TestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
@@ -277,7 +277,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ComplexRules(t *testing.T) {
 
 			// Step 2: Run migration and verify transformation
 			steps = append(steps,
-				acctest.ZeroTrustAccessGroupMigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
+				acctest.ZeroTrustAccessGroupMigrationV2TestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					// Verify expansion: 2 emails + 2 IPs = 4 include objects
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(4)),
@@ -349,7 +349,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ZoneScoped(t *testing.T) {
 
 			// Step 2: Run migration and verify zone context preserved
 			steps = append(steps,
-				acctest.ZeroTrustAccessGroupMigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
+				acctest.ZeroTrustAccessGroupMigrationV2TestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(2)),
@@ -505,7 +505,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
 			steps = append(steps,
-				acctest.ZeroTrustAccessGroupMigrationTestStep(t, config, tmpDir, tc.version, expectedChecks),
+				acctest.ZeroTrustAccessGroupMigrationV2TestStep(t, config, tmpDir, tc.version, expectedChecks),
 			)
 
 			resource.Test(t, resource.TestCase{

@@ -35,7 +35,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }`, rnd, zoneID)
 
 	// Use MigrationTestStepWithPlan to handle import block processing
-	migrationSteps := acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 		// Verify http3 setting
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
@@ -83,7 +83,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }`, rnd, zoneID)
 
 	// Use MigrationTestStepWithPlan to handle import block processing
-	migrationSteps := acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 		// Verify zero_rtt -> 0rtt mapping
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("0rtt")),
@@ -151,7 +151,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify NEL block transformation
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify NEL nested block transformation
 				statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_nel", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_nel", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("nel")),
@@ -205,7 +205,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify variable references are preserved
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify http3 setting preserves variable reference
 				statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),

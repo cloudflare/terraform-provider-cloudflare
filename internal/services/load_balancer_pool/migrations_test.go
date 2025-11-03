@@ -74,7 +74,7 @@ func TestMigrateCloudflareLoadBalancerPool_Basic_MultiVersion(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("minimum_origins"), knownvalue.Int64Exact(1)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-basic-%s", rnd))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
@@ -163,7 +163,7 @@ func TestMigrateCloudflareLoadBalancerPool_AllOptionalAttributes_MultiVersion(t 
 						},
 					},
 					// Step 2 - migrate to new provider, check that there's no diff, and verify results
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-full-%s", rnd))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
@@ -354,7 +354,7 @@ func TestMigrateCloudflareLoadBalancerPool_CheckRegions_MultiVersion(t *testing.
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-regions-%s", rnd))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						// Verify check_regions changed from set to list
@@ -644,7 +644,7 @@ func TestMigrateCloudflareLoadBalancerPool_DynamicOrigins_MultiVersion(t *testin
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						// Verify origins structure remains correct after migration

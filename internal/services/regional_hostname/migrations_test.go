@@ -52,7 +52,7 @@ func TestMigrateCloudflareRegionalHostname_Migration_TimeoutsRemoval(t *testing.
 			// Step 2: Run migration from v4 to current version
 			// This will run the migration tool which should remove the timeouts block
 			// and the state upgrade function will handle the state transformation
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, zoneName))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_key"), knownvalue.StringExact("ca")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),

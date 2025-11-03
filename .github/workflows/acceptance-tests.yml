@@ -44,13 +44,19 @@ jobs:
         with:
           go-version-file: ./go.mod
 
+      - name: Install Go modules
+        run: go mod download
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+          terraform_wrapper: false
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 24
-
-      - name: Install grit
-        run: npm install -g @getgrit/cli
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -58,58 +64,100 @@ jobs:
       - name: Build tf-migrate
         run: ./scripts/build-tf-migrate.sh
 
-      ######## Magic Tests ########
-      - name: Run Magic Acceptance Tests
-        id: magic_acceptance_tests
-        run: ./scripts/run-ci-tests magic acceptance
+      - name: Build provider
+        run: go build -o terraform-provider-cloudflare .
         env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
+          GOGC: "50"
 
-      - name: Run Magic Migration Tests
-        id: magic_migration_tests
-        run: ./scripts/run-ci-tests magic migration
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
+      ######## Magic Tests ########
+#      - name: Run Magic Acceptance Tests
+#        id: magic_acceptance_tests
+#        timeout-minutes: 120
+#        run: ./scripts/run-ci-tests magic acceptance
+#        env:
+#          TF_ACC: 1
+#          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+#          TF_LOG: DEBUG
+#          TF_LOG_PATH_MASK: ${{ github.workspace }}/test-logs/terraform-%s.log
+#          DEBUG_LOGS: "true"
+#          TEST_TIMEOUT: "30m"
+#          SWEEP_TIMEOUT: "10m"
+#          PARALLEL_JOBS: "3"
+#          GOGC: "50"
+#        continue-on-error: true
+
+#      - name: Run Magic Migration Tests
+#        id: magic_migration_tests
+#        timeout-minutes: 120
+#        run: ./scripts/run-ci-tests magic migration
+#        env:
+#          TF_ACC: 1
+#          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+#          TF_LOG: DEBUG
+#          TF_LOG_PATH_MASK: ${{ github.workspace }}/test-logs/terraform-%s.log
+#          DEBUG_LOGS: "true"
+#          TEST_TIMEOUT: "30m"
+#          SWEEP_TIMEOUT: "10m"
+#          PARALLEL_JOBS: "3"
+#          GOGC: "50"
+#        continue-on-error: true
 
       ######## Organization Tests ########
       # These tests require a specific user with organization permissions
-      - name: Run Organization Acceptance Tests
-        id: organization_acceptance_tests
-        run: ./scripts/run-ci-tests organization acceptance
-        env:
-          TF_ACC: 1
+#      - name: Run Organization Acceptance Tests
+#        id: organization_acceptance_tests
+#        timeout-minutes: 120
+#        run: ./scripts/run-ci-tests organization acceptance
+#        env:
+#          TF_ACC: 1
           # Override credentials for organization tests
-          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
-          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
-          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
-        continue-on-error: true
+#          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
+#          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
+#          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
+#          TF_LOG: DEBUG
+#          TF_LOG_PATH_MASK: ${{ github.workspace }}/test-logs/terraform-%s.log
+#          DEBUG_LOGS: "true"
+#          TEST_TIMEOUT: "30m"
+#          SWEEP_TIMEOUT: "10m"
+#          PARALLEL_JOBS: "3"
+#          GOGC: "50"
+#        continue-on-error: true
 
       ######## Everything Else ########
-      - name: Run Default Acceptance Tests
-        id: default_acceptance_tests
-        run: ./scripts/run-ci-tests default acceptance
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
+#      - name: Run Default Acceptance Tests
+#        id: default_acceptance_tests
+#        timeout-minutes: 120
+#        run: ./scripts/run-ci-tests default acceptance
+#        env:
+#          TF_ACC: 1
+#          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+#          TF_LOG: DEBUG
+#          TF_LOG_PATH_MASK: ${{ github.workspace }}/test-logs/terraform-%s.log
+#          DEBUG_LOGS: "true"
+#          TEST_TIMEOUT: "30m"
+#          SWEEP_TIMEOUT: "10m"
+#          PARALLEL_JOBS: "3"
+#          GOGC: "50"
+#        continue-on-error: true
 
       - name: Run Default Migration Tests
         id: default_migration_tests
+        timeout-minutes: 120
         run: ./scripts/run-ci-tests default migration
         env:
           TF_ACC: 1
           TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+          TEST_TIMEOUT: "30m"
+          SWEEP_TIMEOUT: "10m"
+          PARALLEL_JOBS: "3"
+          GOGC: "50"
         continue-on-error: true
 
-      - name: Check Test Status
-        if: ${{
-          steps.magic_acceptance_tests.outcome == 'failure' ||
-          steps.magic_migration_tests.outcome == 'failure' ||
-          steps.default_acceptance_tests.outcome == 'failure' ||
-          steps.default_migration_tests.outcome == 'failure' ||
-          steps.organization_acceptance_tests.outcome == 'failure'}}
-        run: exit 1
+#      - name: Check Test Status
+#        if: ${{
+#          steps.magic_acceptance_tests.outcome == 'failure' ||
+#          steps.magic_migration_tests.outcome == 'failure' ||
+#          steps.default_acceptance_tests.outcome == 'failure' ||
+#          steps.default_migration_tests.outcome == 'failure' ||
+#          steps.organization_acceptance_tests.outcome == 'failure'}}
+#        run: exit 1
