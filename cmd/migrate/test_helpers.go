@@ -23,10 +23,23 @@ type TestCase struct {
 	Expected []string
 }
 
+// clearApplicationPolicyMapping clears the global application policy mapping
+// This is needed between tests to prevent cross-test contamination
+func clearApplicationPolicyMapping() {
+	// Access the global applicationPolicyMapping from access_policy.go
+	// and clear it to prevent moved blocks from appearing in unrelated tests
+	for k := range applicationPolicyMapping {
+		delete(applicationPolicyMapping, k)
+	}
+}
+
 // RunTransformationTests executes a series of test cases for HCL transformation
 func RunTransformationTests(t *testing.T, tests []TestCase, transformFunc func([]byte, string) ([]byte, error)) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// Clear any global state that might affect the test
+			clearApplicationPolicyMapping()
+			
 			// Parse the input
 			file, diags := hclwrite.ParseConfig([]byte(tt.Config), "test.tf", hcl.InitialPos)
 			require.False(t, diags.HasErrors(), "Failed to parse input config: %s", diags)
