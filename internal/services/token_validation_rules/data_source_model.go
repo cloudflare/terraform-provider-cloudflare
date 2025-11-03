@@ -27,7 +27,6 @@ type TokenValidationRulesDataSourceModel struct {
 	Enabled     types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Expression  types.String                                                          `tfsdk:"expression" json:"expression,computed"`
 	LastUpdated timetypes.RFC3339                                                     `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	ModifiedBy  types.String                                                          `tfsdk:"modified_by" json:"modified_by,computed"`
 	Title       types.String                                                          `tfsdk:"title" json:"title,computed"`
 	Selector    customfield.NestedObject[TokenValidationRulesSelectorDataSourceModel] `tfsdk:"selector" json:"selector,computed"`
 	Filter      *TokenValidationRulesFindOneByDataSourceModel                         `tfsdk:"filter"`

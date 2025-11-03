@@ -67,30 +67,45 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"alg": schema.StringAttribute{
-									Description: "Algorithm\nAvailable values: \"ES256\", \"ES384\", \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\".",
+									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
-											"ES256",
-											"ES384",
 											"RS256",
 											"RS384",
 											"RS512",
 											"PS256",
 											"PS384",
 											"PS512",
+											"ES256",
+											"ES384",
 										),
 									},
+								},
+								"e": schema.StringAttribute{
+									Description: "RSA exponent",
+									Computed:    true,
 								},
 								"kid": schema.StringAttribute{
 									Description: "Key ID",
 									Computed:    true,
 								},
 								"kty": schema.StringAttribute{
-									Description: "Key Type\nAvailable values: \"EC\", \"RSA\".",
+									Description: "Key Type\nAvailable values: \"RSA\", \"EC\".",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("EC", "RSA"),
+										stringvalidator.OneOfCaseInsensitive("RSA", "EC"),
+									},
+								},
+								"n": schema.StringAttribute{
+									Description: "RSA modulus",
+									Computed:    true,
+								},
+								"crv": schema.StringAttribute{
+									Description: "Curve\nAvailable values: \"P-256\", \"P-384\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("P-256", "P-384"),
 									},
 								},
 								"x": schema.StringAttribute{
@@ -99,14 +114,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"y": schema.StringAttribute{
 									Description: "Y EC coordinate",
-									Computed:    true,
-								},
-								"e": schema.StringAttribute{
-									Description: "RSA exponent",
-									Computed:    true,
-								},
-								"n": schema.StringAttribute{
-									Description: "RSA modulus",
 									Computed:    true,
 								},
 							},
