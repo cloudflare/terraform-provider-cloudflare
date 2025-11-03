@@ -252,20 +252,6 @@ type WorkersScriptNamedHandlersModel struct {
 	Name     types.String                   `tfsdk:"name" json:"name,computed"`
 }
 
-type WorkersScriptObservabilityModel struct {
-	Enabled          types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed"`
-}
-
-type WorkersScriptObservabilityLogsModel struct {
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
-}
-
 type WorkersScriptPlacementModel struct {
 	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
 	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
