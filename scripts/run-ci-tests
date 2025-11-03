@@ -17,6 +17,9 @@ get_product_group_services() {
         magic)
             echo "magic_wan_ipsec_tunnel magic_wan_gre_tunnel magic_wan_static_route magic_transit_connector"
             ;;
+        organization)
+            echo "organization organization_profile"
+            ;;
         *)
             echo ""
             ;;
@@ -24,7 +27,7 @@ get_product_group_services() {
 }
 
 get_available_product_groups() {
-    echo "magic"
+    echo "magic organization"
 }
 
 # List of services with their parallel test configuration
@@ -83,6 +86,8 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/managed_transforms parallel=1"
     "resource=./internal/services/notification_policy_webhooks"
     "resource=./internal/services/observatory_scheduled_test"
+    "resource=./internal/services/organization"
+    "resource=./internal/services/organization_profile depends_on=organization"
     "resource=./internal/services/origin_ca_certificate"
     "resource=./internal/services/page_rule parallel=1"
     "resource=./internal/services/pages_domain"
@@ -134,8 +139,10 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/zero_trust_list"
     "resource=./internal/services/zero_trust_organization"
     "resource=./internal/services/zero_trust_tunnel_cloudflared"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_config"
     "resource=./internal/services/zero_trust_tunnel_cloudflared_route"
     "resource=./internal/services/zero_trust_tunnel_cloudflared_token"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_virtual_network"
     "resource=./internal/services/zone"
     "resource=./internal/services/zone_cache_reserve"
     "resource=./internal/services/zone_cache_variants"

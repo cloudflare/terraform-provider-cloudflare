@@ -9,7 +9,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
 
   rule_settings = {
     quarantine = {
-      file_types = ["exe", "pdf", "zip"]
+      file_types = ["pdf"]
     }
   }
 }

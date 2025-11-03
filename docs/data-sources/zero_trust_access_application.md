@@ -75,7 +75,7 @@ The header value will be interpreted as a json object similar to:
 - `tags` (Set of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--target_criteria))
 - `type` (String) The application type.
-Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp".
+Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp", "mcp", "mcp_portal".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -106,6 +106,10 @@ Read-Only:
 
 <a id="nestedatt--destinations"></a>
 ### Nested Schema for `destinations`
+
+Optional:
+
+- `mcp_server_id` (String) A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.
 
 Read-Only:
 

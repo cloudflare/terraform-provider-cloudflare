@@ -44,6 +44,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
 				},
 			},
+			"managed_by": schema.SingleNestedAttribute{
+				Description: "Parent container details",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountManagedByDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"parent_org_id": schema.StringAttribute{
+						Description: "ID of the parent Organization, if one exists",
+						Computed:    true,
+					},
+					"parent_org_name": schema.StringAttribute{
+						Description: "Name of the parent Organization, if one exists",
+						Computed:    true,
+					},
+				},
+			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
 				Computed:    true,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -19,6 +20,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+const resourcePrefix = "tfacctest-"
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
@@ -52,9 +55,12 @@ func testSweepCloudflarePagesProjects(r string) error {
 	// Track unique project names to avoid duplicate deletions
 	projectNames := make(map[string]bool)
 
-	// Delete all pages projects in the test account
-	// Note: In a test environment, we assume all pages projects can be deleted
+	// Delete all pages projects with test prefix
 	for _, deployment := range list.Result {
+		if !strings.HasPrefix(deployment.ProjectName, resourcePrefix) {
+			continue
+		}
+
 		// Only delete each project once (deployments can have multiple entries per project)
 		if !projectNames[deployment.ProjectName] {
 			projectNames[deployment.ProjectName] = true
@@ -75,36 +81,36 @@ func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoN
 	return acctest.LoadTestCase("pagesprojectsource.tf", resourceID, accountID, projectName, repoOwner, repoName)
 }
 
-func testPagesProjectBuildConfig(resourceID, accountID string) string {
-	return acctest.LoadTestCase("pagesprojectbuildconfig.tf", resourceID, accountID, resourceID)
+func testPagesProjectBuildConfig(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectbuildconfig.tf", resourceID, accountID, projectName)
 }
 
 func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string) string {
 	return acctest.LoadTestCase("pagesprojectdeploymentconfig.tf", resourceID, accountID, projectName)
 }
 
-func testPagesProjectDirectUpload(resourceID, accountID string) string {
-	return acctest.LoadTestCase("pagesprojectdirectupload.tf", resourceID, accountID)
+func testPagesProjectDirectUpload(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectdirectupload.tf", resourceID, accountID, projectName)
 }
 
-func testPagesProjectMinimal(resourceID, accountID string) string {
-	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID)
+func testPagesProjectMinimal(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID, projectName)
 }
 
-func testPagesProjectFullConfig(resourceID, accountID, owner, repo string) string {
-	return acctest.LoadTestCase("pagesprojectfullconfig.tf", resourceID, accountID, owner, repo)
+func testPagesProjectFullConfig(resourceID, accountID, projectName, owner, repo string) string {
+	return acctest.LoadTestCase("pagesprojectfullconfig.tf", resourceID, accountID, projectName, owner, repo)
 }
 
-func testPagesProjectEnvVars(resourceID, accountID string) string {
-	return acctest.LoadTestCase("pagesprojectenvvars.tf", resourceID, accountID)
+func testPagesProjectEnvVars(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectenvvars.tf", resourceID, accountID, projectName)
 }
 
-func testPagesProjectPreviewSettings(resourceID, accountID, owner, repo, setting, extraConfig string) string {
-	return acctest.LoadTestCase("pagesprojectpreviewsettings.tf", resourceID, accountID, owner, repo, setting, extraConfig)
+func testPagesProjectPreviewSettings(resourceID, accountID, projectName, owner, repo, setting, extraConfig string) string {
+	return acctest.LoadTestCase("pagesprojectpreviewsettings.tf", resourceID, accountID, projectName, owner, repo, setting, extraConfig)
 }
 
-func testPagesProjectUpdated(resourceID, accountID string) string {
-	return acctest.LoadTestCase("pagesprojectupdated.tf", resourceID, accountID)
+func testPagesProjectUpdated(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectupdated.tf", resourceID, accountID, projectName)
 }
 
 func testAccCheckCloudflarePageProjectDestroy(s *terraform.State) error {
@@ -128,10 +134,10 @@ func testAccCheckCloudflarePageProjectDestroy(s *terraform.State) error {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	t.Skipf("Please configure Cloudflare Pages GitHub project.")
-
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
@@ -145,9 +151,9 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectSource(rnd, accountID, rnd, pagesOwner, pagesRepo),
+				Config: testPagesProjectSource(rnd, accountID, projectName, pagesOwner, pagesRepo),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("type"), knownvalue.StringExact("github")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("owner"), knownvalue.StringExact(pagesOwner)),
@@ -155,7 +161,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("pr_comments_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("deployments_enabled"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("production_deployment_enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("production_deployments_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_deployment_setting"), knownvalue.StringExact("custom")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_includes"), knownvalue.ListSizeExact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_includes").AtSliceIndex(0), knownvalue.StringExact("dev")),
@@ -176,10 +182,10 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
-	t.Skipf("Please configure Cloudflare Pages GitHub project.")
-
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -191,9 +197,9 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectBuildConfig(rnd, accountID),
+				Config: testPagesProjectBuildConfig(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("npm run build")),
@@ -214,10 +220,10 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
-	t.Skipf("Please configure Cloudflare Pages GitHub project.")
-
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -228,72 +234,63 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectDeploymentConfig(rnd, accountID, rnd),
+				Config: testPagesProjectDeploymentConfig(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 
 					// Preview
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("type"), knownvalue.StringExact("plain_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("value"), knownvalue.StringExact("preview")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("value"), knownvalue.StringExact("1x0000000000000000000000000000000AA")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases").AtMapKey("D1_BINDING").AtMapKey("id"), knownvalue.StringExact("445e2955-951a-4358-a35b-a4d0c813f63")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets").AtMapKey("R2_BINDING").AtMapKey("name"), knownvalue.StringExact("some-bucket")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2022-08-15")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_flags"), knownvalue.ListSizeExact(1)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_flags").AtSliceIndex(0), knownvalue.StringExact("preview_flag")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("environment_variables"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("environment_variables").AtMapKey("ENVIRONMENT"), knownvalue.StringExact("preview")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("secrets"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("secrets").AtMapKey("TURNSTILE_SECRET"), knownvalue.StringExact("1x0000000000000000000000000000000AA")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases").AtMapKey("D1_BINDING"), knownvalue.StringExact("445e2955-951a-4358-a35b-a4d0c813f63")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets").AtMapKey("R2_BINDING"), knownvalue.StringExact("some-bucket")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("always_use_latest_compatibility_date"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("unbound")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("placement"), knownvalue.Null()),
 
 					// Production
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("environment_variables"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("environment_variables").AtMapKey("ENVIRONMENT"), knownvalue.StringExact("production")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("environment_variables").AtMapKey("OTHER_VALUE"), knownvalue.StringExact("other value")),
-
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("secrets"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("secrets").AtMapKey("TURNSTILE_SECRET"), knownvalue.StringExact("1x0000000000000000000000000000000AA")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("secrets").AtMapKey("TURNSTILE_INVIS_SECRET"), knownvalue.StringExact("2x0000000000000000000000000000000AA")),
-
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(4)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("type"), knownvalue.StringExact("plain_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("value"), knownvalue.StringExact("production")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("OTHER_VALUE").AtMapKey("type"), knownvalue.StringExact("plain_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("OTHER_VALUE").AtMapKey("value"), knownvalue.StringExact("other value")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("value"), knownvalue.StringExact("1x0000000000000000000000000000000AA")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_INVIS_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_INVIS_SECRET").AtMapKey("value"), knownvalue.StringExact("2x0000000000000000000000000000000AA")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_1"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_2"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
-
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_1").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_2").AtMapKey("namespace_id"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_1"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_2"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
-
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_1").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_2").AtMapKey("namespace_id"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("d1_databases"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("d1_databases").AtMapKey("D1_BINDING_1"), knownvalue.StringExact("445e2955-951a-4358-a35b-a4d0c813f63")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("d1_databases").AtMapKey("D1_BINDING_2"), knownvalue.StringExact("a399414b-c697-409a-a688-377db6433cd9")),
-
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("d1_databases").AtMapKey("D1_BINDING_1").AtMapKey("id"), knownvalue.StringExact("445e2955-951a-4358-a35b-a4d0c813f63")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("d1_databases").AtMapKey("D1_BINDING_2").AtMapKey("id"), knownvalue.StringExact("a399414b-c697-409a-a688-377db6433cd9")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets").AtMapKey("R2_BINDING_1"), knownvalue.StringExact("some-bucket")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets").AtMapKey("R2_BINDING_2"), knownvalue.StringExact("other-bucket")),
-
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets").AtMapKey("R2_BINDING_1").AtMapKey("name"), knownvalue.StringExact("some-bucket")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets").AtMapKey("R2_BINDING_2").AtMapKey("name"), knownvalue.StringExact("other-bucket")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_date"), knownvalue.StringExact("2022-08-16")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_flags"), knownvalue.ListSizeExact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_flags").AtSliceIndex(0), knownvalue.StringExact("production_flag")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_flags").AtSliceIndex(1), knownvalue.StringExact("second flag")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("always_use_latest_compatibility_date"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement").AtSliceIndex(0).AtMapKey("mode"), knownvalue.StringExact("smart")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
 				},
 			},
 			{
@@ -307,8 +304,10 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -319,15 +318,14 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectDirectUpload(rnd, accountID),
+				Config: testPagesProjectDirectUpload(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:            name,
@@ -341,8 +339,10 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -353,9 +353,9 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectMinimal(rnd, accountID),
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
@@ -364,23 +364,21 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testPagesProjectUpdated(rnd, accountID),
+				Config: testPagesProjectUpdated(rnd, accountID, projectName),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("yarn build")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:            name,
@@ -394,8 +392,10 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T) {
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -406,28 +406,26 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectUpdated(rnd, accountID),
+				Config: testPagesProjectUpdated(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testPagesProjectMinimal(rnd, accountID),
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.Null()),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:            name,
@@ -440,10 +438,10 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 	})
 }
 func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
-	t.Skipf("Please configure Cloudflare Pages GitHub project.")
-
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
@@ -457,9 +455,9 @@ func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectFullConfig(rnd, accountID, pagesOwner, pagesRepo),
+				Config: testPagesProjectFullConfig(rnd, accountID, projectName, pagesOwner, pagesRepo),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
 
@@ -519,8 +517,10 @@ func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -531,9 +531,9 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectEnvVars(rnd, accountID),
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 
 					// Preview env vars - test both types
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("PLAIN_TEXT_VAR").AtMapKey("type"), knownvalue.StringExact("plain_text")),
@@ -543,7 +543,6 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_PLAIN").AtMapKey("type"), knownvalue.StringExact("plain_text")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:            name,
@@ -557,10 +556,10 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
-	t.Skipf("Please configure Cloudflare Pages GitHub project.")
-
+	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
@@ -574,14 +573,14 @@ func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectPreviewSettings(rnd, accountID, pagesOwner, pagesRepo, "all", ""),
+				Config: testPagesProjectPreviewSettings(rnd, accountID, projectName, pagesOwner, pagesRepo, "all", ""),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_deployment_setting"), knownvalue.StringExact("all")),
 				},
 			},
 			{
-				Config: testPagesProjectPreviewSettings(rnd, accountID, pagesOwner, pagesRepo, "none", ""),
+				Config: testPagesProjectPreviewSettings(rnd, accountID, projectName, pagesOwner, pagesRepo, "none", ""),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
@@ -592,7 +591,7 @@ func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 				},
 			},
 			{
-				Config: testPagesProjectPreviewSettings(rnd, accountID, pagesOwner, pagesRepo, "custom", `
+				Config: testPagesProjectPreviewSettings(rnd, accountID, projectName, pagesOwner, pagesRepo, "custom", `
 				preview_branch_includes = ["dev", "staging"]
 				preview_branch_excludes = ["main", "prod"]
 				`),

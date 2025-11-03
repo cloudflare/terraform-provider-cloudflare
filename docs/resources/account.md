@@ -30,6 +30,7 @@ resource "cloudflare_account" "example_account" {
 
 ### Optional
 
+- `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--managed_by))
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
 - `type` (String) Available values: "standard", "enterprise".
 - `unit` (Attributes) information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/ (see [below for nested schema](#nestedatt--unit))
@@ -38,6 +39,15 @@ resource "cloudflare_account" "example_account" {
 
 - `created_on` (String) Timestamp for the creation of the account
 - `id` (String) Identifier
+
+<a id="nestedatt--managed_by"></a>
+### Nested Schema for `managed_by`
+
+Read-Only:
+
+- `parent_org_id` (String) ID of the parent Organization, if one exists
+- `parent_org_name` (String) Name of the parent Organization, if one exists
+
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`

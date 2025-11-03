@@ -5,6 +5,9 @@ package internal
 import (
 	"context"
 	"fmt"
+	"os"
+	"regexp"
+
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -43,6 +46,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
@@ -101,6 +105,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
@@ -232,8 +238,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"os"
-	"regexp"
 )
 
 var _ provider.ProviderWithConfigValidators = (*CloudflareProvider)(nil)
@@ -396,6 +400,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		account_member.NewResource,
 		account_subscription.NewResource,
 		account_token.NewResource,
+		organization.NewResource,
+		organization_profile.NewResource,
 		origin_ca_certificate.NewResource,
 		user.NewResource,
 		api_token.NewResource,
@@ -585,6 +591,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workflow.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
+		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
@@ -606,6 +613,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_token.NewAccountTokensDataSource,
 		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsDataSource,
 		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsListDataSource,
+		organization.NewOrganizationDataSource,
+		organization.NewOrganizationsDataSource,
+		organization_profile.NewOrganizationProfileDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
 		ip_ranges.NewIPRangesDataSource,
@@ -919,6 +929,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workflow.NewWorkflowsDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
+		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,

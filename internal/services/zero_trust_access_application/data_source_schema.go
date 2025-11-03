@@ -136,7 +136,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -151,6 +151,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"dash_sso",
 						"infrastructure",
 						"rdp",
+						"mcp",
+						"mcp_portal",
 					),
 				},
 			},
@@ -251,7 +253,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: `Available values: "public", "private".`,
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("public", "private"),
+								stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal"),
 							},
 						},
 						"uri": schema.StringAttribute{
@@ -280,6 +282,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"vnet_id": schema.StringAttribute{
 							Description: "The VNET ID to match the destination. When omitted, all VNETs will match.",
 							Computed:    true,
+						},
+						"mcp_server_id": schema.StringAttribute{
+							Description: "A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.",
+							Optional:    true,
 						},
 					},
 				},

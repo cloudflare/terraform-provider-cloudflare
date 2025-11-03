@@ -39,6 +39,7 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 - `last_heartbeat` (String)
 - `last_seen_version` (String)
 - `last_updated` (String)
+- `license_key` (String)
 - `notes` (String)
 - `timezone` (String)
 
