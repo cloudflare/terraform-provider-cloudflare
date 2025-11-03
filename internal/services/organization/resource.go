@@ -186,7 +186,7 @@ func (r *OrganizationResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	_, err := r.client.Organizations.Delete(
+	err := r.client.Organizations.Delete(
 		ctx,
 		data.ID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),

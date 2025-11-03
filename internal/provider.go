@@ -75,14 +75,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_field"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job"
@@ -143,8 +140,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_config"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/universal_ssl_setting"
@@ -169,7 +164,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider"
@@ -393,7 +387,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
 		logpush_ownership_challenge.NewResource,
-		logpull_retention.NewResource,
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
 		authenticated_origin_pulls_settings.NewResource,
@@ -528,17 +521,12 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
-		workflow.NewResource,
-		leaked_credential_check.NewResource,
-		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
-		token_validation_config.NewResource,
-		token_validation_rules.NewResource,
 	}
 }
 
@@ -639,7 +627,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_dataset_job.NewLogpushDatasetJobDataSource,
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
-		logpull_retention.NewLogpullRetentionDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
@@ -673,7 +660,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_kv.NewWorkersKVDataSource,
 		queue.NewQueueDataSource,
 		queue.NewQueuesDataSource,
-		queue_consumer.NewQueueConsumerDataSource,
 		queue_consumer.NewQueueConsumersDataSource,
 		api_shield.NewAPIShieldDataSource,
 		api_shield_discovery_operation.NewAPIShieldDiscoveryOperationsDataSource,
@@ -864,10 +850,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		sso_connector.NewSSOConnectorsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
-		workflow.NewWorkflowDataSource,
-		workflow.NewWorkflowsDataSource,
-		leaked_credential_check.NewLeakedCredentialCheckDataSource,
-		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
@@ -877,10 +859,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsListDataSource,
-		token_validation_config.NewTokenValidationConfigDataSource,
-		token_validation_config.NewTokenValidationConfigsDataSource,
-		token_validation_rules.NewTokenValidationRulesDataSource,
-		token_validation_rules.NewTokenValidationRulesListDataSource,
 	}
 }
 
