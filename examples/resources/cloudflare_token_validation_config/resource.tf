@@ -3,6 +3,7 @@ resource "cloudflare_token_validation_config" "example_token_validation_config" 
   credentials = {
     keys = [{
       alg = "ES256"
+      crv = "P-256"
       kid = "38013f13-c266-4eec-a72a-92ec92779f21"
       kty = "EC"
       x = "KN53JRwN3wCjm2o39bvZUX2VdrsHzS8pxOAGjm8m7EQ"

@@ -33,15 +33,16 @@ func (m TokenValidationConfigModel) MarshalJSONForUpdate(state TokenValidationCo
 }
 
 type TokenValidationConfigCredentialsModel struct {
-	Keys *[]*TokenValidationConfigCredentialsKeysModel `tfsdk:"keys" json:"keys,optional"`
+	Keys *[]*TokenValidationConfigCredentialsKeysModel `tfsdk:"keys" json:"keys,required"`
 }
 
 type TokenValidationConfigCredentialsKeysModel struct {
 	Alg types.String `tfsdk:"alg" json:"alg,required"`
+	E   types.String `tfsdk:"e" json:"e,optional"`
 	Kid types.String `tfsdk:"kid" json:"kid,required"`
 	Kty types.String `tfsdk:"kty" json:"kty,required"`
+	N   types.String `tfsdk:"n" json:"n,optional"`
+	Crv types.String `tfsdk:"crv" json:"crv,optional"`
 	X   types.String `tfsdk:"x" json:"x,optional"`
 	Y   types.String `tfsdk:"y" json:"y,optional"`
-	E   types.String `tfsdk:"e" json:"e,optional"`
-	N   types.String `tfsdk:"n" json:"n,optional"`
 }

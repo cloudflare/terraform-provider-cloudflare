@@ -60,9 +60,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"modified_by": schema.StringAttribute{
-				Computed: true,
-			},
 			"title": schema.StringAttribute{
 				Description: "A human-readable name for the rule.",
 				Computed:    true,
