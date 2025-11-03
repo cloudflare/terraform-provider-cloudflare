@@ -44,10 +44,11 @@ type TokenValidationConfigCredentialsDataSourceModel struct {
 
 type TokenValidationConfigCredentialsKeysDataSourceModel struct {
 	Alg types.String `tfsdk:"alg" json:"alg,computed"`
+	E   types.String `tfsdk:"e" json:"e,computed"`
 	Kid types.String `tfsdk:"kid" json:"kid,computed"`
 	Kty types.String `tfsdk:"kty" json:"kty,computed"`
+	N   types.String `tfsdk:"n" json:"n,computed"`
+	Crv types.String `tfsdk:"crv" json:"crv,computed"`
 	X   types.String `tfsdk:"x" json:"x,computed"`
 	Y   types.String `tfsdk:"y" json:"y,computed"`
-	E   types.String `tfsdk:"e" json:"e,computed"`
-	N   types.String `tfsdk:"n" json:"n,computed"`
 }

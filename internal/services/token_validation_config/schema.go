@@ -43,34 +43,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"keys": schema.ListNestedAttribute{
-						Optional: true,
+						Required: true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"alg": schema.StringAttribute{
-									Description: "Algorithm\nAvailable values: \"ES256\", \"ES384\", \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\".",
+									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\".",
 									Required:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
-											"ES256",
-											"ES384",
 											"RS256",
 											"RS384",
 											"RS512",
 											"PS256",
 											"PS384",
 											"PS512",
+											"ES256",
+											"ES384",
 										),
 									},
+								},
+								"e": schema.StringAttribute{
+									Description: "RSA exponent",
+									Optional:    true,
 								},
 								"kid": schema.StringAttribute{
 									Description: "Key ID",
 									Required:    true,
 								},
 								"kty": schema.StringAttribute{
-									Description: "Key Type\nAvailable values: \"EC\", \"RSA\".",
+									Description: "Key Type\nAvailable values: \"RSA\", \"EC\".",
 									Required:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("EC", "RSA"),
+										stringvalidator.OneOfCaseInsensitive("RSA", "EC"),
+									},
+								},
+								"n": schema.StringAttribute{
+									Description: "RSA modulus",
+									Optional:    true,
+								},
+								"crv": schema.StringAttribute{
+									Description: "Curve\nAvailable values: \"P-256\", \"P-384\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("P-256", "P-384"),
 									},
 								},
 								"x": schema.StringAttribute{
@@ -79,14 +94,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"y": schema.StringAttribute{
 									Description: "Y EC coordinate",
-									Optional:    true,
-								},
-								"e": schema.StringAttribute{
-									Description: "RSA exponent",
-									Optional:    true,
-								},
-								"n": schema.StringAttribute{
-									Description: "RSA modulus",
 									Optional:    true,
 								},
 							},

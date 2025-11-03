@@ -141,9 +141,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
-						"modified_by": schema.StringAttribute{
-							Computed: true,
-						},
 					},
 				},
 			},
