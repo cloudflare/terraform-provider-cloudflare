@@ -170,6 +170,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_portal"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_server"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider"
@@ -479,6 +481,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_device_settings.NewResource,
 		zero_trust_access_identity_provider.NewResource,
 		zero_trust_organization.NewResource,
+		zero_trust_access_ai_controls_mcp_portal.NewResource,
+		zero_trust_access_ai_controls_mcp_server.NewResource,
 		zero_trust_access_infrastructure_target.NewResource,
 		zero_trust_access_short_lived_certificate.NewResource,
 		zero_trust_access_mtls_certificate.NewResource,
@@ -775,6 +779,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProviderDataSource,
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProvidersDataSource,
 		zero_trust_organization.NewZeroTrustOrganizationDataSource,
+		zero_trust_access_ai_controls_mcp_portal.NewZeroTrustAccessAIControlsMcpPortalDataSource,
+		zero_trust_access_ai_controls_mcp_portal.NewZeroTrustAccessAIControlsMcpPortalsDataSource,
+		zero_trust_access_ai_controls_mcp_server.NewZeroTrustAccessAIControlsMcpServerDataSource,
+		zero_trust_access_ai_controls_mcp_server.NewZeroTrustAccessAIControlsMcpServersDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetsDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificateDataSource,
