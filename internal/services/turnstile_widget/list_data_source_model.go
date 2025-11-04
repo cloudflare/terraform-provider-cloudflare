@@ -41,6 +41,7 @@ func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type TurnstileWidgetsResultDataSourceModel struct {
+	ID             types.String                   `tfsdk:"id" json:"sitekey,computed"`
 	BotFightMode   types.Bool                     `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                   `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

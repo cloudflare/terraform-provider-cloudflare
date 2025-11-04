@@ -37,6 +37,7 @@ func (m *ConnectivityDirectoryServicesDataSourceModel) toListParams(_ context.Co
 }
 
 type ConnectivityDirectoryServicesResultDataSourceModel struct {
+	ID        types.String                                                               `tfsdk:"id" json:"service_id,computed"`
 	Host      customfield.NestedObject[ConnectivityDirectoryServicesHostDataSourceModel] `tfsdk:"host" json:"host,computed"`
 	Name      types.String                                                               `tfsdk:"name" json:"name,computed"`
 	Type      types.String                                                               `tfsdk:"type" json:"type,computed"`

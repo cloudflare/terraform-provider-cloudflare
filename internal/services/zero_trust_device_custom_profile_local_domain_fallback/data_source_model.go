@@ -17,8 +17,9 @@ type ZeroTrustDeviceCustomProfileLocalDomainFallbackResultDataSourceEnvelope str
 }
 
 type ZeroTrustDeviceCustomProfileLocalDomainFallbackDataSourceModel struct {
-	AccountID   types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	ID          types.String                   `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID    types.String                   `tfsdk:"policy_id" path:"policy_id,required"`
+	AccountID   types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	Description types.String                   `tfsdk:"description" json:"description,computed"`
 	Suffix      types.String                   `tfsdk:"suffix" json:"suffix,computed"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`

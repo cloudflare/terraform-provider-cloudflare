@@ -113,6 +113,7 @@ func (d *ConnectivityDirectoryServiceDataSource) Read(ctx context.Context, req d
 		return
 	}
 	data = &env.Result
+	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

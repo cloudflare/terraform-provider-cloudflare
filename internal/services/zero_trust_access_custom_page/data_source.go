@@ -83,6 +83,7 @@ func (d *ZeroTrustAccessCustomPageDataSource) Read(ctx context.Context, req data
 		return
 	}
 	data = &env.Result
+	data.ID = data.CustomPageID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

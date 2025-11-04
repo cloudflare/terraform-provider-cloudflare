@@ -17,7 +17,7 @@ type DNSZoneTransfersTSIGResultDataSourceEnvelope struct {
 
 type DNSZoneTransfersTSIGDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"tsig_id,computed"`
-	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,optional"`
+	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,required"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Algo      types.String `tfsdk:"algo" json:"algo,computed"`
 	Name      types.String `tfsdk:"name" json:"name,computed"`

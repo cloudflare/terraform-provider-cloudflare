@@ -37,6 +37,7 @@ func (m *WebAnalyticsSitesDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type WebAnalyticsSitesResultDataSourceModel struct {
+	ID          types.String                                                        `tfsdk:"id" json:"site_tag,computed"`
 	AutoInstall types.Bool                                                          `tfsdk:"auto_install" json:"auto_install,computed"`
 	Created     timetypes.RFC3339                                                   `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Rules       customfield.NestedObjectList[WebAnalyticsSitesRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`

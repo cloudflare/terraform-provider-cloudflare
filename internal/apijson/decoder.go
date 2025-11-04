@@ -1306,7 +1306,7 @@ func (d *decoderBuilder) newCustomTimeTypeDecoder(t reflect.Type) decoderFunc {
 	}
 }
 
-func setUnexportedField(field reflect.Value, value interface{}) {
+func setUnexportedField(field reflect.Value, value any) {
 	reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().Set(reflect.ValueOf(value))
 }
 

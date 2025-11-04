@@ -17,6 +17,7 @@ type APIShieldResultDataSourceEnvelope struct {
 }
 
 type APIShieldDataSourceModel struct {
+	ID                    types.String                                                                `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID                types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
 	AuthIDCharacteristics customfield.NestedObjectList[APIShieldAuthIDCharacteristicsDataSourceModel] `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,computed"`
 }

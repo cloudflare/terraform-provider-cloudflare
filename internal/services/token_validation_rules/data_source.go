@@ -113,6 +113,7 @@ func (d *TokenValidationRulesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 	data = &env.Result
+	data.ID = data.RuleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
