@@ -17,6 +17,10 @@ var _ datasource.DataSourceWithConfigValidators = (*ArgoTieredCachingDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -24,13 +28,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"editable": schema.BoolAttribute{
 				Description: "Whether the setting is editable.",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The identifier of the caching setting.\nAvailable values: \"tiered_caching\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("tiered_caching"),
-				},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time this setting was modified.",

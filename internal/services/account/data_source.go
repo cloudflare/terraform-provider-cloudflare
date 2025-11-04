@@ -112,6 +112,7 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

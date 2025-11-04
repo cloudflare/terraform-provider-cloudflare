@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"sso_connector_id": schema.StringAttribute{
 				Description: "SSO Connector identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",

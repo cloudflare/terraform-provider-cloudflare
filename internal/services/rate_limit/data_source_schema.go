@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rate_limit_id": schema.StringAttribute{
 				Description: "Defines the unique identifier of the rate limit.",
-				Optional:    true,
+				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",

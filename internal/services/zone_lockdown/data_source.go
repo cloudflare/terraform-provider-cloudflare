@@ -113,6 +113,7 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.LockDownsID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

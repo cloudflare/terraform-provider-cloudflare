@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"load_balancer_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"zone_id": schema.StringAttribute{
 				Required: true,

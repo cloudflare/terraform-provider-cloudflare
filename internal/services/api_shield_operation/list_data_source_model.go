@@ -71,6 +71,7 @@ func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type APIShieldOperationsResultDataSourceModel struct {
+	ID          types.String                                                         `tfsdk:"id" json:"operation_id,computed"`
 	Endpoint    types.String                                                         `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                         `tfsdk:"host" json:"host,computed"`
 	LastUpdated timetypes.RFC3339                                                    `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`

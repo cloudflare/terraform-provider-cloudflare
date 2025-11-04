@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"version_id": schema.StringAttribute{
 				Description: `Identifier for the version, which can be ID or the literal "latest" to operate on the most recently created version.`,
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

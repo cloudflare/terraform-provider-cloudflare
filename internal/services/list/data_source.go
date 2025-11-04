@@ -83,6 +83,7 @@ func (d *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 	data = &env.Result
+	data.ID = data.ListID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

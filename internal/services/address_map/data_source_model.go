@@ -19,7 +19,7 @@ type AddressMapResultDataSourceEnvelope struct {
 
 type AddressMapDataSourceModel struct {
 	ID           types.String                                                       `tfsdk:"id" path:"address_map_id,computed"`
-	AddressMapID types.String                                                       `tfsdk:"address_map_id" path:"address_map_id,optional"`
+	AddressMapID types.String                                                       `tfsdk:"address_map_id" path:"address_map_id,required"`
 	AccountID    types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	CanDelete    types.Bool                                                         `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                                                         `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`

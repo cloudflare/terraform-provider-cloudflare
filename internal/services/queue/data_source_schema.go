@@ -23,8 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"queue_id": schema.StringAttribute{
 				Description: "A Resource identifier.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "A Resource identifier.",

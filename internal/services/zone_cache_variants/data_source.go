@@ -82,6 +82,7 @@ func (d *ZoneCacheVariantsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

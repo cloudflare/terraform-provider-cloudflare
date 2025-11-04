@@ -17,11 +17,11 @@ type CloudConnectorRulesResultDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
+	ID          types.String                                                           `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID      types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	Description types.String                                                           `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
 	Expression  types.String                                                           `tfsdk:"expression" json:"expression,computed"`
-	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
 	Provider    types.String                                                           `tfsdk:"provider" json:"provider,computed"`
 	Parameters  customfield.NestedObject[CloudConnectorRulesParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
 }

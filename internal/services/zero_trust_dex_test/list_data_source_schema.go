@@ -33,6 +33,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The unique identifier for the test.",
+							Computed:    true,
+						},
 						"data": schema.SingleNestedAttribute{
 							Description: "The configuration object which contains the details for the WARP client to conduct the test.",
 							Computed:    true,

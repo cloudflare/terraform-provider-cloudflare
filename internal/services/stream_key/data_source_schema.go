@@ -15,6 +15,10 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamKeyDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -23,10 +27,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The date and time a signing key was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
 			},
 		},
 	}
