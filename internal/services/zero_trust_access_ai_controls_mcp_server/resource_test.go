@@ -16,7 +16,7 @@ import (
 func TestAccZeroTrustAccessAIControlsMcpServer_basic(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_server.tf-test"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	hostname := "https://docs.mcp.cloudflare.com/mcp"
+	mcpUrl := "https://docs.mcp.cloudflare.com/mcp"
 	name1 := "Test Server"
 	name2 := "Updated Test Server"
 
@@ -27,21 +27,21 @@ func TestAccZeroTrustAccessAIControlsMcpServer_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create and Read testing
 			{
-				Config: acctest.LoadTestCase("basic.tf", accountID, hostname, name1),
+				Config: acctest.LoadTestCase("basic.tf", accountID, mcpUrl, name1),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", "tf-test"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", hostname),
+					resource.TestCheckResourceAttr(resourceName, "hostname", mcpUrl),
 					resource.TestCheckResourceAttr(resourceName, "name", name1),
 				),
 			},
 			// Update and Read testing
 			{
-				Config: acctest.LoadTestCase("basic.tf", accountID, hostname, name2),
+				Config: acctest.LoadTestCase("basic.tf", accountID, mcpUrl, name2),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", "tf-test"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", hostname),
+					resource.TestCheckResourceAttr(resourceName, "hostname", mcpUrl),
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
 				),
 			},
