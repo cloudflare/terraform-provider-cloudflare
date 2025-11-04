@@ -5,6 +5,7 @@ package zero_trust_dex_test
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
@@ -68,17 +69,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			Description: "Additional details about the test.",
 			Optional:    true,
 		},
-			"targeted": schema.BoolAttribute{
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
-			},
-			"targeted": schema.BoolAttribute{
-				Optional: true,
-			},
-			"target_policies": schema.ListNestedAttribute{
+		"targeted": schema.BoolAttribute{
+			Optional: true,
+		},
+		"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
 				Optional:    true,
 				Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []ZeroTrustDEXTestTargetPoliciesModel{}).ListValue),
