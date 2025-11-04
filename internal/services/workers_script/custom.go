@@ -104,70 +104,10 @@ func (v contentSHA256Validator) MarkdownDescription(ctx context.Context) string 
 }
 
 func (v contentSHA256Validator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
-	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
-		return
-	}
-
-	providedHash := req.ConfigValue.ValueString()
-
-	var config WorkersScriptModel
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var hasContent, hasContentFile bool
-
-	if !config.Content.IsNull() {
-		hasContent = true
-	}
-
-	if !config.ContentFile.IsNull() {
-		hasContentFile = true
-	}
-
-	var actualHash string
-	var err error
-
-	if hasContent {
-		actualHash, err = calculateStringHash(config.Content.ValueString())
-		if err != nil {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
-				"Hash Calculation Error",
-				fmt.Sprintf("Failed to calculate SHA-256 hash of content: %s", err.Error()),
-			)
-			return
-		}
-	} else if hasContentFile {
-		actualHash, err = calculateFileHash(config.ContentFile.ValueString())
-		if err != nil {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
-				"Hash Calculation Error",
-				fmt.Sprintf("Failed to calculate SHA-256 hash of file '%s': %s", config.ContentFile.ValueString(), err.Error()),
-			)
-			return
-		}
-	}
-
-	if providedHash != actualHash {
-		var source string
-		if hasContent {
-			source = "content"
-		} else if hasContentFile {
-			source = fmt.Sprintf("content_file (%s)", config.ContentFile.ValueString())
-		}
-
-		resp.Diagnostics.AddAttributeError(
-			req.Path,
-			"SHA-256 Hash Mismatch",
-			fmt.Sprintf("The provided SHA-256 hash '%s' does not match the actual hash '%s' of %s",
-				providedHash, actualHash, source),
-		)
-	}
+	// TODO: Content validation is not currently implemented
+	// The Content and ContentFile fields are not exposed in the WorkersScriptModel
+	// This validator needs to be reimplemented once the schema is updated
+	return
 }
 
 func ValidateContentSHA256() validator.String {
