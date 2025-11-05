@@ -29,18 +29,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token name.",
 				Required:    true,
 			},
-			"policies": schema.ListNestedAttribute{
-				Description: "List of access policies assigned to the token.",
+			"policies": schema.SetNestedAttribute{
+				Description: "Set of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Policy identifier.",
-							Computed:    true,
-							PlanModifiers: []planmodifier.String{
-								stringplanmodifier.UseStateForUnknown(),
-							},
-						},
 						"effect": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,
@@ -56,22 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"id": schema.StringAttribute{
 										Description: "Identifier of the permission group.",
 										Required:    true,
-									},
-									"meta": schema.SingleNestedAttribute{
-										Description: "Attributes associated to the permission group.",
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"key": schema.StringAttribute{
-												Optional: true,
-											},
-											"value": schema.StringAttribute{
-												Optional: true,
-											},
-										},
-									},
-									"name": schema.StringAttribute{
-										Description: "Name of the permission group.",
-										Computed:    true,
 									},
 								},
 							},

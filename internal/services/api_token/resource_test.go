@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -74,8 +75,6 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_api_token.test_account_token"
 
-	var policyId string
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -86,14 +85,8 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Store policy ID for cross-step comparison
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						policyId = value
-						return nil
-					}),
 					// Verify conditions are not set (ConfigStateChecks can't easily check for absence)
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.in"),
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.not_in"),
@@ -118,16 +111,8 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Verify policy ID hasn't changed during update
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
-						}
-						return nil
-					}),
 					// Verify conditions still not set
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.in"),
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.not_in"),
@@ -252,11 +237,18 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 	})
 }
 
+// Test that permission group order doesn't affect plans. This test uses two
+// corresponding .tf files that are identical except they swap the order of two
+// permission groups on the same policy. We use statecheck.CompareValue to
+// assert that permission group 0 never changes and permission group 1 never
+// changes despite changing the order of the permission groups and updating the
+// token name.
 func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_api_token." + rnd
-	permissionID1 := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
-	permissionID2 := "e199d584e69344eba202452019deafe3" // Disable ESC read
+	resourceName := "cloudflare_api_token.test_account_token"
+
+	permgroup0_SAME := statecheck.CompareValue(compare.ValuesSame())
+	permgroup1_SAME := statecheck.CompareValue(compare.ValuesSame())
 
 	// Test that permission group order doesn't affect plans
 	resource.Test(t, resource.TestCase{
@@ -265,20 +257,41 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAPITokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					// Verify both permission IDs are present (order is normalized by provider)
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionID1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(permissionID2)),
+					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
 			},
 			{
-				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						// Changing order of permission groups should not affect plan
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
+					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
@@ -293,16 +306,16 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAPITokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					// Order is normalized - should still be same as first test
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionID1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(permissionID2)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
+					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
 			},
 			{
-				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
@@ -310,10 +323,90 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 				},
 			},
 			{
-				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd+"-updated"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						// Order change should still not affect plan
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
+					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
+					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
+				},
+			},
+		},
+	})
+}
+
+// Test that policy group order doesn't affect plans. This test uses two
+// corresponding .tf files that are identical except they swap the order of two
+// policies.
+func TestAccAPIToken_PolicyOrder(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_api_token.test_account_token"
+
+	policy1_permgroup_SAME := statecheck.CompareValue(compare.ValuesSame())
+	policy2_permgroup_SAME := statecheck.CompareValue(compare.ValuesSame())
+
+	// Test that policy order doesn't affect plans
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAPITokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
@@ -321,122 +414,60 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 		},
 	})
 
-	// rnd := utils.GenerateRandomResourceName()
-	// permissionID0 := ""
-	// permissionID1 := ""
-
-	// var policyId string
-
-	// resource.Test(t, resource.TestCase{
-	// 	PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-	// 	ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-	// 	Steps: []resource.TestStep{
-	// 		{
-	// 			// not seting permission IDs first, retrieving them from API by name
-	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, "", ""),
-	// 			Check: resource.ComposeTestCheckFunc(
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
-	// 				resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
-	// 					policyId = value
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
-	// 					permissionID0 = value
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
-	// 					permissionID1 = value
-	// 					return nil
-	// 				}),
-	// 			),
-	// 		},
-	// 		// below we try changing the order of the permission group IDs and
-	// 		// verify there are no plan changes
-	// 		{
-	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID0, permissionID1),
-	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
-	// 				PreApply: []plancheck.PlanCheck{
-	// 					plancheck.ExpectEmptyPlan(),
-	// 				},
-	// 			},
-	// 		},
-	// 		{
-	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID0),
-	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
-	// 				PreApply: []plancheck.PlanCheck{
-	// 					plancheck.ExpectEmptyPlan(),
-	// 				},
-	// 			},
-	// 		},
-	// 		// try updating the token and ensure policy information hasn't
-	// 		// changed
-	// 		{
-	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd+"updated", permissionID1, permissionID0),
-	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
-	// 				PreApply: []plancheck.PlanCheck{
-	// 					plancheck.ExpectNonEmptyPlan(),
-	// 				},
-	// 			},
-	// 			Check: resource.ComposeTestCheckFunc(
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"updated"),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
-	// 					if value != policyId {
-	// 						return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
-	// 					if value != permissionID0 {
-	// 						return fmt.Errorf("permission ID 0 changed from %s to %s", permissionID0, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
-	// 					if value != permissionID1 {
-	// 						return fmt.Errorf("permission ID 1 changed from %s to %s", permissionID1, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 			),
-	// 		},
-	// 		{
-	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd+"updated2", permissionID0, permissionID1),
-	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
-	// 				PreApply: []plancheck.PlanCheck{
-	// 					plancheck.ExpectNonEmptyPlan(),
-	// 				},
-	// 			},
-	// 			Check: resource.ComposeTestCheckFunc(
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"updated2"),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
-	// 					if value != policyId {
-	// 						return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
-	// 					if value != permissionID0 {
-	// 						return fmt.Errorf("permission ID 0 changed from %s to %s", permissionID0, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
-	// 					if value != permissionID1 {
-	// 						return fmt.Errorf("permission ID 1 changed from %s to %s", permissionID1, value)
-	// 					}
-	// 					return nil
-	// 				}),
-	// 			),
-	// 		},
-	// 	},
-	// })
+	// Test the reverse order scenario
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAPITokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
+				},
+			},
+		},
+	})
 }
 
 func TestAccAPIToken_CRUD(t *testing.T) {
@@ -463,7 +494,6 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(initialName)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(oneDayFromNow)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
 				},
 			},

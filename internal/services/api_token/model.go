@@ -35,16 +35,13 @@ func (m APITokenModel) MarshalJSONForUpdate(state APITokenModel) (data []byte, e
 }
 
 type APITokenPoliciesModel struct {
-	ID               types.String                              `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Effect           types.String                              `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*APITokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
 	Resources        *map[string]types.String                  `tfsdk:"resources" json:"resources,required"`
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
-	ID   types.String                               `tfsdk:"id" json:"id,required"`
-	Meta *APITokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,optional"`
-	Name types.String                               `tfsdk:"name" json:"name,computed"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type APITokenPoliciesPermissionGroupsMetaModel struct {
