@@ -388,8 +388,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		opts = append(opts, option.WithHeader("x-stainless-runtime-version", *pluginVersion))
 	}
 
-	opts = append(opts, option.WithBaseURL("https://api.staging.cloudflare.com/client/v4/"))
-
 	client := cloudflare.NewClient(
 		opts...,
 	)
