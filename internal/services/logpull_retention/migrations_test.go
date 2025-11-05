@@ -50,7 +50,7 @@ resource "cloudflare_logpull_retention" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state transformation
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists and has correct type
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
@@ -93,7 +93,7 @@ resource "cloudflare_logpull_retention" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state transformation
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists and has correct type
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
