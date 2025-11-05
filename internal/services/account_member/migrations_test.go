@@ -79,7 +79,7 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.NotNull()),
@@ -138,7 +138,7 @@ func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("accepted")),
 			}),
