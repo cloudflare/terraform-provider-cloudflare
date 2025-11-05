@@ -45,6 +45,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
@@ -580,6 +581,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
 		turnstile_widget.NewResource,
+		connectivity_directory_service.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
 		web_analytics_rule.NewResource,
@@ -913,6 +915,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationsDataSource,
 		turnstile_widget.NewTurnstileWidgetDataSource,
 		turnstile_widget.NewTurnstileWidgetsDataSource,
+		connectivity_directory_service.NewConnectivityDirectoryServiceDataSource,
+		connectivity_directory_service.NewConnectivityDirectoryServicesDataSource,
 		hyperdrive_config.NewHyperdriveConfigDataSource,
 		hyperdrive_config.NewHyperdriveConfigsDataSource,
 		web_analytics_site.NewWebAnalyticsSiteDataSource,

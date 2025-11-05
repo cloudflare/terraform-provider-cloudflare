@@ -83,6 +83,7 @@ func (d *TokenValidationConfigDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 	data = &env.Result
+	data.ID = data.ConfigID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
