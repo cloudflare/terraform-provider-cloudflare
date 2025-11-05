@@ -104,6 +104,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/snippet_rules depends_on=snippet"
     "resource=./internal/services/snippets depends_on=snippet_rules"
     "resource=./internal/services/spectrum_application"
+    "resource=./internal/services/sso_connector"
     "resource=./internal/services/tiered_cache"
     # "resource=./internal/services/token_validation_config"
     "resource=./internal/services/token_validation_rules"
