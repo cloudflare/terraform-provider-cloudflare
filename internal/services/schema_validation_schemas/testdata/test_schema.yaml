@@ -7,7 +7,7 @@ servers:
   - url: https://api.example.com
     description: Production server
 paths:
-  /products:
+  /products_two:
     get:
       summary: Get all products
       description: Retrieves a list of all available products.
