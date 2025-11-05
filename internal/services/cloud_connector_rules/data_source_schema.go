@@ -24,9 +24,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
 			"rules": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{

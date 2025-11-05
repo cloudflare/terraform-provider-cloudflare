@@ -32,10 +32,10 @@ type APIShieldOperationDataSourceModel struct {
 }
 
 func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (params api_gateway.OperationGetParams, diags diag.Diagnostics) {
-	mFilterFeature := []api_gateway.OperationListParamsFeature{}
+	mFilterFeature := []api_gateway.OperationGetParamsFeature{}
 	if m.Filter.Feature != nil {
 		for _, item := range *m.Filter.Feature {
-			mFilterFeature = append(mFilterFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+			mFilterFeature = append(mFilterFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
 		}
 	}
 
