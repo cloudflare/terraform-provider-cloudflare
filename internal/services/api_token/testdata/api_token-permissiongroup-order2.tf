@@ -19,13 +19,13 @@ resource "cloudflare_api_token" "test_account_token" {
       }, {
       id = data.cloudflare_api_token_permission_groups_list.disable_esc_read.result[0].id
     }]
-    resources = {
+    resources = jsonencode({
       "com.cloudflare.api.account.zone.*" = "*"
-    }
+    })
   }]
 }
 
 data "cloudflare_api_token" "test_account_token" {
-  token_id = cloudflare_api_token.test_account_token.id
+  token_id   = cloudflare_api_token.test_account_token.id
   depends_on = [cloudflare_api_token.test_account_token]
 }

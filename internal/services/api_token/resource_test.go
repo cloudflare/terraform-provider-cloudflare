@@ -3,6 +3,7 @@ package api_token_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -470,6 +471,50 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 	})
 }
 
+func TestAccAPIToken_ResourcesFlexible(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_api_token.test_account_token"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAPITokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-resources-flexible.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-resources-flexible.tf", rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-resources-flexible.tf", rnd+"-updated", accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-resources-flexible.tf", rnd+"-updated", accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
 func TestAccAPIToken_CRUD(t *testing.T) {
 	// Comprehensive test covering Create, Read, Update, Delete + Import
 	rnd := utils.GenerateRandomResourceName()
@@ -555,9 +600,9 @@ resource "cloudflare_api_token" "crud_test" {
       permission_groups = [
         { id = data.cloudflare_api_token_permission_groups_list.dns_read.result[0].id }
       ]
-      resources = {
+      resources = jsonencode({
         "com.cloudflare.api.account.zone.*" = "*"
-      }
+	})
     }
   ]
 

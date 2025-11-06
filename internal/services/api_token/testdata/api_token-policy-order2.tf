@@ -18,18 +18,18 @@ resource "cloudflare_api_token" "test_account_token" {
       permission_groups = [{
         id = data.cloudflare_api_token_permission_groups_list.dns_read.result[0].id
       }]
-      resources = {
+      resources = jsonencode({
         "com.cloudflare.api.account.zone.*" = "*"
-      }
+      })
     },
     {
       effect = "allow"
       permission_groups = [{
         id = data.cloudflare_api_token_permission_groups_list.disable_esc_read.result[0].id
       }]
-      resources = {
+      resources = jsonencode({
         "com.cloudflare.api.account.zone.*" = "*"
-      }
+      })
     },
   ]
 }
