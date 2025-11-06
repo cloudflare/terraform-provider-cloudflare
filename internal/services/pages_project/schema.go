@@ -10,10 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -41,13 +38,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"production_branch": schema.StringAttribute{
 				Description: "Production branch of the project. Used to identify production deployments.",
-				Required:    true,
+				Optional:    true,
 			},
 			"build_config": schema.SingleNestedAttribute{
 				Description: "Configs for the project build process.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectBuildConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
@@ -78,15 +73,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"preview": schema.SingleNestedAttribute{
 						Description: "Configs for preview deploys.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsPreviewModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
@@ -98,12 +89,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-							},
-							"always_use_latest_compatibility_date": schema.BoolAttribute{
-								Description: "Whether to always use the latest compatibility date for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
@@ -124,22 +109,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{},
 								},
 							},
-							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     int64default.StaticInt64(3),
-							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapNestedAttribute{
@@ -186,12 +162,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"fail_open": schema.BoolAttribute{
-								Description: "Whether to fail open when the deployment config cannot be applied.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
-							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Optional:    true,
@@ -212,16 +182,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "ID of the KV namespace.",
 											Optional:    true,
 										},
-									},
-								},
-							},
-							"limits": schema.SingleNestedAttribute{
-								Description: "Limits for Pages Functions.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"cpu_ms": schema.Int64Attribute{
-										Description: "CPU time limit in milliseconds.",
-										Optional:    true,
 									},
 								},
 							},
@@ -294,20 +254,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"usage_model": schema.StringAttribute{
-								Description:        "The usage model for Pages Functions.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
-								Computed:           true,
-								Optional:           true,
-								DeprecationMessage: "All new projects now use the Standard usage model.",
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"standard",
-										"bundled",
-										"unbound",
-									),
-								},
-								Default: stringdefault.StaticString("standard"),
-							},
 							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Optional:    true,
@@ -318,18 +264,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-							},
-							"wrangler_config_hash": schema.StringAttribute{
-								Description: "Hash of the Wrangler configuration used for the deployment.",
-								Optional:    true,
 							},
 						},
 					},
 					"production": schema.SingleNestedAttribute{
 						Description: "Configs for production deploys.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsProductionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
@@ -341,12 +281,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-							},
-							"always_use_latest_compatibility_date": schema.BoolAttribute{
-								Description: "Whether to always use the latest compatibility date for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
@@ -367,22 +301,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{},
 								},
 							},
-							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     int64default.StaticInt64(3),
-							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapNestedAttribute{
@@ -429,12 +354,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"fail_open": schema.BoolAttribute{
-								Description: "Whether to fail open when the deployment config cannot be applied.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
-							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Optional:    true,
@@ -455,16 +374,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "ID of the KV namespace.",
 											Optional:    true,
 										},
-									},
-								},
-							},
-							"limits": schema.SingleNestedAttribute{
-								Description: "Limits for Pages Functions.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"cpu_ms": schema.Int64Attribute{
-										Description: "CPU time limit in milliseconds.",
-										Optional:    true,
 									},
 								},
 							},
@@ -537,20 +446,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"usage_model": schema.StringAttribute{
-								Description:        "The usage model for Pages Functions.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
-								Computed:           true,
-								Optional:           true,
-								DeprecationMessage: "All new projects now use the Standard usage model.",
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"standard",
-										"bundled",
-										"unbound",
-									),
-								},
-								Default: stringdefault.StaticString("standard"),
-							},
 							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Optional:    true,
@@ -561,73 +456,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-							},
-							"wrangler_config_hash": schema.StringAttribute{
-								Description: "Hash of the Wrangler configuration used for the deployment.",
-								Optional:    true,
 							},
 						},
 					},
 				},
 			},
 			"source": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"deployments_enabled": schema.BoolAttribute{
-								Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
-								Computed:           true,
-								Optional:           true,
-								DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-								Default:            booldefault.StaticBool(true),
+								Optional: true,
 							},
 							"owner": schema.StringAttribute{
-								Description: "The owner of the repository.",
-								Optional:    true,
+								Optional: true,
 							},
 							"path_excludes": schema.ListAttribute{
-								Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"path_includes": schema.ListAttribute{
-								Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"pr_comments_enabled": schema.BoolAttribute{
-								Description: "Whether to enable PR comments.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Optional: true,
 							},
 							"preview_branch_excludes": schema.ListAttribute{
-								Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_branch_includes": schema.ListAttribute{
-								Description: "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{
-								Description: "Controls whether commits to preview branches trigger a preview deployment.\nAvailable values: \"all\", \"none\", \"custom\".",
-								Computed:    true,
+								Description: `Available values: "all", "none", "custom".`,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -636,30 +502,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"custom",
 									),
 								},
-								Default: stringdefault.StaticString("all"),
 							},
 							"production_branch": schema.StringAttribute{
-								Description: "The production branch of the repository.",
-								Optional:    true,
+								Optional: true,
 							},
 							"production_deployments_enabled": schema.BoolAttribute{
-								Description: "Whether to trigger a production deployment on commits to the production branch.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Optional: true,
 							},
 							"repo_name": schema.StringAttribute{
-								Description: "The name of the repository.",
-								Optional:    true,
+								Optional: true,
 							},
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "The source control management provider.\nAvailable values: \"github\", \"gitlab\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
-						},
+						Optional: true,
 					},
 				},
 			},
@@ -668,28 +524,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"framework": schema.StringAttribute{
-				Description: "Framework the project is using.",
-				Computed:    true,
-			},
-			"framework_version": schema.StringAttribute{
-				Description: "Version of the framework the project is using.",
-				Computed:    true,
-			},
-			"preview_script_name": schema.StringAttribute{
-				Description: "Name of the preview script.",
-				Computed:    true,
-			},
-			"production_script_name": schema.StringAttribute{
-				Description: "Name of the production script.",
-				Computed:    true,
-			},
 			"subdomain": schema.StringAttribute{
 				Description: "The Cloudflare subdomain associated with the project.",
-				Computed:    true,
-			},
-			"uses_functions": schema.BoolAttribute{
-				Description: "Whether the project uses functions.",
 				Computed:    true,
 			},
 			"domains": schema.ListAttribute{
@@ -699,7 +535,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
-				Description: "Most recent production deployment of the project.",
+				Description: "Most recent deployment to the repo.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -884,46 +720,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentSourceConfigModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"deployments_enabled": schema.BoolAttribute{
-										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
-										Computed:           true,
-										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-										Default:            booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"owner": schema.StringAttribute{
-										Description: "The owner of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 									"path_excludes": schema.ListAttribute{
-										Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"path_includes": schema.ListAttribute{
-										Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"pr_comments_enabled": schema.BoolAttribute{
-										Description: "Whether to enable PR comments.",
-										Computed:    true,
-										Default:     booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"preview_branch_excludes": schema.ListAttribute{
-										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_branch_includes": schema.ListAttribute{
-										Description: "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "Controls whether commits to preview branches trigger a preview deployment.\nAvailable values: \"all\", \"none\", \"custom\".",
+										Description: `Available values: "all", "none", "custom".`,
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -932,29 +758,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												"custom",
 											),
 										},
-										Default: stringdefault.StaticString("all"),
 									},
 									"production_branch": schema.StringAttribute{
-										Description: "The production branch of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 									"production_deployments_enabled": schema.BoolAttribute{
-										Description: "Whether to trigger a production deployment on commits to the production branch.",
-										Computed:    true,
-										Default:     booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"repo_name": schema.StringAttribute{
-										Description: "The name of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 								},
 							},
 							"type": schema.StringAttribute{
-								Description: "The source control management provider.\nAvailable values: \"github\", \"gitlab\".",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
-								},
+								Computed: true,
 							},
 						},
 					},
@@ -1010,7 +827,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
-				Description: "Most recent deployment of the project.",
+				Description: "Most recent deployment to the repo.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -1195,46 +1012,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[PagesProjectLatestDeploymentSourceConfigModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"deployments_enabled": schema.BoolAttribute{
-										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
-										Computed:           true,
-										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-										Default:            booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"owner": schema.StringAttribute{
-										Description: "The owner of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 									"path_excludes": schema.ListAttribute{
-										Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"path_includes": schema.ListAttribute{
-										Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"pr_comments_enabled": schema.BoolAttribute{
-										Description: "Whether to enable PR comments.",
-										Computed:    true,
-										Default:     booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"preview_branch_excludes": schema.ListAttribute{
-										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_branch_includes": schema.ListAttribute{
-										Description: "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "Controls whether commits to preview branches trigger a preview deployment.\nAvailable values: \"all\", \"none\", \"custom\".",
+										Description: `Available values: "all", "none", "custom".`,
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -1243,29 +1050,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												"custom",
 											),
 										},
-										Default: stringdefault.StaticString("all"),
 									},
 									"production_branch": schema.StringAttribute{
-										Description: "The production branch of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 									"production_deployments_enabled": schema.BoolAttribute{
-										Description: "Whether to trigger a production deployment on commits to the production branch.",
-										Computed:    true,
-										Default:     booldefault.StaticBool(true),
+										Computed: true,
 									},
 									"repo_name": schema.StringAttribute{
-										Description: "The name of the repository.",
-										Computed:    true,
+										Computed: true,
 									},
 								},
 							},
 							"type": schema.StringAttribute{
-								Description: "The source control management provider.\nAvailable values: \"github\", \"gitlab\".",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
-								},
+								Computed: true,
 							},
 						},
 					},
