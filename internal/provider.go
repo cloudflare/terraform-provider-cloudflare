@@ -901,6 +901,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dns_location.NewZeroTrustDNSLocationsDataSource,
 		zero_trust_gateway_logging.NewZeroTrustGatewayLoggingDataSource,
 		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointDataSource,
+		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointsDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPolicyDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPoliciesDataSource,
 		zero_trust_gateway_certificate.NewZeroTrustGatewayCertificateDataSource,
