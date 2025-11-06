@@ -1,6 +1,6 @@
 resource "cloudflare_queue" "test_queue" {
   account_id = "%s"
-  name       = "%s"
+  queue_name = "%s"
 }
 
 resource "cloudflare_queue_consumer" "%s" {
@@ -8,9 +8,8 @@ resource "cloudflare_queue_consumer" "%s" {
   queue_id   = cloudflare_queue.test_queue.id
   type       = "http_pull"
 
-  settings {
+  settings = {
     batch_size        = 20
     max_retries       = 5
-    max_wait_time_ms  = 8000
   }
 }
