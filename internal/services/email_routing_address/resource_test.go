@@ -6,7 +6,8 @@ import (
 	"os"
 	"testing"
 
-	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -19,26 +20,33 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_address", &resource.Sweeper{
 		Name: "cloudflare_email_routing_address",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+			client := acctest.SharedClient()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-			if err != nil {
-				return fmt.Errorf("error establishing client: %w", err)
-			}
-
 			ctx := context.Background()
-			emails, _, err := client.ListEmailRoutingDestinationAddresses(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListEmailRoutingAddressParameters{})
+
+			// List all email routing addresses
+			addresses, err := client.EmailRouting.Addresses.List(ctx, email_routing.AddressListParams{
+				AccountID: cloudflare.F(accountID),
+			})
 			if err != nil {
 				return fmt.Errorf("failed to fetch email routing destination addresses: %w", err)
 			}
 
-			for _, email := range emails {
-				_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cfv1.AccountIdentifier(accountID), email.Tag)
+			addressList := addresses.Result
+			fmt.Printf("Found %d email routing destination addresses to delete\n", len(addressList))
+			deletedCount := 0
+
+			for _, address := range addressList {
+				_, err := client.EmailRouting.Addresses.Delete(ctx, address.Tag, email_routing.AddressDeleteParams{
+					AccountID: cloudflare.F(accountID),
+				})
 				if err != nil {
-					return fmt.Errorf("failed to delete email routing destination address %q: %w", email.Email, err)
+					return fmt.Errorf("failed to delete email routing destination address %q: %w", address.Email, err)
 				}
+				deletedCount++
 			}
 
+			fmt.Printf("Deleted %d email routing destination addresses\n", deletedCount)
 			return nil
 		},
 	})
