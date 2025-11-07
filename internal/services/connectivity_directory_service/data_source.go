@@ -57,36 +57,6 @@ func (d *ConnectivityDirectoryServiceDataSource) Read(ctx context.Context, req d
 		return
 	}
 
-	if data.Filter != nil {
-		params, diags := data.toListParams(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		env := ConnectivityDirectoryServicesResultListDataSourceEnvelope{}
-		page, err := d.client.Connectivity.Directory.Services.List(ctx, params)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to make http request", err.Error())
-			return
-		}
-
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
-
-		if count := len(env.Result.Elements()); count != 1 {
-			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
-			return
-		}
-		ts, diags := env.Result.AsStructSliceT(ctx)
-		resp.Diagnostics.Append(diags...)
-		data.ServiceID = ts[0].ServiceID
-	}
-
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -94,8 +64,7 @@ func (d *ConnectivityDirectoryServiceDataSource) Read(ctx context.Context, req d
 	}
 
 	res := new(http.Response)
-	env := ConnectivityDirectoryServiceResultDataSourceEnvelope{*data}
-	_, err := d.client.Connectivity.Directory.Services.Get(
+	err := d.client.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
 		params,
@@ -107,13 +76,11 @@ func (d *ConnectivityDirectoryServiceDataSource) Read(ctx context.Context, req d
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

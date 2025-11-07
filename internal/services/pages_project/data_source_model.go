@@ -18,24 +18,19 @@ type PagesProjectResultDataSourceEnvelope struct {
 }
 
 type PagesProjectDataSourceModel struct {
-	ID                   types.String                                                             `tfsdk:"id" path:"project_name,computed"`
-	ProjectName          types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
-	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
-	CreatedOn            timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Framework            types.String                                                             `tfsdk:"framework" json:"framework,computed"`
-	FrameworkVersion     types.String                                                             `tfsdk:"framework_version" json:"framework_version,computed"`
-	Name                 types.String                                                             `tfsdk:"name" json:"name,computed"`
-	PreviewScriptName    types.String                                                             `tfsdk:"preview_script_name" json:"preview_script_name,computed"`
-	ProductionBranch     types.String                                                             `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProductionScriptName types.String                                                             `tfsdk:"production_script_name" json:"production_script_name,computed"`
-	Subdomain            types.String                                                             `tfsdk:"subdomain" json:"subdomain,computed"`
-	UsesFunctions        types.Bool                                                               `tfsdk:"uses_functions" json:"uses_functions,computed"`
-	Domains              customfield.List[types.String]                                           `tfsdk:"domains" json:"domains,computed"`
-	BuildConfig          customfield.NestedObject[PagesProjectBuildConfigDataSourceModel]         `tfsdk:"build_config" json:"build_config,computed"`
-	CanonicalDeployment  customfield.NestedObject[PagesProjectCanonicalDeploymentDataSourceModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
-	DeploymentConfigs    customfield.NestedObject[PagesProjectDeploymentConfigsDataSourceModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed"`
-	LatestDeployment     customfield.NestedObject[PagesProjectLatestDeploymentDataSourceModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Source               customfield.NestedObject[PagesProjectSourceDataSourceModel]              `tfsdk:"source" json:"source,computed"`
+	ID                  types.String                                                             `tfsdk:"id" path:"project_name,computed"`
+	ProjectName         types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
+	AccountID           types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	CreatedOn           timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Name                types.String                                                             `tfsdk:"name" json:"name,computed"`
+	ProductionBranch    types.String                                                             `tfsdk:"production_branch" json:"production_branch,computed"`
+	Subdomain           types.String                                                             `tfsdk:"subdomain" json:"subdomain,computed"`
+	Domains             customfield.List[types.String]                                           `tfsdk:"domains" json:"domains,computed"`
+	BuildConfig         customfield.NestedObject[PagesProjectBuildConfigDataSourceModel]         `tfsdk:"build_config" json:"build_config,computed"`
+	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentDataSourceModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
+	DeploymentConfigs   customfield.NestedObject[PagesProjectDeploymentConfigsDataSourceModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed"`
+	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentDataSourceModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
+	Source              customfield.NestedObject[PagesProjectSourceDataSourceModel]              `tfsdk:"source" json:"source,computed"`
 }
 
 func (m *PagesProjectDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectGetParams, diags diag.Diagnostics) {
@@ -138,28 +133,22 @@ type PagesProjectDeploymentConfigsDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewDataSourceModel struct {
-	AIBindings                       customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
-	AlwaysUseLatestCompatibilityDate types.Bool                                                                                              `tfsdk:"always_use_latest_compatibility_date" json:"always_use_latest_compatibility_date,computed"`
-	AnalyticsEngineDatasets          customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
-	Browsers                         customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
-	BuildImageMajorVersion           types.Int64                                                                                             `tfsdk:"build_image_major_version" json:"build_image_major_version,computed"`
-	CompatibilityDate                types.String                                                                                            `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
-	CompatibilityFlags               customfield.List[types.String]                                                                          `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
-	D1Databases                      customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
-	DurableObjectNamespaces          customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed"`
-	EnvVars                          customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel]                 `tfsdk:"env_vars" json:"env_vars,computed"`
-	FailOpen                         types.Bool                                                                                              `tfsdk:"fail_open" json:"fail_open,computed"`
-	HyperdriveBindings               customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewHyperdriveBindingsDataSourceModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed"`
-	KVNamespaces                     customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed"`
-	Limits                           customfield.NestedObject[PagesProjectDeploymentConfigsPreviewLimitsDataSourceModel]                     `tfsdk:"limits" json:"limits,computed"`
-	MTLSCertificates                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed"`
-	Placement                        customfield.NestedObject[PagesProjectDeploymentConfigsPreviewPlacementDataSourceModel]                  `tfsdk:"placement" json:"placement,computed"`
-	QueueProducers                   customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewQueueProducersDataSourceModel]          `tfsdk:"queue_producers" json:"queue_producers,computed"`
-	R2Buckets                        customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewR2BucketsDataSourceModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed"`
-	Services                         customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewServicesDataSourceModel]                `tfsdk:"services" json:"services,computed"`
-	UsageModel                       types.String                                                                                            `tfsdk:"usage_model" json:"usage_model,computed"`
-	VectorizeBindings                customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed"`
-	WranglerConfigHash               types.String                                                                                            `tfsdk:"wrangler_config_hash" json:"wrangler_config_hash,computed"`
+	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
+	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
+	Browsers                customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
+	CompatibilityDate       types.String                                                                                            `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
+	CompatibilityFlags      customfield.List[types.String]                                                                          `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
+	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
+	DurableObjectNamespaces customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed"`
+	EnvVars                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel]                 `tfsdk:"env_vars" json:"env_vars,computed"`
+	HyperdriveBindings      customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewHyperdriveBindingsDataSourceModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed"`
+	KVNamespaces            customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed"`
+	MTLSCertificates        customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed"`
+	Placement               customfield.NestedObject[PagesProjectDeploymentConfigsPreviewPlacementDataSourceModel]                  `tfsdk:"placement" json:"placement,computed"`
+	QueueProducers          customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewQueueProducersDataSourceModel]          `tfsdk:"queue_producers" json:"queue_producers,computed"`
+	R2Buckets               customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewR2BucketsDataSourceModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed"`
+	Services                customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewServicesDataSourceModel]                `tfsdk:"services" json:"services,computed"`
+	VectorizeBindings       customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed"`
 }
 
 type PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel struct {
@@ -194,10 +183,6 @@ type PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel struct {
 	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
 }
 
-type PagesProjectDeploymentConfigsPreviewLimitsDataSourceModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,computed"`
-}
-
 type PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel struct {
 	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,computed"`
 }
@@ -226,28 +211,22 @@ type PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel struct
 }
 
 type PagesProjectDeploymentConfigsProductionDataSourceModel struct {
-	AIBindings                       customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
-	AlwaysUseLatestCompatibilityDate types.Bool                                                                                                 `tfsdk:"always_use_latest_compatibility_date" json:"always_use_latest_compatibility_date,computed"`
-	AnalyticsEngineDatasets          customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
-	Browsers                         customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
-	BuildImageMajorVersion           types.Int64                                                                                                `tfsdk:"build_image_major_version" json:"build_image_major_version,computed"`
-	CompatibilityDate                types.String                                                                                               `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
-	CompatibilityFlags               customfield.List[types.String]                                                                             `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
-	D1Databases                      customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
-	DurableObjectNamespaces          customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed"`
-	EnvVars                          customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel]                 `tfsdk:"env_vars" json:"env_vars,computed"`
-	FailOpen                         types.Bool                                                                                                 `tfsdk:"fail_open" json:"fail_open,computed"`
-	HyperdriveBindings               customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed"`
-	KVNamespaces                     customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed"`
-	Limits                           customfield.NestedObject[PagesProjectDeploymentConfigsProductionLimitsDataSourceModel]                     `tfsdk:"limits" json:"limits,computed"`
-	MTLSCertificates                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed"`
-	Placement                        customfield.NestedObject[PagesProjectDeploymentConfigsProductionPlacementDataSourceModel]                  `tfsdk:"placement" json:"placement,computed"`
-	QueueProducers                   customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionQueueProducersDataSourceModel]          `tfsdk:"queue_producers" json:"queue_producers,computed"`
-	R2Buckets                        customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionR2BucketsDataSourceModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed"`
-	Services                         customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionServicesDataSourceModel]                `tfsdk:"services" json:"services,computed"`
-	UsageModel                       types.String                                                                                               `tfsdk:"usage_model" json:"usage_model,computed"`
-	VectorizeBindings                customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed"`
-	WranglerConfigHash               types.String                                                                                               `tfsdk:"wrangler_config_hash" json:"wrangler_config_hash,computed"`
+	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
+	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
+	Browsers                customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
+	CompatibilityDate       types.String                                                                                               `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
+	CompatibilityFlags      customfield.List[types.String]                                                                             `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
+	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
+	DurableObjectNamespaces customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed"`
+	EnvVars                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel]                 `tfsdk:"env_vars" json:"env_vars,computed"`
+	HyperdriveBindings      customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed"`
+	KVNamespaces            customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed"`
+	MTLSCertificates        customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed"`
+	Placement               customfield.NestedObject[PagesProjectDeploymentConfigsProductionPlacementDataSourceModel]                  `tfsdk:"placement" json:"placement,computed"`
+	QueueProducers          customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionQueueProducersDataSourceModel]          `tfsdk:"queue_producers" json:"queue_producers,computed"`
+	R2Buckets               customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionR2BucketsDataSourceModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed"`
+	Services                customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionServicesDataSourceModel]                `tfsdk:"services" json:"services,computed"`
+	VectorizeBindings       customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed"`
 }
 
 type PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel struct {
@@ -280,10 +259,6 @@ type PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel st
 
 type PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel struct {
 	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
-}
-
-type PagesProjectDeploymentConfigsProductionLimitsDataSourceModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,computed"`
 }
 
 type PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel struct {

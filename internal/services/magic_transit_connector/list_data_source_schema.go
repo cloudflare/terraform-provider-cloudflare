@@ -73,9 +73,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"last_seen_version": schema.StringAttribute{
 							Computed: true,
 						},
-						"license_key": schema.StringAttribute{
-							Computed: true,
-						},
 					},
 				},
 			},

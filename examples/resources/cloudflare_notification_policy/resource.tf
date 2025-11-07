@@ -57,7 +57,6 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
     traffic_exclusions = ["security_events"]
     tunnel_id = ["string"]
     tunnel_name = ["string"]
-    type = ["string"]
     where = ["string"]
     zones = ["string"]
   }
