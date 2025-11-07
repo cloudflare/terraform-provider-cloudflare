@@ -153,7 +153,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"open_access": schema.BoolAttribute{
 				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "custom", "predefined", "integration".`,

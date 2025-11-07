@@ -22,6 +22,7 @@ type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
 	ProxyEndpointID types.String                   `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id,required"`
 	AccountID       types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt       timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Kind            types.String                   `tfsdk:"kind" json:"kind,computed"`
 	Name            types.String                   `tfsdk:"name" json:"name,computed"`
 	Subdomain       types.String                   `tfsdk:"subdomain" json:"subdomain,computed"`
 	UpdatedAt       timetypes.RFC3339              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

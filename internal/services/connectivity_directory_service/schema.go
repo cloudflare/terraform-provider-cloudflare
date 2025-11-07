@@ -5,7 +5,7 @@ package connectivity_directory_service
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ConnectivityDirectoryServiceResource)(nil)
@@ -20,13 +21,17 @@ var _ resource.ResourceWithConfigValidators = (*ConnectivityDirectoryServiceReso
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"service_id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"service_id": schema.StringAttribute{
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -42,22 +47,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"host": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
-					"hostname": schema.StringAttribute{
-						Optional: true,
-					},
 					"ipv4": schema.StringAttribute{
 						Optional: true,
+					},
+					"network": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"tunnel_id": schema.StringAttribute{
+								Required: true,
+							},
+						},
 					},
 					"ipv6": schema.StringAttribute{
 						Optional: true,
 					},
-					"network": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+					"hostname": schema.StringAttribute{
+						Optional: true,
 					},
-					"resolver_network": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+					"resolver_network": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"tunnel_id": schema.StringAttribute{
+								Required: true,
+							},
+							"resolver_ips": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+						},
 					},
 				},
 			},
@@ -72,6 +89,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
 				},
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

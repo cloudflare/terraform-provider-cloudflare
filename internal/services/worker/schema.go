@@ -110,7 +110,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Whether [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/) are enabled for the Worker.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 				},
 			},
