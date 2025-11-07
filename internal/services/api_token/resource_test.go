@@ -88,6 +88,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
 				},
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					// Verify conditions are not set (ConfigStateChecks can't easily check for absence)
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.in"),
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.not_in"),
@@ -114,6 +115,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
 				},
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					// Verify conditions still not set
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.in"),
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.0.not_in"),
@@ -126,6 +128,13 @@ func TestAccAPIToken_Basic(t *testing.T) {
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
@@ -148,7 +157,8 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Verify not_in condition is not set
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "condition.request_ip.in.0", "192.0.2.1/32"),
 					resource.TestCheckNoResourceAttr(resourceName, "condition.request_ip.not_in"),
 				),
 			},
@@ -159,6 +169,13 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
@@ -184,6 +201,26 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("not_in"), knownvalue.ListSizeExact(1)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("not_in").AtSliceIndex(0), knownvalue.StringExact("198.51.100.1/32")),
 				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "condition.request_ip.in.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(resourceName, "condition.request_ip.not_in.0", "198.51.100.1/32"),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-with-all-condition.tf", rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
@@ -211,6 +248,11 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("not_before"), knownvalue.StringExact(notBefore)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(expireTime)),
 				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "not_before", notBefore),
+					resource.TestCheckResourceAttr(resourceName, "expires_on", expireTime),
+				),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-with-ttl.tf", rnd, expireTime),
@@ -233,6 +275,18 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("not_before"), knownvalue.StringExact(notBefore)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(updatedExpireTime)),
 				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "not_before", notBefore),
+					resource.TestCheckResourceAttr(resourceName, "expires_on", updatedExpireTime),
+				),
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
@@ -297,6 +351,13 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 					},
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 
@@ -351,6 +412,13 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
@@ -412,6 +480,13 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 					},
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 
@@ -467,6 +542,13 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 }
@@ -510,6 +592,13 @@ func TestAccAPIToken_ResourcesFlexible(t *testing.T) {
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})

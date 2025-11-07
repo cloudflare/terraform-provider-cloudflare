@@ -13,9 +13,9 @@ resource "cloudflare_account_token" "test_account_token" {
     permission_groups = [{
       id = data.cloudflare_account_api_token_permission_groups_list.dns_read.result[0].id
     }]
-    resources = {
+    resources = jsonencode({
       "com.cloudflare.api.account.%[2]s" = "*"
-    }
+    })
   }]
 
   condition = {
