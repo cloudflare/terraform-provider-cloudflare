@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 )
@@ -176,6 +177,14 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
 				},
 			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -256,6 +265,14 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("sample_rate"), knownvalue.Float64Exact(logpushJobConfigUpdate.outputOptions.sampleRate)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("timestamp_format"), knownvalue.StringExact(toString(logpushJobConfigUpdate.outputOptions.timestampFormat))),
 				},
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -350,6 +367,14 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 					},
 				},
 				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigUpdate),
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -548,6 +573,14 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 			{
 				Config:      testCloudflareLogpushJobImmutableFields(rnd, logpushJobConfigUpdate),
 				ExpectError: regexp.MustCompile(regexp.QuoteMeta("400 Bad Request")),
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("zones/%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
