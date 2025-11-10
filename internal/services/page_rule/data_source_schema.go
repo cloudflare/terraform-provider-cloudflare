@@ -17,6 +17,10 @@ var _ datasource.DataSourceWithConfigValidators = (*PageRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"pagerule_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -29,10 +33,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The timestamp of when the Page Rule was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the Page Rule was last modified.",

@@ -83,6 +83,7 @@ func (d *LoadBalancerDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.LoadBalancerID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

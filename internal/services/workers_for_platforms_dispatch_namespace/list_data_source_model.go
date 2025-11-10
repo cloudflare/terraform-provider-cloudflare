@@ -32,6 +32,7 @@ func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams(_ co
 }
 
 type WorkersForPlatformsDispatchNamespacesResultDataSourceModel struct {
+	ID             types.String      `tfsdk:"id" json:"namespace_name,computed"`
 	CreatedBy      types.String      `tfsdk:"created_by" json:"created_by,computed"`
 	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedBy     types.String      `tfsdk:"modified_by" json:"modified_by,computed"`

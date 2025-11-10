@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"config_id": schema.StringAttribute{
 				Description: "UUID.",
-				Optional:    true,
+				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",

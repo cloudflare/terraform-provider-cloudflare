@@ -17,9 +17,17 @@ var _ datasource.DataSourceWithConfigValidators = (*APIShieldDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
+			},
+			"normalize": schema.BoolAttribute{
+				Description: "Ensures that the configuration is written or retrieved in normalized fashion",
+				Optional:    true,
 			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
 				Computed:   true,

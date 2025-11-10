@@ -113,6 +113,7 @@ func (d *ZeroTrustAccessServiceTokenDataSource) Read(ctx context.Context, req da
 		return
 	}
 	data = &env.Result
+	data.ID = data.ServiceTokenID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
