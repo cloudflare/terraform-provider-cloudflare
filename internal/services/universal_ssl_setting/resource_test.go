@@ -10,15 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func testUniversalSSLSetting_Enable(rnd, zoneID string) string {
-	return acctest.LoadTestCase("universalssl_enabled.tf", rnd, zoneID)
+func testUniversalSSLSettingConfig(rnd, zoneID string, enabled bool) string {
+	return acctest.LoadTestCase("universalssl.tf", rnd, zoneID, enabled)
 }
 
-func testUniversalSSLSetting_Disable(rnd, zoneID string) string {
-	return acctest.LoadTestCase("universalssl_disabled.tf", rnd, zoneID)
-}
-
-func TestAccCloudflareUniversalSSLSetting_Enable(t *testing.T) {
+func TestAccCloudflareUniversalSSLSetting_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_universal_ssl_setting." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -28,65 +24,26 @@ func TestAccCloudflareUniversalSSLSetting_Enable(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testUniversalSSLSetting_Enable(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareUniversalSSLSetting_Disable(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_universal_ssl_setting." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testUniversalSSLSetting_Disable(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "enabled", "false"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareUniversalSSLSetting_Update(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_universal_ssl_setting." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testUniversalSSLSetting_Enable(rnd, zoneID),
+				// Create with enabled = true
+				Config: testUniversalSSLSettingConfig(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 				),
 			},
 			{
-				Config: testUniversalSSLSetting_Disable(rnd, zoneID),
+				// Update to enabled = false
+				Config: testUniversalSSLSettingConfig(rnd, zoneID, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 				),
 			},
 			{
-				Config: testUniversalSSLSetting_Enable(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
-				),
+				// Import test
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

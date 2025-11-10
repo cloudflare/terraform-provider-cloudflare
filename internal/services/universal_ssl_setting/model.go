@@ -12,6 +12,7 @@ type UniversalSSLSettingResultEnvelope struct {
 }
 
 type UniversalSSLSettingModel struct {
+	ID      types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 }

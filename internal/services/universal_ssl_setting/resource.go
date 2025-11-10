@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*UniversalSSLSettingResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*UniversalSSLSettingResource)(nil)
+var _ resource.ResourceWithImportState = (*UniversalSSLSettingResource)(nil)
 
 func NewResource() resource.Resource {
 	return &UniversalSSLSettingResource{}
@@ -88,6 +91,7 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -136,6 +140,7 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -175,6 +180,7 @@ func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -199,4 +205,46 @@ func (r *UniversalSSLSettingResource) ModifyPlan(ctx context.Context, req resour
 				"in the API, refer to the documentation for how to do it manually.",
 		)
 	}
+}
+
+func (r *UniversalSSLSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *UniversalSSLSettingModel = new(UniversalSSLSettingModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := UniversalSSLSettingResultEnvelope{*data}
+	_, err := r.client.SSL.Universal.Settings.Get(
+		ctx,
+		ssl.UniversalSettingGetParams{
+			ZoneID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
