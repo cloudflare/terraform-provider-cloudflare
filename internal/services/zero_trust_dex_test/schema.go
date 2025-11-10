@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
@@ -13,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDEXTestResource)(nil)
@@ -52,15 +54,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Optional:    true,
+						Required:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.",
-						Optional:    true,
+						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+						},
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP request method type.",
+						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
 						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("GET"),
+						},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
@@ -71,6 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
+				Computed:    true,
 				Optional:    true,
 				Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []ZeroTrustDEXTestTargetPoliciesModel{}).ListValue),
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesModel](ctx),

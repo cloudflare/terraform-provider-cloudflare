@@ -12,16 +12,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/connectivity"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ConnectivityDirectoryServiceResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ConnectivityDirectoryServiceResource)(nil)
-var _ resource.ResourceWithImportState = (*ConnectivityDirectoryServiceResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ConnectivityDirectoryServiceResource{}
@@ -70,8 +67,7 @@ func (r *ConnectivityDirectoryServiceResource) Create(ctx context.Context, req r
 		return
 	}
 	res := new(http.Response)
-	env := ConnectivityDirectoryServiceResultEnvelope{*data}
-	_, err = r.client.Connectivity.Directory.Services.New(
+	err = r.client.Connectivity.Directory.Services.New(
 		ctx,
 		connectivity.DirectoryServiceNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -85,13 +81,11 @@ func (r *ConnectivityDirectoryServiceResource) Create(ctx context.Context, req r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -119,8 +113,7 @@ func (r *ConnectivityDirectoryServiceResource) Update(ctx context.Context, req r
 		return
 	}
 	res := new(http.Response)
-	env := ConnectivityDirectoryServiceResultEnvelope{*data}
-	_, err = r.client.Connectivity.Directory.Services.Update(
+	err = r.client.Connectivity.Directory.Services.Update(
 		ctx,
 		data.ServiceID.ValueString(),
 		connectivity.DirectoryServiceUpdateParams{
@@ -135,13 +128,11 @@ func (r *ConnectivityDirectoryServiceResource) Update(ctx context.Context, req r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -156,8 +147,7 @@ func (r *ConnectivityDirectoryServiceResource) Read(ctx context.Context, req res
 	}
 
 	res := new(http.Response)
-	env := ConnectivityDirectoryServiceResultEnvelope{*data}
-	_, err := r.client.Connectivity.Directory.Services.Get(
+	err := r.client.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
 		connectivity.DirectoryServiceGetParams{
@@ -175,14 +165,6 @@ func (r *ConnectivityDirectoryServiceResource) Read(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -208,53 +190,6 @@ func (r *ConnectivityDirectoryServiceResource) Delete(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.ServiceID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ConnectivityDirectoryServiceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ConnectivityDirectoryServiceModel = new(ConnectivityDirectoryServiceModel)
-
-	path_account_id := ""
-	path_service_id := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<account_id>/<service_id>",
-		&path_account_id,
-		&path_service_id,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	data.AccountID = types.StringValue(path_account_id)
-	data.ServiceID = types.StringValue(path_service_id)
-
-	res := new(http.Response)
-	env := ConnectivityDirectoryServiceResultEnvelope{*data}
-	_, err := r.client.Connectivity.Directory.Services.Get(
-		ctx,
-		path_service_id,
-		connectivity.DirectoryServiceGetParams{
-			AccountID: cloudflare.F(path_account_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ServiceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

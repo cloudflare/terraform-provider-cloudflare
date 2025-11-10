@@ -18,7 +18,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_t
         http_host_header = "httpHostHeader"
         keep_alive_connections = 100
         keep_alive_timeout = 90
-        match_sn_ito_host = false
         no_happy_eyeballs = false
         no_tls_verify = false
         origin_server_name = "originServerName"
@@ -41,7 +40,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_t
       http_host_header = "httpHostHeader"
       keep_alive_connections = 100
       keep_alive_timeout = 90
-      match_sn_ito_host = false
       no_happy_eyeballs = false
       no_tls_verify = false
       origin_server_name = "originServerName"
