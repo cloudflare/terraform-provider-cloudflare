@@ -60,7 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"entries": schema.ListNestedAttribute{
+			"entries": schema.SetNestedAttribute{
 				Description:        "Custom entries from this profile.\nIf this field is omitted, entries owned by this profile will not be changed.",
 				Optional:           true,
 				DeprecationMessage: "This attribute will be sunset on 01/01/2026",
@@ -94,7 +94,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"shared_entries": schema.ListNestedAttribute{
+			"shared_entries": schema.SetNestedAttribute{
 				Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -154,7 +154,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"open_access": schema.BoolAttribute{
 				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"type": schema.StringAttribute{
 				Description:   `Available values: "custom", "predefined", "integration".`,

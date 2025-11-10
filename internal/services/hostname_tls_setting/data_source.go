@@ -84,6 +84,7 @@ func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

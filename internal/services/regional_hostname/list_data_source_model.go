@@ -32,6 +32,7 @@ func (m *RegionalHostnamesDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type RegionalHostnamesResultDataSourceModel struct {
+	ID        types.String      `tfsdk:"id" json:"hostname,computed"`
 	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Hostname  types.String      `tfsdk:"hostname" json:"hostname,computed"`
 	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`

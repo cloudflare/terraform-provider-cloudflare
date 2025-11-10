@@ -34,6 +34,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceManagedNetworksListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "API UUID.",
+							Computed:    true,
+						},
 						"config": schema.SingleNestedAttribute{
 							Description: "The configuration object containing information for the WARP client to detect the managed network.",
 							Computed:    true,

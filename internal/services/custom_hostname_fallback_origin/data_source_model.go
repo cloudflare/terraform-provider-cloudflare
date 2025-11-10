@@ -18,6 +18,7 @@ type CustomHostnameFallbackOriginResultDataSourceEnvelope struct {
 }
 
 type CustomHostnameFallbackOriginDataSourceModel struct {
+	ID        types.String                   `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID    types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedAt timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Origin    types.String                   `tfsdk:"origin" json:"origin,computed"`

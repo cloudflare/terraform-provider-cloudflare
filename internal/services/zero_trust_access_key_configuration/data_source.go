@@ -82,6 +82,7 @@ func (d *ZeroTrustAccessKeyConfigurationDataSource) Read(ctx context.Context, re
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

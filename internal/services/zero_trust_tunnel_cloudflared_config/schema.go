@@ -106,6 +106,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "Timeout after which an idle keepalive connection can be discarded.",
 											Optional:    true,
 										},
+										"match_sn_ito_host": schema.BoolAttribute{
+											Description: "Auto configure the Hostname on the origin server certificate.",
+											Optional:    true,
+										},
 										"no_happy_eyeballs": schema.BoolAttribute{
 											Description: "Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.",
 											Optional:    true,
@@ -187,6 +191,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"keep_alive_timeout": schema.Int64Attribute{
 								Description: "Timeout after which an idle keepalive connection can be discarded.",
+								Optional:    true,
+							},
+							"match_sn_ito_host": schema.BoolAttribute{
+								Description: "Auto configure the Hostname on the origin server certificate.",
 								Optional:    true,
 							},
 							"no_happy_eyeballs": schema.BoolAttribute{

@@ -113,6 +113,7 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Read(ctx context.Context, re
 		return
 	}
 	data = &env.Result
+	data.ID = data.RouteID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

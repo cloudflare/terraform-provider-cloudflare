@@ -17,7 +17,7 @@ type WorkersRouteResultDataSourceEnvelope struct {
 
 type WorkersRouteDataSourceModel struct {
 	ID      types.String `tfsdk:"id" path:"route_id,computed"`
-	RouteID types.String `tfsdk:"route_id" path:"route_id,optional"`
+	RouteID types.String `tfsdk:"route_id" path:"route_id,required"`
 	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Pattern types.String `tfsdk:"pattern" json:"pattern,computed"`
 	Script  types.String `tfsdk:"script" json:"script,computed"`

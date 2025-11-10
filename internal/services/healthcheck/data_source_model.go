@@ -19,7 +19,7 @@ type HealthcheckResultDataSourceEnvelope struct {
 
 type HealthcheckDataSourceModel struct {
 	ID                   types.String                                                   `tfsdk:"id" path:"healthcheck_id,computed"`
-	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,optional"`
+	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,required"`
 	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Address              types.String                                                   `tfsdk:"address" json:"address,computed"`
 	ConsecutiveFails     types.Int64                                                    `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`

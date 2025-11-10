@@ -35,6 +35,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[QueuesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
 						"consumers": schema.ListNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectListType[QueuesConsumersDataSourceModel](ctx),

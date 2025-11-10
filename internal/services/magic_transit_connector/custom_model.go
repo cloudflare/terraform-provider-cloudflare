@@ -18,6 +18,7 @@ type CustomMagicTransitConnectorModel struct {
 	InterruptWindowHourOfDay     types.Float64                           `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed_optional"`
 	Notes                        types.String                            `tfsdk:"notes" json:"notes,computed_optional"`
 	Timezone                     types.String                            `tfsdk:"timezone" json:"timezone,computed_optional"`
+	LicenseKey                   types.String                            `tfsdk:"license_key" json:"license_key,computed"`
 }
 
 func (m CustomMagicTransitConnectorModel) MarshalJSON() (data []byte, err error) {
@@ -29,6 +30,7 @@ func (m CustomMagicTransitConnectorModel) MarshalJSONForUpdate(state CustomMagic
 }
 
 type CustomMagicTransitConnectorDeviceModel struct {
-	ID           types.String `tfsdk:"id" json:"id,computed_optional"`
-	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed_optional"`
+	ID               types.String `tfsdk:"id" json:"id,computed_optional"`
+	ProvisionLicense types.Bool   `tfsdk:"provision_license" json:"provision_license,optional,no_refresh"`
+	SerialNumber     types.String `tfsdk:"serial_number" json:"serial_number,computed_optional"`
 }

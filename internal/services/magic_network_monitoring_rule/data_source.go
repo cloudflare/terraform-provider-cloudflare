@@ -83,6 +83,7 @@ func (d *MagicNetworkMonitoringRuleDataSource) Read(ctx context.Context, req dat
 		return
 	}
 	data = &env.Result
+	data.ID = data.RuleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

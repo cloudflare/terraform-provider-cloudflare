@@ -85,6 +85,7 @@ func (d *WorkerVersionDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 	data = &env.Result
+	data.ID = data.VersionID
 
 	// Set assets to null if not returned by API (computed field)
 	if data.Assets.IsUnknown() {

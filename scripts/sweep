@@ -49,9 +49,13 @@ show_usage() {
     echo "  --debug            Enable debug logging (default: disabled)"
     echo "  --dry-run          Show what would be swept without executing"
     echo ""
-    echo "Environment variables:"
-    echo "  CLOUDFLARE_API_TOKEN    Required - Your Cloudflare API token"
-    echo "  DEBUG_LOGS             Enable debug logging (default: false)"
+    echo "Environment variables (authentication):"
+    echo "  CLOUDFLARE_API_TOKEN              Your Cloudflare API token"
+    echo "  OR"
+    echo "  CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL   Your Cloudflare API key and email"
+    echo ""
+    echo "Other environment variables:"
+    echo "  DEBUG_LOGS                        Enable debug logging (default: false)"
     echo ""
     echo "Examples:"
     echo "  $0 --account c03814971cc44525d34173ca738b615b"
@@ -125,9 +129,15 @@ validate_prerequisites() {
         log "${GREEN}Target resource '$target_resource' validated${NC}"
     fi
     
-    # Check if CLOUDFLARE_API_TOKEN is set
-    if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-        log "${RED}Error: CLOUDFLARE_API_TOKEN environment variable is required${NC}"
+    # Check if either CLOUDFLARE_API_TOKEN or (CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL) is set
+    if [ -z "$CLOUDFLARE_API_TOKEN" ] && [ -z "$CLOUDFLARE_API_KEY" ]; then
+        log "${RED}Error: Either CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL environment variables are required${NC}"
+        exit 1
+    fi
+
+    # If using API key, ensure email is also set
+    if [ -n "$CLOUDFLARE_API_KEY" ] && [ -z "$CLOUDFLARE_EMAIL" ]; then
+        log "${RED}Error: CLOUDFLARE_EMAIL is required when using CLOUDFLARE_API_KEY${NC}"
         exit 1
     fi
     
@@ -158,10 +168,18 @@ fetch_zones_for_account() {
     local zones_file="$LOG_DIR/zones_${account_id}.json"
     
     log "${WHITE}Fetching zones for account: $account_id${NC}" >&2
-    
+
+    # Build authentication headers based on available credentials
+    local auth_headers
+    if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+        auth_headers="-H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\""
+    else
+        auth_headers="-H \"X-Auth-Email: $CLOUDFLARE_EMAIL\" -H \"X-Auth-Key: $CLOUDFLARE_API_KEY\""
+    fi
+
     # Make API request to list zones for the account
-    local api_response=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?account.id=${account_id}" \
-        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    local api_response=$(eval curl -s -X GET "https://api.cloudflare.com/client/v4/zones?account.id=${account_id}" \
+        $auth_headers \
         -H "Content-Type: application/json")
     
     # Check if we got any response
@@ -266,6 +284,7 @@ pages_domain
 pages_project
 queue
 turnstile_widget
+email_routing_address
 EOF
 }
 
@@ -303,6 +322,7 @@ dns_zone_transfers_tsig
 email_routing_catch_all
 email_routing_dns
 email_routing_rule
+email_routing_settings
 healthcheck
 managed_transforms
 cloud_connector_rules

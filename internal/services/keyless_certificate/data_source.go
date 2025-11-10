@@ -83,6 +83,7 @@ func (d *KeylessCertificateDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.KeylessCertificateID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
