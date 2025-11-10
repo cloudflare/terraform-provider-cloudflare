@@ -582,10 +582,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"deployments_enabled": schema.BoolAttribute{
 								Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
-								Computed:           true,
 								Optional:           true,
 								DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-								Default:            booldefault.StaticBool(true),
 							},
 							"owner": schema.StringAttribute{
 								Description: "The owner of the repository.",
@@ -607,9 +605,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"pr_comments_enabled": schema.BoolAttribute{
 								Description: "Whether to enable PR comments.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(true),
 							},
 							"preview_branch_excludes": schema.ListAttribute{
 								Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -644,9 +640,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"production_deployments_enabled": schema.BoolAttribute{
 								Description: "Whether to trigger a production deployment on commits to the production branch.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(true),
 							},
 							"repo_name": schema.StringAttribute{
 								Description: "The name of the repository.",
@@ -887,7 +881,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 										Computed:           true,
 										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-										Default:            booldefault.StaticBool(true),
 									},
 									"owner": schema.StringAttribute{
 										Description: "The owner of the repository.",
@@ -908,7 +901,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"pr_comments_enabled": schema.BoolAttribute{
 										Description: "Whether to enable PR comments.",
 										Computed:    true,
-										Default:     booldefault.StaticBool(true),
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -941,7 +933,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"production_deployments_enabled": schema.BoolAttribute{
 										Description: "Whether to trigger a production deployment on commits to the production branch.",
 										Computed:    true,
-										Default:     booldefault.StaticBool(true),
 									},
 									"repo_name": schema.StringAttribute{
 										Description: "The name of the repository.",
@@ -1198,7 +1189,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 										Computed:           true,
 										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-										Default:            booldefault.StaticBool(true),
 									},
 									"owner": schema.StringAttribute{
 										Description: "The owner of the repository.",
@@ -1219,7 +1209,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"pr_comments_enabled": schema.BoolAttribute{
 										Description: "Whether to enable PR comments.",
 										Computed:    true,
-										Default:     booldefault.StaticBool(true),
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -1252,7 +1241,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"production_deployments_enabled": schema.BoolAttribute{
 										Description: "Whether to trigger a production deployment on commits to the production branch.",
 										Computed:    true,
-										Default:     booldefault.StaticBool(true),
 									},
 									"repo_name": schema.StringAttribute{
 										Description: "The name of the repository.",

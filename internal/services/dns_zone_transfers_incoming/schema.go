@@ -5,13 +5,10 @@ package dns_zone_transfers_incoming
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,6 +25,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"auto_refresh_seconds": schema.Float64Attribute{
+				Description: "How often should a secondary zone auto refresh regardless of DNS NOTIFY.\nNot applicable for primary zones.",
+				Required:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "Zone name.",
 				Required:    true,
@@ -36,15 +37,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A list of peer tags.",
 				Required:    true,
 				ElementType: types.StringType,
-			},
-			"auto_refresh_seconds": schema.Float64Attribute{
-				Description: "How often should a secondary zone auto refresh regardless of DNS NOTIFY.\nNot applicable for primary zones.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(300),
-				},
-				Default: float64default.StaticFloat64(86400),
 			},
 			"checked_time": schema.StringAttribute{
 				Description: "The time for a specific event.",
