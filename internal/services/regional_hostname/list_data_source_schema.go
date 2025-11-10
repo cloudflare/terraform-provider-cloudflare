@@ -35,6 +35,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[RegionalHostnamesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+							Computed:    true,
+						},
 						"created_on": schema.StringAttribute{
 							Description: "When the regional hostname was created",
 							Computed:    true,

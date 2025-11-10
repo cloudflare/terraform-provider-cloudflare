@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"domain_name": schema.StringAttribute{
 				Description: "Name of the domain.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",

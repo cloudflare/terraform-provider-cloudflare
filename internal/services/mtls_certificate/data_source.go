@@ -83,6 +83,7 @@ func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	data = &env.Result
+	data.ID = data.MTLSCertificateID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -34,6 +34,10 @@ func (m *SchemaValidationSchemasDataSourceModel) toReadParams(_ context.Context)
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.Filter.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.Filter.OmitSource.ValueBool())
+	}
+
 	return
 }
 

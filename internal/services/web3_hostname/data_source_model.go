@@ -18,7 +18,7 @@ type Web3HostnameResultDataSourceEnvelope struct {
 
 type Web3HostnameDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" path:"identifier,computed"`
-	Identifier  types.String      `tfsdk:"identifier" path:"identifier,optional"`
+	Identifier  types.String      `tfsdk:"identifier" path:"identifier,required"`
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String      `tfsdk:"description" json:"description,computed"`

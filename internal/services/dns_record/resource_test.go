@@ -36,36 +36,53 @@ func init() {
 
 func testSweepCloudflareRecord(r string) error {
 	ctx := context.Background()
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
-		return clientErr
-	}
+	client := acctest.SharedClient()
 
-	// Clean up test DNS records only
+	// Clean up DNS records
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	records, _, err := client.ListDNSRecords(context.Background(), cfold.ZoneIdentifier(zoneID), cfold.ListDNSRecordsParams{})
+	// List all DNS records using v6 SDK
+	records, err := client.DNS.Records.List(ctx, dns.RecordListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 		return err
 	}
 
-	if len(records) == 0 {
+	recordList := records.Result
+	if len(recordList) == 0 {
 		log.Print("[DEBUG] No Cloudflare DNS records to sweep")
 		return nil
 	}
 
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	fmt.Printf("Found %d DNS records to evaluate\n", len(recordList))
 
-	for _, record := range records {
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	deletedCount := 0
+	skippedCount := 0
+
+	for _, record := range recordList {
 		shouldDelete := false
+		skipReason := ""
+
+		// NEVER delete critical system records
+		if record.Type == "NS" || record.Type == "SOA" {
+			skipReason = "system record (NS/SOA)"
+			skippedCount++
+			continue
+		}
 
 		// Delete test records - those that start with tf-acctest- or contain terraform test patterns
 		if strings.HasPrefix(record.Name, "tf-acctest-") || strings.Contains(record.Name, "tf-acctest") {
+			shouldDelete = true
+		}
+
+		// Delete records with common test names
+		if strings.Contains(record.Name, "test") || strings.Contains(record.Name, "example") {
 			shouldDelete = true
 		}
 
@@ -77,11 +94,17 @@ func testSweepCloudflareRecord(r string) error {
 			}
 		}
 
-		// Also clean up apex domain records if they are A/AAAA/CNAME records that could conflict with tests
-		// Only delete apex records that are likely from tests (A/AAAA records pointing to test IPs or CNAME records)
+		// Clean up common DNS record types that are likely from tests
 		if domain != "" && record.Name == domain {
-			if record.Type == "A" && (strings.HasPrefix(record.Content, "192.168.") || strings.HasPrefix(record.Content, "10.0.") || strings.HasPrefix(record.Content, "172.16.")) {
-				shouldDelete = true
+			// Delete apex A/AAAA records pointing to private/test IPs
+			if record.Type == "A" {
+				if strings.HasPrefix(record.Content, "192.168.") ||
+				   strings.HasPrefix(record.Content, "10.0.") ||
+				   strings.HasPrefix(record.Content, "172.16.") ||
+				   strings.HasPrefix(record.Content, "198.51.100.") || // TEST-NET-2
+				   strings.HasPrefix(record.Content, "203.0.113.") {    // TEST-NET-3
+					shouldDelete = true
+				}
 			} else if record.Type == "AAAA" && strings.HasPrefix(record.Content, "2001:db8:") {
 				shouldDelete = true
 			} else if record.Type == "CNAME" {
@@ -89,15 +112,49 @@ func testSweepCloudflareRecord(r string) error {
 			}
 		}
 
+		// Clean up TXT records with test content
+		if record.Type == "TXT" {
+			if strings.Contains(record.Content, "test") ||
+			   strings.Contains(record.Content, "terraform") ||
+			   strings.Contains(record.Content, "acctest") {
+				shouldDelete = true
+			}
+		}
+
+		// Clean up MX records pointing to test domains
+		if record.Type == "MX" {
+			if strings.Contains(record.Content, "test") ||
+			   strings.Contains(record.Content, "example") ||
+			   strings.Contains(record.Content, "mail.terraform.cfapi.net") {
+				shouldDelete = true
+			}
+		}
+
+		// Clean up SRV, CAA, LOC, HTTPS, SVCB, DNSKEY records (usually test records)
+		if record.Type == "SRV" || record.Type == "CAA" || record.Type == "LOC" ||
+		   record.Type == "HTTPS" || record.Type == "SVCB" || record.Type == "DNSKEY" {
+			shouldDelete = true
+		}
+
 		if shouldDelete {
-			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s, Type: %s, Content: %s", record.ID, record.Name, record.Type, record.Content))
-			err := client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
+			tflog.Info(ctx, fmt.Sprintf("Deleting DNS record ID: %s, Name: %s, Type: %s, Content: %s", record.ID, record.Name, record.Type, record.Content))
+			_, err := client.DNS.Records.Delete(ctx, record.ID, dns.RecordDeleteParams{
+				ZoneID: cloudflare.F(zoneID),
+			})
 			if err != nil {
 				tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS record %s: %s", record.ID, err))
+			} else {
+				deletedCount++
 			}
+		} else {
+			if skipReason != "" {
+				tflog.Debug(ctx, fmt.Sprintf("Skipping DNS record %s (%s): %s", record.Name, record.Type, skipReason))
+			}
+			skippedCount++
 		}
 	}
 
+	fmt.Printf("Deleted %d DNS records, skipped %d records\n", deletedCount, skippedCount)
 	return nil
 }
 

@@ -83,6 +83,7 @@ func (d *Web3HostnameDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Identifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -45,6 +45,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[SchemaValidationSchemasListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "A unique identifier of this schema",
+							Computed:    true,
+						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},

@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"job_id": schema.Int64Attribute{
 				Description: "Unique id of the job.",
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
 				},

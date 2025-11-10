@@ -83,6 +83,7 @@ func (d *DNSZoneTransfersACLDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 	data = &env.Result
+	data.ID = data.ACLID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

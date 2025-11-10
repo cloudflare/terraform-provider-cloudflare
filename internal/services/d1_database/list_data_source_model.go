@@ -37,6 +37,7 @@ func (m *D1DatabasesDataSourceModel) toListParams(_ context.Context) (params d1.
 }
 
 type D1DatabasesResultDataSourceModel struct {
+	ID        types.String      `tfsdk:"id" json:"uuid,computed"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
 	UUID      types.String      `tfsdk:"uuid" json:"uuid,computed"`

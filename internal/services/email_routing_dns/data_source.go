@@ -80,6 +80,7 @@ func (d *EmailRoutingDNSDataSource) Read(ctx context.Context, req datasource.Rea
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

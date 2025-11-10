@@ -82,6 +82,7 @@ func (d *WorkersKVDataSource) Read(ctx context.Context, req datasource.ReadReque
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
