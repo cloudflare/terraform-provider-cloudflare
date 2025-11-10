@@ -18,7 +18,7 @@ type ZeroTrustDeviceCustomProfileResultDataSourceEnvelope struct {
 
 type ZeroTrustDeviceCustomProfileDataSourceModel struct {
 	ID                         types.String                                                                             `tfsdk:"id" path:"policy_id,computed"`
-	PolicyID                   types.String                                                                             `tfsdk:"policy_id" path:"policy_id,computed_optional"`
+	PolicyID                   types.String                                                                             `tfsdk:"policy_id" path:"policy_id,required"`
 	AccountID                  types.String                                                                             `tfsdk:"account_id" path:"account_id,required"`
 	AllowModeSwitch            types.Bool                                                                               `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
 	AllowUpdates               types.Bool                                                                               `tfsdk:"allow_updates" json:"allow_updates,computed"`

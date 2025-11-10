@@ -14,9 +14,6 @@ import (
 	"path/filepath"
 
 	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -146,106 +143,9 @@ func getAssetManifestHash(manifest AssetManifest) (string, error) {
 }
 
 func handleAssets(ctx context.Context, client *cloudflare.Client, data *WorkersScriptModel) error {
-	if data == nil {
-		return nil
-	}
-
-	if data.Assets == nil {
-		return nil
-	}
-
-	if data.Assets.Directory.IsNull() || data.Assets.Directory.IsUnknown() {
-		return nil
-	}
-
-	if data.Assets.JWT.ValueString() != "" {
-		return nil
-	}
-
-	directory := data.Assets.Directory.ValueString()
-
-	manifest, err := getAssetManifest(directory)
-	if err != nil {
-		return err
-	}
-
-	scriptName := data.ScriptName.ValueString()
-
-	requestBody := AssetUploadSessionRequestBody{
-		Manifest: manifest,
-	}
-
-	dataBytes, err := json.Marshal(requestBody)
-	if err != nil {
-		return err
-	}
-
-	res, err := client.Workers.Scripts.Assets.Upload.New(
-		ctx,
-		scriptName,
-		workers.ScriptAssetUploadNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	// Nothing to upload...
-	if len(res.Buckets) == 0 {
-		if res.JWT == "" {
-			return fmt.Errorf("failed to upload assets: no completion token received from upload session")
-		}
-		data.Assets.JWT = types.StringValue(res.JWT)
-		return nil
-	}
-
-	sessionToken := res.JWT
-
-	hashLookup := make(map[string]string)
-	for filename, manifest := range manifest {
-		hashLookup[manifest.Hash] = filename
-	}
-
-	// Upload each bucket of assets
-	for _, bucketHashes := range res.Buckets {
-		files := Bucket{}
-		for _, hash := range bucketHashes {
-			filename := hashLookup[hash]
-			entry := manifest[filename]
-
-			files = append(files, entry)
-		}
-
-		bucketBytes, formDataContentType, err := files.MarshalMultipart()
-		if err != nil {
-			return err
-		}
-
-		res, err := client.Workers.Assets.Upload.New(ctx,
-			workers.AssetUploadNewParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-				Base64:    cloudflare.F(workers.AssetUploadNewParamsBase64True),
-			},
-			option.WithRequestBody(formDataContentType, bucketBytes),
-			option.WithHeader("Authorization", fmt.Sprintf("Bearer %s", sessionToken)),
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			return err
-		}
-		if res.JWT != "" {
-			data.Assets.JWT = types.StringValue(res.JWT)
-		}
-	}
-
-	if res.JWT == "" {
-		return fmt.Errorf("failed to upload assets: no completion token received from upload session")
-	}
-
+	// TODO: Asset handling is not currently implemented
+	// The Assets.Directory field is not exposed in the WorkersScriptMetadataAssetsModel
+	// This function needs to be reimplemented once the schema is updated
 	return nil
 }
 

@@ -84,6 +84,7 @@ func (d *MagicTransitSiteWANDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 	data = &env.Result
+	data.ID = data.WANID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

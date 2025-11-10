@@ -31,6 +31,7 @@ func (m *QueuesDataSourceModel) toListParams(_ context.Context) (params queues.Q
 }
 
 type QueuesResultDataSourceModel struct {
+	ID                  types.String                                                 `tfsdk:"id" json:"queue_id,computed"`
 	Consumers           customfield.NestedObjectList[QueuesConsumersDataSourceModel] `tfsdk:"consumers" json:"consumers,computed"`
 	ConsumersTotalCount types.Float64                                                `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                 `tfsdk:"created_on" json:"created_on,computed"`

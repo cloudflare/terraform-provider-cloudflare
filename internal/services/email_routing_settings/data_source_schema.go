@@ -17,6 +17,10 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingSettingsDataSour
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -28,10 +32,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "State of the zone settings for Email Routing.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Email Routing settings identifier.",
 				Computed:    true,
 			},
 			"modified": schema.StringAttribute{
