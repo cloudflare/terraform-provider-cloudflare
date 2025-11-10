@@ -18,7 +18,7 @@ type ZeroTrustGatewayCertificateResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewayCertificateDataSourceModel struct {
 	ID            types.String      `tfsdk:"id" path:"certificate_id,computed"`
-	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,optional"`
+	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,required"`
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
 	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
 	Certificate   types.String      `tfsdk:"certificate" json:"certificate,computed"`

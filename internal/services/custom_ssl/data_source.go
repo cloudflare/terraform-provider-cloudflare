@@ -113,6 +113,7 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.CustomCertificateID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

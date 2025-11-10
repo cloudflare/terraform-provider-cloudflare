@@ -6,7 +6,8 @@ import (
 	"os"
 	"testing"
 
-	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -21,31 +22,48 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_rule", &resource.Sweeper{
 		Name: "cloudflare_email_routing_rule",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+			client := acctest.SharedClient()
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-			if err != nil {
-				return fmt.Errorf("error establishing client: %w", err)
-			}
-
 			ctx := context.Background()
-			rules, _, err := client.ListEmailRoutingRules(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListEmailRoutingRulesParameters{})
+
+			// List all email routing rules
+			rules, err := client.EmailRouting.Rules.List(ctx, email_routing.RuleListParams{
+				ZoneID: cloudflare.F(zoneID),
+			})
 			if err != nil {
 				return fmt.Errorf("failed to fetch email routing rules: %w", err)
 			}
 
-			for _, rule := range rules {
-				for _, matchers := range rule.Matchers {
+			ruleList := rules.Result
+			fmt.Printf("Found %d email routing rules\n", len(ruleList))
+			deletedCount := 0
+			skippedCount := 0
+
+			for _, rule := range ruleList {
+				isCatchAll := false
+				for _, matcher := range rule.Matchers {
 					// you cannot delete a catch all rule
-					if matchers.Type != "all" {
-						_, err := client.DeleteEmailRoutingRule(ctx, cfv1.ZoneIdentifier(zoneID), rule.Tag)
-						if err != nil {
-							return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
-						}
+					if matcher.Type == "all" {
+						isCatchAll = true
+						break
 					}
 				}
+
+				if isCatchAll {
+					skippedCount++
+					continue
+				}
+
+				_, err := client.EmailRouting.Rules.Delete(ctx, rule.Tag, email_routing.RuleDeleteParams{
+					ZoneID: cloudflare.F(zoneID),
+				})
+				if err != nil {
+					return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
+				}
+				deletedCount++
 			}
 
+			fmt.Printf("Deleted %d email routing rules, skipped %d catch-all rules\n", deletedCount, skippedCount)
 			return nil
 		},
 	})

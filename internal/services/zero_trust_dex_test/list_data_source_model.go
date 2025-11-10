@@ -31,6 +31,7 @@ func (m *ZeroTrustDEXTestsDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type ZeroTrustDEXTestsResultDataSourceModel struct {
+	ID             types.String                                                                 `tfsdk:"id" json:"test_id,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestsDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
 	Enabled        types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,computed"`

@@ -15,12 +15,12 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestAssetDat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"asset_id": schema.StringAttribute{
 				Description: "UUID.",
+				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"request_id": schema.StringAttribute{
@@ -38,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"file_type": schema.StringAttribute{
 				Description: "Asset file type.",
-				Computed:    true,
-			},
-			"id": schema.Int64Attribute{
-				Description: "Asset ID.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{

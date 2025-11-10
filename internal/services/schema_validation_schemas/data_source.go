@@ -113,6 +113,7 @@ func (d *SchemaValidationSchemasDataSource) Read(ctx context.Context, req dataso
 		return
 	}
 	data = &env.Result
+	data.ID = data.SchemaID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -45,6 +46,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
@@ -77,11 +79,14 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_field"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job"
@@ -144,6 +149,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_config"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/token_validation_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/universal_ssl_setting"
@@ -169,6 +176,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_portal"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_server"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider"
@@ -449,6 +459,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
 		logpush_ownership_challenge.NewResource,
+		logpull_retention.NewResource,
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
 		authenticated_origin_pulls_settings.NewResource,
@@ -535,6 +546,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_device_settings.NewResource,
 		zero_trust_access_identity_provider.NewResource,
 		zero_trust_organization.NewResource,
+		zero_trust_access_ai_controls_mcp_portal.NewResource,
+		zero_trust_access_ai_controls_mcp_server.NewResource,
 		zero_trust_access_infrastructure_target.NewResource,
 		zero_trust_access_short_lived_certificate.NewResource,
 		zero_trust_access_mtls_certificate.NewResource,
@@ -569,6 +582,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
 		turnstile_widget.NewResource,
+		connectivity_directory_service.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
 		web_analytics_rule.NewResource,
@@ -586,12 +600,17 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
+		workflow.NewResource,
+		leaked_credential_check.NewResource,
+		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
+		token_validation_config.NewResource,
+		token_validation_rules.NewResource,
 	}
 }
 
@@ -692,6 +711,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_dataset_job.NewLogpushDatasetJobDataSource,
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
+		logpull_retention.NewLogpullRetentionDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
@@ -725,6 +745,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_kv.NewWorkersKVDataSource,
 		queue.NewQueueDataSource,
 		queue.NewQueuesDataSource,
+		queue_consumer.NewQueueConsumerDataSource,
 		queue_consumer.NewQueueConsumersDataSource,
 		api_shield.NewAPIShieldDataSource,
 		api_shield_discovery_operation.NewAPIShieldDiscoveryOperationsDataSource,
@@ -828,6 +849,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProviderDataSource,
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProvidersDataSource,
 		zero_trust_organization.NewZeroTrustOrganizationDataSource,
+		zero_trust_access_ai_controls_mcp_portal.NewZeroTrustAccessAIControlsMcpPortalDataSource,
+		zero_trust_access_ai_controls_mcp_portal.NewZeroTrustAccessAIControlsMcpPortalsDataSource,
+		zero_trust_access_ai_controls_mcp_server.NewZeroTrustAccessAIControlsMcpServerDataSource,
+		zero_trust_access_ai_controls_mcp_server.NewZeroTrustAccessAIControlsMcpServersDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetDataSource,
 		zero_trust_access_infrastructure_target.NewZeroTrustAccessInfrastructureTargetsDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificateDataSource,
@@ -876,6 +901,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dns_location.NewZeroTrustDNSLocationsDataSource,
 		zero_trust_gateway_logging.NewZeroTrustGatewayLoggingDataSource,
 		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointDataSource,
+		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointsDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPolicyDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPoliciesDataSource,
 		zero_trust_gateway_certificate.NewZeroTrustGatewayCertificateDataSource,
@@ -891,6 +917,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationsDataSource,
 		turnstile_widget.NewTurnstileWidgetDataSource,
 		turnstile_widget.NewTurnstileWidgetsDataSource,
+		connectivity_directory_service.NewConnectivityDirectoryServiceDataSource,
+		connectivity_directory_service.NewConnectivityDirectoryServicesDataSource,
 		hyperdrive_config.NewHyperdriveConfigDataSource,
 		hyperdrive_config.NewHyperdriveConfigsDataSource,
 		web_analytics_site.NewWebAnalyticsSiteDataSource,
@@ -921,6 +949,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		sso_connector.NewSSOConnectorsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
+		workflow.NewWorkflowDataSource,
+		workflow.NewWorkflowsDataSource,
+		leaked_credential_check.NewLeakedCredentialCheckDataSource,
+		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
@@ -930,6 +962,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsDataSource,
 		schema_validation_operation_settings.NewSchemaValidationOperationSettingsListDataSource,
+		token_validation_config.NewTokenValidationConfigDataSource,
+		token_validation_config.NewTokenValidationConfigsDataSource,
+		token_validation_rules.NewTokenValidationRulesDataSource,
+		token_validation_rules.NewTokenValidationRulesListDataSource,
 	}
 }
 

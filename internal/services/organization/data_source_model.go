@@ -110,10 +110,10 @@ type OrganizationProfileDataSourceModel struct {
 }
 
 type OrganizationFindOneByDataSourceModel struct {
-	ID         *[]types.String                         `tfsdk:"id" query:"id,computed"`
+	ID         *[]types.String                         `tfsdk:"id" query:"id,optional"`
 	Containing *OrganizationsContainingDataSourceModel `tfsdk:"containing" query:"containing,optional"`
 	Name       *OrganizationsNameDataSourceModel       `tfsdk:"name" query:"name,optional"`
 	PageSize   types.Int64                             `tfsdk:"page_size" query:"page_size,optional"`
 	PageToken  types.String                            `tfsdk:"page_token" query:"page_token,optional"`
-	Parent     *OrganizationsParentDataSourceModel     `tfsdk:"parent" query:"parent,computed"`
+	Parent     *OrganizationsParentDataSourceModel     `tfsdk:"parent" query:"parent,optional"`
 }

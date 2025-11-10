@@ -11,7 +11,6 @@ import (
 )
 
 func TestOrganizationsDataSourceModelSchemaParity(t *testing.T) {
-	t.Skip("FIXME: unexpected model/schema parity issues")
 	t.Parallel()
 	model := (*organization.OrganizationsDataSourceModel)(nil)
 	schema := organization.ListDataSourceSchema(context.TODO())
