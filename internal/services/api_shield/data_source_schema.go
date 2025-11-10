@@ -25,6 +25,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
+			"normalize": schema.BoolAttribute{
+				Description: "Ensures that the configuration is written or retrieved in normalized fashion",
+				Optional:    true,
+			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[APIShieldAuthIDCharacteristicsDataSourceModel](ctx),
