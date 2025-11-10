@@ -18,7 +18,7 @@ type MagicTransitSiteLANResultDataSourceEnvelope struct {
 
 type MagicTransitSiteLANDataSourceModel struct {
 	ID               types.String                                                                  `tfsdk:"id" path:"lan_id,computed"`
-	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,optional"`
+	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,required"`
 	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,required"`
 	HaLink           types.Bool                                                                    `tfsdk:"ha_link" json:"ha_link,computed"`

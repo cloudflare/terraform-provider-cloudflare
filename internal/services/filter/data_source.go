@@ -113,6 +113,7 @@ func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 	data = &env.Result
+	data.ID = data.FilterID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

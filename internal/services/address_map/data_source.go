@@ -83,6 +83,7 @@ func (d *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.AddressMapID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

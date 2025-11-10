@@ -19,7 +19,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"connector_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier",
@@ -41,6 +41,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"last_updated": schema.StringAttribute{
+				Computed: true,
+			},
+			"license_key": schema.StringAttribute{
 				Computed: true,
 			},
 			"notes": schema.StringAttribute{

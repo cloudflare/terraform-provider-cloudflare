@@ -20,11 +20,15 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicWANIPSECTunnelDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
+			"ipsec_tunnel_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
-			"ipsec_tunnel_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

@@ -16,10 +16,13 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceCustomProfile
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"policy_id": schema.StringAttribute{
+				Required: true,
+			},
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"description": schema.StringAttribute{

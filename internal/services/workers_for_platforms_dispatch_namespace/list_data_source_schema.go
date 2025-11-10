@@ -35,6 +35,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[WorkersForPlatformsDispatchNamespacesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Name of the Workers for Platforms dispatch namespace.",
+							Computed:    true,
+						},
 						"created_by": schema.StringAttribute{
 							Description: "Identifier.",
 							Computed:    true,

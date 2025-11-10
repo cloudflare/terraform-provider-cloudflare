@@ -8,7 +8,7 @@ import (
 
 type UnionVariant struct {
 	TypeFilter         gjson.Type
-	DiscriminatorValue interface{}
+	DiscriminatorValue any
 	Type               reflect.Type
 }
 

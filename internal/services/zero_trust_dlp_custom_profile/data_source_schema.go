@@ -19,10 +19,13 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPCustomProfileDat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"profile_id": schema.StringAttribute{
+				Required: true,
+			},
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"ai_context_enabled": schema.BoolAttribute{
@@ -51,10 +54,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the profile.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The id of the profile (uuid).",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
