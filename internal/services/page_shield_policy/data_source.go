@@ -83,6 +83,7 @@ func (d *PageShieldPolicyDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

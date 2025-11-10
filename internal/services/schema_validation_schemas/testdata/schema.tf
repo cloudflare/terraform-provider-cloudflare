@@ -1,6 +1,6 @@
-resource "cloudflare_api_shield_operation" "getAllProducts" {
+resource "cloudflare_api_shield_operation" "getAllProductsTwo" {
   zone_id = "%[2]s"
-  endpoint = "/products"
+  endpoint = "/products_two"
   host = "api.example.com"
   method = "GET"
 }

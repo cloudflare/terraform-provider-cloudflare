@@ -83,6 +83,7 @@ func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.DNSFirewallID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

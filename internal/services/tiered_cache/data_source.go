@@ -82,6 +82,7 @@ func (d *TieredCacheDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

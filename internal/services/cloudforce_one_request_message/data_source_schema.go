@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestMessageD
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"request_id": schema.StringAttribute{
 				Description: "UUID.",
+				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"page": schema.Int64Attribute{
@@ -66,10 +66,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Defines the message creation time.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.Int64Attribute{
-				Description: "Message ID.",
-				Computed:    true,
 			},
 			"is_follow_on_request": schema.BoolAttribute{
 				Description: "Whether the message is a follow-on request.",

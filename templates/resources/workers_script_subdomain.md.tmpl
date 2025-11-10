@@ -1,0 +1,27 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+-> This resource is redundant with `cloudflare_worker` and should not be used together. When using the `cloudflare_worker` resource, use the nested `subdomain` attribute to control subdomain settings instead.
+
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}

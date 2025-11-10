@@ -17,10 +17,10 @@ type PageRuleResultDataSourceEnvelope struct {
 }
 
 type PageRuleDataSourceModel struct {
+	ID         types.String      `tfsdk:"id" path:"pagerule_id,computed"`
 	PageruleID types.String      `tfsdk:"pagerule_id" path:"pagerule_id,required"`
 	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn  timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID         types.String      `tfsdk:"id" json:"id,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Priority   types.Int64       `tfsdk:"priority" json:"priority,computed"`
 	Status     types.String      `tfsdk:"status" json:"status,computed"`

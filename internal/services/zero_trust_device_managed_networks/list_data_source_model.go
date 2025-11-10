@@ -31,6 +31,7 @@ func (m *ZeroTrustDeviceManagedNetworksListDataSourceModel) toListParams(_ conte
 }
 
 type ZeroTrustDeviceManagedNetworksListResultDataSourceModel struct {
+	ID        types.String                                                                      `tfsdk:"id" json:"network_id,computed"`
 	Config    customfield.NestedObject[ZeroTrustDeviceManagedNetworksListConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
 	Name      types.String                                                                      `tfsdk:"name" json:"name,computed"`
 	NetworkID types.String                                                                      `tfsdk:"network_id" json:"network_id,computed"`

@@ -19,7 +19,7 @@ type SSOConnectorResultDataSourceEnvelope struct {
 
 type SSOConnectorDataSourceModel struct {
 	ID                 types.String                                                      `tfsdk:"id" path:"sso_connector_id,computed"`
-	SSOConnectorID     types.String                                                      `tfsdk:"sso_connector_id" path:"sso_connector_id,optional"`
+	SSOConnectorID     types.String                                                      `tfsdk:"sso_connector_id" path:"sso_connector_id,required"`
 	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn          timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	EmailDomain        types.String                                                      `tfsdk:"email_domain" json:"email_domain,computed"`
