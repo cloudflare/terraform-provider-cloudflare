@@ -83,6 +83,7 @@ func (d *ZeroTrustGatewayProxyEndpointDataSource) Read(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProxyEndpointID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

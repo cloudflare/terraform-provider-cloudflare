@@ -83,6 +83,7 @@ func (d *ZeroTrustDLPPredefinedProfileDataSource) Read(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

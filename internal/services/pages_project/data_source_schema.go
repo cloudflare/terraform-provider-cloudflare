@@ -19,12 +19,16 @@ var _ datasource.DataSourceWithConfigValidators = (*PagesProjectDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+			"id": schema.StringAttribute{
+				Description: "Name of the project.",
+				Computed:    true,
 			},
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
+				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
 				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
@@ -38,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"framework_version": schema.StringAttribute{
 				Description: "Version of the framework the project is using.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "ID of the project.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{

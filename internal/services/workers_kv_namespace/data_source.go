@@ -113,6 +113,7 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -83,6 +83,7 @@ func (d *MagicTransitConnectorDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 	data = &env.Result
+	data.ID = data.ConnectorID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

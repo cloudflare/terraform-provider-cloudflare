@@ -83,6 +83,7 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.RateLimitID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -82,6 +82,7 @@ func (d *ZeroTrustDeviceDefaultProfileDataSource) Read(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

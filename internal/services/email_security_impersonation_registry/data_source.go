@@ -113,6 +113,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 		return
 	}
 	data = &env.Result
+	data.ID = data.DisplayNameID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -17,6 +17,7 @@ type D1DatabaseModel struct {
 	UUID                types.String                    `tfsdk:"uuid" json:"uuid,computed"`
 	AccountID           types.String                    `tfsdk:"account_id" path:"account_id,required"`
 	Name                types.String                    `tfsdk:"name" json:"name,required"`
+	Jurisdiction        types.String                    `tfsdk:"jurisdiction" json:"jurisdiction,optional,no_refresh"`
 	PrimaryLocationHint types.String                    `tfsdk:"primary_location_hint" json:"primary_location_hint,optional,no_refresh"`
 	ReadReplication     *D1DatabaseReadReplicationModel `tfsdk:"read_replication" json:"read_replication,optional"`
 	CreatedAt           timetypes.RFC3339               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
