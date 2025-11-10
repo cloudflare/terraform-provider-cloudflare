@@ -75,8 +75,8 @@ type DateTime struct {
 }
 
 type AdditionalProperties struct {
-	A      bool                   `json:"a"`
-	Extras map[string]interface{} `json:"-,extras"`
+	A      bool           `json:"a"`
+	Extras map[string]any `json:"-,extras"`
 }
 
 type TypedAdditionalProperties struct {
@@ -86,8 +86,8 @@ type TypedAdditionalProperties struct {
 
 type EmbeddedStructs struct {
 	AdditionalProperties
-	A      *int                   `json:"number2"`
-	Extras map[string]interface{} `json:"-,extras"`
+	A      *int           `json:"number2"`
+	Extras map[string]any `json:"-,extras"`
 }
 
 type Recursive struct {
@@ -96,7 +96,7 @@ type Recursive struct {
 }
 
 type UnknownStruct struct {
-	Unknown interface{} `json:"unknown"`
+	Unknown any `json:"unknown"`
 }
 
 type UnionStruct struct {
@@ -135,7 +135,7 @@ type ReaderStruct struct {
 
 var tests = map[string]struct {
 	buf string
-	val interface{}
+	val any
 }{
 	"map_string": {
 		`--xxx
@@ -162,7 +162,7 @@ Content-Disposition: form-data; name="c"
 false
 --xxx--
 `,
-		map[string]interface{}{"a": float64(1), "b": "str", "c": false},
+		map[string]any{"a": float64(1), "b": "str", "c": false},
 	},
 
 	"primitive_struct": {
@@ -468,7 +468,7 @@ true
 `,
 		AdditionalProperties{
 			A: true,
-			Extras: map[string]interface{}{
+			Extras: map[string]any{
 				"bar": "value",
 				"foo": true,
 			},
@@ -510,7 +510,7 @@ bar
 --xxx--
 `,
 		UnknownStruct{
-			Unknown: map[string]interface{}{
+			Unknown: map[string]any{
 				"foo": "bar",
 			},
 		},
@@ -597,7 +597,7 @@ func TestEncode(t *testing.T) {
 	}
 }
 
-func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) resType {
+func DropDiagnostic[resType any](res resType, diags diag.Diagnostics) resType {
 	for _, d := range diags {
 		panic(fmt.Sprintf("%s: %s", d.Summary(), d.Detail()))
 	}

@@ -83,6 +83,7 @@ func (d *QueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -34,19 +34,19 @@ var EscapeSJSONKey = strings.NewReplacer("\\", "\\\\", "|", "\\|", "#", "\\#", "
 // CustomMarshaler allows types to override their JSON encoding behavior while supporting
 // plan/state diffing for Terraform operations. This is checked before standard encoding.
 type CustomMarshaler interface {
-	MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error)
+	MarshalJSONWithState(plan any, state any) ([]byte, error)
 }
 
 // Marshals the given data to a JSON string.
 // For null values, omits the property entirely.
-func Marshal(value interface{}) ([]byte, error) {
+func Marshal(value any) ([]byte, error) {
 	e := &encoder{dateFormat: time.RFC3339}
 	return e.marshal(value, value)
 }
 
 // Marshals the given plan data to a JSON string.
 // For null values, omits the property unless the corresponding state value was set.
-func MarshalForUpdate(plan interface{}, state interface{}) ([]byte, error) {
+func MarshalForUpdate(plan any, state any) ([]byte, error) {
 	e := &encoder{root: true, dateFormat: time.RFC3339}
 	return e.marshal(plan, state)
 }
@@ -54,12 +54,12 @@ func MarshalForUpdate(plan interface{}, state interface{}) ([]byte, error) {
 // Marshals the given plan data to a JSON string.
 // Only serializes properties that changed from the state.
 // https://datatracker.ietf.org/doc/html/rfc7386
-func MarshalForPatch(plan interface{}, state interface{}) ([]byte, error) {
+func MarshalForPatch(plan any, state any) ([]byte, error) {
 	e := &encoder{root: true, dateFormat: time.RFC3339, patch: true}
 	return e.marshal(plan, state)
 }
 
-func MarshalRoot(value interface{}) ([]byte, error) {
+func MarshalRoot(value any) ([]byte, error) {
 	e := &encoder{root: true, dateFormat: time.RFC3339}
 	return e.marshal(value, value)
 }
@@ -97,7 +97,7 @@ func errorFromDiagnostics(diags diag.Diagnostics) error {
 	return errors.New(strings.Join(messages, " "))
 }
 
-func (e *encoder) marshal(plan interface{}, state interface{}) ([]byte, error) {
+func (e *encoder) marshal(plan any, state any) ([]byte, error) {
 	planVal := reflect.ValueOf(plan)
 	stateVal := reflect.ValueOf(state)
 	if !planVal.IsValid() {
@@ -156,7 +156,7 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 				return nil, nil
 			}
 			marshaler := plan.Interface().(CustomMarshaler)
-			var stateVal interface{}
+			var stateVal any
 			if state.IsValid() {
 				stateVal = state.Interface()
 			}
@@ -181,7 +181,6 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 	case reflect.Pointer:
 		inner := t.Elem()
 
-		innerEncoder := e.typeEncoder(inner)
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
 			// if we end up accessing missing fields/properties, we might end up with an invalid
 			// reflect value. In that case, we just initialize it to a nil pointer of that type.
@@ -200,11 +199,21 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 			if !s.IsNil() && p.IsNil() {
 				return explicitJsonNull, nil
 			}
-			// if state is nil, then there is no value to unset. we still have to pass
-			// some value in for state, so we pass in the plan value so it marshals as-is
+
+			// If state is nil, then there is no value to unset. We still have to pass some value in for state, so
+			// we pass in the plan value so it marshals as-is.
 			if s.IsNil() {
 				s = reflect.New(p.Type().Elem())
+
+				// If we're patching, then we force serializing the plan as a non-patch. Otherwise, if the plan is the
+				// zero value of the inner type, then it wouldn't be included (because we are setting a zero value
+				// state above) when it should be.
+				previousPatch := e.patch
+				e.patch = false
+				defer func() { e.patch = previousPatch }()
 			}
+
+			innerEncoder := e.typeEncoder(inner)
 			return innerEncoder(p.Elem(), s.Elem())
 		}
 	case reflect.Struct:
@@ -406,81 +415,108 @@ func (e encoder) handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) (
 
 // safeCollectionElements safely extracts elements from List, Tuple, or Set values
 // This prevents panics when plan and state have different collection types
-func UnwrapTerraformAttrValue(value attr.Value) (out any, diags diag.Diagnostics) {
-	switch v := value.(type) {
-	case basetypes.BoolValue:
-		return v.ValueBool(), nil
-	case basetypes.Int32Value:
-		return v.ValueInt32(), nil
-	case basetypes.Int64Value:
-		return v.ValueInt64(), nil
-	case basetypes.Float32Value:
-		return v.ValueFloat32(), nil
-	case basetypes.Float64Value:
-		return v.ValueFloat64(), nil
+func UnwrapTerraformAttrValue(ctx context.Context, value attr.Value) (out any, diags diag.Diagnostics) {
+	if value == nil {
+		return nil, diags
+	}
+
+	switch val := value.(type) {
+	case basetypes.DynamicValuable:
+		v, d := val.ToDynamicValue(ctx)
+		o, ds := UnwrapTerraformAttrValue(ctx, v.UnderlyingValue())
+		d.Append(ds...)
+		return o, d
+	case basetypes.BoolValuable:
+		v, d := val.ToBoolValue(ctx)
+		return v.ValueBoolPointer(), d
+	case basetypes.Int32Valuable:
+		v, d := val.ToInt32Value(ctx)
+		return v.ValueInt32Pointer(), d
+	case basetypes.Int64Valuable:
+		v, d := val.ToInt64Value(ctx)
+		return v.ValueInt64Pointer(), d
+	case basetypes.Float32Valuable:
+		v, d := val.ToFloat32Value(ctx)
+		return v.ValueFloat32Pointer(), d
+	case basetypes.Float64Valuable:
+		v, d := val.ToFloat64Value(ctx)
+		return v.ValueFloat64Pointer(), d
 	case basetypes.NumberValue:
-		return v.ValueBigFloat(), nil
+		v, d := val.ToNumberValue(ctx)
+		return v.ValueBigFloat(), d
 	case basetypes.StringValue:
-		return v.ValueString(), nil
+		v, d := val.ToStringValue(ctx)
+		return v.ValueStringPointer(), d
 	case basetypes.TupleValue:
-		return v.Elements(), nil
-	case basetypes.ListValue:
-		return v.Elements(), nil
-	case basetypes.SetValue:
-		return v.Elements(), nil
-	case basetypes.MapValue:
-		return v.Elements(), nil
-	case basetypes.ObjectValue:
-		return v.Attributes(), nil
+		return val.Elements(), nil
+	case basetypes.ListValuable:
+		v, d := val.ToListValue(ctx)
+		return v.Elements(), d
+	case basetypes.SetValuable:
+		v, d := val.ToSetValue(ctx)
+		return v.Elements(), d
+	case basetypes.MapValuable:
+		v, d := val.ToMapValue(ctx)
+		return v.Elements(), d
+	case basetypes.ObjectValuable:
+		v, d := val.ToObjectValue(ctx)
+		return v.Attributes(), d
 	default:
-		diags.AddError("unknown type received at terraform encoder", fmt.Sprintf("received: %s", value.Type(context.TODO())))
+		diags.AddError("unknown type received at unwrap terraform encoder", fmt.Sprintf("received: %s", value.Type(context.TODO())))
 		return nil, diags
 	}
 }
 
 func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
+	ctx := context.TODO()
 
+	// Note that we use pointers for primitives so that we can distinguish between a zero and omitted value.
 	if t == reflect.TypeOf(basetypes.BoolValue{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(true), func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+		return e.terraformUnwrappedEncoder(reflect.PointerTo(reflect.TypeOf(true)), func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(basetypes.Int64Value{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(int64(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+		return e.terraformUnwrappedEncoder(reflect.PointerTo(reflect.TypeOf(int64(0))), func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(basetypes.Float64Value{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(float64(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+		return e.terraformUnwrappedEncoder(reflect.PointerTo(reflect.TypeOf(float64(0))), func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(basetypes.NumberValue{}) {
 		return e.terraformUnwrappedEncoder(reflect.TypeOf(big.NewFloat(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(basetypes.StringValue{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+		return e.terraformUnwrappedEncoder(reflect.PointerTo(reflect.TypeOf("")), func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(timetypes.RFC3339{}) {
 		return e.terraformUnwrappedEncoder(reflect.TypeOf(time.Time{}), func(value attr.Value) (any, diag.Diagnostics) {
 			return value.(timetypes.RFC3339).ValueRFC3339Time()
 		})
 	} else if t == reflect.TypeOf(basetypes.ListValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(UnwrapTerraformAttrValue)
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
+		})
 	} else if t == reflect.TypeOf(basetypes.TupleValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(UnwrapTerraformAttrValue)
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
+		})
 	} else if t == reflect.TypeOf(basetypes.SetValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(UnwrapTerraformAttrValue)
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
+			return UnwrapTerraformAttrValue(ctx, value)
+		})
 	} else if t == reflect.TypeOf(basetypes.MapValue{}) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t == reflect.TypeOf(basetypes.ObjectValue{}) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return UnwrapTerraformAttrValue(value)
+			return UnwrapTerraformAttrValue(ctx, value)
 		})
 	} else if t.Implements(reflect.TypeOf((*basetypes.DynamicValuable)(nil)).Elem()) {
 		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
-			ctx := context.TODO()
 			tfPlan, _ := plan.Interface().(basetypes.DynamicValuable).ToDynamicValue(ctx)
 			tfState, _ := state.Interface().(basetypes.DynamicValuable).ToDynamicValue(ctx)
 
@@ -502,23 +538,23 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
 		structType := reflect.PointerTo(t.Field(0).Type)
 		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectLike).ValueAny(context.TODO())
+			return value.(customfield.NestedObjectLike).ValueAny(ctx)
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectListLike)(nil)).Elem()) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectListLike).AsStructSlice(context.TODO())
+			return value.(customfield.NestedObjectListLike).AsStructSlice(ctx)
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.ListLike)(nil)).Elem()) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.ListLike).ValueAttr(context.TODO())
+			return value.(customfield.ListLike).ValueAttr(ctx)
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectMapLike).AsStructMap(context.TODO())
+			return value.(customfield.NestedObjectMapLike).AsStructMap(ctx)
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.MapLike).ValueAttr(context.TODO())
+			return value.(customfield.MapLike).ValueAttr(ctx)
 		})
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
 		return e.handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
@@ -676,39 +712,63 @@ func (e encoder) newInterfaceEncoder() encoderFunc {
 	}
 }
 
-// Given a []byte of json (may either be an empty object or an object that already contains entries)
-// encode all of the entries in the map to the json byte array.
-func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Value) ([]byte, error) {
-	// We do not implement "patch" behavior for maps because it is conceptually treated as a single "value"
-	// that should get updated all at once (similar to how arrays work). Technically this is not specified
-	// in rfc7386, but it is the most intuitive behavior for maps.
-	prevPatch := e.patch
-	e.patch = false
-	defer func() { e.patch = prevPatch }()
-
-	type mapPair struct {
-		key  []byte
-		plan reflect.Value
+func encodeKey(key reflect.Value, keyEncoder encoderFunc) (string, error) {
+	if key.Type().Kind() == reflect.String {
+		return key.String(), nil
 	}
 
+	encodedKeyBytes, err := keyEncoder(key, key)
+	if err != nil {
+		return "", err
+	}
+
+	return string(encodedKeyBytes), nil
+}
+
+// Given a []byte of json (may either be an empty object or an object that already contains entries)
+// encode all of the entries in the map to the json byte array.
+func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflect.Value) ([]byte, error) {
+	type mapPair struct {
+		key   []byte
+		plan  reflect.Value
+		state reflect.Value
+	}
+
+	pairKeys := map[string]bool{}
 	pairs := []mapPair{}
 	keyEncoder := e.typeEncoder(plan.Type().Key())
 
 	iter := plan.MapRange()
 	for iter.Next() {
-		var encodedKeyString string
-		if iter.Key().Type().Kind() == reflect.String {
-			encodedKeyString = iter.Key().String()
-		} else {
-			var err error
-			encodedKeyBytes, err := keyEncoder(iter.Key(), iter.Key())
-			encodedKeyString = string(encodedKeyBytes)
+		encodedKeyString, err := encodeKey(iter.Key(), keyEncoder)
+		if err != nil {
+			return nil, err
+		}
+
+		pairKeys[encodedKeyString] = true
+		encodedKey := []byte(encodedKeyString)
+		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value(), state: state.MapIndex(iter.Key())})
+	}
+
+	// When patching a map, we also have to consider keys in the state that aren't in the plan. These keys
+	// should be deleted.
+	if e.patch {
+		iter = state.MapRange()
+		for iter.Next() {
+			encodedKeyString, err := encodeKey(iter.Key(), keyEncoder)
 			if err != nil {
 				return nil, err
 			}
+
+			if _, ok := pairKeys[encodedKeyString]; ok {
+				// We already handled this key when iterating over the plan's keys.
+				continue
+			}
+
+			pairKeys[encodedKeyString] = true
+			encodedKey := []byte(encodedKeyString)
+			pairs = append(pairs, mapPair{key: encodedKey, plan: plan.MapIndex(iter.Key()), state: iter.Value()})
 		}
-		encodedKey := []byte(encodedKeyString)
-		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value()})
 	}
 
 	// Ensure deterministic output
@@ -716,9 +776,29 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 		return bytes.Compare(pairs[i].key, pairs[j].key) < 0
 	})
 
-	elementEncoder := e.typeEncoder(plan.Type().Elem())
 	for _, pair := range pairs {
-		encodedValue, err := elementEncoder(pair.plan, pair.plan)
+		var encodedValue []byte
+		var err error
+
+		if pair.plan.IsValid() && pair.state.IsValid() {
+			if e.patch && reflect.DeepEqual(pair.plan.Interface(), pair.state.Interface()) {
+				// We are patching and this key's value didn't change so we can omit it.
+				continue
+			}
+			elementEncoder := e.typeEncoder(plan.Type().Elem())
+			encodedValue, err = elementEncoder(pair.plan, pair.state)
+		} else if pair.plan.IsValid() {
+			// This key exists in the plan, but it doesn't exist in the state. Just encode the full value associated
+			// with this key in the plan.
+			prevPatch := e.patch
+			e.patch = false
+			elementEncoder := e.typeEncoder(plan.Type().Elem())
+			encodedValue, err = elementEncoder(pair.plan, pair.plan)
+			e.patch = prevPatch
+		} else {
+			// This key exists in the state, but not the plan, so we should delete it by sending null (see below).
+			encodedValue = nil
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -746,14 +826,13 @@ func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 			return explicitJsonNull, nil
 		} else if patch && !stateNil && reflect.DeepEqual(plan.Interface(), state.Interface()) {
 			return nil, nil
+		} else if state.Kind() != plan.Kind() {
+			e.patch = false
+			json, err := e.encodeMapEntries([]byte("{}"), plan, plan)
+			e.patch = patch
+			return json, err
 		}
 
-		json := []byte("{}")
-		var err error
-		json, err = e.encodeMapEntries(json, plan, state)
-		if err != nil {
-			return nil, err
-		}
-		return json, nil
+		return e.encodeMapEntries([]byte("{}"), plan, state)
 	}
 }

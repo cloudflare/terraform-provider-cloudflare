@@ -17,7 +17,7 @@ type DNSZoneTransfersACLResultDataSourceEnvelope struct {
 
 type DNSZoneTransfersACLDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"acl_id,computed"`
-	ACLID     types.String `tfsdk:"acl_id" path:"acl_id,optional"`
+	ACLID     types.String `tfsdk:"acl_id" path:"acl_id,required"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	IPRange   types.String `tfsdk:"ip_range" json:"ip_range,computed"`
 	Name      types.String `tfsdk:"name" json:"name,computed"`

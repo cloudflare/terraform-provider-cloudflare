@@ -8,10 +8,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -22,9 +24,13 @@ var _ datasource.DataSourceWithConfigValidators = (*SpectrumApplicationDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "App identifier.",
+				Computed:    true,
+			},
 			"app_id": schema.StringAttribute{
 				Description: "App identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Zone identifier.",
@@ -38,10 +44,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the Application was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "App identifier.",
-				Computed:    true,
 			},
 			"ip_firewall": schema.BoolAttribute{
 				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
@@ -184,6 +186,33 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 				CustomType: customfield.NormalizedDynamicType{},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"direction": schema.StringAttribute{
+						Description: "Sets the direction by which results are ordered.\nAvailable values: \"asc\", \"desc\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"order": schema.StringAttribute{
+						Description: "Application field by which results are ordered.\nAvailable values: \"protocol\", \"app_id\", \"created_on\", \"modified_on\", \"dns\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"protocol",
+								"app_id",
+								"created_on",
+								"modified_on",
+								"dns",
+							),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -193,5 +222,7 @@ func (d *SpectrumApplicationDataSource) Schema(ctx context.Context, req datasour
 }
 
 func (d *SpectrumApplicationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("app_id"), path.MatchRoot("filter")),
+	}
 }

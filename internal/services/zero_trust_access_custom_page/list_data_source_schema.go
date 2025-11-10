@@ -35,6 +35,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessCustomPagesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "UUID.",
+							Computed:    true,
+						},
 						"name": schema.StringAttribute{
 							Description: "Custom page name.",
 							Computed:    true,

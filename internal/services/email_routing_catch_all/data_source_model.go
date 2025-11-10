@@ -17,9 +17,9 @@ type EmailRoutingCatchAllResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingCatchAllDataSourceModel struct {
+	ID       types.String                                                              `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled  types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed"`
-	ID       types.String                                                              `tfsdk:"id" json:"id,computed"`
 	Name     types.String                                                              `tfsdk:"name" json:"name,computed"`
 	Tag      types.String                                                              `tfsdk:"tag" json:"tag,computed"`
 	Actions  customfield.NestedObjectList[EmailRoutingCatchAllActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`

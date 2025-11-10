@@ -82,8 +82,8 @@ type DateTimeCustom struct {
 }
 
 type AdditionalProperties struct {
-	A      bool                   `json:"a"`
-	Extras map[string]interface{} `json:"-,extras"`
+	A      bool           `json:"a"`
+	Extras map[string]any `json:"-,extras"`
 }
 
 type TypedAdditionalProperties struct {
@@ -93,8 +93,8 @@ type TypedAdditionalProperties struct {
 
 type EmbeddedStructs struct {
 	AdditionalProperties
-	A      *int                   `json:"number2"`
-	Extras map[string]interface{} `json:"-,extras"`
+	A      *int           `json:"number2"`
+	Extras map[string]any `json:"-,extras"`
 }
 
 type Recursive struct {
@@ -103,7 +103,7 @@ type Recursive struct {
 }
 
 type UnknownStruct struct {
-	Unknown interface{} `json:"unknown"`
+	Unknown any `json:"unknown"`
 }
 
 type Inline struct {
@@ -137,7 +137,7 @@ type RecordsModel struct {
 	C types.String `tfsdk:"tfsdk_c" json:"c,computed"`
 }
 
-func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) resType {
+func DropDiagnostic[resType any](res resType, diags diag.Diagnostics) resType {
 	for _, d := range diags {
 		panic(fmt.Sprintf("%s: %s", d.Summary(), d.Detail()))
 	}
@@ -163,7 +163,7 @@ var ctx = context.TODO()
 
 var tests = map[string]struct {
 	buf string
-	val interface{}
+	val any
 }{
 	"true":               {"true", true},
 	"false":              {"false", false},
@@ -216,7 +216,7 @@ var tests = map[string]struct {
 
 	"map_string":                       {`{"foo":"bar"}`, map[string]string{"foo": "bar"}},
 	"map_string_with_sjson_path_chars": {`{":a.b.c*:d*-1e.f":"bar"}`, map[string]string{":a.b.c*:d*-1e.f": "bar"}},
-	"map_interface":                    {`{"a":1,"b":"str","c":false}`, map[string]interface{}{"a": float64(1), "b": "str", "c": false}},
+	"map_interface":                    {`{"a":1,"b":"str","c":false}`, map[string]any{"a": float64(1), "b": "str", "c": false}},
 
 	"primitive_struct": {
 		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}`,
@@ -262,7 +262,7 @@ var tests = map[string]struct {
 		`{"a":true,"bar":"value","foo":true}`,
 		AdditionalProperties{
 			A: true,
-			Extras: map[string]interface{}{
+			Extras: map[string]any{
 				"bar": "value",
 				"foo": true,
 			},
@@ -284,7 +284,7 @@ var tests = map[string]struct {
 	"unknown_struct_map": {
 		`{"unknown":{"foo":"bar"}}`,
 		UnknownStruct{
-			Unknown: map[string]interface{}{
+			Unknown: map[string]any{
 				"foo": "bar",
 			},
 		},
@@ -413,7 +413,7 @@ type Inner struct {
 
 var decode_only_tests = map[string]struct {
 	buf string
-	val interface{}
+	val any
 }{
 	"tfsdk_struct_decode": {
 		`{"result":{"c":"7887590e1967befa70f48ffe9f61ce80","a":"88281d6015751d6172e7313b0c665b5e","extra":"property","another":2,"b":"http://example.com/example.html\t20"}`,
@@ -476,7 +476,7 @@ var decode_only_tests = map[string]struct {
 
 var encodeOnlyTests = map[string]struct {
 	buf string
-	val interface{}
+	val any
 }{
 	"tfsdk_struct_encode": {
 		`{"result":{"a":"88281d6015751d6172e7313b0c665b5e","b":"http://example.com/example.html\t20"}}`,
@@ -616,8 +616,8 @@ func TestEncode(t *testing.T) {
 }
 
 var updateTests = map[string]struct {
-	state         interface{}
-	plan          interface{}
+	state         any
+	plan          any
 	expected      string
 	expectedPatch string
 }{
@@ -625,21 +625,24 @@ var updateTests = map[string]struct {
 	"terraform_true": {types.BoolValue(true), types.BoolValue(true), "true", ""},
 
 	"null to true":   {types.BoolNull(), types.BoolValue(true), "true", "true"},
+	"null to false":  {types.BoolNull(), types.BoolValue(false), "false", "false"},
 	"false to true":  {types.BoolValue(false), types.BoolValue(true), "true", "true"},
 	"unset bool":     {types.BoolValue(false), types.BoolNull(), "null", "null"},
 	"omit null bool": {types.BoolNull(), types.BoolNull(), "", ""},
 
-	"string set":       {types.StringNull(), types.StringValue("two"), `"two"`, `"two"`},
-	"string update":    {types.StringValue("one"), types.StringValue("two"), `"two"`, `"two"`},
-	"unset string":     {types.StringValue("hey"), types.StringNull(), "null", "null"},
-	"omit null string": {types.StringNull(), types.StringNull(), "", ""},
-	"string unchanged": {types.StringValue("one"), types.StringValue("one"), `"one"`, ""},
+	"string set":           {types.StringNull(), types.StringValue("two"), `"two"`, `"two"`},
+	"null to empty string": {types.StringNull(), types.StringValue(""), `""`, `""`},
+	"string update":        {types.StringValue("one"), types.StringValue("two"), `"two"`, `"two"`},
+	"unset string":         {types.StringValue("hey"), types.StringNull(), "null", "null"},
+	"omit null string":     {types.StringNull(), types.StringNull(), "", ""},
+	"string unchanged":     {types.StringValue("one"), types.StringValue("one"), `"one"`, ""},
 
-	"int set":       {types.Int64Null(), types.Int64Value(42), "42", "42"},
-	"int update":    {types.Int64Value(42), types.Int64Value(43), "43", "43"},
-	"unset int":     {types.Int64Value(42), types.Int64Null(), "null", "null"},
-	"omit null int": {types.Int64Null(), types.Int64Null(), "", ""},
-	"int unchanged": {types.Int64Value(42), types.Int64Value(42), "42", ""},
+	"null to zero int": {types.Int64Null(), types.Int64Value(0), "0", "0"},
+	"int set":          {types.Int64Null(), types.Int64Value(42), "42", "42"},
+	"int update":       {types.Int64Value(42), types.Int64Value(43), "43", "43"},
+	"unset int":        {types.Int64Value(42), types.Int64Null(), "null", "null"},
+	"omit null int":    {types.Int64Null(), types.Int64Null(), "", ""},
+	"int unchanged":    {types.Int64Value(42), types.Int64Value(42), "42", ""},
 
 	"tuple set": {
 		types.TupleNull([]attr.Type{types.Int64Type, types.StringType}),
@@ -1171,7 +1174,7 @@ var updateTests = map[string]struct {
 		}),
 		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{}),
 		`{}`,
-		`{}`,
+		`{"Key1":null,"Key2":null}`,
 	},
 
 	"update to add a key to a custom map": {
@@ -1183,7 +1186,7 @@ var updateTests = map[string]struct {
 			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
 		}),
 		`{"Key1":["Value1"],"Key2":["Value2"]}`,
-		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+		`{"Key2":["Value2"]}`,
 	},
 
 	"update a nested array in a custom map": {
@@ -1196,7 +1199,7 @@ var updateTests = map[string]struct {
 			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value3"), basetypes.NewStringValue("Value2")})),
 		}),
 		`{"Key1":["Value1"],"Key2":["Value3","Value2"]}`,
-		`{"Key1":["Value1"],"Key2":["Value3","Value2"]}`,
+		`{"Key2":["Value3","Value2"]}`,
 	},
 
 	"unset custom map": {
@@ -1217,7 +1220,7 @@ var updateTests = map[string]struct {
 			"Key1": P("Value1"),
 		},
 		`{"Key1":"Value1"}`,
-		`{"Key1":"Value1"}`,
+		`{"Key2":null}`,
 	},
 
 	"set custom object map": {
@@ -1260,7 +1263,7 @@ var updateTests = map[string]struct {
 			},
 		}),
 		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
-		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
+		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17}}}}`,
 	},
 
 	"encode_state_for_unknown with unknown plan": {
@@ -1359,8 +1362,8 @@ func TestUpdateEncoding(t *testing.T) {
 
 var decode_from_value_tests = map[string]struct {
 	buf      string
-	starting interface{}
-	expected interface{}
+	starting any
+	expected any
 }{
 
 	"tfsdk_dynamic_null": {
@@ -1653,7 +1656,7 @@ func TestDecodeFromValue(t *testing.T) {
 
 var decode_unset_tests = map[string]struct {
 	buf string
-	val interface{}
+	val any
 }{
 	"nested_object_list_is_omitted_null": {
 		`{}`,
@@ -1804,8 +1807,8 @@ type RuleExample struct {
 
 var decode_computed_only_tests = map[string]struct {
 	buf      string
-	starting interface{}
-	expected interface{}
+	starting any
+	expected any
 }{
 	"primitive_list_unchanged": {
 		`{}`,
@@ -2716,7 +2719,7 @@ func pairwise[T any](input []T) [][]T {
 	return pairs
 }
 
-func merge[T interface{}](test_array ...map[string]T) map[string]T {
+func merge[T any](test_array ...map[string]T) map[string]T {
 	out := make(map[string]T)
 	for _, tests := range test_array {
 		for name, t := range tests {
@@ -2749,7 +2752,7 @@ type customMarshalerBasic struct {
 	State string
 }
 
-func (c customMarshalerBasic) MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error) {
+func (c customMarshalerBasic) MarshalJSONWithState(plan any, state any) ([]byte, error) {
 	// Transform the value based on whether state exists
 	planVal, ok := plan.(customMarshalerBasic)
 	if !ok {
@@ -2772,7 +2775,7 @@ func (c customMarshalerBasic) MarshalJSONWithState(plan interface{}, state inter
 // Test type with nested JSON transformation (similar to PolicyResources)
 type customMarshalerNested map[string]string
 
-func (c customMarshalerNested) MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error) {
+func (c customMarshalerNested) MarshalJSONWithState(plan any, state any) ([]byte, error) {
 	planMap, ok := plan.(customMarshalerNested)
 	if !ok {
 		if ptr, ok := plan.(*customMarshalerNested); ok && ptr != nil {
@@ -2782,7 +2785,7 @@ func (c customMarshalerNested) MarshalJSONWithState(plan interface{}, state inte
 		}
 	}
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	for key, val := range planMap {
 		// Try to unmarshal as JSON object
 		var nestedObj map[string]string
@@ -2806,7 +2809,7 @@ type structWithCustomField struct {
 func TestCustomMarshaler(t *testing.T) {
 	tests := []struct {
 		name     string
-		value    interface{}
+		value    any
 		expected string
 	}{
 		{
@@ -2858,7 +2861,7 @@ func TestCustomMarshaler(t *testing.T) {
 			}
 
 			// Compare JSON output (order-independent)
-			var expectedJSON, actualJSON interface{}
+			var expectedJSON, actualJSON any
 			if err := json.Unmarshal([]byte(tt.expected), &expectedJSON); err != nil {
 				t.Fatalf("Failed to unmarshal expected JSON: %v", err)
 			}
@@ -2881,8 +2884,8 @@ func TestCustomMarshaler(t *testing.T) {
 func TestCustomMarshalerForUpdate(t *testing.T) {
 	tests := []struct {
 		name     string
-		plan     interface{}
-		state    interface{}
+		plan     any
+		state    any
 		expected string
 	}{
 		{
@@ -2907,7 +2910,7 @@ func TestCustomMarshalerForUpdate(t *testing.T) {
 			}
 
 			// Compare JSON output
-			var expectedJSON, actualJSON interface{}
+			var expectedJSON, actualJSON any
 			if err := json.Unmarshal([]byte(tt.expected), &expectedJSON); err != nil {
 				t.Fatalf("Failed to unmarshal expected JSON: %v", err)
 			}
