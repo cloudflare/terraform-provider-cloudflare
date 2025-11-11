@@ -13,3 +13,4 @@
 | CLOUDFLARE_API_TOKEN | API token associated with the CI user | Secret |
 | CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN | Token for providing ownership of a logpush resource | Secret |
 | CLOUDFLARE_API_USER_SERVICE_KEY | Service key associated with the CI user | Secret |
+| CLOUDFLARE_TUNNEL_ID | Tunnel ID used for Zero Trust tunnel route acceptance tests | 362aa0e1-40d8-4e5e-9e85-b6f7d6b7916e |
