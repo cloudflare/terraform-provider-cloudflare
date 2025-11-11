@@ -6,12 +6,10 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*APIShieldDataSource)(nil)
@@ -27,15 +25,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"properties": schema.ListAttribute{
-				Description: "Requests information about certain properties.",
+			"normalize": schema.BoolAttribute{
+				Description: "Ensures that the configuration is written or retrieved in normalized fashion",
 				Optional:    true,
-				Validators: []validator.List{
-					listvalidator.ValueStringsAre(
-						stringvalidator.OneOfCaseInsensitive("auth_id_characteristics"),
-					),
-				},
-				ElementType: types.StringType,
 			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
 				Computed:   true,

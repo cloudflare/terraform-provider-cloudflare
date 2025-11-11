@@ -51,6 +51,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel struct {
 	HTTPHostHeader         types.String                                                           `tfsdk:"http_host_header" json:"httpHostHeader,optional"`
 	KeepAliveConnections   types.Int64                                                            `tfsdk:"keep_alive_connections" json:"keepAliveConnections,optional"`
 	KeepAliveTimeout       types.Int64                                                            `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,optional"`
+	MatchSnItoHost         types.Bool                                                             `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,optional"`
 	NoHappyEyeballs        types.Bool                                                             `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,optional"`
 	NoTLSVerify            types.Bool                                                             `tfsdk:"no_tls_verify" json:"noTLSVerify,optional"`
 	OriginServerName       types.String                                                           `tfsdk:"origin_server_name" json:"originServerName,optional"`
@@ -74,6 +75,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel struct {
 	HTTPHostHeader         types.String                                                    `tfsdk:"http_host_header" json:"httpHostHeader,optional"`
 	KeepAliveConnections   types.Int64                                                     `tfsdk:"keep_alive_connections" json:"keepAliveConnections,optional"`
 	KeepAliveTimeout       types.Int64                                                     `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,optional"`
+	MatchSnItoHost         types.Bool                                                      `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,optional"`
 	NoHappyEyeballs        types.Bool                                                      `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,optional"`
 	NoTLSVerify            types.Bool                                                      `tfsdk:"no_tls_verify" json:"noTLSVerify,optional"`
 	OriginServerName       types.String                                                    `tfsdk:"origin_server_name" json:"originServerName,optional"`

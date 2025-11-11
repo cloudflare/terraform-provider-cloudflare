@@ -19,7 +19,7 @@ type AccessRuleModel struct {
 	ZoneID        types.String                                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	Mode          types.String                                   `tfsdk:"mode" json:"mode,required"`
 	Configuration *AccessRuleConfigurationModel                  `tfsdk:"configuration" json:"configuration,required"`
-	Notes         types.String                                   `tfsdk:"notes" json:"notes,optional"`
+	Notes         types.String                                   `tfsdk:"notes" json:"notes,computed_optional"`
 	CreatedOn     timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn    timetypes.RFC3339                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	AllowedModes  customfield.List[types.String]                 `tfsdk:"allowed_modes" json:"allowed_modes,computed"`

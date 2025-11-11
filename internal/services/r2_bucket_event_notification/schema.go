@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "Array of rules to drive notifications.",
-				Optional:    true,
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"actions": schema.ListAttribute{
