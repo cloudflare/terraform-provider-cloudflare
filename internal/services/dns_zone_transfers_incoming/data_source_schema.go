@@ -6,8 +6,10 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +27,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"auto_refresh_seconds": schema.Float64Attribute{
 				Description: "How often should a secondary zone auto refresh regardless of DNS NOTIFY.\nNot applicable for primary zones.",
 				Computed:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(300),
+				},
 			},
 			"checked_time": schema.StringAttribute{
 				Description: "The time for a specific event.",

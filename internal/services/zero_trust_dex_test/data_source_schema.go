@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDEXTestDataSource)(nil)
@@ -61,18 +59,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
+						Description: "The type of test.",
 						Computed:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
-						},
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
+						Description: "The HTTP request method type.",
 						Computed:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("GET"),
-						},
 					},
 				},
 			},
@@ -84,7 +76,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
+							Description: "The id of the DEX rule",
 							Computed:    true,
 						},
 						"default": schema.BoolAttribute{
