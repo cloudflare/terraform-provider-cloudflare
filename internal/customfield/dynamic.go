@@ -87,6 +87,39 @@ func (v NormalizedDynamicValue) ToDynamicValue(ctx context.Context) (types.Dynam
 	return v.Dynamic, nil
 }
 
+/**
+ * need to maintain the invariant that `.ElemType` is never nil
+ */
+func (v NormalizedDynamicValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	if v.IsNull() {
+		return tftypes.NewValue(tftypes.DynamicPseudoType, nil), nil
+	}
+	if v.IsUnknown() {
+		return tftypes.NewValue(tftypes.DynamicPseudoType, tftypes.UnknownValue), nil
+	}
+
+	inner := v.UnderlyingValue()
+	switch t := inner.Type(ctx).(type) {
+	case types.ListType:
+		if t.ElemType == nil {
+			val, _ := types.ListValue(types.BoolType, []attr.Value{})
+			return val.ToTerraformValue(ctx)
+		}
+	case types.SetType:
+		if t.ElemType == nil {
+			val, _ := types.SetValue(types.BoolType, []attr.Value{})
+			return val.ToTerraformValue(ctx)
+		}
+	case types.MapType:
+		if t.ElemType == nil {
+			val, _ := types.MapValue(types.BoolType, map[string]attr.Value{})
+			return val.ToTerraformValue(ctx)
+		}
+	}
+
+	return inner.ToTerraformValue(ctx)
+}
+
 func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq bool, diag diag.Diagnostics) {
 	if lhs == nil || rhs == nil {
 		return lhs == rhs, nil
