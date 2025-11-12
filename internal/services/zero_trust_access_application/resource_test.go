@@ -2102,3 +2102,32 @@ func TestAccCloudflareAccessApplication_MCPSetup(t *testing.T) {
 func testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationmcpconfig.tf", rnd, domain, accountID)
 }
+func TestAccCloudflareAccessApplication_ProxyEndpoint(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationProxyEndpoint(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", "Gateway Proxy"),
+					resource.TestCheckResourceAttr(name, "type", "proxy_endpoint"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareAccessApplicationProxyEndpoint(rnd, accID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigproxyendpoint.tf", rnd, accID)
+}
