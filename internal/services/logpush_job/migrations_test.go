@@ -66,7 +66,7 @@ func TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion(t *testing.T) 
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact("audit_logs")),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
@@ -121,7 +121,7 @@ func TestMigrateCloudflareLogpushJob_Migration_OutputOptions(t *testing.T) {
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact("audit_logs")),
 			}),
 			{
@@ -139,16 +139,16 @@ func TestMigrateCloudflareLogpushJob_Migration_OutputOptions(t *testing.T) {
 // TestMigrateCloudflareLogpushJob_Migration_InstantLogs tests migration of logpush jobs
 // with kind = "instant-logs" which needs to be converted to empty string in v5.
 func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
-	accountID := acctest.TestAccCloudflareAccountID
+	zoneID := acctest.TestAccCloudflareZoneID
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_logpush_job." + rnd
-	v4Config := testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(accountID, rnd)
+	v4Config := testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd)
 	tmpDir := t.TempDir()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
@@ -166,7 +166,7 @@ func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact("")),
 			}),
 			{
@@ -211,14 +211,14 @@ resource "cloudflare_logpush_job" "%[2]s" {
 `, accountID, rnd)
 }
 
-func testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(accountID, rnd string) string {
+func testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_logpush_job" "%[2]s" {
-  account_id       = "%[1]s"
-  dataset          = "audit_logs"
+  zone_id       = "%[1]s"
+  dataset          = "http_requests"
   destination_conf = "https://logpush-receiver.sd.cfplat.com"
   enabled          = true
   kind             = "instant-logs"
 }
-`, accountID, rnd)
+`, zoneID, rnd)
 }
