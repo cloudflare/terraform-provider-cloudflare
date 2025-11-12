@@ -18,7 +18,7 @@ var (
 	saasAppTypes                          = []string{"saas", "dash_sso"}
 	appLauncherVisibleAppTypes            = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
 	targetCompatibleAppTypes              = []string{"rdp", "infrastructure"}
-	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp", "mcp_portal", "mcp"}
+	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp", "mcp_portal", "mcp", "proxy_endpoint"}
 	authenticateViaWarpCompatibleAppTypes = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"}
 	durationRegex                         = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
 )
