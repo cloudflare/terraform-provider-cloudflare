@@ -21,7 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"dex_test_id": schema.StringAttribute{
 				Description: "The unique identifier for the test.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -70,7 +70,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
-				Optional:    true,
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{

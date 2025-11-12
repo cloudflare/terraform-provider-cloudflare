@@ -18,7 +18,7 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 
 type ZeroTrustDEXTestDataSourceModel struct {
 	ID             types.String                                                                `tfsdk:"id" path:"dex_test_id,computed"`
-	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,required"`
+	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`
 	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`
 	Enabled        types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
@@ -27,7 +27,7 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	Targeted       types.Bool                                                                  `tfsdk:"targeted" json:"targeted,computed"`
 	TestID         types.String                                                                `tfsdk:"test_id" json:"test_id,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
-	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
 }
 
 func (m *ZeroTrustDEXTestDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceDEXTestGetParams, diags diag.Diagnostics) {
