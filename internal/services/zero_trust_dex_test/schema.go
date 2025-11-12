@@ -52,11 +52,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Optional:    true,
+						Required:    true,
 					},
 					"kind": schema.StringAttribute{
 						Description: "The type of test.",
-						Optional:    true,
+						Required:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP request method type.",
@@ -69,6 +69,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Additional details about the test.",
 				Optional:    true,
 			},
+			"targeted": schema.BoolAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "DEX rules targeted by this test",
 				Optional:    true,
@@ -78,7 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
+							Description: "The id of the DEX rule",
 							Required:    true,
 						},
 						"default": schema.BoolAttribute{
@@ -93,9 +97,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
 			},
 		},
 	}
