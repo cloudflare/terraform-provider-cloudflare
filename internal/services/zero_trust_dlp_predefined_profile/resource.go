@@ -71,9 +71,10 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 	}
 	res := new(http.Response)
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.New(
+	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
-		zero_trust.DLPProfilePredefinedNewParams{
+		data.ProfileID.ValueString(),
+		zero_trust.DLPProfilePredefinedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -91,6 +92,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,7 +123,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
-		data.ID.ValueString(),
+		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -140,6 +142,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +160,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -180,6 +183,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -195,7 +199,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Delete(ctx context.Context, req 
 
 	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -205,6 +209,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Delete(ctx context.Context, req 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -250,6 +255,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) ImportState(ctx context.Context,
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
