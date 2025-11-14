@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -76,6 +77,58 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	normalizeFalseAndNullBool(&data.PurposeJustificationRequired, sourceData.PurposeJustificationRequired)
 	normalizeFalseAndNullBool(&data.ApprovalRequired, sourceData.ApprovalRequired)
 	normalizeFalseAndNullBool(&data.IsolationRequired, sourceData.IsolationRequired)
+
+	// Normalize IP addresses in include/exclude/require rules to handle /32 and /128 CIDR notation
+	if !data.Include.IsNullOrUnknown() && !sourceData.Include.IsNullOrUnknown() {
+		includeSlice, d := data.Include.AsStructSliceT(ctx)
+		diags.Append(d...)
+		sourceIncludeSlice, d := sourceData.Include.AsStructSliceT(ctx)
+		diags.Append(d...)
+
+		if !diags.HasError() && len(includeSlice) == len(sourceIncludeSlice) {
+			for i := range includeSlice {
+				if includeSlice[i].IP != nil && sourceIncludeSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&includeSlice[i].IP.IP, sourceIncludeSlice[i].IP.IP)
+				}
+			}
+			data.Include, d = customfield.NewObjectSet(ctx, includeSlice)
+			diags.Append(d...)
+		}
+	}
+
+	if !data.Exclude.IsNullOrUnknown() && !sourceData.Exclude.IsNullOrUnknown() {
+		excludeSlice, d := data.Exclude.AsStructSliceT(ctx)
+		diags.Append(d...)
+		sourceExcludeSlice, d := sourceData.Exclude.AsStructSliceT(ctx)
+		diags.Append(d...)
+
+		if !diags.HasError() && len(excludeSlice) == len(sourceExcludeSlice) {
+			for i := range excludeSlice {
+				if excludeSlice[i].IP != nil && sourceExcludeSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&excludeSlice[i].IP.IP, sourceExcludeSlice[i].IP.IP)
+				}
+			}
+			data.Exclude, d = customfield.NewObjectSet(ctx, excludeSlice)
+			diags.Append(d...)
+		}
+	}
+
+	if !data.Require.IsNullOrUnknown() && !sourceData.Require.IsNullOrUnknown() {
+		requireSlice, d := data.Require.AsStructSliceT(ctx)
+		diags.Append(d...)
+		sourceRequireSlice, d := sourceData.Require.AsStructSliceT(ctx)
+		diags.Append(d...)
+
+		if !diags.HasError() && len(requireSlice) == len(sourceRequireSlice) {
+			for i := range requireSlice {
+				if requireSlice[i].IP != nil && sourceRequireSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&requireSlice[i].IP.IP, sourceRequireSlice[i].IP.IP)
+				}
+			}
+			data.Require, d = customfield.NewObjectSet(ctx, requireSlice)
+			diags.Append(d...)
+		}
+	}
 
 	return diags
 }

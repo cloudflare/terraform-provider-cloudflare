@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -107,6 +108,49 @@ func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, state
 	persistNullFromState(&data.Require, stateData.Require)
 	persistNullFromState(&data.Exclude, stateData.Exclude)
 
+	// Normalize IP addresses in include/exclude/require rules to handle /32 and /128 CIDR notation
+	if !data.Include.IsNullOrUnknown() && !stateData.Include.IsNullOrUnknown() {
+		includeSlice, _ := data.Include.AsStructSliceT(ctx)
+		stateIncludeSlice, _ := stateData.Include.AsStructSliceT(ctx)
+
+		if len(includeSlice) == len(stateIncludeSlice) {
+			for i := range includeSlice {
+				if includeSlice[i].IP != nil && stateIncludeSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&includeSlice[i].IP.IP, stateIncludeSlice[i].IP.IP)
+				}
+			}
+			data.Include, _ = customfield.NewObjectSet(ctx, includeSlice)
+		}
+	}
+
+	if !data.Exclude.IsNullOrUnknown() && !stateData.Exclude.IsNullOrUnknown() {
+		excludeSlice, _ := data.Exclude.AsStructSliceT(ctx)
+		stateExcludeSlice, _ := stateData.Exclude.AsStructSliceT(ctx)
+
+		if len(excludeSlice) == len(stateExcludeSlice) {
+			for i := range excludeSlice {
+				if excludeSlice[i].IP != nil && stateExcludeSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&excludeSlice[i].IP.IP, stateExcludeSlice[i].IP.IP)
+				}
+			}
+			data.Exclude, _ = customfield.NewObjectSet(ctx, excludeSlice)
+		}
+	}
+
+	if !data.Require.IsNullOrUnknown() && !stateData.Require.IsNullOrUnknown() {
+		requireSlice, _ := data.Require.AsStructSliceT(ctx)
+		stateRequireSlice, _ := stateData.Require.AsStructSliceT(ctx)
+
+		if len(requireSlice) == len(stateRequireSlice) {
+			for i := range requireSlice {
+				if requireSlice[i].IP != nil && stateRequireSlice[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&requireSlice[i].IP.IP, stateRequireSlice[i].IP.IP)
+				}
+			}
+			data.Require, _ = customfield.NewObjectSet(ctx, requireSlice)
+		}
+	}
+
 	if data.ConnectionRules != nil && stateData.ConnectionRules != nil {
 		normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(ctx, data.ConnectionRules, stateData.ConnectionRules)
 	}
@@ -195,6 +239,22 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 				break
 			}
 			normalizeZeroTrustApplicationPolicyAPIData(ctx, &(*data.Policies)[i], &(*stateData.Policies)[i])
+		}
+	}
+
+	// Normalize IP addresses in destination CIDRs to handle /32 and /128 CIDR notation
+	if !data.Destinations.IsNullOrUnknown() && !stateData.Destinations.IsNullOrUnknown() {
+		destSlice, d := data.Destinations.AsStructSliceT(ctx)
+		diags.Append(d...)
+		stateDestSlice, d := stateData.Destinations.AsStructSliceT(ctx)
+		diags.Append(d...)
+
+		if !diags.HasError() && len(destSlice) == len(stateDestSlice) {
+			for i := range destSlice {
+				utils.NormalizeIPStringWithCIDR(&destSlice[i].CIDR, stateDestSlice[i].CIDR)
+			}
+			data.Destinations, d = customfield.NewObjectList(ctx, destSlice)
+			diags.Append(d...)
 		}
 	}
 
