@@ -37,12 +37,14 @@ debug_log() {
 show_usage() {
     echo "Usage: $0 --account <account_id> [options]"
     echo "       $0 <account_id> [options]  (legacy format)"
+    echo "       $0 --list                  (list available sweepers)"
     echo ""
     echo "Arguments:"
     echo "  --account ID       Cloudflare Account ID to sweep resources for"
     echo ""
     echo "Options:"
     echo "  --help, -h         Show this help message"
+    echo "  --list             List all available sweepers and exit"
     echo "  --zone ID          Target a specific zone ID (filters zone-level sweepers)"
     echo "  --resource NAME    Target a specific resource type (e.g., load_balancer, dns_record)"
     echo "  --sweep-timeout T  Timeout for sweeper operations (default: $SWEEP_TIMEOUT)"
@@ -58,6 +60,7 @@ show_usage() {
     echo "  DEBUG_LOGS                        Enable debug logging (default: false)"
     echo ""
     echo "Examples:"
+    echo "  $0 --list"
     echo "  $0 --account c03814971cc44525d34173ca738b615b"
     echo "  $0 --account c03814971cc44525d34173ca738b615b --debug"
     echo "  $0 --account c03814971cc44525d34173ca738b615b --resource load_balancer"
@@ -224,109 +227,84 @@ fetch_zones_for_account() {
     echo "$zones_file"
 }
 
-# Define account-level services (resources that use CLOUDFLARE_ACCOUNT_ID)
-get_account_level_services() {
-    cat << 'EOF'
-account
-account_member
-account_role
-account_token
-r2_bucket
-workers_kv_namespace
-workers_script
-workers_route
-workers_cron_trigger
-workers_custom_domain
-workers_for_platforms_dispatch_namespace
-zero_trust_access_application
-zero_trust_access_group
-zero_trust_access_identity_provider
-zero_trust_access_policy
-zero_trust_access_service_token
-zero_trust_access_custom_page
-zero_trust_access_key_configuration
-zero_trust_access_mtls_certificate
-zero_trust_access_mtls_hostname_settings
-zero_trust_access_short_lived_certificate
-zero_trust_access_tag
-zero_trust_device_custom_profile
-zero_trust_device_custom_profile_local_domain_fallback
-zero_trust_device_default_profile_certificates
-zero_trust_device_managed_networks
-zero_trust_dlp_custom_profile
-zero_trust_dlp_entry
-zero_trust_gateway_proxy_endpoint
-zero_trust_gateway_settings
-zero_trust_list
-zero_trust_organization
-zero_trust_tunnel_cloudflared
-zero_trust_tunnel_cloudflared_route
-zero_trust_tunnel_cloudflared_token
-list
-list_item
-address_map
-api_shield
-api_token
-load_balancer
-load_balancer_monitor
-load_balancer_pool
-logpull_retention
-logpush_job
-logpush_ownership_challenge
-magic_wan_ipsec_tunnel
-magic_wan_gre_tunnel
-magic_wan_static_route
-magic_transit_connector
-notification_policy_webhooks
-observatory_scheduled_test
-origin_ca_certificate
-pages_domain
-pages_project
-queue
-turnstile_widget
-email_routing_address
-EOF
+# Cache for discovered services (to avoid repeated discovery)
+ACCOUNT_SERVICES_CACHE=""
+ZONE_SERVICES_CACHE=""
+DISCOVERY_DONE="false"
+
+# Function to discover all available services with sweepers
+discover_sweepers() {
+    if [ "$DISCOVERY_DONE" = "true" ]; then
+        return 0
+    fi
+
+    debug_log "${WHITE}Discovering available sweepers...${NC}"
+
+    local account_services=()
+    local zone_services=()
+
+    # Scan all service directories
+    for service_dir in ./internal/services/*/; do
+        if [ ! -d "$service_dir" ]; then
+            continue
+        fi
+
+        local service=$(basename "$service_dir")
+
+        # Check if this service has a sweeper
+        if ! has_sweeper "$service"; then
+            continue
+        fi
+
+        # Check which type of sweeper it is by examining the test files
+        local is_account=false
+        local is_zone=false
+
+        # Look for CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_ZONE_ID usage in test files
+        for test_file in "$service_dir"/*_test.go; do
+            if [ ! -f "$test_file" ]; then
+                continue
+            fi
+
+            # Check if the sweeper function references CLOUDFLARE_ACCOUNT_ID
+            if grep -q 'CLOUDFLARE_ACCOUNT_ID' "$test_file" 2>/dev/null; then
+                is_account=true
+            fi
+
+            # Check if the sweeper function references CLOUDFLARE_ZONE_ID
+            if grep -q 'CLOUDFLARE_ZONE_ID' "$test_file" 2>/dev/null; then
+                is_zone=true
+            fi
+        done
+
+        # Add to appropriate list(s)
+        if [ "$is_account" = "true" ]; then
+            account_services+=("$service")
+        fi
+
+        if [ "$is_zone" = "true" ]; then
+            zone_services+=("$service")
+        fi
+    done
+
+    # Sort the services alphabetically
+    ACCOUNT_SERVICES_CACHE=$(printf '%s\n' "${account_services[@]}" | sort)
+    ZONE_SERVICES_CACHE=$(printf '%s\n' "${zone_services[@]}" | sort)
+    DISCOVERY_DONE="true"
+
+    debug_log "${GREEN}Discovery complete. Found $(echo "$ACCOUNT_SERVICES_CACHE" | wc -w) account-level and $(echo "$ZONE_SERVICES_CACHE" | wc -w) zone-level sweepers.${NC}"
 }
 
-# Define zone-level services (resources that use CLOUDFLARE_ZONE_ID)
+# Get account-level services (discovers on first call, then uses cache)
+get_account_level_services() {
+    discover_sweepers
+    echo "$ACCOUNT_SERVICES_CACHE"
+}
+
+# Get zone-level services (discovers on first call, then uses cache)
 get_zone_level_services() {
-    cat << 'EOF'
-dns_record
-page_rule
-zone_lockdown
-zone_setting
-zone_cache_variants
-zone_cache_reserve
-zone_subscription
-zone_hold
-ruleset
-snippet
-snippet_rules
-snippets
-spectrum_application
-custom_ssl
-custom_pages
-authenticated_origin_pulls
-authenticated_origin_pulls_certificate
-bot_management
-certificate_pack
-argo_smart_routing
-argo_tiered_caching
-tiered_cache
-regional_tiered_cache
-url_normalization_settings
-waiting_room_settings
-dns_settings_internal_view
-dns_zone_transfers_acl
-dns_zone_transfers_tsig
-email_routing_catch_all
-email_routing_dns
-email_routing_rule
-email_routing_settings
-healthcheck
-managed_transforms
-cloud_connector_rules
-EOF
+    discover_sweepers
+    echo "$ZONE_SERVICES_CACHE"
 }
 
 # Function to check if a service has a sweeper implementation
@@ -375,7 +353,8 @@ run_sweeper() {
     # Build sweeper command
     local service_path="./internal/services/$service"
     local sweeper_name="cloudflare_${service}"
-    local test_cmd="TF_LOG=debug TF_ACC=1 go test -v \"$service_path\" -sweep=all -sweep-run=\"$sweeper_name\" -timeout \"$SWEEP_TIMEOUT\""
+    # NOTE: Do NOT set TF_ACC=1 when running sweepers, as that triggers acceptance tests
+    local test_cmd="go test -v \"$service_path\" -sweep=all -sweep-run=\"$sweeper_name\" -timeout \"$SWEEP_TIMEOUT\""
     
     debug_log "${WHITE}Running command: $test_cmd${NC}"
     
@@ -543,6 +522,15 @@ run_zone_sweepers() {
     fi
 }
 
+# Function to display available sweepers
+display_available_sweepers() {
+    log "${WHITE}Available account-level resources:${NC}"
+    get_account_level_services | sed 's/^/  /'
+
+    log "${WHITE}Available zone-level resources:${NC}"
+    get_zone_level_services | sed 's/^/  /'
+}
+
 # Main execution function
 main() {
     local account_id="$1"
@@ -550,7 +538,7 @@ main() {
     local target_resource="$3"
     local target_zone="$4"
     local start_time=$(date +%s)
-    
+
     log "${GREEN}Starting account-based sweeper for account: $account_id${NC}"
     if [ -n "$target_resource" ]; then
         log "${WHITE}Targeting specific resource: $target_resource${NC}"
@@ -560,6 +548,13 @@ main() {
     fi
     log "${WHITE}Logs will be written to: $LOG_DIR${NC}"
     log "${WHITE}Sweeper timeout: $SWEEP_TIMEOUT${NC}"
+
+    # Display available sweepers if in debug mode
+    if [ "$DEBUG_LOGS" = "true" ]; then
+        echo ""
+        display_available_sweepers
+    fi
+
     echo ""
     
     # Clean up old logs
@@ -635,11 +630,16 @@ ACCOUNT_ID=""
 DRY_RUN="false"
 TARGET_RESOURCE=""
 TARGET_ZONE=""
+LIST_ONLY="false"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --help|-h)
             show_usage
+            ;;
+        --list)
+            LIST_ONLY="true"
+            shift
             ;;
         --account)
             ACCOUNT_ID="$2"
@@ -676,6 +676,12 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Handle --list option
+if [ "$LIST_ONLY" = "true" ]; then
+    display_available_sweepers
+    exit 0
+fi
 
 # Validate arguments and prerequisites
 validate_prerequisites "$ACCOUNT_ID" "$TARGET_RESOURCE"
