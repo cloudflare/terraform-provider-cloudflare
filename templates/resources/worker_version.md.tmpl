@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+
+## Module Content
+
+Modules support two mutually exclusive attributes for content:
+
+- **`content_file`** (recommended) - Points to a local file path. Avoids storing content in state, preventing state file bloat.
+- **`content_base64`** - Inline base64-encoded content. Primarily used after importing.
+
+**Import Behavior:** When importing, Terraform always populates `content_base64` in state. If your config uses `content_file`, an in-place update will switch state to use `content_file` (assuming content matches).
+
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
+
