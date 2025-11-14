@@ -36,9 +36,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled_entries": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				//Computed:    true,
+				Optional: true,
+				//CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"ai_context_enabled": schema.BoolAttribute{
