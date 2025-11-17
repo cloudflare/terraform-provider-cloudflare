@@ -42,7 +42,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The id of the script in the Workers system. Usually the script name.",
+							Description: "The name used to identify the script.",
 							Computed:    true,
 						},
 						"compatibility_date": schema.StringAttribute{
@@ -114,6 +114,50 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"observability": schema.SingleNestedAttribute{
+							Description: "Observability settings for the Worker.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[WorkersScriptsObservabilityDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"enabled": schema.BoolAttribute{
+									Description: "Whether observability is enabled for the Worker.",
+									Computed:    true,
+								},
+								"head_sampling_rate": schema.Float64Attribute{
+									Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+									Computed:    true,
+								},
+								"logs": schema.SingleNestedAttribute{
+									Description: "Log settings for the Worker.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectType[WorkersScriptsObservabilityLogsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"enabled": schema.BoolAttribute{
+											Description: "Whether logs are enabled for the Worker.",
+											Computed:    true,
+										},
+										"invocation_logs": schema.BoolAttribute{
+											Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+											Computed:    true,
+										},
+										"destinations": schema.ListAttribute{
+											Description: "A list of destinations where logs will be exported to.",
+											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
+											ElementType: types.StringType,
+										},
+										"head_sampling_rate": schema.Float64Attribute{
+											Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+											Computed:    true,
+										},
+										"persist": schema.BoolAttribute{
+											Description: "Whether log persistence is enabled for the Worker.",
+											Computed:    true,
+										},
+									},
+								},
+							},
+						},
 						"placement": schema.SingleNestedAttribute{
 							Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 							Computed:    true,
@@ -145,7 +189,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"placement_mode": schema.StringAttribute{
-							Description:        "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
+							Description:        `Available values: "smart".`,
 							Computed:           true,
 							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.String{
@@ -153,7 +197,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"placement_status": schema.StringAttribute{
-							Description:        "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
+							Description:        `Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".`,
 							Computed:           true,
 							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.String{
@@ -163,6 +207,37 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"INSUFFICIENT_INVOCATIONS",
 								),
 							},
+						},
+						"routes": schema.ListNestedAttribute{
+							Description: "Routes associated with the Worker.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[WorkersScriptsRoutesDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Description: "Identifier.",
+										Computed:    true,
+									},
+									"pattern": schema.StringAttribute{
+										Description: "Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).",
+										Computed:    true,
+									},
+									"script": schema.StringAttribute{
+										Description: "Name of the script to run if the route matches.",
+										Computed:    true,
+									},
+								},
+							},
+						},
+						"tag": schema.StringAttribute{
+							Description: "The immutable ID of the script.",
+							Computed:    true,
+						},
+						"tags": schema.SetAttribute{
+							Description: "Tags associated with the Worker.",
+							Computed:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 						"tail_consumers": schema.SetNestedAttribute{
 							Description: "List of Workers that will consume logs from the attached Worker.",

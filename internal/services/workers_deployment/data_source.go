@@ -84,6 +84,7 @@ func (d *WorkersDeploymentDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 	data = &env.Result
+	data.ID = data.DeploymentID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

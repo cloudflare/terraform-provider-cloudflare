@@ -15,12 +15,16 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersCronTriggerDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+			"id": schema.StringAttribute{
+				Description: "Name of the script, used in URLs and route configuration.",
+				Computed:    true,
 			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
+				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"schedules": schema.ListNestedAttribute{
