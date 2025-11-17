@@ -3,6 +3,7 @@ package zero_trust_access_service_token_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -24,6 +25,63 @@ var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID    = os.Getenv("CLOUDFLARE_ZONE_ID")
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_access_service_token", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_service_token",
+		F:    testSweepCloudflareAccessServiceTokens,
+	})
+}
+
+func testSweepCloudflareAccessServiceTokens(r string) error {
+	ctx := context.Background()
+
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	// Zone level Access Service Tokens.
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneTokens, _, err := client.ListAccessServiceTokens(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessServiceTokensParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Service Tokens: %s", err))
+	}
+
+	if len(zoneTokens) == 0 {
+		log.Print("[DEBUG] No Cloudflare zone level Access Service Tokens to sweep")
+	} else {
+		for _, token := range zoneTokens {
+			if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.ZoneIdentifier(zoneID), token.ID); err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Service Token %s", token.ID))
+			}
+		}
+	}
+
+	// Account level Access Service Tokens.
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountTokens, _, err := client.ListAccessServiceTokens(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessServiceTokensParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Service Tokens: %s", err))
+	}
+
+	if len(accountTokens) == 0 {
+		log.Print("[DEBUG] No Cloudflare account level Access Service Tokens to sweep")
+		return nil
+	}
+
+	for _, token := range accountTokens {
+		if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.AccountIdentifier(accountID), token.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Service Token %s", token.ID))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAccessServiceToken_BasicAccount(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
