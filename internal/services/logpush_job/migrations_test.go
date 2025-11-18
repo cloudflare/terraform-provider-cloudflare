@@ -19,7 +19,7 @@ import (
 // This test ensures that:
 // 1. output_options block { ... } → output_options = { ... } (block to attribute syntax)
 // 2. cve20214428 field is renamed to cve_2021_44228
-// 3. kind = "instant-logs" is converted to kind = ""
+// 3. kind = "instant-logs" is removed
 // 4. Numeric fields are properly converted (max_upload_* fields)
 // 5. The migration tool successfully transforms both configuration and state files
 func TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion(t *testing.T) {
@@ -137,7 +137,7 @@ func TestMigrateCloudflareLogpushJob_Migration_OutputOptions(t *testing.T) {
 }
 
 // TestMigrateCloudflareLogpushJob_Migration_InstantLogs tests migration of logpush jobs
-// with kind = "instant-logs" which needs to be converted to empty string in v5.
+// with kind = "instant-logs" which is removed in v5 (instant-logs is no longer valid).
 func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
 	zoneID := acctest.TestAccCloudflareZoneID
 	rnd := utils.GenerateRandomResourceName()
@@ -166,15 +166,25 @@ func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact("")),
-			}),
+			// Note: We expect a non-empty plan because removing "instant-logs" creates a real change
+			{
+				PreConfig: func() {
+					acctest.WriteOutConfig(t, v4Config, tmpDir)
+					acctest.RunMigrationV2Command(t, v4Config, tmpDir, "v4", "v5")
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				ConfigDirectory:          config.StaticDirectory(tmpDir),
+				ExpectNonEmptyPlan:       true, // Removing kind="instant-logs" creates a plan diff
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.Null()),
+				},
+			},
 			{
 				// Step 3: Apply migrated config with v5 provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact("")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.Null()),
 				},
 			},
 		},
