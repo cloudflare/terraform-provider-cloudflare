@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package account_token
+package token_validation_rules
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type AccountTokenDataSource struct {
+type TokenValidationRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*AccountTokenDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*TokenValidationRulesDataSource)(nil)
 
-func NewAccountTokenDataSource() datasource.DataSource {
-	return &AccountTokenDataSource{}
+func NewTokenValidationRulesDataSource() datasource.DataSource {
+	return &TokenValidationRulesDataSource{}
 }
 
-func (d *AccountTokenDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_account_token"
+func (d *TokenValidationRulesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_token_validation_rules"
 }
 
-func (d *AccountTokenDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TokenValidationRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *AccountTokenDataSource) Configure(ctx context.Context, req datasource.C
 	d.client = client
 }
 
-func (d *AccountTokenDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *AccountTokenDataSourceModel
+func (d *TokenValidationRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *TokenValidationRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,8 +64,8 @@ func (d *AccountTokenDataSource) Read(ctx context.Context, req datasource.ReadRe
 			return
 		}
 
-		env := AccountTokensResultListDataSourceEnvelope{}
-		page, err := d.client.Accounts.Tokens.List(ctx, params)
+		env := TokenValidationRulesListResultListDataSourceEnvelope{}
+		page, err := d.client.TokenValidation.Rules.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
@@ -84,7 +84,7 @@ func (d *AccountTokenDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.TokenID = ts[0].ID
+		data.RuleID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)
@@ -94,10 +94,10 @@ func (d *AccountTokenDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	res := new(http.Response)
-	env := AccountTokenResultDataSourceEnvelope{*data}
-	_, err := d.client.Accounts.Tokens.Get(
+	env := TokenValidationRulesResultDataSourceEnvelope{*data}
+	_, err := d.client.TokenValidation.Rules.Get(
 		ctx,
-		data.TokenID.ValueString(),
+		data.RuleID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,7 +113,7 @@ func (d *AccountTokenDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
-	data.ID = data.TokenID
+	data.ID = data.RuleID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
