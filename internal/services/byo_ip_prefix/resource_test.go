@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
 	cfv3 "github.com/cloudflare/cloudflare-go/v6"
@@ -12,6 +13,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -70,10 +74,16 @@ func testSweepCloudflareBYOIPPrefixes(r string) error {
 
 func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 	t.Parallel()
-	prefixID := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID")
 
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_byo_ip_prefix.%s", rnd)
+	var (
+		rnd  = utils.GenerateRandomResourceName()
+		name = fmt.Sprintf("cloudflare_byo_ip_prefix.%s", rnd)
+
+		accountID     = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+		loaDocumentID = os.Getenv("CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID")
+		cidr          = os.Getenv("CLOUDFLARE_BYO_IP_CIDR")
+		asn, _        = strconv.ParseInt(os.Getenv("CLOUDFLARE_BYO_IP_ASN"), 10, 64)
+	)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -84,23 +94,68 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareBYOIPPrefixConfig(prefixID, "BYOIP Prefix Description old", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						name, "description", "BYOIP Prefix Description old"),
-				),
+				Config: testAccCheckCloudflareBYOIPPrefixConfig(accountID, asn, cidr, loaDocumentID, "This is my BYOIP prefix old", rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("description"),
+						knownvalue.StringExact("This is my BYOIP prefix old"),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("asn"),
+						knownvalue.Int64Exact(asn),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("loa_document_id"),
+						knownvalue.StringExact(loaDocumentID),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("cidr"),
+						knownvalue.StringExact(cidr),
+					),
+				},
+				PreventDiskCleanup: true,
 			},
 			{
-				Config: testAccCheckCloudflareBYOIPPrefixConfig(prefixID, "BYOIP Prefix Description new", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						name, "description", "BYOIP Prefix Description new"),
-				),
+				Config: testAccCheckCloudflareBYOIPPrefixConfig(accountID, asn, cidr, loaDocumentID, "This is my BYOIP prefix new", rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("description"),
+						knownvalue.StringExact("This is my BYOIP prefix new"),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("asn"),
+						knownvalue.Int64Exact(asn),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("loa_document_id"),
+						knownvalue.StringExact(loaDocumentID),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("cidr"),
+						knownvalue.StringExact(cidr),
+					),
+				},
+				PreventDiskCleanup: true,
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"irr_validation_state", "rpki_validation_state", "ownership_validation_state"},
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareBYOIPPrefixConfig(prefixID, description, name string) string {
-	return acctest.LoadTestCase("byoipprefixconfig.tf", prefixID, description, name)
+func testAccCheckCloudflareBYOIPPrefixConfig(accountID string, asn int64, cidr string, loaDocumentID string, description, name string) string {
+	return acctest.LoadTestCase("byoipprefixconfig.tf", accountID, asn, cidr, loaDocumentID, description, name)
 }
