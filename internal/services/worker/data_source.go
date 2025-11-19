@@ -83,6 +83,7 @@ func (d *WorkerDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 	data = &env.Result
+	data.ID = data.WorkerID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
