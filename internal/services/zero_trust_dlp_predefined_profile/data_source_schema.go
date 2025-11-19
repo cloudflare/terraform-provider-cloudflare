@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPPredefinedProfileDataSource)(nil)
@@ -19,46 +20,26 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPPredefinedProfil
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"profile_id": schema.StringAttribute{
+				Required: true,
+			},
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"ai_context_enabled": schema.BoolAttribute{
 				Computed: true,
 			},
 			"allowed_match_count": schema.Int64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
+				Computed: true,
 			},
 			"confidence_threshold": schema.StringAttribute{
-				Description: `Available values: "low", "medium", "high", "very_high".`,
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"low",
-						"medium",
-						"high",
-						"very_high",
-					),
-				},
-			},
-			"created_at": schema.StringAttribute{
-				Description: "When the profile was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the profile.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The id of the profile (uuid).",
-				Computed:    true,
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the profile.",
+				Description: "The name of the predefined profile.",
 				Computed:    true,
 			},
 			"ocr_enabled": schema.BoolAttribute{
@@ -68,48 +49,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
 			},
-			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration".`,
+			"enabled_entries": schema.ListAttribute{
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"custom",
-						"predefined",
-						"integration",
-					),
-				},
-			},
-			"updated_at": schema.StringAttribute{
-				Description: "When the profile was lasted updated.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"context_awareness": schema.SingleNestedAttribute{
-				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:           true,
-				DeprecationMessage: "This attribute is deprecated.",
-				CustomType:         customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"enabled": schema.BoolAttribute{
-						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
-						Computed:    true,
-					},
-					"skip": schema.SingleNestedAttribute{
-						Description: "Content types to exclude from context analysis and return all matches.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessSkipDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"files": schema.BoolAttribute{
-								Description: "If the content type is a file, skip context analysis and return all matches.",
-								Computed:    true,
-							},
-						},
-					},
-				},
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"entries": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDLPPredefinedProfileEntriesDataSourceModel](ctx),
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectListType[ZeroTrustDLPPredefinedProfileEntriesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

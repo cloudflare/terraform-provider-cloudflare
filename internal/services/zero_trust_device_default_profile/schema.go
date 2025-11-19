@@ -178,6 +178,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",
 				Computed:    true,
+				Default:     booldefault.StaticBool(true),
 			},
 			"gateway_unique_id": schema.StringAttribute{
 				Computed: true,

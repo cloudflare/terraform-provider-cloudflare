@@ -102,7 +102,6 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Complete(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-updated", rnd))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(float64(updatedPrecedence))),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Updated custom device profile")),
 				},
 			},

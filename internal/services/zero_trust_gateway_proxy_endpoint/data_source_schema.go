@@ -7,8 +7,10 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,18 +19,25 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustGatewayProxyEndpoin
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"proxy_endpoint_id": schema.StringAttribute{
+				Required: true,
+			},
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"id": schema.StringAttribute{
-				Computed: true,
+			"kind": schema.StringAttribute{
+				Description: "The proxy endpoint kind\nAvailable values: \"ip\", \"identity\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ip", "identity"),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Specify the name of the proxy endpoint.",

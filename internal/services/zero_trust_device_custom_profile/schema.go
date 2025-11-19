@@ -52,10 +52,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A description of the policy.",
 				Optional:    true,
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether the policy will be applied to matching devices.",
-				Optional:    true,
-			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
 				Optional:    true,
@@ -172,6 +168,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether the policy will be applied to matching devices.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
 			},
 			"exclude_office_ips": schema.BoolAttribute{
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
