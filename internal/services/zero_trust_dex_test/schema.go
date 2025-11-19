@@ -70,7 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"targeted": schema.BoolAttribute{
-				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"target_policies": schema.ListNestedAttribute{
