@@ -105,7 +105,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/snippets depends_on=snippet_rules"
     "resource=./internal/services/spectrum_application"
     "resource=./internal/services/tiered_cache"
-    "resource=./internal/services/token_validation_config"
+    # "resource=./internal/services/token_validation_config"
     "resource=./internal/services/token_validation_rules"
     "resource=./internal/services/turnstile_widget"
     "resource=./internal/services/url_normalization_settings"
