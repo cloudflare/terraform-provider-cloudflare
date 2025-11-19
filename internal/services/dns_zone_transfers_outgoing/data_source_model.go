@@ -17,10 +17,10 @@ type DNSZoneTransfersOutgoingResultDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersOutgoingDataSourceModel struct {
+	ID                  types.String                  `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID              types.String                  `tfsdk:"zone_id" path:"zone_id,required"`
 	CheckedTime         types.String                  `tfsdk:"checked_time" json:"checked_time,computed"`
 	CreatedTime         types.String                  `tfsdk:"created_time" json:"created_time,computed"`
-	ID                  types.String                  `tfsdk:"id" json:"id,computed"`
 	LastTransferredTime types.String                  `tfsdk:"last_transferred_time" json:"last_transferred_time,computed"`
 	Name                types.String                  `tfsdk:"name" json:"name,computed"`
 	SOASerial           types.Float64                 `tfsdk:"soa_serial" json:"soa_serial,computed"`

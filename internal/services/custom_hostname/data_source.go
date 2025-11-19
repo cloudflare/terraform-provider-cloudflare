@@ -113,6 +113,7 @@ func (d *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 	data = &env.Result
+	data.ID = data.CustomHostnameID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

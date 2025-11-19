@@ -106,6 +106,7 @@ func (d *OrganizationDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.OrganizationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
