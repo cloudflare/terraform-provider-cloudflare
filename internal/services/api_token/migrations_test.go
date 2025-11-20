@@ -226,7 +226,7 @@ resource "cloudflare_api_token" "%[1]s" {
 func TestMigrateAPITokenFromV5WithTTL(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
-	acctest.TestAccPreCheck(t)
+
 	// V5 config with TTL settings
 	v5Config := fmt.Sprintf(`
 resource "cloudflare_api_token" "%[1]s" {
