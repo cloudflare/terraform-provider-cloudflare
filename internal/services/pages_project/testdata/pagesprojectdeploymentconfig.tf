@@ -1,3 +1,8 @@
+resource "cloudflare_workers_kv_namespace" "%[1]s_kv_namespace" {
+  account_id = "%[2]s"
+  title = "tfacctest-pages-project-kv-namespace"
+}
+
 resource "cloudflare_pages_project" "%[1]s" {
   account_id        = "%[2]s"
   name              = "%[3]s"
@@ -16,7 +21,7 @@ resource "cloudflare_pages_project" "%[1]s" {
       }
       kv_namespaces = {
         KV_BINDING = {
-          namespace_id = "5eb63bbbe01eeed093cb22bb8f5acdc3"
+          namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv_namespace.id
         }
       }
       durable_object_namespaces = {
@@ -66,10 +71,10 @@ resource "cloudflare_pages_project" "%[1]s" {
       }
       kv_namespaces = {
         KV_BINDING_1 = {
-          namespace_id = "5eb63bbbe01eeed093cb22bb8f5acdc3"
+          namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv_namespace.id
         }
         KV_BINDING_2 = {
-          namespace_id = "3cdca5f8bb22bc390deee10ebbb36be5"
+          namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv_namespace.id
         }
       }
       durable_object_namespaces = {

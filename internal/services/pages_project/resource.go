@@ -64,6 +64,8 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	planDeploymentConfigs := data.DeploymentConfigs
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -93,6 +95,13 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 	data = &env.Result
 	data.ID = data.Name
 
+	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	data.DeploymentConfigs = updatedDeploymentConfigs
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -112,6 +121,8 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	planDeploymentConfigs := data.DeploymentConfigs
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -143,6 +154,13 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 	data = &env.Result
 	data.ID = data.Name
 
+	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	data.DeploymentConfigs = updatedDeploymentConfigs
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -154,6 +172,8 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	stateDeploymentConfigs := data.DeploymentConfigs
 
 	res := new(http.Response)
 	env := PagesProjectResultEnvelope{*data}
@@ -183,6 +203,13 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 	data.ID = data.Name
+
+	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, stateDeploymentConfigs, data.DeploymentConfigs)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	data.DeploymentConfigs = updatedDeploymentConfigs
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
