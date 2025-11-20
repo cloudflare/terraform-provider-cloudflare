@@ -10,7 +10,7 @@ resource "cloudflare_api_token" "test_account_token" {
   policies = [{
     effect            = "allow"
     permission_groups = [{ id = data.cloudflare_api_token_permission_groups_list.dns_read.result[0].id }]
-    resources         = { "com.cloudflare.api.account.zone.*" = "*" }
+    resources         = jsonencode({ "com.cloudflare.api.account.zone.*" = "*" })
   }]
 
   not_before = "2018-07-01T05:20:00Z"

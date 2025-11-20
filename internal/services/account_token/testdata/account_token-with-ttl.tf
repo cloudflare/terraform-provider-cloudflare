@@ -11,9 +11,9 @@ resource "cloudflare_account_token" "test_account_token" {
   policies = [{
     effect            = "allow"
     permission_groups = [{ id = data.cloudflare_account_api_token_permission_groups_list.dns_read.result[0].id }]
-    resources = {
+    resources = jsonencode({
       "com.cloudflare.api.account.%[2]s" = "*"
-    }
+    })
   }]
 
   not_before = "2018-07-01T05:20:00Z"
