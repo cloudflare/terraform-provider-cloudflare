@@ -499,7 +499,7 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
