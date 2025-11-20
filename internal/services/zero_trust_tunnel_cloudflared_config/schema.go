@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -240,12 +239,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"version": schema.Int64Attribute{
 				Description: "The version of the Tunnel Configuration.",
 				Computed:    true,
-			},
-			"warp_routing_enabled": schema.BoolAttribute{
-				Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-				Optional:    true,
-				Computed:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 		},
 	}
