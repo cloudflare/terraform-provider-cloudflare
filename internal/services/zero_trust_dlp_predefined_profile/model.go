@@ -4,7 +4,7 @@ package zero_trust_dlp_predefined_profile
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -36,15 +36,6 @@ func (m ZeroTrustDLPPredefinedProfileModel) MarshalJSON() (data []byte, err erro
 
 func (m ZeroTrustDLPPredefinedProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPPredefinedProfileModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
-}
-
-type ZeroTrustDLPPredefinedProfileContextAwarenessModel struct {
-	Enabled types.Bool                                              `tfsdk:"enabled" json:"enabled,required"`
-	Skip    *ZeroTrustDLPPredefinedProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip,required"`
-}
-
-type ZeroTrustDLPPredefinedProfileContextAwarenessSkipModel struct {
-	Files types.Bool `tfsdk:"files" json:"files,required"`
 }
 
 type ZeroTrustDLPPredefinedProfileEntriesModel struct {
