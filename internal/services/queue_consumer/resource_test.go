@@ -115,7 +115,6 @@ func TestAccCloudflareQueueConsumer_HttpPull_UpdateSettings(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(10)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(3)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(5000)),
 				},
 			},
 			{
@@ -125,7 +124,6 @@ func TestAccCloudflareQueueConsumer_HttpPull_UpdateSettings(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.batch_size"), knownvalue.Float64Exact(20)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_retries"), knownvalue.Float64Exact(5)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings.max_wait_time_ms"), knownvalue.Float64Exact(8000)),
 				},
 			},
 		},

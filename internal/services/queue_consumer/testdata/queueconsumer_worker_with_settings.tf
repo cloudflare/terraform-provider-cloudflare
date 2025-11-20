@@ -1,23 +1,10 @@
 resource "cloudflare_queue" "test_queue" {
-  account_id = "%s"
-  queue_name = "%s"
-}
-
-resource "cloudflare_queue_consumer" "%s" {
-  account_id  = "%s"
-  queue_id    = cloudflare_queue.test_queue.id
-  type        = "worker"
-  script_name = "test-worker"
-  
-  settings = {
-    batch_size        = 10
-    max_retries       = 3
-    max_wait_time_ms  = 100
-  }
+  account_id = "%[1]s"
+  queue_name = "%[2]s"
 }
 
 resource "cloudflare_workers_script" "worker_script" {
-  account_id  = "%s"
+  account_id  = "%[5]s"
   script_name = "test-worker"
   bindings = [
     {
@@ -36,4 +23,19 @@ export default {
 };
 EOT
   main_module         = "index.js"
+}
+
+resource "cloudflare_queue_consumer" "%[3]s" {
+  account_id  = "%[4]s"
+  queue_id    = cloudflare_queue.test_queue.id
+  type        = "worker"
+  script_name = cloudflare_workers_script.worker_script.script_name
+
+  settings = {
+    batch_size        = 10
+    max_retries       = 3
+    max_wait_time_ms  = 5000
+  }
+
+  depends_on = [cloudflare_workers_script.worker_script]
 }
