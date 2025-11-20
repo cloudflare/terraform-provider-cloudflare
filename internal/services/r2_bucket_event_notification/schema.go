@@ -84,6 +84,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				Validators: []validator.List{
+					listvalidator.SizeAtLeast(1),
+				},
 			},
 			"queue_name": schema.StringAttribute{
 				Description: "Name of the queue.",
