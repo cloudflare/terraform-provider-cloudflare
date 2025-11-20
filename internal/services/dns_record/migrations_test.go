@@ -188,7 +188,7 @@ resource "cloudflare_record" "%[1]s" {
     target   = "sipserver.example.com"
   }
 }`, rnd, zoneID, name)
-	
+
 	// V5 config needs priority at root level
 	v5Config := fmt.Sprintf(`
 resource "cloudflare_dns_record" "%[1]s" {
@@ -601,7 +601,7 @@ resource "cloudflare_record" "%[1]s" {
 func TestMigrateDNSRecordPTRRecord(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("1.2.0.192.in-addr.arpa")
+	name := fmt.Sprintf("1.2.0.192.in-addr.%s.arpa", rnd)
 	tmpDir := t.TempDir()
 
 	v4Config := fmt.Sprintf(`
