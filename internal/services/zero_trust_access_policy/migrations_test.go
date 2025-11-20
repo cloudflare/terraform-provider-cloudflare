@@ -15,10 +15,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
-
 // TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic tests basic migration from v4 to v5
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
