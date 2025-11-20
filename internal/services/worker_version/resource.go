@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -157,8 +158,21 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// This resource is immutable at the API level, but can be updated "in-place" if
+// the only changes are to provider-only attributes (namely the content_file
+// module attribute). Allowing "in-place" updates to these attributes makes it
+// possible to import this resource without destroying and re-creating it in the
+// process.
 func (r *WorkerVersionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Update is not supported for this resource
+	var plan *WorkerVersionModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	// Computed properties are marked as unknown in the plan and can't be copied
+	// to state. The modules attribute is the only attribute that can be updated
+	// in-place, so we only copy that attribute to state.
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("modules"), plan.Modules)...)
 }
 
 func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
