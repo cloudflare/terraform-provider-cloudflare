@@ -102,16 +102,16 @@ type WorkerVersionAnnotationsModel struct {
 }
 
 type WorkerVersionAssetsModel struct {
-	Config              customfield.NestedObject[WorkerVersionAssetsConfigModel] `tfsdk:"config" json:"config,computed_optional"`
+	Config              customfield.NestedObject[WorkerVersionAssetsConfigModel] `tfsdk:"config" json:"config,optional"`
 	JWT                 types.String                                             `tfsdk:"jwt" json:"jwt,optional"`
 	Directory           types.String                                             `tfsdk:"directory" json:"-,optional"`
 	AssetManifestSHA256 types.String                                             `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkerVersionAssetsConfigModel struct {
-	HTMLHandling     types.String                   `tfsdk:"html_handling" json:"html_handling,computed_optional"`
-	NotFoundHandling types.String                   `tfsdk:"not_found_handling" json:"not_found_handling,computed_optional"`
-	RunWorkerFirst   customfield.List[types.String] `tfsdk:"run_worker_first" json:"run_worker_first,computed_optional"`
+	HTMLHandling     types.String                       `tfsdk:"html_handling" json:"html_handling,optional"`
+	NotFoundHandling types.String                       `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
+	RunWorkerFirst   customfield.NormalizedDynamicValue `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
 }
 
 type WorkerVersionBindingsModel struct {
