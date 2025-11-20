@@ -3,6 +3,7 @@ package zero_trust_access_group
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
@@ -26,6 +27,35 @@ func normalizeReadZeroTrustAccessGroupAPIData(ctx context.Context, data, sourceD
 	normalizeEmptyAndNullSlice(&data.Include, sourceData.Include)
 	normalizeEmptyAndNullSlice(&data.Require, sourceData.Require)
 	normalizeEmptyAndNullSlice(&data.Exclude, sourceData.Exclude)
+
+	// Normalize IP addresses in include/exclude/require rules to handle /32 and /128 CIDR notation
+	if data.Include != nil && sourceData.Include != nil {
+		for i := range *data.Include {
+			if i < len(*sourceData.Include) {
+				if (*data.Include)[i].IP != nil && (*sourceData.Include)[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&(*data.Include)[i].IP.IP, (*sourceData.Include)[i].IP.IP)
+				}
+			}
+		}
+	}
+	if data.Exclude != nil && sourceData.Exclude != nil {
+		for i := range *data.Exclude {
+			if i < len(*sourceData.Exclude) {
+				if (*data.Exclude)[i].IP != nil && (*sourceData.Exclude)[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&(*data.Exclude)[i].IP.IP, (*sourceData.Exclude)[i].IP.IP)
+				}
+			}
+		}
+	}
+	if data.Require != nil && sourceData.Require != nil {
+		for i := range *data.Require {
+			if i < len(*sourceData.Require) {
+				if (*data.Require)[i].IP != nil && (*sourceData.Require)[i].IP != nil {
+					utils.NormalizeIPStringWithCIDR(&(*data.Require)[i].IP.IP, (*sourceData.Require)[i].IP.IP)
+				}
+			}
+		}
+	}
 
 	return diags
 }
