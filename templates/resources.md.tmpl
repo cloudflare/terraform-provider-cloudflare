@@ -17,10 +17,14 @@ description: |-
 
 {{ .SchemaMarkdown | trimspace }}
 
-{{ if .HasImport -}}
 ## Import
 
+{{ if .HasImport -}}
 Import is supported using the following syntax:
 
 {{ codefile "shell" .ImportFile }}
+
+{{ else }}
+~> This resource does not currently support `terraform import`.
+
 {{- end }}
