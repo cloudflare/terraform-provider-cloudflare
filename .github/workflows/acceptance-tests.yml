@@ -7,11 +7,7 @@ on:
   push:
     branches:
       - "release-please**"
-jobs:
-  acceptance-tests:
-    name: Acceptance Tests
-    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
-    env:
+env:
       CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
       CLOUDFLARE_ALT_DOMAIN: terraform2.cfapi.net
       CLOUDFLARE_ALT_ZONE_ID: b72110c08e3382597095c29ba7e661ea
@@ -36,6 +32,194 @@ jobs:
       CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
       CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
       CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+jobs:  
+  magic-acceptance: 
+    name: Magic acceptance tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }} 
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+      - name: Run Magic Acceptance Tests
+        id: magic_acceptance_tests
+        run: ./scripts/run-ci-tests magic acceptance
+        env:
+          TF_ACC: 1
+        continue-on-error: true
+      - name: Run Magic Migration Tests
+        id: magic_migration_tests
+        run: ./scripts/run-ci-tests magic migration
+        env:
+          TF_ACC: 1
+        continue-on-error: true
+  orgs-acceptance: 
+    name: Magic acceptance tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }} 
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+      ######## Organization Tests ########
+      # These tests require a specific user with organization permissions
+      - name: Run Organization Acceptance Tests
+        id: organization_acceptance_tests
+        run: ./scripts/run-ci-tests organization acceptance
+        env:
+          TF_ACC: 1
+          # Override credentials for organization tests
+          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
+          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
+        continue-on-error: true
+  acceptance-tests:
+    name: Acceptance Tests
+    continue-on-error: true
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }} 
+    strategy: 
+      matrix:
+        #magic-wan:
+        #  - "magic_wan_gre_tunnel"
+        #  - "magic_wan_static_route"
+        #  - "magic_transit_connector"
+        #  - "magic_wan_ipsec_tunnel"
+        #organization: 
+        #  - "organization"
+        #  - "organization_profile"
+        #snippets:
+        #  - "snippet_rules"
+        #  - "snippets"
+        #zt-mtls:
+        #  - "zero_trust_access_short_lived_certificate"
+        #  - "zero_trust_access_mtls_hostname_settings"
+        test: 
+          - "account"
+          - "account_api_token_permission_groups"
+          - "account_dns_settings"
+          - "account_dns_settings_internal_view"
+          - "account_member"
+          - "account_permission_group"
+          - "account_role"
+          - "account_subscription"
+          - "account_token"
+          - "address_map"
+          - "api_shield"
+          - "api_token"
+          - "argo_smart_routing"
+          - "argo_tiered_caching"
+          - "authenticated_origin_pulls"
+          - "authenticated_origin_pulls_certificate"
+          - "bot_management"
+          - "byo_ip_prefix"
+          - "certificate_pack"
+          - "cloud_connector_rules"
+          - "custom_hostname"
+          - "custom_pages"
+          - "custom_ssl"
+          - "dns_record"
+          - "dns_settings_internal_view"
+          - "dns_zone_transfers_acl"
+          - "dns_zone_transfers_tsig"
+          - "email_routing_catch_all"
+          - "email_routing_dns"
+          - "email_routing_rule"
+          - "email_security_impersonation_registry"
+          - "email_security_trusted_domains"
+          - "healthcheck"
+          - "ip_ranges"
+          - "list"
+          - "list_item"
+          - "load_balancer"
+          - "load_balancer_monitor"
+          - "load_balancer_pool"
+          - "logpull_retention"
+          - "logpush_job"
+          - "logpush_ownership_challenge"
+          - "managed_transforms"
+          - "notification_policy_webhooks"
+          - "observatory_scheduled_test"
+          - "origin_ca_certificate"
+          - "page_rule"
+          - "pages_domain"
+          - "pages_project"
+          - "queue"
+          - "r2_bucket"
+          - "regional_hostname"
+          - "regional_tiered_cache"
+          - "ruleset"
+          - "snippet"
+          - "spectrum_application"
+          - "tiered_cache"
+          - "turnstile_widget"
+          - "url_normalization_settings"
+          - "waiting_room_settings"
+          - "worker"
+          - "worker_version"
+          - "workers_cron_trigger"
+          - "workers_custom_domain"
+          - "workers_for_platforms_dispatch_namespace"
+          - "workers_kv"
+          - "workers_kv_namespace"
+          - "workers_route"
+          - "workers_script"
+          - "zero_trust_access_application"
+          - "zero_trust_access_custom_page"
+          - "zero_trust_access_group"
+          - "zero_trust_access_identity_provider"
+          - "zero_trust_access_key_configuration"
+          - "zero_trust_access_mtls_certificate"
+          - "zero_trust_access_policy"
+          - "zero_trust_access_service_token"
+          - "zero_trust_access_tag"
+          - "zero_trust_device_custom_profile"
+          - "zero_trust_device_custom_profile_local_domain_fallback"
+          - "zero_trust_device_default_profile_certificates"
+          - "zero_trust_device_managed_networks"
+          - "zero_trust_device_posture_rule"
+          - "zero_trust_dlp_custom_profile"
+          - "zero_trust_dlp_entry"
+          - "zero_trust_gateway_proxy_endpoint"
+          - "zero_trust_gateway_policy"
+          - "zero_trust_gateway_settings"
+          - "zero_trust_list"
+          - "zero_trust_organization"
+          - "zero_trust_tunnel_cloudflared"
+          - "zero_trust_tunnel_cloudflared_config"
+          - "zero_trust_tunnel_cloudflared_route"
+          - "zero_trust_tunnel_cloudflared_token"
+          - "zero_trust_tunnel_cloudflared_virtual_network"
+          - "zone"
+          - "zone_cache_reserve"
+          - "zone_cache_variants"
+          - "zone_dnssec"
+          - "zone_hold"
+          - "zone_lockdown"
+          - "zone_setting"
+          - "zone_subscription"   
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+      - name: Run acceptance tests
+        id: acc_tests
+        # note: not all resources are covered here, only passing ones should be included here (for now).
+        run: go test -run "^TestAcc" -count 1 ./internal/services/${{ matrix.test }}
+        env:
+          TF_ACC: 1
+  migration-tests: 
+    name: Migration Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }} 
     steps:
       - uses: actions/checkout@v4
 
@@ -53,56 +237,18 @@ jobs:
         run: npm install -g @getgrit/cli
 
       - name: Bootstrap
-        run: ./scripts/bootstrap
-
-      ######## Magic Tests ########
-      - name: Run Magic Acceptance Tests
-        id: magic_acceptance_tests
-        run: ./scripts/run-ci-tests magic acceptance
-        env:
-          TF_ACC: 1
-        continue-on-error: true
-
-      - name: Run Magic Migration Tests
-        id: magic_migration_tests
-        run: ./scripts/run-ci-tests magic migration
-        env:
-          TF_ACC: 1
-        continue-on-error: true
-
-      ######## Organization Tests ########
-      # These tests require a specific user with organization permissions
-      - name: Run Organization Acceptance Tests
-        id: organization_acceptance_tests
-        run: ./scripts/run-ci-tests organization acceptance
-        env:
-          TF_ACC: 1
-          # Override credentials for organization tests
-          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
-          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
-          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
-        continue-on-error: true
-
-      ######## Everything Else ########
-      - name: Run Default Acceptance Tests
-        id: default_acceptance_tests
-        run: ./scripts/run-ci-tests default acceptance
-        env:
-          TF_ACC: 1
-        continue-on-error: true
+        run: ./scripts/bootstrap 
 
       - name: Run Default Migration Tests
         id: default_migration_tests
         run: ./scripts/run-ci-tests default migration
         env:
           TF_ACC: 1
-        continue-on-error: true
 
-      - name: Check Test Status
-        if: ${{
-          steps.magic_acceptance_tests.outcome == 'failure' ||
-          steps.magic_migration_tests.outcome == 'failure' ||
-          steps.default_acceptance_tests.outcome == 'failure' ||
-          steps.default_migration_tests.outcome == 'failure' ||
-          steps.organization_acceptance_tests.outcome == 'failure'}}
-        run: exit 1
+
+
+    # when all resources support sweepers, re-enable.
+    #
+    # - name: Post-Sweeper
+    #  if: ${{ always() }}
+    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
