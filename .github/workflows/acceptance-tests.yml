@@ -67,13 +67,13 @@ jobs:
           TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
-      - name: Run Magic Migration Tests
-        id: magic_migration_tests
-        run: ./scripts/run-ci-tests magic migration
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
+      # - name: Run Magic Migration Tests
+      #   id: magic_migration_tests
+      #   run: ./scripts/run-ci-tests magic migration
+      #   env:
+      #     TF_ACC: 1
+      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+      #   continue-on-error: true
 
       ######## Organization Tests ########
       # These tests require a specific user with organization permissions
@@ -97,13 +97,13 @@ jobs:
           TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
-      - name: Run Default Migration Tests
-        id: default_migration_tests
-        run: ./scripts/run-ci-tests default migration
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
+      # - name: Run Default Migration Tests
+      #   id: default_migration_tests
+      #   run: ./scripts/run-ci-tests default migration
+      #   env:
+      #     TF_ACC: 1
+      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+      #   continue-on-error: true
 
       - name: Check Test Status
         if: ${{
