@@ -12,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -61,10 +63,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"exclude": schema.ListNestedAttribute{
-				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileExcludeModel](ctx),
+				Description:   "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Optional:      true,
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileExcludeModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(path.MatchRoot("include")),
 				},
@@ -89,10 +92,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"include": schema.ListNestedAttribute{
-				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileIncludeModel](ctx),
+				Description:   "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Optional:      true,
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileIncludeModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(path.MatchRoot("exclude")),
 				},
@@ -117,9 +121,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
-				Optional:   true,
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfileServiceModeV2Model](ctx),
+				Optional:      true,
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfileServiceModeV2Model](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",
@@ -216,11 +221,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"gateway_unique_id": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"fallback_domains": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileFallbackDomainsModel](ctx),
+				Computed:      true,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileFallbackDomainsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"suffix": schema.StringAttribute{
@@ -241,8 +248,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"target_tests": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
+				Computed:      true,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
