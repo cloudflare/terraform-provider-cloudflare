@@ -5,9 +5,9 @@ package dns_record
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/dns"
-	"github.com/cloudflare/cloudflare-go/v5/shared"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v6/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -35,7 +35,7 @@ type DNSRecordDataSourceModel struct {
 	TagsModifiedOn    timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 	TTL               types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
 	Type              types.String                                               `tfsdk:"type" json:"type,computed"`
-	Tags              customfield.List[types.String]                             `tfsdk:"tags" json:"tags,computed"`
+	Tags              customfield.Set[types.String]                              `tfsdk:"tags" json:"tags,computed"`
 	Data              customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
 	Settings          customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Meta              jsontypes.Normalized                                       `tfsdk:"meta" json:"meta,computed"`

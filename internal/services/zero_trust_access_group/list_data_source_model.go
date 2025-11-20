@@ -5,10 +5,9 @@ package zero_trust_access_group
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -47,13 +46,11 @@ func (m *ZeroTrustAccessGroupsDataSourceModel) toListParams(_ context.Context) (
 
 type ZeroTrustAccessGroupsResultDataSourceModel struct {
 	ID        types.String                                                                `tfsdk:"id" json:"id,computed"`
-	CreatedAt timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Exclude   customfield.NestedObjectList[ZeroTrustAccessGroupsExcludeDataSourceModel]   `tfsdk:"exclude" json:"exclude,computed"`
 	Include   customfield.NestedObjectList[ZeroTrustAccessGroupsIncludeDataSourceModel]   `tfsdk:"include" json:"include,computed"`
 	IsDefault customfield.NestedObjectList[ZeroTrustAccessGroupsIsDefaultDataSourceModel] `tfsdk:"is_default" json:"is_default,computed"`
 	Name      types.String                                                                `tfsdk:"name" json:"name,computed"`
 	Require   customfield.NestedObjectList[ZeroTrustAccessGroupsRequireDataSourceModel]   `tfsdk:"require" json:"require,computed"`
-	UpdatedAt timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustAccessGroupsExcludeDataSourceModel struct {

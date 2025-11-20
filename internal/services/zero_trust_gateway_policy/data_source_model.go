@@ -5,8 +5,8 @@ package zero_trust_gateway_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -29,9 +29,9 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Enabled       types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Identity      types.String                                                                `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                `tfsdk:"name" json:"name,computed"`
-	NotSharable   types.Bool                                                                  `tfsdk:"not_sharable" json:"not_sharable,computed"`
 	Precedence    types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed"`
 	ReadOnly      types.Bool                                                                  `tfsdk:"read_only" json:"read_only,computed"`
+	Sharable      types.Bool                                                                  `tfsdk:"sharable" json:"sharable,computed"`
 	SourceAccount types.String                                                                `tfsdk:"source_account" json:"source_account,computed"`
 	Traffic       types.String                                                                `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

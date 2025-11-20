@@ -42,7 +42,7 @@ data "cloudflare_page_shield_connections_list" "example_page_shield_connections_
 Available values: "asc", "desc".
 - `exclude_cdn_cgi` (Boolean) When true, excludes connections seen in a `/cdn-cgi` path from the returned connections. The default value is true.
 - `exclude_urls` (String) Excludes connections whose URL contains one of the URL-encoded URLs separated by commas.
-- `export` (String) Export the list of connections as a file.
+- `export` (String) Export the list of connections as a file, limited to 50000 entries.
 Available values: "csv".
 - `hosts` (String) Includes connections that match one or more URL-encoded hostnames separated by commas.
 

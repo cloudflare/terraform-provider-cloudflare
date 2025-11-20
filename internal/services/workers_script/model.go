@@ -35,19 +35,23 @@ type WorkersEnvironmentModel struct {
 }
 
 type WorkersScriptModel struct {
-	ID            types.String      `tfsdk:"id" json:"-,computed"`
-	ScriptName    types.String      `tfsdk:"script_name" path:"script_name,required"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Content       types.String      `tfsdk:"content" json:"-"`
-	ContentFile   types.String      `tfsdk:"content_file" json:"-"`
-	ContentSHA256 types.String      `tfsdk:"content_sha256" json:"-"`
-	ContentType   types.String      `tfsdk:"content_type" json:"-"`
-	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
-	HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules    types.Bool        `tfsdk:"has_modules" json:"has_modules,computed"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	StartupTimeMs types.Int64       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
+	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
+	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	Content          types.String                                                  `tfsdk:"content" json:"-"`
+	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
+	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
+	ContentType      types.String                                                  `tfsdk:"content_type" json:"-"`
+	CreatedOn        timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Etag             types.String                                                  `tfsdk:"etag" json:"etag,computed"`
+	HasAssets        types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules       types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
+	LastDeployedFrom types.String                                                  `tfsdk:"last_deployed_from" json:"last_deployed_from,computed"`
+	MigrationTag     types.String                                                  `tfsdk:"migration_tag" json:"migration_tag,computed"`
+	ModifiedOn       timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	StartupTimeMs    types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	Handlers         customfield.List[types.String]                                `tfsdk:"handlers" json:"handlers,computed"`
+	NamedHandlers    customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed"`
 
 	WorkersScriptMetadataModel
 }
@@ -56,22 +60,25 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	var metadata WorkersScriptMetadataModel
-	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	contentType := r.ContentType.ValueString()
+	if r.Content.ValueString() != "" {
+		workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
-	if r.MainModule.ValueString() != "" {
-		if contentType == "" {
-			contentType = "application/javascript+module"
+		contentType := r.ContentType.ValueString()
+
+		if r.MainModule.ValueString() != "" {
+			if contentType == "" {
+				contentType = "application/javascript+module"
+			}
+			mainModuleName := r.MainModule.ValueString()
+			writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
+		} else {
+			if contentType == "" {
+				contentType = "application/javascript"
+			}
+			writeFileBytes("script", "script", contentType, workerBody, writer)
+			r.BodyPart = types.StringValue("script")
 		}
-		mainModuleName := r.MainModule.ValueString()
-		writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
-	} else {
-		if contentType == "" {
-			contentType = "application/javascript"
-		}
-		writeFileBytes("script", "script", contentType, workerBody, writer)
-		r.BodyPart = types.StringValue("script")
 	}
 
 	topLevelMetadata := r.WorkersScriptMetadataModel
@@ -96,6 +103,7 @@ type WorkersScriptMetadataModel struct {
 	CompatibilityFlags customfield.Set[types.String]                                    `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	KeepAssets         types.Bool                                                       `tfsdk:"keep_assets" json:"keep_assets,optional"`
 	KeepBindings       *[]types.String                                                  `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Limits             *WorkersScriptMetadataLimitsModel                                `tfsdk:"limits" json:"limits,optional"`
 	Logpush            types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed_optional"`
 	MainModule         types.String                                                     `tfsdk:"main_module" json:"main_module,optional"`
 	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]   `tfsdk:"migrations" json:"migrations,optional"`
@@ -107,46 +115,55 @@ type WorkersScriptMetadataModel struct {
 }
 
 type WorkersScriptMetadataAssetsModel struct {
-	Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Config              *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
+	JWT                 types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Directory           types.String                            `tfsdk:"directory" json:"-,optional"`
+	AssetManifestSHA256 types.String                            `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
-	Headers          types.String    `tfsdk:"headers" json:"_headers,optional"`
-	Redirects        types.String    `tfsdk:"redirects" json:"_redirects,optional"`
-	HTMLHandling     types.String    `tfsdk:"html_handling" json:"html_handling,optional"`
-	NotFoundHandling types.String    `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
-	RunWorkerFirst   *[]types.String `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
-	ServeDirectly    types.Bool      `tfsdk:"serve_directly" json:"serve_directly,optional"`
+	Headers          types.String `tfsdk:"headers" json:"_headers,optional"`
+	Redirects        types.String `tfsdk:"redirects" json:"_redirects,optional"`
+	HTMLHandling     types.String `tfsdk:"html_handling" json:"html_handling,optional"`
+	NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
+	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
+	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
-	Name          types.String                                `tfsdk:"name" json:"name,required"`
-	Type          types.String                                `tfsdk:"type" json:"type,required"`
-	Dataset       types.String                                `tfsdk:"dataset" json:"dataset,optional"`
-	ID            types.String                                `tfsdk:"id" json:"id,optional"`
-	Namespace     types.String                                `tfsdk:"namespace" json:"namespace,optional"`
-	Outbound      *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
-	ClassName     types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
-	Environment   types.String                                `tfsdk:"environment" json:"environment,optional"`
-	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
-	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	Json          types.String                                `tfsdk:"json" json:"json,optional"`
-	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
-	Text          types.String                                `tfsdk:"text" json:"text,optional"`
-	Pipeline      types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
-	QueueName     types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
-	BucketName    types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
-	Service       types.String                                `tfsdk:"service" json:"service,optional"`
-	IndexName     types.String                                `tfsdk:"index_name" json:"index_name,optional"`
-	SecretName    types.String                                `tfsdk:"secret_name" json:"secret_name,optional"`
-	StoreID       types.String                                `tfsdk:"store_id" json:"store_id,optional"`
-	Algorithm     jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
-	Format        types.String                                `tfsdk:"format" json:"format,optional"`
-	Usages        *[]types.String                             `tfsdk:"usages" json:"usages,optional"`
-	KeyBase64     types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
-	KeyJwk        jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
-	WorkflowName  types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
+	Name                        types.String                                `tfsdk:"name" json:"name,required"`
+	Type                        types.String                                `tfsdk:"type" json:"type,required"`
+	Dataset                     types.String                                `tfsdk:"dataset" json:"dataset,optional"`
+	ID                          types.String                                `tfsdk:"id" json:"id,optional"`
+	Outbound                    *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
+	ClassName                   types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
+	NamespaceID                 types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
+	ScriptName                  types.String                                `tfsdk:"script_name" json:"script_name,optional"`
+	Json                        types.String                                `tfsdk:"json" json:"json,optional"`
+	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
+	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
+	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
+	QueueName                   types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
+	BucketName                  types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
+	Jurisdiction                types.String                                `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
+	IndexName                   types.String                                `tfsdk:"index_name" json:"index_name,optional"`
+	SecretName                  types.String                                `tfsdk:"secret_name" json:"secret_name,optional"`
+	StoreID                     types.String                                `tfsdk:"store_id" json:"store_id,optional"`
+	Algorithm                   jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
+	Format                      types.String                                `tfsdk:"format" json:"format,optional"`
+	Usages                      customfield.Set[types.String]               `tfsdk:"usages" json:"usages,optional"`
+	KeyBase64                   types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
+	KeyJwk                      jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
+	WorkflowName                types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
+	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,optional"`
+	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
+	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
+	Environment                 types.String                                `tfsdk:"environment" json:"environment,optional"`
+	OldName                     types.String                                `tfsdk:"old_name" json:"old_name,optional"`
+	AllowedDestinationAddresses *[]types.String                             `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,optional"`
+	AllowedSenderAddresses      *[]types.String                             `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,optional"`
+	DestinationAddress          types.String                                `tfsdk:"destination_address" json:"destination_address,optional"`
+	Service                     types.String                                `tfsdk:"service" json:"service,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
@@ -157,6 +174,10 @@ type WorkersScriptMetadataBindingsOutboundModel struct {
 type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Service     types.String `tfsdk:"service" json:"service,optional"`
+}
+
+type WorkersScriptMetadataLimitsModel struct {
+	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
 }
 
 type WorkersScriptMetadataMigrationsModel struct {
@@ -207,9 +228,11 @@ type WorkersScriptMetadataObservabilityModel struct {
 }
 
 type WorkersScriptMetadataObservabilityLogsModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,required"`
-	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,required"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,required"`
+	InvocationLogs   types.Bool      `tfsdk:"invocation_logs" json:"invocation_logs,required"`
+	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
@@ -222,6 +245,11 @@ type WorkersScriptMetadataTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace,optional"`
+}
+
+type WorkersScriptNamedHandlersModel struct {
+	Handlers customfield.List[types.String] `tfsdk:"handlers" json:"handlers,computed"`
+	Name     types.String                   `tfsdk:"name" json:"name,computed"`
 }
 
 type WorkersScriptTailConsumersModel struct {

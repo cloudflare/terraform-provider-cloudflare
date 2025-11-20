@@ -144,7 +144,7 @@ Read-Only:
 - `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--result--settings))
-- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 - `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.

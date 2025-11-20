@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
@@ -14,9 +15,11 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		return
 	}
 
-	// Client secret can't ever be updated - it's only set when the token is first created.
-	// Tell TF to set the value to Null if it's unknown.
-	if stateApp != nil && stateApp.ClientSecret.IsNull() && planApp.ClientSecret.IsUnknown() {
+	// If ClientSecretVersion changes, then ClientSecret will change.
+	if stateApp != nil && !stateApp.ClientSecretVersion.Equal(planApp.ClientSecretVersion) {
+		planApp.ClientSecret = types.StringUnknown()
+	} else if stateApp != nil && stateApp.ClientSecret.IsNull() && planApp.ClientSecret.IsUnknown() {
+		// Otherwise maintain the ClientSecret value set in state since API won't return it.
 		planApp.ClientSecret = stateApp.ClientSecret
 	}
 

@@ -5,8 +5,8 @@ package load_balancer_pool
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -49,6 +49,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	MinimumOrigins     types.Int64                                                                  `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
 	ModifiedOn         types.String                                                                 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Monitor            types.String                                                                 `tfsdk:"monitor" json:"monitor,computed"`
+	MonitorGroup       types.String                                                                 `tfsdk:"monitor_group" json:"monitor_group,computed"`
 	Name               types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Networks           customfield.List[types.String]                                               `tfsdk:"networks" json:"networks,computed"`
 	NotificationEmail  types.String                                                                 `tfsdk:"notification_email" json:"notification_email,computed"`

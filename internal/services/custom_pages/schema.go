@@ -18,44 +18,42 @@ import (
 
 var _ resource.ResourceWithConfigValidators = (*CustomPagesResource)(nil)
 
+
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\".", 
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
-						"under_attack",
-						"basic_challenge",
-						"waf_challenge",
-						"waf_block",
-						"ip_block",
-						"country_challenge",
-						"500_errors",
 						"1000_errors",
+						"500_errors",
+						"basic_challenge",
+						"country_challenge",
+						"ip_block",
 						"managed_challenge",
 						"ratelimit_block",
+						"under_attack",
+						"waf_block",
 					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\".", 
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
-						"under_attack",
-						"basic_challenge",
-						"waf_challenge",
-						"waf_block",
-						"ip_block",
-						"country_challenge",
-						"500_errors",
 						"1000_errors",
+						"500_errors",
+						"basic_challenge",
+						"country_challenge",
+						"ip_block",
 						"managed_challenge",
 						"ratelimit_block",
+						"under_attack",
+						"waf_block",
 					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},

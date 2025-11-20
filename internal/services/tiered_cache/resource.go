@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/cache"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/cache"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -202,6 +203,11 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
+		// Handle 404 errors gracefully - it means the setting is already "off"
+		if strings.Contains(err.Error(), "404 Not Found") || strings.Contains(err.Error(), "does not exist") {
+			// Setting already doesn't exist (tiered cache is already off), consider deletion successful
+			return
+		}
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}

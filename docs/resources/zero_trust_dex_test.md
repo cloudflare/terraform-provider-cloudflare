@@ -67,10 +67,13 @@ Optional:
 <a id="nestedatt--target_policies"></a>
 ### Nested Schema for `target_policies`
 
-Optional:
+Required:
+
+- `id` (String) The id of the DEX rule
+
+Read-Only:
 
 - `default` (Boolean) Whether the DEX rule is the account default
-- `id` (String) The id of the DEX rule
 - `name` (String) The name of the DEX rule
 
 ## Import

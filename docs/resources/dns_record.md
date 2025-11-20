@@ -47,7 +47,7 @@ Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", 
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--settings))
-- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 
 ### Read-Only
 

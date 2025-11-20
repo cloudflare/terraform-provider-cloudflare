@@ -16,7 +16,7 @@ type ZeroTrustDLPPredefinedProfileModel struct {
 	ID                  types.String                                        `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String                                        `tfsdk:"account_id" path:"account_id,required"`
 	ProfileID           types.String                                        `tfsdk:"profile_id" json:"profile_id,required,no_refresh"`
-	ContextAwareness    *ZeroTrustDLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
+	ContextAwareness    *ZeroTrustDLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional,no_refresh"`
 	Entries             *[]*ZeroTrustDLPPredefinedProfileEntriesModel       `tfsdk:"entries" json:"entries,optional"`
 	AIContextEnabled    types.Bool                                          `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed_optional"`
 	AllowedMatchCount   types.Int64                                         `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`

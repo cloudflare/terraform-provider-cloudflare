@@ -33,11 +33,10 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_zero_trust_dlp_custom
 - `enabled` (Boolean)
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
-- `profile_id` (String)
 
 ### Optional
 
-- `type` (String) Available values: "custom", "predefined", "integration".
+- `profile_id` (String)
 
 ### Read-Only
 
@@ -48,7 +47,9 @@ Cannot be set to false if secret is true
 - `created_at` (String)
 - `id` (String) The ID of this resource.
 - `secret` (Boolean)
+- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--pattern"></a>
@@ -72,3 +73,19 @@ Read-Only:
 - `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 
+<a id="nestedatt--variant"></a>
+### Nested Schema for `variant`
+
+Read-Only:
+
+- `description` (String)
+- `topic_type` (String) Available values: "Intent", "Content".
+- `type` (String) Available values: "PromptTopic".
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_zero_trust_dlp_custom_entry.example '<account_id>/<entry_id>'
+```

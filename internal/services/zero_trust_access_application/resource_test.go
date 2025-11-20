@@ -22,6 +22,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_application", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_application",
@@ -105,6 +109,12 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_redirect_to_identity"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_auth_401_redirect"), knownvalue.Bool(false)),
+
+					// destinations and self_hosted_domains should be populated from the API
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("public")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations").AtSliceIndex(0).AtMapKey("uri"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("self_hosted_domains"), knownvalue.ListSizeExact(1)),
 				},
 			},
 			{
@@ -1994,7 +2004,7 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.ListExact([]knownvalue.Check{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{
 						knownvalue.StringExact("ccc"),
 						knownvalue.StringExact("aaa"),
 						knownvalue.StringExact("bbb"),
@@ -2011,7 +2021,7 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.ListSizeExact(3)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetSizeExact(3)),
 				},
 			},
 			{
@@ -2024,4 +2034,71 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 
 func testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithtagsordering.tf", rnd, domain, accountID)
+}
+
+func TestAccCloudflareAccessApplication_MCPSetup(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	mcpAppName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s_mcp_server", rnd)
+	mcpPortalAppName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s_mcp_portal", rnd)
+	mcpPortalDomain := fmt.Sprintf("%[1]s.%[2]s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					// check mcp server app
+					statecheck.ExpectKnownValue(mcpAppName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(mcpAppName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"_mcp_server")),
+					statecheck.ExpectKnownValue(mcpAppName, tfjsonpath.New("domain"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(mcpAppName, tfjsonpath.New("type"), knownvalue.StringExact("mcp")),
+					statecheck.ExpectKnownValue(mcpAppName, tfjsonpath.New("destinations"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"type":          knownvalue.StringExact("via_mcp_server_portal"),
+							"mcp_server_id": knownvalue.StringExact(rnd),
+						}),
+					})),
+					// check mcp server portal app
+					statecheck.ExpectKnownValue(mcpPortalAppName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(mcpPortalAppName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"_mcp_portal")),
+					statecheck.ExpectKnownValue(mcpPortalAppName, tfjsonpath.New("domain"), knownvalue.StringExact(mcpPortalDomain)),
+					statecheck.ExpectKnownValue(mcpPortalAppName, tfjsonpath.New("type"), knownvalue.StringExact("mcp_portal")),
+					statecheck.ExpectKnownValue(mcpPortalAppName, tfjsonpath.New("destinations"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"type": knownvalue.StringExact("public"),
+							"uri":  knownvalue.StringExact(mcpPortalDomain),
+						}),
+					})),
+				},
+			},
+			{
+				ResourceName:            mcpPortalAppName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+				ImportStateVerifyIgnore: []string{"enable_binding_cookie", "options_preflight_bypass", "auto_redirect_to_identity"},
+			},
+			{
+				ResourceName:            mcpAppName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity"},
+			},
+			{
+				Config:   testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationmcpconfig.tf", rnd, domain, accountID)
 }

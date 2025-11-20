@@ -55,7 +55,6 @@ Read-Only:
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.
 - `bg_color` (String) The background color of the App Launcher page.
 - `cors_headers` (Attributes) (see [below for nested schema](#nestedatt--result--cors_headers))
-- `created_at` (String)
 - `custom_deny_message` (String) The custom error message shown to a user when they are denied access to the application.
 - `custom_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing identity-based rules.
 - `custom_non_identity_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.
@@ -88,11 +87,10 @@ The header value will be interpreted as a json object similar to:
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
-- `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
+- `tags` (Set of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--result--target_criteria))
 - `type` (String) The application type.
-Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp".
-- `updated_at` (String)
+Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp", "mcp", "mcp_portal".
 
 <a id="nestedatt--result--cors_headers"></a>
 ### Nested Schema for `result.cors_headers`
@@ -111,6 +109,10 @@ Read-Only:
 
 <a id="nestedatt--result--destinations"></a>
 ### Nested Schema for `result.destinations`
+
+Optional:
+
+- `mcp_server_id` (String) A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.
 
 Read-Only:
 
@@ -150,21 +152,21 @@ Read-Only:
 
 Read-Only:
 
-- `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--result--policies--approval_groups))
+- `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--result--policies--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `connection_rules` (Attributes) The rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--result--policies--connection_rules))
 - `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
-- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--policies--exclude))
+- `exclude` (Attributes Set) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--policies--exclude))
 - `id` (String) The UUID of the policy
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--policies--include))
+- `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--policies--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
-- `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--policies--require))
+- `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--policies--require))
 - `session_duration` (String) The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `updated_at` (String)
 
@@ -878,7 +880,6 @@ Available values: "saml", "oidc".
 - `client_id` (String) The application client id
 - `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
-- `created_at` (String)
 - `custom_attributes` (Attributes List) (see [below for nested schema](#nestedatt--result--saas_app--custom_attributes))
 - `custom_claims` (Attributes List) (see [below for nested schema](#nestedatt--result--saas_app--custom_claims))
 - `default_relay_state` (String) The URL that the user will be redirected to after a successful login for IDP initiated logins.
@@ -896,7 +897,6 @@ Available values: "id", "email".
 - `scopes` (List of String) Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
 - `sso_endpoint` (String) The endpoint where your SaaS application will send login requests.
-- `updated_at` (String)
 
 <a id="nestedatt--result--saas_app--custom_attributes"></a>
 ### Nested Schema for `result.saas_app.custom_attributes`

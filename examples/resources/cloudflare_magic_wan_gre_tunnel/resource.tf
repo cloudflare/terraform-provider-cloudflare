@@ -4,6 +4,12 @@ resource "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
   customer_gre_endpoint = "203.0.113.1"
   interface_address = "192.0.2.0/31"
   name = "GRE_1"
+  automatic_return_routing = true
+  bgp = {
+    customer_asn = 0
+    extra_prefixes = ["string"]
+    md5_key = "md5_key"
+  }
   description = "Tunnel for ISP X"
   health_check = {
     direction = "bidirectional"

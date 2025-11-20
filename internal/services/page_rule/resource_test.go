@@ -18,6 +18,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 var (
 	domain = os.Getenv("CLOUDFLARE_DOMAIN")
 )

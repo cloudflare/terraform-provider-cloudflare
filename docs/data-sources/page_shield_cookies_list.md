@@ -43,7 +43,7 @@ data "cloudflare_page_shield_cookies_list" "example_page_shield_cookies_list" {
 - `direction` (String) The direction used to sort returned cookies.'
 Available values: "asc", "desc".
 - `domain` (String) Filters the returned cookies that match the specified domain attribute
-- `export` (String) Export the list of cookies as a file.
+- `export` (String) Export the list of cookies as a file, limited to 50000 entries.
 Available values: "csv".
 - `hosts` (String) Includes cookies that match one or more URL-encoded hostnames separated by commas.
 

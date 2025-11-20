@@ -29,8 +29,10 @@ data "cloudflare_account" "example_account" {
 
 - `created_on` (String) Timestamp for the creation of the account
 - `id` (String) Account identifier tag.
+- `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--managed_by))
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `type` (String) Available values: "standard", "enterprise".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -40,6 +42,15 @@ Optional:
 - `direction` (String) Direction to order results.
 Available values: "asc", "desc".
 - `name` (String) Name of the account.
+
+
+<a id="nestedatt--managed_by"></a>
+### Nested Schema for `managed_by`
+
+Read-Only:
+
+- `parent_org_id` (String) ID of the parent Organization, if one exists
+- `parent_org_name` (String) Name of the parent Organization, if one exists
 
 
 <a id="nestedatt--settings"></a>

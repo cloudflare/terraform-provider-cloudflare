@@ -42,6 +42,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The version of the Tunnel Configuration.",
 				Computed:    true,
 			},
+			"warp_routing_enabled": schema.BoolAttribute{
+				Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
+				Computed:    true,
+			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
 				Computed:    true,
@@ -223,16 +227,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"tls_timeout": schema.Int64Attribute{
 								Description: "Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server.",
 								Computed:    true,
-							},
-						},
-					},
-					"warp_routing": schema.SingleNestedAttribute{
-						Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Computed: true,
 							},
 						},
 					},

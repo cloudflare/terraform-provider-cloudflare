@@ -18,15 +18,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"editable": schema.BoolAttribute{
-				Description: "Whether the setting is editable",
+				Description: "Whether the setting is editable.",
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.\nAvailable values: \"tc_regional\".",
+				Description: "The identifier of the caching setting.\nAvailable values: \"tc_regional\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("tc_regional"),
@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The value of the feature\nAvailable values: \"on\", \"off\".",
+				Description: "Value of the Regional Tiered Cache zone setting.\nAvailable values: \"on\", \"off\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/queues"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -93,6 +93,7 @@ func (r *QueueResource) Create(ctx context.Context, req resource.CreateRequest, 
 	data = &env.Result
 	data.ID = data.QueueID
 
+	FixInconsistentCRUDResponses(data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -143,6 +144,7 @@ func (r *QueueResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	data = &env.Result
 	data.ID = data.QueueID
 
+	FixInconsistentCRUDResponses(data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -184,6 +186,7 @@ func (r *QueueResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	data = &env.Result
 	data.ID = data.QueueID
 
+	FixInconsistentCRUDResponses(data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -256,6 +259,7 @@ func (r *QueueResource) ImportState(ctx context.Context, req resource.ImportStat
 	data = &env.Result
 	data.ID = data.QueueID
 
+	FixInconsistentCRUDResponses(data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

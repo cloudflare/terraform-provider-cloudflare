@@ -39,8 +39,19 @@ Read-Only:
 
 - `created_on` (String) Timestamp for the creation of the account
 - `id` (String) Identifier
+- `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--result--managed_by))
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--result--settings))
+- `type` (String) Available values: "standard", "enterprise".
+
+<a id="nestedatt--result--managed_by"></a>
+### Nested Schema for `result.managed_by`
+
+Read-Only:
+
+- `parent_org_id` (String) ID of the parent Organization, if one exists
+- `parent_org_name` (String) Name of the parent Organization, if one exists
+
 
 <a id="nestedatt--result--settings"></a>
 ### Nested Schema for `result.settings`

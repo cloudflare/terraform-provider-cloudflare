@@ -17,7 +17,7 @@ type ZeroTrustDLPEntryResultEnvelope struct {
 type ZeroTrustDLPEntryModel struct {
 	ID            types.String                                               `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
-	ProfileID     types.String                                               `tfsdk:"profile_id" json:"profile_id,required"`
+	ProfileID     types.String                                               `tfsdk:"profile_id" json:"profile_id,optional"`
 	Enabled       types.Bool                                                 `tfsdk:"enabled" json:"enabled,required"`
 	Name          types.String                                               `tfsdk:"name" json:"name,required"`
 	Pattern       *ZeroTrustDLPEntryPatternModel                             `tfsdk:"pattern" json:"pattern,required"`
@@ -27,6 +27,7 @@ type ZeroTrustDLPEntryModel struct {
 	Secret        types.Bool                                                 `tfsdk:"secret" json:"secret,computed"`
 	UpdatedAt     timetypes.RFC3339                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Variant       customfield.NestedObject[ZeroTrustDLPEntryVariantModel]    `tfsdk:"variant" json:"variant,computed"`
 	WordList      jsontypes.Normalized                                       `tfsdk:"word_list" json:"word_list,computed"`
 }
 
@@ -46,4 +47,10 @@ type ZeroTrustDLPEntryPatternModel struct {
 type ZeroTrustDLPEntryConfidenceModel struct {
 	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
 	Available          types.Bool `tfsdk:"available" json:"available,computed"`
+}
+
+type ZeroTrustDLPEntryVariantModel struct {
+	TopicType   types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type        types.String `tfsdk:"type" json:"type,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 }

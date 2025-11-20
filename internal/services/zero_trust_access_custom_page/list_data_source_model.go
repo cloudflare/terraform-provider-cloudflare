@@ -5,10 +5,9 @@ package zero_trust_access_custom_page
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -32,10 +31,7 @@ func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams(_ context.Conte
 }
 
 type ZeroTrustAccessCustomPagesResultDataSourceModel struct {
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
-	Type      types.String      `tfsdk:"type" json:"type,computed"`
-	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count,computed"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
-	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
+	Type types.String `tfsdk:"type" json:"type,computed"`
+	UID  types.String `tfsdk:"uid" json:"uid,computed"`
 }

@@ -5,20 +5,18 @@ package workers_script
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -37,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -45,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"content": schema.StringAttribute{
-				Description: "Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.",
+				Description: "Module or Service Worker contents of the Worker. Conflicts with `content_file`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -54,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"content_file": schema.StringAttribute{
-				Description: "Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.",
+				Description: "Path to a file containing the Module or Service Worker contents of the Worker. Conflicts with `content`. Must be paired with `content_sha256`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -86,7 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"assets": schema.SingleNestedAttribute{
-				Description: "Configuration for assets within a Worker",
+				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
@@ -94,11 +92,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"headers": schema.StringAttribute{
-								Description: "The contents of a _headers file (used to attach custom headers on asset responses)",
+								Description: "The contents of a _headers file (used to attach custom headers on asset responses).",
 								Optional:    true,
 							},
 							"redirects": schema.StringAttribute{
-								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)",
+								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving).",
 								Optional:    true,
 							},
 							"html_handling": schema.StringAttribute{
@@ -132,10 +130,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"serve_directly": schema.BoolAttribute{
 								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-								Computed:           true,
 								Optional:           true,
 								DeprecationMessage: "This attribute is deprecated.",
-								Default:            booldefault.StaticBool(true),
 							},
 						},
 					},
@@ -143,6 +139,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
 						Sensitive:   true,
+					},
+					"directory": schema.StringAttribute{
+						Description: "Path to the directory containing asset files to upload.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRoot("assets").AtName("jwt")),
+						},
+					},
+					"asset_manifest_sha256": schema.StringAttribute{
+						Description: "The SHA-256 hash of the asset manifest of files to upload.",
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							ComputeSHA256HashOfAssetManifest(),
+						},
 					},
 				},
 			},
@@ -158,7 +168,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -167,9 +177,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"assets",
 									"browser",
 									"d1",
+									"data_blob",
 									"dispatch_namespace",
 									"durable_object_namespace",
 									"hyperdrive",
+									"inherit",
+									"images",
 									"json",
 									"kv_namespace",
 									"mtls_certificate",
@@ -178,13 +191,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"queue",
 									"r2_bucket",
 									"secret_text",
+									"send_email",
 									"service",
 									"tail_consumer",
+									"text_blob",
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
 									"secret_key",
 									"workflow",
+									"wasm_module",
 								),
 							},
 						},
@@ -197,7 +213,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
-							Description: "Namespace to bind to.",
+							Description: "The name of the dispatch namespace.",
 							Optional:    true,
 						},
 						"outbound": schema.SingleNestedAttribute{
@@ -307,11 +323,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"usages": schema.ListAttribute{
+						"usages": schema.SetAttribute{
 							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.ValueStringsAre(
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							Validators: []validator.Set{
+								setvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
 										"encrypt",
 										"decrypt",
@@ -341,36 +358,77 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Name of the Workflow to bind to.",
 							Optional:    true,
 						},
+						"part": schema.StringAttribute{
+							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
+							Optional:    true,
+						},
+						"old_name": schema.StringAttribute{
+							Description: "The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
+							Optional:    true,
+						},
+						"version_id": schema.StringAttribute{
+							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Optional:    true,
+						},
+						"allowed_destination_addresses": schema.ListAttribute{
+							Description: "List of allowed destination addresses.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"allowed_sender_addresses": schema.ListAttribute{
+							Description: "List of allowed sender addresses.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"destination_address": schema.StringAttribute{
+							Description: "Destination address for the email.",
+							Optional:    true,
+						},
+						"jurisdiction": schema.StringAttribute{
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+							},
+						},
 					},
 				},
 			},
 			"body_part": schema.StringAttribute{
-				Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+				Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
 				Optional:    true,
 			},
 			"compatibility_date": schema.StringAttribute{
-				Description:   "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
-				Computed:      true,
-				Optional:      true,
-				Default:       stringdefault.StaticString(""),
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"compatibility_flags": schema.SetAttribute{
-				Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
-				Computed:      true,
-				Optional:      true,
-				ElementType:   types.StringType,
-				CustomType:    customfield.NewSetType[types.String](ctx),
-				PlanModifiers: []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
+				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"keep_assets": schema.BoolAttribute{
 				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
 				Optional:    true,
 			},
-			"keep_bindings": schema.ListAttribute{
+			"keep_bindings": schema.SetAttribute{
 				Description: "List of binding types to keep from previous_upload.",
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"limits": schema.SingleNestedAttribute{
+				Description: "Limits to apply for this Worker.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"cpu_ms": schema.Int64Attribute{
+						Description: "The amount of CPU time this Worker can use in milliseconds.",
+						Optional:    true,
+					},
+				},
 			},
 			"logpush": schema.BoolAttribute{
 				Description: "Whether Logpush is turned on for the Worker.",
@@ -379,7 +437,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"main_module": schema.StringAttribute{
-				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+				Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
 				Optional:    true,
 			},
 			"migrations": schema.SingleNestedAttribute{
@@ -536,23 +594,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityLogsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Whether logs are enabled for the Worker.",
 								Required:    true,
 							},
-							"head_sampling_rate": schema.Float64Attribute{
-								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-								Optional:    true,
-							},
 							"invocation_logs": schema.BoolAttribute{
 								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
 								Required:    true,
 							},
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where logs will be exported to.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Optional:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether log persistence is enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+							},
 						},
 					},
 				},
+			},
+			"created_on": schema.StringAttribute{
+				Description:   "When the script was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
@@ -566,6 +640,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether a Worker contains modules.",
 				Computed:    true,
 			},
+			"last_deployed_from": schema.StringAttribute{
+				Description: "The client most recently used to deploy this Worker.",
+				Computed:    true,
+			},
+			"migration_tag": schema.StringAttribute{
+				Description: "The tag of the Durable Object migration that was most recently applied for this Worker.",
+				Computed:    true,
+			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
 				Computed:    true,
@@ -573,6 +655,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"startup_time_ms": schema.Int64Attribute{
 				Computed: true,
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"standard",
+						"bundled",
+						"unbound",
+					),
+				},
+				Default: stringdefault.StaticString("standard"),
+			},
+			"handlers": schema.ListAttribute{
+				Description: "The names of handlers exported as part of the default export.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"named_handlers": schema.ListNestedAttribute{
+				Description: "Named exports, such as Durable Object class implementations and named entrypoints.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkersScriptNamedHandlersModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"handlers": schema.ListAttribute{
+							Description: "The names of handlers exported as part of the named export.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the export.",
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
@@ -627,21 +747,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"usage_model": schema.StringAttribute{
-				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("standard"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
-			"created_on": schema.StringAttribute{
-				Description:   "When the script was created.",
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 		},
 	}
 }
@@ -652,7 +757,12 @@ func (r *WorkersScriptResource) Schema(ctx context.Context, req resource.SchemaR
 
 func (r *WorkersScriptResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{
-		resourcevalidator.ExactlyOneOf(
+		resourcevalidator.AtLeastOneOf(
+			path.MatchRoot("content"),
+			path.MatchRoot("content_file"),
+			path.MatchRoot("assets"),
+		),
+		resourcevalidator.Conflicting(
 			path.MatchRoot("content"),
 			path.MatchRoot("content_file"),
 		),

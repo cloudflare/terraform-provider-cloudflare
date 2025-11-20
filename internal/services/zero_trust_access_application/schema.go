@@ -1,12 +1,10 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 package zero_trust_access_application
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -142,7 +140,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -157,6 +155,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"dash_sso",
 						"infrastructure",
 						"rdp",
+						"mcp",
+						"mcp_portal",
 					),
 				},
 			},
@@ -480,10 +480,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					}...),
 				},
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
-				CustomType:  customfield.NewListType[types.String](ctx),
 				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"destinations": schema.ListNestedAttribute{
@@ -492,7 +492,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsModel](ctx),
 				Validators: []validator.List{
-					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), destinationCompatibleAppTypes...),
 					listvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("self_hosted_domains"),
 					}...),
@@ -505,7 +505,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Default:     stringdefault.StaticString("public"),
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("public", "private"),
+								stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal"),
 							},
 						},
 						"uri": schema.StringAttribute{
@@ -549,6 +549,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Validators: []validator.String{
 								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
+						},
+						"mcp_server_id": schema.StringAttribute{
+							Description: "A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.",
+							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "via_mcp_server_portal"),
+								customvalidator.RequiredWhenOtherStringIsOneOf(path.MatchRelative().AtParent().AtName("type"), "via_mcp_server_portal"),
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "mcp"),
 							},
 						},
 					},
@@ -619,13 +628,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
 						},
-						"include": schema.ListNestedAttribute{
+						"include": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("decision")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("decision")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -917,13 +926,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"exclude": schema.ListNestedAttribute{
+						"exclude": schema.SetNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -1183,13 +1192,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"require": schema.ListNestedAttribute{
+						"require": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -1476,13 +1485,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
 						},
 					},
-					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
 					"custom_attributes": schema.ListNestedAttribute{
 						Optional: true,
 						Validators: []validator.List{
@@ -1609,10 +1611,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.UseStateForUnknown(),
 						},
-					},
-					"updated_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
 					},
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_gateway_categories_list" "example_zero_trust_gateway
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Provide the identifier string.
 
 ### Optional
 
@@ -37,24 +37,24 @@ data "cloudflare_zero_trust_gateway_categories_list" "example_zero_trust_gateway
 
 Read-Only:
 
-- `beta` (Boolean) True if the category is in beta and subject to change.
-- `class` (String) Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.
+- `beta` (Boolean) Indicate whether the category is in beta and subject to change.
+- `class` (String) Specify which account types can create policies for this category. `blocked` Blocks unconditionally for all accounts. `removalPending` Allows removal from policies but disables addition. `noBlock` Prevents blocking.
 Available values: "free", "premium", "blocked", "removalPending", "noBlock".
-- `description` (String) A short summary of domains in the category.
-- `id` (Number) The identifier for this category. There is only one category per ID.
-- `name` (String) The name of the category.
-- `subcategories` (Attributes List) All subcategories for this category. (see [below for nested schema](#nestedatt--result--subcategories))
+- `description` (String) Provide a short summary of domains in the category.
+- `id` (Number) Identify this category. Only one category per ID.
+- `name` (String) Specify the category name.
+- `subcategories` (Attributes List) Provide all subcategories for this category. (see [below for nested schema](#nestedatt--result--subcategories))
 
 <a id="nestedatt--result--subcategories"></a>
 ### Nested Schema for `result.subcategories`
 
 Read-Only:
 
-- `beta` (Boolean) True if the category is in beta and subject to change.
-- `class` (String) Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.
+- `beta` (Boolean) Indicate whether the category is in beta and subject to change.
+- `class` (String) Specify which account types can create policies for this category. `blocked` Blocks unconditionally for all accounts. `removalPending` Allows removal from policies but disables addition. `noBlock` Prevents blocking.
 Available values: "free", "premium", "blocked", "removalPending", "noBlock".
-- `description` (String) A short summary of domains in the category.
-- `id` (Number) The identifier for this category. There is only one category per ID.
-- `name` (String) The name of the category.
+- `description` (String) Provide a short summary of domains in the category.
+- `id` (Number) Identify this category. Only one category per ID.
+- `name` (String) Specify the category name.
 
 

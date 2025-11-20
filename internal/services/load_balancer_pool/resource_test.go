@@ -3,22 +3,27 @@ package load_balancer_pool_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer_pool", &resource.Sweeper{
@@ -32,6 +37,7 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -42,17 +48,90 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 	pools, err := client.ListLoadBalancerPools(ctx, cfold.AccountIdentifier(accountID), cfold.ListLoadBalancerPoolParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Pools: %s", err))
+		return err
 	}
 
 	if len(pools) == 0 {
-		log.Print("[DEBUG] No Cloudflare Load Balancer Pools to sweep")
+		tflog.Debug(ctx, "[DEBUG] No Cloudflare Load Balancer Pools to sweep")
 		return nil
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Found %d Cloudflare Load Balancer Pools to sweep", len(pools)))
+
+	// Track deletion results
+	deleted := 0
+	failed := 0
+
 	for _, pool := range pools {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool ID: %s", pool.ID))
-		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, cfold.AccountIdentifier(accountID), pool.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool ID: %s, Name: %s", pool.ID, pool.Name))
+
+		err := client.DeleteLoadBalancerPool(ctx, cfold.AccountIdentifier(accountID), pool.ID)
+		if err != nil {
+			// Check if this is a dependency error (pool referenced by load balancers)
+			if strings.Contains(err.Error(), "referenced by other objects") {
+				tflog.Warn(ctx, fmt.Sprintf("Pool %s is referenced by load balancers, attempting to clean up referencing load balancers first", pool.ID))
+
+				// Try to find and delete referencing load balancers
+				if cleanupErr := cleanupReferencingLoadBalancers(ctx, client, pool.ID); cleanupErr != nil {
+					tflog.Error(ctx, fmt.Sprintf("Failed to cleanup referencing load balancers for pool %s: %v", pool.ID, cleanupErr))
+				}
+
+				// Retry pool deletion after load balancer cleanup
+				retryErr := client.DeleteLoadBalancerPool(ctx, cfold.AccountIdentifier(accountID), pool.ID)
+				if retryErr != nil {
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer Pool %s (%s) after cleanup: %v", pool.ID, pool.Name, retryErr))
+					failed++
+				} else {
+					tflog.Info(ctx, fmt.Sprintf("Successfully deleted Load Balancer Pool %s (%s) after cleanup", pool.ID, pool.Name))
+					deleted++
+				}
+			} else {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer Pool %s (%s): %v", pool.ID, pool.Name, err))
+				failed++
+			}
+		} else {
+			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Load Balancer Pool %s (%s)", pool.ID, pool.Name))
+			deleted++
+		}
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Load Balancer Pool sweep completed: %d deleted, %d failed", deleted, failed))
+
+	// Don't fail the sweep if some deletions failed - this could be due to dependencies
+	// that will be resolved by other sweepers or subsequent runs
+	return nil
+}
+
+// cleanupReferencingLoadBalancers attempts to delete all load balancers to clear dependencies
+func cleanupReferencingLoadBalancers(ctx context.Context, client *cfold.API, poolID string) error {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set for load balancer cleanup")
+	}
+
+	// Simple approach: delete all load balancers when we hit dependency issues
+	// This is safe since it's a test account
+	tflog.Info(ctx, fmt.Sprintf("Attempting to clean up all load balancers due to pool %s dependency", poolID))
+
+	lbs, err := client.ListLoadBalancers(ctx, cfold.ZoneIdentifier(zoneID), cfold.ListLoadBalancerParams{})
+	if err != nil {
+		return fmt.Errorf("failed to list load balancers: %v", err)
+	}
+
+	deletedLBs := 0
+	for _, lb := range lbs {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Load Balancer %s (%s) for dependency cleanup", lb.ID, lb.Name))
+		err := client.DeleteLoadBalancer(ctx, cfold.ZoneIdentifier(zoneID), lb.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer %s: %v", lb.ID, err))
+		} else {
+			deletedLBs++
+			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Load Balancer %s", lb.ID))
+		}
+	}
+
+	if deletedLBs > 0 {
+		tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Cleaned up %d load balancers for pool dependency resolution", deletedLBs))
 	}
 
 	return nil
@@ -115,6 +194,13 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
+			},
+			// Import
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})
@@ -311,10 +397,10 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
-				Check:  resource.ComposeTestCheckFunc(
-				// TODO: see if this is still actually needed
-				// testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
-				// testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
+				Check: resource.ComposeTestCheckFunc(
+					// TODO: see if this is still actually needed
+					// testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+					// testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
 				),
 			},
 			{

@@ -35,6 +35,9 @@ data "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 
 Read-Only:
 
+- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise.
+- `bgp` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--bgp))
+- `bgp_status` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--bgp_status))
 - `cloudflare_gre_endpoint` (String) The IP address assigned to the Cloudflare side of the GRE tunnel.
 - `created_on` (String) The date and time the tunnel was created.
 - `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
@@ -47,6 +50,46 @@ Read-Only:
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
 - `name` (String) The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.
 - `ttl` (Number) Time To Live (TTL) in number of hops of the GRE tunnel.
+
+<a id="nestedatt--gre_tunnel--bgp"></a>
+### Nested Schema for `gre_tunnel.bgp`
+
+Read-Only:
+
+- `customer_asn` (Number) ASN used on the customer end of the BGP session
+- `extra_prefixes` (List of String) Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.
+- `md5_key` (String) MD5 key to use for session authentication.
+
+Note that *this is not a security measure*. MD5 is not a valid security mechanism, and the
+key is not treated as a secret value. This is *only* supported for preventing
+misconfiguration, not for defending against malicious attacks.
+
+The MD5 key, if set, must be of non-zero length and consist only of the following types of
+character:
+
+* ASCII alphanumerics: `[a-zA-Z0-9]`
+* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \|`
+
+In other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),
+quotation mark (`"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed
+(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of
+these disallowed characters will be rejected.
+
+
+<a id="nestedatt--gre_tunnel--bgp_status"></a>
+### Nested Schema for `gre_tunnel.bgp_status`
+
+Read-Only:
+
+- `bgp_state` (String)
+- `cf_speaker_ip` (String)
+- `cf_speaker_port` (Number)
+- `customer_speaker_ip` (String)
+- `customer_speaker_port` (Number)
+- `state` (String) Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".
+- `tcp_established` (Boolean)
+- `updated_at` (String)
+
 
 <a id="nestedatt--gre_tunnel--health_check"></a>
 ### Nested Schema for `gre_tunnel.health_check`

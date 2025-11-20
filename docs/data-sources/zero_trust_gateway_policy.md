@@ -27,54 +27,41 @@ data "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" 
 
 ### Optional
 
-- `rule_id` (String) The API resource UUID.
+- `rule_id` (String) Identify the API resource with a UUID.
 
 ### Read-Only
 
-- `action` (String) The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
+- `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `created_at` (String)
-- `deleted_at` (String) Date of deletion, if any.
-- `description` (String) The description of the rule.
-- `device_posture` (String) The wirefilter expression used for device posture check matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
-- `enabled` (Boolean) True if the rule is enabled.
-- `expiration` (Attributes) The expiration time stamp and default duration of a DNS policy. Takes
-precedence over the policy's `schedule` configuration, if any.
-
-This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--expiration))
-- `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
-- `id` (String) The API resource UUID.
-- `identity` (String) The wirefilter expression used for identity matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
-- `name` (String) The name of the rule.
-- `not_sharable` (Boolean) The rule cannot be shared via the Orgs API
-- `precedence` (Number) Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.
-- `read_only` (Boolean) The rule was shared via the Orgs API and cannot be edited by the current account
-- `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--rule_settings))
-- `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
-- `source_account` (String) account tag of account that created the rule
-- `traffic` (String) The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
+- `deleted_at` (String) Indicate the date of deletion, if any.
+- `description` (String) Specify the rule description.
+- `device_posture` (String) Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
+- `enabled` (Boolean) Specify whether the rule is enabled.
+- `expiration` (Attributes) Defines the expiration time stamp and default duration of a DNS policy. Takes precedence over the policy's `schedule` configuration, if any. This  does not apply to HTTP or network policies. Settable only for `dns` rules. (see [below for nested schema](#nestedatt--expiration))
+- `filters` (List of String) Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.
+- `id` (String) Identify the API resource with a UUID.
+- `identity` (String) Specify the wirefilter expression used for identity matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
+- `name` (String) Specify the rule name.
+- `precedence` (Number) Set the order of your rules. Lower values indicate higher precedence. At each processing phase, evaluate applicable rules in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) to manage precedence via Terraform.
+- `read_only` (Boolean) Indicate that this rule is shared via the Orgs API and read only.
+- `rule_settings` (Attributes) Defines settings for this rule. Settings apply only to specific rule types and must use compatible selectors. If Terraform detects drift, confirm the setting supports your rule type and check whether the API modifies the value. Use API-returned values in your configuration to prevent drift. (see [below for nested schema](#nestedatt--rule_settings))
+- `schedule` (Attributes) Defines the schedule for activating DNS policies. Settable only for `dns` and `dns_resolver` rules. (see [below for nested schema](#nestedatt--schedule))
+- `sharable` (Boolean) Indicate that this rule is sharable via the Orgs API.
+- `source_account` (String) Provide the account tag of the account that created the rule.
+- `traffic` (String) Specify the wirefilter expression used for traffic matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `updated_at` (String)
-- `version` (Number) version number of the rule
-- `warning_status` (String) Warning for a misconfigured rule, if any.
+- `version` (Number) Indicate the version number of the rule(read-only).
+- `warning_status` (String) Indicate a warning for a misconfigured rule, if any.
 
 <a id="nestedatt--expiration"></a>
 ### Nested Schema for `expiration`
 
 Read-Only:
 
-- `duration` (Number) The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.
-- `expired` (Boolean) Whether the policy has expired.
-- `expires_at` (String) The time stamp at which the policy will expire and cease to be
-applied.
-
-Must adhere to RFC 3339 and include a UTC offset. Non-zero
-offsets are accepted but will be converted to the equivalent
-value with offset zero (UTC+00:00) and will be returned as time
-stamps with offset zero denoted by a trailing 'Z'.
-
-Policies with an expiration do not consider the timezone of
-clients they are applied to, and expire "globally" at the point
-given by their `expires_at` value.
+- `duration` (Number) Defines the default duration a policy active in minutes. Must set in order to use the `reset_expiration` endpoint on this rule.
+- `expired` (Boolean) Indicates whether the policy is expired.
+- `expires_at` (String) Show the timestamp when the policy expires and stops applying.  The value must follow RFC 3339 and include a UTC offset.  The system accepts non-zero offsets but converts them to the equivalent UTC+00:00  value and returns timestamps with a trailing Z. Expiration policies ignore client  timezones and expire globally at the specified expires_at time.
 
 
 <a id="nestedatt--rule_settings"></a>
@@ -82,38 +69,38 @@ given by their `expires_at` value.
 
 Read-Only:
 
-- `add_headers` (Map of List of String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
-- `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
-- `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
-- `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))
-- `block_page` (Attributes) Custom block page settings. If missing/null, blocking will use the the account settings. (see [below for nested schema](#nestedatt--rule_settings--block_page))
-- `block_page_enabled` (Boolean) Enable the custom block page.
-- `block_reason` (String) The text describing why this block occurred, displayed on the custom block page (if enabled).
-- `bypass_parent_rule` (Boolean) Set by children MSP accounts to bypass their parent's rules.
-- `check_session` (Attributes) Configure how session check behaves. (see [below for nested schema](#nestedatt--rule_settings--check_session))
-- `dns_resolvers` (Attributes) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' are set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
-- `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. (see [below for nested schema](#nestedatt--rule_settings--egress))
-- `ignore_cname_category_matches` (Boolean) Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.
-- `insecure_disable_dnssec_validation` (Boolean) INSECURE - disable DNSSEC validation (for Allow actions).
-- `ip_categories` (Boolean) Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.
-- `ip_indicator_feeds` (Boolean) Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.
-- `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. (see [below for nested schema](#nestedatt--rule_settings--l4override))
-- `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule is matched. (see [below for nested schema](#nestedatt--rule_settings--notification_settings))
-- `override_host` (String) Override matching DNS queries with a hostname.
-- `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
-- `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
-- `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--rule_settings--quarantine))
-- `redirect` (Attributes) Settings that apply to redirect rules (see [below for nested schema](#nestedatt--rule_settings--redirect))
-- `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
-- `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.
-- `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
+- `add_headers` (Map of List of String) Add custom headers to allowed requests as key-value pairs. Use header names as keys that map to arrays of header values. Settable only for `http` rules with the action set to `allow`.
+- `allow_child_bypass` (Boolean) Set to enable MSP children to bypass this rule. Only parent MSP accounts can set this. this rule. Settable for all types of rules.
+- `audit_ssh` (Attributes) Define the settings for the Audit SSH action. Settable only for `l4` rules with `audit_ssh` action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
+- `biso_admin_controls` (Attributes) Configure browser isolation behavior. Settable only for `http` rules with the action set to `isolate`. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))
+- `block_page` (Attributes) Configure custom block page settings. If missing or null, use the account settings. Settable only for `http` rules with the action set to `block`. (see [below for nested schema](#nestedatt--rule_settings--block_page))
+- `block_page_enabled` (Boolean) Enable the custom block page. Settable only for `dns` rules with action `block`.
+- `block_reason` (String) Explain why the rule blocks the request. The custom block page shows this text (if enabled). Settable only for `dns`, `l4`, and `http` rules when the action set to `block`.
+- `bypass_parent_rule` (Boolean) Set to enable MSP accounts to bypass their parent's rules. Only MSP child accounts can set this. Settable for all types of rules.
+- `check_session` (Attributes) Configure session check behavior. Settable only for `l4` and `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--rule_settings--check_session))
+- `dns_resolvers` (Attributes) Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
+- `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. Settable only for `egress` rules. (see [below for nested schema](#nestedatt--rule_settings--egress))
+- `ignore_cname_category_matches` (Boolean) Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.
+- `insecure_disable_dnssec_validation` (Boolean) Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.
+- `ip_categories` (Boolean) Enable IPs in DNS resolver category blocks. The system blocks only domain name categories unless you enable this setting. Settable only for `dns` and `dns_resolver` rules.
+- `ip_indicator_feeds` (Boolean) Indicates whether to include IPs in DNS resolver indicator feed blocks. Default, indicator feeds block only domain names. Settable only for `dns` and `dns_resolver` rules.
+- `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. Settable only for `l4` rules with the action set to `l4_override`. (see [below for nested schema](#nestedatt--rule_settings--l4override))
+- `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule matched. Settable for all types of rules with the action set to `block`. (see [below for nested schema](#nestedatt--rule_settings--notification_settings))
+- `override_host` (String) Defines a hostname for override, for the matching DNS queries. Settable only for `dns` rules with the action set to `override`.
+- `override_ips` (List of String) Defines a an IP or set of IPs for overriding matched DNS queries. Settable only for `dns` rules with the action set to `override`.
+- `payload_log` (Attributes) Configure DLP payload logging. Settable only for `http` rules. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
+- `quarantine` (Attributes) Configure settings that apply to quarantine rules. Settable only for `http` rules. (see [below for nested schema](#nestedatt--rule_settings--quarantine))
+- `redirect` (Attributes) Apply settings to redirect rules. Settable only for `http` rules with the action set to `redirect`. (see [below for nested schema](#nestedatt--rule_settings--redirect))
+- `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Not used when 'dns_resolvers' is specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
+- `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot set when 'dns_resolvers' specified or 'resolve_dns_internally' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.
+- `untrusted_cert` (Attributes) Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
 
 <a id="nestedatt--rule_settings--audit_ssh"></a>
 ### Nested Schema for `rule_settings.audit_ssh`
 
 Read-Only:
 
-- `command_logging` (Boolean) Enable to turn on SSH command logging.
+- `command_logging` (Boolean) Enable SSH command logging.
 
 
 <a id="nestedatt--rule_settings--biso_admin_controls"></a>
@@ -121,24 +108,24 @@ Read-Only:
 
 Read-Only:
 
-- `copy` (String) Configure whether copy is enabled or not. When set with "remote_only", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == "v2"`.
+- `copy` (String) Configure copy behavior. If set to remote_only, users cannot copy isolated content from the remote browser to the local clipboard. If this field is absent, copying remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled", "remote_only".
 - `dcp` (Boolean) Set to false to enable copy-pasting. Only applies when `version == "v1"`.
 - `dd` (Boolean) Set to false to enable downloading. Only applies when `version == "v1"`.
 - `dk` (Boolean) Set to false to enable keyboard usage. Only applies when `version == "v1"`.
-- `download` (String) Configure whether downloading enabled or not. When set with "remote_only", downloads are only available for viewing. Only applies when `version == "v2"`.
+- `download` (String) Configure download behavior. When set to remote_only, users can view downloads but cannot save them. Applies only when version == "v2".
 Available values: "enabled", "disabled", "remote_only".
 - `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
 - `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
-- `keyboard` (String) Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == "v2"`.
+- `keyboard` (String) Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled".
-- `paste` (String) Configure whether pasting is enabled or not. When set with "remote_only", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == "v2"`.
+- `paste` (String) Configure paste behavior. If set to remote_only, users cannot paste content from the local clipboard into isolated pages. If this field is absent, pasting remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled", "remote_only".
-- `printing` (String) Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == "v2"`.
+- `printing` (String) Configure print behavior. Default, Printing is enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled".
-- `upload` (String) Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == "v2"`.
+- `upload` (String) Configure upload behavior. If this field is absent, uploading remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled".
-- `version` (String) Indicates which version of the browser isolation controls should apply.
+- `version` (String) Indicate which version of the browser isolation controls should apply.
 Available values: "v1", "v2".
 
 
@@ -147,8 +134,8 @@ Available values: "v1", "v2".
 
 Read-Only:
 
-- `include_context` (Boolean) If true, context information will be passed as query parameters
-- `target_uri` (String) URI to which the user will be redirected
+- `include_context` (Boolean) Specify whether to pass the context information as query parameters.
+- `target_uri` (String) Specify the URI to which the user is redirected.
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -156,8 +143,8 @@ Read-Only:
 
 Read-Only:
 
-- `duration` (String) Configure how fresh the session needs to be to be considered valid. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
-- `enforce` (Boolean) Set to true to enable session enforcement.
+- `duration` (String) Sets the required session freshness threshold. The API returns a normalized version of this value.
+- `enforce` (Boolean) Enable session enforcement.
 
 
 <a id="nestedatt--rule_settings--dns_resolvers"></a>
@@ -173,10 +160,10 @@ Read-Only:
 
 Read-Only:
 
-- `ip` (String) IPv4 address of upstream resolver.
-- `port` (Number) A port number to use for upstream resolver. Defaults to 53 if unspecified.
-- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when vnet_id is set.
-- `vnet_id` (String) Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted.
+- `ip` (String) Specify the IPv4 address of the upstream resolver.
+- `port` (Number) Specify a port number to use for the upstream resolver. Defaults to 53 if unspecified.
+- `route_through_private_network` (Boolean) Indicate whether to connect to this resolver over a private network. Must set when vnet_id set.
+- `vnet_id` (String) Specify an optional virtual network for this resolver. Uses default virtual network id if omitted.
 
 
 <a id="nestedatt--rule_settings--dns_resolvers--ipv6"></a>
@@ -184,10 +171,10 @@ Read-Only:
 
 Read-Only:
 
-- `ip` (String) IPv6 address of upstream resolver.
-- `port` (Number) A port number to use for upstream resolver. Defaults to 53 if unspecified.
-- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when vnet_id is set.
-- `vnet_id` (String) Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted.
+- `ip` (String) Specify the IPv6 address of the upstream resolver.
+- `port` (Number) Specify a port number to use for the upstream resolver. Defaults to 53 if unspecified.
+- `route_through_private_network` (Boolean) Indicate whether to connect to this resolver over a private network. Must set when vnet_id set.
+- `vnet_id` (String) Specify an optional virtual network for this resolver. Uses default virtual network id if omitted.
 
 
 
@@ -196,9 +183,9 @@ Read-Only:
 
 Read-Only:
 
-- `ipv4` (String) The IPv4 address to be used for egress.
-- `ipv4_fallback` (String) The fallback IPv4 address to be used for egress in the event of an error egressing with the primary IPv4. Can be '0.0.0.0' to indicate local egress via WARP IPs.
-- `ipv6` (String) The IPv6 range to be used for egress.
+- `ipv4` (String) Specify the IPv4 address to use for egress.
+- `ipv4_fallback` (String) Specify the fallback IPv4 address to use for egress when the primary IPv4 fails. Set '0.0.0.0' to indicate local egress via WARP IPs.
+- `ipv6` (String) Specify the IPv6 range to use for egress.
 
 
 <a id="nestedatt--rule_settings--l4override"></a>
@@ -206,8 +193,8 @@ Read-Only:
 
 Read-Only:
 
-- `ip` (String) IPv4 or IPv6 address.
-- `port` (Number) A port number to use for TCP/UDP overrides.
+- `ip` (String) Defines the IPv4 or IPv6 address.
+- `port` (Number) Defines a port number to use for TCP/UDP overrides.
 
 
 <a id="nestedatt--rule_settings--notification_settings"></a>
@@ -215,10 +202,10 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Set notification on
-- `include_context` (Boolean) If true, context information will be passed as query parameters
+- `enabled` (Boolean) Enable notification.
+- `include_context` (Boolean) Indicates whether to pass the context information as query parameters.
 - `msg` (String) Customize the message shown in the notification.
-- `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
+- `support_url` (String) Defines an optional URL to direct users to additional information. If unset, the notification opens a block page.
 
 
 <a id="nestedatt--rule_settings--payload_log"></a>
@@ -226,7 +213,7 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Set to true to enable DLP payload logging for this rule.
+- `enabled` (Boolean) Enable DLP payload logging for this rule.
 
 
 <a id="nestedatt--rule_settings--quarantine"></a>
@@ -234,7 +221,7 @@ Read-Only:
 
 Read-Only:
 
-- `file_types` (List of String) Types of files to sandbox.
+- `file_types` (List of String) Specify the types of files to sandbox.
 
 
 <a id="nestedatt--rule_settings--redirect"></a>
@@ -242,9 +229,9 @@ Read-Only:
 
 Read-Only:
 
-- `include_context` (Boolean) If true, context information will be passed as query parameters
-- `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
-- `target_uri` (String) URI to which the user will be redirected
+- `include_context` (Boolean) Specify whether to pass the context information as query parameters.
+- `preserve_path_and_query` (Boolean) Specify whether to append the path and query parameters from the original request to target_uri.
+- `target_uri` (String) Specify the URI to which the user is redirected.
 
 
 <a id="nestedatt--rule_settings--resolve_dns_internally"></a>
@@ -252,9 +239,9 @@ Read-Only:
 
 Read-Only:
 
-- `fallback` (String) The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.
+- `fallback` (String) Specify the fallback behavior to apply when the internal DNS response code differs from 'NOERROR' or when the response data contains only CNAME records for 'A' or 'AAAA' queries.
 Available values: "none", "public_dns".
-- `view_id` (String) The internal DNS view identifier that's passed to the internal DNS service.
+- `view_id` (String) Specify the internal DNS view identifier to pass to the internal DNS service.
 
 
 <a id="nestedatt--rule_settings--untrusted_cert"></a>
@@ -262,7 +249,7 @@ Available values: "none", "public_dns".
 
 Read-Only:
 
-- `action` (String) The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.
+- `action` (String) Defines the action performed when an untrusted certificate seen. The default action an error with HTTP code 526.
 Available values: "pass_through", "block", "error".
 
 
@@ -272,13 +259,13 @@ Available values: "pass_through", "block", "error".
 
 Read-Only:
 
-- `fri` (String) The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.
-- `mon` (String) The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.
-- `sat` (String) The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.
-- `sun` (String) The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.
-- `thu` (String) The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.
-- `time_zone` (String) The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.
-- `tue` (String) The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.
-- `wed` (String) The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.
+- `fri` (String) Specify the time intervals when the rule is active on Fridays, in the increasing order from 00:00-24:00.  If this parameter omitted, the rule is deactivated on Fridays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `mon` (String) Specify the time intervals when the rule is active on Mondays, in the increasing order from 00:00-24:00(capped at maximum of 6 time splits). If this parameter omitted, the rule is deactivated on Mondays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `sat` (String) Specify the time intervals when the rule is active on Saturdays, in the increasing order from 00:00-24:00.  If this parameter omitted, the rule is deactivated on Saturdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `sun` (String) Specify the time intervals when the rule is active on Sundays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Sundays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `thu` (String) Specify the time intervals when the rule is active on Thursdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Thursdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `time_zone` (String) Specify the time zone for rule evaluation. When a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway always uses the current time for that time zone. When this parameter is omitted, Gateway uses the time zone determined from the user's IP address. Colo time zone is used when the user's IP address does not resolve to a location.
+- `tue` (String) Specify the time intervals when the rule is active on Tuesdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Tuesdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+- `wed` (String) Specify the time intervals when the rule is active on Wednesdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Wednesdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
 
 

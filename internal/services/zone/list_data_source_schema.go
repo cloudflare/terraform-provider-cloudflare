@@ -208,7 +208,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"plan": schema.SingleNestedAttribute{
 							Description:        "A Zones subscription information.",
 							Computed:           true,
-							DeprecationMessage: "This attribute is deprecated.",
+							DeprecationMessage: "Please use the `/zones/{zone_id}/subscription` API\nto update a zone's plan. Changing this value will create/cancel\nassociated subscriptions. To view available plans for this zone,\nsee [Zone Plans](https://developers.cloudflare.com/api/resources/zones/subresources/plans/).",
 							CustomType:         customfield.NewNestedObjectType[ZonesPlanDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
@@ -264,7 +264,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"permissions": schema.ListAttribute{
 							Description:        "Legacy permissions based on legacy user membership information.",
 							Computed:           true,
-							DeprecationMessage: "This attribute is deprecated.",
+							DeprecationMessage: "This has been replaced by Account memberships.",
 							CustomType:         customfield.NewListType[types.String](ctx),
 							ElementType:        types.StringType,
 						},

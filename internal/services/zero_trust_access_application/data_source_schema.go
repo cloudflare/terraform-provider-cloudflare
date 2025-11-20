@@ -67,10 +67,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The background color of the App Launcher page.",
 				Computed:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"custom_deny_message": schema.StringAttribute{
 				Description: "The custom error message shown to a user when they are denied access to the application.",
 				Computed:    true,
@@ -140,7 +136,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -155,12 +151,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"dash_sso",
 						"infrastructure",
 						"rdp",
+						"mcp",
+						"mcp_portal",
 					),
 				},
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"allowed_idps": schema.ListAttribute{
 				Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
@@ -181,10 +175,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"cors_headers": schema.SingleNestedAttribute{
@@ -259,7 +253,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: `Available values: "public", "private".`,
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("public", "private"),
+								stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal"),
 							},
 						},
 						"uri": schema.StringAttribute{
@@ -288,6 +282,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"vnet_id": schema.StringAttribute{
 							Description: "The VNET ID to match the destination. When omitted, all VNETs will match.",
 							Computed:    true,
+						},
+						"mcp_server_id": schema.StringAttribute{
+							Description: "A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.",
+							Optional:    true,
 						},
 					},
 				},
@@ -345,10 +343,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of the policy",
 							Computed:    true,
 						},
-						"approval_groups": schema.ListNestedAttribute{
+						"approval_groups": schema.SetNestedAttribute{
 							Description: "Administrators who can approve a temporary authentication request.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"approvals_needed": schema.Float64Attribute{
@@ -391,10 +389,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"exclude": schema.ListNestedAttribute{
+						"exclude": schema.SetNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -675,10 +673,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"include": schema.ListNestedAttribute{
+						"include": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -979,10 +977,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Require users to enter a justification when they log in to the application.",
 							Computed:    true,
 						},
-						"require": schema.ListNestedAttribute{
+						"require": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -1313,10 +1311,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 						Computed:    true,
 					},
-					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
-					},
 					"custom_attributes": schema.ListNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSaaSAppCustomAttributesDataSourceModel](ctx),
@@ -1409,10 +1403,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"sso_endpoint": schema.StringAttribute{
 						Description: "The endpoint where your SaaS application will send login requests.",
 						Computed:    true,
-					},
-					"updated_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
 					},
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

@@ -29,6 +29,9 @@ data "cloudflare_bot_management" "example_bot_management" {
 - `ai_bots_protection` (String) Enable rule to block AI Scrapers and Crawlers. Please note the value `only_on_ad_pages` is currently not available for Enterprise customers.
 Available values: "block", "disabled", "only_on_ad_pages".
 - `auto_update_model` (Boolean) Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)
+- `bm_cookie_enabled` (Boolean) Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true
+- `cf_robots_variant` (String) Specifies the Robots Access Control License variant to use.
+Available values: "off", "policy_only".
 - `crawler_protection` (String) Enable rule to punish AI Scrapers and Crawlers via a link maze.
 Available values: "enabled", "disabled".
 - `enable_js` (Boolean) Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).

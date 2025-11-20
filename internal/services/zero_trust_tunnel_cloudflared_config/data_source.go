@@ -8,11 +8,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustTunnelCloudflaredConfigDataSource struct {
@@ -83,6 +84,11 @@ func (d *ZeroTrustTunnelCloudflaredConfigDataSource) Read(ctx context.Context, r
 		return
 	}
 	data = &env.Result
+	
+	// Set default for warp_routing_enabled if not set
+	if data.WARPRoutingEnabled.IsNull() {
+		data.WARPRoutingEnabled = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

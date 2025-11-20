@@ -30,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"profile_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
@@ -55,17 +55,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration".`,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"custom",
-						"predefined",
-						"integration",
-					),
-				},
-			},
 			"case_sensitive": schema.BoolAttribute{
 				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 				Computed:    true,
@@ -76,6 +65,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"secret": schema.BoolAttribute{
 				Computed: true,
+			},
+			"type": schema.StringAttribute{
+				Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"custom",
+						"predefined",
+						"integration",
+						"exact_data",
+						"document_fingerprint",
+						"word_list",
+					),
+				},
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
@@ -92,6 +95,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"available": schema.BoolAttribute{
 						Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 						Computed:    true,
+					},
+				},
+			},
+			"variant": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomEntryVariantModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"topic_type": schema.StringAttribute{
+						Description: `Available values: "Intent", "Content".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: `Available values: "PromptTopic".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+						},
+					},
+					"description": schema.StringAttribute{
+						Computed: true,
 					},
 				},
 			},

@@ -3,6 +3,8 @@ package customvalidator
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"strings"
 )
 
 func RequiredWhenOtherStringIsOneOf(pathExpr path.Expression, wantStrValues ...string) requiredWhenOtherAttributeIsOneOfValidator {
@@ -83,5 +84,9 @@ func (i requiredWhenOtherAttributeIsOneOfValidator) validateAny(ctx context.Cont
 }
 
 func (i requiredWhenOtherAttributeIsOneOfValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, res *validator.ObjectResponse) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiredWhenOtherAttributeIsOneOfValidator) ValidateString(ctx context.Context, req validator.StringRequest, res *validator.StringResponse) {
 	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }

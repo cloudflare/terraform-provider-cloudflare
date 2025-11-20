@@ -6,3 +6,6 @@ cd "$(dirname "$0")/.."
 
 echo "==> Running tests"
 go test -v ./... "$@"
+
+echo "==> Running cmd/migrate tests"
+(cd cmd/migrate && go test -v ./... "$@")

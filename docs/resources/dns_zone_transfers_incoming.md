@@ -28,7 +28,7 @@ resource "cloudflare_dns_zone_transfers_incoming" "example_dns_zone_transfers_in
 - `auto_refresh_seconds` (Number) How often should a secondary zone auto refresh regardless of DNS NOTIFY.
 Not applicable for primary zones.
 - `name` (String) Zone name.
-- `peers` (List of String) A list of peer tags.
+- `peers` (Set of String) A list of peer tags.
 - `zone_id` (String)
 
 ### Read-Only

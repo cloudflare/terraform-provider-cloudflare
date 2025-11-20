@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"maps"
-	"math/big"
 	"slices"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -13,12 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
+
+	t "github.com/cloudflare/terraform-provider-cloudflare/internal/types"
 )
 
 var (
 	_ basetypes.DynamicTypable                    = (*NormalizedDynamicType)(nil)
 	_ basetypes.DynamicValuableWithSemanticEquals = (*NormalizedDynamicValue)(nil)
-	_ planmodifier.Dynamic                        = (*normalizeDynamicPlanModifier)(nil)
+	_ planmodifier.Dynamic                        = (*NormalizingDynamicPlanModifier)(nil)
 )
 
 type NormalizedDynamicType struct {
@@ -86,77 +87,11 @@ func (v NormalizedDynamicValue) ToDynamicValue(ctx context.Context) (types.Dynam
 	return v.Dynamic, nil
 }
 
-func floatValue(value attr.Value) (bool, *big.Float) {
-	if value == nil {
-		return false, nil
-	}
-
-	switch v := value.(type) {
-	case basetypes.Float32Value:
-		return true, big.NewFloat(float64(v.ValueFloat32()))
-	case basetypes.Float64Value:
-		return true, big.NewFloat(v.ValueFloat64())
-	case basetypes.NumberValue:
-		return true, v.ValueBigFloat()
-	default:
-		return false, nil
-	}
-}
-
-func intValue(value attr.Value) (bool, *big.Int) {
-	if value == nil {
-		return false, nil
-	}
-
-	switch v := value.(type) {
-	case basetypes.Int32Value:
-		return true, big.NewInt(int64(v.ValueInt32()))
-	case basetypes.Int64Value:
-		return true, big.NewInt((v.ValueInt64()))
-	case basetypes.NumberValue:
-		i, a := v.ValueBigFloat().Int(nil)
-		if a == big.Exact {
-			return true, i
-		}
-		return false, nil
-	default:
-		return false, nil
-	}
-}
-
-func childItems(value attr.Value) (bool, []attr.Value) {
-	if value == nil {
-		return false, nil
-	}
-
-	switch v := value.(type) {
-	case basetypes.ListValue:
-		return true, v.Elements()
-	case basetypes.TupleValue:
-		return true, v.Elements()
-	case basetypes.SetValue:
-		return true, v.Elements()
-	default:
-		return false, nil
-	}
-}
-
-func childAttributes(value attr.Value) (bool, map[string]attr.Value) {
-	if value == nil {
-		return false, nil
-	}
-
-	switch v := value.(type) {
-	case basetypes.MapValue:
-		return true, v.Elements()
-	case basetypes.ObjectValue:
-		return true, v.Attributes()
-	default:
-		return false, nil
-	}
-}
-
 func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq bool, diag diag.Diagnostics) {
+	if lhs == nil || rhs == nil {
+		return lhs == rhs, nil
+	}
+
 	if (lhs.Equal(rhs)) || (lhs.IsNull() && rhs.IsNull()) || (lhs.IsUnknown() && rhs.IsUnknown()) {
 		return true, nil
 	}
@@ -173,16 +108,16 @@ func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq boo
 		}
 	}
 
-	if ok, lvalue := intValue(lhs); ok {
-		if ok, rvalue := intValue(rhs); ok {
+	if ok, lvalue := t.IntValue(lhs); ok {
+		if ok, rvalue := t.IntValue(rhs); ok {
 			if lvalue.Cmp(rvalue) == 0 {
 				return true, diag
 			}
 		}
 	}
 
-	if ok, lvalue := floatValue(lhs); ok {
-		if ok, rvalue := floatValue(rhs); ok {
+	if ok, lvalue := t.FloatValue(lhs); ok {
+		if ok, rvalue := t.FloatValue(rhs); ok {
 			if lvalue.Cmp(rvalue) == 0 {
 				return true, diag
 			}
@@ -191,8 +126,8 @@ func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq boo
 
 	// in terraform a list of primitives below a certain length is considered a tuple
 	// tuple: `[1, 2]`, list `tolist([1, 2])`, set `toset([1, 2])`
-	if ok, lvalues := childItems(lhs); ok {
-		if ok, rvalues := childItems(rhs); ok {
+	if ok, lvalues := t.ChildItems(lhs); ok {
+		if ok, rvalues := t.ChildItems(rhs); ok {
 			eq := slices.EqualFunc(lvalues, rvalues,
 				func(l attr.Value, r attr.Value) bool {
 					e, d := semanticEquals(ctx, l, r)
@@ -207,8 +142,8 @@ func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq boo
 	}
 
 	// object value `{a = 2}` and map value `tomap({ a = 2 })` should be similar to how tuple and lists behave
-	if ok, lvalues := childAttributes(lhs); ok {
-		if ok, rvalues := childAttributes(rhs); ok {
+	if ok, lvalues := t.ChildAttributes(lhs); ok {
+		if ok, rvalues := t.ChildAttributes(rhs); ok {
 			eq := maps.EqualFunc(lvalues, rvalues,
 				func(l attr.Value, r attr.Value) bool {
 					e, d := semanticEquals(ctx, l, r)
@@ -229,13 +164,13 @@ func (v NormalizedDynamicValue) DynamicSemanticEquals(ctx context.Context, other
 	return semanticEquals(ctx, v, other)
 }
 
-type normalizeDynamicPlanModifier struct{}
+type NormalizingDynamicPlanModifier struct{}
 
-func (m normalizeDynamicPlanModifier) Description(ctx context.Context) string {
+func (m NormalizingDynamicPlanModifier) Description(ctx context.Context) string {
 	return ""
 }
 
-func (m normalizeDynamicPlanModifier) MarkdownDescription(ctx context.Context) string {
+func (m NormalizingDynamicPlanModifier) MarkdownDescription(ctx context.Context) string {
 	return ""
 }
 
@@ -256,13 +191,13 @@ func validate(ctx context.Context, value attr.Value) (diags diag.Diagnostics) {
 		return
 	}
 
-	if ok, values := childItems(value); ok {
+	if ok, values := t.ChildItems(value); ok {
 		for _, val := range values {
 			diags.Append(validate(ctx, val)...)
 		}
 	}
 
-	if ok, values := childAttributes(value); ok {
+	if ok, values := t.ChildAttributes(value); ok {
 		for _, val := range values {
 			diags.Append(validate(ctx, val)...)
 		}
@@ -271,7 +206,7 @@ func validate(ctx context.Context, value attr.Value) (diags diag.Diagnostics) {
 	return
 }
 
-func (m normalizeDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req planmodifier.DynamicRequest, resp *planmodifier.DynamicResponse) {
+func (m NormalizingDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req planmodifier.DynamicRequest, resp *planmodifier.DynamicResponse) {
 	resp.Diagnostics.Append(validate(ctx, req.PlanValue)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -288,5 +223,5 @@ func (m normalizeDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req
 }
 
 func NormalizeDynamicPlanModifier() planmodifier.Dynamic {
-	return normalizeDynamicPlanModifier{}
+	return NormalizingDynamicPlanModifier{}
 }

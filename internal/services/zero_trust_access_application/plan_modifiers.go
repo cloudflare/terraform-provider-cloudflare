@@ -10,15 +10,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var (
-	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp"}
+	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp", "mcp_portal"}
+	destinationCompatibleAppTypes         = []string{"self_hosted", "ssh", "vnc", "rdp", "mcp_portal", "mcp"}
 	saasAppTypes                          = []string{"saas", "dash_sso"}
 	appLauncherVisibleAppTypes            = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
 	targetCompatibleAppTypes              = []string{"rdp", "infrastructure"}
-	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp"}
+	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp", "mcp_portal", "mcp"}
 	authenticateViaWarpCompatibleAppTypes = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"}
 	durationRegex                         = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
 )
@@ -47,7 +47,6 @@ func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAcces
 
 	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.SelfHostedDomains, customfield.UnknownList[types.String](ctx), customfield.NullList[types.String](ctx))
 	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.Destinations, customfield.UnknownObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx), customfield.NullObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx))
-	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.HTTPOnlyCookieAttribute, types.BoolUnknown(), types.BoolNull())
 
 	// A self_hosted_app's 'domain', 'self_hosted_domains', and 'destinations' are all tied together in the API.
 	// changing one, causes the others to change. So we need to tell TF to set the other two to unknown if any of them
@@ -76,11 +75,10 @@ func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAcces
 
 func modifySaasAppNestedObjectPlan(ctx context.Context, planApp *ZeroTrustAccessApplicationModel) diag.Diagnostics {
 	diags := diag.Diagnostics{}
-	if planApp.SaaSApp.IsNull() {
+	if planApp.SaaSApp == nil {
 		return diags
 	}
-	var planSaasApp ZeroTrustAccessApplicationSaaSAppModel
-	diags.Append(planApp.SaaSApp.As(ctx, &planSaasApp, basetypes.ObjectAsOptions{})...)
+	planSaasApp := *planApp.SaaSApp
 
 	oidcType, samlType, currentType := "oidc", "saml", planSaasApp.AuthType.ValueString()
 
@@ -97,7 +95,7 @@ func modifySaasAppNestedObjectPlan(ctx context.Context, planApp *ZeroTrustAccess
 	setDefaultAccordingToAppType(samlType, currentType, &planSaasApp.NameIDFormat, types.StringUnknown(), types.StringNull())
 	setDefaultAccordingToAppType(samlType, currentType, &planSaasApp.SSOEndpoint, types.StringUnknown(), types.StringNull())
 
-	planApp.SaaSApp, _ = customfield.NewObject[ZeroTrustAccessApplicationSaaSAppModel](ctx, &planSaasApp)
+	planApp.SaaSApp = &planSaasApp
 	return diags
 }
 
@@ -112,11 +110,17 @@ func modifyNestedPoliciesPlan(_ context.Context, planApp *ZeroTrustAccessApplica
 }
 
 func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
-	var planApp, stateApp *ZeroTrustAccessApplicationModel
+	var planApp, stateApp, configApp *ZeroTrustAccessApplicationModel
 	res.Diagnostics.Append(req.Plan.Get(ctx, &planApp)...)
 	res.Diagnostics.Append(req.State.Get(ctx, &stateApp)...)
+	res.Diagnostics.Append(req.Config.Get(ctx, &configApp)...)
 	if res.Diagnostics.HasError() || planApp == nil {
 		return
+	}
+
+	// If tags are not configured, ensure they stay null in the plan
+	if configApp != nil && configApp.Tags.IsNull() {
+		planApp.Tags = customfield.NullSet[types.String](ctx)
 	}
 
 	modifyPlanForDomains(ctx, planApp, stateApp)
@@ -124,7 +128,7 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 	appType := planApp.Type.ValueString()
 
 	// Add default values for some app type specific attributes
-	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.HTTPOnlyCookieAttribute, types.BoolValue(true), types.BoolNull())
+	setDefaultAccordingToAppTypes(append(selfHostedAppTypes, "mcp"), appType, &planApp.HTTPOnlyCookieAttribute, types.BoolValue(true), types.BoolNull())
 	setDefaultAccordingToAppTypes(appLauncherVisibleAppTypes, appType, &planApp.AppLauncherVisible, types.BoolValue(true), types.BoolNull())
 	setDefaultAccordingToAppType("app_launcher", appType, &planApp.SkipAppLauncherLoginPage, types.BoolValue(false), types.BoolNull())
 	setDefaultAccordingToAppTypes(sessionDurationCompatibleAppTypes, appType, &planApp.SessionDuration, types.StringValue("24h"), types.StringNull())
@@ -137,35 +141,5 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		modifyNestedPoliciesPlan(ctx, planApp)
 	}
 
-	// Handle tags order normalization - API returns alphabetically sorted tags
-	// but we want to preserve the user's configuration order
-	if stateApp != nil && !planApp.Tags.IsNull() && !stateApp.Tags.IsNull() && !planApp.Tags.IsUnknown() {
-		normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
-	}
-
 	res.Plan.Set(ctx, &planApp)
-}
-
-func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.String], stateTags customfield.List[types.String]) {
-	var stateStrings, planStrings []string
-
-	for _, elem := range stateTags.Elements() {
-		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
-			stateStrings = append(stateStrings, str.ValueString())
-		}
-	}
-
-	for _, elem := range planTags.Elements() {
-		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
-			planStrings = append(planStrings, str.ValueString())
-		}
-	}
-
-	if len(stateStrings) == len(planStrings) {
-		slices.Sort(stateStrings)
-		slices.Sort(planStrings)
-		if slices.Equal(stateStrings, planStrings) {
-			*planTags = stateTags
-		}
-	}
 }

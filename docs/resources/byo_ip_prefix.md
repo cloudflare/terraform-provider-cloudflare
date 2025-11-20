@@ -36,14 +36,14 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Read-Only
 
-- `advertised` (Boolean) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
-- `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
+- `advertised` (Boolean, Deprecated) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
+- `advertised_modified_at` (String, Deprecated) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
 - `created_at` (String)
 - `id` (String) Identifier of an IP Prefix.
 - `modified_at` (String)
-- `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
-- `on_demand_locked` (Boolean) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
+- `on_demand_enabled` (Boolean, Deprecated) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
+- `on_demand_locked` (Boolean, Deprecated) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
 
 ## Import
 

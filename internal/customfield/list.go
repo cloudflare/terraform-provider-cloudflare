@@ -96,6 +96,7 @@ type ListLike interface {
 	UnknownValue(ctx context.Context) ListLike
 	KnownValue(ctx context.Context, T any) ListLike
 	IsNullOrUnknown() bool
+	attr.Value
 }
 
 var _ ListLike = (*List[basetypes.StringValue])(nil)

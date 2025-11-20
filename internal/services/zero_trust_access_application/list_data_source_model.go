@@ -5,8 +5,8 @@ package zero_trust_access_application
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -68,7 +68,6 @@ type ZeroTrustAccessApplicationsResultDataSourceModel struct {
 	AUD                         types.String                                                                           `tfsdk:"aud" json:"aud,computed"`
 	AutoRedirectToIdentity      types.Bool                                                                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
 	CORSHeaders                 customfield.NestedObject[ZeroTrustAccessApplicationsCORSHeadersDataSourceModel]        `tfsdk:"cors_headers" json:"cors_headers,computed"`
-	CreatedAt                   timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomDenyMessage           types.String                                                                           `tfsdk:"custom_deny_message" json:"custom_deny_message,computed"`
 	CustomDenyURL               types.String                                                                           `tfsdk:"custom_deny_url" json:"custom_deny_url,computed"`
 	CustomNonIdentityDenyURL    types.String                                                                           `tfsdk:"custom_non_identity_deny_url" json:"custom_non_identity_deny_url,computed"`
@@ -88,8 +87,7 @@ type ZeroTrustAccessApplicationsResultDataSourceModel struct {
 	ServiceAuth401Redirect      types.Bool                                                                             `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect,computed"`
 	SessionDuration             types.String                                                                           `tfsdk:"session_duration" json:"session_duration,computed"`
 	SkipInterstitial            types.Bool                                                                             `tfsdk:"skip_interstitial" json:"skip_interstitial,computed"`
-	Tags                        customfield.List[types.String]                                                         `tfsdk:"tags" json:"tags,computed"`
-	UpdatedAt                   timetypes.RFC3339                                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Tags                        customfield.Set[types.String]                                                          `tfsdk:"tags" json:"tags,computed"`
 	SaaSApp                     customfield.NestedObject[ZeroTrustAccessApplicationsSaaSAppDataSourceModel]            `tfsdk:"saas_app" json:"saas_app,computed"`
 	AppLauncherLogoURL          types.String                                                                           `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,computed"`
 	BgColor                     types.String                                                                           `tfsdk:"bg_color" json:"bg_color,computed"`
@@ -112,32 +110,33 @@ type ZeroTrustAccessApplicationsCORSHeadersDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationsDestinationsDataSourceModel struct {
-	Type       types.String `tfsdk:"type" json:"type,computed"`
-	URI        types.String `tfsdk:"uri" json:"uri,computed"`
-	CIDR       types.String `tfsdk:"cidr" json:"cidr,computed"`
-	Hostname   types.String `tfsdk:"hostname" json:"hostname,computed"`
-	L4Protocol types.String `tfsdk:"l4_protocol" json:"l4_protocol,computed"`
-	PortRange  types.String `tfsdk:"port_range" json:"port_range,computed"`
-	VnetID     types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
+	Type        types.String `tfsdk:"type" json:"type,computed"`
+	URI         types.String `tfsdk:"uri" json:"uri,computed"`
+	CIDR        types.String `tfsdk:"cidr" json:"cidr,computed"`
+	Hostname    types.String `tfsdk:"hostname" json:"hostname,computed"`
+	L4Protocol  types.String `tfsdk:"l4_protocol" json:"l4_protocol,computed"`
+	PortRange   types.String `tfsdk:"port_range" json:"port_range,computed"`
+	VnetID      types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
+	McpServerID types.String `tfsdk:"mcp_server_id" json:"mcp_server_id,optional"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesDataSourceModel struct {
-	ID                           types.String                                                                                   `tfsdk:"id" json:"id,computed"`
-	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
-	ApprovalRequired             types.Bool                                                                                     `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Decision                     types.String                                                                                   `tfsdk:"decision" json:"decision,computed"`
-	Exclude                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
-	Include                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
-	IsolationRequired            types.Bool                                                                                     `tfsdk:"isolation_required" json:"isolation_required,computed"`
-	Name                         types.String                                                                                   `tfsdk:"name" json:"name,computed"`
-	Precedence                   types.Int64                                                                                    `tfsdk:"precedence" json:"precedence,computed"`
-	PurposeJustificationPrompt   types.String                                                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
-	PurposeJustificationRequired types.Bool                                                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
-	Require                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
-	SessionDuration              types.String                                                                                   `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                                                              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
+	ID                           types.String                                                                                  `tfsdk:"id" json:"id,computed"`
+	ApprovalGroups               customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
+	ApprovalRequired             types.Bool                                                                                    `tfsdk:"approval_required" json:"approval_required,computed"`
+	CreatedAt                    timetypes.RFC3339                                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Decision                     types.String                                                                                  `tfsdk:"decision" json:"decision,computed"`
+	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
+	Include                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
+	IsolationRequired            types.Bool                                                                                    `tfsdk:"isolation_required" json:"isolation_required,computed"`
+	Name                         types.String                                                                                  `tfsdk:"name" json:"name,computed"`
+	Precedence                   types.Int64                                                                                   `tfsdk:"precedence" json:"precedence,computed"`
+	PurposeJustificationPrompt   types.String                                                                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
+	PurposeJustificationRequired types.Bool                                                                                    `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
+	Require                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
+	SessionDuration              types.String                                                                                  `tfsdk:"session_duration" json:"session_duration,computed"`
+	UpdatedAt                    timetypes.RFC3339                                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel]   `tfsdk:"connection_rules" json:"connection_rules,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel struct {
@@ -590,7 +589,6 @@ type ZeroTrustAccessApplicationsSCIMConfigMappingsOperationsDataSourceModel stru
 type ZeroTrustAccessApplicationsSaaSAppDataSourceModel struct {
 	AuthType                      types.String                                                                                        `tfsdk:"auth_type" json:"auth_type,computed"`
 	ConsumerServiceURL            types.String                                                                                        `tfsdk:"consumer_service_url" json:"consumer_service_url,computed"`
-	CreatedAt                     timetypes.RFC3339                                                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomAttributes              customfield.NestedObjectList[ZeroTrustAccessApplicationsSaaSAppCustomAttributesDataSourceModel]     `tfsdk:"custom_attributes" json:"custom_attributes,computed"`
 	DefaultRelayState             types.String                                                                                        `tfsdk:"default_relay_state" json:"default_relay_state,computed"`
 	IdPEntityID                   types.String                                                                                        `tfsdk:"idp_entity_id" json:"idp_entity_id,computed"`
@@ -600,7 +598,6 @@ type ZeroTrustAccessApplicationsSaaSAppDataSourceModel struct {
 	SAMLAttributeTransformJsonata types.String                                                                                        `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,computed"`
 	SPEntityID                    types.String                                                                                        `tfsdk:"sp_entity_id" json:"sp_entity_id,computed"`
 	SSOEndpoint                   types.String                                                                                        `tfsdk:"sso_endpoint" json:"sso_endpoint,computed"`
-	UpdatedAt                     timetypes.RFC3339                                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AccessTokenLifetime           types.String                                                                                        `tfsdk:"access_token_lifetime" json:"access_token_lifetime,computed"`
 	AllowPKCEWithoutClientSecret  types.Bool                                                                                          `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret,computed"`
 	AppLauncherURL                types.String                                                                                        `tfsdk:"app_launcher_url" json:"app_launcher_url,computed"`

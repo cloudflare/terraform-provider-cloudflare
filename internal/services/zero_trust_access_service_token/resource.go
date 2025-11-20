@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -156,7 +156,12 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 	}
 
 	data = &env.Result
-	data.ClientSecret = secret
+
+	// Preserve the old client_secret if the API didn't return a new one
+	// New secret happens on Create and if Version changes
+	if data.ClientSecret.IsNull() {
+		data.ClientSecret = secret
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

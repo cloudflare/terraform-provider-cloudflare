@@ -27,6 +27,16 @@ import (
 var explicitJsonNull = []byte("null")
 var encoders sync.Map // map[encoderEntry]encoderFunc
 
+// If we want to set a literal key value into JSON using sjson, we need to make sure it doesn't have
+// special characters that sjson interprets as a path.
+var EscapeSJSONKey = strings.NewReplacer("\\", "\\\\", "|", "\\|", "#", "\\#", "@", "\\@", "*", "\\*", ".", "\\.", ":", "\\:", "?", "\\?").Replace
+
+// CustomMarshaler allows types to override their JSON encoding behavior while supporting
+// plan/state diffing for Terraform operations. This is checked before standard encoding.
+type CustomMarshaler interface {
+	MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error)
+}
+
 // Marshals the given data to a JSON string.
 // For null values, omits the property entirely.
 func Marshal(value interface{}) ([]byte, error) {
@@ -138,6 +148,22 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 }
 
 func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
+	// Check if type implements CustomMarshaler interface
+	customMarshalerType := reflect.TypeOf((*CustomMarshaler)(nil)).Elem()
+	if t.Implements(customMarshalerType) {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			if !plan.IsValid() || (plan.Kind() == reflect.Ptr && plan.IsNil()) {
+				return nil, nil
+			}
+			marshaler := plan.Interface().(CustomMarshaler)
+			var stateVal interface{}
+			if state.IsValid() {
+				stateVal = state.Interface()
+			}
+			return marshaler.MarshalJSONWithState(plan.Interface(), stateVal)
+		}
+	}
+
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return e.newTimeTypeEncoder()
 	}
@@ -598,7 +624,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 				continue
 			}
 			someFieldsSet = true
-			json, err = sjson.SetRawBytes(json, ef.tag.name, encoded)
+			json, err = sjson.SetRawBytes(json, EscapeSJSONKey(ef.tag.name), encoded)
 			if err != nil {
 				return nil, err
 			}
@@ -681,7 +707,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 				return nil, err
 			}
 		}
-		encodedKey := []byte(sjsonReplacer.Replace(encodedKeyString))
+		encodedKey := []byte(encodedKeyString)
 		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value()})
 	}
 
@@ -700,7 +726,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 			// encode a nil for the property rather than omitting the key entirely
 			encodedValue = explicitJsonNull
 		}
-		json, err = sjson.SetRawBytes(json, string(pair.key), encodedValue)
+		json, err = sjson.SetRawBytes(json, EscapeSJSONKey(string(pair.key)), encodedValue)
 		if err != nil {
 			return nil, err
 		}
@@ -712,11 +738,13 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 	patch := e.patch
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
-		if state.IsNil() && plan.IsNil() {
+		stateNil := !state.IsValid() || state.IsNil()
+		planNil := !plan.IsValid() || plan.IsNil()
+		if stateNil && planNil {
 			return nil, nil
-		} else if plan.IsNil() {
+		} else if planNil {
 			return explicitJsonNull, nil
-		} else if patch && !state.IsNil() && reflect.DeepEqual(plan.Interface(), state.Interface()) {
+		} else if patch && !stateNil && reflect.DeepEqual(plan.Interface(), state.Interface()) {
 			return nil, nil
 		}
 
@@ -729,7 +757,3 @@ func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 		return json, nil
 	}
 }
-
-// If we want to set a literal key value into JSON using sjson, we need to make sure it doesn't have
-// special characters that sjson interprets as a path.
-var sjsonReplacer *strings.Replacer = strings.NewReplacer(".", "\\.", ":", "\\:", "*", "\\*")

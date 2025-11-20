@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijsoncustom"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -57,6 +57,10 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
+	if data.ID.IsNull() {
+		data.ID = data.RulesetID
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -67,7 +71,7 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	env := RulesetResultDataSourceEnvelope{*data}
 	_, err := d.client.Rulesets.Get(
 		ctx,
-		data.RulesetID.ValueString(),
+		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

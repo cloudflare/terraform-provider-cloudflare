@@ -5,8 +5,8 @@ package r2_bucket_lock
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/r2"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -41,5 +41,5 @@ type R2BucketLockRulesDataSourceModel struct {
 type R2BucketLockRulesConditionDataSourceModel struct {
 	MaxAgeSeconds types.Int64       `tfsdk:"max_age_seconds" json:"maxAgeSeconds,computed"`
 	Type          types.String      `tfsdk:"type" json:"type,computed"`
-	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,computed" format:"date"`
+	Date          timetypes.RFC3339 `tfsdk:"date" json:"date,computed" format:"date-time"`
 }

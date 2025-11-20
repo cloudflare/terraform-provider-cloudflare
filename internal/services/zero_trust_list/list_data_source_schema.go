@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -49,11 +49,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
+							Description: "Identify the API resource with a UUID.",
 							Computed:    true,
 						},
 						"list_count": schema.Float64Attribute{
-							Description: "The number of items in the list.",
+							Description: "Indicate the number of items in the list.",
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
@@ -61,11 +61,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Description: "The description of the list.",
+							Description: "Provide the list description.",
 							Computed:    true,
 						},
 						"items": schema.SetNestedAttribute{
-							Description: "The items in the list.",
+							Description: "Provide the list items.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustListsItemsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
@@ -75,22 +75,22 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										CustomType: timetypes.RFC3339Type{},
 									},
 									"description": schema.StringAttribute{
-										Description: "The description of the list item, if present",
+										Description: "Provide the list item description (optional).",
 										Computed:    true,
 									},
 									"value": schema.StringAttribute{
-										Description: "The value of the item in a list.",
+										Description: "Specify the item value.",
 										Computed:    true,
 									},
 								},
 							},
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the list.",
+							Description: "Specify the list name.",
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+							Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

@@ -12,10 +12,15 @@ resource "cloudflare_ruleset" "my_ruleset" {
       action_parameters = {
         uri = {
           query = {
-            value = "foo=bar"
+            value = ""
           }
         }
       }
     }
   ]
+}
+
+data "cloudflare_ruleset" "my_ruleset" {
+  zone_id = var.zone_id
+  id      = cloudflare_ruleset.my_ruleset.id
 }

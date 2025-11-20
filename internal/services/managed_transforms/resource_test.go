@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"testing"
 
-	cloudflare "github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/managed_transforms"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	cloudflare "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -24,6 +24,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_managed_headers", &resource.Sweeper{
@@ -69,7 +73,7 @@ func cleanup(t *testing.T) {
 
 func makeTransform(id string, enabled bool) map[string]string {
 	return map[string]string{
-		"id": id,
+		"id":      id,
 		"enabled": strconv.FormatBool(enabled),
 	}
 }
@@ -325,9 +329,9 @@ func TestAccCloudflareManagedHeaders_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -384,9 +388,9 @@ func TestAccCloudflareManagedHeaders_RequestOnly(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -415,9 +419,9 @@ func TestAccCloudflareManagedHeaders_ResponseOnly(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -446,9 +450,9 @@ func TestAccCloudflareManagedHeaders_VisitorLocationHeaders(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -504,9 +508,9 @@ func TestAccCloudflareManagedHeaders_RemoveVisitorIP(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -563,9 +567,9 @@ func TestAccCloudflareManagedHeaders_MultipleRequestHeaders(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -669,7 +673,7 @@ func TestAccCloudflareManagedHeaders_ConflictDetection(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareManagedTransformsConflictTest(rnd, zoneID),
+				Config:      testAccCheckCloudflareManagedTransformsConflictTest(rnd, zoneID),
 				ExpectError: regexp.MustCompile("404"),
 			},
 		},
@@ -720,9 +724,9 @@ func TestAccCloudflareManagedHeaders_NonConflictingTransforms(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -757,9 +761,9 @@ func TestAccCloudflareManagedHeaders_Enterprise(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

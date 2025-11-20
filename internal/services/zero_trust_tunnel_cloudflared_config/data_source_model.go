@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_config
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,12 +18,13 @@ type ZeroTrustTunnelCloudflaredConfigResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
-	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
-	TunnelID  types.String                                                                    `tfsdk:"tunnel_id" path:"tunnel_id,required"`
-	CreatedAt timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Source    types.String                                                                    `tfsdk:"source" json:"source,computed"`
-	Version   types.Int64                                                                     `tfsdk:"version" json:"version,computed"`
-	Config    customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	AccountID          types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
+	TunnelID           types.String                                                                    `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	CreatedAt          timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Source             types.String                                                                    `tfsdk:"source" json:"source,computed"`
+	Version            types.Int64                                                                     `tfsdk:"version" json:"version,computed"`
+	Config             customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	WARPRoutingEnabled types.Bool                                                                      `tfsdk:"warp_routing_enabled" json:"-,computed"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredConfigurationGetParams, diags diag.Diagnostics) {
@@ -37,7 +38,6 @@ func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context
 type ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel struct {
 	Ingress       customfield.NestedObjectList[ZeroTrustTunnelCloudflaredConfigConfigIngressDataSourceModel]   `tfsdk:"ingress" json:"ingress,computed"`
 	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel] `tfsdk:"origin_request" json:"originRequest,computed"`
-	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel]   `tfsdk:"warp_routing" json:"warp-routing,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressDataSourceModel struct {
@@ -91,8 +91,4 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessDataSourceModel st
 	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed"`
 	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed"`
 	Required types.Bool                     `tfsdk:"required" json:"required,computed"`
-}
-
-type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }

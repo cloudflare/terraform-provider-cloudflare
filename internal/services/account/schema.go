@@ -26,13 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"type": schema.StringAttribute{
-				Description: "the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.\nAvailable values: \"standard\", \"enterprise\".",
-				Required:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
-				},
-			},
 			"unit": schema.SingleNestedAttribute{
 				Description: "information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/",
 				Optional:    true,
@@ -46,6 +39,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Description: "Account name",
 				Required:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: `Available values: "standard", "enterprise".`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
+				},
+			},
+			"managed_by": schema.SingleNestedAttribute{
+				Description: "Parent container details",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountManagedByModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"parent_org_id": schema.StringAttribute{
+						Description: "ID of the parent Organization, if one exists",
+						Computed:    true,
+					},
+					"parent_org_name": schema.StringAttribute{
+						Description: "Name of the parent Organization, if one exists",
+						Computed:    true,
+					},
+				},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",

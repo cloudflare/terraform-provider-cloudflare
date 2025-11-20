@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/workers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -33,6 +35,31 @@ const (
 var (
 	compatibilityFlags = []string{"nodejs_compat", "web_socket_compression"}
 )
+
+// supportsTerraformWriteOnly checks if the current Terraform version supports WriteOnly attributes (1.11+)
+func supportsTerraformWriteOnly() bool {
+	cmd := exec.Command("terraform", "version")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	versionStr := string(output)
+	re := regexp.MustCompile(`Terraform v(\d+)\.(\d+)`)
+	matches := re.FindStringSubmatch(versionStr)
+	if len(matches) < 3 {
+		return false
+	}
+
+	major, err1 := strconv.Atoi(matches[1])
+	minor, err2 := strconv.Atoi(matches[2])
+	if err1 != nil || err2 != nil {
+		return false
+	}
+
+	// WriteOnly attributes require Terraform 1.11+
+	return major > 1 || (major == 1 && minor >= 11)
+}
 
 func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 	t.Parallel()
@@ -339,8 +366,89 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 	})
 }
 
+func TestAcc_WorkerScriptWithAssets(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	assetsDir := t.TempDir()
+	assetFile := path.Join(assetsDir, "index.html")
+
+	writeAssetFile := func(t *testing.T, content string) {
+		err := os.WriteFile(assetFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(assetFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeAssetFile(t, "v1")
+				},
+				Config: testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.StringExact(assetsDir)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("asset_manifest_sha256"), knownvalue.StringExact("b098d2898ca7ae5677c7291d97323e7894137515043f3e560f3bd155870eea9e")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("has_assets"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				PreConfig: func() {
+					writeAssetFile(t, "v2")
+				},
+				Config: testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.StringExact(assetsDir)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("asset_manifest_sha256"), knownvalue.StringExact("46f07eb8a3fa881af81ce2b6b3fc1627edccf115526aa5c631308c45c75d2fb1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("has_assets"), knownvalue.Bool(true)),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"assets.%", "assets.directory", "assets.asset_manifest_sha256", "startup_time_ms"},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	t.Parallel()
+
+	if !supportsTerraformWriteOnly() {
+		t.Skip("Skipping test: WriteOnly attributes require Terraform 1.11+ (DurableObject migrations are required)")
+	}
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_workers_script." + rnd
@@ -384,7 +492,8 @@ func testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, acc
 }
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
-	return acctest.LoadTestCase("module.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
+	// Use non-migration template to support Terraform < 1.11
+	return acctest.LoadTestCase("module_no_migrations.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
 func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile string) string {
@@ -393,4 +502,8 @@ func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile strin
 
 func testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentFile string) string {
 	return acctest.LoadTestCase("module_with_invalid_content_sha256.tf", rnd, accountID, contentFile)
+}
+
+func testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir string) string {
+	return acctest.LoadTestCase("module_with_assets.tf", rnd, accountID, assetsDir)
 }

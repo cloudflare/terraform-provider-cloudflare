@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_notification_policy_webhooks" "example_notification_policy_webhooks" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  webhook_id = "b115d5ec-15c6-41ee-8b76-92c449b5227b"
+  webhook_id = "b115d5ec15c641ee8b7692c449b5227b"
 }
 ```
 
@@ -38,7 +38,7 @@ data "cloudflare_notification_policy_webhooks" "example_notification_policy_webh
 - `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
 - `secret` (String, Sensitive) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
 - `type` (String) Type of webhook endpoint.
-Available values: "slack", "generic", "gchat".
+Available values: "datadog", "discord", "feishu", "gchat", "generic", "opsgenie", "slack", "splunk".
 - `url` (String) The POST endpoint to call when dispatching a notification.
 
 

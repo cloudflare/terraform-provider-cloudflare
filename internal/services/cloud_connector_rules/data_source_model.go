@@ -5,8 +5,8 @@ package cloud_connector_rules
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/cloud_connector"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/cloud_connector"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,8 +16,8 @@ type CloudConnectorRulesResultDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
-	ID     types.String                                `tfsdk:"id" json:"id,computed"`
 	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
 	Rules  *[]*CloudConnectorRulesDataSourceRulesModel `tfsdk:"rules" json:"rules,computed,no_refresh"`
 }
 

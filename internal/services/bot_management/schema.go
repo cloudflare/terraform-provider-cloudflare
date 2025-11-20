@@ -47,6 +47,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
+			"bm_cookie_enabled": schema.BoolAttribute{
+				Description: "Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true",
+				Computed:    true,
+				Optional:    true,
+			},
+			"cf_robots_variant": schema.StringAttribute{
+				Description: "Specifies the Robots Access Control License variant to use.\nAvailable values: \"off\", \"policy_only\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("off", "policy_only"),
+				},
+			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
 				Computed:    true,

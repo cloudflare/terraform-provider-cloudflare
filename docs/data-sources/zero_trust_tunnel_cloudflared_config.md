@@ -33,6 +33,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 - `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 Available values: "local", "cloudflare".
 - `version` (Number) The version of the Tunnel Configuration.
+- `warp_routing_enabled` (Boolean) Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
@@ -41,7 +42,6 @@ Read-Only:
 
 - `ingress` (Attributes List) List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel. (see [below for nested schema](#nestedatt--config--ingress))
 - `origin_request` (Attributes) Configuration parameters for the public hostname specific connection settings between cloudflared and origin server. (see [below for nested schema](#nestedatt--config--origin_request))
-- `warp_routing` (Attributes) Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route. (see [below for nested schema](#nestedatt--config--warp_routing))
 
 <a id="nestedatt--config--ingress"></a>
 ### Nested Schema for `config.ingress`
@@ -113,14 +113,5 @@ Read-Only:
 - `aud_tag` (List of String) Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.
 - `required` (Boolean) Deny traffic that has not fulfilled Access authorization.
 - `team_name` (String)
-
-
-
-<a id="nestedatt--config--warp_routing"></a>
-### Nested Schema for `config.warp_routing`
-
-Read-Only:
-
-- `enabled` (Boolean)
 
 

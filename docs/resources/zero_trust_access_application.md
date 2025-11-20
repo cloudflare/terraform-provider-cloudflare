@@ -151,10 +151,10 @@ The header value will be interpreted as a json object similar to:
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
-- `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
+- `tags` (Set of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--target_criteria))
 - `type` (String) The application type.
-Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp".
+Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp", "mcp", "mcp_portal".
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -186,6 +186,7 @@ Optional:
 - `hostname` (String) The hostname of the destination. Matches a valid SNI served by an HTTPS origin.
 - `l4_protocol` (String) The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.
 Available values: "tcp", "udp".
+- `mcp_server_id` (String) A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.
 - `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
 - `type` (String) Available values: "public", "private".
 - `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
@@ -221,12 +222,12 @@ Optional:
 - `connection_rules` (Attributes) The rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules))
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
-- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
+- `exclude` (Attributes Set) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
 - `id` (String) The UUID of the policy
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
+- `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
 - `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
-- `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--policies--require))
+- `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--policies--require))
 
 <a id="nestedatt--policies--connection_rules"></a>
 ### Nested Schema for `policies.connection_rules`
@@ -959,9 +960,7 @@ Read-Only:
 
 - `client_id` (String) The application client id
 - `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
-- `created_at` (String)
 - `public_key` (String) The Access public certificate that will be used to verify your identity.
-- `updated_at` (String)
 
 <a id="nestedatt--saas_app--custom_attributes"></a>
 ### Nested Schema for `saas_app.custom_attributes`

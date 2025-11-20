@@ -1,24 +1,14 @@
 resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
-  name = "%[1]s"
-  account_id = "%[2]s"
-  description = "desc"
-  precedence = 12302
-  action = "block"
-  filters = ["dns"]
-  traffic = "any(dns.domains[*] == \"example.com\")"
+  account_id  = "%[2]s"
+  name        = "%[1]s"
+  description = "Basic DNS policy for testing"
+  precedence  = 12350
+  action      = "block"
+  filters     = ["dns"]
+  traffic     = "any(dns.domains[*] == \"basic.example.com\")"
+
   rule_settings = {
     block_page_enabled = true
-    block_reason = "cuz"
-    insecure_disable_dnssec_validation = false
-    egress = {
-      ipv4 = "203.0.113.1"
-      ipv6 = "2001:db8::/32"
-    }
-    untrusted_cert = {
-      action = "error"
-    }
-    payload_log = {
-      enabled = true
-    }
+    block_reason       = "Basic test policy"
   }
 }

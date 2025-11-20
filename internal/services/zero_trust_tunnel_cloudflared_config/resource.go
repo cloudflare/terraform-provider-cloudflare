@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -93,6 +93,11 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 	}
 	data = &env.Result
 	data.ID = data.TunnelID
+	
+	// Set default for warp_routing_enabled if not set
+	if data.WARPRoutingEnabled.IsNull() {
+		data.WARPRoutingEnabled = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -184,6 +189,11 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 	}
 	data = &env.Result
 	data.ID = data.TunnelID
+	
+	// Set default for warp_routing_enabled if not set
+	if data.WARPRoutingEnabled.IsNull() {
+		data.WARPRoutingEnabled = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

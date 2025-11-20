@@ -30,9 +30,9 @@ data "cloudflare_zero_trust_gateway_proxy_endpoint" "example_zero_trust_gateway_
 
 - `created_at` (String)
 - `id` (String) The ID of this resource.
-- `ips` (List of String) A list of CIDRs to restrict ingress connections.
-- `name` (String) The name of the proxy endpoint.
-- `subdomain` (String) The subdomain to be used as the destination in the proxy client.
+- `ips` (List of String) Specify the list of CIDRs to restrict ingress connections.
+- `name` (String) Specify the name of the proxy endpoint.
+- `subdomain` (String) Specify the subdomain to use as the destination in the proxy client.
 - `updated_at` (String)
 
 

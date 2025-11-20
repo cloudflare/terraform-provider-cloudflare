@@ -44,6 +44,7 @@ Cannot be set to false if secret is true
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--confidence"></a>
@@ -62,5 +63,15 @@ Read-Only:
 
 - `regex` (String)
 - `validation` (String, Deprecated) Available values: "luhn".
+
+
+<a id="nestedatt--variant"></a>
+### Nested Schema for `variant`
+
+Read-Only:
+
+- `description` (String)
+- `topic_type` (String) Available values: "Intent", "Content".
+- `type` (String) Available values: "PromptTopic".
 
 

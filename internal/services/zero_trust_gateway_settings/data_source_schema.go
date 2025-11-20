@@ -30,57 +30,57 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "Account settings",
+				Description: "Specify account settings.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
-						Description: "Activity log settings.",
+						Description: "Specify activity log settings.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsActivityLogDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable activity logging.",
+								Description: "Specify whether to log activity.",
 								Computed:    true,
 							},
 						},
 					},
 					"antivirus": schema.SingleNestedAttribute{
-						Description: "Anti-virus settings.",
+						Description: "Specify anti-virus settings.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled_download_phase": schema.BoolAttribute{
-								Description: "Enable anti-virus scanning on downloads.",
+								Description: "Specify whether to enable anti-virus scanning on downloads.",
 								Computed:    true,
 							},
 							"enabled_upload_phase": schema.BoolAttribute{
-								Description: "Enable anti-virus scanning on uploads.",
+								Description: "Specify whether to enable anti-virus scanning on uploads.",
 								Computed:    true,
 							},
 							"fail_closed": schema.BoolAttribute{
-								Description: "Block requests for files that cannot be scanned.",
+								Description: "Specify whether to block requests for unscannable files.",
 								Computed:    true,
 							},
 							"notification_settings": schema.SingleNestedAttribute{
-								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
+								Description: "Configure the message the user's device shows during an antivirus scan.",
 								Computed:    true,
 								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
-										Description: "Set notification on",
+										Description: "Specify whether to enable notifications.",
 										Computed:    true,
 									},
 									"include_context": schema.BoolAttribute{
-										Description: "If true, context information will be passed as query parameters",
+										Description: "Specify whether to include context information as query parameters.",
 										Computed:    true,
 									},
 									"msg": schema.StringAttribute{
-										Description: "Customize the message shown in the notification.",
+										Description: "Specify the message to show in the notification.",
 										Computed:    true,
 									},
 									"support_url": schema.StringAttribute{
-										Description: "Optional URL to direct users to additional information. If not set, the notification will open a block page.",
+										Description: "Specify a URL that directs users to more information. If unset, the notification opens a block page.",
 										Computed:    true,
 									},
 								},
@@ -88,44 +88,44 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"block_page": schema.SingleNestedAttribute{
-						Description: "Block page layout settings.",
+						Description: "Specify block page layout settings.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"background_color": schema.StringAttribute{
-								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
+								Description: "Specify the block page background color in `#rrggbb` format when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Specify whether to enable the custom block page.",
 								Computed:    true,
 							},
 							"footer_text": schema.StringAttribute{
-								Description: "If mode is customized_block_page: block page footer text.",
+								Description: "Specify the block page footer text when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"header_text": schema.StringAttribute{
-								Description: "If mode is customized_block_page: block page header text.",
+								Description: "Specify the block page header text when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"include_context": schema.BoolAttribute{
-								Description: "If mode is redirect_uri: when enabled, context will be appended to target_uri as query parameters.",
+								Description: "Specify whether to append context to target_uri as query parameters. This applies only when the mode is redirect_uri.",
 								Computed:    true,
 							},
 							"logo_path": schema.StringAttribute{
-								Description: "If mode is customized_block_page: full URL to the logo file.",
+								Description: "Specify the full URL to the logo file when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"mailto_address": schema.StringAttribute{
-								Description: "If mode is customized_block_page: admin email for users to contact.",
+								Description: "Specify the admin email for users to contact when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"mailto_subject": schema.StringAttribute{
-								Description: "If mode is customized_block_page: subject line for emails created from block page.",
+								Description: "Specify the subject line for emails created from the block page when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"\", \"customized_block_page\", \"redirect_uri\".",
+								Description: "Specify whether to redirect users to a Cloudflare-hosted block page or a customer-provided URI.\nAvailable values: \"\", \"customized_block_page\", \"redirect_uri\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -136,38 +136,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"name": schema.StringAttribute{
-								Description: "If mode is customized_block_page: block page title.",
+								Description: "Specify the block page title when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "Indicate that this setting was shared via the Orgs API and read only for the current account.",
 								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Indicate the account tag of the account that shared this setting.",
 								Computed:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
-								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
+								Description: "Specify whether to suppress detailed information at the bottom of the block page when the mode is customized_block_page.",
 								Computed:    true,
 							},
 							"target_uri": schema.StringAttribute{
-								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
+								Description: "Specify the URI to redirect users to when the mode is redirect_uri.",
 								Computed:    true,
 							},
 							"version": schema.Int64Attribute{
-								Description: "Version number of the setting",
+								Description: "Indicate the version number of the setting.",
 								Computed:    true,
 							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
-						Description: "DLP body scanning settings.",
+						Description: "Specify the DLP inspection mode.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
-								Description: "Set the inspection mode to either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
+								Description: "Specify the inspection mode as either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("deep", "shallow"),
@@ -176,47 +176,47 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"browser_isolation": schema.SingleNestedAttribute{
-						Description: "Browser isolation settings.",
+						Description: "Specify Clientless Browser Isolation settings.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBrowserIsolationDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"non_identity_enabled": schema.BoolAttribute{
-								Description: "Enable non-identity onramp support for Browser Isolation.",
+								Description: "Specify whether to enable non-identity onramp support for Browser Isolation.",
 								Computed:    true,
 							},
 							"url_browser_isolation_enabled": schema.BoolAttribute{
-								Description: "Enable Clientless Browser Isolation.",
+								Description: "Specify whether to enable Clientless Browser Isolation.",
 								Computed:    true,
 							},
 						},
 					},
 					"certificate": schema.SingleNestedAttribute{
-						Description: "Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used.",
+						Description: "Specify certificate settings for Gateway TLS interception. If unset, the Cloudflare Root CA handles interception.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCertificateDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
-								Description: "UUID of certificate to be used for interception. Certificate must be available (previously called 'active') on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
+								Description: "Specify the UUID of the certificate used for interception. Ensure the certificate is available at the edge(previously called 'active'). A nil UUID directs Cloudflare to use the Root CA.",
 								Computed:    true,
 							},
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Description:        "Specify custom certificate settings for BYO-PKI. This field is deprecated; use `certificate` instead.",
 						Computed:           true,
 						DeprecationMessage: "This attribute is deprecated.",
 						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
+								Description: "Specify whether to enable a custom certificate authority for signing Gateway traffic.",
 								Computed:    true,
 							},
 							"id": schema.StringAttribute{
-								Description: "UUID of certificate (ID from MTLS certificate store).",
+								Description: "Specify the UUID of the certificate (ID from MTLS certificate store).",
 								Computed:    true,
 							},
 							"binding_status": schema.StringAttribute{
-								Description: "Certificate status (internal).",
+								Description: "Indicate the internal certificate status.",
 								Computed:    true,
 							},
 							"updated_at": schema.StringAttribute{
@@ -226,57 +226,57 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"extended_email_matching": schema.SingleNestedAttribute{
-						Description: "Extended e-mail matching settings.",
+						Description: "Configures user email settings for firewall policies. When you enable this, the system standardizes email addresses in the identity portion of the rule to match extended email variants in firewall policies. When you disable this setting, the system matches email addresses exactly as you provide them. Enable this setting if your email uses `.` or `+` modifiers.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
+								Description: "Specify whether to match all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
 								Computed:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "Indicate that this setting was shared via the Orgs API and read only for the current account.",
 								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Indicate the account tag of the account that shared this setting.",
 								Computed:    true,
 							},
 							"version": schema.Int64Attribute{
-								Description: "Version number of the setting",
+								Description: "Indicate the version number of the setting.",
 								Computed:    true,
 							},
 						},
 					},
 					"fips": schema.SingleNestedAttribute{
-						Description: "FIPS settings.",
+						Description: "Specify FIPS settings.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Enforce cipher suites and TLS versions compliant with FIPS 140-2.",
 								Computed:    true,
 							},
 						},
 					},
 					"host_selector": schema.SingleNestedAttribute{
-						Description: "Setting to enable host selector in egress policies.",
+						Description: "Enable host selection in egress policies.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable filtering via hosts for egress policies.",
+								Description: "Specify whether to enable filtering via hosts for egress policies.",
 								Computed:    true,
 							},
 						},
 					},
 					"inspection": schema.SingleNestedAttribute{
-						Description: "Setting to define inspection settings",
+						Description: "Define the proxy inspection mode.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
-								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
+								Description: "Define the proxy inspection mode.   1. static: Gateway applies static inspection to HTTP on TCP(80). With TLS decryption on, Gateway inspects HTTPS traffic on TCP(443) and UDP(443).   2. dynamic: Gateway applies protocol detection to inspect HTTP and HTTPS traffic on any port. TLS decryption must remain on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
@@ -285,27 +285,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"protocol_detection": schema.SingleNestedAttribute{
-						Description: "Protocol Detection settings.",
+						Description: "Specify whether to detect protocols from the initial bytes of client traffic.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable detecting protocol on initial bytes of client traffic.",
+								Description: "Specify whether to detect protocols from the initial bytes of client traffic.",
 								Computed:    true,
 							},
 						},
 					},
 					"sandbox": schema.SingleNestedAttribute{
-						Description: "Sandbox settings.",
+						Description: "Specify whether to enable the sandbox.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable sandbox.",
+								Description: "Specify whether to enable the sandbox.",
 								Computed:    true,
 							},
 							"fallback_action": schema.StringAttribute{
-								Description: "Action to take when the file cannot be scanned.\nAvailable values: \"allow\", \"block\".",
+								Description: "Specify the action to take when the system cannot scan the file.\nAvailable values: \"allow\", \"block\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("allow", "block"),
@@ -314,12 +314,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"tls_decrypt": schema.SingleNestedAttribute{
-						Description: "TLS interception settings.",
+						Description: "Specify whether to inspect encrypted HTTP traffic.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable inspecting encrypted HTTP traffic.",
+								Description: "Specify whether to inspect encrypted HTTP traffic.",
 								Computed:    true,
 							},
 						},

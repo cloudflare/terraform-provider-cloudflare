@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	cloudflare "github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/dns"
+	cloudflare "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -22,6 +22,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_dns_record", &resource.Sweeper{
@@ -35,9 +39,10 @@ func testSweepCloudflareRecord(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
-	// Clean up the account level rulesets
+	// Clean up test DNS records only
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
@@ -46,6 +51,7 @@ func testSweepCloudflareRecord(r string) error {
 	records, _, err := client.ListDNSRecords(context.Background(), cfold.ZoneIdentifier(zoneID), cfold.ListDNSRecordsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
+		return err
 	}
 
 	if len(records) == 0 {
@@ -53,10 +59,43 @@ func testSweepCloudflareRecord(r string) error {
 		return nil
 	}
 
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
 	for _, record := range records {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
-		//nolint:errcheck
-		client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
+		shouldDelete := false
+
+		// Delete test records - those that start with tf-acctest- or contain terraform test patterns
+		if strings.HasPrefix(record.Name, "tf-acctest-") || strings.Contains(record.Name, "tf-acctest") {
+			shouldDelete = true
+		}
+
+		// Clean up PTR records used in tests (reverse DNS records)
+		if record.Type == "PTR" && (strings.Contains(record.Name, ".in-addr.arpa") || strings.Contains(record.Name, ".ip6.arpa")) {
+			// Delete PTR records that are clearly test records
+			if strings.Contains(record.Content, "example.com") || strings.Contains(record.Content, "test") {
+				shouldDelete = true
+			}
+		}
+
+		// Also clean up apex domain records if they are A/AAAA/CNAME records that could conflict with tests
+		// Only delete apex records that are likely from tests (A/AAAA records pointing to test IPs or CNAME records)
+		if domain != "" && record.Name == domain {
+			if record.Type == "A" && (strings.HasPrefix(record.Content, "192.168.") || strings.HasPrefix(record.Content, "10.0.") || strings.HasPrefix(record.Content, "172.16.")) {
+				shouldDelete = true
+			} else if record.Type == "AAAA" && strings.HasPrefix(record.Content, "2001:db8:") {
+				shouldDelete = true
+			} else if record.Type == "CNAME" {
+				shouldDelete = true
+			}
+		}
+
+		if shouldDelete {
+			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s, Type: %s, Content: %s", record.ID, record.Name, record.Type, record.Content))
+			err := client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS record %s: %s", record.ID, err))
+			}
+		}
 	}
 
 	return nil
@@ -113,7 +152,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", domain),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 				),
@@ -500,9 +539,6 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_ClearTags(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into clearing tags.")
-
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -556,6 +592,367 @@ func TestSuppressTrailingDots(t *testing.T) {
 		got := suppressTrailingDots("", c.old, c.new, nil)
 		assert.Equal(t, c.expected, got)
 	}
+}
+
+// TestAccCloudflareRecord_TagsDrift tests for the issue reported in
+// https://github.com/cloudflare/terraform-provider-cloudflare/issues/5517
+// where DNS records show perpetual drift with tags and other computed fields
+func TestAccCloudflareRecord_TagsDrift(t *testing.T) {
+	// Don't run in parallel to avoid conflicts
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create resources with various tag configurations
+			{
+				Config: testAccCheckCloudflareRecordConfigTagsDrift(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					// Record with empty tags list
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "tags.#", "0"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "content", "192.168.0.10"),
+
+					// Record with explicit tags (tags are a set, so order may vary)
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_tags", rnd), "tags.#", "2"),
+					resource.TestCheckTypeSetElemAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_tags", rnd), "tags.*", "test:tag1"),
+					resource.TestCheckTypeSetElemAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_tags", rnd), "tags.*", "env:test"),
+
+					// Record with settings
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_settings", rnd), "settings.flatten_cname", "false"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_settings", rnd), "tags.#", "0"),
+
+					// Record without tags specified
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_no_tags", rnd), "type", "A"),
+				),
+			},
+			// Step 2: Apply the same configuration again to check for drift
+			// This should not show any changes if the provider handles defaults correctly
+			{
+				Config:             testAccCheckCloudflareRecordConfigTagsDrift(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes on re-apply
+			},
+			// Step 3: Import test to verify state consistency
+			{
+				ResourceName:        fmt.Sprintf("cloudflare_dns_record.%s", rnd),
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				// Ignore computed fields that might differ after import
+				ImportStateVerifyIgnore: []string{"comment_modified_on", "created_on", "modified_on", "tags_modified_on"},
+			},
+			{
+				ResourceName:            fmt.Sprintf("cloudflare_dns_record.%s_with_tags", rnd),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportStateVerifyIgnore: []string{"comment_modified_on", "created_on", "modified_on", "tags_modified_on"},
+			},
+			{
+				ResourceName:            fmt.Sprintf("cloudflare_dns_record.%s_with_settings", rnd),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportStateVerifyIgnore: []string{"comment_modified_on", "created_on", "modified_on", "tags_modified_on"},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareRecord_ComputedFieldsDrift specifically tests for computed fields
+// causing perpetual drift as reported in issue #5517
+func TestAccCloudflareRecord_ComputedFieldsDrift(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create minimal DNS record
+			{
+				Config: testAccCheckCloudflareRecordConfigComputedDrift(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					// Verify minimal record
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "content", "192.168.0.20"),
+					// Check that computed fields are set
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "created_on"),
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "modified_on"),
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "proxiable"),
+
+					// Verify CNAME with settings
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_cname_settings", rnd), "type", "CNAME"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_cname_settings", rnd), "settings.flatten_cname", "false"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_cname_settings", rnd), "tags.#", "0"),
+
+					// Verify record with comment
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_comment", rnd), "comment", "Test comment for drift"),
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("cloudflare_dns_record.%s_with_comment", rnd), "comment_modified_on"),
+				),
+			},
+			// Step 2: Re-apply to check for drift - this is the critical test
+			// If there's a drift issue, this will fail with ExpectNonEmptyPlan: false
+			{
+				Config:             testAccCheckCloudflareRecordConfigComputedDrift(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // Should be no changes on re-apply
+			},
+			// Step 3: Make a small change to verify updates work correctly
+			{
+				Config: testAccCheckCloudflareRecordConfigComputedDriftUpdated(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_minimal", rnd), "content", "192.168.0.25"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_with_comment", rnd), "comment", "Updated comment"),
+				),
+			},
+			// Step 4: Re-apply updated config to ensure no drift after update
+			{
+				Config:             testAccCheckCloudflareRecordConfigComputedDriftUpdated(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // Should be no changes on re-apply
+			},
+		},
+	})
+}
+
+// TestAccCloudflareRecord_DriftIssue5517 specifically tests for the drift issues
+// reported in https://github.com/cloudflare/terraform-provider-cloudflare/issues/5517
+// This test attempts to reproduce the exact scenarios users reported
+func TestAccCloudflareRecord_DriftIssue5517(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create records that users reported as problematic
+			{
+				Config: testAccCheckCloudflareRecordConfigDriftRepro(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					// Check proxied CNAME with settings
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_proxied_cname_with_settings", rnd), "type", "CNAME"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_proxied_cname_with_settings", rnd), "proxied", "true"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_proxied_cname_with_settings", rnd), "settings.flatten_cname", "false"),
+
+					// Check CNAME with mixed case - checking if it preserves case
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_cname_mixed_case", rnd), "type", "CNAME"),
+					// For now, just check that it's set, we'll see in step 2 if it causes drift
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("cloudflare_dns_record.%s_cname_mixed_case", rnd), "content"),
+
+					// Check empty tags
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_a_record_empty_tags", rnd), "tags.#", "0"),
+				),
+			},
+			// Step 2: CRITICAL TEST - Re-apply to check for drift
+			// This is where users are seeing the issue
+			{
+				Config:             testAccCheckCloudflareRecordConfigDriftRepro(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes
+			},
+		},
+	})
+}
+
+// Simple test to isolate the tags drift issue for records without explicit tags
+func TestAccCloudflareRecord_SimpleDrift(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigSimpleDrift(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "content", "192.168.0.50"),
+				),
+			},
+			// Second step: Apply same config again - should NOT show drift
+			{
+				Config:             testAccCheckCloudflareRecordConfigSimpleDrift(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes
+			},
+		},
+	})
+}
+
+// Test CNAME case normalization specifically
+func TestAccCloudflareRecord_CNAMECase(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigCNAMECase(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s", rnd), "type", "CNAME"),
+				),
+			},
+			// Second step: Apply same config again - should NOT show drift
+			{
+				Config:             testAccCheckCloudflareRecordConfigCNAMECase(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRecord_CommentModifiedOn(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigWithoutComment(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckNoResourceAttr(resourceName, "comment_modified_on"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigCommentModified(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "Test comment for drift"),
+					resource.TestCheckResourceAttrSet(resourceName, "comment_modified_on"),
+				),
+			},
+		},
+	})
+}
+
+// Test FQDN normalization for DNS record names
+func TestAccCloudflareRecord_FQDNNormalize(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					// Check subdomain record
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain", rnd), "content", "192.168.0.100"),
+
+					// Check multi-level subdomain
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain_multi", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain_multi", rnd), "content", "192.168.0.102"),
+				),
+			},
+			// Second step: Apply same config again - should NOT show drift for name fields
+			{
+				Config:             testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareRecordConfigCNAMECase(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordcnamecase.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigTagsDrift(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordtagsdrift.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigSimpleDrift(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordsimpledrift.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordfqdnnormalize.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigComputedDrift(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordcomputeddrift.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigDriftRepro(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecorddriftrepo.tf", rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareRecordConfigComputedDriftUpdated(zoneID, rnd, domain string) string {
+	// Create an inline config for the update since it's a simple change
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s_minimal" {
+  zone_id = "%[2]s"
+  name    = "tf-acctest-minimal.%[1]s.%[3]s"
+  type    = "A"
+  content = "192.168.0.25"  # Changed from .20
+  ttl     = 3600
+  proxied = false
+}
+
+resource "cloudflare_dns_record" "%[1]s_cname_settings" {
+  zone_id = "%[2]s"
+  name    = "tf-acctest-cname.%[1]s.%[3]s"
+  type    = "CNAME"
+  content = "target.%[3]s"
+  ttl     = 60
+  proxied = false
+  
+  settings = {
+    flatten_cname = false
+  }
+  
+  tags = []
+}
+
+resource "cloudflare_dns_record" "%[1]s_with_comment" {
+  zone_id = "%[2]s"
+  name    = "tf-acctest-comment.%[1]s.%[3]s"
+  type    = "A"
+  content = "192.168.0.21"
+  ttl     = 3600
+  proxied = false
+  comment = "Updated comment"  # Changed comment
+  tags    = []
+}`, rnd, zoneID, domain)
 }
 
 func testAccCheckCloudflareRecordRecreated(before, after *cfold.DNSRecord) resource.TestCheckFunc {
@@ -722,6 +1119,94 @@ func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd, domain string) 
 
 func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
 	return acctest.LoadTestCase("recorddnskey.tf", zoneID, name)
+}
+
+func testAccCheckCloudflareRecordConfigWithoutComment(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordswithoutcomment.tf", zoneID, name, rnd, domain)
+}
+
+func testAccCheckCloudflareRecordConfigCommentModified(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordcommentmodified.tf", zoneID, name, rnd, domain)
+}
+
+// TestAccCloudflareRecord_ModifiedOnDrift tests for issues for drift
+func TestAccCloudflareRecord_ModifiedOnDrift(t *testing.T) {
+	var record cfold.DNSRecord
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("tf-acctest-%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", name)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create a record with settings and tags
+				Config: testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestCheckResourceAttr(resourceName, "proxied", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
+					resource.TestCheckResourceAttrSet(resourceName, "modified_on"),
+				),
+			},
+			{
+				// Apply the same config again - should show no changes
+				Config:             testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // This should pass with our fix, fail without it
+			},
+			{
+				// Test with explicit empty settings
+				Config: testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.11"),
+					resource.TestCheckResourceAttrSet(resourceName, "modified_on"),
+				),
+			},
+			{
+				// Apply the same config again - should show no changes
+				Config:             testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // This should pass with our fix, fail without it
+			},
+		},
+	})
+}
+
+func testAccCloudflareRecordModifiedOnDriftInitial(zoneID, name, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[2]s" {
+  zone_id = "%[1]s"
+  name    = "%[2]s"
+  type    = "A"
+  content = "192.168.0.10"
+  ttl     = 1
+  proxied = false
+  tags    = []
+}`, zoneID, name, domain)
+}
+
+func testAccCloudflareRecordModifiedOnDriftWithEmptySettings(zoneID, name, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[2]s" {
+  zone_id  = "%[1]s"
+  name     = "%[2]s"
+  type     = "A"
+  content  = "192.168.0.11"
+  ttl      = 1
+  proxied  = false
+  tags     = []
+  settings = {}
+}`, zoneID, name, domain)
 }
 
 func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {

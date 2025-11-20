@@ -8,17 +8,20 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustDLPIntegrationEntryResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustDLPIntegrationEntryResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDLPIntegrationEntryResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDLPIntegrationEntryResource{}
@@ -142,7 +145,43 @@ func (r *ZeroTrustDLPIntegrationEntryResource) Update(ctx context.Context, req r
 }
 
 func (r *ZeroTrustDLPIntegrationEntryResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustDLPIntegrationEntryModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDLPIntegrationEntryResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.DLP.Entries.Integration.Get(
+		ctx,
+		data.ID.ValueString(),
+		zero_trust.DLPEntryIntegrationGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustDLPIntegrationEntryResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -166,6 +205,51 @@ func (r *ZeroTrustDLPIntegrationEntryResource) Delete(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDLPIntegrationEntryResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDLPIntegrationEntryModel = new(ZeroTrustDLPIntegrationEntryModel)
+
+	path_account_id := ""
+	path_entry_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<entry_id>",
+		&path_account_id,
+		&path_entry_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.EntryID = types.StringValue(path_entry_id)
+
+	res := new(http.Response)
+	env := ZeroTrustDLPIntegrationEntryResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.DLP.Entries.Integration.Get(
+		ctx,
+		path_entry_id,
+		zero_trust.DLPEntryIntegrationGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

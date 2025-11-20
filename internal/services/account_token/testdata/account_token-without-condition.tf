@@ -1,12 +1,18 @@
-resource "cloudflare_account_token" "%[1]s" {
-	name = "%[3]s"
-  	account_id = "%[2]s"
+data "cloudflare_account_api_token_permission_groups_list" "dns_read" {
+  account_id = "%[2]s"
+  name       = "DNS Read"
+  scope      = "com.cloudflare.api.account.zone"
+}
 
-	policies = [{
-		effect = "allow"
-		permission_groups = [{ id = "%[4]s" }]
-		resources = {
-			"com.cloudflare.api.account.%[2]s" = "*"
-		}
-	}]
+resource "cloudflare_account_token" "test_account_token" {
+  name       = "%[1]s"
+  account_id = "%[2]s"
+
+  policies = [{
+    effect            = "allow"
+    permission_groups = [{ id = data.cloudflare_account_api_token_permission_groups_list.dns_read.result[0].id }]
+    resources = {
+      "com.cloudflare.api.account.%[2]s" = "*"
+    }
+  }]
 }

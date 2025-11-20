@@ -5,8 +5,8 @@ package notification_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/alerting"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -81,6 +81,7 @@ type NotificationPolicyFiltersDataSourceModel struct {
 	TrafficExclusions            customfield.List[types.String] `tfsdk:"traffic_exclusions" json:"traffic_exclusions,computed"`
 	TunnelID                     customfield.List[types.String] `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	TunnelName                   customfield.List[types.String] `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
+	Type                         customfield.List[types.String] `tfsdk:"type" json:"type,computed"`
 	Where                        customfield.List[types.String] `tfsdk:"where" json:"where,computed"`
 	Zones                        customfield.List[types.String] `tfsdk:"zones" json:"zones,computed"`
 }

@@ -5,8 +5,8 @@ package account
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/accounts"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -38,10 +38,17 @@ func (m *AccountsDataSourceModel) toListParams(_ context.Context) (params accoun
 }
 
 type AccountsResultDataSourceModel struct {
-	ID        types.String                                              `tfsdk:"id" json:"id,computed"`
-	Name      types.String                                              `tfsdk:"name" json:"name,computed"`
-	CreatedOn timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Settings  customfield.NestedObject[AccountsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
+	ID        types.String                                               `tfsdk:"id" json:"id,computed"`
+	Name      types.String                                               `tfsdk:"name" json:"name,computed"`
+	Type      types.String                                               `tfsdk:"type" json:"type,computed"`
+	CreatedOn timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ManagedBy customfield.NestedObject[AccountsManagedByDataSourceModel] `tfsdk:"managed_by" json:"managed_by,computed"`
+	Settings  customfield.NestedObject[AccountsSettingsDataSourceModel]  `tfsdk:"settings" json:"settings,computed"`
+}
+
+type AccountsManagedByDataSourceModel struct {
+	ParentOrgID   types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
+	ParentOrgName types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
 }
 
 type AccountsSettingsDataSourceModel struct {
