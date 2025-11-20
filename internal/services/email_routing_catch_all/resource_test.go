@@ -27,7 +27,7 @@ func init() {
 			ctx := context.Background()
 
 			// Get the catch-all rule
-			catchAll, err := client.EmailRouting.Rules.CatchAll.Get(ctx, email_routing.RuleCatchAllGetParams{
+			catchAll, err := client.EmailRouting.Rules.CatchAlls.Get(ctx, email_routing.RuleCatchAllGetParams{
 				ZoneID: cloudflare.F(zoneID),
 			})
 			if err != nil {
@@ -36,10 +36,23 @@ func init() {
 
 			// Disable the catch-all rule if it's enabled
 			if catchAll.Enabled {
-				_, err := client.EmailRouting.Rules.CatchAll.Update(ctx, email_routing.RuleCatchAllUpdateParams{
+				actionParams := make([]email_routing.CatchAllActionParam, 0)
+				for _, action := range catchAll.Actions {
+					actionParams = append(actionParams, email_routing.CatchAllActionParam{
+						Type:  cloudflare.F(action.Type),
+						Value: cloudflare.F(action.Value),
+					})
+				}
+				matcherParams := make([]email_routing.CatchAllMatcherParam, 0)
+				for _, matcher := range catchAll.Matchers {
+					matcherParams = append(matcherParams, email_routing.CatchAllMatcherParam{
+						Type: cloudflare.F(matcher.Type),
+					})
+				}
+				_, err := client.EmailRouting.Rules.CatchAlls.Update(ctx, email_routing.RuleCatchAllUpdateParams{
 					ZoneID:   cloudflare.F(zoneID),
-					Actions:  cloudflare.F(catchAll.Actions),
-					Matchers: cloudflare.F(catchAll.Matchers),
+					Actions:  cloudflare.F(actionParams),
+					Matchers: cloudflare.F(matcherParams),
 					Enabled:  cloudflare.F(email_routing.RuleCatchAllUpdateParamsEnabledFalse),
 				})
 				if err != nil {
