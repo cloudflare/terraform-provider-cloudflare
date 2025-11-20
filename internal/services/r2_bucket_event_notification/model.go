@@ -34,3 +34,19 @@ type R2BucketEventNotificationRulesModel struct {
 	Prefix      types.String    `tfsdk:"prefix" json:"prefix,optional"`
 	Suffix      types.String    `tfsdk:"suffix" json:"suffix,optional"`
 }
+
+func (enRules1 R2BucketEventNotificationRulesModel) Equal(enRules2 R2BucketEventNotificationRulesModel) bool {
+	if !stringEqualNullOrEmpty(enRules1.Prefix, enRules2.Prefix) {
+		return false
+	}
+
+	if !stringEqualNullOrEmpty(enRules1.Suffix, enRules2.Suffix) {
+		return false
+	}
+
+	if !stringEqualNullOrEmpty(enRules1.Description, enRules2.Description) {
+		return false
+	}
+
+	return actionsEqual(enRules1.Actions, enRules2.Actions)
+}
