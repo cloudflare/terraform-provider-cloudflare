@@ -23,8 +23,12 @@ data "cloudflare_spectrum_application" "example_spectrum_application" {
 
 ### Required
 
-- `app_id` (String) App identifier.
 - `zone_id` (String) Zone identifier.
+
+### Optional
+
+- `app_id` (String) App identifier.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
@@ -48,6 +52,17 @@ Available values: "off", "v1", "v2", "simple".
 Available values: "off", "flexible", "full", "strict".
 - `traffic_type` (String) Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.
 Available values: "direct", "http", "https".
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `direction` (String) Sets the direction by which results are ordered.
+Available values: "asc", "desc".
+- `order` (String) Application field by which results are ordered.
+Available values: "protocol", "app_id", "created_on", "modified_on", "dns".
+
 
 <a id="nestedatt--dns"></a>
 ### Nested Schema for `dns`

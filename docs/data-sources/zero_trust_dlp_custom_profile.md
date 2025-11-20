@@ -35,7 +35,7 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 - `created_at` (String) When the profile was created.
 - `description` (String) The description of the profile.
 - `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
-- `id` (String) The id of the profile (uuid).
+- `id` (String) The ID of this resource.
 - `name` (String) The name of the profile.
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.

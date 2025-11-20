@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custo
 ### Required
 
 - `account_id` (String) Identifier.
-
-### Optional
-
 - `custom_page_id` (String) UUID.
 
 ### Read-Only

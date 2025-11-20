@@ -56,4 +56,7 @@ Available values: "pending", "active", "deactivated", "blocked", "error", "unkno
 - `ssl` (String) SSL certificate status.
 Available values: "initializing", "pending", "active", "deactivated", "error", "unknown".
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

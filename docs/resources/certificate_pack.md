@@ -12,7 +12,7 @@ description: |-
 ~> Certificate packs are not able to be updated in place. If
 you require a zero downtime rotation, you can create multiple
 resources using a 2-phase change where you have both resources
-live at once and you remove the old one once you've confirmed 
+live at once and you remove the old one once you've confirmed
 the certificate is available.
 
 ## Example Usage

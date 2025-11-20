@@ -40,3 +40,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_argo_tiered_caching.example '<zone_id>'
 ```
+
+

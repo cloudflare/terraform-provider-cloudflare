@@ -46,17 +46,19 @@ Read-Only:
 - `handlers` (List of String) The names of handlers exported as part of the default export.
 - `has_assets` (Boolean) Whether a Worker contains assets.
 - `has_modules` (Boolean) Whether a Worker contains modules.
-- `id` (String) The id of the script in the Workers system. Usually the script name.
+- `id` (String) The name used to identify the script.
 - `last_deployed_from` (String) The client most recently used to deploy this Worker.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `migration_tag` (String) The tag of the Durable Object migration that was most recently applied for this Worker.
 - `modified_on` (String) When the script was last modified.
 - `named_handlers` (Attributes List) Named exports, such as Durable Object class implementations and named entrypoints. (see [below for nested schema](#nestedatt--result--named_handlers))
+- `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--result--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--result--placement))
-- `placement_mode` (String, Deprecated) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "smart".
-- `placement_status` (String, Deprecated) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
+- `placement_mode` (String, Deprecated) Available values: "smart".
+- `placement_status` (String, Deprecated) Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
+- `routes` (Attributes List) Routes associated with the Worker. (see [below for nested schema](#nestedatt--result--routes))
+- `tag` (String) The immutable ID of the script.
+- `tags` (Set of String) Tags associated with the Worker.
 - `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--result--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard", "bundled", "unbound".
@@ -70,6 +72,28 @@ Read-Only:
 - `name` (String) The name of the export.
 
 
+<a id="nestedatt--result--observability"></a>
+### Nested Schema for `result.observability`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether observability is enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--logs))
+
+<a id="nestedatt--result--observability--logs"></a>
+### Nested Schema for `result.observability.logs`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where logs will be exported to.
+- `enabled` (Boolean) Whether logs are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+
 <a id="nestedatt--result--placement"></a>
 ### Nested Schema for `result.placement`
 
@@ -80,6 +104,16 @@ Read-Only:
 Available values: "smart".
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
+
+
+<a id="nestedatt--result--routes"></a>
+### Nested Schema for `result.routes`
+
+Read-Only:
+
+- `id` (String) Identifier.
+- `pattern` (String) Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).
+- `script` (String) Name of the script to run if the route matches.
 
 
 <a id="nestedatt--result--tail_consumers"></a>

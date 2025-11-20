@@ -39,4 +39,7 @@ resource "cloudflare_stream_caption_language" "example_stream_caption_language" 
 - `status` (String) The status of a generated caption.
 Available values: "ready", "inprogress", "error".
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

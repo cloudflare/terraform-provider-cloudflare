@@ -55,3 +55,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_image.example '<account_id>/<image_id>'
 ```
+
+

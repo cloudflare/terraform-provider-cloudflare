@@ -14,6 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_api_shield" "example_api_shield" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  normalize = true
 }
 ```
 
@@ -24,9 +25,14 @@ data "cloudflare_api_shield" "example_api_shield" {
 
 - `zone_id` (String) Identifier.
 
+### Optional
+
+- `normalize` (Boolean) Ensures that the configuration is written or retrieved in normalized fashion
+
 ### Read-Only
 
 - `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
+- `id` (String) Identifier.
 
 <a id="nestedatt--auth_id_characteristics"></a>
 ### Nested Schema for `auth_id_characteristics`

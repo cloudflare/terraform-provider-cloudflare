@@ -26,4 +26,7 @@ resource "cloudflare_authenticated_origin_pulls_settings" "example_authenticated
 - `enabled` (Boolean) Indicates whether zone-level authenticated origin pulls is enabled.
 - `zone_id` (String) Identifier.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

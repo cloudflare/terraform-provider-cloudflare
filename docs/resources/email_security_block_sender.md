@@ -48,3 +48,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_email_security_block_sender.example '<account_id>/<pattern_id>'
 ```
+
+

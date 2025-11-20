@@ -51,6 +51,7 @@ generated and signed at request time.
 See [DNSSEC with NSEC3](https://developers.cloudflare.com/dns/dnssec/enable-nsec3/) for details.
 - `ds` (String) Full DS record.
 - `flags` (Number) Flag for DNSSEC record.
+- `id` (String) Identifier.
 - `key_tag` (Number) Code for key tag.
 - `key_type` (String) Algorithm key type.
 - `modified_on` (String) When DNSSEC was last modified.

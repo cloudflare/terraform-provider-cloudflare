@@ -37,6 +37,7 @@ data "cloudflare_zero_trust_access_tags" "example_zero_trust_access_tags" {
 
 Read-Only:
 
+- `id` (String) The name of the tag
 - `name` (String) The name of the tag
 
 

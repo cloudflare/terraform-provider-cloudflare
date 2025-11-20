@@ -25,11 +25,8 @@ data "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
 ### Required
 
 - `account_id` (String) Identifier
-- `site_id` (String) Identifier
-
-### Optional
-
 - `acl_id` (String) Identifier
+- `site_id` (String) Identifier
 
 ### Read-Only
 

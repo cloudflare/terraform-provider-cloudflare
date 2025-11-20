@@ -28,7 +28,7 @@ data "cloudflare_email_routing_settings" "example_email_routing_settings" {
 
 - `created` (String) The date and time the settings have been created.
 - `enabled` (Boolean) State of the zone settings for Email Routing.
-- `id` (String) Email Routing settings identifier.
+- `id` (String) Identifier.
 - `modified` (String) The date and time the settings have been modified.
 - `name` (String) Domain of your zone.
 - `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.

@@ -39,4 +39,7 @@ Required:
 - `enabled` (Boolean)
 - `risk_level` (String) Available values: "low", "medium", "high".
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

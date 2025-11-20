@@ -35,4 +35,7 @@ resource "cloudflare_leaked_credential_check_rule" "example_leaked_credential_ch
 
 - `id` (String) Defines the unique ID for this custom detection.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

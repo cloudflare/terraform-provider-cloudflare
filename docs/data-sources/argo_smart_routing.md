@@ -27,7 +27,7 @@ data "cloudflare_argo_smart_routing" "example_argo_smart_routing" {
 ### Read-Only
 
 - `editable` (Boolean) Specifies if the setting is editable.
-- `id` (String) Specifies the identifier of the Argo Smart Routing setting.
+- `id` (String) Specifies the zone associated with the API call.
 - `modified_on` (String) Specifies the time when the setting was last modified.
 - `value` (String) Specifies the enablement value of Argo Smart Routing.
 Available values: "on", "off".

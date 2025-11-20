@@ -18,12 +18,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
   ai_context_enabled = true
   allowed_match_count = 5
   confidence_threshold = "confidence_threshold"
-  context_awareness = {
-    enabled = true
-    skip = {
-      files = true
-    }
-  }
+  enabled_entries = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
   entries = [{
     id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
     enabled = true
@@ -45,36 +40,15 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number)
 - `confidence_threshold` (String)
-- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `enabled_entries` (List of String)
 - `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
 - `ocr_enabled` (Boolean)
 
 ### Read-Only
 
-- `created_at` (String) When the profile was created.
-- `description` (String) The description of the profile.
-- `id` (String) The id of the profile (uuid).
-- `name` (String) The name of the profile.
+- `id` (String) The ID of this resource.
+- `name` (String) The name of the predefined profile.
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `type` (String) Available values: "custom", "predefined", "integration".
-- `updated_at` (String) When the profile was lasted updated.
-
-<a id="nestedatt--context_awareness"></a>
-### Nested Schema for `context_awareness`
-
-Required:
-
-- `enabled` (Boolean) If true, scan the context of predefined entries to only return matches surrounded by keywords.
-- `skip` (Attributes) Content types to exclude from context analysis and return all matches. (see [below for nested schema](#nestedatt--context_awareness--skip))
-
-<a id="nestedatt--context_awareness--skip"></a>
-### Nested Schema for `context_awareness.skip`
-
-Required:
-
-- `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
-
-
 
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`
@@ -91,3 +65,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_dlp_predefined_profile.example '<account_id>/<profile_id>'
 ```
+
+

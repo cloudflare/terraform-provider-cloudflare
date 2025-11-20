@@ -66,4 +66,7 @@ Optional:
 
 - `headers` (List of String) Specifies the value for the Access-Control-Allow-Headers header R2 sets when requesting objects in this bucket from a browser. Cross-origin requests that include custom headers (e.g. x-user-id) should specify these headers as AllowedHeaders.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

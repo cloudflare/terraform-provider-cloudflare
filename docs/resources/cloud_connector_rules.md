@@ -72,3 +72,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_cloud_connector_rules.example '<zone_id>'
 ```
+
+

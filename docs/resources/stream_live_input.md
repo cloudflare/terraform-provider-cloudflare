@@ -124,4 +124,7 @@ Read-Only:
 
 - `url` (String, Sensitive) The URL used to play live video over WebRTC.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

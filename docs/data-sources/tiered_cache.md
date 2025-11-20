@@ -27,8 +27,7 @@ data "cloudflare_tiered_cache" "example_tiered_cache" {
 ### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable.
-- `id` (String) The identifier of the caching setting.
-Available values: "tiered_cache_smart_topology_enable".
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 - `value` (String) Value of the Smart Tiered Cache zone setting.
 Available values: "on", "off".

@@ -26,13 +26,13 @@ data "cloudflare_worker_version" "example_worker_version" {
 ### Required
 
 - `account_id` (String) Identifier.
+- `version_id` (String) Identifier for the version, which can be ID or the literal "latest" to operate on the most recently created version.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
 - `include` (String) Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.
 Available values: "modules".
-- `version_id` (String) Identifier for the version, which can be ID or the literal "latest" to operate on the most recently created version.
 
 ### Read-Only
 

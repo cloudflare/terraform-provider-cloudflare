@@ -28,6 +28,7 @@ data "cloudflare_zone_hold" "example_zone_hold" {
 
 - `hold` (Boolean)
 - `hold_after` (String)
+- `id` (String) Identifier.
 - `include_subdomains` (String)
 
 

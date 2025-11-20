@@ -23,11 +23,11 @@ data "cloudflare_load_balancer" "example_load_balancer" {
 
 ### Required
 
+- `load_balancer_id` (String)
 - `zone_id` (String)
 
 ### Optional
 
-- `load_balancer_id` (String)
 - `pop_pools` (Map of List of String) Enterprise only: A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
 - `region_pools` (Map of List of String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
 

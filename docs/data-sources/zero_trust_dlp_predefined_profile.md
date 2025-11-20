@@ -29,35 +29,14 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 ### Read-Only
 
 - `ai_context_enabled` (Boolean)
-- `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
-- `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
-- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
-- `created_at` (String) When the profile was created.
-- `description` (String) The description of the profile.
-- `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
-- `id` (String) The id of the profile (uuid).
-- `name` (String) The name of the profile.
+- `allowed_match_count` (Number)
+- `confidence_threshold` (String)
+- `enabled_entries` (List of String)
+- `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
+- `id` (String) The ID of this resource.
+- `name` (String) The name of the predefined profile.
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `type` (String) Available values: "custom", "predefined", "integration".
-- `updated_at` (String) When the profile was lasted updated.
-
-<a id="nestedatt--context_awareness"></a>
-### Nested Schema for `context_awareness`
-
-Read-Only:
-
-- `enabled` (Boolean) If true, scan the context of predefined entries to only return matches surrounded by keywords.
-- `skip` (Attributes) Content types to exclude from context analysis and return all matches. (see [below for nested schema](#nestedatt--context_awareness--skip))
-
-<a id="nestedatt--context_awareness--skip"></a>
-### Nested Schema for `context_awareness.skip`
-
-Read-Only:
-
-- `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
-
-
 
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`

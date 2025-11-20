@@ -49,10 +49,10 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `description` (String) The description of the profile.
-- `entries` (Attributes List, Deprecated) Custom entries from this profile.
+- `entries` (Attributes Set, Deprecated) Custom entries from this profile.
 If this field is omitted, entries owned by this profile will not be changed. (see [below for nested schema](#nestedatt--entries))
 - `ocr_enabled` (Boolean)
-- `shared_entries` (Attributes List) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--shared_entries))
+- `shared_entries` (Attributes Set) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--shared_entries))
 
 ### Read-Only
 
@@ -121,3 +121,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_dlp_custom_profile.example '<account_id>/<profile_id>'
 ```
+
+

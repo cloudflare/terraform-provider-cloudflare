@@ -41,4 +41,7 @@ Available values: "none", "log", "block".
   - `null` - clears any existing override
 Available values: "none".
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

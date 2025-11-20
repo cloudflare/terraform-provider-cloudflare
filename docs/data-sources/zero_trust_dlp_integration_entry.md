@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_dlp_integration_entry" "example_zero_trust_dlp_integ
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `entry_id` (String)
 
 ### Read-Only

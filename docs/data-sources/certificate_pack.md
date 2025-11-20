@@ -26,4 +26,8 @@ data "cloudflare_certificate_pack" "example_certificate_pack" {
 - `certificate_pack_id` (String) Identifier.
 - `zone_id` (String) Identifier.
 
+### Read-Only
+
+- `id` (String) Identifier.
+
 

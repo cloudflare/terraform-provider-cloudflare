@@ -28,6 +28,7 @@ data "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
 
 ### Read-Only
 
+- `id` (String) Identifier
 - `route` (Attributes) (see [below for nested schema](#nestedatt--route))
 
 <a id="nestedatt--route"></a>

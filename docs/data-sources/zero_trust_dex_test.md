@@ -24,10 +24,10 @@ data "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 ### Required
 
 - `account_id` (String)
+- `dex_test_id` (String) The unique identifier for the test.
 
 ### Optional
 
-- `dex_test_id` (String) The unique identifier for the test.
 - `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 
 ### Read-Only

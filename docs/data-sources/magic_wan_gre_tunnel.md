@@ -29,6 +29,7 @@ data "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 ### Read-Only
 
 - `gre_tunnel` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel))
+- `id` (String) Identifier
 
 <a id="nestedatt--gre_tunnel"></a>
 ### Nested Schema for `gre_tunnel`

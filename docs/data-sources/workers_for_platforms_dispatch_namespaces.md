@@ -39,6 +39,7 @@ Read-Only:
 
 - `created_by` (String) Identifier.
 - `created_on` (String) When the script was created.
+- `id` (String) Name of the Workers for Platforms dispatch namespace.
 - `modified_by` (String) Identifier.
 - `modified_on` (String) When the script was last modified.
 - `namespace_id` (String) API Resource UUID tag.

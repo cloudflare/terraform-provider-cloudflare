@@ -32,6 +32,7 @@ data "cloudflare_email_routing_dns" "example_email_routing_dns" {
 ### Read-Only
 
 - `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
+- `id` (String) Identifier.
 - `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `result` (Attributes) (see [below for nested schema](#nestedatt--result))
 - `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))

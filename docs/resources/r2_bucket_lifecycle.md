@@ -138,4 +138,7 @@ Optional:
 - `date` (String)
 - `max_age` (Number)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

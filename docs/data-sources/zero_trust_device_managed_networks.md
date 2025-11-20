@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_device_managed_networks" "example_zero_trust_device_
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `network_id` (String) API UUID.
 
 ### Read-Only

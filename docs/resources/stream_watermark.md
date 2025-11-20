@@ -49,4 +49,7 @@ resource "cloudflare_stream_watermark" "example_stream_watermark" {
 - `uid` (String) The unique identifier for a watermark profile.
 - `width` (Number) The width of the image in pixels.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

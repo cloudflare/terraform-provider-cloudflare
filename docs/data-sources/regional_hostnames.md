@@ -39,6 +39,7 @@ Read-Only:
 
 - `created_on` (String) When the regional hostname was created
 - `hostname` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
+- `id` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
 - `region_key` (String) Identifying key for the region
 - `routing` (String) Configure which routing method to use for the regional hostname
 

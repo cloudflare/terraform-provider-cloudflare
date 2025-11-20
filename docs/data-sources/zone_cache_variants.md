@@ -27,8 +27,7 @@ data "cloudflare_zone_cache_variants" "example_zone_cache_variants" {
 ### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable.
-- `id` (String) The identifier of the caching setting.
-Available values: "variants".
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 - `value` (Attributes) Value of the zone setting. (see [below for nested schema](#nestedatt--value))
 

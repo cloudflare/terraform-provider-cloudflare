@@ -41,6 +41,7 @@ data "cloudflare_schema_validation_schemas_list" "example_schema_validation_sche
 Read-Only:
 
 - `created_at` (String)
+- `id` (String) A unique identifier of this schema
 - `kind` (String) The kind of the schema
 Available values: "openapi_v3".
 - `name` (String) A human-readable name for the schema

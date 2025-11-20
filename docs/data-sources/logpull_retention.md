@@ -27,5 +27,6 @@ data "cloudflare_logpull_retention" "example_logpull_retention" {
 ### Read-Only
 
 - `flag` (Boolean) The log retention flag for Logpull API.
+- `id` (String) Identifier.
 
 

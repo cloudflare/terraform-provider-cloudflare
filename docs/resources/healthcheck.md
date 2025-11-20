@@ -109,3 +109,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_healthcheck.example '<zone_id>/<healthcheck_id>'
 ```
+
+

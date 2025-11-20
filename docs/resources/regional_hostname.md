@@ -45,3 +45,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_regional_hostname.example '<zone_id>/<hostname>'
 ```
+
+

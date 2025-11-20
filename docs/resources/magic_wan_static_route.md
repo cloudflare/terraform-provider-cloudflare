@@ -63,3 +63,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_magic_wan_static_route.example '<account_id>/<route_id>'
 ```
+
+

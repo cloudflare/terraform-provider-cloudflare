@@ -36,6 +36,7 @@ Available values: "off", "policy_only".
 Available values: "enabled", "disabled".
 - `enable_js` (Boolean) Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).
 - `fight_mode` (Boolean) Whether to enable Bot Fight Mode.
+- `id` (String) Identifier.
 - `is_robots_txt_managed` (Boolean) Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.
 - `optimize_wordpress` (Boolean) Whether to optimize Super Bot Fight Mode protections for Wordpress.
 - `sbfm_definitely_automated` (String) Super Bot Fight Mode (SBFM) action to take on definitely automated requests.

@@ -93,4 +93,7 @@ resource "cloudflare_authenticated_origin_pulls_certificate" "example_authentica
 Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `uploaded_on` (String) This is the time the certificate was uploaded.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

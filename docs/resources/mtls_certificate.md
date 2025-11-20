@@ -60,3 +60,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_mtls_certificate.example '<account_id>/<mtls_certificate_id>'
 ```
+
+

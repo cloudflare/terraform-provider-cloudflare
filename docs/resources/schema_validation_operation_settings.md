@@ -34,4 +34,7 @@ Available values: "log", "block", "none".
 - `operation_id` (String) UUID.
 - `zone_id` (String) Identifier.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

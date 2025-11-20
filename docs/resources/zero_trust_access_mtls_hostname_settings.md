@@ -49,4 +49,7 @@ Required:
 - `client_certificate_forwarding` (Boolean) Client Certificate Forwarding is a feature that takes the client cert provided by the eyeball to the edge, and forwards it to the origin as a HTTP header to allow logging on the origin.
 - `hostname` (String) The hostname that these settings apply to.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

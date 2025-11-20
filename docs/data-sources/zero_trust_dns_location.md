@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" {
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `location_id` (String)
 
 ### Read-Only

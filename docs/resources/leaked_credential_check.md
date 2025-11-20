@@ -29,4 +29,7 @@ resource "cloudflare_leaked_credential_check" "example_leaked_credential_check" 
 
 - `enabled` (Boolean) Determines whether or not Leaked Credential Checks are enabled.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

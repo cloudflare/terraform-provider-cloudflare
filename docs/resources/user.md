@@ -56,4 +56,7 @@ Read-Only:
 - `status` (String) Whether the user is a member of the organization or has an invitation pending.
 Available values: "member", "invited".
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

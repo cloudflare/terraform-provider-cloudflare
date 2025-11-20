@@ -26,4 +26,7 @@ resource "cloudflare_stream_webhook" "example_stream_webhook" {
 - `account_id` (String) The account identifier tag.
 - `notification_url` (String) The URL where webhooks will be sent.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

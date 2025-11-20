@@ -33,7 +33,6 @@ data "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_a
 - `created` (String) Defines the asset creation time.
 - `description` (String) Asset description.
 - `file_type` (String) Asset file type.
-- `id` (Number) Asset ID.
 - `name` (String) Asset name.
 
 

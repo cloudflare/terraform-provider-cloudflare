@@ -44,6 +44,7 @@ Read-Only:
 - `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--result--data))
 - `description` (String) Additional details about the test.
 - `enabled` (Boolean) Determines whether or not the test is active.
+- `id` (String) The unique identifier for the test.
 - `interval` (String) How often the test will run.
 - `name` (String) The name of the DEX test. Must be unique.
 - `targeted` (Boolean)

@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_post
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `rule_id` (String) API UUID.
 
 ### Read-Only
@@ -78,7 +75,7 @@ Available values: "<", "<=", ">", ">=", "==".
 - `os` (String) Os Version.
 - `os_distro_name` (String) Operating System Distribution Name (linux only).
 - `os_distro_revision` (String) Version of OS Distribution (linux only).
-- `os_version_extra` (String) Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the distribution name and version. (Mac, iOS, and Linux only).
+- `os_version_extra` (String) Additional operating system version details. For Windows, the UBR (Update Build Revision). For Mac or iOS, the Product Version Extra. For Linux, the distribution name and version.
 - `overall` (String) Overall.
 - `path` (String) File path.
 - `require_all` (Boolean) Whether to check all disks for encryption.

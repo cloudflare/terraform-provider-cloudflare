@@ -27,6 +27,7 @@ data "cloudflare_zero_trust_access_key_configuration" "example_zero_trust_access
 ### Read-Only
 
 - `days_until_next_rotation` (Number) The number of days until the next key rotation.
+- `id` (String) Identifier.
 - `key_rotation_interval_days` (Number) The number of days between key rotations.
 - `last_key_rotation_at` (String) The timestamp of the previous key rotation.
 

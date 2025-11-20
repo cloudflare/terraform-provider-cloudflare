@@ -35,7 +35,7 @@ data "cloudflare_pages_project" "example_pages_project" {
 - `domains` (List of String) A list of associated custom domains for the project.
 - `framework` (String) Framework the project is using.
 - `framework_version` (String) Version of the framework the project is using.
-- `id` (String) ID of the project.
+- `id` (String) Name of the project.
 - `latest_deployment` (Attributes) Most recent deployment of the project. (see [below for nested schema](#nestedatt--latest_deployment))
 - `name` (String) Name of the project.
 - `preview_script_name` (String) Name of the preview script.

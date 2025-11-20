@@ -34,4 +34,7 @@ resource "cloudflare_organization_profile" "example_organization_profile" {
 - `external_metadata` (String)
 - `organization_id` (String)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

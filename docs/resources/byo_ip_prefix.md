@@ -14,9 +14,10 @@ description: |-
 ```terraform
 resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
   account_id = "258def64c72dae45f3e4c8516e2111f2"
-  asn = 209242
+  asn = 13335
   cidr = "192.0.2.0/24"
-  loa_document_id = "d933b1530bc56c9953cf8ce166da8004"
+  delegate_loa_creation = true
+  description = "Internal test prefix"
 }
 ```
 
@@ -28,10 +29,10 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 - `account_id` (String) Identifier of a Cloudflare account.
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `loa_document_id` (String) Identifier for the uploaded LOA document.
 
 ### Optional
 
+- `delegate_loa_creation` (Boolean) Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.
 - `description` (String) Description of the prefix.
 
 ### Read-Only
@@ -41,9 +42,14 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
 - `created_at` (String)
 - `id` (String) Identifier of an IP Prefix.
+- `irr_validation_state` (String) State of one kind of validation for an IP prefix.
+- `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean, Deprecated) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
 - `on_demand_locked` (Boolean, Deprecated) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
+- `ownership_validation_state` (String) State of one kind of validation for an IP prefix.
+- `ownership_validation_token` (String) Token provided to demonstrate ownership of the prefix.
+- `rpki_validation_state` (String) State of one kind of validation for an IP prefix.
 
 ## Import
 
@@ -52,3 +58,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_byo_ip_prefix.example '<account_id>/<prefix_id>'
 ```
+
+

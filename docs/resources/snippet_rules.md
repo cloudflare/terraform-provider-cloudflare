@@ -49,4 +49,7 @@ Read-Only:
 - `id` (String) The unique ID of the rule.
 - `last_updated` (String) The timestamp of when the rule was last modified.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

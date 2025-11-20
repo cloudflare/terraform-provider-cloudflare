@@ -26,7 +26,7 @@ data "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) Identifier.
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 
 <a id="nestedatt--rules"></a>

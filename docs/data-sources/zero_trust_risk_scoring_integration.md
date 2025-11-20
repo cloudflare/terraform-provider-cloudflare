@@ -24,9 +24,6 @@ data "cloudflare_zero_trust_risk_scoring_integration" "example_zero_trust_risk_s
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `integration_id` (String)
 
 ### Read-Only

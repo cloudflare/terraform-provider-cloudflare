@@ -24,9 +24,6 @@ data "cloudflare_dns_zone_transfers_peer" "example_dns_zone_transfers_peer" {
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `peer_id` (String)
 
 ### Read-Only

@@ -26,6 +26,7 @@ data "cloudflare_managed_transforms" "example_managed_transforms" {
 
 ### Read-Only
 
+- `id` (String) The unique ID of the zone.
 - `managed_request_headers` (Attributes List) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
 - `managed_response_headers` (Attributes List) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
 

@@ -24,9 +24,6 @@ data "cloudflare_queue" "example_queue" {
 ### Required
 
 - `account_id` (String) A Resource identifier.
-
-### Optional
-
 - `queue_id` (String) A Resource identifier.
 
 ### Read-Only

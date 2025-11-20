@@ -31,4 +31,7 @@ Available values: "enabled", "disabled".
 
 - `modified` (String) Defines the last modification date (ISO 8601) of the Content Scanning status.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

@@ -65,4 +65,7 @@ Optional:
 - `date` (String)
 - `max_age_seconds` (Number)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

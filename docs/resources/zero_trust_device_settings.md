@@ -37,4 +37,7 @@ resource "cloudflare_zero_trust_device_settings" "example_zero_trust_device_sett
 - `root_certificate_installation_enabled` (Boolean) Enable installation of cloudflare managed root certificate.
 - `use_zt_virtual_ip` (Boolean) Enable using CGNAT virtual IPv4.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

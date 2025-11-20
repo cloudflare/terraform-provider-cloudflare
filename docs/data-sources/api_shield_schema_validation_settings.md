@@ -26,6 +26,7 @@ data "cloudflare_api_shield_schema_validation_settings" "example_api_shield_sche
 
 ### Read-Only
 
+- `id` (String) Identifier.
 - `validation_default_mitigation_action` (String) The default mitigation action used when there is no mitigation action defined on the operation
 
 Mitigation actions are as follows:

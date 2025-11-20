@@ -44,11 +44,16 @@ Read-Only:
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
 - `created_at` (String)
+- `delegate_loa_creation` (Boolean) Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.
 - `description` (String) Description of the prefix.
 - `id` (String) Identifier of an IP Prefix.
+- `irr_validation_state` (String) State of one kind of validation for an IP prefix.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean, Deprecated) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
 - `on_demand_locked` (Boolean, Deprecated) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
+- `ownership_validation_state` (String) State of one kind of validation for an IP prefix.
+- `ownership_validation_token` (String) Token provided to demonstrate ownership of the prefix.
+- `rpki_validation_state` (String) State of one kind of validation for an IP prefix.
 
 
