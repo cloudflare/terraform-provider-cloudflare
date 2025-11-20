@@ -381,7 +381,8 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 
 		// For Data field (CAA, LOC, etc records), check if it actually changed
 		if (plan.Data == nil) != (state.Data == nil) {
-			// One has data, the other doesn't - this is a change
+			hasChanges = true
+		} else if plan.Data != nil && state.Data != nil && !plan.Data.Equal(state.Data) {
 			hasChanges = true
 		}
 		// Note: If both have data, the contentChanged check above already covers it
@@ -390,7 +391,7 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		// Check settings changes - treat empty object as equivalent to null
 		planSettingsEmpty := plan.Settings.IsNull() || plan.Settings.IsUnknown()
 		stateSettingsEmpty := state.Settings.IsNull() || state.Settings.IsUnknown()
-		
+
 		// Check if plan settings is an empty object {}
 		if !plan.Settings.IsNull() && !plan.Settings.IsUnknown() {
 			var planSettingsData DNSRecordSettingsModel
@@ -404,8 +405,8 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 				}
 			}
 		}
-		
-		// Only consider it a change if one is empty and the other is not, 
+
+		// Only consider it a change if one is empty and the other is not,
 		// or if both are non-empty and different
 		if !planSettingsEmpty && !stateSettingsEmpty {
 			hasChanges = hasChanges || !plan.Settings.Equal(state.Settings)
@@ -439,7 +440,7 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		}
 
 		// Handle modified_on: preserve from state if no actual changes
-		// This prevents "inconsistent result after apply" errors when nothing changed
+		// This prevents showing as "known after apply" when nothing changed
 		if plan.ModifiedOn.IsUnknown() {
 			if !hasChanges {
 				// No actual changes, preserve modified_on from state
