@@ -236,6 +236,21 @@ func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
+				Config: testCloudflareZoneSettingConfigCiphersEmpty(rnd, zoneID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("ciphers")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.ListSizeExact(0)),
+				},
+			},
+			// This will cause the panic due to #6363
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/ciphers", zoneID),
+			},
+			{
 				Config: testCloudflareZoneSettingConfigCiphers(rnd, zoneID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
@@ -333,6 +348,10 @@ func testCloudflareZoneSettingConfigMinTLSVersion(resourceID, zoneID string) str
 
 func testCloudflareZoneSettingConfigCiphers(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("ciphers.tf", resourceID, zoneID)
+}
+
+func testCloudflareZoneSettingConfigCiphersEmpty(resourceID, zoneID string) string {
+	return acctest.LoadTestCase("ciphers_empty.tf", resourceID, zoneID)
 }
 
 func testCloudflareZoneSettingEditableInconsistency(resourceID, zoneID, settingID, value string) string {
