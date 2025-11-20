@@ -1,3 +1,8 @@
+resource "cloudflare_workers_kv_namespace" "%[1]s_kv_namespace" {
+  account_id = "%[2]s"
+  title = "tfacctest-pages-project-kv-namespace"
+}
+
 resource "cloudflare_pages_project" "%[1]s" {
 	account_id = "%[2]s"
 	name = "%[3]s"
@@ -30,7 +35,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 			
 			kv_namespaces = {
 				KV_PREVIEW = {
-					namespace_id = "preview-kv-namespace-id"
+					namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv_namespace.id
 				}
 			}
 			
@@ -43,7 +48,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 			r2_buckets = {
 				R2_PREVIEW = {
 					name = "preview-bucket"
-					jurisdiction = "us"
+					jurisdiction = "eu"
 				}
 			}
 			
@@ -113,7 +118,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 			
 			kv_namespaces = {
 				KV_PROD = {
-					namespace_id = "prod-kv-namespace-id"
+					namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv_namespace.id
 				}
 			}
 			

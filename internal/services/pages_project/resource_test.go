@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -134,7 +135,6 @@ func testAccCheckCloudflarePageProjectDestroy(s *terraform.State) error {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -182,7 +182,6 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -220,7 +219,6 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -246,7 +244,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("TURNSTILE_SECRET").AtMapKey("value"), knownvalue.StringExact("1x0000000000000000000000000000000AA")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING").AtMapKey("namespace_id"), knownvalue.StringRegexp(regexp.MustCompile("^[0-9a-f]{32}$"))),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces"), knownvalue.MapSizeExact(1)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(1)),
@@ -272,8 +270,8 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_INVIS_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("TURNSTILE_INVIS_SECRET").AtMapKey("value"), knownvalue.StringExact("2x0000000000000000000000000000000AA")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(2)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_1").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_2").AtMapKey("namespace_id"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_1").AtMapKey("namespace_id"), knownvalue.StringRegexp(regexp.MustCompile("^[0-9a-f]{32}$"))),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces").AtMapKey("KV_BINDING_2").AtMapKey("namespace_id"), knownvalue.StringRegexp(regexp.MustCompile("^[0-9a-f]{32}$"))),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces"), knownvalue.MapSizeExact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_1").AtMapKey("namespace_id"), knownvalue.StringExact("5eb63bbbe01eeed093cb22bb8f5acdc3")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("DO_BINDING_2").AtMapKey("namespace_id"), knownvalue.StringExact("3cdca5f8bb22bc390deee10ebbb36be5")),
@@ -298,13 +296,17 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{
+					"deployment_configs.preview.env_vars.TURNSTILE_SECRET.value",
+					"deployment_configs.production.env_vars.TURNSTILE_SECRET.value",
+					"deployment_configs.production.env_vars.TURNSTILE_INVIS_SECRET.value",
+				},
 			},
 		},
 	})
 }
 
 func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -339,7 +341,6 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -358,8 +359,8 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
@@ -375,7 +376,7 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("yarn build")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
@@ -385,14 +386,15 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ImportStateVerifyIgnore: []string{"deployment_configs.production.env_vars.PROD_UPDATED.value"},
 			},
 		},
 	})
 }
 
 func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
+	t.Skip("FIXME: waiting on fixes to apijson.MarshalForPatch()")
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -409,7 +411,7 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 				Config: testPagesProjectUpdated(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
 				},
 			},
@@ -423,22 +425,21 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.Null()),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
 				},
 			},
 			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				// ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
 }
 func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -494,7 +495,7 @@ func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("vectorize_bindings"), knownvalue.MapSizeExact(1)),
 
 					// Placement
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("placement").AtSliceIndex(0).AtMapKey("mode"), knownvalue.StringExact("smart")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
 
 					// Production deployment configs
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-01-16")),
@@ -511,13 +512,15 @@ func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{
+					"deployment_configs.preview.env_vars.SECRET_KEY.value",
+				},
 			},
 		},
 	})
 }
 
 func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -556,7 +559,6 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
-	t.Skip("FIXME: waiting on upstream fixes to the Cloudflare Pages OpenAPI schema")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd

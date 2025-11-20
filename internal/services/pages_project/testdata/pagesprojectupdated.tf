@@ -4,7 +4,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 	production_branch = "develop"
 	
 	build_config = {
-		build_caching = false
+		build_caching = true
 		build_command = "yarn build"
 		destination_dir = "build"
 		root_dir = "/"
