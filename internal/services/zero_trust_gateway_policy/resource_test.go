@@ -61,14 +61,14 @@ func testSweepCloudflareZeroTrustGatewayPolicy(r string) error {
 
 	for _, rule := range rules {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Teams Rule: %s (%s)", rule.Name, rule.ID))
-		
+
 		err := client.TeamsDeleteRule(ctx, accountID, rule.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Teams Rule %s: %s", rule.ID, err))
 			failedCount++
 			continue
 		}
-		
+
 		deletedCount++
 		tflog.Info(ctx, fmt.Sprintf("Successfully deleted Teams Rule: %s", rule.ID))
 	}
@@ -554,7 +554,7 @@ func TestAccCloudflareTeamsRule_HTTP_Redirect(t *testing.T) {
 
 func TestAccCloudflareTeamsRule_HTTP_Quarantine(t *testing.T) {
 	// SKIP: Quarantine action requires account-level feature enablement
-	// 
+	//
 	// Investigation notes:
 	// - "quarantine" IS a valid action according to:
 	//   * Terraform provider schema (schema.go:56)
@@ -562,11 +562,11 @@ func TestAccCloudflareTeamsRule_HTTP_Quarantine(t *testing.T) {
 	//   * Provider documentation (shows quarantine examples)
 	// - API returns: 400 Bad Request "invalid action \"quarantine\"" (error code 2087)
 	// - Root cause: Test account lacks required feature enablement
-	// 
+	//
 	// Possible missing prerequisites:
 	// - Enterprise plan requirement
 	// - DLP (Data Loss Prevention) feature flag
-	// - Malware scanning feature enablement  
+	// - Malware scanning feature enablement
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -645,7 +645,6 @@ func TestAccCloudflareTeamsRule_HTTP_Scan(t *testing.T) {
 	})
 }
 
-
 func TestAccCloudflareTeamsRule_Egress(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -690,19 +689,20 @@ func TestAccCloudflareTeamsRule_Egress(t *testing.T) {
 
 // TestAccCloudflareTeamsRule_EgressDedicated - Test with dedicated IPs (DISABLED)
 func TestAccCloudflareTeamsRule_EgressDedicated(t *testing.T) {
+	t.Skip("Dedicated egress IPs require Enterprise plan purchase and configuration")
 	// SKIP: Dedicated egress IPs require Enterprise plan purchase and configuration
-	// 
+	//
 	// Investigation notes:
 	// - Egress action IS valid and supported by the API
 	// - API error: "Account doesn't own dedicated primary IPv4" (error code 2055)
 	// - Root cause: Test account lacks dedicated egress IP configuration
-	// 
+	//
 	// Dedicated egress IPs are:
 	// - Enterprise feature that must be purchased ($50/month per data center)
 	// - Assigned to specific Cloudflare data centers
 	// - Consist of IPv4 address + IPv6 range
 	// - Can be Cloudflare-provided or BYOIP (Bring Your Own IP)
-	// 
+	//
 	// Alternative: Basic egress policies work without dedicated IPs (use WARP IPs)
 	//
 	rnd := utils.GenerateRandomResourceName()
@@ -733,7 +733,6 @@ func TestAccCloudflareTeamsRule_EgressDedicated(t *testing.T) {
 		},
 	})
 }
-
 
 func TestAccCloudflareTeamsRule_SafeSearch(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
@@ -894,7 +893,6 @@ func TestAccCloudflareTeamsRule_UpdateToMaximal(t *testing.T) {
 	})
 }
 
-
 func TestAccCloudflareTeamsRule_DNS_ResolveInternal(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -927,7 +925,7 @@ func TestAccCloudflareTeamsRule_DNS_ResolveInternal(t *testing.T) {
 					// Verify the DNS view was created
 					statecheck.ExpectKnownValue(viewName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(viewName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-view", rnd))),
-					// Verify the rule settings use the view_id 
+					// Verify the rule settings use the view_id
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("resolve_dns_internally").AtMapKey("fallback"), knownvalue.StringExact("public_dns")),
 					// View ID should not be null - it should reference the created view
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("rule_settings").AtMapKey("resolve_dns_internally").AtMapKey("view_id"), knownvalue.NotNull()),
@@ -943,7 +941,6 @@ func TestAccCloudflareTeamsRule_DNS_ResolveInternal(t *testing.T) {
 		},
 	})
 }
-
 
 // Helper functions for test configurations
 func testAccCloudflareTeamsRuleConfigDnsOverride(rnd, accountID string) string {
