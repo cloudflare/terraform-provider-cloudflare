@@ -1266,7 +1266,6 @@ resource "cloudflare_list_item" "example" {
 - `ip_rules` is now a list of objects (`ip_rules = [{ ... }]`) instead of multiple block attribute (`ip_rules { ... }`).
 - `origin_request` is now a list of objects (`origin_request = [{ ... }]`) instead of multiple block attribute (`origin_request { ... }`).
 - `origin_request` is now a single nested attribute (`origin_request = { ... }`) instead of a block (`origin_request { ... }`).
-- `warp_routing` is now a single nested attribute (`warp_routing = { ... }`) instead of a block (`warp_routing { ... }`).
 
 ## cloudflare_waiting_room
 

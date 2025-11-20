@@ -93,11 +93,6 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 	}
 	data = &env.Result
 	data.ID = data.TunnelID
-	
-	// Set default for warp_routing_enabled if not set
-	if data.WARPRoutingEnabled.IsNull() {
-		data.WARPRoutingEnabled = types.BoolValue(false)
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -189,11 +184,6 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 	}
 	data = &env.Result
 	data.ID = data.TunnelID
-	
-	// Set default for warp_routing_enabled if not set
-	if data.WARPRoutingEnabled.IsNull() {
-		data.WARPRoutingEnabled = types.BoolValue(false)
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -134,7 +134,7 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateVerifyIgnore: []string{"config.warp_routing"},
+				ImportStateVerifyIgnore: []string{},
 			},
 		},
 	})
@@ -184,7 +184,7 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateVerifyIgnore: []string{"config.warp_routing"},
+				ImportStateVerifyIgnore: []string{},
 			},
 		},
 	})
@@ -235,7 +235,7 @@ func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateVerifyIgnore: []string{"config.warp_routing"},
+				ImportStateVerifyIgnore: []string{},
 			},
 		},
 	})
