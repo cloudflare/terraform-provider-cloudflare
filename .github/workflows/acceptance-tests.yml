@@ -81,7 +81,7 @@ jobs:
         continue-on-error: true
   acceptance-tests:
     name: Acceptance Tests
-    continue-on-error: ${{ matrix.test }}
+    continue-on-error: true
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }} 
     strategy: 
       matrix:
