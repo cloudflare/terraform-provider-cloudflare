@@ -106,7 +106,7 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -140,7 +140,7 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 			{
 				PreConfig: func() {
 					client := acctest.SharedClient()
-					result, err := client.Workers.Scripts.Settings.Edit(context.Background(), rnd, workers.ScriptSettingEditParams{AccountID: cloudflare.F(accountID), ScriptSetting: workers.ScriptSettingParam{Logpush: cloudflare.Bool(true)}})
+					result, err := client.Workers.Scripts.Settings.Edit(context.Background(), resourceName, workers.ScriptSettingEditParams{AccountID: cloudflare.F(accountID), ScriptSetting: workers.ScriptSettingParam{Logpush: cloudflare.Bool(true)}})
 					if err != nil {
 						t.Errorf("Error updating script settings out-of-band to test drift detection: %s", err)
 					}
@@ -173,7 +173,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -230,7 +230,7 @@ func TestAcc_WorkerScriptWithContentFile(t *testing.T) {
 	t.Parallel()
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tmpDir := t.TempDir()
 	contentFile := path.Join(tmpDir, "worker.mjs")
@@ -384,7 +384,7 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -416,7 +416,7 @@ func TestAcc_WorkerScriptWithAssets(t *testing.T) {
 	t.Parallel()
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
-	name := "cloudflare_workers_script." + rnd
+	name := "cloudflare_workers_script." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	assetsDir := t.TempDir()
 	assetFile := path.Join(assetsDir, "index.html")
