@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -405,4 +406,15 @@ func UnknownOnlyIf(siblingName string, triggerValue string) planmodifier.String 
 		conditionAttributeName: siblingName,
 		triggerValue:           types.StringValue(triggerValue),
 	}
+}
+
+func RequiresReplaceIfStateValueExists() planmodifier.String {
+	description := "Requires replacement if the state value is not null or unknown."
+	return stringplanmodifier.RequiresReplaceIf(
+		func(ctx context.Context, req planmodifier.StringRequest, res *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+			res.RequiresReplace = !req.StateValue.IsNull() && !req.StateValue.IsUnknown()
+		},
+		description,
+		description,
+	)
 }

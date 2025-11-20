@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
@@ -75,6 +76,20 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tail_consumers"), knownvalue.SetExact([]knownvalue.Check{})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Import using an import block and assert there are no changes
+				// reported in the import plan.
+				Config:              testAccCloudflareWorkerConfigUpdate(rnd, accountID),
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateKind:     resource.ImportBlockWithID,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
 				},
 			},
 			{

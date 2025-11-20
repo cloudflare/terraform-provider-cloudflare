@@ -175,14 +175,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"content_file": schema.StringAttribute{
 							Description: "The file path of the module content.",
 							Required:    true,
+							PlanModifiers: []planmodifier.String{
+								RequiresReplaceIfStateValueExists(),
+							},
 						},
 						"content_type": schema.StringAttribute{
 							Description: "The content type of the module.",
 							Required:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the module.",
 							Required:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 						"content_sha256": schema.StringAttribute{
 							Description: "The SHA-256 hash of the module content.",
@@ -194,7 +203,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Placement settings for the version.",
