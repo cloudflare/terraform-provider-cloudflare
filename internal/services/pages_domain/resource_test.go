@@ -53,8 +53,8 @@ func TestAccCloudflarePagesDomain(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("project_name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(fullDomain)),
 				},
-				Check:              testAccCheckCloudflarePagesDomainExists(name, accountID, rnd, fullDomain),
-				ExpectNonEmptyPlan: true,
+				Check: testAccCheckCloudflarePagesDomainExists(name, accountID, rnd, fullDomain),
+				// ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:        name,

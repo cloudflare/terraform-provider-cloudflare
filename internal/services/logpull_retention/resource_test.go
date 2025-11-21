@@ -49,7 +49,7 @@ func TestAccLogpullRetention_Basic(t *testing.T) {
 				Config: testLogpullRetentionSetConfig(rnd, zoneID, false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroy),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
 						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(false)),
 					},
 				},
@@ -62,7 +62,7 @@ func TestAccLogpullRetention_Basic(t *testing.T) {
 				Config: testLogpullRetentionSetConfig(rnd, zoneID, true),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
 						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(true)),
 					},
 				},

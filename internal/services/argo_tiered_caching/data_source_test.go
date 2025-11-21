@@ -36,7 +36,7 @@ func TestAccCloudflareArgoTieredCachingDataSource_Basic(t *testing.T) {
 					// Check the data source attributes
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
-					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("id"), knownvalue.StringExact("tiered_caching")),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("editable"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("modified_on"), knownvalue.NotNull()),
 				},

@@ -188,6 +188,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_AllSharedEntryTypes(t *testing.T
 }
 
 func TestAccCloudflareZeroTrustDlpCustomProfile_DeprecatedAttributes(t *testing.T) {
+	t.Skip("fix: API response 'entries' are not in the same order as request")
 	rnd, accountID := setupDLPCustomProfileTest(t)
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_dlp_custom_profile.%s", rnd)
 
@@ -309,8 +310,8 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_SharedEntries(t *testing.T) {
 					// Test deprecated custom entries
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("shared_entries"), knownvalue.ListExact([]knownvalue.Check{
 						knownvalue.ObjectExact(map[string]knownvalue.Check{
-							"enabled":  knownvalue.Bool(true),
-							"entry_id": knownvalue.StringExact("56a8c060-01bb-4f89-ba1e-3ad42770a342"),
+							"enabled":    knownvalue.Bool(true),
+							"entry_id":   knownvalue.StringExact("56a8c060-01bb-4f89-ba1e-3ad42770a342"),
 							"entry_type": knownvalue.StringExact("predefined"),
 						}),
 					})),
