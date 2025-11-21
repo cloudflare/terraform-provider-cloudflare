@@ -41,4 +41,7 @@ resource "cloudflare_stream_audio_track" "example_stream_audio_track" {
 Available values: "queued", "ready", "error".
 - `uid` (String) A Cloudflare-generated unique identifier for a media item.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

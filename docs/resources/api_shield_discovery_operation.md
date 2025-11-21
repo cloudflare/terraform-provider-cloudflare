@@ -38,4 +38,7 @@ Available values: "review", "ignored".
 
 - `id` (String) UUID.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

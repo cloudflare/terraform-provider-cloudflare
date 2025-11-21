@@ -18,7 +18,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"peer_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,

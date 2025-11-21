@@ -23,11 +23,8 @@ data "cloudflare_waiting_room" "example_waiting_room" {
 
 ### Required
 
-- `zone_id` (String) Identifier.
-
-### Optional
-
 - `waiting_room_id` (String)
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

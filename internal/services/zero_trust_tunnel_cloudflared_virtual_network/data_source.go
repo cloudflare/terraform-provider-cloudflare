@@ -113,6 +113,7 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworkDataSource) Read(ctx context.Co
 		return
 	}
 	data = &env.Result
+	data.ID = data.VirtualNetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

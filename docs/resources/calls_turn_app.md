@@ -37,4 +37,7 @@ resource "cloudflare_calls_turn_app" "example_calls_turn_app" {
 - `modified` (String) The date and time the item was last modified.
 - `uid` (String) A Cloudflare-generated unique identifier for a item.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

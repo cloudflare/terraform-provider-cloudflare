@@ -51,6 +51,7 @@ Available values: "no_clearance", "jschallenge", "managed", "interactive".
 - `created_on` (String) When the widget was created.
 - `domains` (List of String)
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
+- `id` (String) Widget item identifier tag.
 - `mode` (String) Widget Mode
 Available values: "non-interactive", "invisible", "managed".
 - `modified_on` (String) When the widget was modified.

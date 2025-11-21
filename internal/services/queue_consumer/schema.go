@@ -30,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"consumer_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
-				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"dead_letter_queue": schema.StringAttribute{

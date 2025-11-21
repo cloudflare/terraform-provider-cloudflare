@@ -50,6 +50,7 @@ Read-Only:
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--result--fallback_domains))
 - `gateway_unique_id` (String)
+- `id` (String)
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--result--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.

@@ -9,6 +9,9 @@ description: |-
 
 
 
+~> `cloudflare_api_shield_schema_validation_settings` is in a deprecation phase and will be removed in the future.
+  Instead, please utilize the [cloudflare_schema_validation_settings](./schema_validation_settings) resource instead.
+
 ## Example Usage
 
 ```terraform

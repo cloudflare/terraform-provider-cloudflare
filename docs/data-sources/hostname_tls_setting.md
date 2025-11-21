@@ -31,6 +31,8 @@ Available values: "ciphers", "min_tls_version", "http2".
 
 - `created_at` (String) This is the time the tls setting was originally created for this hostname.
 - `hostname` (String) The hostname for which the tls settings are set.
+- `id` (String) The TLS Setting name.
+Available values: "ciphers", "min_tls_version", "http2".
 - `status` (String) Deployment status for the given tls setting.
 - `updated_at` (String) This is the time the tls setting was updated.
 - `value` (Number) The tls setting value.

@@ -24,9 +24,6 @@ data "cloudflare_mtls_certificate" "example_mtls_certificate" {
 ### Required
 
 - `account_id` (String) Identifier.
-
-### Optional
-
 - `mtls_certificate_id` (String) Identifier.
 
 ### Read-Only

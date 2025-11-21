@@ -76,3 +76,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_web_analytics_site.example '<account_id>/<site_id>'
 ```
+
+

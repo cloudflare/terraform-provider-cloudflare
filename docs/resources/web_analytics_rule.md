@@ -43,4 +43,7 @@ resource "cloudflare_web_analytics_rule" "example_web_analytics_rule" {
 - `id` (String) The Web Analytics rule identifier.
 - `priority` (Number)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

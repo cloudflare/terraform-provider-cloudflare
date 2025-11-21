@@ -139,7 +139,7 @@ Optional:
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
 Available values: "none", "404-page", "single-page-application".
-- `run_worker_first` (List of String) Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.
+- `run_worker_first` (Dynamic) When a boolean true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script. When a list of strings, contains path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.
 
 
 
@@ -285,9 +285,13 @@ Optional:
 
 Required:
 
-- `content_file` (String) The file path of the module content.
 - `content_type` (String) The content type of the module.
 - `name` (String) The name of the module.
+
+Optional:
+
+- `content_base64` (String) The base64-encoded module content.
+- `content_file` (String) The file path of the module content.
 
 Read-Only:
 
@@ -309,3 +313,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_worker_version.example '<account_id>/<worker_id>/<version_id>'
 ```
+
+

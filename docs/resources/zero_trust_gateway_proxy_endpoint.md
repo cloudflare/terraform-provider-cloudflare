@@ -14,8 +14,8 @@ description: |-
 ```terraform
 resource "cloudflare_zero_trust_gateway_proxy_endpoint" "example_zero_trust_gateway_proxy_endpoint" {
   account_id = "699d98642c564d2e855e9661899b7252"
-  ips = ["192.0.2.1/32"]
   name = "Devops team"
+  kind = "ip"
 }
 ```
 
@@ -25,8 +25,13 @@ resource "cloudflare_zero_trust_gateway_proxy_endpoint" "example_zero_trust_gate
 ### Required
 
 - `account_id` (String)
-- `ips` (List of String) Specify the list of CIDRs to restrict ingress connections.
 - `name` (String) Specify the name of the proxy endpoint.
+
+### Optional
+
+- `ips` (List of String) Specify the list of CIDRs to restrict ingress connections.
+- `kind` (String) The proxy endpoint kind
+Available values: "ip", "identity".
 
 ### Read-Only
 
@@ -42,3 +47,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_gateway_proxy_endpoint.example '<account_id>/<proxy_endpoint_id>'
 ```
+
+

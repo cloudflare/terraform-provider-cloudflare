@@ -50,7 +50,7 @@ resource "cloudflare_api_token" "example_api_token" {
 ### Required
 
 - `name` (String) Token name.
-- `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes Set) Set of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 
 ### Optional
 
@@ -76,11 +76,7 @@ Required:
 - `effect` (String) Allow or deny operations against the resources.
 Available values: "allow", "deny".
 - `permission_groups` (Attributes Set) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
-- `resources` (Map of String) A list of resource names that the policy applies to.
-
-Read-Only:
-
-- `id` (String) Policy identifier.
+- `resources` (String) A json object representing the resources that are specified to the policy.
 
 <a id="nestedatt--policies--permission_groups"></a>
 ### Nested Schema for `policies.permission_groups`
@@ -88,23 +84,6 @@ Read-Only:
 Required:
 
 - `id` (String) Identifier of the permission group.
-
-Optional:
-
-- `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--policies--permission_groups--meta))
-
-Read-Only:
-
-- `name` (String) Name of the permission group.
-
-<a id="nestedatt--policies--permission_groups--meta"></a>
-### Nested Schema for `policies.permission_groups.meta`
-
-Optional:
-
-- `key` (String)
-- `value` (String)
-
 
 
 
@@ -130,3 +109,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_api_token.example '<token_id>'
 ```
+
+

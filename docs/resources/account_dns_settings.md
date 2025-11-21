@@ -97,4 +97,7 @@ Optional:
 - `rname` (String) The email address of the zone administrator, with the first label representing the local part of the email address.
 - `ttl` (Number) The time to live (TTL) of the SOA record itself.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

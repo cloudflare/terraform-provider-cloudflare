@@ -24,9 +24,6 @@ data "cloudflare_dns_zone_transfers_acl" "example_dns_zone_transfers_acl" {
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `acl_id` (String)
 
 ### Read-Only

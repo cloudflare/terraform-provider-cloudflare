@@ -27,6 +27,7 @@ data "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_settin
 ### Read-Only
 
 - `created_at` (String)
+- `id` (String) The ID of this resource.
 - `settings` (Attributes) Specify account settings. (see [below for nested schema](#nestedatt--settings))
 - `updated_at` (String)
 

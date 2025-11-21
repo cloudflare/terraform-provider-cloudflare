@@ -42,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The version of the Tunnel Configuration.",
 				Computed:    true,
 			},
-			"warp_routing_enabled": schema.BoolAttribute{
-				Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-				Computed:    true,
-			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
 				Computed:    true,
@@ -116,6 +112,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 										"keep_alive_timeout": schema.Int64Attribute{
 											Description: "Timeout after which an idle keepalive connection can be discarded.",
+											Computed:    true,
+										},
+										"match_sn_ito_host": schema.BoolAttribute{
+											Description: "Auto configure the Hostname on the origin server certificate.",
 											Computed:    true,
 										},
 										"no_happy_eyeballs": schema.BoolAttribute{
@@ -202,6 +202,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"keep_alive_timeout": schema.Int64Attribute{
 								Description: "Timeout after which an idle keepalive connection can be discarded.",
+								Computed:    true,
+							},
+							"match_sn_ito_host": schema.BoolAttribute{
+								Description: "Auto configure the Hostname on the origin server certificate.",
 								Computed:    true,
 							},
 							"no_happy_eyeballs": schema.BoolAttribute{

@@ -39,4 +39,7 @@ Required:
 
 - `payload` (String) Defines the ruleset expression to use in matching content objects.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

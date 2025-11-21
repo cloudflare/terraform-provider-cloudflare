@@ -110,3 +110,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_spectrum_application.example '<zone_id>/<app_id>'
 ```
+
+

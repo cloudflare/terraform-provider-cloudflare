@@ -76,4 +76,7 @@ Optional:
 - `logo_path` (String) The URL of the logo on your login page.
 - `text_color` (String) The text color on your login page.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

@@ -17,7 +17,7 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
   bucket_name = "example-bucket"
   destination = {
     access_key_id = "accessKeyId"
-    provider = "r2"
+    cloud_provider = "r2"
     secret_access_key = "secretAccessKey"
   }
   source = {
@@ -81,4 +81,7 @@ Optional:
 - `region` (String) Name of the AWS availability zone.
 - `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

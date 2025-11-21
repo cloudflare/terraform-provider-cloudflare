@@ -24,9 +24,6 @@ data "cloudflare_worker" "example_worker" {
 ### Required
 
 - `account_id` (String) Identifier.
-
-### Optional
-
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Read-Only

@@ -97,11 +97,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"description": schema.StringAttribute{
-				Description: "A human-readable description of the pool.",
-				Optional:    true,
-				Computed:    true,
-			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
 				Optional:    true,
@@ -117,11 +112,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"monitor_group": schema.StringAttribute{
 				Description: "The ID of the Monitor Group to use for checking the health of origins within this pool.",
 				Optional:    true,
-			},
-			"notification_email": schema.StringAttribute{
-				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
-				Optional:    true,
-				Computed:    true,
 			},
 			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
@@ -148,6 +138,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
+			"description": schema.StringAttribute{
+				Description: "A human-readable description of the pool.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
 				Computed:    true,
@@ -159,6 +155,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(1),
+			},
+			"notification_email": schema.StringAttribute{
+				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",

@@ -24,6 +24,21 @@ data "cloudflare_workers_script" "example_workers_script" {
 ### Required
 
 - `account_id` (String) Identifier.
+
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `script_name` (String) Name of the script, used in URLs and route configuration.
+
+### Read-Only
+
+- `id` (String) Name of the script, used in URLs and route configuration.
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `tags` (String) Filter scripts by tags. Format: comma-separated list of tag:allowed pairs where allowed is 'yes' or 'no'.
 
 

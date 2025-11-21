@@ -3,6 +3,7 @@ package worker_version
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -65,47 +67,58 @@ func calculateStringHash(content string) (string, error) {
 	return hex.EncodeToString(hash[:]), nil
 }
 
-func ComputeSHA256HashOfContentFile() planmodifier.String {
-	return computeSHA256HashOfContentFileModifier{}
+func ComputeSHA256HashOfContent() planmodifier.String {
+	return computeSHA256HashOfContentModifier{}
 }
 
-var _ planmodifier.String = &computeSHA256HashOfContentFileModifier{}
+var _ planmodifier.String = &computeSHA256HashOfContentModifier{}
 
-type computeSHA256HashOfContentFileModifier struct{}
+type computeSHA256HashOfContentModifier struct{}
 
-func (c computeSHA256HashOfContentFileModifier) Description(_ context.Context) string {
+func (c computeSHA256HashOfContentModifier) Description(_ context.Context) string {
 	return "Calculates the SHA-256 hash of the provided module content."
 }
 
-func (c computeSHA256HashOfContentFileModifier) MarkdownDescription(ctx context.Context) string {
+func (c computeSHA256HashOfContentModifier) MarkdownDescription(ctx context.Context) string {
 	return c.Description(ctx)
 }
 
-func (c computeSHA256HashOfContentFileModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
-	// Don't modify during destroy
+func (c computeSHA256HashOfContentModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
 	if req.Config.Raw.IsNull() {
 		return
 	}
 
 	contentFilePath := req.Path.ParentPath().AtName("content_file")
+	contentBase64Path := req.Path.ParentPath().AtName("content_base64")
 
 	var contentFile types.String
+	var contentBase64 types.String
 	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, contentFilePath, &contentFile)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, contentBase64Path, &contentBase64)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	if contentFile.IsNull() || contentFile.IsUnknown() {
-		return
+	if !contentFile.IsNull() && !contentFile.IsUnknown() {
+		contentSHA256, err := calculateFileHash(contentFile.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
+			return
+		}
+		resp.PlanValue = types.StringValue(contentSHA256)
+	} else if !contentBase64.IsNull() && !contentBase64.IsUnknown() {
+		content, err := base64.StdEncoding.DecodeString(contentBase64.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error decoding base64", err.Error())
+			return
+		}
+		contentSHA256, err := calculateStringHash(string(content))
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
+			return
+		}
+		resp.PlanValue = types.StringValue(contentSHA256)
 	}
-
-	contentSHA256, err := calculateFileHash(contentFile.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
-		return
-	}
-
-	resp.PlanValue = types.StringValue(contentSHA256)
 }
 
 func UpdateSecretTextsFromState[T any](
@@ -405,4 +418,15 @@ func UnknownOnlyIf(siblingName string, triggerValue string) planmodifier.String 
 		conditionAttributeName: siblingName,
 		triggerValue:           types.StringValue(triggerValue),
 	}
+}
+
+func RequiresReplaceIfStateValueExists() planmodifier.String {
+	description := "Requires replacement if the state value is not null or unknown."
+	return stringplanmodifier.RequiresReplaceIf(
+		func(ctx context.Context, req planmodifier.StringRequest, res *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+			res.RequiresReplace = !req.StateValue.IsNull() && !req.StateValue.IsUnknown()
+		},
+		description,
+		description,
+	)
 }

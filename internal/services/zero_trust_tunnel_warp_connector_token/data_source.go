@@ -64,7 +64,7 @@ func (d *ZeroTrustTunnelWARPConnectorTokenDataSource) Read(ctx context.Context, 
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustTunnelWARPConnectorTokenResultDataSourceEnvelope{*data}
+	env := ZeroTrustTunnelWARPConnectorTokenResultDataSourceEnvelope{}
 	_, err := d.client.ZeroTrust.Tunnels.WARPConnector.Token.Get(
 		ctx,
 		data.TunnelID.ValueString(),
@@ -82,7 +82,7 @@ func (d *ZeroTrustTunnelWARPConnectorTokenDataSource) Read(ctx context.Context, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Token = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

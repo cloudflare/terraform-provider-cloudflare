@@ -20,7 +20,6 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Name                       types.String                                                                   `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                  `tfsdk:"precedence" json:"precedence,required"`
 	Description                types.String                                                                   `tfsdk:"description" json:"description,optional"`
-	Enabled                    types.Bool                                                                     `tfsdk:"enabled" json:"enabled,optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
@@ -32,6 +31,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	AutoConnect                types.Float64                                                                  `tfsdk:"auto_connect" json:"auto_connect,computed_optional"`
 	CaptivePortal              types.Float64                                                                  `tfsdk:"captive_portal" json:"captive_portal,computed_optional"`
 	DisableAutoFallback        types.Bool                                                                     `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
+	Enabled                    types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExcludeOfficeIPs           types.Bool                                                                     `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                     `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed_optional"`
 	SccmVpnBoundarySupport     types.Bool                                                                     `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed_optional"`

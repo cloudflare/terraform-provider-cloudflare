@@ -3,10 +3,14 @@ package zero_trust_tunnel_cloudflared_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	cloudflare6 "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -14,6 +18,90 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+//func init() {
+//	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared", &resource.Sweeper{
+//		Name: "cloudflare_zero_trust_tunnel_cloudflared",
+//		F:    testSweepCloudflareZeroTrustTunnelCloudflared,
+//	})
+//}
+
+func testSweepCloudflareZeroTrustTunnelCloudflared(region string) error {
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	if accountID == "" {
+		log.Print("[DEBUG] CLOUDFLARE_ACCOUNT_ID not set, skipping sweep")
+		return nil
+	}
+
+	ctx := context.Background()
+
+	// List all cloudflared tunnels using v6 SDK
+	page, err := client.ZeroTrust.Tunnels.Cloudflared.List(
+		ctx,
+		zero_trust.TunnelCloudflaredListParams{
+			AccountID: cloudflare6.F(accountID),
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("error listing cloudflared tunnels for sweep: %w", err)
+	}
+
+	tunnelCount := 0
+	for page != nil && len(page.Result) > 0 {
+		tunnelCount += len(page.Result)
+
+		for _, tunnel := range page.Result {
+			if tunnel.ID == "" {
+				log.Printf("[DEBUG] Skipping cloudflared tunnel with empty ID: %s", tunnel.Name)
+				continue
+			}
+
+			// Skip tunnels that are already deleted
+			if !tunnel.DeletedAt.IsZero() {
+				log.Printf("[DEBUG] Skipping already deleted cloudflared tunnel: %s (%s)", tunnel.Name, tunnel.ID)
+				continue
+			}
+
+			log.Printf("[INFO] Deleting cloudflared tunnel: %s (%s)", tunnel.Name, tunnel.ID)
+
+			_, err := client.ZeroTrust.Tunnels.Cloudflared.Delete(
+				ctx,
+				tunnel.ID,
+				zero_trust.TunnelCloudflaredDeleteParams{
+					AccountID: cloudflare6.F(accountID),
+				},
+				option.WithQuery("cascade", "true"),
+			)
+			if err != nil {
+				log.Printf("[ERROR] Failed to delete cloudflared tunnel %s: %v", tunnel.ID, err)
+				continue
+			}
+
+			log.Printf("[DEBUG] Successfully deleted cloudflared tunnel: %s (%s) with cascade", tunnel.Name, tunnel.ID)
+		}
+
+		// Get next page
+		page, err = page.GetNextPage()
+		if err != nil {
+			log.Printf("[ERROR] Failed to get next page of tunnels: %v", err)
+			break
+		}
+	}
+
+	if tunnelCount == 0 {
+		log.Print("[DEBUG] No cloudflared tunnels found to sweep")
+	} else {
+		log.Printf("[DEBUG] Found %d cloudflared tunnels to sweep", tunnelCount)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel

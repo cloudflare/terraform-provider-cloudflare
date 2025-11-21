@@ -68,8 +68,9 @@ func TestAccCloudflareMagicTransitConnectorItWorks(t *testing.T) {
 						}
 						return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
 					},
-					ImportState:       true,
-					ImportStateVerify: true,
+					ImportState:             true,
+					ImportStateVerify:       true,
+					ImportStateVerifyIgnore: []string{"license_key", "device.provision_license"}, // License key is only returned on creation
 				},
 				// Update the resource that should cause a in-place update
 				{
@@ -105,6 +106,7 @@ func TestAccCloudflareMagicTransitConnectorItWorks(t *testing.T) {
 		testAccCheckCloudflareMCONNSimple(resourceName, accountID, serialNumber, "true", resourceName, "5", "1"),
 		testAccCheckCloudflareMCONNSimple(resourceName, accountID, serialNumber, "true", "some random notes", "4", "0"),
 		testAccCheckCloudflareMCONNSimpleWithDeviceID(resourceName, accountID, deviceId, "true", resourceName, "5", "1"),
+		testAccCheckCloudflareMCONNSimpleWithProvisionLicense(resourceName, accountID, "true", resourceName, "5", "1"),
 	}
 
 	for _, config := range configurations {
@@ -135,8 +137,9 @@ func TestAccCloudflareMagicTransitConnectorItWorks(t *testing.T) {
 						}
 						return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
 					},
-					ImportState:       true,
-					ImportStateVerify: true,
+					ImportState:             true,
+					ImportStateVerify:       true,
+					ImportStateVerifyIgnore: []string{"license_key", "device.provision_license"}, // Write-only fields
 				},
 			},
 			CheckDestroy: testAccCheckCloudflareMCONNCheckDestroy(accountID),
@@ -216,4 +219,8 @@ func testAccCheckCloudflareMCONNSimple(name, accountID, serialNumber, activated,
 
 func testAccCheckCloudflareMCONNSimpleWithDeviceID(name, accountID, deviceID, activated, notes, interruptWindowDurationHours, interruptWindowHourOfDay string) string {
 	return acctest.LoadTestCase("basic_with_device_id.tf", name, accountID, deviceID, activated, notes, interruptWindowDurationHours, interruptWindowHourOfDay)
+}
+
+func testAccCheckCloudflareMCONNSimpleWithProvisionLicense(name, accountID, activated, notes, interruptWindowDurationHours, interruptWindowHourOfDay string) string {
+	return acctest.LoadTestCase("basic_with_provision_license.tf", name, accountID, activated, notes, interruptWindowDurationHours, interruptWindowHourOfDay)
 }

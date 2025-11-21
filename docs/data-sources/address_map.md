@@ -24,9 +24,6 @@ data "cloudflare_address_map" "example_address_map" {
 ### Required
 
 - `account_id` (String) Identifier of a Cloudflare account.
-
-### Optional
-
 - `address_map_id` (String) Identifier of an Address Map.
 
 ### Read-Only

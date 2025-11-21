@@ -60,3 +60,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_magic_network_monitoring_rule.example '<account_id>/<rule_id>'
 ```
+
+

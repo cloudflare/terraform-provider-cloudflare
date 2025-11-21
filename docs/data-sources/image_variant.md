@@ -28,6 +28,7 @@ data "cloudflare_image_variant" "example_image_variant" {
 
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 
 <a id="nestedatt--variant"></a>

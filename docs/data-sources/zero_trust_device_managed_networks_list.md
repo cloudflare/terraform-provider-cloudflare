@@ -38,6 +38,7 @@ data "cloudflare_zero_trust_device_managed_networks_list" "example_zero_trust_de
 Read-Only:
 
 - `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--result--config))
+- `id` (String) API UUID.
 - `name` (String) The name of the device managed network. This name must be unique.
 - `network_id` (String) API UUID.
 - `type` (String) The type of device managed network.

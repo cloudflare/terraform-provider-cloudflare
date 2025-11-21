@@ -1,7 +1,11 @@
 package main
 
 import (
+	"strings"
 	"testing"
+
+	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccessApplicationPoliciesTransformation(t *testing.T) {
@@ -454,4 +458,324 @@ func TestAccessApplicationSkipAppLauncherLoginPageRemoval(t *testing.T) {
 	}
 
 	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestAccessApplicationSetToListTransformation(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "transform toset to list for allowed_idps",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id   = "abc123"
+  name         = "Test App"
+  domain       = "test.example.com"
+  allowed_idps = toset(["idp-1", "idp-2", "idp-3"])
+  type         = "self_hosted"
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id   = "abc123"
+  name         = "Test App"
+  domain       = "test.example.com"
+  allowed_idps = ["idp-1", "idp-2", "idp-3"]
+  type         = "self_hosted"
+}`},
+		},
+		{
+			Name: "handle already list format for allowed_idps",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id   = "abc123"
+  name         = "Test App"
+  domain       = "test.example.com"
+  allowed_idps = ["idp-1", "idp-2"]
+  type         = "self_hosted"
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id   = "abc123"
+  name         = "Test App"
+  domain       = "test.example.com"
+  allowed_idps = ["idp-1", "idp-2"]
+  type         = "self_hosted"
+}`},
+		},
+		{
+			Name: "transform toset for custom_pages",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id    = "abc123"
+  name          = "Test App"
+  domain        = "test.example.com"
+  custom_pages  = toset(["page1", "page2"])
+  type          = "self_hosted"
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id   = "abc123"
+  name         = "Test App"
+  domain       = "test.example.com"
+  custom_pages = ["page1", "page2"]
+  type         = "self_hosted"
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestAccessApplicationPoliciesEdgeCases(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "empty policies array",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies   = []
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies   = []
+  type       = "self_hosted"
+}`},
+		},
+		{
+			Name: "complex policy references with expressions",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies   = concat(
+    [cloudflare_zero_trust_access_policy.main.id],
+    var.additional_policies
+  )
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies   = concat([cloudflare_zero_trust_access_policy.main.id], var.additional_policies)
+  type       = "self_hosted"
+}`},
+		},
+		{
+			Name: "policies with for expression",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies   = [for p in var.policy_ids : p]
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  policies = [
+    for p in
+    var.policy_ids
+    : p
+  ]
+  type = "self_hosted"
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestAccessApplicationDestinationsEdgeCases(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "destinations with expressions",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations {
+    uri = format("https://%s.example.com", var.subdomain)
+  }
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations = [
+    {
+      uri = format("https://%s.example.com", var.subdomain)
+    }
+  ]
+}`},
+		},
+		{
+			Name: "destinations with conditional expression",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations {
+    uri = var.use_ssl ? "https://app.example.com" : "http://app.example.com"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations = [
+    {
+      uri = var.use_ssl ? "https://app.example.com" : "http://app.example.com"
+    }
+  ]
+}`},
+		},
+		{
+			Name: "destinations block without uri",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations {
+    description = "Test destination"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations = [
+    {
+      description = "Test destination"
+    }
+  ]
+}`},
+		},
+		{
+			Name: "empty destinations block",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations {
+  }
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations = [
+    {}
+  ]
+}`},
+		},
+		{
+			Name: "multiple destinations with mixed content",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations {
+    uri = "https://app1.example.com"
+    description = "Primary app"
+  }
+  
+  destinations {
+  }
+  
+  destinations {
+    uri = "tcp://db.example.com:3306"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+  
+  destinations = [
+    {
+      description = "Primary app"
+      uri         = "https://app1.example.com"
+    },
+    {},
+    {
+      uri = "tcp://db.example.com:3306"
+    }
+  ]
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestCreatePoliciesAttribute(t *testing.T) {
+	tests := []struct {
+		name     string
+		policies []PolicyReference
+		expected string
+	}{
+		{
+			name:     "no policies",
+			policies: []PolicyReference{},
+			expected: "",
+		},
+		{
+			name: "single policy",
+			policies: []PolicyReference{
+				{ResourceName: "cloudflare_zero_trust_access_policy.test1", Precedence: 1},
+			},
+			expected: `policies = [
+  {
+    id         = cloudflare_zero_trust_access_policy.test1.id
+    precedence = 1
+  }
+]`,
+		},
+		{
+			name: "multiple policies",
+			policies: []PolicyReference{
+				{ResourceName: "cloudflare_zero_trust_access_policy.test1", Precedence: 1},
+				{ResourceName: "cloudflare_zero_trust_access_policy.test2", Precedence: 2},
+				{ResourceName: "cloudflare_zero_trust_access_policy.test3", Precedence: 3},
+			},
+			expected: `policies = [
+  {
+    id         = cloudflare_zero_trust_access_policy.test1.id
+    precedence = 1
+  },
+  {
+    id         = cloudflare_zero_trust_access_policy.test2.id
+    precedence = 2
+  },
+  {
+    id         = cloudflare_zero_trust_access_policy.test3.id
+    precedence = 3
+  }
+]`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			file := hclwrite.NewEmptyFile()
+			body := file.Body()
+			
+			createPoliciesAttribute(body, tt.policies)
+			
+			result := string(file.Bytes())
+			if tt.expected == "" {
+				assert.Equal(t, "", strings.TrimSpace(result))
+			} else {
+				// Check that the expected content is in the result
+				assert.Contains(t, result, tt.expected)
+				if len(tt.policies) > 0 {
+					assert.Contains(t, result, "# Policies auto-migrated from v4 access_policy resources")
+				}
+			}
+		})
+	}
 }

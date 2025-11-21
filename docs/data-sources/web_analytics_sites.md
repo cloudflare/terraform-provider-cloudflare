@@ -42,6 +42,7 @@ Read-Only:
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
 - `created` (String)
+- `id` (String) The Web Analytics site identifier.
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--result--rules))
 - `ruleset` (Attributes) (see [below for nested schema](#nestedatt--result--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.

@@ -21,7 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"prefix_id": schema.StringAttribute{
 				Description: "Identifier of an IP Prefix.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",
@@ -54,8 +54,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"delegate_loa_creation": schema.BoolAttribute{
+				Description: "Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.",
+				Computed:    true,
+			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
+				Computed:    true,
+			},
+			"irr_validation_state": schema.StringAttribute{
+				Description: "State of one kind of validation for an IP prefix.",
 				Computed:    true,
 			},
 			"loa_document_id": schema.StringAttribute{
@@ -75,6 +83,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description:        "Whether advertisement status of the prefix is locked, meaning it cannot be changed.",
 				Computed:           true,
 				DeprecationMessage: "Prefer the [BGP Prefixes API](https://developers.cloudflare.com/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/) instead, which allows for advertising multiple BGP routes within a single IP Prefix.",
+			},
+			"ownership_validation_state": schema.StringAttribute{
+				Description: "State of one kind of validation for an IP prefix.",
+				Computed:    true,
+			},
+			"ownership_validation_token": schema.StringAttribute{
+				Description: "Token provided to demonstrate ownership of the prefix.",
+				Computed:    true,
+			},
+			"rpki_validation_state": schema.StringAttribute{
+				Description: "State of one kind of validation for an IP prefix.",
+				Computed:    true,
 			},
 		},
 	}

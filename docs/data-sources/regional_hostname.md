@@ -23,11 +23,8 @@ data "cloudflare_regional_hostname" "example_regional_hostname" {
 
 ### Required
 
-- `zone_id` (String) Identifier.
-
-### Optional
-
 - `hostname` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

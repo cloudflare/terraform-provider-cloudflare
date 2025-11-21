@@ -38,6 +38,7 @@ data "cloudflare_zero_trust_device_default_profile" "example_zero_trust_device_d
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
+- `id` (String) The ID of this resource.
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--include))
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).

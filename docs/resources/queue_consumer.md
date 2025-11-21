@@ -38,7 +38,6 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Optional
 
-- `consumer_id` (String) A Resource identifier.
 - `dead_letter_queue` (String)
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
@@ -46,6 +45,7 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Read-Only
 
+- `consumer_id` (String) A Resource identifier.
 - `created_on` (String)
 - `script` (String) Name of a Worker
 
@@ -61,4 +61,7 @@ Optional:
 - `retry_delay` (Number) The number of seconds to delay before making the message available for another attempt.
 - `visibility_timeout_ms` (Number) The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

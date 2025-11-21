@@ -37,4 +37,7 @@ resource "cloudflare_r2_managed_domain" "example_r2_managed_domain" {
 - `bucket_id` (String) Bucket ID.
 - `domain` (String) Domain name of the bucket's r2.dev domain.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

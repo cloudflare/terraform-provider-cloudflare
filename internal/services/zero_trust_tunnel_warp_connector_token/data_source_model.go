@@ -12,12 +12,13 @@ import (
 )
 
 type ZeroTrustTunnelWARPConnectorTokenResultDataSourceEnvelope struct {
-	Result ZeroTrustTunnelWARPConnectorTokenDataSourceModel `json:"result,computed"`
+	Result types.String `json:"result,computed"`
 }
 
 type ZeroTrustTunnelWARPConnectorTokenDataSourceModel struct {
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	Token     types.String `tfsdk:"token" json:"-,computed"`
 }
 
 func (m *ZeroTrustTunnelWARPConnectorTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelWARPConnectorTokenGetParams, diags diag.Diagnostics) {

@@ -25,11 +25,8 @@ data "cloudflare_pages_domain" "example_pages_domain" {
 ### Required
 
 - `account_id` (String) Identifier
-- `project_name` (String) Name of the project.
-
-### Optional
-
 - `domain_name` (String) Name of the domain.
+- `project_name` (String) Name of the project.
 
 ### Read-Only
 

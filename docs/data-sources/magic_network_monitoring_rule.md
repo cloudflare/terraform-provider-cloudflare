@@ -24,9 +24,6 @@ data "cloudflare_magic_network_monitoring_rule" "example_magic_network_monitorin
 ### Required
 
 - `account_id` (String)
-
-### Optional
-
 - `rule_id` (String) The id of the rule. Must be unique.
 
 ### Read-Only

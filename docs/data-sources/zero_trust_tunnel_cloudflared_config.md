@@ -33,7 +33,6 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 - `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 Available values: "local", "cloudflare".
 - `version` (Number) The version of the Tunnel Configuration.
-- `warp_routing_enabled` (Boolean) Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
@@ -66,6 +65,7 @@ Read-Only:
 - `http_host_header` (String) Sets the HTTP Host header on requests sent to the local service.
 - `keep_alive_connections` (Number) Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.
 - `keep_alive_timeout` (Number) Timeout after which an idle keepalive connection can be discarded.
+- `match_sn_ito_host` (Boolean) Auto configure the Hostname on the origin server certificate.
 - `no_happy_eyeballs` (Boolean) Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.
 - `no_tls_verify` (Boolean) Disables TLS verification of the certificate presented by your origin. Will allow any certificate from the origin to be accepted.
 - `origin_server_name` (String) Hostname that cloudflared should expect from your origin server certificate.
@@ -98,6 +98,7 @@ Read-Only:
 - `http_host_header` (String) Sets the HTTP Host header on requests sent to the local service.
 - `keep_alive_connections` (Number) Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.
 - `keep_alive_timeout` (Number) Timeout after which an idle keepalive connection can be discarded.
+- `match_sn_ito_host` (Boolean) Auto configure the Hostname on the origin server certificate.
 - `no_happy_eyeballs` (Boolean) Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.
 - `no_tls_verify` (Boolean) Disables TLS verification of the certificate presented by your origin. Will allow any certificate from the origin to be accepted.
 - `origin_server_name` (String) Hostname that cloudflared should expect from your origin server certificate.

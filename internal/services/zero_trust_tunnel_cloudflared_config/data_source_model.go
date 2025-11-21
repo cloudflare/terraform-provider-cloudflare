@@ -24,7 +24,6 @@ type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 	Source             types.String                                                                    `tfsdk:"source" json:"source,computed"`
 	Version            types.Int64                                                                     `tfsdk:"version" json:"version,computed"`
 	Config             customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	WARPRoutingEnabled types.Bool                                                                      `tfsdk:"warp_routing_enabled" json:"-,computed"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredConfigurationGetParams, diags diag.Diagnostics) {
@@ -56,6 +55,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestDataSourceModel s
 	HTTPHostHeader         types.String                                                                                              `tfsdk:"http_host_header" json:"httpHostHeader,computed"`
 	KeepAliveConnections   types.Int64                                                                                               `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed"`
 	KeepAliveTimeout       types.Int64                                                                                               `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed"`
+	MatchSnItoHost         types.Bool                                                                                                `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,computed"`
 	NoHappyEyeballs        types.Bool                                                                                                `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed"`
 	NoTLSVerify            types.Bool                                                                                                `tfsdk:"no_tls_verify" json:"noTLSVerify,computed"`
 	OriginServerName       types.String                                                                                              `tfsdk:"origin_server_name" json:"originServerName,computed"`
@@ -79,6 +79,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel struct {
 	HTTPHostHeader         types.String                                                                                       `tfsdk:"http_host_header" json:"httpHostHeader,computed"`
 	KeepAliveConnections   types.Int64                                                                                        `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed"`
 	KeepAliveTimeout       types.Int64                                                                                        `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed"`
+	MatchSnItoHost         types.Bool                                                                                         `tfsdk:"match_sn_ito_host" json:"matchSNItoHost,computed"`
 	NoHappyEyeballs        types.Bool                                                                                         `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed"`
 	NoTLSVerify            types.Bool                                                                                         `tfsdk:"no_tls_verify" json:"noTLSVerify,computed"`
 	OriginServerName       types.String                                                                                       `tfsdk:"origin_server_name" json:"originServerName,computed"`

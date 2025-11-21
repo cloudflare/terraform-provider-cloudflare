@@ -31,6 +31,7 @@ func (m *ZeroTrustDeviceCustomProfilesDataSourceModel) toListParams(_ context.Co
 }
 
 type ZeroTrustDeviceCustomProfilesResultDataSourceModel struct {
+	ID                         types.String                                                                              `tfsdk:"id" json:"policy_id,computed"`
 	AllowModeSwitch            types.Bool                                                                                `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
 	AllowUpdates               types.Bool                                                                                `tfsdk:"allow_updates" json:"allow_updates,computed"`
 	AllowedToLeave             types.Bool                                                                                `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`

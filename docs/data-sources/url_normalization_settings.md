@@ -26,6 +26,7 @@ data "cloudflare_url_normalization_settings" "example_url_normalization_settings
 
 ### Read-Only
 
+- `id` (String) The unique ID of the zone.
 - `scope` (String) The scope of the URL normalization.
 Available values: "incoming", "both", "none".
 - `type` (String) The type of URL normalization performed by Cloudflare.

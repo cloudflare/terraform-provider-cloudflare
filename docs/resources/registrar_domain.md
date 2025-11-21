@@ -35,4 +35,7 @@ resource "cloudflare_registrar_domain" "example_registrar_domain" {
 - `locked` (Boolean) Shows whether a registrar lock is in place for a domain.
 - `privacy` (Boolean) Privacy option controls redacting WHOIS information.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

@@ -164,3 +164,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_page_rule.example '<zone_id>/<pagerule_id>'
 ```
+
+

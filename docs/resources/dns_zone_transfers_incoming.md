@@ -25,11 +25,14 @@ resource "cloudflare_dns_zone_transfers_incoming" "example_dns_zone_transfers_in
 
 ### Required
 
-- `auto_refresh_seconds` (Number) How often should a secondary zone auto refresh regardless of DNS NOTIFY.
-Not applicable for primary zones.
 - `name` (String) Zone name.
 - `peers` (Set of String) A list of peer tags.
 - `zone_id` (String)
+
+### Optional
+
+- `auto_refresh_seconds` (Number) How often should a secondary zone auto refresh regardless of DNS NOTIFY.
+Not applicable for primary zones.
 
 ### Read-Only
 
@@ -46,3 +49,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_dns_zone_transfers_incoming.example '<zone_id>'
 ```
+
+

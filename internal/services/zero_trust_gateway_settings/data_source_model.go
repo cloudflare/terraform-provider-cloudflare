@@ -18,6 +18,7 @@ type ZeroTrustGatewaySettingsResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewaySettingsDataSourceModel struct {
+	ID        types.String                                                              `tfsdk:"id" path:"account_id,computed"`
 	AccountID types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	UpdatedAt timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

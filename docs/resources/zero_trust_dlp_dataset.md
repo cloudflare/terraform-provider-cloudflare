@@ -126,4 +126,7 @@ Read-Only:
 - `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `version` (Number)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

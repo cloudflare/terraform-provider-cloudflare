@@ -142,3 +142,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_observatory_scheduled_test.example '<zone_id>/<url>'
 ```
+
+

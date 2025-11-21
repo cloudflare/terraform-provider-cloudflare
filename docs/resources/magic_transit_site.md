@@ -61,3 +61,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_magic_transit_site.example '<account_id>/<site_id>'
 ```
+
+

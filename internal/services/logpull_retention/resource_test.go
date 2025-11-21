@@ -5,12 +5,15 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestAccLogpullRetentionSetStatus(t *testing.T) {
+func TestAccLogpullRetention_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Logpull
 	// service is throwing authentication errors despite it being marked as
 	// available.
@@ -19,24 +22,63 @@ func TestAccLogpullRetentionSetStatus(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_logpull_retention." + rnd
+	resourceName := "cloudflare_logpull_retention." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
+			// Since prior state is not guaranteed, no plancheck.ExpectResourceAction() on the first step.
+			// However, it has extra step to ensure the update cases (set to true -> false -> true).
+			// Set flag to true.
 			{
-				Config: testLogpullRetentionSetConfig(rnd, zoneID, "false"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "flag", "false"),
-				),
+				Config: testLogpullRetentionSetConfig(rnd, zoneID, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						// No plancheck.ExpectResourceAction().
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(true)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(true)),
+				},
+			},
+			// Set flag to false.
+			{
+				Config: testLogpullRetentionSetConfig(rnd, zoneID, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(false)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(false)),
+				},
+			},
+			// Set flag to true.
+			{
+				Config: testLogpullRetentionSetConfig(rnd, zoneID, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(true)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("flag"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
-func testLogpullRetentionSetConfig(id, zoneID, enabled string) string {
+func testLogpullRetentionSetConfig(id, zoneID string, enabled bool) string {
 	return acctest.LoadTestCase("logpullretentionsetconfig.tf", id, zoneID, enabled)
 }

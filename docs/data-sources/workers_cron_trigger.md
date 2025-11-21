@@ -28,6 +28,7 @@ data "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 ### Read-Only
 
+- `id` (String) Name of the script, used in URLs and route configuration.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 
 <a id="nestedatt--schedules"></a>

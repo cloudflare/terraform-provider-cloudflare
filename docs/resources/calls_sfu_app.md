@@ -37,4 +37,7 @@ resource "cloudflare_calls_sfu_app" "example_calls_sfu_app" {
 - `secret` (String, Sensitive) Bearer token
 - `uid` (String) A Cloudflare-generated unique identifier for a item.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

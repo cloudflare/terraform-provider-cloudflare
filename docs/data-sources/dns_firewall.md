@@ -24,9 +24,6 @@ data "cloudflare_dns_firewall" "example_dns_firewall" {
 ### Required
 
 - `account_id` (String) Identifier.
-
-### Optional
-
 - `dns_firewall_id` (String) Identifier.
 
 ### Read-Only

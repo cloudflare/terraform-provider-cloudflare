@@ -47,7 +47,6 @@ Available values: "asc", "desc".
 - `author` (String) Author of message.
 - `content` (String) Content of message.
 - `created` (String) Defines the message creation time.
-- `id` (Number) Message ID.
 - `is_follow_on_request` (Boolean) Whether the message is a follow-on request.
 - `updated` (String) Defines the message last updated time.
 

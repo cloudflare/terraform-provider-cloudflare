@@ -26,4 +26,7 @@ resource "cloudflare_stream_download" "example_stream_download" {
 - `account_id` (String) Identifier.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

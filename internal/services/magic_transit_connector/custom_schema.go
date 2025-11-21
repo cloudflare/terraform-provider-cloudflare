@@ -31,6 +31,10 @@ func CustomResourceSchema(_ context.Context) schema.Schema {
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 					},
+					"provision_license": schema.BoolAttribute{
+						Description: "Set to true to provision a license key for this connector. Only used during resource creation. This is a write-only field that will not be stored in state.",
+						Optional:    true,
+					},
 					"serial_number": schema.StringAttribute{
 						Optional:      true,
 						Computed:      true,
@@ -57,6 +61,12 @@ func CustomResourceSchema(_ context.Context) schema.Schema {
 			"timezone": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
+			},
+			"license_key": schema.StringAttribute{
+				Description:   "License key for the connector. This is only returned on creation and will not be available in subsequent reads.",
+				Computed:      true,
+				Sensitive:     true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

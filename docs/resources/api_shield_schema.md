@@ -9,6 +9,9 @@ description: |-
 
 
 
+~> `cloudflare_api_shield_schema` is in a deprecation phase and will be removed in the future.
+  Instead, please utilize the [cloudflare_schema_validation_schemas](./schema_validation_schemas) resource instead.
+
 ## Example Usage
 
 ```terraform
@@ -74,5 +77,4 @@ Read-Only:
 - `code` (Number) Code that identifies the event that occurred.
 - `locations` (List of String) JSONPath location(s) in the schema where these events were encountered.  See [https://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/) for JSONPath specification.
 - `message` (String) Diagnostic message that describes the event.
-
 

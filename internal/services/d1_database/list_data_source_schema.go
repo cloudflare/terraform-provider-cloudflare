@@ -39,6 +39,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[D1DatabasesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "D1 database identifier (UUID).",
+							Computed:    true,
+						},
 						"created_at": schema.StringAttribute{
 							Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 							Computed:    true,

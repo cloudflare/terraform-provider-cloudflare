@@ -48,4 +48,7 @@ Required:
 - `name` (String) Name of the warp device.
 - `router_ip` (String) IPv4 CIDR of the router sourcing flow data associated with this warp device. Only /32 addresses are currently supported.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

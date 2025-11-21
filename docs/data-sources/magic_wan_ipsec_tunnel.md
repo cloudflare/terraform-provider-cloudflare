@@ -28,6 +28,7 @@ data "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 
 ### Read-Only
 
+- `id` (String) Identifier
 - `ipsec_tunnel` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel))
 
 <a id="nestedatt--ipsec_tunnel"></a>

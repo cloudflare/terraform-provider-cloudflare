@@ -27,8 +27,7 @@ data "cloudflare_regional_tiered_cache" "example_regional_tiered_cache" {
 ### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable.
-- `id` (String) The identifier of the caching setting.
-Available values: "tc_regional".
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 - `value` (String) Value of the Regional Tiered Cache zone setting.
 Available values: "on", "off".

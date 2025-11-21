@@ -7,9 +7,9 @@ resource "cloudflare_api_token" "%[1]s" {
     permission_groups = [{
       id = "%[2]s"
     }]
-    resources = {
+    resources = jsonencode({
       "com.cloudflare.api.account.zone.*" = "*"
-    }
+    })
   }]
 }
 

@@ -24,9 +24,6 @@ data "cloudflare_notification_policy" "example_notification_policy" {
 ### Required
 
 - `account_id` (String) The account id
-
-### Optional
-
 - `policy_id` (String) The unique identifier of a notification policy
 
 ### Read-Only

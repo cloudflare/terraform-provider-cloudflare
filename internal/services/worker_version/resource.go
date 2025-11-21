@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -82,15 +83,25 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	modules := data.Modules
-	if modules != nil {
-		for _, mod := range *data.Modules {
-			content, err := readFile(mod.ContentFile.ValueString())
-			if err != nil {
-				resp.Diagnostics.AddError("Error reading file", err.Error())
+	var planModules *[]*WorkerVersionModulesModel
+	if data.Modules != nil {
+		planModules = data.Modules
+
+		copied := make([]*WorkerVersionModulesModel, len(*data.Modules))
+		for i, mod := range *data.Modules {
+			modCopy := *mod
+			copied[i] = &modCopy
+
+			if !mod.ContentFile.IsNull() {
+				content, err := readFile(mod.ContentFile.ValueString())
+				if err != nil {
+					resp.Diagnostics.AddError("Error reading file", err.Error())
+					return
+				}
+				copied[i].ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
 			}
-			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
 		}
+		data.Modules = &copied
 	}
 
 	// Bindings as ordered in the plan. Terraform expects bindings written to
@@ -138,7 +149,31 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
-	data.Modules = modules
+
+	if data.Modules != nil && planModules != nil {
+		apiModuleNameMap := make(map[string]*WorkerVersionModulesModel)
+		for _, mod := range *data.Modules {
+			apiModuleNameMap[mod.Name.ValueString()] = mod
+		}
+
+		for _, planMod := range *planModules {
+			if apiMod, ok := apiModuleNameMap[planMod.Name.ValueString()]; ok {
+				contentBase64 := apiMod.ContentBase64.ValueString()
+				content, err := base64.StdEncoding.DecodeString(contentBase64)
+				if err != nil {
+					resp.Diagnostics.AddError("Create Error", err.Error())
+					return
+				}
+				contentSHA256, err := calculateStringHash(string(content))
+				if err != nil {
+					resp.Diagnostics.AddError("Create Error", err.Error())
+					return
+				}
+				planMod.ContentSHA256 = types.StringValue(contentSHA256)
+			}
+		}
+	}
+	data.Modules = planModules
 
 	if assets != nil && data.Assets != nil {
 		assets.Config = data.Assets.Config
@@ -157,8 +192,21 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// This resource is immutable at the API level, but can be updated "in-place" if
+// the only changes are to provider-only attributes (namely the content_file
+// module attribute). Allowing "in-place" updates to these attributes makes it
+// possible to import this resource without destroying and re-creating it in the
+// process.
 func (r *WorkerVersionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Update is not supported for this resource
+	var plan *WorkerVersionModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	// Computed properties are marked as unknown in the plan and can't be copied
+	// to state. The modules attribute is the only attribute that can be updated
+	// in-place, so we only copy that attribute to state.
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("modules"), plan.Modules)...)
 }
 
 func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -170,8 +218,16 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
-	stateModules := data.Modules
+	assets := data.Assets
+	var stateModules *[]*WorkerVersionModulesModel
+	if data.Modules != nil {
+		copied := make([]*WorkerVersionModulesModel, len(*data.Modules))
+		for i, mod := range *data.Modules {
+			modCopy := *mod
+			copied[i] = &modCopy
+		}
+		stateModules = &copied
+	}
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}
@@ -204,32 +260,38 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	data = &env.Result
 	data.Assets = assets
 
-	// Refresh content_sha256 on each module
-	moduleNameMap := make(map[string]*WorkerVersionModulesModel)
-	if stateModules != nil {
-		for _, mod := range *stateModules {
-			moduleNameMap[mod.Name.ValueString()] = mod
-		}
-	}
+	apiModuleNameMap := make(map[string]*WorkerVersionModulesModel)
 	if data.Modules != nil {
 		for _, mod := range *data.Modules {
-			contentBase64 := mod.ContentBase64.ValueString()
-			content, err := base64.StdEncoding.DecodeString(contentBase64)
-			if err != nil {
-				resp.Diagnostics.AddError("Refresh Error", err.Error())
-				return
-			}
-			contentSHA256, err := calculateStringHash(string(content))
-			if err != nil {
-				resp.Diagnostics.AddError("Refresh Error", err.Error())
-				return
-			}
+			apiModuleNameMap[mod.Name.ValueString()] = mod
+		}
+	}
 
-			mod.ContentSHA256 = types.StringValue(contentSHA256)
-			if stateMod, ok := moduleNameMap[mod.Name.ValueString()]; ok {
-				mod.ContentFile = stateMod.ContentFile
+	if stateModules != nil {
+		for _, stateMod := range *stateModules {
+			if apiMod, ok := apiModuleNameMap[stateMod.Name.ValueString()]; ok {
+				contentBase64 := apiMod.ContentBase64.ValueString()
+				content, err := base64.StdEncoding.DecodeString(contentBase64)
+				if err != nil {
+					resp.Diagnostics.AddError("Refresh Error", err.Error())
+					return
+				}
+				contentSHA256, err := calculateStringHash(string(content))
+				if err != nil {
+					resp.Diagnostics.AddError("Refresh Error", err.Error())
+					return
+				}
+				stateMod.ContentSHA256 = types.StringValue(contentSHA256)
+
+				if stateMod.ContentBase64.IsNull() || stateMod.ContentBase64.IsUnknown() {
+					// content_file was used, keep it as is
+				} else {
+					// content_base64 was used, update it from API
+					stateMod.ContentBase64 = apiMod.ContentBase64
+				}
 			}
 		}
+		data.Modules = stateModules
 	}
 
 	// restore any secret_text `text` values from state since they aren't returned by the API
@@ -286,6 +348,7 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 		path_version_id,
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(path_account_id),
+			Include:   cloudflare.F(workers.BetaWorkerVersionGetParamsIncludeModules),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -301,6 +364,23 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	data = &env.Result
+
+	if data.Modules != nil {
+		for _, mod := range *data.Modules {
+			contentBase64 := mod.ContentBase64.ValueString()
+			content, err := base64.StdEncoding.DecodeString(contentBase64)
+			if err != nil {
+				resp.Diagnostics.AddError("Import Error", err.Error())
+				return
+			}
+			contentSHA256, err := calculateStringHash(string(content))
+			if err != nil {
+				resp.Diagnostics.AddError("Import Error", err.Error())
+				return
+			}
+			mod.ContentSHA256 = types.StringValue(contentSHA256)
+		}
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

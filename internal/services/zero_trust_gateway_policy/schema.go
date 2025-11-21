@@ -366,8 +366,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.",
-						Computed:    true,
 						Optional:    true,
+						Computed:    true,
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.",

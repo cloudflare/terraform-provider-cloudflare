@@ -56,4 +56,7 @@ Optional:
 - `prefix` (String) Notifications will be sent only for objects with this prefix.
 - `suffix` (String) Notifications will be sent only for objects with this suffix.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

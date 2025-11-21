@@ -36,4 +36,7 @@ resource "cloudflare_logpush_ownership_challenge" "example_logpush_ownership_cha
 - `message` (String)
 - `valid` (Boolean)
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

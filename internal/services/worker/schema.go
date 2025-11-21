@@ -11,7 +11,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -47,6 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
+				Default:     setdefault.StaticValue(customfield.NewSetMust[types.String](ctx, nil).SetValue),
 			},
 			"observability": schema.SingleNestedAttribute{
 				Description: "Observability settings for the Worker.",
@@ -65,6 +68,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Default:     float64default.StaticFloat64(1),
+						PlanModifiers: []planmodifier.Float64{
+							NormalizeFloat64(),
+						},
 					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
@@ -83,6 +89,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 								Optional:    true,
 								Default:     float64default.StaticFloat64(1),
+								PlanModifiers: []planmodifier.Float64{
+									NormalizeFloat64(),
+								},
 							},
 							"invocation_logs": schema.BoolAttribute{
 								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
@@ -91,8 +100,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 						},
+						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityLogsModel{
+							Enabled:          types.BoolValue(false),
+							HeadSamplingRate: types.Float64Value(1),
+							InvocationLogs:   types.BoolValue(true),
+						}).ObjectValue),
 					},
 				},
+				Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityModel{
+					Enabled:          types.BoolValue(false),
+					HeadSamplingRate: types.Float64Value(1),
+					Logs: customfield.NewObjectMust(ctx, &WorkerObservabilityLogsModel{
+						Enabled:          types.BoolValue(false),
+						HeadSamplingRate: types.Float64Value(1),
+						InvocationLogs:   types.BoolValue(true),
+					}),
+				}).ObjectValue),
 			},
 			"subdomain": schema.SingleNestedAttribute{
 				Description: "Subdomain settings for the Worker.",
@@ -110,9 +133,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Whether [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/) are enabled for the Worker.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 				},
+				Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerSubdomainModel{
+					Enabled:         types.BoolValue(false),
+					PreviewsEnabled: types.BoolValue(false),
+				}).ObjectValue),
 			},
 			"tail_consumers": schema.SetNestedAttribute{
 				Description: "Other Workers that should consume logs from the Worker.",
@@ -127,11 +153,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				Default: setdefault.StaticValue(customfield.NewSetMust[customfield.NestedObject[WorkerTailConsumersModel]](ctx, nil).SetValue),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Worker was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					// created_on is set on Worker creation and never changes
+					// after that.
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"updated_on": schema.StringAttribute{
 				Description: "When the Worker was most recently updated.",

@@ -1,10 +1,14 @@
 package worker_test
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,26 +17,78 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+const resourcePrefix = "tfacctest-"
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_worker", &resource.Sweeper{
+		Name: "cloudflare_worker",
+		F:    testSweepCloudflareWorkers,
+	})
+}
+
+func testSweepCloudflareWorkers(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	if accountID == "" {
+		return nil
+	}
+
+	list, err := client.Workers.Beta.Workers.List(ctx, workers.BetaWorkerListParams{
+		AccountID: cloudflare.F(accountID),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to list workers: %w", err)
+	}
+
+	for list != nil && len(list.Result) > 0 {
+		for _, worker := range list.Result {
+			if !strings.HasPrefix(worker.ID, resourcePrefix) {
+				continue
+			}
+
+			_, err := client.Workers.Beta.Workers.Delete(ctx, worker.ID, workers.BetaWorkerDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				continue
+			}
+		}
+
+		list, err = list.GetNextPage()
+		if err != nil {
+			break
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareWorker_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_worker." + rnd
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_worker." + resourceName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_worker." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareWorkerConfig(rnd, accountID),
+				Config: testAccCloudflareWorkerConfig(resourceName, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
 					// Verify computed attributes
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -41,25 +97,25 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"invocation_logs":    knownvalue.Bool(true),
 						}),
 					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tail_consumers"), knownvalue.SetExact([]knownvalue.Check{})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tail_consumers"), knownvalue.SetExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
 				},
 			},
 			{
-				Config: testAccCloudflareWorkerConfigUpdate(rnd, accountID),
+				Config: testAccCloudflareWorkerConfigUpdate(resourceName, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{knownvalue.StringExact("environment=production")})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{knownvalue.StringExact("environment=production")})),
 					// Verify computed attributes
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -68,15 +124,29 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"invocation_logs":    knownvalue.Bool(true),
 						}),
 					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tail_consumers"), knownvalue.SetExact([]knownvalue.Check{})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tail_consumers"), knownvalue.SetExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
 				},
 			},
+			// { // This fails due to having no target config for the import
+			// 	// Import using an import block and assert there are no changes
+			// 	// reported in the import plan.
+			// 	Config:              testAccCloudflareWorkerConfigUpdate(rnd, accountID),
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateKind:     resource.ImportBlockWithID,
+			// 	ImportPlanChecks: resource.ImportPlanChecks{
+			// 		PreApply: []plancheck.PlanCheck{
+			// 			plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+			// 		},
+			// 	},
+			// },
 			{
 				ResourceName:        name,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),

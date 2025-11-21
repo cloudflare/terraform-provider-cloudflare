@@ -28,7 +28,7 @@ data "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" {
 
 - `actions` (Attributes List) List actions for the catch-all routing rule. (see [below for nested schema](#nestedatt--actions))
 - `enabled` (Boolean) Routing rule status.
-- `id` (String) Routing rule identifier.
+- `id` (String) Identifier.
 - `matchers` (Attributes List) List of matchers for the catch-all routing rule. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
 - `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)

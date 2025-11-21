@@ -39,3 +39,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_dns_zone_transfers_acl.example '<account_id>/<acl_id>'
 ```
+
+

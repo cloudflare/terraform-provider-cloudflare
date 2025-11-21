@@ -33,4 +33,7 @@ Required:
 
 - `main_module` (String) Name of the file that contains the main module of the snippet.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.

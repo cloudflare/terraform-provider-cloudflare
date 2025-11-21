@@ -25,10 +25,10 @@ data "cloudflare_list" "example_list" {
 ### Required
 
 - `account_id` (String) The Account ID for this resource.
+- `list_id` (String) The unique ID of the list.
 
 ### Optional
 
-- `list_id` (String) The unique ID of the list.
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
 
 ### Read-Only

@@ -26,6 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkerVersionResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Version identifier.",
@@ -172,29 +173,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"content_base64": schema.StringAttribute{
+							Description: "The base64-encoded module content.",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("content_file")),
+								stringvalidator.AtLeastOneOf(path.MatchRelative().AtParent().AtName("content_file")),
+							},
+						},
 						"content_file": schema.StringAttribute{
 							Description: "The file path of the module content.",
-							Required:    true,
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("content_base64")),
+								stringvalidator.AtLeastOneOf(path.MatchRelative().AtParent().AtName("content_base64")),
+							},
 						},
 						"content_type": schema.StringAttribute{
 							Description: "The content type of the module.",
 							Required:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the module.",
 							Required:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 						"content_sha256": schema.StringAttribute{
 							Description: "The SHA-256 hash of the module content.",
 							Computed:    true,
 							PlanModifiers: []planmodifier.String{
-								ComputeSHA256HashOfContentFile(),
+								ComputeSHA256HashOfContent(),
 								stringplanmodifier.RequiresReplace(),
 							},
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Placement settings for the version.",
@@ -260,13 +278,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
-						Computed:    true,
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsConfigModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"html_handling": schema.StringAttribute{
 								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -276,11 +292,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"none",
 									),
 								},
-								Default: stringdefault.StaticString("auto-trailing-slash"),
 							},
 							"not_found_handling": schema.StringAttribute{
 								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\nAvailable values: \"none\", \"404-page\", \"single-page-application\".",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -289,14 +303,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"single-page-application",
 									),
 								},
-								Default: stringdefault.StaticString("none"),
 							},
-							"run_worker_first": schema.ListAttribute{
-								Description: "Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.",
-								Computed:    true,
-								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
+							"run_worker_first": schema.DynamicAttribute{
+								Description:   "When a boolean true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script. When a list of strings, contains path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.",
+								Optional:      true,
+								Validators:    []validator.Dynamic{runWorkerFirstValidator{}},
+								CustomType:    customfield.NormalizedDynamicType{},
+								PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 							},
 						},
 					},

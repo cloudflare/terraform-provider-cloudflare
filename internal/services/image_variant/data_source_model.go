@@ -17,8 +17,9 @@ type ImageVariantResultDataSourceEnvelope struct {
 }
 
 type ImageVariantDataSourceModel struct {
-	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	ID        types.String                                                 `tfsdk:"id" path:"variant_id,computed"`
 	VariantID types.String                                                 `tfsdk:"variant_id" path:"variant_id,required"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Variant   customfield.NestedObject[ImageVariantVariantDataSourceModel] `tfsdk:"variant" json:"variant,computed"`
 }
 

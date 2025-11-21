@@ -79,4 +79,7 @@ Optional:
 - `log_all` (Boolean) Specify whether to log all requests to this service.
 - `log_blocks` (Boolean) Specify whether to log only blocking requests to this service.
 
+## Import
 
+
+~> This resource does not currently support `terraform import`.
