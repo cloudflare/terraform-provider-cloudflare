@@ -14,7 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-// TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion tests the most fundamental
+// TestMigrateLogpushJob_Migration_Basic_MultiVersion tests the most fundamental
 // logpush job migration scenario with output_options block to attribute transformation.
 // This test ensures that:
 // 1. output_options block { ... } → output_options = { ... } (block to attribute syntax)
@@ -22,7 +22,7 @@ import (
 // 3. kind = "instant-logs" is converted to kind = ""
 // 4. Numeric fields are properly converted (max_upload_* fields)
 // 5. The migration tool successfully transforms both configuration and state files
-func TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion(t *testing.T) {
+func TestMigrateLogpushJob_Migration_Basic_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -31,7 +31,7 @@ func TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion(t *testing.T) 
 		{
 			name:     "from_v4_52_1",
 			version:  "4.52.1",
-			configFn: testAccCloudflareLogpushJobMigrationConfigV4Basic,
+			configFn: testAccLogpushJobMigrationConfigV4Basic,
 		},
 	}
 
@@ -87,17 +87,17 @@ func TestMigrateCloudflareLogpushJob_Migration_Basic_MultiVersion(t *testing.T) 
 	}
 }
 
-// TestMigrateCloudflareLogpushJob_Migration_OutputOptions tests migration of logpush jobs
+// TestMigrateLogpushJob_Migration_OutputOptions tests migration of logpush jobs
 // with output_options blocks. This test verifies that:
 // 1. output_options block syntax is converted to attribute syntax with =
 // 2. cve20214428 field is properly renamed to cve_2021_44228
 // 3. All nested fields within output_options are preserved
 // 4. State transformation converts array [{...}] to object {...}
-func TestMigrateCloudflareLogpushJob_Migration_OutputOptions(t *testing.T) {
+func TestMigrateLogpushJob_Migration_OutputOptions(t *testing.T) {
 	accountID := acctest.TestAccCloudflareAccountID
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_logpush_job." + rnd
-	v4Config := testAccCloudflareLogpushJobMigrationConfigV4OutputOptions(accountID, rnd)
+	v4Config := testAccLogpushJobMigrationConfigV4OutputOptions(accountID, rnd)
 	tmpDir := t.TempDir()
 
 	resource.Test(t, resource.TestCase{
@@ -136,13 +136,13 @@ func TestMigrateCloudflareLogpushJob_Migration_OutputOptions(t *testing.T) {
 	})
 }
 
-// TestMigrateCloudflareLogpushJob_Migration_InstantLogs tests migration of logpush jobs
+// TestMigrateLogpushJob_Migration_InstantLogs tests migration of logpush jobs
 // with kind = "instant-logs" which needs to be converted to empty string in v5.
-func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
+func TestMigrateLogpushJob_Migration_InstantLogs(t *testing.T) {
 	zoneID := acctest.TestAccCloudflareZoneID
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_logpush_job." + rnd
-	v4Config := testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd)
+	v4Config := testAccLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd)
 	tmpDir := t.TempDir()
 
 	resource.Test(t, resource.TestCase{
@@ -183,7 +183,7 @@ func TestMigrateCloudflareLogpushJob_Migration_InstantLogs(t *testing.T) {
 
 // V4 Configuration Functions
 
-func testAccCloudflareLogpushJobMigrationConfigV4Basic(accountID, rnd string) string {
+func testAccLogpushJobMigrationConfigV4Basic(accountID, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_logpush_job" "%[2]s" {
   account_id       = "%[1]s"
@@ -194,7 +194,7 @@ resource "cloudflare_logpush_job" "%[2]s" {
 `, accountID, rnd)
 }
 
-func testAccCloudflareLogpushJobMigrationConfigV4OutputOptions(accountID, rnd string) string {
+func testAccLogpushJobMigrationConfigV4OutputOptions(accountID, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_logpush_job" "%[2]s" {
   account_id       = "%[1]s"
@@ -211,7 +211,7 @@ resource "cloudflare_logpush_job" "%[2]s" {
 `, accountID, rnd)
 }
 
-func testAccCloudflareLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd string) string {
+func testAccLogpushJobMigrationConfigV4InstantLogs(zoneID, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_logpush_job" "%[2]s" {
   zone_id       = "%[1]s"
