@@ -4,7 +4,32 @@
 
 Full Changelog: [v5.12.0...v5.13.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.12.0...v5.13.0)
 
-### ⚠ BREAKING CHANGES
+### ⚠ BREAKING CHANGES: cloudflare_api_token & cloudflare_account_token Schema Update
+
+The 5.13 release includes major updates to the cloudflare_api_token resource to eliminate configuration drift caused by policy ordering differences in the Cloudflare API.
+
+Fixes: cloudflare/terraform-provider-cloudflare#6092
+
+**Whats changed**
+- policies are now a Set; order is ignored to prevent drift.
+- When defining a policy, resources must use jsonencode(); all policy resource values must now be JSON-encoded strings.
+- Removed fields: id, name, and meta have been removed from policy blocks.
+
+**Required Action (v5.13+)**
+Customers looking to upgrade to v5.13+ must update all cloudflare_api_token & cloudflare_account_token resources to wrap policy resource values in jsonencode()
+
+Before:
+```
+resources = {
+  "com.cloudflare.api.account.${var.cf_account_id}" = "*"
+}
+```
+After:
+```
+resources = jsonencode({
+  "com.cloudflare.api.account.${var.cf_account_id}" = "*"
+})
+```
 
 * **account_token:** token policy order and nested resources ([#6440](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6440))
 
