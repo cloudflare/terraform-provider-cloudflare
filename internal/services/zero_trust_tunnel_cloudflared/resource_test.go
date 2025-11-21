@@ -23,12 +23,12 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-func init() {
-	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared", &resource.Sweeper{
-		Name: "cloudflare_zero_trust_tunnel_cloudflared",
-		F:    testSweepCloudflareZeroTrustTunnelCloudflared,
-	})
-}
+//func init() {
+//	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared", &resource.Sweeper{
+//		Name: "cloudflare_zero_trust_tunnel_cloudflared",
+//		F:    testSweepCloudflareZeroTrustTunnelCloudflared,
+//	})
+//}
 
 func testSweepCloudflareZeroTrustTunnelCloudflared(region string) error {
 	client := acctest.SharedClient()
