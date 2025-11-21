@@ -56,7 +56,6 @@ func testSweepCloudflareOrgs(_ string) error {
 
 // TestAccCloudflareOrganization_Basic tests the basic CRUD operations for organization resource
 func TestAccCloudflareOrganization_Basic(t *testing.T) {
-	t.Skip("")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := fmt.Sprintf("tf-acctest-%s", rnd)
