@@ -21,8 +21,8 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	resource.AddTestSweepers("cloudflare_workers_kv", &resource.Sweeper{
-		Name: "cloudflare_workers_kv",
+	resource.AddTestSweepers("cloudflare_organization", &resource.Sweeper{
+		Name: "cloudflare_organization",
 		F:    testSweepCloudflareOrgs,
 	})
 }
