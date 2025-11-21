@@ -445,50 +445,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations to apply for Durable Objects associated with this Worker.",
 				Optional:    true,
-				WriteOnly:   true,
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataMigrationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"deleted_classes": schema.ListAttribute{
 						Description: "A list of classes to delete Durable Object namespaces from.",
 						Optional:    true,
-						WriteOnly:   true,
 						ElementType: types.StringType,
 					},
 					"new_classes": schema.ListAttribute{
 						Description: "A list of classes to create Durable Object namespaces from.",
 						Optional:    true,
-						WriteOnly:   true,
 						ElementType: types.StringType,
 					},
 					"new_sqlite_classes": schema.ListAttribute{
 						Description: "A list of classes to create Durable Object namespaces with SQLite from.",
 						Optional:    true,
-						WriteOnly:   true,
 						ElementType: types.StringType,
 					},
 					"new_tag": schema.StringAttribute{
 						Description: "Tag to set as the latest migration tag.",
 						Optional:    true,
-						WriteOnly:   true,
 					},
 					"old_tag": schema.StringAttribute{
 						Description: "Tag used to verify against the latest migration tag for this Worker. If they don't match, the upload is rejected.",
 						Optional:    true,
-						WriteOnly:   true,
 					},
 					"renamed_classes": schema.ListNestedAttribute{
 						Description: "A list of classes with Durable Object namespaces that were renamed.",
 						Optional:    true,
-						WriteOnly:   true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"from": schema.StringAttribute{
-									Optional:  true,
-									WriteOnly: true,
+									Optional: true,
 								},
 								"to": schema.StringAttribute{
-									Optional:  true,
-									WriteOnly: true,
+									Optional: true,
 								},
 							},
 						},
@@ -496,20 +487,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"transferred_classes": schema.ListNestedAttribute{
 						Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
 						Optional:    true,
-						WriteOnly:   true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"from": schema.StringAttribute{
-									Optional:  true,
-									WriteOnly: true,
+									Optional: true,
 								},
 								"from_script": schema.StringAttribute{
-									Optional:  true,
-									WriteOnly: true,
+									Optional: true,
 								},
 								"to": schema.StringAttribute{
-									Optional:  true,
-									WriteOnly: true,
+									Optional: true,
 								},
 							},
 						},
@@ -517,40 +504,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"steps": schema.ListNestedAttribute{
 						Description: "Migrations to apply in order.",
 						Optional:    true,
-						WriteOnly:   true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"deleted_classes": schema.ListAttribute{
 									Description: "A list of classes to delete Durable Object namespaces from.",
 									Optional:    true,
-									WriteOnly:   true,
 									ElementType: types.StringType,
 								},
 								"new_classes": schema.ListAttribute{
 									Description: "A list of classes to create Durable Object namespaces from.",
 									Optional:    true,
-									WriteOnly:   true,
 									ElementType: types.StringType,
 								},
 								"new_sqlite_classes": schema.ListAttribute{
 									Description: "A list of classes to create Durable Object namespaces with SQLite from.",
 									Optional:    true,
-									WriteOnly:   true,
 									ElementType: types.StringType,
 								},
 								"renamed_classes": schema.ListNestedAttribute{
 									Description: "A list of classes with Durable Object namespaces that were renamed.",
 									Optional:    true,
-									WriteOnly:   true,
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"from": schema.StringAttribute{
-												Optional:  true,
-												WriteOnly: true,
+												Optional: true,
 											},
 											"to": schema.StringAttribute{
-												Optional:  true,
-												WriteOnly: true,
+												Optional: true,
 											},
 										},
 									},
@@ -558,20 +538,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"transferred_classes": schema.ListNestedAttribute{
 									Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
 									Optional:    true,
-									WriteOnly:   true,
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"from": schema.StringAttribute{
-												Optional:  true,
-												WriteOnly: true,
+												Optional: true,
 											},
 											"from_script": schema.StringAttribute{
-												Optional:  true,
-												WriteOnly: true,
+												Optional: true,
 											},
 											"to": schema.StringAttribute{
-												Optional:  true,
-												WriteOnly: true,
+												Optional: true,
 											},
 										},
 									},
