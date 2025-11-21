@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.13.1 (2025-11-21)
+
+Full Changelog: [v5.13.0...v5.13.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.13.0...v5.13.1)
+
+### Chores
+
+* update changelog ([#6480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6480)) ([adba156](https://github.com/cloudflare/terraform-provider-cloudflare/commit/adba156599c44b43277c7d4b5694f3ccde2408a3))
+* **zone:** update migration tests ([#6468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6468)) ([635b77e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/635b77ed0dce21c4ca732b9897184dd0b9c02d7a))
+
 ## 5.13.0 (2025-11-21)
 
 Full Changelog: [v5.12.0...v5.13.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.12.0...v5.13.0)
