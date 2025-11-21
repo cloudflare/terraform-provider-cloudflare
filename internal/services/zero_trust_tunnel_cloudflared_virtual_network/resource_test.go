@@ -36,7 +36,7 @@ func init() {
 func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 	ctx := context.Background()
 
-	client := acctest.SharedClient() // TODO(terraform): replace with SharedV2Clent
+	client := acctest.SharedClient()
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
@@ -59,13 +59,18 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 
 	for _, vnet := range tunnelVirtualNetworks.Result {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Virtual Network %s", vnet.ID))
-		//nolint:errcheck
-		client.ZeroTrust.Networks.VirtualNetworks.Delete(
-			context.Background(), vnet.ID, zero_trust.NetworkVirtualNetworkDeleteParams{
-				AccountID: cloudflare.F(accountID),
-			})
-	}
 
+		_, err = client.ZeroTrust.Networks.VirtualNetworks.Delete(
+			context.Background(),
+			vnet.ID,
+			zero_trust.NetworkVirtualNetworkDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Tunnel Virtual Networks: %s", err))
+		}
+	}
 	return nil
 }
 
@@ -178,7 +183,7 @@ func TestAccCloudflareTunnelVirtualNetwork_Minimal(t *testing.T) {
 				Config: testAccCloudflareTunnelVirtualNetworkMinimal(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("comment"), knownvalue.StringExact("")), // Default value
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("comment"), knownvalue.StringExact("")),        // Default value
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default_network"), knownvalue.Bool(false)), // Default value
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
@@ -196,7 +201,6 @@ func TestAccCloudflareTunnelVirtualNetwork_Minimal(t *testing.T) {
 	})
 }
 
-
 func testAccCloudflareTunnelVirtualNetworkSimple(ID, comment, accountID, name string, isDefault bool) string {
 	return acctest.LoadTestCase("tunnelvirtualnetworksimple.tf", ID, comment, accountID, name, isDefault)
 }
@@ -208,5 +212,3 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "%s" {
 	name       = "%s"
 }`, name, accountID, name)
 }
-
-
