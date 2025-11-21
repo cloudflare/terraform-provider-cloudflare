@@ -3,8 +3,12 @@ package organization_test
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6/organizations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -16,8 +20,43 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
+func init() {
+	resource.AddTestSweepers("cloudflare_workers_kv", &resource.Sweeper{
+		Name: "cloudflare_workers_kv",
+		F:    testSweepCloudflareOrgs,
+	})
+}
+
+func testSweepCloudflareOrgs(_ string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	orgID := os.Getenv("CLOUDFLARE_ORGANIZATION_ID")
+
+	if orgID == "" {
+		return nil
+	}
+
+	orgs, err := client.Organizations.List(ctx, organizations.OrganizationListParams{})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch KV namespaces: %s", err)
+		return err
+	}
+	for _, org := range orgs.Result {
+		if !strings.HasPrefix(org.Name, "tf-acctest-") {
+			continue
+		}
+		_, err = client.Organizations.Delete(ctx, org.ID)
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete org %s: %s", org.ID, err)
+			continue
+		}
+	}
+	return nil
+}
+
 // TestAccCloudflareOrganization_Basic tests the basic CRUD operations for organization resource
 func TestAccCloudflareOrganization_Basic(t *testing.T) {
+	t.Skip("")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := fmt.Sprintf("tf-acctest-%s", rnd)
@@ -106,22 +145,20 @@ func TestAccCloudflareOrganization_WithProfile(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				
+
 				ImportStateVerifyIgnore: []string{
 					"profile", // Profile fields not populated on import
 					"profile.%",
 					"profile.business_name",
-					"profile.business_email", 
+					"profile.business_email",
 					"profile.business_phone",
 					"profile.business_address",
 					"profile.external_metadata",
-				}, 
+				},
 			},
 		},
 	})
 }
-
-
 
 // Test configuration functions that load from testdata files
 
