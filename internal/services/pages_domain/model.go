@@ -35,14 +35,14 @@ func (m PagesDomainModel) MarshalJSONForUpdate(state PagesDomainModel) (data []b
 }
 
 type PagesDomainValidationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	Method       types.String `tfsdk:"method" json:"method,computed"`
 	Status       types.String `tfsdk:"status" json:"status,computed"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed"`
 	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type PagesDomainVerificationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	Status       types.String `tfsdk:"status" json:"status,computed"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 }

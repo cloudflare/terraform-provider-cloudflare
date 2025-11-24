@@ -130,7 +130,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"using_latest_model": schema.BoolAttribute{
 				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",

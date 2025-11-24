@@ -18,15 +18,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Name of the domain.",
+				Description: "The domain name.",
 				Computed:    true,
 			},
 			"domain_name": schema.StringAttribute{
-				Description: "Name of the domain.",
+				Description: "The domain name.",
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"project_name": schema.StringAttribute{
@@ -47,7 +47,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Description: "The domain name.",
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: `Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".`,
@@ -70,9 +71,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[PagesDomainValidationDataDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"error_message": schema.StringAttribute{
-						Computed: true,
-					},
 					"method": schema.StringAttribute{
 						Description: `Available values: "http", "txt".`,
 						Computed:    true,
@@ -93,6 +91,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
+					"error_message": schema.StringAttribute{
+						Computed: true,
+					},
 					"txt_name": schema.StringAttribute{
 						Computed: true,
 					},
@@ -105,9 +106,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[PagesDomainVerificationDataDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"error_message": schema.StringAttribute{
-						Computed: true,
-					},
 					"status": schema.StringAttribute{
 						Description: `Available values: "pending", "active", "deactivated", "blocked", "error".`,
 						Computed:    true,
@@ -120,6 +118,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"error",
 							),
 						},
+					},
+					"error_message": schema.StringAttribute{
+						Computed: true,
 					},
 				},
 			},
