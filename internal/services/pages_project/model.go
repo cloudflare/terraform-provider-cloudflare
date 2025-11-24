@@ -42,12 +42,12 @@ func (m PagesProjectModel) MarshalJSONForUpdate(state PagesProjectModel) (data [
 }
 
 type PagesProjectBuildConfigModel struct {
-	BuildCaching      types.Bool   `tfsdk:"build_caching" json:"build_caching,optional"`
-	BuildCommand      types.String `tfsdk:"build_command" json:"build_command,optional"`
-	DestinationDir    types.String `tfsdk:"destination_dir" json:"destination_dir,optional"`
-	RootDir           types.String `tfsdk:"root_dir" json:"root_dir,optional"`
-	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,optional"`
-	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,optional"`
+	BuildCaching      types.Bool   `tfsdk:"build_caching" json:"build_caching,computed_optional"`
+	BuildCommand      types.String `tfsdk:"build_command" json:"build_command,computed_optional"`
+	DestinationDir    types.String `tfsdk:"destination_dir" json:"destination_dir,computed_optional"`
+	RootDir           types.String `tfsdk:"root_dir" json:"root_dir,computed_optional"`
+	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,computed_optional"`
+	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,computed_optional"`
 }
 
 type PagesProjectDeploymentConfigsModel struct {

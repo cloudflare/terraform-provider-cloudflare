@@ -51,26 +51,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"build_command": schema.StringAttribute{
 						Description: "Command used to build project.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"destination_dir": schema.StringAttribute{
 						Description: "Output directory of the build.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"root_dir": schema.StringAttribute{
 						Description: "Directory to run the command.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"web_analytics_tag": schema.StringAttribute{
 						Description: "The classifying tag for analytics.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"web_analytics_token": schema.StringAttribute{
 						Description: "The auth token for analytics.",
+						Computed:    true,
 						Optional:    true,
 						Sensitive:   true,
 					},
