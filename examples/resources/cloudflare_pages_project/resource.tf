@@ -76,15 +76,15 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       r2_buckets = {
         R2_BINDING = {
-          jurisdiction = "eu"
           name = "some-bucket"
+          jurisdiction = "eu"
         }
       }
       services = {
         SERVICE_BINDING = {
+          service = "example-worker"
           entrypoint = "MyHandler"
           environment = "production"
-          service = "example-worker"
         }
       }
       usage_model = "standard"
@@ -160,15 +160,15 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       r2_buckets = {
         R2_BINDING = {
-          jurisdiction = "eu"
           name = "some-bucket"
+          jurisdiction = "eu"
         }
       }
       services = {
         SERVICE_BINDING = {
+          service = "example-worker"
           entrypoint = "MyHandler"
           environment = "production"
-          service = "example-worker"
         }
       }
       usage_model = "standard"
@@ -184,6 +184,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
     config = {
       deployments_enabled = true
       owner = "my-org"
+      owner_id = "12345678"
       path_excludes = ["string"]
       path_includes = ["string"]
       pr_comments_enabled = true
@@ -192,6 +193,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
       preview_deployment_setting = "all"
       production_branch = "main"
       production_deployments_enabled = true
+      repo_id = "12345678"
       repo_name = "my-repo"
     }
     type = "github"
