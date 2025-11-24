@@ -620,7 +620,7 @@ func TestAccAccountToken_ResourcesFlexible(t *testing.T) {
 	})
 }
 
-func TestAccAPIToken_CRUD(t *testing.T) {
+func TestAccAccountToken_CRUD(t *testing.T) {
 	// Comprehensive test covering Create, Read, Update, Delete + Import
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -640,7 +640,7 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create and Read
 			{
-				Config: testAccAPITokenCRUDConfig(initialName, accountID, oneDayFromNow, "192.0.2.1/32"),
+				Config: acctest.LoadTestCase("account_token-crud.tf", initialName, accountID, oneDayFromNow, "192.0.2.1/32"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(initialName)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
@@ -651,7 +651,7 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 			},
 			// Update name and TTL
 			{
-				Config: testAccAPITokenCRUDConfig(updatedName, accountID, twoDaysFromNow, "192.0.2.1/32"),
+				Config: acctest.LoadTestCase("account_token-crud.tf", updatedName, accountID, twoDaysFromNow, "192.0.2.1/32"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -668,7 +668,7 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 			},
 			// Update condition
 			{
-				Config: testAccAPITokenCRUDConfig(updatedName, accountID, twoDaysFromNow, "198.51.100.1/32"),
+				Config: acctest.LoadTestCase("account_token-crud.tf", updatedName, accountID, twoDaysFromNow, "198.51.100.1/32"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -691,40 +691,4 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccAPITokenCRUDConfig(name, accountID, expiresOn, ipCondition string) string {
-	return fmt.Sprintf(`
-data "cloudflare_account_api_token_permission_groups_list" "dns_read" {
-  account_id = "%[2]s"
-  name  = "DNS Read"
-  scope = "com.cloudflare.api.account.zone"
-}
-
-resource "cloudflare_account_token" "crud_test" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  expires_on = "%[3]s"
-
-  policies = [
-    {
-		effect = "allow"
-		permission_groups = [
-			{ id = data.cloudflare_account_api_token_permission_groups_list.dns_read.result[0].id }
-		]
-		resources = jsonencode({
-			"com.cloudflare.api.account.%[2]s": {
-				"com.cloudflare.api.account.zone.*" = "*"
-			}
-		})
-    }
-  ]
-
-  condition = {
-    request_ip = {
-      in = ["%[4]s"]
-    }
-  }
-}
-`, name, accountID, expiresOn, ipCondition)
 }
