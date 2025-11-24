@@ -276,7 +276,8 @@ func (r *AccountMemberResource) ModifyPlan(ctx context.Context, req resource.Mod
 		plan.Policies = state.Policies
 	} else if configUsesPolicies && !configUsesRoles {
 		// When policies are configured, suppress roles diffs by keeping state value
-		plan.Roles = state.Roles
+		// TODO why was this being set? if we are switching from roles to policies then let's just show roles being removed in diff
+		// plan.Roles = state.Roles
 	}
 
 	// Always suppress user field diffs since it's computed and can change independently
