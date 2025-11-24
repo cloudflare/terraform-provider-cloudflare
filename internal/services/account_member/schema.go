@@ -52,17 +52,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"policies": schema.ListNestedAttribute{
+			"policies": schema.SetNestedAttribute{
 				Description: "Array of policies associated with this member.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Policy identifier.",
-							Computed:    true,
-						},
 						"access": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,

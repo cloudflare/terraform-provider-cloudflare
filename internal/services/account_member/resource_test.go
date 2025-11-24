@@ -2,12 +2,16 @@ package account_member_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v6/iam"
+	"github.com/cloudflare/cloudflare-go/v6/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -17,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+)
 
 // Note: Account members are challenging to test with sweepers/CheckDestroy because:
 // 1. The API requires special permissions that may not be available with test tokens
@@ -25,7 +30,6 @@ import (
 //
 // For comprehensive resource lifecycle testing, we rely on the built-in Terraform
 // test framework validation and the resource's own Delete implementation.
-)
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
@@ -76,6 +80,44 @@ func testSweepCloudflareAccountMembers(r string) error {
 			continue
 		}
 		tflog.Info(ctx, fmt.Sprintf("Deleted account member: %s", member.ID))
+	}
+
+	return nil
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_account_member", &resource.Sweeper{
+		Name: "cloudflare_account_member",
+		F:    testSweepCloudflareAccountMember,
+	})
+}
+
+func testSweepCloudflareAccountMember(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	// Deactivate members
+	// TODO
+
+	// List all Resource Groups
+	resourceGroups, err := client.IAM.ResourceGroups.List(ctx, iam.ResourceGroupListParams{
+		AccountID: cloudflare.F(accountID),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to fetch account tokens: %w", err)
+	}
+
+	// Delete domain groups (those created by our tests)
+	for _, resourceGroup := range resourceGroups.Result {
+		if strings.Contains(resourceGroup.Name, "terraform") {
+			_, err := client.IAM.ResourceGroups.Delete(ctx, resourceGroup.ID, iam.ResourceGroupDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				return fmt.Errorf("failed to delete resource group %s: %w", resourceGroup.ID, err)
+			}
+		}
 	}
 
 	return nil
@@ -142,11 +184,11 @@ func TestAccCloudflareAccountMember_Import(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:                resourceName,
-				ImportState:                 true,
-				ImportStateVerify:           true,
-				ImportStateIdPrefix:         fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore:     []string{"policies.0.resource_groups.0.id"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"policies.0.resource_groups.0.id"},
 			},
 		},
 	})
@@ -184,7 +226,6 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 	})
 }
 
-
 func testCloudflareAccountMemberBasicConfig(accountID, emailAddress string) string {
 	return acctest.LoadTestCase("cloudflareaccountmemberbasicconfig.tf", accountID, emailAddress)
 }
@@ -199,8 +240,9 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	resourceName := "cloudflare_account_member." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email := fmt.Sprintf("%s@example.com", rnd)
-	initialRole := "05784afa30c1afe1440e79d9351c7430"
-	updatedRole := "33666b9c79b9a5273fc7344ff42f953d"
+
+	initialRoleID := getRoleId(t, accountID, "Administrator")
+	updatedRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -211,36 +253,36 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Create with initial role
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, initialRole),
+				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, initialRoleID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(initialRole)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(initialRoleID)),
 				},
 			},
 			{
 				// Update role in-place (tests custom marshal logic)
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, updatedRole),
+				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, updatedRoleID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRole)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRoleID)),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRole)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRoleID)),
 				},
 			},
 		},
 	})
 }
 
+// Test that using roles ignores auto-generated policies to avoid diffs
 func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
-	// Test that using roles ignores auto-generated policies to avoid diffs
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -249,7 +291,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 	resourceName := "cloudflare_account_member." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email := fmt.Sprintf("%s@example.com", rnd)
-	roleID := "05784afa30c1afe1440e79d9351c7430"
+	roleID := getRoleId(t, accountID, "Administrator")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -303,10 +345,10 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_account_member." + rnd
+	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email := fmt.Sprintf("%s@example.com", rnd)
-	permissionGroupID := "8e23b19e4e0d44c29d239c5688ba8cbb"
+	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -316,7 +358,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccountMemberPoliciesConfig(accountID, rnd, accountID, email, permissionGroupID),
+				Config: testCloudflareAccountMemberPoliciesConfig(accountID, email, permissionGroupID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
@@ -329,7 +371,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 			},
 			{
 				// Second apply should not cause any changes (stable state)
-				Config: testCloudflareAccountMemberPoliciesConfig(accountID, rnd, accountID, email, permissionGroupID),
+				Config: testCloudflareAccountMemberPoliciesConfig(accountID, email, permissionGroupID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
@@ -345,6 +387,157 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 	})
 }
 
-func testCloudflareAccountMemberPoliciesConfig(dataSourceAccountID, resourceID, accountID, emailAddress, permissionGroupID string) string {
-	return acctest.LoadTestCase("cloudflareaccountmemberpoliciesconfig.tf", dataSourceAccountID, resourceID, accountID, emailAddress, permissionGroupID)
+func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
+	// permission to manage account members.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_account_member.test_member"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	email := fmt.Sprintf("%s@example.com", rnd)
+	permissionGroupID := getPermissionGroupId(t, accountID, "domain_admin_readonly")
+
+	zones := getDomains(t, accountID)
+	if len(zones) < 2 {
+		t.Skip("Not enough domains found, need 2 for this test")
+	}
+	domainGroupID1 := createDomainGroup(t, rnd, accountID, zones[0].ID)
+	domainGroupID2 := createDomainGroup(t, rnd, accountID, zones[1].ID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("cloudflare_account_member-add-resource-group1.tf", accountID, email, permissionGroupID, domainGroupID1),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(domainGroupID1)),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("cloudflare_account_member-add-resource-group2.tf", accountID, email, permissionGroupID, domainGroupID1, domainGroupID2),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(domainGroupID1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(domainGroupID2)),
+				},
+			},
+		},
+	})
+}
+
+func testCloudflareAccountMemberPoliciesConfig(accountID, emailAddress, permgroupId string) string {
+	return acctest.LoadTestCase("cloudflareaccountmemberpoliciesconfig.tf", accountID, emailAddress, permgroupId)
+}
+
+func getPermissionGroupId(t *testing.T, accountID string, label string) string {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	res, err := client.IAM.PermissionGroups.List(ctx, iam.PermissionGroupListParams{
+		AccountID: cloudflare.String(accountID),
+		Label:     cloudflare.String(label),
+	})
+	if err != nil {
+		t.Fatalf("Failed to list permission groups: %v", err)
+	}
+	if len(res.Result) == 0 {
+		t.Fatalf("Expected at least one permission group with label '%s' but got none", label)
+	}
+	return res.Result[0].ID
+}
+
+func getRoleId(t *testing.T, accountID string, label string) string {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	roles, err := client.Accounts.Roles.List(ctx, accounts.RoleListParams{
+		AccountID: cloudflare.String(accountID),
+		// this may eventually become a problem if there are too many roles
+		PerPage: cloudflare.Float(100),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(roles.Result) == 0 {
+		t.Fatal("no roles available for testing")
+	}
+	var roleID string
+	for i, role := range roles.Result {
+		if role.Name == label {
+			roleID = roles.Result[i].ID
+			break
+		}
+	}
+	if roleID == "" {
+		t.Fatalf("failed to find '%s' role for testing", label)
+	}
+	return roleID
+}
+
+func getDomains(t *testing.T, accountID string) []zones.Zone {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	res, err := client.Zones.List(ctx, zones.ZoneListParams{
+		Account: cloudflare.F(zones.ZoneListParamsAccount{
+			ID: cloudflare.F(accountID),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("Failed to list domains: %v", err)
+	}
+	return res.Result
+}
+
+// TODO unfortunately the SDK for resource groups is broken and the ID that comes
+// back is empty so we need to manually parse the json here
+type domaingroup struct {
+	ID string `json:"id"`
+}
+
+type response struct {
+	Result domaingroup `json:"result"`
+}
+
+func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	domainGroup, err := client.IAM.ResourceGroups.New(ctx, iam.ResourceGroupNewParams{
+		AccountID: cloudflare.String(accountID),
+		Name:      cloudflare.String(fmt.Sprintf("terraform-test-%s-%s", rnd, domainID)),
+		Scope: cloudflare.F(iam.ResourceGroupNewParamsScope{
+			Key: cloudflare.String(fmt.Sprintf("com.cloudflare.api.account.%s", accountID)),
+			Objects: cloudflare.F([]iam.ResourceGroupNewParamsScopeObject{
+				{
+					Key: cloudflare.String(fmt.Sprintf("com.cloudflare.api.account.zone.%s", domainID)),
+				},
+			}),
+		}),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	response := response{}
+	err = json.Unmarshal([]byte(domainGroup.JSON.RawJSON()), &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return response.Result.ID
 }
