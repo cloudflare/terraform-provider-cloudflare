@@ -155,7 +155,14 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
-	env := ZoneSubscriptionResultEnvelope{*data}
+	env := ZoneSubscriptionResultEnvelope{
+		Result: ZoneSubscriptionModel{
+			ZoneID: data.ZoneID,
+			RatePlan: &ZoneSubscriptionRatePlanModel{
+				Sets: types.ListNull(types.StringType),
+			},
+		},
+	}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
 		zones.SubscriptionGetParams{
@@ -206,7 +213,14 @@ func (r *ZoneSubscriptionResource) ImportState(ctx context.Context, req resource
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
-	env := ZoneSubscriptionResultEnvelope{*data}
+	env := ZoneSubscriptionResultEnvelope{
+		Result: ZoneSubscriptionModel{
+			ZoneID: data.ZoneID,
+			RatePlan: &ZoneSubscriptionRatePlanModel{
+				Sets: types.ListNull(types.StringType),
+			},
+		},
+	}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
 		zones.SubscriptionGetParams{
