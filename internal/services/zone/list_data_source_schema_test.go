@@ -11,7 +11,6 @@ import (
 )
 
 func TestZonesDataSourceModelSchemaParity(t *testing.T) {
-	t.Skip("need investigation: currently broken")
 	t.Parallel()
 	model := (*zone.ZonesDataSourceModel)(nil)
 	schema := zone.ListDataSourceSchema(context.TODO())
