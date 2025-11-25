@@ -676,6 +676,181 @@ func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstMigration(t *testin
 	})
 }
 
+// TestAccCloudflareWorkerScript_UnmanagedSecretNoDrift verifies that unmanaged secrets
+// (secrets that exist on the Worker but are not defined in Terraform config) do not cause drift.
+// This is a regression test for https://github.com/cloudflare/terraform-provider-cloudflare/issues/5892
+func TestAccCloudflareWorkerScript_UnmanagedSecretNoDrift(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithManagedSecret(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MANAGED_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+			{
+				PreConfig: func() {
+					// Add an unmanaged secret via the API (out-of-band)
+					client := acctest.SharedClient()
+					boundary := "--form-data-boundary-unmanaged-secret"
+					body := []byte(fmt.Sprintf(`--%s
+Content-Disposition: form-data; name="files"; filename="worker.mjs"
+Content-Type: application/javascript+module
+
+export default { fetch() { return new Response('Hello world'); } };
+--%s
+Content-Disposition: form-data; name="metadata"; filename="metadata.json"
+Content-Type: application/json
+
+{"main_module": "worker.mjs", "bindings": [{"type": "secret_text", "name": "MANAGED_SECRET", "text": "managed-secret-value"}, {"type": "secret_text", "name": "UNMANAGED_SECRET", "text": "unmanaged-secret-value"}]}
+--%s--
+`,
+						boundary, boundary, boundary,
+					))
+					result, err := client.Workers.Scripts.Update(context.Background(),
+						resourceName,
+						workers.ScriptUpdateParams{AccountID: cloudflare.F(accountID)},
+						option.WithRequestBody("multipart/form-data;boundary="+boundary, body),
+					)
+					if err != nil {
+						t.Errorf("Error adding unmanaged secret out-of-band: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not add unmanaged secret out-of-band.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: false,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Verify state still only contains the managed secret and plan is empty
+				Config: testAccWorkersScriptConfigWithManagedSecret(resourceName, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MANAGED_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_NoSecretsInConfigWithUnmanagedSecrets verifies that workers with
+// unmanaged secrets do not cause drift when config has no secrets at all.
+// This is a common scenario where users manage secrets outside of Terraform (e.g., via wrangler or dashboard).
+func TestAccCloudflareWorkerScript_NoSecretsInConfigWithUnmanagedSecrets(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigNoSecrets(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+				},
+			},
+			{
+				PreConfig: func() {
+					// Add secrets via the API (out-of-band) - simulating wrangler secret put
+					client := acctest.SharedClient()
+					boundary := "--form-data-boundary-unmanaged-secrets"
+					body := []byte(fmt.Sprintf(`--%s
+Content-Disposition: form-data; name="files"; filename="worker.mjs"
+Content-Type: application/javascript+module
+
+export default { fetch() { return new Response('Hello world'); } };
+--%s
+Content-Disposition: form-data; name="metadata"; filename="metadata.json"
+Content-Type: application/json
+
+{"main_module": "worker.mjs", "bindings": [{"type": "secret_text", "name": "API_KEY", "text": "secret-api-key"}, {"type": "secret_text", "name": "DB_PASSWORD", "text": "secret-db-password"}]}
+--%s--
+`,
+						boundary, boundary, boundary,
+					))
+					result, err := client.Workers.Scripts.Update(context.Background(),
+						resourceName,
+						workers.ScriptUpdateParams{AccountID: cloudflare.F(accountID)},
+						option.WithRequestBody("multipart/form-data;boundary="+boundary, body),
+					)
+					if err != nil {
+						t.Errorf("Error adding secrets out-of-band: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not add secrets out-of-band.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: false,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Verify we can still apply the same config without issues
+				Config: testAccWorkersScriptConfigNoSecrets(resourceName, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccWorkersScriptConfigWithManagedSecret(rnd, accountID string) string {
+	return acctest.LoadTestCase("module_with_unmanaged_secret.tf", rnd, accountID)
+}
+
+func testAccWorkersScriptConfigNoSecrets(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_workers_script" "%[1]s" {
+  account_id = "%[2]s"
+  script_name = "%[1]s"
+  content = "export default { fetch() { return new Response('Hello world'); } };"
+  main_module = "worker.mjs"
+}
+`, rnd, accountID)
+}
+
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {
 	return acctest.LoadTestCase("service_worker_initial.tf", rnd, scriptContent1, accountID)
 }
