@@ -31,14 +31,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"frequency": schema.StringAttribute{
-				Description: "How often the subscription is renewed automatically.\nAvailable values: \"weekly\", \"monthly\", \"quarterly\", \"yearly\".",
+				Description: "How often the subscription is renewed automatically.\nAvailable values: \"weekly\", \"monthly\", \"quarterly\", \"yearly\".\nNote: Some plans may not support frequency configuration and will return \"not-applicable\".",
 				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"weekly",
 						"monthly",
 						"quarterly",
 						"yearly",
+						"not-applicable",
 					),
 				},
 			},
@@ -66,27 +68,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"externally_managed": schema.BoolAttribute{
 						Description: "Whether this rate plan is managed externally from Cloudflare.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"is_contract": schema.BoolAttribute{
 						Description: "Whether a rate plan is enterprise-based (or newly adopted term contract).",
-						Optional:    true,
+						Computed:    true,
 					},
 					"public_name": schema.StringAttribute{
 						Description: "The full name of the rate plan.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"scope": schema.StringAttribute{
 						Description: "The scope that this rate plan applies to.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
 						Description: "The list of sets this rate plan applies to.",
-						Optional:    true,
+						Computed:    true,
 						ElementType: types.StringType,
 					},
 				},
