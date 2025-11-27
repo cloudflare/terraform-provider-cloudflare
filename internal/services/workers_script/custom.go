@@ -259,7 +259,7 @@ func UpdateSecretTextsFromState[T any](
 		updatedElems = append(updatedElems, refreshedObj)
 	}
 
-	// Add any new elements from API that weren't in state
+	// Add any new elements from API that weren't in state (except unmanaged secret_text bindings)
 	for _, refreshedVal := range refreshedElems {
 		refreshedObj, ok := refreshedVal.(basetypes.ObjectValue)
 		if !ok {
@@ -292,6 +292,11 @@ func UpdateSecretTextsFromState[T any](
 		}
 
 		if !foundInState {
+			// Don't add unmanaged secret_text bindings - these are secrets that exist
+			// on the Worker but are not defined in Terraform config
+			if typeAttr.(types.String).ValueString() == "secret_text" {
+				continue
+			}
 			// This is a new element from the API, add it
 			updatedElems = append(updatedElems, refreshedObj)
 		}
