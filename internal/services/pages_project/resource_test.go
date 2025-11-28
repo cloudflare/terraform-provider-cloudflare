@@ -58,14 +58,14 @@ func testSweepCloudflarePagesProjects(r string) error {
 
 	// Delete all pages projects with test prefix
 	for _, deployment := range list.Result {
-		if !strings.HasPrefix(deployment.ProjectName, resourcePrefix) {
+		if !strings.HasPrefix(deployment.Name, resourcePrefix) {
 			continue
 		}
 
 		// Only delete each project once (deployments can have multiple entries per project)
-		if !projectNames[deployment.ProjectName] {
-			projectNames[deployment.ProjectName] = true
-			_, err := client.Pages.Projects.Delete(ctx, deployment.ProjectName, pages.ProjectDeleteParams{
+		if !projectNames[deployment.Name] {
+			projectNames[deployment.Name] = true
+			_, err := client.Pages.Projects.Delete(ctx, deployment.Name, pages.ProjectDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
