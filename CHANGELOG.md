@@ -1,5 +1,36 @@
 # Changelog
 
+## 5.14.0 (2025-11-28)
+
+Full Changelog: [v5.13.0...v5.14.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.13.0...v5.14.0)
+
+### Features
+
+* chore: point Terraform to Go 'next' ([af9a5f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/af9a5f896f4e65e9808a2b6458279b9a7ff935fe))
+* chore(api_shield_discovery_operation): Deprecate api_shield_discovery_operation ([7dc0a63](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7dc0a63e0fa3de74d8877788ff787294cb603c07))
+* feat: BOTS-7562 add bot management feedback endpoints to stainless config (prod) ([f5112e1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f5112e1e4d4fe53b9e0ec96aa27f69fb7706099b))
+* feat(radar): Add origins endpoints to public api docs ([ee51e5f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ee51e5f19c5f1f3cd4d2c07acdcf0f368c635c4d))
+
+
+### Bug Fixes
+
+* **pages_project:** use correct field name in test sweeper ([6dc0e53](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6dc0e538754b84e8e31d0c1b7bd8c0e291161811))
+* **zero_trust_device_posture_rule:** preserve input.version and other fields ([#6500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6500)) ([4c4e54b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4c4e54bdfdfa2c6ce584322cd2ae8562269b4a98))
+* **zero_trust_dlp_custom_profile:** add sweepers for dlp_custom_profile ([cbcb325](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cbcb325271e91d6c3a0bb832eb0c347198d9ce6c))
+* **zone:** datasource model schema parity ([#6487](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6487)) ([861c68f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/861c68fcb37627371673e60dfcbc7bf09638e28e))
+
+
+### Chores
+
+* **account_tokens:** adding a simple CRUD test ([#6484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6484)) ([6869538](https://github.com/cloudflare/terraform-provider-cloudflare/commit/68695382141a2b097c051b38a32fabf5368c2ad9))
+* **api:** update composite API spec ([68d017a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/68d017a1dd2379d7f4c22b83b9ee31e146971b54))
+* **cloudflare_api_shield_operation:** Add acceptance tests  ([#6491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6491)) ([37e1fdf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/37e1fdf9d72b9d853e4ba7b751f2680db5abb9f6))
+* **internal:** codegen related update ([504e8b6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/504e8b61e19091d8f2e66f37889311256cf6590b))
+* **internal:** codegen related update ([550d77c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/550d77c15980feac28e1df2b6fc52473d81f57e6))
+* **logpush_job:** add v4 to v5 migration tests ([#6483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6483)) ([2e4b8a0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2e4b8a090ca9741cd6f7e5861305f82ac582b63d))
+* update changelog ([#6480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6480)) ([adba156](https://github.com/cloudflare/terraform-provider-cloudflare/commit/adba156599c44b43277c7d4b5694f3ccde2408a3))
+* **zone:** update migration tests ([#6468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6468)) ([8ff53df](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8ff53dfe672acc0dc3b9538a613de77e96517e0e))
+
 ## 5.13.0 (2025-11-21)
 
 Full Changelog: [v5.12.0...v5.13.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.12.0...v5.13.0)
