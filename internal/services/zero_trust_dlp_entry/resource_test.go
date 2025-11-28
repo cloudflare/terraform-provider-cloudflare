@@ -97,7 +97,7 @@ func testSweepCloudflareZeroTrustDLPEntry(r string) error {
 	}
 
 	for _, entry := range entries.Result {
-		if entry.Type == "custom" {
+		if entry.Type == "custom" && utils.ShouldSweepResource(entry.Name) {
 			_, err := client.ZeroTrust.DLP.Entries.Delete(context.Background(), entry.ID, zero_trust.DLPEntryDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})

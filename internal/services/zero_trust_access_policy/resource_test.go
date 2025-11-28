@@ -50,9 +50,15 @@ func testSweepCloudflareAccessPolicies(r string) error {
 		log.Print("[DEBUG] No Cloudflare zone level Access Policies to sweep")
 	} else {
 		for _, policy := range zonePolicies {
-			if err := client.DeleteAccessPolicy(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.DeleteAccessPolicyParams{PolicyID: policy.ID}); err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Policy %s", policy.ID))
+			if !utils.ShouldSweepResource(policy.Name) {
+				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleting zone-level Access Policy: %s (%s)", policy.Name, policy.ID))
+			if err := client.DeleteAccessPolicy(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.DeleteAccessPolicyParams{PolicyID: policy.ID}); err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone-level Access Policy %s (%s): %s", policy.Name, policy.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted zone-level Access Policy: %s (%s)", policy.Name, policy.ID))
 		}
 	}
 
@@ -69,9 +75,15 @@ func testSweepCloudflareAccessPolicies(r string) error {
 	}
 
 	for _, policy := range accountPolicies {
-		if err := client.DeleteAccessPolicy(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.DeleteAccessPolicyParams{PolicyID: policy.ID}); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Policy %s", policy.ID))
+		if !utils.ShouldSweepResource(policy.Name) {
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting account-level Access Policy: %s (%s)", policy.Name, policy.ID))
+		if err := client.DeleteAccessPolicy(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.DeleteAccessPolicyParams{PolicyID: policy.ID}); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account-level Access Policy %s (%s): %s", policy.Name, policy.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account-level Access Policy: %s (%s)", policy.Name, policy.ID))
 	}
 
 	return nil

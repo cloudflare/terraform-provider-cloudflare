@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -21,6 +22,71 @@ import (
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_queue_consumer", &resource.Sweeper{
+		Name: "cloudflare_queue_consumer",
+		F:    testSweepCloudflareQueueConsumers,
+	})
+}
+
+func testSweepCloudflareQueueConsumers(r string) error {
+	ctx := context.Background()
+	clientV1, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+	clientV6 := acctest.SharedClient()
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping queue consumers sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	// List all queues using v1 client
+	queuesResp, _, err := clientV1.ListQueues(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListQueuesParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch queues: %s", err))
+		return fmt.Errorf("failed to fetch queues: %w", err)
+	}
+
+	if len(queuesResp) == 0 {
+		tflog.Info(ctx, "No queues found, skipping queue consumers sweep")
+		return nil
+	}
+
+	// For each queue, list and delete its consumers
+	for _, queue := range queuesResp {
+		// Only process queues that would be swept themselves
+		if !utils.ShouldSweepResource(queue.Name) {
+			continue
+		}
+
+		consumersPage, err := clientV6.Queues.Consumers.List(ctx, queue.ID, queues.ConsumerListParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch consumers for queue %s: %s", queue.Name, err))
+			continue
+		}
+
+		for _, consumer := range consumersPage.Result {
+			tflog.Info(ctx, fmt.Sprintf("Deleting queue consumer: %s (queue: %s, account: %s)", consumer.ConsumerID, queue.Name, accountID))
+			_, err := clientV6.Queues.Consumers.Delete(ctx, queue.ID, consumer.ConsumerID, queues.ConsumerDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete queue consumer %s: %s", consumer.ConsumerID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted queue consumer: %s", consumer.ConsumerID))
+		}
+	}
+
+	return nil
 }
 
 func TestAccCloudflareQueueConsumer_Worker_UpdateDeadLetterQueue(t *testing.T) {
@@ -134,6 +200,11 @@ func testSweepCloudflareQueueConsumer(r string) error {
 	ctx := context.Background()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping queue consumers sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
 	client := acctest.SharedClient()
 	if client == nil {
 		tflog.Error(ctx, "Failed to create Cloudflare client")
@@ -145,7 +216,13 @@ func testSweepCloudflareQueueConsumer(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list queues: %s", err))
 		return fmt.Errorf("failed to list queues: %w", err)
+	}
+
+	if len(queueList.Result) == 0 {
+		tflog.Info(ctx, "No queues to sweep consumers from")
+		return nil
 	}
 
 	// For each queue, list and delete consumers
@@ -154,16 +231,20 @@ func testSweepCloudflareQueueConsumer(r string) error {
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
-			continue // Skip if we can't list consumers
+			tflog.Error(ctx, fmt.Sprintf("Failed to list consumers for queue %s: %s", queue.QueueID, err))
+			continue
 		}
 
 		for _, consumer := range consumers.Result {
+			tflog.Info(ctx, fmt.Sprintf("Deleting queue consumer: %s (queue: %s) (account: %s)", consumer.ConsumerID, queue.QueueID, accountID))
 			_, err := client.Queues.Consumers.Delete(ctx, queue.QueueID, consumer.ConsumerID, queues.ConsumerDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
 				tflog.Error(ctx, fmt.Sprintf("Failed to delete queue consumer %s: %s", consumer.ConsumerID, err))
+				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted queue consumer: %s", consumer.ConsumerID))
 		}
 	}
 

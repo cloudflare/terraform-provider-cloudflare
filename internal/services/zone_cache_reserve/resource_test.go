@@ -1,6 +1,7 @@
 package zone_cache_reserve_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,8 +9,29 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zone_cache_reserve", &resource.Sweeper{
+		Name: "cloudflare_zone_cache_reserve",
+		F:    testSweepCloudflareZoneCacheReserve,
+	})
+}
+
+func testSweepCloudflareZoneCacheReserve(r string) error {
+	ctx := context.Background()
+	// Zone Cache Reserve is a zone-level caching configuration setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zone Cache Reserve doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

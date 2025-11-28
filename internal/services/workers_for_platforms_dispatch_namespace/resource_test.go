@@ -9,6 +9,7 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -21,24 +22,43 @@ func init() {
 	resource.AddTestSweepers("cloudflare_workers_for_platforms_dispatch_namespace", &resource.Sweeper{
 		Name: "cloudflare_workers_for_platforms_dispatch_namespace",
 		F: func(region string) error {
+			ctx := context.Background()
 			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", err))
 				return fmt.Errorf("error establishing client: %w", err)
 			}
 
-			ctx := context.Background()
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping Workers for Platforms dispatch namespaces sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
+			}
+
 			resp, err := client.ListWorkersForPlatformsDispatchNamespaces(ctx, cfv1.AccountIdentifier(accountID))
 			if err != nil {
-				return err
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch Workers for Platforms dispatch namespaces: %s", err))
+				return fmt.Errorf("failed to fetch Workers for Platforms dispatch namespaces: %w", err)
+			}
+
+			if len(resp.Result) == 0 {
+				tflog.Info(ctx, "No Workers for Platforms dispatch namespaces to sweep")
+				return nil
 			}
 
 			for _, namespace := range resp.Result {
+				if !utils.ShouldSweepResource(namespace.NamespaceName) {
+					continue
+				}
+
+				tflog.Info(ctx, fmt.Sprintf("Deleting Workers for Platforms dispatch namespace: %s (account: %s)", namespace.NamespaceName, accountID))
 				err := client.DeleteWorkersForPlatformsDispatchNamespace(ctx, cfv1.AccountIdentifier(accountID), namespace.NamespaceName)
 				if err != nil {
-					return err
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete Workers for Platforms dispatch namespace %s: %s", namespace.NamespaceName, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted Workers for Platforms dispatch namespace: %s", namespace.NamespaceName))
 			}
 
 			return nil

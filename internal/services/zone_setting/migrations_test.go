@@ -15,10 +15,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
-
 // TestMigrateZoneSettingMigrationFromV4Basic tests basic migration from v4 zone_settings_override to v5 zone_setting
 func TestMigrateZoneSettingMigrationFromV4Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

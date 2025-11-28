@@ -12,10 +12,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/pkg/errors"
 )
 
 func TestMain(m *testing.M) {
@@ -38,43 +37,70 @@ func testSweepCloudflarePageRules(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s",clientErr))
+		return clientErr
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 
 	if zoneID == "" || altZoneID == "" {
-		return errors.New("CLOUDFLARE_ZONE_ID and CLOUDFLARE_ALT_ZONE_ID must be set for cloudflare_page_rule sweepers")
+		tflog.Info(ctx, "Skipping page rules sweep: CLOUDFLARE_ZONE_ID and CLOUDFLARE_ALT_ZONE_ID must be set")
+		return nil
 	}
 
-	pageRules, err := client.ListPageRules(context.Background(), zoneID)
+	pageRules, err := client.ListPageRules(ctx, zoneID)
 	if err != nil {
-		return fmt.Errorf("error listing page rules: %w", err)
+		// If the zone doesn't exist or is invalid, just log and continue (don't fail the sweep)
+		tflog.Warn(ctx, fmt.Sprintf("Failed to fetch page rules for zone %s: %s (skipping)", zoneID, err))
+		// Continue to try the alt zone
+		pageRules = []cloudflare.PageRule{}
 	}
+	if len(pageRules) == 0 {
+		tflog.Info(ctx, fmt.Sprintf("No page rules to sweep in zone %s", zoneID))
+	} else {
+		for _, pageRule := range pageRules {
+			// Use standard filtering helper on the target URL
+			if !utils.ShouldSweepResource(pageRule.Targets[0].Target) {
+				continue
+			}
 
-	for _, pageRule := range pageRules {
-		err := client.DeletePageRule(context.Background(), zoneID, pageRule.ID)
-		if err != nil {
-			return fmt.Errorf("error deleting page rule %s: %w", pageRule.ID, err)
+			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, zoneID))
+			err := client.DeletePageRule(ctx, zoneID, pageRule.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID,err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted page rule: %s", pageRule.ID))
 		}
 	}
-
-	altPageRules, err := client.ListPageRules(context.Background(), altZoneID)
+	altPageRules, err := client.ListPageRules(ctx, altZoneID)
 	if err != nil {
-		return fmt.Errorf("error listing page rules: %w", err)
+		// If the zone doesn't exist or is invalid, just log and continue (don't fail the sweep)
+		tflog.Warn(ctx, fmt.Sprintf("Failed to fetch page rules for alt zone %s: %s (skipping)", altZoneID, err))
+		return nil
 	}
+	if len(altPageRules) == 0 {
+		tflog.Info(ctx, fmt.Sprintf("No page rules to sweep in alt zone %s", altZoneID))
+	} else {
+		for _, pageRule := range altPageRules {
+			// Use standard filtering helper on the target URL
+			if !utils.ShouldSweepResource(pageRule.Targets[0].Target) {
+				continue
+			}
 
-	for _, pageRule := range altPageRules {
-		err := client.DeletePageRule(context.Background(), altZoneID, pageRule.ID)
-		if err != nil {
-			return fmt.Errorf("error deleting page rule %s: %w", pageRule.ID, err)
+			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, altZoneID))
+			err := client.DeletePageRule(ctx, altZoneID, pageRule.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID,err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted page rule: %s", pageRule.ID))
 		}
 	}
 
 	return nil
 }
-
 func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -3721,7 +3747,7 @@ func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
 	}
 
 	for _, rs := range s.RootModule().Resources {
@@ -3813,7 +3839,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 
 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
 		}
 		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
@@ -3839,7 +3865,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 
 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
 		}
 		*initialID = rs.Primary.ID
 		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)

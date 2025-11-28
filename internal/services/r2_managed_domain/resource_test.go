@@ -14,6 +14,7 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -27,11 +28,24 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
+	resource.AddTestSweepers("cloudflare_r2_managed_domain", &resource.Sweeper{
+		Name: "cloudflare_r2_managed_domain",
+		F:    testSweepCloudflareR2ManagedDomain,
+	})
 	// TODO: fixme - auth error
 	//resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
 	//	Name: "cloudflare_r2_bucket",
 	//	F:    testSweepCloudflareR2Bucket,
 	//})
+}
+
+func testSweepCloudflareR2ManagedDomain(r string) error {
+	ctx := context.Background()
+	// R2 Managed Domain is a bucket-level configuration.
+	// When R2 buckets are swept, managed domains are cleaned up automatically.
+	// No sweeping required.
+	tflog.Info(ctx, "R2 Managed Domain doesn't require sweeping (bucket-level resource)")
+	return nil
 }
 
 func testSweepCloudflareR2Bucket(r string) error {

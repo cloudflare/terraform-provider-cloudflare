@@ -41,7 +41,8 @@ func testSweepCloudflareManagedTransforms(r string) error {
 	client := acctest.SharedClient()
 
 	if client == nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client"))
+		tflog.Error(ctx, "Failed to create Cloudflare client")
+		return errors.New("failed to create client")
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -49,6 +50,7 @@ func testSweepCloudflareManagedTransforms(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
+	tflog.Info(ctx, fmt.Sprintf("Deleting managed transforms (zone: %s)", zoneID))
 	err := client.ManagedTransforms.Delete(
 		ctx,
 		managed_transforms.ManagedTransformDeleteParams{
@@ -57,9 +59,11 @@ func testSweepCloudflareManagedTransforms(r string) error {
 	)
 
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare managed transforms: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete managed transforms: %s", err))
+		return err
 	}
 
+	tflog.Info(ctx, "Deleted managed transforms")
 	return nil
 }
 

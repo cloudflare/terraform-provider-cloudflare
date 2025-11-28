@@ -1,17 +1,39 @@
 package r2_custom_domain_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_r2_custom_domain", &resource.Sweeper{
+		Name: "cloudflare_r2_custom_domain",
+		F:    testSweepCloudflareR2CustomDomain,
+	})
+}
+
+func testSweepCloudflareR2CustomDomain(r string) error {
+	ctx := context.Background()
+	// R2 Custom Domain is a bucket-level configuration.
+	// When R2 buckets are swept, custom domains are cleaned up automatically.
+	// No sweeping required.
+	tflog.Info(ctx, "R2 Custom Domain doesn't require sweeping (bucket-level resource)")
+	return nil
+}
 
 func TestAccCloudflareR2CustomDomain_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

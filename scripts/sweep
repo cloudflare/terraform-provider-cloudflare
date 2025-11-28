@@ -43,13 +43,14 @@ show_usage() {
     echo "  --account ID       Cloudflare Account ID to sweep resources for"
     echo ""
     echo "Options:"
-    echo "  --help, -h         Show this help message"
-    echo "  --list             List all available sweepers and exit"
-    echo "  --zone ID          Target a specific zone ID (filters zone-level sweepers)"
-    echo "  --resource NAME    Target a specific resource type (e.g., load_balancer, dns_record)"
-    echo "  --sweep-timeout T  Timeout for sweeper operations (default: $SWEEP_TIMEOUT)"
-    echo "  --debug            Enable debug logging (default: disabled)"
-    echo "  --dry-run          Show what would be swept without executing"
+    echo "  --help, -h                      Show this help message"
+    echo "  --list                          List all available sweepers and exit"
+    echo "  --zone ID                       Target a specific zone ID (filters zone-level sweepers)"
+    echo "  --resource NAME                 Target a specific resource type (e.g., load_balancer, dns_record)"
+    echo "  --sweep-timeout T               Timeout for sweeper operations (default: $SWEEP_TIMEOUT)"
+    echo "  --debug                         Enable debug logging (default: disabled)"
+    echo "  --dry-run                       Show what would be swept without executing"
+    echo "  --dangerously-delete-resources  DANGEROUS: Skip resource name validation and delete ALL resources"
     echo ""
     echo "Environment variables (authentication):"
     echo "  CLOUDFLARE_API_TOKEN              Your Cloudflare API token"
@@ -58,6 +59,7 @@ show_usage() {
     echo ""
     echo "Other environment variables:"
     echo "  DEBUG_LOGS                        Enable debug logging (default: false)"
+    echo "  SWEEP_DANGEROUSLY_DELETE_ALL      Set by --dangerously-delete-resources flag"
     echo ""
     echo "Examples:"
     echo "  $0 --list"
@@ -68,6 +70,9 @@ show_usage() {
     echo "  $0 --account c03814971cc44525d34173ca738b615b --sweep-timeout 15m"
     echo "  $0 c03814971cc44525d34173ca738b615b --resource dns_record --debug  # Legacy format"
     echo "  DEBUG_LOGS=true $0 --account c03814971cc44525d34173ca738b615b"
+    echo ""
+    echo "  ${RED}DANGEROUS EXAMPLE:${NC}"
+    echo "  $0 --account c03814971cc44525d34173ca738b615b --dangerously-delete-resources --resource dns_record"
     exit 0
 }
 
@@ -349,6 +354,11 @@ run_sweeper() {
     else
         log "${WHITE}Sweeping account-level service: $service (account: $account_id)${NC}"
     fi
+
+    # Export the danger flag if set (sweepers can check this)
+    if [ "$DANGEROUSLY_DELETE_ALL" = "true" ]; then
+        export SWEEP_DANGEROUSLY_DELETE_ALL="true"
+    fi
     
     # Build sweeper command
     local service_path="./internal/services/$service"
@@ -359,8 +369,9 @@ run_sweeper() {
     debug_log "${WHITE}Running command: $test_cmd${NC}"
     
     # Run the sweeper command
+    # Use tee to output to both stdout and log file
     log "Running sweeper..." > "$log_file"
-    if eval "$test_cmd" >> "$log_file" 2>&1; then
+    if eval "$test_cmd" 2>&1 | tee -a "$log_file"; then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Sweeper completed: $service (${duration}s)${NC}"
@@ -546,6 +557,12 @@ main() {
     if [ "$dry_run" = "true" ]; then
         log "${YELLOW}DRY-RUN MODE: No sweepers will be executed${NC}"
     fi
+    if [ "$DANGEROUSLY_DELETE_ALL" = "true" ]; then
+        log "${RED}⚠️  DANGER MODE ENABLED: Resource name validation is DISABLED${NC}"
+        log "${RED}⚠️  ALL RESOURCES will be deleted, regardless of their names!${NC}"
+        log "${RED}⚠️  This may delete production resources. Proceed with extreme caution!${NC}"
+        sleep 2  # Give user time to see the warning
+    fi
     log "${WHITE}Logs will be written to: $LOG_DIR${NC}"
     log "${WHITE}Sweeper timeout: $SWEEP_TIMEOUT${NC}"
 
@@ -631,6 +648,7 @@ DRY_RUN="false"
 TARGET_RESOURCE=""
 TARGET_ZONE=""
 LIST_ONLY="false"
+DANGEROUSLY_DELETE_ALL="false"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -663,6 +681,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             DRY_RUN="true"
+            shift
+            ;;
+        --dangerously-delete-resources)
+            DANGEROUSLY_DELETE_ALL="true"
             shift
             ;;
         *)

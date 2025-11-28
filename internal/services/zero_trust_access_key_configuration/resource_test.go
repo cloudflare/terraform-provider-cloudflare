@@ -1,14 +1,36 @@
 package zero_trust_access_key_configuration_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_access_key_configuration", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_key_configuration",
+		F:    testSweepCloudflareZeroTrustAccessKeyConfiguration,
+	})
+}
+
+func testSweepCloudflareZeroTrustAccessKeyConfiguration(r string) error {
+	ctx := context.Background()
+	// Access Key Configuration is an account-level key rotation setting.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust Access Key Configuration doesn't require sweeping (account setting)")
+	return nil
+}
 
 func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access

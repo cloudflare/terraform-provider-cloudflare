@@ -4,10 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-	"testing"
-
 	"os"
+	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -51,17 +49,24 @@ func testSweepCloudflareSpectrumApplications(r string) error {
 		}
 
 		if len(spectrumApps) == 0 {
-			log.Print("[DEBUG] No Cloudflare spectrum applications to sweep")
-			return nil
+			tflog.Info(ctx, "No Cloudflare spectrum applications to sweep")
+			continue
 		}
 
 		for _, application := range spectrumApps {
-			tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare spectrum application ID: %s", application.ID))
+			// Use standard filtering helper on DNS field
+			if application.DNS.Name != "" && !utils.ShouldSweepResource(application.DNS.Name) {
+				continue
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Spectrum Application: %s (%s)", application.DNS.Name, application.ID))
 			err := client.DeleteSpectrumApplication(context.Background(), zone.ID, application.ID)
 
 			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare spectrum application (%s) in zone ID: %s", application.ID, zone.ID))
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete Spectrum Application %s (%s): %s", application.DNS.Name, application.ID, err))
+				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted Spectrum Application: %s (%s)", application.DNS.Name, application.ID))
 		}
 	}
 

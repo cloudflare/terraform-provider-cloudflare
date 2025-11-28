@@ -13,12 +13,67 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_api_shield_operation", &resource.Sweeper{
+		Name: "cloudflare_api_shield_operation",
+		F:    testSweepCloudflareAPIShieldOperations,
+	})
+}
+
+func testSweepCloudflareAPIShieldOperations(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping API Shield operations sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	operations, err := client.APIGateway.Operations.List(ctx, api_gateway.OperationListParams{
+		ZoneID: cfv3.F(zoneID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch API Shield operations: %s", err))
+		return fmt.Errorf("failed to fetch API Shield operations: %w", err)
+	}
+
+	if len(operations.Result) == 0 {
+		tflog.Info(ctx, "No API Shield operations to sweep")
+		return nil
+	}
+
+	for _, operation := range operations.Result {
+		// Use standard filtering helper on the endpoint field
+		if !utils.ShouldSweepResource(operation.Endpoint) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting API Shield operation: %s (endpoint: %s, zone: %s)", operation.OperationID, operation.Endpoint, zoneID))
+		_, err := client.APIGateway.Operations.Delete(ctx, operation.OperationID, api_gateway.OperationDeleteParams{
+			ZoneID: cfv3.F(zoneID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete API Shield operation %s: %s", operation.OperationID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted API Shield operation: %s", operation.OperationID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

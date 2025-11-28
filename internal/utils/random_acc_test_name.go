@@ -16,13 +16,14 @@ const (
 )
 
 // GenerateRandomResourceName builds a unique-ish resource identifier to use in
-// tests.
+// tests. All test resources should use this function to ensure they follow
+// the standard naming convention (cf-tf-test-XXXXXXXXXX).
 func GenerateRandomResourceName() string {
 	result := make([]byte, ResourceNameLength)
 	for i := 0; i < ResourceNameLength; i++ {
 		result[i] = CharSetAlpha[randIntRange(0, len(CharSetAlpha))]
 	}
-	return string(result)
+	return TestResourcePrefix + string(result)
 }
 
 // RandStringFromCharSet generates a random string by selecting characters from

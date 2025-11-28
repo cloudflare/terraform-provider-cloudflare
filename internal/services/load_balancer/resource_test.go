@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/pkg/errors"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -45,7 +44,8 @@ func testSweepCloudflareLoadBalancer(r string) error {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
-		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+		tflog.Info(ctx, "Skipping load balancers sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
 	}
 
 	lbs, err := client.ListLoadBalancers(ctx, cfold.ZoneIdentifier(zoneID), cfold.ListLoadBalancerParams{})
@@ -66,15 +66,20 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	failed := 0
 
 	for _, lb := range lbs {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s, Name: %s", lb.ID, lb.Name))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(lb.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer: %s (%s)", lb.Name, lb.ID))
 
 		err := client.DeleteLoadBalancer(ctx, cfold.ZoneIdentifier(zoneID), lb.ID)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer %s (%s): %v", lb.ID, lb.Name, err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer %s (%s): %s", lb.Name, lb.ID, err))
 			failed++
 			// Continue with other load balancers
 		} else {
-			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Load Balancer %s (%s)", lb.ID, lb.Name))
+			tflog.Info(ctx, fmt.Sprintf("Deleted Load Balancer: %s (%s)", lb.Name, lb.ID))
 			deleted++
 		}
 	}

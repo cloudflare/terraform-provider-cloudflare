@@ -37,7 +37,8 @@ func testSweepCloudflareMagicWanGRETunnel(r string) error {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
-		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+		tflog.Info(ctx, "Skipping GRE tunnels sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
 	}
 
 	tflog.Info(ctx, "Starting to list GRE tunnels for sweeping")
@@ -58,8 +59,13 @@ func testSweepCloudflareMagicWanGRETunnel(r string) error {
 	failedCount := 0
 
 	for _, tunnel := range tunnels {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(tunnel.Name) {
+			continue
+		}
+
 		tflog.Info(ctx, fmt.Sprintf("Deleting GRE tunnel: %s (%s)", tunnel.Name, tunnel.ID))
-		
+
 		_, err := client.DeleteMagicTransitGRETunnel(ctx, accountID, tunnel.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete GRE tunnel %s: %s", tunnel.ID, err))

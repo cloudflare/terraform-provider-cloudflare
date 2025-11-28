@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -37,22 +37,41 @@ func testSweepCloudflareAccountToken(r string) error {
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping account tokens sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
 	// List all API tokens
-	tokens, err := client.Accounts.Tokens.List(ctx, accounts.TokenListParams{})
+	tokens, err := client.Accounts.Tokens.List(ctx, accounts.TokenListParams{
+		AccountID: cloudflare.F(accountID),
+	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account tokens: %s", err))
 		return fmt.Errorf("failed to fetch account tokens: %w", err)
 	}
 
+	if len(tokens.Result) == 0 {
+		tflog.Info(ctx, "No account tokens to sweep")
+		return nil
+	}
+
 	// Delete test tokens (those created by our tests)
+	// Uses utils.ShouldSweepResource() to filter by standard test naming convention
 	for _, token := range tokens.Result {
-		if strings.Contains(token.Name, "terraform") {
-			_, err := client.Accounts.Tokens.Delete(ctx, token.ID, accounts.TokenDeleteParams{
-				AccountID: cloudflare.F(accountID),
-			})
-			if err != nil {
-				return fmt.Errorf("failed to delete account token %s: %w", token.ID, err)
-			}
+		if !utils.ShouldSweepResource(token.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account token: %s (%s) (account: %s)", token.Name, token.ID, accountID))
+		_, err := client.Accounts.Tokens.Delete(ctx, token.ID, accounts.TokenDeleteParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account token %s (%s): %s", token.Name, token.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account token: %s (%s)", token.Name, token.ID))
 	}
 
 	return nil

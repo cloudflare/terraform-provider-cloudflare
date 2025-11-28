@@ -15,6 +15,70 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_waiting_room_event", &resource.Sweeper{
+		Name: "cloudflare_waiting_room_event",
+		F:    testSweepCloudflareWaitingRoomEvents,
+	})
+}
+
+func testSweepCloudflareWaitingRoomEvents(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping waiting room events sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	// First, list all waiting rooms
+	waitingRooms, err := client.ListWaitingRooms(ctx, zoneID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch waiting rooms: %s", err))
+		return fmt.Errorf("failed to fetch waiting rooms: %w", err)
+	}
+
+	if len(waitingRooms) == 0 {
+		tflog.Info(ctx, "No waiting rooms found, skipping waiting room events sweep")
+		return nil
+	}
+
+	// For each waiting room, list and delete its events
+	for _, waitingRoom := range waitingRooms {
+		events, err := client.ListWaitingRoomEvents(ctx, zoneID, waitingRoom.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch waiting room events for room %s: %s", waitingRoom.ID, err))
+			continue
+		}
+
+		for _, event := range events {
+			// Use standard filtering helper on the event name
+			if !utils.ShouldSweepResource(event.Name) {
+				continue
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Deleting waiting room event: %s (waiting room: %s, zone: %s)", event.ID, waitingRoom.ID, zoneID))
+			err := client.DeleteWaitingRoomEvent(ctx, zoneID, waitingRoom.ID, event.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete waiting room event %s: %s", event.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted waiting room event: %s", event.ID))
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
