@@ -14,6 +14,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_custom_hostname_fallback_origin", &resource.Sweeper{
+		Name: "cloudflare_custom_hostname_fallback_origin",
+		F:    testSweepCloudflareCustomHostnameFallbackOrigin,
+	})
+}
+
+func testSweepCloudflareCustomHostnameFallbackOrigin(r string) error {
+	ctx := context.Background()
+	// Custom Hostname Fallback Origin is a zone-level configuration setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Custom Hostname Fallback Origin doesn't require sweeping (zone setting)")
+	return nil
+}
+
 func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it

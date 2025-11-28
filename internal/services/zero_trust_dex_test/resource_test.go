@@ -1,18 +1,70 @@
 package zero_trust_dex_test_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_dex_test", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_dex_test",
+		F:    testSweepCloudflareZeroTrustDEXTest,
+	})
+}
+
+func testSweepCloudflareZeroTrustDEXTest(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	testsResp, err := client.ZeroTrust.Devices.DEXTests.List(
+		ctx,
+		zero_trust.DeviceDEXTestListParams{
+			AccountID: cloudflare.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust DEX Tests: %s", err))
+		return err
+	}
+
+	for _, test := range testsResp.Result {
+		if !utils.ShouldSweepResource(test.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust DEX Test: %s", test.TestID))
+		_, err := client.ZeroTrust.Devices.DEXTests.Delete(
+			ctx,
+			test.TestID,
+			zero_trust.DeviceDEXTestDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust DEX Test %s: %s", test.TestID, err))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

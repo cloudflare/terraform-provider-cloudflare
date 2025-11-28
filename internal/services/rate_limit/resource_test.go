@@ -17,6 +17,60 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_rate_limit", &resource.Sweeper{
+		Name: "cloudflare_rate_limit",
+		F:    testSweepCloudflareRateLimits,
+	})
+}
+
+func testSweepCloudflareRateLimits(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping rate limits sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	rateLimits, _, err := client.ListRateLimits(ctx, zoneID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch rate limits: %s", err))
+		return fmt.Errorf("failed to fetch rate limits: %w", err)
+	}
+
+	if len(rateLimits) == 0 {
+		tflog.Info(ctx, "No rate limits to sweep")
+		return nil
+	}
+
+	for _, rateLimit := range rateLimits {
+		// Use standard filtering helper - rate limits have descriptions
+		if rateLimit.Description != "" && !utils.ShouldSweepResource(rateLimit.Description) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting rate limit: %s (zone: %s)", rateLimit.ID, zoneID))
+		err := client.DeleteRateLimit(ctx, zoneID, rateLimit.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete rate limit %s: %s", rateLimit.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted rate limit: %s", rateLimit.ID))
+	}
+
+	return nil
+}
+
 func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()

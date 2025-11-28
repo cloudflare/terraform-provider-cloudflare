@@ -1,12 +1,14 @@
 package regional_tiered_cache_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -14,6 +16,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"regexp"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_regional_tiered_cache", &resource.Sweeper{
+		Name: "cloudflare_regional_tiered_cache",
+		F:    testSweepCloudflareRegionalTieredCache,
+	})
+}
+
+func testSweepCloudflareRegionalTieredCache(r string) error {
+	ctx := context.Background()
+	// Regional Tiered Cache is a zone-level configuration setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Regional Tiered Cache doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareRegionalTieredCache_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

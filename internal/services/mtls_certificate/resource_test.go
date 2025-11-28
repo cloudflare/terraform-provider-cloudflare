@@ -31,28 +31,42 @@ func testSweepCloudflareMTLSCertificates(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping mTLS certificates sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
 	accountIDrc := cloudflare.AccountIdentifier(accountID)
-	mtlsCertificates, _, certsErr := client.ListMTLSCertificates(context.Background(), accountIDrc, cloudflare.ListMTLSCertificatesParams{})
+	mtlsCertificates, _, certsErr := client.ListMTLSCertificates(ctx, accountIDrc, cloudflare.ListMTLSCertificatesParams{})
 
 	if certsErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("failed to fetch mtls certificates: %s", certsErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch mTLS certificates: %s", certsErr))
+		return certsErr
 	}
 
 	if len(mtlsCertificates) == 0 {
-		tflog.Debug(ctx, "no mtls certificates to sweep")
+		tflog.Info(ctx, "No mTLS certificates to sweep")
 		return nil
 	}
 
 	for _, certificate := range mtlsCertificates {
-		_, err := client.DeleteMTLSCertificate(context.Background(), accountIDrc, certificate.ID)
-
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("failed to delete mtls pull certificate (%s) in account ID: %s", certificate.ID, accountID))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(certificate.ID) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting mTLS certificate: %s (account: %s)", certificate.ID, accountID))
+		_, err := client.DeleteMTLSCertificate(ctx, accountIDrc, certificate.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete mTLS certificate %s: %s", certificate.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted mTLS certificate: %s", certificate.ID))
 	}
 
 	return nil

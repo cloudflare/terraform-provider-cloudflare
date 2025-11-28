@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	cfv3 "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -17,6 +19,60 @@ import (
 const (
 	scriptContent = `addEventListener('fetch', event => {event.respondWith(new Response('test'))});`
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_workers_custom_domain", &resource.Sweeper{
+		Name: "cloudflare_workers_custom_domain",
+		F:    testSweepCloudflareWorkersCustomDomains,
+	})
+}
+
+func testSweepCloudflareWorkersCustomDomains(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping workers custom domains sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	domains, err := client.Workers.Domains.List(ctx, workers.DomainListParams{
+		AccountID: cfv3.F(accountID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch workers custom domains: %s", err))
+		return fmt.Errorf("failed to fetch workers custom domains: %w", err)
+	}
+
+	if len(domains.Result) == 0 {
+		tflog.Info(ctx, "No workers custom domains to sweep")
+		return nil
+	}
+
+	for _, domain := range domains.Result {
+		// Use standard filtering helper on the hostname field
+		if !utils.ShouldSweepResource(domain.Hostname) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting workers custom domain: %s (account: %s)", domain.Hostname, accountID))
+		err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
+			AccountID: cfv3.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete workers custom domain %s: %s", domain.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted workers custom domain: %s", domain.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

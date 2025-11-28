@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -44,32 +43,37 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 	}
 
 	tunnelVirtualNetworks, err := client.ZeroTrust.Networks.VirtualNetworks.List(
-		context.Background(), zero_trust.NetworkVirtualNetworkListParams{
+		ctx, zero_trust.NetworkVirtualNetworkListParams{
 			AccountID: cloudflare.F(accountID),
 		})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Virtual Networks: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch tunnel virtual networks: %s", err))
 		return err
 	}
 
 	if len(tunnelVirtualNetworks.Result) == 0 {
-		log.Print("[DEBUG] No Cloudflare Tunnel Virtual Networks to sweep")
+		tflog.Info(ctx, "No tunnel virtual networks to sweep")
 		return nil
 	}
 
 	for _, vnet := range tunnelVirtualNetworks.Result {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Virtual Network %s", vnet.ID))
+		if !utils.ShouldSweepResource(vnet.Name) {
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting tunnel virtual network: %s (%s) (account: %s)", vnet.Name, vnet.ID, accountID))
 
 		_, err = client.ZeroTrust.Networks.VirtualNetworks.Delete(
-			context.Background(),
+			ctx,
 			vnet.ID,
 			zero_trust.NetworkVirtualNetworkDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			},
 		)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Tunnel Virtual Networks: %s", err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete tunnel virtual network %s: %s", vnet.ID, err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted tunnel virtual network: %s", vnet.ID))
 	}
 	return nil
 }

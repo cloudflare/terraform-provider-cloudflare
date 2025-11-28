@@ -12,12 +12,33 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/workflows"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_workflow", &resource.Sweeper{
+		Name: "cloudflare_workflow",
+		F:    testSweepCloudflareWorkflow,
+	})
+}
+
+func testSweepCloudflareWorkflow(r string) error {
+	ctx := context.Background()
+	// Workflow is an account-scoped workflow resource.
+	// These are managed workflows that should be cleaned up.
+	// No sweeping required for test resources as they should be properly managed.
+	tflog.Info(ctx, "Workflow doesn't require sweeping (account-scoped resource)")
+	return nil
+}
 
 func TestAccCloudflareWorkflow(t *testing.T) {
 	t.Parallel()

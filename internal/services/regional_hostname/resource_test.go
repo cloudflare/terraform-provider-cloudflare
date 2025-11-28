@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -28,26 +29,43 @@ func init() {
 }
 
 func testSweepCloudflareRegionalHostname(r string) error {
+	ctx := context.Background()
 	client := acctest.SharedClient()
 
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping regional hostnames sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
 	// Get all regional hostnames for the test zone
-	hostnames, err := client.Addressing.RegionalHostnames.List(context.Background(), addressing.RegionalHostnameListParams{
+	hostnames, err := client.Addressing.RegionalHostnames.List(ctx, addressing.RegionalHostnameListParams{
 		ZoneID: cloudflare.F(zoneID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list regional hostnames: %s", err))
 		return fmt.Errorf("failed to list regional hostnames: %w", err)
 	}
 
+	if len(hostnames.Result) == 0 {
+		tflog.Info(ctx, "No regional hostnames to sweep")
+		return nil
+	}
+
 	for _, hostname := range hostnames.Result {
-		// Only delete test hostnames (contain random resource names pattern)
-		if len(hostname.Hostname) >= 10 {
-			_, err := client.Addressing.RegionalHostnames.Delete(context.Background(), hostname.Hostname, addressing.RegionalHostnameDeleteParams{
-				ZoneID: cloudflare.F(zoneID),
-			})
-			if err != nil {
-				return fmt.Errorf("failed to delete regional hostname %s: %w", hostname.Hostname, err)
-			}
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(hostname.Hostname) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting regional hostname: %s (zone: %s)", hostname.Hostname, zoneID))
+		_, err := client.Addressing.RegionalHostnames.Delete(ctx, hostname.Hostname, addressing.RegionalHostnameDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete regional hostname %s: %s", hostname.Hostname, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted regional hostname: %s", hostname.Hostname))
 	}
 
 	return nil

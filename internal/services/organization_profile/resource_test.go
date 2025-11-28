@@ -1,11 +1,13 @@
 package organization_profile_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -13,8 +15,25 @@ import (
 )
 
 // TestMain is the entry point for test execution
+
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_organization_profile", &resource.Sweeper{
+		Name: "cloudflare_organization_profile",
+		F:    testSweepCloudflareOrganizationProfile,
+	})
+}
+
+func testSweepCloudflareOrganizationProfile(r string) error {
+	ctx := context.Background()
+	// Organization Profile is an organization-level configuration setting.
+	// It's a singleton setting per organization, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Organization Profile doesn't require sweeping (organization setting)")
+	return nil
 }
 
 // TestAccCloudflareOrganizationProfile_Basic tests the basic CRUD operations for organization_profile resource

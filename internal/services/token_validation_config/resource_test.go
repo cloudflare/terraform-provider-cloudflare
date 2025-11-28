@@ -1,6 +1,7 @@
 package token_validation_config_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -11,10 +12,31 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_token_validation_config", &resource.Sweeper{
+		Name: "cloudflare_token_validation_config",
+		F:    testSweepCloudflareTokenValidationConfig,
+	})
+}
+
+func testSweepCloudflareTokenValidationConfig(r string) error {
+	ctx := context.Background()
+	// Token Validation Config is API Shield JWT validation configuration.
+	// These are managed as part of API Shield configuration.
+	// No sweeping required.
+	tflog.Info(ctx, "Token Validation Config doesn't require sweeping (API Shield configuration)")
+	return nil
+}
 
 type JWK struct {
 	Alg string  `json:"alg"`

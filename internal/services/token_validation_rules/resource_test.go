@@ -1,6 +1,7 @@
 package token_validation_rules_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,9 +9,30 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_token_validation_rules", &resource.Sweeper{
+		Name: "cloudflare_token_validation_rules",
+		F:    testSweepCloudflareTokenValidationRules,
+	})
+}
+
+func testSweepCloudflareTokenValidationRules(r string) error {
+	ctx := context.Background()
+	// Token Validation Rules is API Shield token validation rules configuration.
+	// These are managed as part of API Shield configuration.
+	// No sweeping required.
+	tflog.Info(ctx, "Token Validation Rules doesn't require sweeping (API Shield configuration)")
+	return nil
+}
 
 func TestAccCloudflareTokenValidationRules(t *testing.T) {
 	rndResourceName := utils.GenerateRandomResourceName()

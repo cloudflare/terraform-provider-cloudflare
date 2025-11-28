@@ -1,13 +1,35 @@
 package zero_trust_dlp_integration_entry_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_dlp_integration_entry", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_dlp_integration_entry",
+		F:    testSweepCloudflareZeroTrustDLPIntegrationEntry,
+	})
+}
+
+func testSweepCloudflareZeroTrustDLPIntegrationEntry(r string) error {
+	ctx := context.Background()
+	// DLP Integration Entry just enables/disables predefined integration entries.
+	// It doesn't create new resources that accumulate.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust DLP Integration Entry doesn't require sweeping (integration configuration)")
+	return nil
+}
 
 func TestAccCloudflareZeroTrustDlpIntegrationEntry_Basic(t *testing.T) {
 	// Generate a random resource name to avoid conflicts during testing

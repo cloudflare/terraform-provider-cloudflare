@@ -1,15 +1,59 @@
 package api_shield_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_api_shield", &resource.Sweeper{
+		Name: "cloudflare_api_shield",
+		F:    testSweepCloudflareAPIShield,
+	})
+}
+
+func testSweepCloudflareAPIShield(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping API Shield sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Clearing API Shield configuration for zone: %s", zoneID))
+	_, err := client.APIGateway.Configurations.Update(
+		ctx,
+		api_gateway.ConfigurationUpdateParams{
+			ZoneID: cloudflare.F(zoneID),
+		},
+		option.WithRequestBody("application/json", []byte(`{"auth_id_characteristics":[]}`)),
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to clear API Shield configuration: %s", err))
+		return fmt.Errorf("failed to clear API Shield configuration: %w", err)
+	}
+
+	tflog.Info(ctx, "Cleared API Shield configuration")
+	return nil
+}
 
 func TestAccCloudflareAPIShieldBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token

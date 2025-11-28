@@ -36,7 +36,8 @@ func testSweepCloudflareMagicWanStaticRoute(r string) error {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
-		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+		tflog.Info(ctx, "Skipping static routes sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
 	}
 
 	tflog.Info(ctx, "Starting to list static routes for sweeping")
@@ -57,8 +58,13 @@ func testSweepCloudflareMagicWanStaticRoute(r string) error {
 	failedCount := 0
 
 	for _, route := range routes {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(route.Description) {
+			continue
+		}
+
 		tflog.Info(ctx, fmt.Sprintf("Deleting static route: %s (%s)", route.Description, route.ID))
-		
+
 		_, err := client.DeleteMagicTransitStaticRoute(ctx, accountID, route.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete static route %s: %s", route.ID, err))

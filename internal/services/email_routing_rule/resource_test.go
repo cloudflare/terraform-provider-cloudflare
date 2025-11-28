@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -22,20 +23,31 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_rule", &resource.Sweeper{
 		Name: "cloudflare_email_routing_rule",
 		F: func(region string) error {
+			ctx := context.Background()
 			client := acctest.SharedClient()
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-			ctx := context.Background()
+
+			if zoneID == "" {
+				tflog.Info(ctx, "Skipping email routing rules sweep: CLOUDFLARE_ZONE_ID not set")
+				return nil
+			}
 
 			// List all email routing rules
 			rules, err := client.EmailRouting.Rules.List(ctx, email_routing.RuleListParams{
 				ZoneID: cloudflare.F(zoneID),
 			})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch email routing rules: %s", err))
 				return fmt.Errorf("failed to fetch email routing rules: %w", err)
 			}
 
 			ruleList := rules.Result
-			fmt.Printf("Found %d email routing rules\n", len(ruleList))
+			if len(ruleList) == 0 {
+				tflog.Info(ctx, "No email routing rules to sweep")
+				return nil
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Found %d email routing rules", len(ruleList)))
 			deletedCount := 0
 			skippedCount := 0
 
@@ -54,16 +66,23 @@ func init() {
 					continue
 				}
 
+				if !utils.ShouldSweepResource(rule.Name) {
+					continue
+				}
+
+				tflog.Info(ctx, fmt.Sprintf("Deleting email routing rule: %s (%s) (zone: %s)", rule.Name, rule.Tag, zoneID))
 				_, err := client.EmailRouting.Rules.Delete(ctx, rule.Tag, email_routing.RuleDeleteParams{
 					ZoneID: cloudflare.F(zoneID),
 				})
 				if err != nil {
-					return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete email routing rule %s: %s", rule.Name, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted email routing rule: %s", rule.Tag))
 				deletedCount++
 			}
 
-			fmt.Printf("Deleted %d email routing rules, skipped %d catch-all rules\n", deletedCount, skippedCount)
+			tflog.Info(ctx, fmt.Sprintf("Deleted %d email routing rules, skipped %d catch-all rules", deletedCount, skippedCount))
 			return nil
 		},
 	})

@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -21,24 +22,42 @@ func init() {
 	resource.AddTestSweepers("cloudflare_turnstile_widget", &resource.Sweeper{
 		Name: "cloudflare_turnstile_widget",
 		F: func(region string) error {
+			ctx := context.Background()
 			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", err))
 				return fmt.Errorf("error establishing client: %w", err)
 			}
 
-			ctx := context.Background()
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping turnstile widgets sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
+			}
+
 			widgets, _, err := client.ListTurnstileWidgets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListTurnstileWidgetParams{})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch turnstile widgets: %s", err))
 				return fmt.Errorf("failed to fetch turnstile widgets: %w", err)
 			}
 
+			if len(widgets) == 0 {
+				tflog.Info(ctx, "No turnstile widgets to sweep")
+				return nil
+			}
+
 			for _, widget := range widgets {
+				if !utils.ShouldSweepResource(widget.Name) {
+					continue
+				}
+				tflog.Info(ctx, fmt.Sprintf("Deleting turnstile widget: %s (%s) (account: %s)", widget.Name, widget.SiteKey, accountID))
 				err := client.DeleteTurnstileWidget(ctx, cfv1.AccountIdentifier(accountID), widget.SiteKey)
 				if err != nil {
-					return fmt.Errorf("failed to delete turnstile widget %q: %w", widget.SiteKey, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete turnstile widget %s: %s", widget.SiteKey, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted turnstile widget: %s", widget.SiteKey))
 			}
 
 			return nil

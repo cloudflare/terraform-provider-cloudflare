@@ -1,6 +1,7 @@
 package zero_trust_gateway_settings_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,8 +9,29 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_gateway_settings", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_gateway_settings",
+		F:    testSweepCloudflareZeroTrustGatewaySettings,
+	})
+}
+
+func testSweepCloudflareZeroTrustGatewaySettings(r string) error {
+	ctx := context.Background()
+	// Gateway Settings is an account-level gateway configuration setting.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust Gateway Settings doesn't require sweeping (account setting)")
+	return nil
+}
 
 func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access

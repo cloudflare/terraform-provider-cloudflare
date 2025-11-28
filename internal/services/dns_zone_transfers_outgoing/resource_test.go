@@ -2,9 +2,7 @@ package dns_zone_transfers_outgoing_test
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -34,24 +32,29 @@ func testSweepCloudflareSecondaryDNSOutgoing(r string) error {
 	// Clean up the connections between peers and zones
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
-		return errors.New("CLOUDFLARE_ZONE_ID must be set")
-	}
-
-	outgoingZone, err := client.DNS.ZoneTransfers.Outgoing.Get(context.Background(), dns.ZoneTransferOutgoingGetParams{ZoneID: cloudflare.F(zoneID)})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare outgoing secondary zones: %s", err))
-	}
-
-	if len(outgoingZone.Peers) == 0 {
-		log.Print("[DEBUG] No Cloudflare peers connected to zones records to sweep")
+		tflog.Info(ctx, "Skipping DNS zone transfers outgoing sweep: CLOUDFLARE_ZONE_ID not set")
 		return nil
 	}
 
-	_, err = client.DNS.ZoneTransfers.Outgoing.Update(context.Background(), dns.ZoneTransferOutgoingUpdateParams{ZoneID: cloudflare.F(zoneID), Peers: cloudflare.F([]string{})})
+	outgoingZone, err := client.DNS.ZoneTransfers.Outgoing.Get(ctx, dns.ZoneTransferOutgoingGetParams{ZoneID: cloudflare.F(zoneID)})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to clear peers on outgoing zone: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare outgoing secondary zones: %s", err))
+		return fmt.Errorf("failed to fetch Cloudflare outgoing secondary zones: %w", err)
 	}
 
+	if len(outgoingZone.Peers) == 0 {
+		tflog.Info(ctx, "No Cloudflare peers connected to zones records to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Clearing %d peers from outgoing zone transfers (zone: %s)", len(outgoingZone.Peers), zoneID))
+	_, err = client.DNS.ZoneTransfers.Outgoing.Update(ctx, dns.ZoneTransferOutgoingUpdateParams{ZoneID: cloudflare.F(zoneID), Peers: cloudflare.F([]string{})})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to clear peers on outgoing zone: %s", err))
+		return fmt.Errorf("failed to clear peers on outgoing zone: %w", err)
+	}
+
+	tflog.Info(ctx, "Cleared peers from outgoing zone transfers")
 	return nil
 }
 

@@ -1,14 +1,36 @@
 package zero_trust_access_custom_page_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_access_custom_page", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_custom_page",
+		F:    testSweepCloudflareZeroTrustAccessCustomPage,
+	})
+}
+
+func testSweepCloudflareZeroTrustAccessCustomPage(r string) error {
+	ctx := context.Background()
+	// Access Custom Pages are account-level custom HTML page configurations.
+	// They are managed as configuration and don't accumulate.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust Access Custom Page doesn't require sweeping (account configuration)")
+	return nil
+}
 
 func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {

@@ -1,16 +1,96 @@
 package list_item_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
-
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_list_item", &resource.Sweeper{
+		Name: "cloudflare_list_item",
+		F:    testSweepCloudflareListItems,
+		Dependencies: []string{
+			"cloudflare_list",
+		},
+	})
+}
+
+func testSweepCloudflareListItems(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping list items sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	// List all lists
+	lists, err := client.ListLists(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch lists: %s", err))
+		return fmt.Errorf("failed to fetch lists: %w", err)
+	}
+
+	if len(lists) == 0 {
+		tflog.Info(ctx, "No lists found, skipping list items sweep")
+		return nil
+	}
+
+	// For each list, get and delete its items
+	for _, list := range lists {
+		// Only process lists that would be swept themselves
+		if !utils.ShouldSweepResource(list.Name) {
+			continue
+		}
+
+		items, err := client.ListListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListItemsParams{ID: list.ID})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch items for list %s: %s", list.Name, err))
+			continue
+		}
+
+		if len(items) == 0 {
+			continue
+		}
+
+		// Collect item IDs to delete
+		var itemIDs []cloudflare.ListItemDeleteItemRequest
+		for _, item := range items {
+			itemIDs = append(itemIDs, cloudflare.ListItemDeleteItemRequest{ID: item.ID})
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting %d items from list: %s (account: %s)", len(itemIDs), list.Name, accountID))
+		_, err = client.DeleteListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListDeleteItemsParams{
+			ID:    list.ID,
+			Items: cloudflare.ListItemDeleteRequest{Items: itemIDs},
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete items from list %s: %s", list.Name, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted %d items from list: %s", len(itemIDs), list.Name))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareListItem_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

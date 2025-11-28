@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -49,9 +50,14 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_dns", &resource.Sweeper{
 		Name: "cloudflare_email_routing_dns",
 		F: func(region string) error {
+			ctx := context.Background()
 			client := acctest.SharedClient()
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-			ctx := context.Background()
+
+			if zoneID == "" {
+				tflog.Info(ctx, "Skipping email routing DNS sweep: CLOUDFLARE_ZONE_ID not set")
+				return nil
+			}
 
 			// First, get the full email routing settings including subdomains via raw API call
 			req, err := http.NewRequestWithContext(
@@ -61,6 +67,7 @@ func init() {
 				nil,
 			)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create request: %s", err))
 				return fmt.Errorf("failed to create request: %w", err)
 			}
 
@@ -75,6 +82,7 @@ func init() {
 				req.Header.Set("X-Auth-Key", apiKey)
 				req.Header.Set("X-Auth-Email", apiEmail)
 			} else {
+				tflog.Error(ctx, "Missing authentication credentials")
 				return fmt.Errorf("missing authentication credentials")
 			}
 			req.Header.Set("Content-Type", "application/json")
@@ -83,23 +91,26 @@ func init() {
 			httpClient := &http.Client{}
 			resp, err := httpClient.Do(req)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to execute request: %s", err))
 				return fmt.Errorf("failed to execute request: %w", err)
 			}
 			defer resp.Body.Close()
 
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to read response: %s", err))
 				return fmt.Errorf("failed to read response: %w", err)
 			}
 
 			// Parse the response
 			var apiResp EmailRoutingAPIResponse
 			if err := json.Unmarshal(body, &apiResp); err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to parse response: %s", err))
 				return fmt.Errorf("failed to parse response: %w", err)
 			}
 
 			settings := apiResp.Result
-			fmt.Printf("Found %d email routing DNS subdomains\n", len(settings.Subdomains))
+			tflog.Info(ctx, fmt.Sprintf("Found %d email routing DNS subdomains", len(settings.Subdomains)))
 
 			// Clean up subdomains first by calling disable for each one
 			deletedCount := 0
@@ -110,7 +121,7 @@ func init() {
 					continue
 				}
 
-				fmt.Printf("Disabling subdomain: %s\n", subdomain.Name)
+				tflog.Info(ctx, fmt.Sprintf("Disabling subdomain: %s (zone: %s)", subdomain.Name, zoneID))
 
 				// Call the disable endpoint with the subdomain name
 				bodyJSON := fmt.Sprintf(`{"name":"%s"}`, subdomain.Name)
@@ -121,7 +132,7 @@ func init() {
 					bytes.NewBufferString(bodyJSON),
 				)
 				if err != nil {
-					fmt.Printf("Warning: failed to create disable request for %s: %v\n", subdomain.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to create disable request for %s: %s", subdomain.Name, err))
 					continue
 				}
 
@@ -136,20 +147,21 @@ func init() {
 
 				disableResp, err := httpClient.Do(disableReq)
 				if err != nil {
-					fmt.Printf("Warning: failed to disable subdomain %s: %v\n", subdomain.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to disable subdomain %s: %s", subdomain.Name, err))
 					continue
 				}
 				disableResp.Body.Close()
 
 				if disableResp.StatusCode >= 200 && disableResp.StatusCode < 300 {
 					deletedCount++
+					tflog.Info(ctx, fmt.Sprintf("Disabled subdomain: %s", subdomain.Name))
 				} else {
-					fmt.Printf("Warning: got status %d when disabling %s\n", disableResp.StatusCode, subdomain.Name)
+					tflog.Error(ctx, fmt.Sprintf("Got status %d when disabling %s", disableResp.StatusCode, subdomain.Name))
 				}
 			}
 
 			if deletedCount > 0 || skippedCount > 0 {
-				fmt.Printf("Disabled %d subdomains, skipped %d already disabled\n", deletedCount, skippedCount)
+				tflog.Info(ctx, fmt.Sprintf("Disabled %d subdomains, skipped %d already disabled", deletedCount, skippedCount))
 			}
 
 			// Delete email routing DNS configuration (removes remaining DNS records)
@@ -157,21 +169,22 @@ func init() {
 				ZoneID: cloudflare.F(zoneID),
 			})
 			if err != nil {
-				fmt.Printf("Note: DNS delete returned error (might be expected): %v\n", err)
+				tflog.Info(ctx, fmt.Sprintf("Note: DNS delete returned error (might be expected): %v", err))
 			} else if deletedRecords != nil && deletedRecords.Result != nil {
-				fmt.Printf("Deleted %d email routing DNS records\n", len(deletedRecords.Result))
+				tflog.Info(ctx, fmt.Sprintf("Deleted %d email routing DNS records", len(deletedRecords.Result)))
 			}
 
 			// Also disable main zone email routing if it's still enabled
 			if settings.Enabled {
+				tflog.Info(ctx, fmt.Sprintf("Disabling main zone email routing (zone: %s)", zoneID))
 				_, err = client.EmailRouting.Disable(ctx, email_routing.EmailRoutingDisableParams{
 					ZoneID: cloudflare.F(zoneID),
 					Body:   map[string]interface{}{"name": settings.Name},
 				})
 				if err != nil {
-					fmt.Printf("Warning: failed to disable main zone email routing: %v\n", err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to disable main zone email routing: %s", err))
 				} else {
-					fmt.Println("Disabled main zone email routing")
+					tflog.Info(ctx, "Disabled main zone email routing")
 				}
 			}
 
@@ -183,8 +196,13 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_dns_subdomains", &resource.Sweeper{
 		Name: "cloudflare_email_routing_dns_subdomains",
 		F: func(region string) error {
-			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			ctx := context.Background()
+			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+			if zoneID == "" {
+				tflog.Info(ctx, "Skipping email routing DNS subdomains sweep: CLOUDFLARE_ZONE_ID not set")
+				return nil
+			}
 
 			// Make a raw HTTP GET request to get the full response with subdomains
 			req, err := http.NewRequestWithContext(
@@ -194,6 +212,7 @@ func init() {
 				nil,
 			)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create request: %s", err))
 				return fmt.Errorf("failed to create request: %w", err)
 			}
 
@@ -208,6 +227,7 @@ func init() {
 				req.Header.Set("X-Auth-Key", apiKey)
 				req.Header.Set("X-Auth-Email", apiEmail)
 			} else {
+				tflog.Error(ctx, "Missing authentication credentials")
 				return fmt.Errorf("missing authentication credentials")
 			}
 			req.Header.Set("Content-Type", "application/json")
@@ -216,26 +236,29 @@ func init() {
 			httpClient := &http.Client{}
 			resp, err := httpClient.Do(req)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to execute request: %s", err))
 				return fmt.Errorf("failed to execute request: %w", err)
 			}
 			defer resp.Body.Close()
 
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to read response: %s", err))
 				return fmt.Errorf("failed to read response: %w", err)
 			}
 
 			// Parse the response
 			var apiResp EmailRoutingAPIResponse
 			if err := json.Unmarshal(body, &apiResp); err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to parse response: %s", err))
 				return fmt.Errorf("failed to parse response: %w", err)
 			}
 
 			settings := apiResp.Result
-			fmt.Printf("Found %d email routing DNS subdomains to clean up\n", len(settings.Subdomains))
+			tflog.Info(ctx, fmt.Sprintf("Found %d email routing DNS subdomains to clean up", len(settings.Subdomains)))
 
 			if len(settings.Subdomains) == 0 {
-				fmt.Println("No subdomains to clean up")
+				tflog.Info(ctx, "No subdomains to clean up")
 				return nil
 			}
 
@@ -244,12 +267,12 @@ func init() {
 			skippedCount := 0
 			for _, subdomain := range settings.Subdomains {
 				if !subdomain.Enabled {
-					fmt.Printf("Subdomain %s is already disabled, skipping\n", subdomain.Name)
+					tflog.Info(ctx, fmt.Sprintf("Subdomain %s is already disabled, skipping", subdomain.Name))
 					skippedCount++
 					continue
 				}
 
-				fmt.Printf("Disabling subdomain: %s\n", subdomain.Name)
+				tflog.Info(ctx, fmt.Sprintf("Disabling subdomain: %s (zone: %s)", subdomain.Name, zoneID))
 
 				// Call the disable endpoint with the subdomain name
 				bodyJSON := fmt.Sprintf(`{"name":"%s"}`, subdomain.Name)
@@ -260,7 +283,7 @@ func init() {
 					bytes.NewBufferString(bodyJSON),
 				)
 				if err != nil {
-					fmt.Printf("Warning: failed to create disable request for %s: %v\n", subdomain.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to create disable request for %s: %s", subdomain.Name, err))
 					continue
 				}
 
@@ -275,20 +298,20 @@ func init() {
 
 				disableResp, err := httpClient.Do(disableReq)
 				if err != nil {
-					fmt.Printf("Warning: failed to disable subdomain %s: %v\n", subdomain.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to disable subdomain %s: %s", subdomain.Name, err))
 					continue
 				}
 				disableResp.Body.Close()
 
 				if disableResp.StatusCode >= 200 && disableResp.StatusCode < 300 {
 					deletedCount++
-					fmt.Printf("Successfully disabled subdomain: %s\n", subdomain.Name)
+					tflog.Info(ctx, fmt.Sprintf("Successfully disabled subdomain: %s", subdomain.Name))
 				} else {
-					fmt.Printf("Warning: got status %d when disabling %s\n", disableResp.StatusCode, subdomain.Name)
+					tflog.Error(ctx, fmt.Sprintf("Got status %d when disabling %s", disableResp.StatusCode, subdomain.Name))
 				}
 			}
 
-			fmt.Printf("Disabled %d email routing DNS subdomains, skipped %d already disabled\n", deletedCount, skippedCount)
+			tflog.Info(ctx, fmt.Sprintf("Disabled %d email routing DNS subdomains, skipped %d already disabled", deletedCount, skippedCount))
 			return nil
 		},
 	})

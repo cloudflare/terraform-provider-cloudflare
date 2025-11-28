@@ -1,13 +1,35 @@
 package zero_trust_dlp_predefined_profile_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_dlp_predefined_profile", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_dlp_predefined_profile",
+		F:    testSweepCloudflareZeroTrustDLPPredefinedProfile,
+	})
+}
+
+func testSweepCloudflareZeroTrustDLPPredefinedProfile(r string) error {
+	ctx := context.Background()
+	// DLP Predefined Profile is an account-level predefined profile configuration.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust DLP Predefined Profile doesn't require sweeping (predefined configuration)")
+	return nil
+}
 
 func TestAccCloudflareZeroTrustDlpPredefinedProfile_Basic(t *testing.T) {
 	// Generate a random resource name to avoid conflicts during testing

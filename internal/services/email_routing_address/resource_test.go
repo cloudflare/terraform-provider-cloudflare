@@ -9,6 +9,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -24,29 +26,40 @@ func init() {
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			ctx := context.Background()
 
-			// List all email routing addresses
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping email routing addresses sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
+			}
+
 			addresses, err := client.EmailRouting.Addresses.List(ctx, email_routing.AddressListParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch email routing addresses: %s", err))
 				return fmt.Errorf("failed to fetch email routing destination addresses: %w", err)
 			}
 
 			addressList := addresses.Result
-			fmt.Printf("Found %d email routing destination addresses to delete\n", len(addressList))
-			deletedCount := 0
+			if len(addressList) == 0 {
+				tflog.Info(ctx, "No email routing addresses to sweep")
+				return nil
+			}
 
 			for _, address := range addressList {
+				if !utils.ShouldSweepResource(address.Email) {
+					continue
+				}
+				tflog.Info(ctx, fmt.Sprintf("Deleting email routing address: %s (%s) (account: %s)", address.Email, address.Tag, accountID))
 				_, err := client.EmailRouting.Addresses.Delete(ctx, address.Tag, email_routing.AddressDeleteParams{
 					AccountID: cloudflare.F(accountID),
 				})
 				if err != nil {
-					return fmt.Errorf("failed to delete email routing destination address %q: %w", address.Email, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete email routing address %s: %s", address.Email, err))
+					continue
 				}
-				deletedCount++
+				tflog.Info(ctx, fmt.Sprintf("Deleted email routing address: %s", address.Tag))
 			}
 
-			fmt.Printf("Deleted %d email routing destination addresses\n", deletedCount)
 			return nil
 		},
 	})

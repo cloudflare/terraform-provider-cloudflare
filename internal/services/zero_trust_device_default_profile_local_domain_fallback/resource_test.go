@@ -1,6 +1,7 @@
 package zero_trust_device_default_profile_local_domain_fallback_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,12 +9,33 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_default_profile_local_domain_fallback", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_default_profile_local_domain_fallback",
+		F:    testSweepCloudflareZeroTrustDeviceDefaultProfileLocalDomainFallback,
+	})
+}
+
+func testSweepCloudflareZeroTrustDeviceDefaultProfileLocalDomainFallback(r string) error {
+	ctx := context.Background()
+	// Device Default Profile Local Domain Fallback is an account-level fallback domain setting for the default device profile.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust Device Default Profile Local Domain Fallback doesn't require sweeping (account setting)")
+	return nil
+}
 
 func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access

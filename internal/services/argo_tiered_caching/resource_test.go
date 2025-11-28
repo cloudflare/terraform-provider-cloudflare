@@ -1,17 +1,39 @@
 package argo_tiered_caching_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_argo_tiered_caching", &resource.Sweeper{
+		Name: "cloudflare_argo_tiered_caching",
+		F:    testSweepCloudflareArgoTieredCaching,
+	})
+}
+
+func testSweepCloudflareArgoTieredCaching(r string) error {
+	ctx := context.Background()
+	// Argo Tiered Caching is a zone-level feature toggle (on/off).
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Argo Tiered Caching doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareArgoTieredCaching_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

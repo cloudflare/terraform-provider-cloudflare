@@ -1,15 +1,71 @@
 package notification_policy_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_notification_policy", &resource.Sweeper{
+		Name: "cloudflare_notification_policy",
+		F:    testSweepCloudflareNotificationPolicies,
+	})
+}
+
+func testSweepCloudflareNotificationPolicies(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping notification policies sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	policiesResp, err := client.ListNotificationPolicies(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch notification policies: %s", err))
+		return fmt.Errorf("failed to fetch notification policies: %w", err)
+	}
+
+	if len(policiesResp.Result) == 0 {
+		tflog.Info(ctx, "No notification policies to sweep")
+		return nil
+	}
+
+	for _, policy := range policiesResp.Result {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(policy.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting notification policy: %s (account: %s)", policy.Name, accountID))
+		_, err := client.DeleteNotificationPolicy(ctx, accountID, policy.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete notification policy %s: %s", policy.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted notification policy: %s", policy.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
