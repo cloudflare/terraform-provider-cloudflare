@@ -290,10 +290,21 @@ func (r *ZeroTrustDevicePostureRuleResource) normalizeReadData(ctx context.Conte
 			data.Input.OperatingSystem = types.StringNull()
 		}
 
+		// enabled field: if it was null/not set in current state and API added false, keep it null
+		if currentState.Input.Enabled.IsNull() && !data.Input.Enabled.IsNull() && !data.Input.Enabled.ValueBool() {
+			// API adds enabled = false as default for some rule types, keep it null to match config
+			data.Input.Enabled = types.BoolNull()
+		}
+
 		// check_disks field: if it was null in current state but API returns empty array, keep it null
 		if currentState.Input.CheckDisks == nil && data.Input.CheckDisks != nil && len(*data.Input.CheckDisks) == 0 {
 			// API returns empty array when config had none, keep it null to match config
 			data.Input.CheckDisks = nil
+		}
+
+		// Version field: CRITICAL - API may not return version even if config specifies it
+		if !currentState.Input.Version.IsNull() && data.Input.Version.IsNull() {
+			data.Input.Version = currentState.Input.Version
 		}
 
 		// SentinelOne fields: API may not return these fields even if config specifies them
@@ -314,6 +325,23 @@ func (r *ZeroTrustDevicePostureRuleResource) normalizeReadData(ctx context.Conte
 		}
 		if !currentState.Input.OperationalState.IsNull() && data.Input.OperationalState.IsNull() {
 			data.Input.OperationalState = currentState.Input.OperationalState
+		}
+
+		// Additional fields that API may not return consistently
+		if !currentState.Input.Path.IsNull() && data.Input.Path.IsNull() {
+			data.Input.Path = currentState.Input.Path
+		}
+		if !currentState.Input.Sha256.IsNull() && data.Input.Sha256.IsNull() {
+			data.Input.Sha256 = currentState.Input.Sha256
+		}
+		if !currentState.Input.OSDistroName.IsNull() && data.Input.OSDistroName.IsNull() {
+			data.Input.OSDistroName = currentState.Input.OSDistroName
+		}
+		if !currentState.Input.OSDistroRevision.IsNull() && data.Input.OSDistroRevision.IsNull() {
+			data.Input.OSDistroRevision = currentState.Input.OSDistroRevision
+		}
+		if !currentState.Input.OSVersionExtra.IsNull() && data.Input.OSVersionExtra.IsNull() {
+			data.Input.OSVersionExtra = currentState.Input.OSVersionExtra
 		}
 	}
 }
