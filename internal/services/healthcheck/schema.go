@@ -128,7 +128,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"expected_body": schema.StringAttribute{
 						Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy.",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString(""),
 					},
 					"expected_codes": schema.ListAttribute{
 						Description: `The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.`,

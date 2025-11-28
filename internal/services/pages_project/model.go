@@ -18,9 +18,9 @@ type PagesProjectModel struct {
 	Name                 types.String                                                   `tfsdk:"name" json:"name,required"`
 	AccountID            types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ProductionBranch     types.String                                                   `tfsdk:"production_branch" json:"production_branch,required"`
-	BuildConfig          customfield.NestedObject[PagesProjectBuildConfigModel]         `tfsdk:"build_config" json:"build_config,computed_optional"`
+	BuildConfig          *PagesProjectBuildConfigModel                                  `tfsdk:"build_config" json:"build_config,optional"`
+	Source               *PagesProjectSourceModel                                       `tfsdk:"source" json:"source,optional"`
 	DeploymentConfigs    customfield.NestedObject[PagesProjectDeploymentConfigsModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed_optional"`
-	Source               customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed_optional"`
 	CreatedOn            timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Framework            types.String                                                   `tfsdk:"framework" json:"framework,computed"`
 	FrameworkVersion     types.String                                                   `tfsdk:"framework_version" json:"framework_version,computed"`
@@ -50,6 +50,27 @@ type PagesProjectBuildConfigModel struct {
 	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,optional"`
 }
 
+type PagesProjectSourceModel struct {
+	Config *PagesProjectSourceConfigModel `tfsdk:"config" json:"config,required"`
+	Type   types.String                   `tfsdk:"type" json:"type,required"`
+}
+
+type PagesProjectSourceConfigModel struct {
+	DeploymentsEnabled           types.Bool      `tfsdk:"deployments_enabled" json:"deployments_enabled,optional"`
+	Owner                        types.String    `tfsdk:"owner" json:"owner,optional"`
+	OwnerID                      types.String    `tfsdk:"owner_id" json:"owner_id,optional"`
+	PathExcludes                 *[]types.String `tfsdk:"path_excludes" json:"path_excludes,optional"`
+	PathIncludes                 *[]types.String `tfsdk:"path_includes" json:"path_includes,optional"`
+	PrCommentsEnabled            types.Bool      `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,optional"`
+	PreviewBranchExcludes        *[]types.String `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,optional"`
+	PreviewBranchIncludes        *[]types.String `tfsdk:"preview_branch_includes" json:"preview_branch_includes,optional"`
+	PreviewDeploymentSetting     types.String    `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,optional"`
+	ProductionBranch             types.String    `tfsdk:"production_branch" json:"production_branch,optional"`
+	ProductionDeploymentsEnabled types.Bool      `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,optional"`
+	RepoID                       types.String    `tfsdk:"repo_id" json:"repo_id,optional"`
+	RepoName                     types.String    `tfsdk:"repo_name" json:"repo_name,optional"`
+}
+
 type PagesProjectDeploymentConfigsModel struct {
 	Preview    customfield.NestedObject[PagesProjectDeploymentConfigsPreviewModel]    `tfsdk:"preview" json:"preview,computed_optional"`
 	Production customfield.NestedObject[PagesProjectDeploymentConfigsProductionModel] `tfsdk:"production" json:"production,computed_optional"`
@@ -62,7 +83,7 @@ type PagesProjectDeploymentConfigsPreviewModel struct {
 	Browsers                         *map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                `tfsdk:"browsers" json:"browsers,optional"`
 	BuildImageMajorVersion           types.Int64                                                                  `tfsdk:"build_image_major_version" json:"build_image_major_version,computed_optional"`
 	CompatibilityDate                types.String                                                                 `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
-	CompatibilityFlags               customfield.List[types.String]                                               `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	CompatibilityFlags               *[]types.String                                                              `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases                      *map[string]PagesProjectDeploymentConfigsPreviewD1DatabasesModel             `tfsdk:"d1_databases" json:"d1_databases,optional"`
 	DurableObjectNamespaces          *map[string]PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,optional"`
 	EnvVars                          *map[string]PagesProjectDeploymentConfigsPreviewEnvVarsModel                 `tfsdk:"env_vars" json:"env_vars,optional"`
@@ -81,22 +102,22 @@ type PagesProjectDeploymentConfigsPreviewModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewAIBindingsModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id,optional"`
+	ProjectID types.String `tfsdk:"project_id" json:"project_id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel struct {
-	Dataset types.String `tfsdk:"dataset" json:"dataset,optional"`
+	Dataset types.String `tfsdk:"dataset" json:"dataset,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewBrowsersModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewD1DatabasesModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,optional"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewEnvVarsModel struct {
@@ -105,42 +126,42 @@ type PagesProjectDeploymentConfigsPreviewEnvVarsModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewHyperdriveBindingsModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewKVNamespacesModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,optional"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewLimitsModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
+	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewMTLSCertificatesModel struct {
-	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,optional"`
+	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewPlacementModel struct {
-	Mode types.String `tfsdk:"mode" json:"mode,optional"`
+	Mode types.String `tfsdk:"mode" json:"mode,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewQueueProducersModel struct {
-	Name types.String `tfsdk:"name" json:"name,optional"`
+	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
 type PagesProjectDeploymentConfigsPreviewR2BucketsModel struct {
+	Name         types.String `tfsdk:"name" json:"name,required"`
 	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
-	Name         types.String `tfsdk:"name" json:"name,optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewServicesModel struct {
+	Service     types.String `tfsdk:"service" json:"service,required"`
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
-	Service     types.String `tfsdk:"service" json:"service,optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel struct {
-	IndexName types.String `tfsdk:"index_name" json:"index_name,optional"`
+	IndexName types.String `tfsdk:"index_name" json:"index_name,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionModel struct {
@@ -150,7 +171,7 @@ type PagesProjectDeploymentConfigsProductionModel struct {
 	Browsers                         *map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                `tfsdk:"browsers" json:"browsers,optional"`
 	BuildImageMajorVersion           types.Int64                                                                     `tfsdk:"build_image_major_version" json:"build_image_major_version,computed_optional"`
 	CompatibilityDate                types.String                                                                    `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
-	CompatibilityFlags               customfield.List[types.String]                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	CompatibilityFlags               *[]types.String                                                                 `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases                      *map[string]PagesProjectDeploymentConfigsProductionD1DatabasesModel             `tfsdk:"d1_databases" json:"d1_databases,optional"`
 	DurableObjectNamespaces          *map[string]PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,optional"`
 	EnvVars                          *map[string]PagesProjectDeploymentConfigsProductionEnvVarsModel                 `tfsdk:"env_vars" json:"env_vars,optional"`
@@ -169,22 +190,22 @@ type PagesProjectDeploymentConfigsProductionModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionAIBindingsModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id,optional"`
+	ProjectID types.String `tfsdk:"project_id" json:"project_id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel struct {
-	Dataset types.String `tfsdk:"dataset" json:"dataset,optional"`
+	Dataset types.String `tfsdk:"dataset" json:"dataset,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionBrowsersModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionD1DatabasesModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,optional"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionEnvVarsModel struct {
@@ -193,61 +214,42 @@ type PagesProjectDeploymentConfigsProductionEnvVarsModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionHyperdriveBindingsModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionKVNamespacesModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,optional"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionLimitsModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
+	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionMTLSCertificatesModel struct {
-	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,optional"`
+	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionPlacementModel struct {
-	Mode types.String `tfsdk:"mode" json:"mode,optional"`
+	Mode types.String `tfsdk:"mode" json:"mode,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionQueueProducersModel struct {
-	Name types.String `tfsdk:"name" json:"name,optional"`
+	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
 type PagesProjectDeploymentConfigsProductionR2BucketsModel struct {
+	Name         types.String `tfsdk:"name" json:"name,required"`
 	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
-	Name         types.String `tfsdk:"name" json:"name,optional"`
 }
 
 type PagesProjectDeploymentConfigsProductionServicesModel struct {
+	Service     types.String `tfsdk:"service" json:"service,required"`
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
-	Service     types.String `tfsdk:"service" json:"service,optional"`
 }
 
 type PagesProjectDeploymentConfigsProductionVectorizeBindingsModel struct {
-	IndexName types.String `tfsdk:"index_name" json:"index_name,optional"`
-}
-
-type PagesProjectSourceModel struct {
-	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed_optional"`
-	Type   types.String                                            `tfsdk:"type" json:"type,optional"`
-}
-
-type PagesProjectSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed_optional"`
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,optional"`
-	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed_optional"`
-	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed_optional"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed_optional"`
-	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed_optional"`
-	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed_optional"`
-	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed_optional"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,optional"`
-	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed_optional"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,optional"`
+	IndexName types.String `tfsdk:"index_name" json:"index_name,required"`
 }
 
 type PagesProjectCanonicalDeploymentModel struct {
@@ -267,15 +269,16 @@ type PagesProjectCanonicalDeploymentModel struct {
 	Source            customfield.NestedObject[PagesProjectCanonicalDeploymentSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectCanonicalDeploymentStagesModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                    `tfsdk:"url" json:"url,computed"`
+	UsesFunctions     types.Bool                                                                      `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 
 type PagesProjectCanonicalDeploymentBuildConfigModel struct {
+	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,computed"`
+	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,computed"`
 	BuildCaching      types.Bool   `tfsdk:"build_caching" json:"build_caching,computed"`
 	BuildCommand      types.String `tfsdk:"build_command" json:"build_command,computed"`
 	DestinationDir    types.String `tfsdk:"destination_dir" json:"destination_dir,computed"`
 	RootDir           types.String `tfsdk:"root_dir" json:"root_dir,computed"`
-	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,computed"`
-	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,computed"`
 }
 
 type PagesProjectCanonicalDeploymentDeploymentTriggerModel struct {
@@ -285,6 +288,7 @@ type PagesProjectCanonicalDeploymentDeploymentTriggerModel struct {
 
 type PagesProjectCanonicalDeploymentDeploymentTriggerMetadataModel struct {
 	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
+	CommitDirty   types.Bool   `tfsdk:"commit_dirty" json:"commit_dirty,computed"`
 	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
 	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
 }
@@ -307,17 +311,19 @@ type PagesProjectCanonicalDeploymentSourceModel struct {
 }
 
 type PagesProjectCanonicalDeploymentSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
 	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
+	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
+	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed"`
 	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
 	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
 	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
 	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
 	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
+	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed"`
 }
 
 type PagesProjectCanonicalDeploymentStagesModel struct {
@@ -344,15 +350,16 @@ type PagesProjectLatestDeploymentModel struct {
 	Source            customfield.NestedObject[PagesProjectLatestDeploymentSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectLatestDeploymentStagesModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                 `tfsdk:"url" json:"url,computed"`
+	UsesFunctions     types.Bool                                                                   `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 
 type PagesProjectLatestDeploymentBuildConfigModel struct {
+	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,computed"`
+	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,computed"`
 	BuildCaching      types.Bool   `tfsdk:"build_caching" json:"build_caching,computed"`
 	BuildCommand      types.String `tfsdk:"build_command" json:"build_command,computed"`
 	DestinationDir    types.String `tfsdk:"destination_dir" json:"destination_dir,computed"`
 	RootDir           types.String `tfsdk:"root_dir" json:"root_dir,computed"`
-	WebAnalyticsTag   types.String `tfsdk:"web_analytics_tag" json:"web_analytics_tag,computed"`
-	WebAnalyticsToken types.String `tfsdk:"web_analytics_token" json:"web_analytics_token,computed"`
 }
 
 type PagesProjectLatestDeploymentDeploymentTriggerModel struct {
@@ -362,6 +369,7 @@ type PagesProjectLatestDeploymentDeploymentTriggerModel struct {
 
 type PagesProjectLatestDeploymentDeploymentTriggerMetadataModel struct {
 	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
+	CommitDirty   types.Bool   `tfsdk:"commit_dirty" json:"commit_dirty,computed"`
 	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
 	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
 }
@@ -384,17 +392,19 @@ type PagesProjectLatestDeploymentSourceModel struct {
 }
 
 type PagesProjectLatestDeploymentSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
 	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
+	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
+	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed"`
 	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
 	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
 	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
 	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
 	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
+	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed"`
 }
 
 type PagesProjectLatestDeploymentStagesModel struct {

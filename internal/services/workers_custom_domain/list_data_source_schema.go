@@ -59,8 +59,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"environment": schema.StringAttribute{
-							Description: "Worker environment associated with the zone and hostname.",
-							Computed:    true,
+							Description:        "Worker environment associated with the zone and hostname.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
 						},
 						"hostname": schema.StringAttribute{
 							Description: "Hostname of the Worker Domain.",

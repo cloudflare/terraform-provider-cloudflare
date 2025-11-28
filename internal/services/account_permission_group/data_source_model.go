@@ -12,6 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type AccountPermissionGroupResultDataSourceEnvelope struct {
+	Result AccountPermissionGroupDataSourceModel `json:"result,computed"`
+}
+
 type AccountPermissionGroupDataSourceModel struct {
 	AccountID         types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	PermissionGroupID types.String                                                        `tfsdk:"permission_group_id" path:"permission_group_id,required"`

@@ -48,6 +48,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/account_token"
     "resource=./internal/services/address_map"
     "resource=./internal/services/api_shield"
+    "resource=./internal/services/api_shield_operation parallel=1"
     "resource=./internal/services/api_token"
     "resource=./internal/services/argo_smart_routing"
     "resource=./internal/services/argo_tiered_caching"

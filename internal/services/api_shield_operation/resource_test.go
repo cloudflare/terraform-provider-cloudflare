@@ -14,76 +14,238 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "host", domain),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					// Required attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("method"), knownvalue.StringExact("GET")),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("host"), knownvalue.StringExact(domain)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.StringExact("/example/path")),
+					// Computed attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("last_updated"), knownvalue.NotNull()),
+				},
+			},
+			{
+				ResourceName:        resourceID,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
 }
 
-func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
+func TestAccCloudflareAPIShieldOperation_RequiresReplace(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
+	var operationID1, operationID2 string
+
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),
+				ConfigStateChecks: []statecheck.StateCheck{
+					// Required attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("method"), knownvalue.StringExact("GET")),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("host"), knownvalue.StringExact(domain)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.StringExact("/example/path")),
+					// Computed attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("last_updated"), knownvalue.NotNull()),
+				},
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "host", domain),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
+					testCheckAPIShieldOperationID(resourceID, &operationID1),
 				),
 			},
 			{
 				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "POST", Host: domain, Endpoint: "/example/path"}),
+				ConfigStateChecks: []statecheck.StateCheck{
+					// Required attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("method"), knownvalue.StringExact("POST")),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("host"), knownvalue.StringExact(domain)),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.StringExact("/example/path")),
+					// Computed attributes
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("last_updated"), knownvalue.NotNull()),
+				},
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceID, "method", "POST"), // check that we've 'updated' the value
-					resource.TestCheckResourceAttr(resourceID, "host", domain),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
+					testCheckAPIShieldOperationID(resourceID, &operationID2),
+					testCheckAPIShieldOperationRecreated(&operationID1, &operationID2),
 				),
+			},
+			{
+				ResourceName:        resourceID,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
+}
+
+func TestAccCloudflareAPIShieldOperation_AllMethods(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	// Test all HTTP methods supported by the API
+	methods := []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+
+	for _, method := range methods {
+		t.Run(method, func(t *testing.T) {
+			resourceID := "cloudflare_api_shield_operation." + rnd
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck_Credentials(t)
+					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_Domain(t)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				CheckDestroy:             testAccCheckAPIShieldOperationDelete,
+				Steps: []resource.TestStep{
+					{
+						Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{
+							Method:   method,
+							Host:     domain,
+							Endpoint: fmt.Sprintf("/api/%s/test", method),
+						}),
+						ConfigStateChecks: []statecheck.StateCheck{
+							// Required attributes
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("method"), knownvalue.StringExact(method)),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("host"), knownvalue.StringExact(domain)),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.StringExact(fmt.Sprintf("/api/%s/test", method))),
+							// Computed attributes
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("last_updated"), knownvalue.NotNull()),
+						},
+					},
+					{
+						ResourceName:        resourceID,
+						ImportState:         true,
+						ImportStateVerify:   true,
+						ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+					},
+				},
+			})
+		})
+	}
+}
+
+func TestAccCloudflareAPIShieldOperation_DifferentEndpoints(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	testCases := []struct {
+		name     string
+		endpoint string
+	}{
+		{
+			name:     "SimpleEndpoint",
+			endpoint: "/api/users",
+		},
+		{
+			name:     "EndpointWithSingleParameter",
+			endpoint: "/api/users/{var1}",
+		},
+		{
+			name:     "EndpointWithMultipleParameters",
+			endpoint: "/api/users/{var1}/posts/{var2}",
+		},
+		{
+			name:     "EndpointWithTrailingSlash",
+			endpoint: "/api/resources/",
+		},
+		{
+			name:     "RootEndpoint",
+			endpoint: "/",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			resourceName := rnd + "_" + tc.name
+			resourceID := "cloudflare_api_shield_operation." + resourceName
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck_Credentials(t)
+					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_Domain(t)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				CheckDestroy:             testAccCheckAPIShieldOperationDelete,
+				Steps: []resource.TestStep{
+					{
+						Config: testAccCloudflareAPIShieldOperation(resourceName, zoneID, cloudflare.APIShieldBasicOperation{
+							Method:   "GET",
+							Host:     domain,
+							Endpoint: tc.endpoint,
+						}),
+						ConfigStateChecks: []statecheck.StateCheck{
+							// Required attributes
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("method"), knownvalue.StringExact("GET")),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("host"), knownvalue.StringExact(domain)),
+							// Note: endpoint may be normalized by Cloudflare, so we just check it's not null
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.NotNull()),
+							// Computed attributes
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("last_updated"), knownvalue.NotNull()),
+						},
+					},
+					{
+						ResourceName:        resourceID,
+						ImportState:         true,
+						ImportStateVerify:   true,
+						ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+					},
+				},
+			})
+		})
+	}
 }
 
 func testAccCheckAPIShieldOperationDelete(s *terraform.State) error {
@@ -112,6 +274,36 @@ func testAccCheckAPIShieldOperationDelete(s *terraform.State) error {
 	}
 
 	return nil
+}
+
+func testCheckAPIShieldOperationID(resourceName string, operationID *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+
+		*operationID = rs.Primary.Attributes["operation_id"]
+		if *operationID == "" {
+			return fmt.Errorf("operation_id is empty")
+		}
+
+		return nil
+	}
+}
+
+func testCheckAPIShieldOperationRecreated(operationID1, operationID2 *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if *operationID1 == "" || *operationID2 == "" {
+			return fmt.Errorf("operation IDs not captured")
+		}
+
+		if *operationID1 == *operationID2 {
+			return fmt.Errorf("resource was not recreated: operation_id remained the same (%s)", *operationID1)
+		}
+
+		return nil
+	}
 }
 
 func testAccCloudflareAPIShieldOperation(resourceName, zone string, op cloudflare.APIShieldBasicOperation) string {

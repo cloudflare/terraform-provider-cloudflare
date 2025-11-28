@@ -28,6 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
+				Computed:    true,
 			},
 			"activated_on": schema.StringAttribute{
 				Description: "The last time proof of ownership was detected and the zone was made\nactive.",

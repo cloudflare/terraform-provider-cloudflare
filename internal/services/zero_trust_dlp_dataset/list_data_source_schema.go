@@ -103,7 +103,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"updated_at": schema.StringAttribute{
-							Description: "When the dataset was last updated.\n\nThis includes name or description changes as well as uploads.",
+							Description: "Stores when the dataset was last updated.\n\nThis includes name or description changes as well as uploads.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},

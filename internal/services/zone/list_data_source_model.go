@@ -61,8 +61,8 @@ func (m *ZonesDataSourceModel) toListParams(_ context.Context) (params zones.Zon
 }
 
 type ZonesAccountDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id,computed"`
-	Name types.String `tfsdk:"name" json:"name,computed"`
+	ID   types.String `tfsdk:"id" json:"id,computed" query:"id,optional"`
+	Name types.String `tfsdk:"name" json:"name,computed" query:"name,optional"`
 }
 
 type ZonesResultDataSourceModel struct {

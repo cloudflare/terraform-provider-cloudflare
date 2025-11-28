@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"project_name": schema.StringAttribute{
@@ -56,7 +56,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Description: "The domain name.",
+							Computed:    true,
 						},
 						"status": schema.StringAttribute{
 							Description: `Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".`,
@@ -76,9 +77,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[PagesDomainsValidationDataDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"error_message": schema.StringAttribute{
-									Computed: true,
-								},
 								"method": schema.StringAttribute{
 									Description: `Available values: "http", "txt".`,
 									Computed:    true,
@@ -99,6 +97,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"error_message": schema.StringAttribute{
+									Computed: true,
+								},
 								"txt_name": schema.StringAttribute{
 									Computed: true,
 								},
@@ -111,9 +112,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[PagesDomainsVerificationDataDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"error_message": schema.StringAttribute{
-									Computed: true,
-								},
 								"status": schema.StringAttribute{
 									Description: `Available values: "pending", "active", "deactivated", "blocked", "error".`,
 									Computed:    true,
@@ -126,6 +124,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"error",
 										),
 									},
+								},
+								"error_message": schema.StringAttribute{
+									Computed: true,
 								},
 							},
 						},

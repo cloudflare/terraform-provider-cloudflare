@@ -53,6 +53,7 @@ type ZeroTrustDevicePostureRuleInputModel struct {
 	ExtendedKeyUsage        *[]types.String                                `tfsdk:"extended_key_usage" json:"extended_key_usage,optional"`
 	Locations               *ZeroTrustDevicePostureRuleInputLocationsModel `tfsdk:"locations" json:"locations,optional"`
 	SubjectAlternativeNames *[]types.String                                `tfsdk:"subject_alternative_names" json:"subject_alternative_names,optional"`
+	UpdateWindowDays        types.Float64                                  `tfsdk:"update_window_days" json:"update_window_days,optional"`
 	ComplianceStatus        types.String                                   `tfsdk:"compliance_status" json:"compliance_status,optional"`
 	ConnectionID            types.String                                   `tfsdk:"connection_id" json:"connection_id,optional"`
 	LastSeen                types.String                                   `tfsdk:"last_seen" json:"last_seen,optional"`

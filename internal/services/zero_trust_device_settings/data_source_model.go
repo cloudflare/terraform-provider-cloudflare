@@ -18,6 +18,10 @@ type ZeroTrustDeviceSettingsResultDataSourceEnvelope struct {
 type ZeroTrustDeviceSettingsDataSourceModel struct {
 	AccountID                          types.String  `tfsdk:"account_id" path:"account_id,required"`
 	DisableForTime                     types.Float64 `tfsdk:"disable_for_time" json:"disable_for_time,computed"`
+	ExternalEmergencySignalEnabled     types.Bool    `tfsdk:"external_emergency_signal_enabled" json:"external_emergency_signal_enabled,computed"`
+	ExternalEmergencySignalFingerprint types.String  `tfsdk:"external_emergency_signal_fingerprint" json:"external_emergency_signal_fingerprint,computed"`
+	ExternalEmergencySignalInterval    types.String  `tfsdk:"external_emergency_signal_interval" json:"external_emergency_signal_interval,computed"`
+	ExternalEmergencySignalURL         types.String  `tfsdk:"external_emergency_signal_url" json:"external_emergency_signal_url,computed"`
 	GatewayProxyEnabled                types.Bool    `tfsdk:"gateway_proxy_enabled" json:"gateway_proxy_enabled,computed"`
 	GatewayUdpProxyEnabled             types.Bool    `tfsdk:"gateway_udp_proxy_enabled" json:"gateway_udp_proxy_enabled,computed"`
 	RootCertificateInstallationEnabled types.Bool    `tfsdk:"root_certificate_installation_enabled" json:"root_certificate_installation_enabled,computed"`

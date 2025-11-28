@@ -26,11 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"environment": schema.StringAttribute{
-				Description:   "Worker environment associated with the zone and hostname.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"hostname": schema.StringAttribute{
 				Description:   "Hostname of the Worker Domain.",
 				Required:      true,
@@ -45,6 +40,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier of the zone.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"environment": schema.StringAttribute{
+				Description:        "Worker environment associated with the zone and hostname.",
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				PlanModifiers:      []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_name": schema.StringAttribute{
 				Description: "Name of the zone.",

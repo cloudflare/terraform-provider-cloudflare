@@ -40,14 +40,14 @@ func (m *PagesDomainDataSourceModel) toReadParams(_ context.Context) (params pag
 }
 
 type PagesDomainValidationDataDataSourceModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	Method       types.String `tfsdk:"method" json:"method,computed"`
 	Status       types.String `tfsdk:"status" json:"status,computed"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed"`
 	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type PagesDomainVerificationDataDataSourceModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	Status       types.String `tfsdk:"status" json:"status,computed"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 }
