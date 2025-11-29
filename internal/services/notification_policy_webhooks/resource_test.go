@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -18,6 +19,60 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_notification_policy_webhooks", &resource.Sweeper{
+		Name: "cloudflare_notification_policy_webhooks",
+		F:    testSweepCloudflareNotificationPolicyWebhooks,
+	})
+}
+
+func testSweepCloudflareNotificationPolicyWebhooks(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping notification policy webhooks sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	webhooks, err := client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
+		AccountID: cloudflare.F(accountID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch notification policy webhooks: %s", err))
+		return fmt.Errorf("failed to fetch notification policy webhooks: %w", err)
+	}
+
+	if len(webhooks.Result) == 0 {
+		tflog.Info(ctx, "No notification policy webhooks to sweep")
+		return nil
+	}
+
+	for _, webhook := range webhooks.Result {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(webhook.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting notification policy webhook: %s (account: %s)", webhook.Name, accountID))
+		_, err := client.Alerting.Destinations.Webhooks.Delete(ctx, webhook.ID, alerting.DestinationWebhookDeleteParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete notification policy webhook %s: %s", webhook.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted notification policy webhook: %s", webhook.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareNotificationPolicyWebhooks_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification

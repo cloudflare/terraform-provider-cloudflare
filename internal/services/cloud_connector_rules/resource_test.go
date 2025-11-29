@@ -1,13 +1,18 @@
 package cloud_connector_rules_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/cloud_connector"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -15,29 +20,39 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-// func init() {
-// 	resource.AddTestSweepers("cloudflare_cloud_connector_rules", &resource.Sweeper{
-// 		Name: "cloudflare_cloud_connector_rules",
-// 		F:    testSweepCloudflareCloudConnectorRules,
-// 	})
-// }
+func init() {
+	resource.AddTestSweepers("cloudflare_cloud_connector_rules", &resource.Sweeper{
+		Name: "cloudflare_cloud_connector_rules",
+		F:    testSweepCloudflareCloudConnectorRules,
+	})
+}
 
-// func testSweepCloudflareCloudConnectorRules(r string) error {
-// 	ctx := context.Background()
-// 	client := acctest.SharedClient()
+func testSweepCloudflareCloudConnectorRules(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
 
-// 	zone := os.Getenv("CLOUDFLARE_ZONE_ID")
-// 	if zone == "" {
-// 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
-// 	}
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping cloud connector rules sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
 
-// 	_, err := client.CloudConnector.Rules.Update(ctx context.Context, params cloud_connector.RuleUpdateParams, opts ...option.RequestOption) UpdateZoneCloudConnectorRules(context.Background(), cloudflare.ZoneIdentifier(zone), []cloudflare.CloudConnectorRule{})
-// 	if err != nil {
-// 		tflog.Error(ctx, fmt.Sprintf("Failed to disable Cloudflare Zone Cloud Connector Rules: %s", err))
-// 	}
+	tflog.Info(ctx, fmt.Sprintf("Clearing cloud connector rules for zone: %s", zoneID))
+	_, err := client.CloudConnector.Rules.Update(
+		ctx,
+		cloud_connector.RuleUpdateParams{
+			ZoneID: cloudflare.F(zoneID),
+		},
+		option.WithRequestBody("application/json", []byte(`[]`)),
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to clear cloud connector rules: %s", err))
+		return fmt.Errorf("failed to clear cloud connector rules: %w", err)
+	}
 
-// 	return nil
-// }
+	tflog.Info(ctx, "Cleared cloud connector rules")
+	return nil
+}
 
 func TestAccCloudflareCloudConnectorRules(t *testing.T) {
 	t.Parallel()

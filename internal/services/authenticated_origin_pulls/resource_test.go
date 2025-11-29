@@ -1,14 +1,37 @@
 package authenticated_origin_pulls_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_authenticated_origin_pulls", &resource.Sweeper{
+		Name: "cloudflare_authenticated_origin_pulls",
+		F:    testSweepCloudflareAuthenticatedOriginPulls,
+	})
+}
+
+func testSweepCloudflareAuthenticatedOriginPulls(r string) error {
+	ctx := context.Background()
+	// Authenticated Origin Pulls is a zone-level security setting (enabled/disabled).
+	// It can be configured globally, per-zone, or per-hostname, but it's still a
+	// singleton setting rather than creating multiple resources.
+	// No sweeping required.
+	tflog.Info(ctx, "Authenticated Origin Pulls doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility..")

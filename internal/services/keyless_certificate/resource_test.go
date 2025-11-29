@@ -17,6 +17,60 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_keyless_certificate", &resource.Sweeper{
+		Name: "cloudflare_keyless_certificate",
+		F:    testSweepCloudflareKeylessCertificates,
+	})
+}
+
+func testSweepCloudflareKeylessCertificates(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping keyless certificates sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	certificates, err := client.ListKeylessSSL(ctx, zoneID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch keyless certificates: %s", err))
+		return fmt.Errorf("failed to fetch keyless certificates: %w", err)
+	}
+
+	if len(certificates) == 0 {
+		tflog.Info(ctx, "No keyless certificates to sweep")
+		return nil
+	}
+
+	for _, cert := range certificates {
+		// Use standard filtering helper on the certificate name
+		if !utils.ShouldSweepResource(cert.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting keyless certificate: %s (zone: %s)", cert.Name, zoneID))
+		err := client.DeleteKeylessSSL(ctx, zoneID, cert.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete keyless certificate %s: %s", cert.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted keyless certificate: %s", cert.ID))
+	}
+
+	return nil
+}
+
 func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

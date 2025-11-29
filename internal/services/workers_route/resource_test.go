@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -35,7 +36,7 @@ func testSweepCloudflareWorkersRoute(r string) error {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	if zoneID == "" {
-		// Skip sweeping if no zone ID is set
+		tflog.Info(ctx, "Skipping workers routes sweep: CLOUDFLARE_ZONE_ID not set")
 		return nil
 	}
 
@@ -44,26 +45,39 @@ func testSweepCloudflareWorkersRoute(r string) error {
 		ZoneID: cloudflare.F(zoneID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list workers routes: %s", err))
 		return fmt.Errorf("failed to list workers routes: %w", err)
 	}
 
-	// Delete all routes in the test zone
-	// Note: In a test environment, we assume all routes can be deleted
+	hasRoutes := false
+	// Delete test routes only (filter by pattern containing test resource names)
 	for page != nil {
 		for _, route := range page.Result {
+			hasRoutes = true
+			// Use standard filtering helper on the pattern field
+			if !utils.ShouldSweepResource(route.Pattern) {
+				continue
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Deleting worker route: %s (zone: %s)", route.Pattern, zoneID))
 			_, err := client.Workers.Routes.Delete(ctx, route.ID, workers.RouteDeleteParams{
 				ZoneID: cloudflare.F(zoneID),
 			})
 			if err != nil {
-				// Log but continue sweeping other routes
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete worker route %s: %s", route.ID, err))
 				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted worker route: %s", route.ID))
 		}
 
 		page, err = page.GetNextPage()
 		if err != nil {
 			break
 		}
+	}
+
+	if !hasRoutes {
+		tflog.Info(ctx, "No workers routes to sweep")
 	}
 
 	return nil

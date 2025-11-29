@@ -37,7 +37,8 @@ func testSweepCloudflareMagicWanIPsecTunnel(r string) error {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
-		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+		tflog.Info(ctx, "Skipping IPsec tunnels sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
 	}
 
 	tflog.Info(ctx, "Starting to list IPsec tunnels for sweeping")
@@ -58,8 +59,13 @@ func testSweepCloudflareMagicWanIPsecTunnel(r string) error {
 	failedCount := 0
 
 	for _, tunnel := range tunnels {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(tunnel.Name) {
+			continue
+		}
+
 		tflog.Info(ctx, fmt.Sprintf("Deleting IPsec tunnel: %s (%s)", tunnel.Name, tunnel.ID))
-		
+
 		_, err := client.DeleteMagicTransitIPsecTunnel(ctx, accountID, tunnel.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete IPsec tunnel %s: %s", tunnel.ID, err))

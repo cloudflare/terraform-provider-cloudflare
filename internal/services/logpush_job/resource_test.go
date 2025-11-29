@@ -37,7 +37,6 @@ func testSweepCloudflareLogpushJob(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client()
 	if clientErr != nil {
-		fmt.Printf("Failed to create Cloudflare client: %s\n", clientErr)
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 		return clientErr
 	}
@@ -87,15 +86,20 @@ func cleanLogpushJobs(ctx context.Context, client *cfold.API, resourceID *cfold.
 	deleted := 0
 	failed := 0
 	for _, job := range jobs {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Logpush Job ID: %d, Name: %s", job.ID, job.Name))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(job.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Logpush Job: %s (%d)", job.Name, job.ID))
 
 		err := client.DeleteLogpushJob(ctx, resourceID, job.ID)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Logpush Job %d (%s): %v", job.ID, job.Name, err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Logpush Job %s (%d): %s", job.Name, job.ID, err))
 			failed++
 			// Continue with other jobs
 		} else {
-			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Logpush Job %d (%s)", job.ID, job.Name))
+			tflog.Info(ctx, fmt.Sprintf("Deleted Logpush Job: %s (%d)", job.Name, job.ID))
 			deleted++
 		}
 	}

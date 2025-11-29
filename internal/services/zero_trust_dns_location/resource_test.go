@@ -14,6 +14,47 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_dns_location", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_dns_location",
+		F:    testSweepCloudflareZeroTrustDNSLocation,
+	})
+}
+
+func testSweepCloudflareZeroTrustDNSLocation(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	locations, _, err := client.TeamsLocations(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust DNS Locations: %s", err))
+		return err
+	}
+
+	for _, location := range locations {
+		if !utils.ShouldSweepResource(location.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust DNS Location: %s", location.ID))
+		err := client.DeleteTeamsLocation(ctx, accountID, location.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust DNS Location %s: %s", location.ID, err))
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in

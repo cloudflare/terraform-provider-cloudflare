@@ -9,9 +9,59 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_access_ai_controls_mcp_server", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_ai_controls_mcp_server",
+		F:    testSweepCloudflareZeroTrustAccessAIControlsMcpServer,
+	})
+}
+
+func testSweepCloudflareZeroTrustAccessAIControlsMcpServer(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	serversResp, err := client.ZeroTrust.Access.AIControls.Mcp.Servers.List(
+		ctx,
+		zero_trust.AccessAIControlMcpServerListParams{
+			AccountID: cloudflare.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust Access AI Controls MCP Servers: %s", err))
+		return err
+	}
+
+	for _, server := range serversResp.Result {
+		if !utils.ShouldSweepResource(server.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust Access AI Controls MCP Server: %s", server.ID))
+		_, err := client.ZeroTrust.Access.AIControls.Mcp.Servers.Delete(
+			ctx,
+			server.ID,
+			zero_trust.AccessAIControlMcpServerDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust Access AI Controls MCP Server %s: %s", server.ID, err))
+		}
+	}
+
+	return nil
+}
 
 func TestAccZeroTrustAccessAIControlsMcpServer_basic(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_server.tf-test"

@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -36,19 +37,21 @@ func testSweepCloudflareSnippetRules(r string) error {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	if zoneID == "" {
-		// Skip sweeping if no zone ID is set
+		tflog.Info(ctx, "Skipping snippet rules sweep: CLOUDFLARE_ZONE_ID not set")
 		return nil
 	}
 
-	// Update to empty rules list to delete all rules
+	tflog.Info(ctx, fmt.Sprintf("Deleting all snippet rules (zone: %s)", zoneID))
 	_, err := client.Snippets.Rules.Update(ctx, snippets.RuleUpdateParams{
 		ZoneID: cloudflare.F(zoneID),
 		Rules:  cloudflare.F([]snippets.RuleUpdateParamsRule{}),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete snippet rules: %s", err))
 		return fmt.Errorf("failed to delete snippet rules: %w", err)
 	}
 
+	tflog.Info(ctx, "Deleted all snippet rules")
 	return nil
 }
 

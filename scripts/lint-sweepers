@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "==> Building sweeper linter"
+go build -o /tmp/sweeper-lint ./internal/tools/sweeper-lint
+
+echo "==> Running sweeper linter"
+/tmp/sweeper-lint ./internal/services
+
+# Clean up
+rm -f /tmp/sweeper-lint

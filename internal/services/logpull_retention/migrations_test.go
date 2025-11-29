@@ -14,10 +14,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
-
 // TestMigrateLogpullRetentionV4ToV5_Enabled tests migration with enabled=true
 func TestMigrateLogpullRetentionV4ToV5_Enabled(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -43,14 +42,23 @@ func testSweepCloudflareDNSSettingsInternalView(r string) error {
 	}
 
 	if len(views.Result) == 0 {
-		log.Print("[DEBUG] No Cloudflare views to sweep")
+		tflog.Info(ctx, "No Cloudflare views to sweep")
 		return nil
 	}
 
 	for _, view := range views.Result {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare View ID: %s", view.ID))
-		//nolint:errcheck
-		client.DNS.Settings.Account.Views.Delete(context.TODO(), view.ID, dns.SettingAccountViewDeleteParams{AccountID: cloudflare.F(accountID)})
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(view.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare View: %s (%s)", view.Name, view.ID))
+		_, err := client.DNS.Settings.Account.Views.Delete(context.TODO(), view.ID, dns.SettingAccountViewDeleteParams{AccountID: cloudflare.F(accountID)})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS internal view %s (%s): %s", view.Name, view.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted DNS internal view: %s (%s)", view.Name, view.ID))
 	}
 
 	return nil

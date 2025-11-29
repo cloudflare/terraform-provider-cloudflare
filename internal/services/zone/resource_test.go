@@ -3,7 +3,6 @@ package zone_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"testing"
@@ -13,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func init() {
@@ -51,25 +51,29 @@ func testSweepCloudflareZone(r string) error {
 		}),
 	})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch zones: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zones: %s",err))
 		return err
 	}
+	if len(page.Result) == 0 {
+		tflog.Info(ctx, "No Cloudflare zones to sweep")
+		return nil
+	}
 
-	// Delete test zones only
 	for _, zone := range page.Result {
-		// Filter by test naming conventions
-		if !isTestZone(zone.Name) {
+		// Use standard filtering helper (also checked in isTestZone for zone-specific patterns)
+		if !utils.ShouldSweepResource(zone.Name) && !isTestZone(zone.Name) {
 			continue
 		}
 
-		log.Printf("[INFO] Deleting test zone: %s (%s)", zone.Name, zone.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting test zone: %s (%s)", zone.Name, zone.ID))
 		_, err := client.Zones.Delete(ctx, zones.ZoneDeleteParams{
 			ZoneID: cloudflare.F(zone.ID),
 		})
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete zone %s (%s): %s", zone.Name, zone.ID, err)
-			// Continue sweeping other zones
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone %s (%s): %s", zone.Name, zone.ID,err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted zone: %s (%s)", zone.Name, zone.ID))
 	}
 
 	return nil
@@ -77,13 +81,12 @@ func testSweepCloudflareZone(r string) error {
 
 // isTestZone checks if a zone name matches test naming patterns
 func isTestZone(name string) bool {
-	// Match common test prefixes
-	if strings.HasPrefix(name, "tf-acc-test-") ||
-		strings.HasPrefix(name, "tf-acctest-") {
+	// Use standard test resource naming convention
+	if utils.ShouldSweepResource(name) {
 		return true
 	}
 
-	// Match terraform.cfapi.net test domains
+	// Match terraform.cfapi.net test domains (zone-specific pattern)
 	if strings.HasSuffix(name, ".terraform.cfapi.net") ||
 		name == "terraform.cfapi.net" {
 		return true

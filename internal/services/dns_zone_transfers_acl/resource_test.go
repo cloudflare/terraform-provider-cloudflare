@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -43,14 +42,23 @@ func testSweepCloudflareSecondaryDNSACL(r string) error {
 	}
 
 	if len(acls.Result) == 0 {
-		log.Print("[DEBUG] No Cloudflare ACLs to sweep")
+		tflog.Info(ctx, "No Cloudflare ACLs to sweep")
 		return nil
 	}
 
 	for _, acl := range acls.Result {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare ACL ID: %s", acl.ID))
-		//nolint:errcheck
-		client.DNS.ZoneTransfers.ACLs.Delete(context.TODO(), acl.ID, dns.ZoneTransferACLDeleteParams{AccountID: cloudflare.F(accountID)})
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(acl.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare ACL: %s (%s)", acl.Name, acl.ID))
+		_, err := client.DNS.ZoneTransfers.ACLs.Delete(context.TODO(), acl.ID, dns.ZoneTransferACLDeleteParams{AccountID: cloudflare.F(accountID)})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS zone transfer ACL %s (%s): %s", acl.Name, acl.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted DNS zone transfer ACL: %s (%s)", acl.Name, acl.ID))
 	}
 
 	return nil

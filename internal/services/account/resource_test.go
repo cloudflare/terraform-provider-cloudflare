@@ -3,7 +3,6 @@ package account_test
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -11,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -36,19 +36,29 @@ func testSweepCloudflareAccount(r string) error {
 	// List all accounts to find test accounts to sweep
 	accountsResp, err := client.Accounts.List(ctx, cfaccounts.AccountListParams{})
 	if err != nil {
-		return fmt.Errorf("failed to list accounts: %w", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to list accounts: %s", err))
+		return err
+	}
+
+	if len(accountsResp.Result) == 0 {
+		tflog.Info(ctx, "No Cloudflare accounts to sweep")
+		return nil
 	}
 
 	for _, account := range accountsResp.Result {
-		// Only delete accounts that look like test accounts (contain "tf-acc-test" prefix)
-		if strings.Contains(account.Name, "tf-acc-test") {
-			_, err := client.Accounts.Delete(ctx, cfaccounts.AccountDeleteParams{
-				AccountID: cloudflare.F(account.ID),
-			})
-			if err != nil {
-				return fmt.Errorf("failed to delete account %s: %w", account.ID, err)
-			}
+		if !utils.ShouldSweepResource(account.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account: %s (%s)", account.Name, account.ID))
+		_, err := client.Accounts.Delete(ctx, cfaccounts.AccountDeleteParams{
+			AccountID: cloudflare.F(account.ID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account %s (%s): %s", account.Name, account.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account: %s (%s)", account.Name, account.ID))
 	}
 
 	return nil

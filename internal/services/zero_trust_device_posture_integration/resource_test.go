@@ -14,6 +14,47 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_posture_integration", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_posture_integration",
+		F:    testSweepCloudflareZeroTrustDevicePostureIntegration,
+	})
+}
+
+func testSweepCloudflareZeroTrustDevicePostureIntegration(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	integrations, _, err := client.DevicePostureIntegrations(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust Device Posture Integrations: %s", err))
+		return err
+	}
+
+	for _, integration := range integrations {
+		if !utils.ShouldSweepResource(integration.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust Device Posture Integration: %s", integration.IntegrationID))
+		err := client.DeleteDevicePostureIntegration(ctx, accountID, integration.IntegrationID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust Device Posture Integration %s: %s", integration.IntegrationID, err))
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in

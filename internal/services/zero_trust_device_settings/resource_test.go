@@ -14,6 +14,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_settings", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_settings",
+		F:    testSweepCloudflareZeroTrustDeviceSettings,
+	})
+}
+
+func testSweepCloudflareZeroTrustDeviceSettings(r string) error {
+	ctx := context.Background()
+	// Device Settings is an account-level device configuration setting.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zero Trust Device Settings doesn't require sweeping (account setting)")
+	return nil
+}
+
 func TestAccCloudflareZTDeviceSettings(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in

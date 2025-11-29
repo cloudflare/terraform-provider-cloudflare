@@ -1,6 +1,7 @@
 package bot_management_test
 
 import (
+	"context"
 	"os"
 	"regexp"
 	"testing"
@@ -9,12 +10,33 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_bot_management", &resource.Sweeper{
+		Name: "cloudflare_bot_management",
+		F:    testSweepCloudflareBotManagement,
+	})
+}
+
+func testSweepCloudflareBotManagement(r string) error {
+	ctx := context.Background()
+	// Bot Management is a zone-level configuration for bot detection settings.
+	// It's a singleton configuration per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Bot Management doesn't require sweeping (zone settings)")
+	return nil
+}
 
 func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 	t.Skip("needs SBFM entitlements to run")

@@ -15,6 +15,62 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_web_analytics_site", &resource.Sweeper{
+		Name: "cloudflare_web_analytics_site",
+		F:    testSweepCloudflareWebAnalyticsSites,
+	})
+}
+
+func testSweepCloudflareWebAnalyticsSites(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping web analytics sites sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	sites, _, err := client.ListWebAnalyticsSites(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListWebAnalyticsSitesParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch web analytics sites: %s", err))
+		return fmt.Errorf("failed to fetch web analytics sites: %w", err)
+	}
+
+	if len(sites) == 0 {
+		tflog.Info(ctx, "No web analytics sites to sweep")
+		return nil
+	}
+
+	for _, site := range sites {
+		// Use standard filtering helper on the site tag field
+		if !utils.ShouldSweepResource(site.SiteTag) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting web analytics site: %s (account: %s)", site.SiteTag, accountID))
+		_, err := client.DeleteWebAnalyticsSite(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWebAnalyticsSiteParams{
+			SiteTag: site.SiteTag,
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete web analytics site %s: %s", site.SiteTag, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted web analytics site: %s", site.SiteTag))
+	}
+
+	return nil
+}
+
 func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

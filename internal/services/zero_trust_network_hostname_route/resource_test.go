@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -126,25 +126,39 @@ func testSweepCloudflareZeroTrustNetworkHostnameRoute(r string) error {
 	client := acctest.SharedClient()
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping hostname routes sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
 
-	// List all hostname routes
 	resp, err := client.ZeroTrust.Networks.HostnameRoutes.List(ctx, zero_trust.NetworkHostnameRouteListParams{
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list hostname routes: %s", err))
 		return fmt.Errorf("failed to list zero trust network hostname routes: %w", err)
 	}
 
+	if len(resp.Result) == 0 {
+		tflog.Info(ctx, "No hostname routes to sweep")
+		return nil
+	}
+
 	for _, route := range resp.Result {
-		// Only delete test resources
-		if route.Comment != "" && strings.Contains(route.Comment, "Test hostname route for tf-acctest-") {
-			_, err := client.ZeroTrust.Networks.HostnameRoutes.Delete(ctx, route.ID, zero_trust.NetworkHostnameRouteDeleteParams{
-				AccountID: cloudflare.F(accountID),
-			})
-			if err != nil {
-				return fmt.Errorf("failed to delete zero trust network hostname route %s: %w", route.ID, err)
-			}
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(route.Comment) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting hostname route: %s (%s) (account: %s)", route.Hostname, route.ID, accountID))
+		_, err := client.ZeroTrust.Networks.HostnameRoutes.Delete(ctx, route.ID, zero_trust.NetworkHostnameRouteDeleteParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete hostname route %s: %s", route.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted hostname route: %s", route.ID))
 	}
 
 	return nil

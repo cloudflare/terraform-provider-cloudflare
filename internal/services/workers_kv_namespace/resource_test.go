@@ -3,7 +3,6 @@ package workers_kv_namespace_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -37,8 +37,9 @@ func testSweepCloudflareWorkersKVNamespace(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	
+
 	if accountID == "" {
+		tflog.Info(ctx, "Skipping Workers KV namespaces sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
@@ -47,18 +48,31 @@ func testSweepCloudflareWorkersKVNamespace(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch KV namespaces: %s", err)
-		return err
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch KV namespaces: %s", err))
+		return fmt.Errorf("failed to fetch KV namespaces: %w", err)
 	}
 
-	// Delete all namespaces (sweepers clean up everything from test accounts)
+	if len(namespaces.Result) == 0 {
+		tflog.Info(ctx, "No KV namespaces to sweep")
+		return nil
+	}
+
+	// Delete test namespaces only
 	for _, namespace := range namespaces.Result {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(namespace.Title) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting KV namespace: %s (%s) (account: %s)", namespace.Title, namespace.ID, accountID))
 		_, err := client.KV.Namespaces.Delete(ctx, namespace.ID, kv.NamespaceDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete KV namespace %s (%s): %s", namespace.Title, namespace.ID, err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete KV namespace %s (%s): %s", namespace.Title, namespace.ID, err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted KV namespace: %s", namespace.ID))
 	}
 
 	return nil

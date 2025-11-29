@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -18,6 +19,54 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_custom_profile", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_custom_profile",
+		F:    testSweepCloudflareZeroTrustDeviceCustomProfile,
+	})
+}
+
+func testSweepCloudflareZeroTrustDeviceCustomProfile(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	profilesResp, err := client.ZeroTrust.Devices.Policies.Custom.List(
+		ctx,
+		zero_trust.DevicePolicyCustomListParams{
+			AccountID: cloudflare.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust Device Custom Profiles: %s", err))
+		return err
+	}
+
+	for _, profile := range profilesResp.Result {
+		if !utils.ShouldSweepResource(profile.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust Device Custom Profile: %s", profile.PolicyID))
+		_, err := client.ZeroTrust.Devices.Policies.Custom.Delete(
+			ctx,
+			profile.PolicyID,
+			zero_trust.DevicePolicyCustomDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust Device Custom Profile %s: %s", profile.PolicyID, err))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareZeroTrustDeviceCustomProfile_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

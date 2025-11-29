@@ -27,15 +27,26 @@ func init() {
 
 func testSweepCloudflareZoneCacheVariants(r string) error {
 	ctx := context.Background()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping zone cache variants sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	tflog.Info(ctx, fmt.Sprintf("Deleting Zone Cache Variants for zone: %q", zoneID))
-	client.DeleteZoneCacheVariants(context.Background(), zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Zone Cache Variants for zone: %s", zoneID))
+	err := client.DeleteZoneCacheVariants(context.Background(), zoneID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete zone cache variants: %s", err))
+		return err
+	}
+	tflog.Info(ctx, "Deleted Zone Cache Variants")
 
 	return nil
 }

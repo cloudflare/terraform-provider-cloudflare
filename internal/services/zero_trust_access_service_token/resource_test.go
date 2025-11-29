@@ -56,9 +56,15 @@ func testSweepCloudflareAccessServiceTokens(r string) error {
 		log.Print("[DEBUG] No Cloudflare zone level Access Service Tokens to sweep")
 	} else {
 		for _, token := range zoneTokens {
-			if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.ZoneIdentifier(zoneID), token.ID); err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Service Token %s", token.ID))
+			if !utils.ShouldSweepResource(token.Name) {
+				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleting zone-level Access Service Token: %s (%s)", token.Name, token.ID))
+			if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.ZoneIdentifier(zoneID), token.ID); err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone-level Access Service Token %s (%s): %s", token.Name, token.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted zone-level Access Service Token: %s (%s)", token.Name, token.ID))
 		}
 	}
 
@@ -75,9 +81,15 @@ func testSweepCloudflareAccessServiceTokens(r string) error {
 	}
 
 	for _, token := range accountTokens {
-		if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.AccountIdentifier(accountID), token.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Service Token %s", token.ID))
+		if !utils.ShouldSweepResource(token.Name) {
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting account-level Access Service Token: %s (%s)", token.Name, token.ID))
+		if _, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.AccountIdentifier(accountID), token.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account-level Access Service Token %s (%s): %s", token.Name, token.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account-level Access Service Token: %s (%s)", token.Name, token.ID))
 	}
 
 	return nil

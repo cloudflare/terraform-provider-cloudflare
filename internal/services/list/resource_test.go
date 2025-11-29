@@ -2,9 +2,7 @@ package list_test
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -14,8 +12,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -38,30 +36,36 @@ func testSweepCloudflareList(r string) error {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
-		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+		tflog.Info(ctx, "Skipping lists sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
 	}
 
 	lists, err := client.Rules.Lists.List(ctx, rules.ListListParams{
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s",err))
+		return err
 	}
-
 	if len(lists.Result) == 0 {
-		log.Print("[DEBUG] No Cloudflare Lists to sweep")
+		tflog.Info(ctx, "No Cloudflare Lists to sweep")
 		return nil
 	}
 
 	for _, list := range lists.Result {
-		if !strings.HasPrefix(list.Name, listTestPrefix) {
+		// Check both standard test naming and legacy list test prefix
+		if !utils.ShouldSweepResource(list.Name) && !strings.HasPrefix(list.Name, listTestPrefix) {
 			continue
 		}
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List ID: %s", list.ID))
-		//nolint:errcheck
-		client.Rules.Lists.Delete(ctx, list.ID, rules.ListDeleteParams{
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List: %s (%s)", list.Name, list.ID))
+		_, err := client.Rules.Lists.Delete(ctx, list.ID, rules.ListDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare List %s (%s): %s", list.Name, list.ID,err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted Cloudflare List: %s (%s)", list.Name, list.ID))
 	}
 
 	return nil

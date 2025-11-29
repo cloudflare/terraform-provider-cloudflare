@@ -23,18 +23,29 @@ func init() {
 	resource.AddTestSweepers("cloudflare_hyperdrive_config", &resource.Sweeper{
 		Name: "cloudflare_hyperdrive_config",
 		F: func(region string) error {
+			ctx := context.Background()
 			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-			ctx := context.Background()
-
 			if err != nil {
 				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", err))
+				return fmt.Errorf("error establishing client: %w", err)
+			}
+
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping Hyperdrive configs sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
 			}
 
 			resp, err := client.ListHyperdriveConfigs(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListHyperdriveConfigParams{})
 			if err != nil {
-				return err
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch Hyperdrive configs: %s", err))
+				return fmt.Errorf("failed to fetch Hyperdrive configs: %w", err)
+			}
+
+			if len(resp) == 0 {
+				tflog.Info(ctx, "No Hyperdrive configs to sweep")
+				return nil
 			}
 
 			for _, q := range resp {
@@ -43,10 +54,17 @@ func init() {
 					continue
 				}
 
+				if !utils.ShouldSweepResource(q.Name) {
+					continue
+				}
+
+				tflog.Info(ctx, fmt.Sprintf("Deleting Hyperdrive config: %s (%s) (account: %s)", q.Name, q.ID, accountID))
 				err := client.DeleteHyperdriveConfig(ctx, cfv1.AccountIdentifier(accountID), q.ID)
 				if err != nil {
-					return err
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete Hyperdrive config %s: %s", q.ID, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted Hyperdrive config: %s", q.ID))
 			}
 
 			return nil

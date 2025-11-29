@@ -59,6 +59,10 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 	}
 
 	for _, cert := range accountCerts {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(cert.Name) {
+			continue
+		}
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
@@ -107,6 +111,10 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 	}
 
 	for _, cert := range zoneCerts {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(cert.Name) {
+			continue
+		}
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{

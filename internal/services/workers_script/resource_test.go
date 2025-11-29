@@ -16,6 +16,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -50,6 +51,7 @@ func testSweepCloudflareWorkerScripts(r string) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if accountID == "" {
+		tflog.Info(ctx, "Skipping worker scripts sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
@@ -57,20 +59,30 @@ func testSweepCloudflareWorkerScripts(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list worker scripts: %s", err))
 		return fmt.Errorf("failed to list worker scripts: %w", err)
 	}
 
+	if len(list.Result) == 0 {
+		tflog.Info(ctx, "No worker scripts to sweep")
+		return nil
+	}
+
 	for _, script := range list.Result {
-		if !strings.HasPrefix(script.ID, resourcePrefix) {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(script.ID) {
 			continue
 		}
 
+		tflog.Info(ctx, fmt.Sprintf("Deleting worker script: %s (account: %s)", script.ID, accountID))
 		_, err := client.Workers.Scripts.Delete(ctx, script.ID, workers.ScriptDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete worker script %s: %s", script.ID, err))
 			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted worker script: %s", script.ID))
 	}
 
 	return nil

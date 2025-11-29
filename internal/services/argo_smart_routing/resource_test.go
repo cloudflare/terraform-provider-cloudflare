@@ -1,19 +1,40 @@
 package argo_smart_routing_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_argo_smart_routing", &resource.Sweeper{
+		Name: "cloudflare_argo_smart_routing",
+		F:    testSweepCloudflareArgoSmartRouting,
+	})
+}
+
+func testSweepCloudflareArgoSmartRouting(r string) error {
+	ctx := context.Background()
+	// Argo Smart Routing is a zone-level feature toggle (on/off).
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Argo Smart Routing doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareArgoSmartRouting_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

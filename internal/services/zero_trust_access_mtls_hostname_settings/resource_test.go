@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -30,7 +31,16 @@ func init() {
 
 			client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			if clientErr != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
+			}
+
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+			if accountID == "" && zoneID == "" {
+				tflog.Info(ctx, "Skipping Zero Trust Access mTLS hostname settings sweep: neither CLOUDFLARE_ACCOUNT_ID nor CLOUDFLARE_ZONE_ID set")
+				return nil
 			}
 
 			// First clear hostname settings
@@ -38,44 +48,70 @@ func init() {
 				Settings: []cfv1.AccessMutualTLSHostnameSettings{},
 			}
 
-			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
-			if err != nil {
-				return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
+			if accountID != "" {
+				tflog.Info(ctx, fmt.Sprintf("Clearing Zero Trust Access mTLS hostname settings (account: %s)", accountID))
+				_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
+				if err != nil {
+					tflog.Error(ctx, fmt.Sprintf("Failed to clear Access mTLS hostname settings for account: %s", err))
+					return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
+				}
+				tflog.Info(ctx, "Cleared account mTLS hostname settings")
 			}
 
-			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-			_, err = client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
-			if err != nil {
-				return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
+			if zoneID != "" {
+				tflog.Info(ctx, fmt.Sprintf("Clearing Zero Trust Access mTLS hostname settings (zone: %s)", zoneID))
+				_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
+				if err != nil {
+					tflog.Error(ctx, fmt.Sprintf("Failed to clear Access mTLS hostname settings for zone: %s", err))
+					return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
+				}
+				tflog.Info(ctx, "Cleared zone mTLS hostname settings")
 			}
 
 			// Also clean up ALL certificates to prevent conflicts with certificate tests
 			// This ensures certificate tests can create certificates without "already exists" errors
 
 			// Clean account certificates - be aggressive to prevent test conflicts
-			accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
-			if err == nil {
-				for _, cert := range accountCerts {
-					// Clear hostnames first, then delete
-					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cfv1.UpdateAccessMutualTLSCertificateParams{
-						ID:                  cert.ID,
-						AssociatedHostnames: []string{},
-					})
-					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
+			if accountID != "" {
+				accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
+				if err == nil && len(accountCerts) > 0 {
+					tflog.Info(ctx, fmt.Sprintf("Cleaning up %d account mTLS certificates", len(accountCerts)))
+					for _, cert := range accountCerts {
+						// Clear hostnames first, then delete
+						tflog.Info(ctx, fmt.Sprintf("Deleting account mTLS certificate: %s", cert.ID))
+						client.UpdateAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cfv1.UpdateAccessMutualTLSCertificateParams{
+							ID:                  cert.ID,
+							AssociatedHostnames: []string{},
+						})
+						err := client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
+						if err != nil {
+							tflog.Error(ctx, fmt.Sprintf("Failed to delete account mTLS certificate %s: %s", cert.ID, err))
+						} else {
+							tflog.Info(ctx, fmt.Sprintf("Deleted account mTLS certificate: %s", cert.ID))
+						}
+					}
 				}
 			}
 
 			// Clean zone certificates - be aggressive to prevent test conflicts
-			zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
-			if err == nil {
-				for _, cert := range zoneCerts {
-					// Clear hostnames first, then delete
-					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.UpdateAccessMutualTLSCertificateParams{
-						ID:                  cert.ID,
-						AssociatedHostnames: []string{},
-					})
-					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
+			if zoneID != "" {
+				zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
+				if err == nil && len(zoneCerts) > 0 {
+					tflog.Info(ctx, fmt.Sprintf("Cleaning up %d zone mTLS certificates", len(zoneCerts)))
+					for _, cert := range zoneCerts {
+						// Clear hostnames first, then delete
+						tflog.Info(ctx, fmt.Sprintf("Deleting zone mTLS certificate: %s", cert.ID))
+						client.UpdateAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.UpdateAccessMutualTLSCertificateParams{
+							ID:                  cert.ID,
+							AssociatedHostnames: []string{},
+						})
+						err := client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
+						if err != nil {
+							tflog.Error(ctx, fmt.Sprintf("Failed to delete zone mTLS certificate %s: %s", cert.ID, err))
+						} else {
+							tflog.Info(ctx, fmt.Sprintf("Deleted zone mTLS certificate: %s", cert.ID))
+						}
+					}
 				}
 			}
 

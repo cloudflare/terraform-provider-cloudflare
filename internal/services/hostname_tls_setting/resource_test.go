@@ -31,32 +31,45 @@ func testSweepCloudflareHostnameTLSSettings(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping hostname TLS settings sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
 	zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
 	params := cloudflare.ListHostnameTLSSettingsParams{
 		Setting: "min_tls_version",
 	}
 	settings, resultInfo, err := client.ListHostnameTLSSettings(ctx, zoneIDrc, params)
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch hostname TLS settings: %s", err))
 		return err
 	}
 	if resultInfo.Count == 0 {
-		tflog.Debug(ctx, "no hostname tls settings to sweep")
+		tflog.Info(ctx, "No hostname TLS settings to sweep")
 		return nil
 	}
 
 	for _, setting := range settings {
+		if !utils.ShouldSweepResource(setting.Hostname) {
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting hostname TLS setting: %s (zone: %s)", setting.Hostname, zoneID))
 		deleteParams := cloudflare.DeleteHostnameTLSSettingParams{
 			Setting:  "min_tls_version",
 			Hostname: setting.Hostname,
 		}
 		_, err := client.DeleteHostnameTLSSetting(ctx, zoneIDrc, deleteParams)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("failed to delete hostname tls setting for hostname (%s) in zone ID: %s", setting.Hostname, zoneID))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete hostname TLS setting %s: %s", setting.Hostname, err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted hostname TLS setting: %s", setting.Hostname))
 	}
 
 	return nil

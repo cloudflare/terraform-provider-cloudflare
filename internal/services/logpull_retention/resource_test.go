@@ -1,17 +1,39 @@
 package logpull_retention_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_logpull_retention", &resource.Sweeper{
+		Name: "cloudflare_logpull_retention",
+		F:    testSweepCloudflareLogpullRetention,
+	})
+}
+
+func testSweepCloudflareLogpullRetention(r string) error {
+	ctx := context.Background()
+	// Logpull Retention is a zone-level configuration setting (enabled/disabled).
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Logpull Retention doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccLogpullRetention_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Logpull
