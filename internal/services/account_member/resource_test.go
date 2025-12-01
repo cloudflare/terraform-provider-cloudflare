@@ -132,7 +132,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -164,7 +164,7 @@ func TestAccCloudflareAccountMember_Import(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -206,7 +206,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
@@ -237,9 +237,9 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_account_member." + rnd
+	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 
 	initialRoleID := getRoleId(t, accountID, "Administrator")
 	updatedRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
@@ -253,7 +253,7 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Create with initial role
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, initialRoleID),
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, initialRoleID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
@@ -263,7 +263,7 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 			},
 			{
 				// Update role in-place (tests custom marshal logic)
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, updatedRoleID),
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, updatedRoleID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -288,9 +288,9 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_account_member." + rnd
+	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	roleID := getRoleId(t, accountID, "Administrator")
 
 	resource.Test(t, resource.TestCase{
@@ -301,7 +301,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, roleID),
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, roleID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
@@ -313,7 +313,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 			},
 			{
 				// Second apply should not cause any changes (stable state)
-				Config: testCloudflareAccountMemberRolesConfig(rnd, email, accountID, roleID),
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, roleID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
@@ -333,8 +333,8 @@ func testCloudflareAccountMemberDirectAdd(accountID, emailAddress string) string
 	return acctest.LoadTestCase("cloudflareaccountmemberdirectadd.tf", accountID, emailAddress)
 }
 
-func testCloudflareAccountMemberRolesConfig(resourceID, emailAddress, accountID, roleID string) string {
-	return acctest.LoadTestCase("cloudflareaccountmemberrolesconfig.tf", resourceID, emailAddress, accountID, roleID)
+func testCloudflareAccountMemberRolesConfig(emailAddress, accountID, roleID string) string {
+	return acctest.LoadTestCase("cloudflareaccountmemberrolesconfig.tf", emailAddress, accountID, roleID)
 }
 
 func TestAccCloudflareAccountMember_Policies(t *testing.T) {
@@ -347,7 +347,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
 
 	resource.Test(t, resource.TestCase{
@@ -397,7 +397,7 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "domain_admin_readonly")
 
 	zones := getDomains(t, accountID)
@@ -439,6 +439,53 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(2)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(domainGroupID1)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(domainGroupID2)),
+				},
+			},
+		},
+	})
+}
+
+// How well do we handle switching between roles and policies
+func TestAccCloudflareAccountMember_PoliciesAndRolesSwitching(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
+	// permission to manage account members.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_account_member.test_member"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
+	roleID := getRoleId(t, accountID, "Administrator")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccountMemberPoliciesConfig(accountID, email, permissionGroupID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+				},
+			},
+			{
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, roleID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(roleID)),
 				},
 			},
 		},
