@@ -3,7 +3,6 @@ package zone_subscription_test
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -104,7 +103,6 @@ func TestAccCloudflareZoneSubscriptionResource_WithPlanChange(t *testing.T) {
 	})
 }
 
-// https://jira.cfdata.org/browse/CUSTESC-57375
 // Tests that creating a zone with subscription doesn't cause drift on computed fields
 // The bug was that computed fields (currency, price, state, rate_plan nested fields, frequency)
 // were causing drift on subsequent applies because they were being set to null in config
@@ -161,8 +159,6 @@ func TestAccCloudflareZoneSubscriptionResource_CreateZoneWithPlan_CUSTESC_57375(
 	})
 }
 
-// https://jira.cfdata.org/browse/BILLSUB-247
-// https://jira.cfdata.org/browse/BILLSUB-419
 // https://github.com/cloudflare/terraform-provider-cloudflare/issues/5971
 // https://github.com/cloudflare/terraform-provider-cloudflare/issues/6485
 // Tests that importing a zone subscription with frequency="not-applicable" doesn't cause drift
@@ -210,13 +206,15 @@ func TestAccCloudflareZoneSubscriptionResource_ImportNoChanges_BILLSUB_247(t *te
 	})
 }
 
-// Test that setting frequency on enterprise plans that don't support it produces an error
+// Test that setting frequency on enterprise plans that don't support it causes drift
 // This documents the expected behavior for zones that don't support frequency configuration
+// The API accepts the value during create/update but returns "not-applicable" on read, causing drift
 func TestAccCloudflareZoneSubscriptionResource_FrequencyNotSupported(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_zone_subscription." + rnd
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_ZoneID(t)
@@ -224,8 +222,14 @@ func TestAccCloudflareZoneSubscriptionResource_FrequencyNotSupported(t *testing.
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccCloudflareZoneSubscriptionWithFrequency(rnd, zoneID, "enterprise", "monthly"),
-				ExpectError: regexp.MustCompile(`Provider produced inconsistent result after apply`),
+				Config: testAccCloudflareZoneSubscriptionWithFrequency(rnd, zoneID, "enterprise", "monthly"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rate_plan.id", "enterprise"),
+					// After apply, state contains the configured value
+					resource.TestCheckResourceAttr(resourceName, "frequency", "monthly"),
+				),
+				// Expect non-empty plan on refresh because API returns "not-applicable" instead of "monthly"
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

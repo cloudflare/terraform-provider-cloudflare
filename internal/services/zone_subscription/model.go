@@ -15,7 +15,7 @@ type ZoneSubscriptionResultEnvelope struct {
 type ZoneSubscriptionModel struct {
 	ID                 types.String                   `tfsdk:"id" json:"-,computed"`
 	ZoneID             types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,optional_computed"`
+	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,computed_optional"`
 	RatePlan           *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
 	Currency           types.String                   `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339              `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
@@ -38,6 +38,6 @@ type ZoneSubscriptionRatePlanModel struct {
 	ExternallyManaged types.Bool   `tfsdk:"externally_managed" json:"externally_managed,computed"`
 	IsContract        types.Bool   `tfsdk:"is_contract" json:"is_contract,computed"`
 	PublicName        types.String `tfsdk:"public_name" json:"public_name,computed"`
-	Scope             types.String `tfsdk:"scope" json:"scope,optional_computed"`
+	Scope             types.String `tfsdk:"scope" json:"scope,computed_optional"`
 	Sets              types.List   `tfsdk:"sets" json:"sets,computed"`
 }
