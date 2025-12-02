@@ -235,6 +235,33 @@ func TestAccCloudflareZoneSubscriptionResource_FrequencyNotSupported(t *testing.
 	})
 }
 
+// https://github.com/cloudflare/terraform-provider-cloudflare/issues/6374
+func TestAccCloudflareZoneSubscriptionResource_PartnersEnt(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneName := fmt.Sprintf("%s.net", rnd)
+	zoneResourceName := fmt.Sprintf("zone_%s", rnd)
+	subscriptionResourceName := "cloudflare_zone_subscription." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareZoneSubscriptionCreateZoneWithPlan(rnd, "partners_ent", zoneResourceName, accountID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(subscriptionResourceName, "rate_plan.id", "partners_ent"),
+				),
+				// Expect non-empty plan on refresh because API returns "enterprise" instead of "partners_ent"
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testAccCloudflareZoneSubscriptionConfig(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, zoneID)
 }
