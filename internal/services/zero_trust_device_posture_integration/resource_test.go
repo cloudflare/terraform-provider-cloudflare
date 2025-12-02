@@ -11,7 +11,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -67,37 +70,44 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_integration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	clientID := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID")
-	clientSecret := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET")
-	apiURL := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL")
-	authURL := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL")
+	clientID := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CLIENT_ID")
+	clientSecret := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CLIENT_SECRET")
+	apiURL := os.Getenv("CLOUDFLARE_CROWDSTRIKE_API_URL")
+	customerId := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CUSTOMER_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_WorkspaceOne(t)
+			acctest.TestAccPreCheck_CrowdStrike(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareDevicePostureIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "type", "workspace_one"),
-					resource.TestCheckResourceAttr(name, "interval", "24h"),
-					resource.TestCheckResourceAttr(name, "config.auth_url", authURL),
-					resource.TestCheckResourceAttr(name, "config.api_url", apiURL),
-					resource.TestCheckResourceAttr(name, "config.client_id", clientID),
-				),
+				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, customerId),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("crowdstrike_s2s")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("config").AtMapKey("api_url"), knownvalue.StringExact(apiURL)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("config").AtMapKey("client_id"), knownvalue.StringExact(clientID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("config").AtMapKey("customer_id"), knownvalue.StringExact(customerId)),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"config.client_secret", "config.customer_id"},
 			},
 		},
 	})
 }
 
-func testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL string) string {
-	return acctest.LoadTestCase("devicepostureintegration.tf", rnd, accountID, clientID, clientSecret, apiURL, authURL)
+func testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, customerId string) string {
+	return acctest.LoadTestCase("devicepostureintegration.tf", rnd, accountID, clientID, clientSecret, apiURL, customerId)
 }
 
 func testAccCheckCloudflareDevicePostureIntegrationDestroy(s *terraform.State) error {
