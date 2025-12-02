@@ -8,7 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go"
+	cloudflarev6 "github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/cloudflare-go/v6/iam"
 	"github.com/cloudflare/cloudflare-go/v6/zones"
@@ -82,27 +83,10 @@ func testSweepCloudflareAccountMembers(r string) error {
 		tflog.Info(ctx, fmt.Sprintf("Deleted account member: %s", member.ID))
 	}
 
-	return nil
-}
-
-func init() {
-	resource.AddTestSweepers("cloudflare_account_member", &resource.Sweeper{
-		Name: "cloudflare_account_member",
-		F:    testSweepCloudflareAccountMember,
-	})
-}
-
-func testSweepCloudflareAccountMember(r string) error {
-	ctx := context.Background()
-	client := acctest.SharedClient()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	// Deactivate members
-	// TODO
-
 	// List all Resource Groups
-	resourceGroups, err := client.IAM.ResourceGroups.List(ctx, iam.ResourceGroupListParams{
-		AccountID: cloudflare.F(accountID),
+	client2 := acctest.SharedClient()
+	resourceGroups, err := client2.IAM.ResourceGroups.List(ctx, iam.ResourceGroupListParams{
+		AccountID: cloudflarev6.String(accountID),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to fetch account tokens: %w", err)
@@ -111,8 +95,9 @@ func testSweepCloudflareAccountMember(r string) error {
 	// Delete domain groups (those created by our tests)
 	for _, resourceGroup := range resourceGroups.Result {
 		if strings.Contains(resourceGroup.Name, "terraform") {
-			_, err := client.IAM.ResourceGroups.Delete(ctx, resourceGroup.ID, iam.ResourceGroupDeleteParams{
-				AccountID: cloudflare.F(accountID),
+			_, err := client2.IAM.ResourceGroups.Delete(ctx, resourceGroup.ID, iam.ResourceGroupDeleteParams{
+				// AccountID: cloudflare.AccountIdentifier(accountID),
+				AccountID: cloudflarev6.String(""),
 			})
 			if err != nil {
 				return fmt.Errorf("failed to delete resource group %s: %w", resourceGroup.ID, err)
@@ -453,8 +438,8 @@ func getPermissionGroupId(t *testing.T, accountID string, label string) string {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	res, err := client.IAM.PermissionGroups.List(ctx, iam.PermissionGroupListParams{
-		AccountID: cloudflare.String(accountID),
-		Label:     cloudflare.String(label),
+		AccountID: cloudflarev6.String(accountID),
+		Label:     cloudflarev6.String(label),
 	})
 	if err != nil {
 		t.Fatalf("Failed to list permission groups: %v", err)
@@ -469,9 +454,9 @@ func getRoleId(t *testing.T, accountID string, label string) string {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	roles, err := client.Accounts.Roles.List(ctx, accounts.RoleListParams{
-		AccountID: cloudflare.String(accountID),
+		AccountID: cloudflarev6.String(accountID),
 		// this may eventually become a problem if there are too many roles
-		PerPage: cloudflare.Float(100),
+		PerPage: cloudflarev6.Float(100),
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -496,8 +481,8 @@ func getDomains(t *testing.T, accountID string) []zones.Zone {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	res, err := client.Zones.List(ctx, zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{
-			ID: cloudflare.F(accountID),
+		Account: cloudflarev6.F(zones.ZoneListParamsAccount{
+			ID: cloudflarev6.F(accountID),
 		}),
 	})
 	if err != nil {
@@ -520,13 +505,13 @@ func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	domainGroup, err := client.IAM.ResourceGroups.New(ctx, iam.ResourceGroupNewParams{
-		AccountID: cloudflare.String(accountID),
-		Name:      cloudflare.String(fmt.Sprintf("terraform-test-%s-%s", rnd, domainID)),
-		Scope: cloudflare.F(iam.ResourceGroupNewParamsScope{
-			Key: cloudflare.String(fmt.Sprintf("com.cloudflare.api.account.%s", accountID)),
-			Objects: cloudflare.F([]iam.ResourceGroupNewParamsScopeObject{
+		AccountID: cloudflarev6.String(accountID),
+		Name:      cloudflarev6.String(fmt.Sprintf("terraform-test-%s-%s", rnd, domainID)),
+		Scope: cloudflarev6.F(iam.ResourceGroupNewParamsScope{
+			Key: cloudflarev6.String(fmt.Sprintf("com.cloudflare.api.account.%s", accountID)),
+			Objects: cloudflarev6.F([]iam.ResourceGroupNewParamsScopeObject{
 				{
-					Key: cloudflare.String(fmt.Sprintf("com.cloudflare.api.account.zone.%s", domainID)),
+					Key: cloudflarev6.String(fmt.Sprintf("com.cloudflare.api.account.zone.%s", domainID)),
 				},
 			}),
 		}),
