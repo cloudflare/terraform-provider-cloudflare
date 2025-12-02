@@ -64,6 +64,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
@@ -376,6 +379,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_zone_transfers_acl.NewResource,
 		dns_zone_transfers_peer.NewResource,
 		dns_zone_transfers_tsig.NewResource,
+		email_security_block_sender.NewResource,
+		email_security_impersonation_registry.NewResource,
+		email_security_trusted_domains.NewResource,
 		email_routing_settings.NewResource,
 		email_routing_dns.NewResource,
 		email_routing_rule.NewResource,
@@ -608,6 +614,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_zone_transfers_peer.NewDNSZoneTransfersPeersDataSource,
 		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGDataSource,
 		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGsDataSource,
+		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
+		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
+		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
+		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistriesDataSource,
+		email_security_trusted_domains.NewEmailSecurityTrustedDomainsDataSource,
+		email_security_trusted_domains.NewEmailSecurityTrustedDomainsListDataSource,
 		email_routing_settings.NewEmailRoutingSettingsDataSource,
 		email_routing_dns.NewEmailRoutingDNSDataSource,
 		email_routing_rule.NewEmailRoutingRuleDataSource,
