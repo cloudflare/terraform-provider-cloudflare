@@ -14,7 +14,6 @@ import (
 )
 
 func TestAccCloudflareZoneSubscriptionDataSource_Basic(t *testing.T) {
-	t.Skip("error checking value for attribute at path: data.cloudflare_zone_subscription.hyhknhabqt.rate_plan.id, err: expected value cf_ent for StringExact check, got: enterprise\n")
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	dataSourceName := fmt.Sprintf("data.cloudflare_zone_subscription.%s", rnd)
@@ -37,7 +36,7 @@ func TestAccCloudflareZoneSubscriptionDataSource_Basic(t *testing.T) {
 					// current_period_end and current_period_start might be null for enterprise plans
 					// rate_plan should exist with nested attributes
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan").AtMapKey("id"), knownvalue.StringExact("cf_ent")), // Enterprise rate plan ID
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan").AtMapKey("id"), knownvalue.StringExact("enterprise")), // Enterprise rate plan ID
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan").AtMapKey("currency"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan").AtMapKey("externally_managed"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("rate_plan").AtMapKey("is_contract"), knownvalue.NotNull()),
