@@ -551,6 +551,78 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLogpushJob_Update(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_logpush_job." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	// Logpush job config to create, with filter.
+	logpushJobConfigCreate := &logpushJobConfig{
+		zoneID:          zoneID,
+		dataset:         "http_requests", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		filter:          `{"where":{"and":[{"key":"ClientRequestHost","operator":"!eq","value":"abc.com"}]}}`,
+	}
+
+	//Logpush job config to update, without filter.
+	logpushJobConfigUpdate := &logpushJobConfig{
+		zoneID:          zoneID,
+		dataset:         "http_requests", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareLogpushJobUpdate(rnd, logpushJobConfigCreate),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfigCreate.kind))),
+				},
+			},
+			{
+				Config: testCloudflareLogpushJobUpdate(rnd, logpushJobConfigUpdate),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfigCreate.kind))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("filter"), knownvalue.StringExact("")),
+				},
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("zones/%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testCloudflareLogpushJobUpdate(resourceID string, logpushJobConfig *logpushJobConfig) string {
+	// Values must be ordered to match the .tf file exactly.
+	params := []any{
+		resourceID,
+		logpushJobConfig.zoneID,
+		logpushJobConfig.dataset,
+		logpushJobConfig.destinationConf,
+		logpushJobConfig.kind,
+		logpushJobConfig.filter,
+	}
+	return acctest.LoadTestCase("update.tf", params...)
+}
+
 // This tests with immutable fields to create / update a Logpush job.
 // dataset cannot be tested, as it has PlanModifiers in schema.go to replace.
 // This needs to bes tested on a zone, to test both kinds with http_requests.
