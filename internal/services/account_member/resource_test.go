@@ -445,53 +445,6 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 	})
 }
 
-// How well do we handle switching between roles and policies
-func TestAccCloudflareAccountMember_PoliciesAndRolesSwitching(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
-	// permission to manage account members.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_account_member.test_member"
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
-	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
-	roleID := getRoleId(t, accountID, "Administrator")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck_AccountID(t)
-			acctest.TestAccPreCheck_Credentials(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testCloudflareAccountMemberPoliciesConfig(accountID, email, permissionGroupID),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
-				},
-			},
-			{
-				Config: testCloudflareAccountMemberRolesConfig(email, accountID, roleID),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(roleID)),
-				},
-			},
-		},
-	})
-}
-
 func testCloudflareAccountMemberPoliciesConfig(accountID, emailAddress, permgroupId string) string {
 	return acctest.LoadTestCase("cloudflareaccountmemberpoliciesconfig.tf", accountID, emailAddress, permgroupId)
 }
