@@ -9,6 +9,7 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -20,17 +21,29 @@ func init() {
 	resource.AddTestSweepers("cloudflare_d1_database", &resource.Sweeper{
 		Name: "cloudflare_d1_database",
 		F: func(region string) error {
+			ctx := context.Background()
 			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", err))
 				return fmt.Errorf("error establishing client: %w", err)
 			}
 
-			ctx := context.Background()
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping D1 databases sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
+			}
+
 			databases, _, err := client.ListD1Databases(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListD1DatabasesParams{})
 			if err != nil {
-				return fmt.Errorf("failed to fetch R2 buckets: %w", err)
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch D1 databases: %s", err))
+				return fmt.Errorf("failed to fetch D1 databases: %w", err)
+			}
+
+			if len(databases) == 0 {
+				tflog.Info(ctx, "No D1 databases to sweep")
+				return nil
 			}
 
 			for _, database := range databases {
@@ -40,10 +53,17 @@ func init() {
 					continue
 				}
 
+				if !utils.ShouldSweepResource(database.Name) {
+					continue
+				}
+
+				tflog.Info(ctx, fmt.Sprintf("Deleting D1 database: %s (%s) (account: %s)", database.Name, database.UUID, accountID))
 				err := client.DeleteD1Database(ctx, cfv1.AccountIdentifier(accountID), database.UUID)
 				if err != nil {
-					return fmt.Errorf("failed to delete D1 database %q: %w", database.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete D1 database %s: %s", database.Name, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted D1 database: %s", database.UUID))
 			}
 
 			return nil

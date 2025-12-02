@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -36,6 +36,7 @@ func testSweepCloudflareWorkers(r string) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if accountID == "" {
+		tflog.Info(ctx, "Skipping workers sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
@@ -43,27 +44,38 @@ func testSweepCloudflareWorkers(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list workers: %s", err))
 		return fmt.Errorf("failed to list workers: %w", err)
 	}
 
+	hasWorkers := false
 	for list != nil && len(list.Result) > 0 {
 		for _, worker := range list.Result {
-			if !strings.HasPrefix(worker.ID, resourcePrefix) {
+			hasWorkers = true
+			// Use standard filtering helper
+			if !utils.ShouldSweepResource(worker.ID) {
 				continue
 			}
 
+			tflog.Info(ctx, fmt.Sprintf("Deleting worker: %s (account: %s)", worker.ID, accountID))
 			_, err := client.Workers.Beta.Workers.Delete(ctx, worker.ID, workers.BetaWorkerDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete worker %s: %s", worker.ID, err))
 				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted worker: %s", worker.ID))
 		}
 
 		list, err = list.GetNextPage()
 		if err != nil {
 			break
 		}
+	}
+
+	if !hasWorkers {
+		tflog.Info(ctx, "No workers to sweep")
 	}
 
 	return nil

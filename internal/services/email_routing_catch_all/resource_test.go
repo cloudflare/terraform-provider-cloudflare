@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -22,20 +23,27 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_catch_all", &resource.Sweeper{
 		Name: "cloudflare_email_routing_catch_all",
 		F: func(region string) error {
+			ctx := context.Background()
 			client := acctest.SharedClient()
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-			ctx := context.Background()
+
+			if zoneID == "" {
+				tflog.Info(ctx, "Skipping email routing catch-all sweep: CLOUDFLARE_ZONE_ID not set")
+				return nil
+			}
 
 			// Get the catch-all rule
 			catchAll, err := client.EmailRouting.Rules.CatchAlls.Get(ctx, email_routing.RuleCatchAllGetParams{
 				ZoneID: cloudflare.F(zoneID),
 			})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch email routing catch-all: %s", err))
 				return fmt.Errorf("failed to fetch email routing catch-all: %w", err)
 			}
 
 			// Disable the catch-all rule if it's enabled
 			if catchAll.Enabled {
+				tflog.Info(ctx, fmt.Sprintf("Disabling email routing catch-all rule (zone: %s)", zoneID))
 				actionParams := make([]email_routing.CatchAllActionParam, 0)
 				for _, action := range catchAll.Actions {
 					actionParams = append(actionParams, email_routing.CatchAllActionParam{
@@ -56,11 +64,12 @@ func init() {
 					Enabled:  cloudflare.F(email_routing.RuleCatchAllUpdateParamsEnabledFalse),
 				})
 				if err != nil {
+					tflog.Error(ctx, fmt.Sprintf("Failed to disable email routing catch-all: %s", err))
 					return fmt.Errorf("failed to disable email routing catch-all: %w", err)
 				}
-				fmt.Printf("Disabled email routing catch-all rule\n")
+				tflog.Info(ctx, "Disabled email routing catch-all rule")
 			} else {
-				fmt.Printf("Email routing catch-all rule is already disabled\n")
+				tflog.Info(ctx, "Email routing catch-all rule is already disabled")
 			}
 
 			return nil

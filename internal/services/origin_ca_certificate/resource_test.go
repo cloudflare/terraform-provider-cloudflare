@@ -22,6 +22,71 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_origin_ca_certificate", &resource.Sweeper{
+		Name: "cloudflare_origin_ca_certificate",
+		F:    testSweepCloudflareOriginCACertificates,
+	})
+}
+
+func testSweepCloudflareOriginCACertificates(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping origin CA certificates sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	// Origin CA certificates don't have a List endpoint - they can only be retrieved by ID
+	// The certificates are revoked on delete, not removed from the API
+	// We'll attempt to list using the SDK method if available
+	certs, err := client.ListOriginCACertificates(ctx, cloudflare.ListOriginCertificatesParams{
+		ZoneID: zoneID,
+	})
+	if err != nil {
+		// If we can't list certificates (zone invalid, API error, etc), log and skip gracefully
+		tflog.Warn(ctx, fmt.Sprintf("Failed to fetch origin CA certificates for zone %s: %s (skipping)", zoneID, err))
+		return nil
+	}
+
+	if len(certs) == 0 {
+		tflog.Info(ctx, "No origin CA certificates to sweep")
+		return nil
+	}
+
+	for _, cert := range certs {
+		// Skip already revoked certificates
+		if cert.RevokedAt != (time.Time{}) {
+			continue
+		}
+
+		// Use standard filtering helper on certificate ID
+		if !utils.ShouldSweepResource(cert.ID) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Revoking origin CA certificate: %s", cert.ID))
+		_, err := client.RevokeOriginCACertificate(ctx, cert.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to revoke origin CA certificate %s: %s", cert.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Revoked origin CA certificate: %s", cert.ID))
+	}
+
+	return nil
+}
+
 func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 	var cert cloudflare.OriginCACertificate
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")

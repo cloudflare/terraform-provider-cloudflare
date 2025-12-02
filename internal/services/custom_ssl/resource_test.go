@@ -16,6 +16,69 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_custom_ssl", &resource.Sweeper{
+		Name: "cloudflare_custom_ssl",
+		F:    testSweepCloudflareCustomSSL,
+	})
+}
+
+func testSweepCloudflareCustomSSL(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping custom SSL sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	certificates, err := client.ListSSL(ctx, zoneID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch custom SSL certificates: %s", err))
+		return fmt.Errorf("failed to fetch custom SSL certificates: %w", err)
+	}
+
+	if len(certificates) == 0 {
+		tflog.Info(ctx, "No custom SSL certificates to sweep")
+		return nil
+	}
+
+	for _, cert := range certificates {
+		// Custom SSL certs typically don't have a name field we can filter on
+		// We can check the hosts field to see if it matches test patterns
+		shouldSweep := false
+		for _, host := range cert.Hosts {
+			if utils.ShouldSweepResource(host) {
+				shouldSweep = true
+				break
+			}
+		}
+
+		if !shouldSweep {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting custom SSL certificate: %s (zone: %s)", cert.ID, zoneID))
+		err := client.DeleteSSL(ctx, zoneID, cert.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete custom SSL certificate %s: %s", cert.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted custom SSL certificate: %s", cert.ID))
+	}
+
+	return nil
+}
+
 func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 	var customSSL cloudflare.ZoneCustomSSL
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

@@ -1,6 +1,7 @@
 package schema_validation_settings_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,8 +9,29 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_schema_validation_settings", &resource.Sweeper{
+		Name: "cloudflare_schema_validation_settings",
+		F:    testSweepCloudflareSchemaValidationSettings,
+	})
+}
+
+func testSweepCloudflareSchemaValidationSettings(r string) error {
+	ctx := context.Background()
+	// Schema Validation Settings is a zone-level configuration setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Schema Validation Settings doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareSchemaValidationZoneSettings(t *testing.T) {
 	rndResourceName := utils.GenerateRandomResourceName()

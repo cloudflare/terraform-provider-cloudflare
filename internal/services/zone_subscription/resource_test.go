@@ -1,12 +1,14 @@
 package zone_subscription_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -14,7 +16,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestAccCloudflareZoneSubscriptionResource_Basic(t *testing.T) {
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zone_subscription", &resource.Sweeper{
+		Name: "cloudflare_zone_subscription",
+		F:    testSweepCloudflareZoneSubscription,
+	})
+}
+
+func testSweepCloudflareZoneSubscription(r string) error {
+	ctx := context.Background()
+	// Zone Subscription is a zone-level billing subscription setting.
+	// It cannot be deleted, only updated.
+	// No sweeping required.
+	tflog.Info(ctx, "Zone Subscription doesn't require sweeping (zone billing setting)")
+	return nil
+}
+
+func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd

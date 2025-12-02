@@ -3,19 +3,19 @@ package organization_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6/organizations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 // TestMain is the entry point for test execution
+
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
@@ -33,23 +33,31 @@ func testSweepCloudflareOrgs(_ string) error {
 	orgID := os.Getenv("CLOUDFLARE_ORGANIZATION_ID")
 
 	if orgID == "" {
+		tflog.Info(ctx, "Skipping organizations sweep: CLOUDFLARE_ORGANIZATION_ID not set")
 		return nil
 	}
 
 	orgs, err := client.Organizations.List(ctx, organizations.OrganizationListParams{})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch KV namespaces: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch organizations: %s",err))
 		return err
 	}
+	if len(orgs.Result) == 0 {
+		tflog.Info(ctx, "No Cloudflare organizations to sweep")
+		return nil
+	}
+
 	for _, org := range orgs.Result {
-		if !strings.HasPrefix(org.Name, "tf-acctest-") {
+		if !utils.ShouldSweepResource(org.Name) {
 			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting organization: %s (%s)", org.Name, org.ID))
 		_, err = client.Organizations.Delete(ctx, org.ID)
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete org %s: %s", org.ID, err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete organization %s (%s): %s", org.Name, org.ID,err))
 			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted organization: %s (%s)", org.Name, org.ID))
 	}
 	return nil
 }

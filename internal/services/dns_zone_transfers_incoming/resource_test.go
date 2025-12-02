@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -44,7 +43,7 @@ func testSweepCloudflareDNSZoneTransfersIncoming(r string) error {
 	}
 
 	if len(incomingZone.Peers) == 0 {
-		log.Print("[DEBUG] No Cloudflare peers connected to zones records to sweep")
+		tflog.Info(ctx, "No Cloudflare peers connected to zones records to sweep")
 		return nil
 	}
 

@@ -15,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/pkg/errors"
 )
 
 func TestMain(m *testing.M) {
@@ -38,7 +37,8 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID == "" {
-		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+		tflog.Info(ctx, "Skipping load balancer monitors sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
 	}
 
 	monitors, err := client.ListLoadBalancerMonitors(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListLoadBalancerMonitorParams{})
@@ -52,9 +52,18 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 	}
 
 	for _, monitor := range monitors {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor ID: %s", monitor.ID))
-		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), monitor.ID)
+		// Use standard filtering helper - check Description field for test resource names
+		if monitor.Description != "" && !utils.ShouldSweepResource(monitor.Description) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor: %s (%s)", monitor.Description, monitor.ID))
+		err := client.DeleteLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), monitor.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Load Balancer Monitor %s (%s): %s", monitor.Description, monitor.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted Load Balancer Monitor: %s (%s)", monitor.Description, monitor.ID))
 	}
 
 	return nil

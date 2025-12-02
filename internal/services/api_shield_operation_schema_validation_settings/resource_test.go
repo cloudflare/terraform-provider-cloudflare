@@ -1,6 +1,7 @@
 package api_shield_operation_schema_validation_settings_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,8 +9,29 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_api_shield_operation_schema_validation_settings", &resource.Sweeper{
+		Name: "cloudflare_api_shield_operation_schema_validation_settings",
+		F:    testSweepCloudflareAPIShieldOperationSchemaValidationSettings,
+	})
+}
+
+func testSweepCloudflareAPIShieldOperationSchemaValidationSettings(r string) error {
+	ctx := context.Background()
+	// This resource configures schema validation settings for API Shield operations.
+	// The settings are tied to operations, so when operations are swept, these settings
+	// are automatically removed. No separate sweeping required.
+	tflog.Info(ctx, "API Shield operation schema validation settings don't require sweeping (operation settings)")
+	return nil
+}
 
 func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token

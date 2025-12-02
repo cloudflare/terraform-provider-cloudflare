@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	cloudflare_v6 "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -14,6 +16,82 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_access_short_lived_certificate", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_short_lived_certificate",
+		F:    testSweepCloudflareZeroTrustAccessShortLivedCertificate,
+	})
+}
+
+func testSweepCloudflareZeroTrustAccessShortLivedCertificate(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	// List all applications to get app names for filtering
+	appsResp, err := client.ZeroTrust.Access.Applications.List(
+		ctx,
+		zero_trust.AccessApplicationListParams{
+			AccountID: cloudflare_v6.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust Access Applications: %s", err))
+		return err
+	}
+
+	// Build map of app IDs that should be swept
+	appIDsToSweep := make(map[string]bool)
+	for _, app := range appsResp.Result {
+		if utils.ShouldSweepResource(app.Name) {
+			appIDsToSweep[app.ID] = true
+		}
+	}
+
+	if len(appIDsToSweep) == 0 {
+		tflog.Info(ctx, "No test applications found to sweep")
+		return nil
+	}
+
+	// List all CAs (v6 API lists all CAs, not per-application)
+	casResp, err := client.ZeroTrust.Access.Applications.CAs.List(
+		ctx,
+		zero_trust.AccessApplicationCAListParams{
+			AccountID: cloudflare_v6.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Failed to fetch CAs: %s", err))
+		return err
+	}
+
+	// Iterate through all CAs and delete those belonging to test applications
+	for _, ca := range casResp.Result {
+		// The AUD field contains the application ID
+		if !appIDsToSweep[ca.AUD] {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust Access Short Lived Certificate: %s for app %s", ca.ID, ca.AUD))
+		_, err := client.ZeroTrust.Access.Applications.CAs.Delete(
+			ctx,
+			ca.AUD,
+			zero_trust.AccessApplicationCADeleteParams{
+				AccountID: cloudflare_v6.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust Access Short Lived Certificate %s: %s", ca.ID, err))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

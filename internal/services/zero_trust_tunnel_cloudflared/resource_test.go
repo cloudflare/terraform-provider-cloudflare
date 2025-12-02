@@ -3,7 +3,6 @@ package zero_trust_tunnel_cloudflared_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -23,25 +22,23 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-//func init() {
-//	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared", &resource.Sweeper{
-//		Name: "cloudflare_zero_trust_tunnel_cloudflared",
-//		F:    testSweepCloudflareZeroTrustTunnelCloudflared,
-//	})
-//}
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_tunnel_cloudflared",
+		F:    testSweepCloudflareZeroTrustTunnelCloudflared,
+	})
+}
 
 func testSweepCloudflareZeroTrustTunnelCloudflared(region string) error {
+	ctx := context.Background()
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if accountID == "" {
-		log.Print("[DEBUG] CLOUDFLARE_ACCOUNT_ID not set, skipping sweep")
+		tflog.Info(ctx, "Skipping cloudflared tunnels sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
-	ctx := context.Background()
-
-	// List all cloudflared tunnels using v6 SDK
 	page, err := client.ZeroTrust.Tunnels.Cloudflared.List(
 		ctx,
 		zero_trust.TunnelCloudflaredListParams{
@@ -49,26 +46,29 @@ func testSweepCloudflareZeroTrustTunnelCloudflared(region string) error {
 		},
 	)
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list cloudflared tunnels: %s", err))
 		return fmt.Errorf("error listing cloudflared tunnels for sweep: %w", err)
 	}
 
 	tunnelCount := 0
 	for page != nil && len(page.Result) > 0 {
-		tunnelCount += len(page.Result)
-
 		for _, tunnel := range page.Result {
 			if tunnel.ID == "" {
-				log.Printf("[DEBUG] Skipping cloudflared tunnel with empty ID: %s", tunnel.Name)
+				tflog.Debug(ctx, fmt.Sprintf("Skipping cloudflared tunnel with empty ID: %s", tunnel.Name))
 				continue
 			}
 
-			// Skip tunnels that are already deleted
 			if !tunnel.DeletedAt.IsZero() {
-				log.Printf("[DEBUG] Skipping already deleted cloudflared tunnel: %s (%s)", tunnel.Name, tunnel.ID)
+				tflog.Debug(ctx, fmt.Sprintf("Skipping already deleted cloudflared tunnel: %s (%s)", tunnel.Name, tunnel.ID))
 				continue
 			}
 
-			log.Printf("[INFO] Deleting cloudflared tunnel: %s (%s)", tunnel.Name, tunnel.ID)
+			if !utils.ShouldSweepResource(tunnel.Name) {
+				continue
+			}
+
+			tunnelCount++
+			tflog.Info(ctx, fmt.Sprintf("Deleting cloudflared tunnel: %s (%s) (account: %s)", tunnel.Name, tunnel.ID, accountID))
 
 			_, err := client.ZeroTrust.Tunnels.Cloudflared.Delete(
 				ctx,
@@ -79,25 +79,22 @@ func testSweepCloudflareZeroTrustTunnelCloudflared(region string) error {
 				option.WithQuery("cascade", "true"),
 			)
 			if err != nil {
-				log.Printf("[ERROR] Failed to delete cloudflared tunnel %s: %v", tunnel.ID, err)
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete cloudflared tunnel %s: %s", tunnel.ID, err))
 				continue
 			}
 
-			log.Printf("[DEBUG] Successfully deleted cloudflared tunnel: %s (%s) with cascade", tunnel.Name, tunnel.ID)
+			tflog.Info(ctx, fmt.Sprintf("Deleted cloudflared tunnel: %s with cascade", tunnel.ID))
 		}
 
-		// Get next page
 		page, err = page.GetNextPage()
 		if err != nil {
-			log.Printf("[ERROR] Failed to get next page of tunnels: %v", err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to get next page of tunnels: %s", err))
 			break
 		}
 	}
 
 	if tunnelCount == 0 {
-		log.Print("[DEBUG] No cloudflared tunnels found to sweep")
-	} else {
-		log.Printf("[DEBUG] Found %d cloudflared tunnels to sweep", tunnelCount)
+		tflog.Info(ctx, "No cloudflared tunnels to sweep")
 	}
 
 	return nil
