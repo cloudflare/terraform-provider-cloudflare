@@ -50,7 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_enterprise\".",
+						Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_enterprise\", \"partners_ent\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -64,6 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"partners_pro",
 								"partners_business",
 								"partners_enterprise",
+								"partners_ent",
 							),
 						},
 					},
