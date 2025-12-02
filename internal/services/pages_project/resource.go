@@ -65,6 +65,7 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	planDeploymentConfigs := data.DeploymentConfigs
+	accountID := data.AccountID.ValueString()
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -76,7 +77,7 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 	_, err = r.client.Pages.Projects.New(
 		ctx,
 		pages.ProjectNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			AccountID: cloudflare.F(accountID),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -93,7 +94,36 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	projectName := data.Name.ValueString()
 	data.ID = data.Name
+
+	// Do a GET to populate all computed fields that aren't in Create response
+	res = new(http.Response)
+	env = PagesProjectResultEnvelope{*data}
+	_, err = r.client.Pages.Projects.Get(
+		ctx,
+		projectName,
+		pages.ProjectGetParams{
+			AccountID: cloudflare.F(accountID),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request for refresh", err.Error())
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Name
+
+	// Normalize empty build_config to nil
+	NormalizeBuildConfig(data)
 
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
@@ -154,6 +184,9 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 	data = &env.Result
 	data.ID = data.Name
 
+	// Normalize empty build_config to nil
+	NormalizeBuildConfig(data)
+
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
 		resp.Diagnostics.Append(diags...)
@@ -203,6 +236,9 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 	data.ID = data.Name
+
+	// Normalize empty build_config to nil
+	NormalizeBuildConfig(data)
 
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, stateDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
@@ -283,9 +319,30 @@ func (r *PagesProjectResource) ImportState(ctx context.Context, req resource.Imp
 	data = &env.Result
 	data.ID = data.Name
 
+	// Normalize empty build_config to nil
+	NormalizeBuildConfig(data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *PagesProjectResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *PagesProjectResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan, state, config PagesProjectModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	updatedPlan, diags := handleDeploymentConfigsRemoval(ctx, config, plan, state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, &updatedPlan)...)
 }

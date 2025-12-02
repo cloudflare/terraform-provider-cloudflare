@@ -5,6 +5,8 @@ resource "cloudflare_pages_project" "%[1]s" {
 	
 	deployment_configs = {
 		preview = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
 			env_vars = {
 				PLAIN_TEXT_VAR = {
 					type = "plain_text"
@@ -18,6 +20,8 @@ resource "cloudflare_pages_project" "%[1]s" {
 		}
 	
 		production = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
 			env_vars = {
 				PROD_PLAIN = {
 					type = "plain_text"

@@ -11,7 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -81,33 +84,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"config": schema.SingleNestedAttribute{
 						Required: true,
 						Attributes: map[string]schema.Attribute{
-							"deployments_enabled": schema.BoolAttribute{
-								Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
-								Optional:           true,
-								DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
-							},
+						"deployments_enabled": schema.BoolAttribute{
+							Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
+							Computed:           true,
+							Optional:           true,
+							PlanModifiers:      []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+							DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+						},
 							"owner": schema.StringAttribute{
 								Description: "The owner of the repository.",
 								Optional:    true,
 							},
-							"owner_id": schema.StringAttribute{
-								Description: "The owner ID of the repository.",
-								Optional:    true,
-							},
-							"path_excludes": schema.ListAttribute{
-								Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"path_includes": schema.ListAttribute{
-								Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"pr_comments_enabled": schema.BoolAttribute{
-								Description: "Whether to enable PR comments.",
-								Optional:    true,
-							},
+						"owner_id": schema.StringAttribute{
+							Description:   "The owner ID of the repository.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						},
+						"path_excludes": schema.ListAttribute{
+							Description: "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"path_includes": schema.ListAttribute{
+							Description: "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"pr_comments_enabled": schema.BoolAttribute{
+							Description:   "Whether to enable PR comments.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+						},
 							"preview_branch_excludes": schema.ListAttribute{
 								Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
 								Optional:    true,
@@ -133,14 +142,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "The production branch of the repository.",
 								Optional:    true,
 							},
-							"production_deployments_enabled": schema.BoolAttribute{
-								Description: "Whether to trigger a production deployment on commits to the production branch.",
-								Optional:    true,
-							},
-							"repo_id": schema.StringAttribute{
-								Description: "The ID of the repository.",
-								Optional:    true,
-							},
+						"production_deployments_enabled": schema.BoolAttribute{
+							Description:   "Whether to trigger a production deployment on commits to the production branch.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+						},
+						"repo_id": schema.StringAttribute{
+							Description:   "The ID of the repository.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						},
 							"repo_name": schema.StringAttribute{
 								Description: "The name of the repository.",
 								Optional:    true,
@@ -647,44 +660,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the project was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"framework": schema.StringAttribute{
-				Description: "Framework the project is using.",
-				Computed:    true,
+				Description:   "Framework the project is using.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"framework_version": schema.StringAttribute{
-				Description: "Version of the framework the project is using.",
-				Computed:    true,
+				Description:   "Version of the framework the project is using.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"preview_script_name": schema.StringAttribute{
-				Description: "Name of the preview script.",
-				Computed:    true,
+				Description:   "Name of the preview script.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"production_script_name": schema.StringAttribute{
-				Description: "Name of the production script.",
-				Computed:    true,
+				Description:   "Name of the production script.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"subdomain": schema.StringAttribute{
-				Description: "The Cloudflare subdomain associated with the project.",
-				Computed:    true,
+				Description:   "The Cloudflare subdomain associated with the project.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"uses_functions": schema.BoolAttribute{
-				Description: "Whether the project uses functions.",
-				Computed:    true,
+				Description:   "Whether the project uses functions.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"domains": schema.ListAttribute{
-				Description: "A list of associated custom domains for the project.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:   "A list of associated custom domains for the project.",
+				Computed:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
-				Description: "Most recent production deployment of the project.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentModel](ctx),
+				Description:   "Most recent production deployment of the project.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentModel](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -1010,9 +1032,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
-				Description: "Most recent deployment of the project.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentModel](ctx),
+				Description:   "Most recent deployment of the project.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[PagesProjectLatestDeploymentModel](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",

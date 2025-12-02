@@ -13,6 +13,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 	deployment_configs = {
 		preview = {
 			compatibility_date = "2023-06-01"
+			compatibility_flags = []
 			
 			env_vars = {
 				UPDATED_VAR = {
@@ -24,6 +25,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 	
 		production = {
 			compatibility_date = "2023-06-01"
+			compatibility_flags = []
 			
 			env_vars = {
 				PROD_UPDATED = {
