@@ -2,7 +2,6 @@ package r2_bucket_test
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -32,33 +31,32 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	// TODO: fixme - auth error
-	//resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
-	//	Name: "cloudflare_r2_bucket",
-	//	F:    testSweepCloudflareR2Bucket,
-	//})
+	resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
+		Name: "cloudflare_r2_bucket",
+		F:    testSweepCloudflareR2Bucket,
+	})
 }
 
 func testSweepCloudflareR2Bucket(r string) error {
+	ctx := context.Background()
 	client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
-	accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
-
-	if accessKeyId == "" {
-		return errors.New("CLOUDFLARE_R2_ACCESS_KEY_ID must be set for this acceptance test")
-	}
-
-	if accessKeyId == "" {
-		return errors.New("CLOUDFLARE_R2_ACCESS_KEY_SECRET must be set for this acceptance test")
-	}
-
 	if err != nil {
 		return fmt.Errorf("error establishing client: %w", err)
 	}
 
-	ctx := context.Background()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return nil // Skip sweep if account ID not set
+	}
+
+	accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+	accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
+
+	if accessKeyId == "" || accessKeySecret == "" {
+		// Skip sweep if R2 credentials aren't available
+		return nil
+	}
+
 	buckets, err := client.ListR2Buckets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListR2BucketsParams{})
 	if err != nil {
 		return fmt.Errorf("failed to fetch R2 buckets: %w", err)
@@ -68,6 +66,11 @@ func testSweepCloudflareR2Bucket(r string) error {
 		// hard coded bucket name for Worker script acceptance tests
 		// until we can break out the packages without cyclic errors.
 		if bucket.Name == "bnfywlzwpt" {
+			continue
+		}
+
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(bucket.Name) {
 			continue
 		}
 

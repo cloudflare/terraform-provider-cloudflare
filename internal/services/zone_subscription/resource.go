@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -155,7 +156,14 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
-	env := ZoneSubscriptionResultEnvelope{*data}
+	env := ZoneSubscriptionResultEnvelope{
+		Result: ZoneSubscriptionModel{
+			ZoneID: data.ZoneID,
+			RatePlan: &ZoneSubscriptionRatePlanModel{
+				Sets: customfield.NullList[types.String](ctx),
+			},
+		},
+	}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
 		zones.SubscriptionGetParams{
@@ -206,7 +214,14 @@ func (r *ZoneSubscriptionResource) ImportState(ctx context.Context, req resource
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
-	env := ZoneSubscriptionResultEnvelope{*data}
+	env := ZoneSubscriptionResultEnvelope{
+		Result: ZoneSubscriptionModel{
+			ZoneID: data.ZoneID,
+			RatePlan: &ZoneSubscriptionRatePlanModel{
+				Sets: customfield.NullList[types.String](ctx),
+			},
+		},
+	}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
 		zones.SubscriptionGetParams{

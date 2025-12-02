@@ -4,6 +4,7 @@ package zone_subscription
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -15,7 +16,7 @@ type ZoneSubscriptionResultEnvelope struct {
 type ZoneSubscriptionModel struct {
 	ID                 types.String                   `tfsdk:"id" json:"-,computed"`
 	ZoneID             types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,optional"`
+	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,computed_optional"`
 	RatePlan           *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
 	Currency           types.String                   `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339              `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
@@ -33,11 +34,11 @@ func (m ZoneSubscriptionModel) MarshalJSONForUpdate(state ZoneSubscriptionModel)
 }
 
 type ZoneSubscriptionRatePlanModel struct {
-	ID                types.String    `tfsdk:"id" json:"id,optional"`
-	Currency          types.String    `tfsdk:"currency" json:"currency,optional"`
-	ExternallyManaged types.Bool      `tfsdk:"externally_managed" json:"externally_managed,optional"`
-	IsContract        types.Bool      `tfsdk:"is_contract" json:"is_contract,optional"`
-	PublicName        types.String    `tfsdk:"public_name" json:"public_name,optional"`
-	Scope             types.String    `tfsdk:"scope" json:"scope,optional"`
-	Sets              *[]types.String `tfsdk:"sets" json:"sets,optional"`
+	ID                types.String                   `tfsdk:"id" json:"id,optional"`
+	Currency          types.String                   `tfsdk:"currency" json:"currency,computed"`
+	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed"`
+	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed"`
+	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed"`
+	Scope             types.String                   `tfsdk:"scope" json:"scope,computed_optional"`
+	Sets              customfield.List[types.String] `tfsdk:"sets" json:"sets,computed"`
 }

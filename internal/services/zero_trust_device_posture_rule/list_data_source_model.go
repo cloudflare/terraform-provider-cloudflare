@@ -63,6 +63,7 @@ type ZeroTrustDevicePostureRulesInputDataSourceModel struct {
 	ExtendedKeyUsage        customfield.List[types.String]                                                     `tfsdk:"extended_key_usage" json:"extended_key_usage,computed"`
 	Locations               customfield.NestedObject[ZeroTrustDevicePostureRulesInputLocationsDataSourceModel] `tfsdk:"locations" json:"locations,computed"`
 	SubjectAlternativeNames customfield.List[types.String]                                                     `tfsdk:"subject_alternative_names" json:"subject_alternative_names,computed"`
+	UpdateWindowDays        types.Float64                                                                      `tfsdk:"update_window_days" json:"update_window_days,computed"`
 	ComplianceStatus        types.String                                                                       `tfsdk:"compliance_status" json:"compliance_status,computed"`
 	ConnectionID            types.String                                                                       `tfsdk:"connection_id" json:"connection_id,computed"`
 	LastSeen                types.String                                                                       `tfsdk:"last_seen" json:"last_seen,computed"`

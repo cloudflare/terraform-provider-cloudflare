@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -38,17 +38,26 @@ func testSweepCloudflareAPIToken(r string) error {
 	// List all API tokens
 	tokens, err := client.User.Tokens.List(ctx, user.TokenListParams{})
 	if err != nil {
-		return fmt.Errorf("failed to fetch API tokens: %w", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch API tokens: %s",err))
+		return err
+	}
+	if len(tokens.Result) == 0 {
+		tflog.Info(ctx, "No Cloudflare API tokens to sweep")
+		return nil
 	}
 
-	// Delete test tokens (those created by our tests)
 	for _, token := range tokens.Result {
-		if strings.Contains(token.Name, "terraform") {
-			_, err := client.User.Tokens.Delete(ctx, token.ID)
-			if err != nil {
-				return fmt.Errorf("failed to delete API token %s: %w", token.ID, err)
-			}
+		if !utils.ShouldSweepResource(token.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting API token: %s (%s)", token.Name, token.ID))
+		_, err := client.User.Tokens.Delete(ctx, token.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete API token %s (%s): %s", token.Name, token.ID,err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted API token: %s (%s)", token.Name, token.ID))
 	}
 
 	return nil

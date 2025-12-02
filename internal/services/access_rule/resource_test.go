@@ -1,14 +1,90 @@
 package access_rule_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_access_rule", &resource.Sweeper{
+		Name: "cloudflare_access_rule",
+		F:    testSweepCloudflareAccessRules,
+	})
+}
+
+func testSweepCloudflareAccessRules(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	// Sweep account-level access rules
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID != "" {
+		accountRulesResp, err := client.ListAccountAccessRules(ctx, accountID, cloudflare.AccessRule{}, 1)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch account access rules: %s", err))
+			return fmt.Errorf("failed to fetch account access rules: %w", err)
+		}
+
+		for _, rule := range accountRulesResp.Result {
+			// Use standard filtering helper on the notes field
+			if !utils.ShouldSweepResource(rule.Notes) {
+				continue
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Deleting account access rule: %s (account: %s)", rule.ID, accountID))
+			_, err := client.DeleteAccountAccessRule(ctx, accountID, rule.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete account access rule %s: %s", rule.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted account access rule: %s", rule.ID))
+		}
+	}
+
+	// Sweep zone-level access rules
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID != "" {
+		zoneRulesResp, err := client.ListZoneAccessRules(ctx, zoneID, cloudflare.AccessRule{}, 1)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone access rules: %s", err))
+			return fmt.Errorf("failed to fetch zone access rules: %w", err)
+		}
+
+		for _, rule := range zoneRulesResp.Result {
+			// Use standard filtering helper on the notes field
+			if !utils.ShouldSweepResource(rule.Notes) {
+				continue
+			}
+
+			tflog.Info(ctx, fmt.Sprintf("Deleting zone access rule: %s (zone: %s)", rule.ID, zoneID))
+			_, err := client.DeleteZoneAccessRule(ctx, zoneID, rule.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete zone access rule %s: %s", rule.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted zone access rule: %s", rule.ID))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

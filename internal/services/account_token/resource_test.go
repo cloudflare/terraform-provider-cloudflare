@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -37,22 +37,41 @@ func testSweepCloudflareAccountToken(r string) error {
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping account tokens sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
 	// List all API tokens
-	tokens, err := client.Accounts.Tokens.List(ctx, accounts.TokenListParams{})
+	tokens, err := client.Accounts.Tokens.List(ctx, accounts.TokenListParams{
+		AccountID: cloudflare.F(accountID),
+	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account tokens: %s", err))
 		return fmt.Errorf("failed to fetch account tokens: %w", err)
 	}
 
+	if len(tokens.Result) == 0 {
+		tflog.Info(ctx, "No account tokens to sweep")
+		return nil
+	}
+
 	// Delete test tokens (those created by our tests)
+	// Uses utils.ShouldSweepResource() to filter by standard test naming convention
 	for _, token := range tokens.Result {
-		if strings.Contains(token.Name, "terraform") {
-			_, err := client.Accounts.Tokens.Delete(ctx, token.ID, accounts.TokenDeleteParams{
-				AccountID: cloudflare.F(accountID),
-			})
-			if err != nil {
-				return fmt.Errorf("failed to delete account token %s: %w", token.ID, err)
-			}
+		if !utils.ShouldSweepResource(token.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account token: %s (%s) (account: %s)", token.Name, token.ID, accountID))
+		_, err := client.Accounts.Tokens.Delete(ctx, token.ID, accounts.TokenDeleteParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account token %s (%s): %s", token.Name, token.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account token: %s (%s)", token.Name, token.ID))
 	}
 
 	return nil
@@ -615,6 +634,79 @@ func TestAccAccountToken_ResourcesFlexible(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
+		},
+	})
+}
+
+func TestAccAccountToken_CRUD(t *testing.T) {
+	// Comprehensive test covering Create, Read, Update, Delete + Import
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.crud_test"
+
+	initialName := rnd + "-initial"
+	updatedName := rnd + "-updated"
+
+	// TTL times
+	oneDayFromNow := time.Now().UTC().AddDate(0, 0, 1).Format(time.RFC3339)
+	twoDaysFromNow := time.Now().UTC().AddDate(0, 0, 2).Format(time.RFC3339)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccountTokenDestroy,
+		Steps: []resource.TestStep{
+			// Create and Read
+			{
+				Config: acctest.LoadTestCase("account_token-crud.tf", initialName, accountID, oneDayFromNow, "192.0.2.1/32"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(initialName)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(oneDayFromNow)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
+				},
+			},
+			// Update name and TTL
+			{
+				Config: acctest.LoadTestCase("account_token-crud.tf", updatedName, accountID, twoDaysFromNow, "192.0.2.1/32"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(updatedName)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(twoDaysFromNow)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(updatedName)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(twoDaysFromNow)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
+				},
+			},
+			// Update condition
+			{
+				Config: acctest.LoadTestCase("account_token-crud.tf", updatedName, accountID, twoDaysFromNow, "198.51.100.1/32"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("198.51.100.1/32")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(updatedName)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("198.51.100.1/32")),
+				},
+			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value"}, // Token value is write-only
 			},
 		},
 	})

@@ -1,19 +1,22 @@
 package account_member_test
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-)
 
 // Note: Account members are challenging to test with sweepers/CheckDestroy because:
 // 1. The API requires special permissions that may not be available with test tokens
@@ -22,6 +25,61 @@ import (
 //
 // For comprehensive resource lifecycle testing, we rely on the built-in Terraform
 // test framework validation and the resource's own Delete implementation.
+)
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_account_member", &resource.Sweeper{
+		Name: "cloudflare_account_member",
+		F:    testSweepCloudflareAccountMembers,
+	})
+}
+
+func testSweepCloudflareAccountMembers(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping account members sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	members, _, err := client.AccountMembers(ctx, accountID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account members: %s", err))
+		return fmt.Errorf("failed to fetch account members: %w", err)
+	}
+
+	if len(members) == 0 {
+		tflog.Info(ctx, "No account members to sweep")
+		return nil
+	}
+
+	for _, member := range members {
+		// Only sweep test members with @example.com emails or emails matching test patterns
+		if !strings.HasSuffix(member.User.Email, "@example.com") && !utils.ShouldSweepResource(member.User.Email) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account member: %s (email: %s, account: %s)", member.ID, member.User.Email, accountID))
+		err := client.DeleteAccountMember(ctx, accountID, member.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account member %s: %s", member.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account member: %s", member.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have

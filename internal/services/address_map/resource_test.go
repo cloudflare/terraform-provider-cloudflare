@@ -1,6 +1,7 @@
 package address_map_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -9,8 +10,63 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_address_map", &resource.Sweeper{
+		Name: "cloudflare_address_map",
+		F:    testSweepCloudflareAddressMaps,
+	})
+}
+
+func testSweepCloudflareAddressMaps(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping address maps sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	addressMaps, err := client.ListAddressMaps(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListAddressMapsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch address maps: %s", err))
+		return fmt.Errorf("failed to fetch address maps: %w", err)
+	}
+
+	if len(addressMaps) == 0 {
+		tflog.Info(ctx, "No address maps to sweep")
+		return nil
+	}
+
+	for _, addressMap := range addressMaps {
+		// Use standard filtering helper on the description field
+		if addressMap.Description == nil || !utils.ShouldSweepResource(*addressMap.Description) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting address map: %s (account: %s)", addressMap.ID, accountID))
+		err := client.DeleteAddressMap(ctx, cloudflare.AccountIdentifier(accountID), addressMap.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete address map %s: %s", addressMap.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted address map: %s", addressMap.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAddressMap(t *testing.T) {
 	acctest.TestAccSkipForDefaultAccount(t, "Pending permission fixes for IP delegation.")

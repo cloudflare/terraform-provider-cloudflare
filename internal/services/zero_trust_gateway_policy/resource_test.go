@@ -60,17 +60,20 @@ func testSweepCloudflareZeroTrustGatewayPolicy(r string) error {
 	failedCount := 0
 
 	for _, rule := range rules {
+		if !utils.ShouldSweepResource(rule.Name) {
+			continue
+		}
 		tflog.Info(ctx, fmt.Sprintf("Deleting Teams Rule: %s (%s)", rule.Name, rule.ID))
 
 		err := client.TeamsDeleteRule(ctx, accountID, rule.ID)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Teams Rule %s: %s", rule.ID, err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Teams Rule %s (%s): %s", rule.Name, rule.ID, err))
 			failedCount++
 			continue
 		}
 
 		deletedCount++
-		tflog.Info(ctx, fmt.Sprintf("Successfully deleted Teams Rule: %s", rule.ID))
+		tflog.Info(ctx, fmt.Sprintf("Deleted Teams Rule: %s (%s)", rule.Name, rule.ID))
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("Completed sweeping Teams Rules: deleted %d, failed %d", deletedCount, failedCount))

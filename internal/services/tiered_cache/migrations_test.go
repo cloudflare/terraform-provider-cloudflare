@@ -14,10 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
-
 // TestMigrateTieredCache_Smart tests migration from v4 cache_type = "smart" to v5 value = "on"
 func TestMigrateTieredCache_Smart(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

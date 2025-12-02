@@ -3,7 +3,6 @@ package zero_trust_access_tag_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -46,18 +45,21 @@ func testSweepCloudflareZeroTrustAccessTag(r string) error {
 	}
 
 	if len(tags) == 0 {
-		log.Print("[DEBUG] No Cloudflare zero trust access tags to sweep")
+		tflog.Info(ctx, "No Cloudflare zero trust access tags to sweep")
 		return nil
 	}
 
 	for _, tag := range tags {
-		// Delete the tag
+		if !utils.ShouldSweepResource(tag.Name) {
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting Access Tag: %s", tag.Name))
 		err := client.DeleteAccessTag(ctx, cloudflare.AccountIdentifier(accountID), tag.Name)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zero trust access tag %s: %s", tag.Name, err))
-		} else {
-			log.Printf("[INFO] Deleted zero trust access tag: %s", tag.Name)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Tag %s: %s", tag.Name, err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted Access Tag: %s", tag.Name))
 	}
 
 	return nil

@@ -3,7 +3,6 @@ package zero_trust_list_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -15,8 +14,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -49,18 +48,27 @@ func testSweepCloudflareZeroTrustList(r string) error {
 		AccountID: cfv6.F(accountID),
 	})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch zero trust lists: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zero trust lists: %s", err))
 		return err
 	}
+	if len(page.Result) == 0 {
+		tflog.Info(ctx, "No Cloudflare zero trust lists to sweep")
+		return nil
+	}
 
-	// Delete all lists (sweepers clean up everything from test accounts)
 	for _, list := range page.Result {
+		if !utils.ShouldSweepResource(list.Name) {
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting zero trust list: %s (%s)", list.Name, list.ID))
 		_, err := client.ZeroTrust.Gateway.Lists.Delete(ctx, list.ID, zero_trust.GatewayListDeleteParams{
 			AccountID: cfv6.F(accountID),
 		})
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete zero trust list %s (%s): %s", list.Name, list.ID, err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zero trust list %s (%s): %s", list.Name, list.ID, err))
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted zero trust list: %s (%s)", list.Name, list.ID))
 	}
 
 	return nil
@@ -644,7 +652,7 @@ func testAccCloudflareTeamsListConfigReorderedItemsUpdate(rnd, accountID string)
 func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		return fmt.Errorf("failed to create Cloudflare client: %s", clientErr)
 	}
 
 	for _, rs := range s.RootModule().Resources {

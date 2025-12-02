@@ -12,12 +12,33 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zone_dnssec", &resource.Sweeper{
+		Name: "cloudflare_zone_dnssec",
+		F:    testSweepCloudflareZoneDNSSEC,
+	})
+}
+
+func testSweepCloudflareZoneDNSSEC(r string) error {
+	ctx := context.Background()
+	// Zone DNSSEC is a zone-level DNSSEC configuration setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zone DNSSEC doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareZoneDNSSECFull(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

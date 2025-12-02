@@ -51,7 +51,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				// Verify v4 attributes are removed/transformed
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
@@ -102,7 +102,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify v4→v5 transformations
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
@@ -150,7 +150,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify removed attributes
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
 				// V5 has computed plan object instead of configurable string
@@ -194,7 +194,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify unicode handling
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(unicodeDomain)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("full")),
@@ -238,7 +238,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify secondary zone handling
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("secondary")),
@@ -282,7 +282,7 @@ resource "cloudflare_zone" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify meta structure
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
 				// Verify meta is a structured object (v5 format)

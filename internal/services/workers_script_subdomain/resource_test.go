@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -21,6 +22,22 @@ import (
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_workers_script_subdomain", &resource.Sweeper{
+		Name: "cloudflare_workers_script_subdomain",
+		F:    testSweepCloudflareWorkersScriptSubdomain,
+	})
+}
+
+func testSweepCloudflareWorkersScriptSubdomain(r string) error {
+	ctx := context.Background()
+	// Workers Script Subdomain is an account-level subdomain configuration.
+	// It's a singleton setting per account, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Workers Script Subdomain doesn't require sweeping (account setting)")
+	return nil
 }
 
 func TestAccCloudflareWorkersScriptSubdomain_Basic(t *testing.T) {

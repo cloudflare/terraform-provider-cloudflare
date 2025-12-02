@@ -3,7 +3,6 @@ package url_normalization_settings_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -19,7 +18,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-	"github.com/pkg/errors"
 )
 
 func TestMain(m *testing.M) {
@@ -37,32 +35,36 @@ func testSweepCloudflareURLNormalizationSettings(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 
-	// Clean up the account level rulesets
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
-		return errors.New("CLOUDFLARE_ZONE_ID must be set")
-	}
-
-	settings, err := client.URLNormalization.Get(context.Background(), url_normalization.URLNormalizationGetParams{
-		ZoneID: cloudflare.F(zoneID),
-	})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare url normalization settings: %s", err))
-	}
-
-	if settings == nil {
-		log.Print("[DEBUG] No Cloudflare url normalization settings to sweep")
+		tflog.Info(ctx, "Skipping URL normalization settings sweep: CLOUDFLARE_ZONE_ID not set")
 		return nil
 	}
 
-	err = client.URLNormalization.Delete(context.Background(), url_normalization.URLNormalizationDeleteParams{
+	settings, err := client.URLNormalization.Get(ctx, url_normalization.URLNormalizationGetParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch URL normalization settings: %s", err))
+		return err
+	}
+
+	if settings == nil {
+		tflog.Info(ctx, "No URL normalization settings to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Deleting URL normalization settings (zone: %s)", zoneID))
+	err = client.URLNormalization.Delete(ctx, url_normalization.URLNormalizationDeleteParams{
 		ZoneID: cloudflare.F(zoneID),
 	})
 
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare url normalization settings: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete URL normalization settings: %s", err))
+		return err
 	}
 
+	tflog.Info(ctx, "Deleted URL normalization settings")
 	return nil
 }
 

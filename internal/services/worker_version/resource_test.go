@@ -1,6 +1,7 @@
 package worker_version_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -16,6 +18,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_worker_version", &resource.Sweeper{
+		Name: "cloudflare_worker_version",
+		F:    testSweepCloudflareWorkerVersion,
+	})
+}
+
+func testSweepCloudflareWorkerVersion(r string) error {
+	ctx := context.Background()
+	// Worker Version is a worker script-level resource.
+	// When worker scripts are swept, versions are cleaned up automatically.
+	// No sweeping required.
+	tflog.Info(ctx, "Worker Version doesn't require sweeping (worker script resource)")
+	return nil
+}
 
 func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

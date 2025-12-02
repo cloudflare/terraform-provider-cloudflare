@@ -46,38 +46,65 @@ func testSweepCloudflareLogpushJob(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	jobs, err := client.ListLogpushJobs(ctx, cfold.AccountIdentifier(accountID), cfold.ListLogpushJobsParams{})
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+	}
+
+	err := cleanLogpushJobs(ctx, client, cfold.AccountIdentifier(accountID))
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Logpush Jobs: %s", err))
+		return err
+	}
+	err = cleanLogpushJobs(ctx, client, cfold.ZoneIdentifier(zoneID))
+	if err != nil {
+		return err
+	}
+
+	tflog.Debug(ctx, "[DEBUG] Logpush Job sweep complete")
+
+	return nil
+}
+
+func cleanLogpushJobs(ctx context.Context, client *cfold.API, resourceID *cfold.ResourceContainer) error {
+	resourceType := resourceID.Type.String()
+
+	tflog.Debug(ctx, fmt.Sprintf("Checking %s level jobs...", resourceType))
+	jobs, err := client.ListLogpushJobs(ctx, resourceID, cfold.ListLogpushJobsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Logpush Jobs for %s: %s", resourceID.Identifier, err))
 		return err
 	}
 
 	if len(jobs) == 0 {
-		tflog.Debug(ctx, "[DEBUG] No Cloudflare Logpush Jobs to sweep")
+		tflog.Debug(ctx, fmt.Sprintf("[DEBUG] No Cloudflare Logpush Jobs to sweep for %s", resourceType))
 		return nil
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Found %d Cloudflare Logpush Jobs to sweep", len(jobs)))
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Found %d Cloudflare %s-level Logpush Jobs to sweep.", len(jobs), resourceType))
 
 	// Track deletion results
 	deleted := 0
 	failed := 0
-
 	for _, job := range jobs {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Logpush Job ID: %d, Name: %s", job.ID, job.Name))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(job.Name) {
+			continue
+		}
 
-		err := client.DeleteLogpushJob(ctx, cfold.AccountIdentifier(accountID), job.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Logpush Job: %s (%d)", job.Name, job.ID))
+
+		err := client.DeleteLogpushJob(ctx, resourceID, job.ID)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Logpush Job %d (%s): %v", job.ID, job.Name, err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Logpush Job %s (%d): %s", job.Name, job.ID, err))
 			failed++
 			// Continue with other jobs
 		} else {
-			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Logpush Job %d (%s)", job.ID, job.Name))
+			tflog.Info(ctx, fmt.Sprintf("Deleted Logpush Job: %s (%d)", job.Name, job.ID))
 			deleted++
 		}
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Logpush Job sweep completed: %d deleted, %d failed", deleted, failed))
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Logpush %s Job sweep completed: %d deleted, %d failed", resourceType, deleted, failed))
 	return nil
 }
 
@@ -526,6 +553,78 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareLogpushJob_Update(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_logpush_job." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	// Logpush job config to create, with filter.
+	logpushJobConfigCreate := &logpushJobConfig{
+		zoneID:          zoneID,
+		dataset:         "http_requests", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		filter:          `{"where":{"and":[{"key":"ClientRequestHost","operator":"!eq","value":"abc.com"}]}}`,
+	}
+
+	//Logpush job config to update, without filter.
+	logpushJobConfigUpdate := &logpushJobConfig{
+		zoneID:          zoneID,
+		dataset:         "http_requests", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareLogpushJobUpdate(rnd, logpushJobConfigCreate),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfigCreate.kind))),
+				},
+			},
+			{
+				Config: testCloudflareLogpushJobUpdate(rnd, logpushJobConfigUpdate),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfigCreate.kind))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("filter"), knownvalue.StringExact("")),
+				},
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("zones/%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testCloudflareLogpushJobUpdate(resourceID string, logpushJobConfig *logpushJobConfig) string {
+	// Values must be ordered to match the .tf file exactly.
+	params := []any{
+		resourceID,
+		logpushJobConfig.zoneID,
+		logpushJobConfig.dataset,
+		logpushJobConfig.destinationConf,
+		logpushJobConfig.kind,
+		logpushJobConfig.filter,
+	}
+	return acctest.LoadTestCase("update.tf", params...)
 }
 
 // This tests with immutable fields to create / update a Logpush job.

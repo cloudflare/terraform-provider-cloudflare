@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -19,6 +20,60 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_healthcheck", &resource.Sweeper{
+		Name: "cloudflare_healthcheck",
+		F:    testSweepCloudflareHealthcheck,
+	})
+}
+
+func testSweepCloudflareHealthcheck(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping healthchecks sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	healthchecksList, err := client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch healthchecks: %s", err))
+		return fmt.Errorf("failed to fetch healthchecks: %w", err)
+	}
+
+	if len(healthchecksList.Result) == 0 {
+		tflog.Info(ctx, "No healthchecks to sweep")
+		return nil
+	}
+
+	for _, healthcheck := range healthchecksList.Result {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(healthcheck.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting healthcheck: %s (%s) (zone: %s)", healthcheck.Name, healthcheck.ID, zoneID))
+		_, err := client.Healthchecks.Delete(ctx, healthcheck.ID, healthchecks.HealthcheckDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete healthcheck %s: %s", healthcheck.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted healthcheck: %s", healthcheck.ID))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck

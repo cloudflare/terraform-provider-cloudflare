@@ -1,6 +1,7 @@
 package zero_trust_device_custom_profile_local_domain_fallback_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -8,9 +9,33 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"golang.org/x/exp/rand"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_custom_profile_local_domain_fallback", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_custom_profile_local_domain_fallback",
+		F:    testSweepCloudflareZeroTrustDeviceCustomProfileLocalDomainFallback,
+	})
+}
+
+func testSweepCloudflareZeroTrustDeviceCustomProfileLocalDomainFallback(r string) error {
+	ctx := context.Background()
+	// Custom Profile Local Domain Fallback is a configuration setting tied to custom device profiles.
+	// It's managed as part of the custom profile lifecycle.
+	// The custom profile sweeper will handle cleanup.
+	tflog.Info(ctx, "Zero Trust Device Custom Profile Local Domain Fallback doesn't require sweeping (custom profile configuration)")
+	return nil
+}
 
 func TestAccCloudflareFallbackDomain_CustomWithAttachedPolicy(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
@@ -34,14 +59,28 @@ func TestAccCloudflareFallbackDomain_CustomWithAttachedPolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1", randomPrecedence),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "domains.#", "1"),
-					resource.TestCheckResourceAttr(name, "domains.0.description", "third example domain"),
-					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
-					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
-					resource.TestCheckResourceAttrSet(name, "policy_id"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("description"), knownvalue.StringExact("third example domain")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("suffix"), knownvalue.StringExact("example.net")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("dns_server").AtSliceIndex(0), knownvalue.StringExact("1.1.1.1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+				},
+			},
+			{
+				Config:   testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1", randomPrecedence),
+				PlanOnly: true,
+			},
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+			{
+				Config:   testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1", randomPrecedence),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -68,19 +107,37 @@ func TestAccCloudflareFallbackDomain_MultipleDomains(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareFallbackDomain_MultipleDomains(rnd, accountID, randomPrecedence),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "domains.#", "4"),
-					resource.TestCheckResourceAttrSet(name, "policy_id"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(4)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+				},
+			},
+			{
+				Config:   testAccCloudflareFallbackDomain_MultipleDomains(rnd, accountID, randomPrecedence),
+				PlanOnly: true,
+			},
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+			{
+				Config:   testAccCloudflareFallbackDomain_MultipleDomains(rnd, accountID, randomPrecedence),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccCloudflareFallbackDomain_MultipleDomainsUpdated(rnd, accountID, randomPrecedence),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "domains.#", "3"),
-					resource.TestCheckResourceAttrSet(name, "policy_id"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+				},
+			},
+			{
+				Config:   testAccCloudflareFallbackDomain_MultipleDomainsUpdated(rnd, accountID, randomPrecedence),
+				PlanOnly: true,
 			},
 		},
 	})

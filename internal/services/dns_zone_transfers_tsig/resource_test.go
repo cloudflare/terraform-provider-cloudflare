@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -43,14 +42,23 @@ func testSweepCloudflareSecondaryDNSTSIG(r string) error {
 	}
 
 	if len(tsigs.Result) == 0 {
-		log.Print("[DEBUG] No Cloudflare tsigs records to sweep")
+		tflog.Info(ctx, "No Cloudflare tsigs records to sweep")
 		return nil
 	}
 
 	for _, tsig := range tsigs.Result {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare tsig ID: %s", tsig.ID))
-		//nolint:errcheck
-		client.DNS.ZoneTransfers.TSIGs.Delete(context.TODO(), tsig.ID, dns.ZoneTransferTSIGDeleteParams{AccountID: cloudflare.F(accountID)})
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(tsig.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare TSIG: %s (%s)", tsig.Name, tsig.ID))
+		_, err := client.DNS.ZoneTransfers.TSIGs.Delete(context.TODO(), tsig.ID, dns.ZoneTransferTSIGDeleteParams{AccountID: cloudflare.F(accountID)})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS zone transfer TSIG %s (%s): %s", tsig.Name, tsig.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted DNS zone transfer TSIG: %s (%s)", tsig.Name, tsig.ID))
 	}
 
 	return nil
