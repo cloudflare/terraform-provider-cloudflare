@@ -64,6 +64,7 @@ func (d *ResourceGroupDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	res := new(http.Response)
+	env := ResourceGroupResultDataSourceEnvelope{*data}
 	_, err := d.client.IAM.ResourceGroups.Get(
 		ctx,
 		data.ResourceGroupID.ValueString(),
@@ -76,11 +77,12 @@ func (d *ResourceGroupDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

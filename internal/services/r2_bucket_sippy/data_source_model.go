@@ -40,7 +40,8 @@ type R2BucketSippyDestinationDataSourceModel struct {
 }
 
 type R2BucketSippySourceDataSourceModel struct {
-	Bucket   types.String `tfsdk:"bucket" json:"bucket,computed"`
-	Provider types.String `tfsdk:"provider" json:"provider,computed"`
-	Region   types.String `tfsdk:"region" json:"region,computed"`
+	Bucket    types.String `tfsdk:"bucket" json:"bucket,computed"`
+	BucketURL types.String `tfsdk:"bucket_url" json:"bucketUrl,computed"`
+	Provider  types.String `tfsdk:"provider" json:"provider,computed"`
+	Region    types.String `tfsdk:"region" json:"region,computed"`
 }
