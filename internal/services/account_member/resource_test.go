@@ -95,9 +95,7 @@ func testSweepCloudflareAccountMembers(r string) error {
 	for _, resourceGroup := range resourceGroups.Result {
 		// Only sweep test resource groups with names matching test patterns
 		if utils.ShouldSweepResource(resourceGroup.Name) {
-			_, err := client2.IAM.ResourceGroups.Delete(ctx, resourceGroup.ID, iam.ResourceGroupDeleteParams{
-				AccountID: cloudflarev6.String(accountID),
-			})
+			err = deleteDomainGroup(accountID, resourceGroup.ID)
 			if err != nil {
 				tflog.Error(ctx, fmt.Sprintf("Failed to delete resource group %s: %s", resourceGroup.ID, err))
 				continue
@@ -429,6 +427,10 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 			},
 		},
 	})
+
+	//cleanup
+	deleteDomainGroup(accountID, domainGroupID1)
+	deleteDomainGroup(accountID, domainGroupID2)
 }
 
 func testCloudflareAccountMemberPoliciesConfig(accountID, emailAddress, permgroupId string) string {
@@ -526,4 +528,13 @@ func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
 		t.Fatal(err)
 	}
 	return response.Result.ID
+}
+
+func deleteDomainGroup(accountID, domainID string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	_, err := client.IAM.ResourceGroups.Delete(ctx, domainID, iam.ResourceGroupDeleteParams{
+		AccountID: cloudflarev6.String(accountID),
+	})
+	return err
 }
