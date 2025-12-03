@@ -214,7 +214,7 @@ func (r *ZeroTrustDevicePostureRuleResource) Delete(ctx context.Context, req res
 }
 
 func (r *ZeroTrustDevicePostureRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDevicePostureRuleModel = new(ZeroTrustDevicePostureRuleModel)
+	var data = new(ZeroTrustDevicePostureRuleModel)
 
 	path_account_id := ""
 	path_rule_id := ""

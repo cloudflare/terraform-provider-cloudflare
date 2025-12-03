@@ -168,7 +168,7 @@ func (r *APIShieldOperationResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldOperationModel = new(APIShieldOperationModel)
+	var data = new(APIShieldOperationModel)
 
 	path_zone_id := ""
 	path_operation_id := ""

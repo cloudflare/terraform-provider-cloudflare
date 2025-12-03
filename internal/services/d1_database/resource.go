@@ -214,7 +214,7 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *D1DatabaseResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *D1DatabaseModel = new(D1DatabaseModel)
+	var data = new(D1DatabaseModel)
 
 	path_account_id := ""
 	path_database_id := ""

@@ -215,7 +215,7 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 }
 
 func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestAssetModel = new(CloudforceOneRequestAssetModel)
+	var data = new(CloudforceOneRequestAssetModel)
 
 	path_account_id := ""
 	path_request_id := ""

@@ -190,7 +190,7 @@ func (r *ZeroTrustDeviceDefaultProfileResource) Delete(ctx context.Context, req 
 }
 
 func (r *ZeroTrustDeviceDefaultProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceDefaultProfileModel = new(ZeroTrustDeviceDefaultProfileModel)
+	var data = new(ZeroTrustDeviceDefaultProfileModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

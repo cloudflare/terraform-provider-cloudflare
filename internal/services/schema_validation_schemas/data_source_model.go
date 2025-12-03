@@ -34,8 +34,8 @@ func (m *SchemaValidationSchemasDataSourceModel) toReadParams(_ context.Context)
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
-	if !m.Filter.OmitSource.IsNull() {
-		params.OmitSource = cloudflare.F(m.Filter.OmitSource.ValueBool())
+	if !m.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}
 
 	return
@@ -46,8 +46,8 @@ func (m *SchemaValidationSchemasDataSourceModel) toListParams(_ context.Context)
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
-	if !m.Filter.OmitSource.IsNull() {
-		params.OmitSource = cloudflare.F(m.Filter.OmitSource.ValueBool())
+	if !m.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}
 	if !m.Filter.ValidationEnabled.IsNull() {
 		params.ValidationEnabled = cloudflare.F(m.Filter.ValidationEnabled.ValueBool())
@@ -57,6 +57,5 @@ func (m *SchemaValidationSchemasDataSourceModel) toListParams(_ context.Context)
 }
 
 type SchemaValidationSchemasFindOneByDataSourceModel struct {
-	OmitSource        types.Bool `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	ValidationEnabled types.Bool `tfsdk:"validation_enabled" query:"validation_enabled,optional"`
 }

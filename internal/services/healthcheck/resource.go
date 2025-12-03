@@ -210,7 +210,7 @@ func (r *HealthcheckResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *HealthcheckResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *HealthcheckModel = new(HealthcheckModel)
+	var data = new(HealthcheckModel)
 
 	path_zone_id := ""
 	path_healthcheck_id := ""

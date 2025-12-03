@@ -209,7 +209,7 @@ func (r *MagicNetworkMonitoringRuleResource) Delete(ctx context.Context, req res
 }
 
 func (r *MagicNetworkMonitoringRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicNetworkMonitoringRuleModel = new(MagicNetworkMonitoringRuleModel)
+	var data = new(MagicNetworkMonitoringRuleModel)
 
 	path_account_id := ""
 	path_rule_id := ""

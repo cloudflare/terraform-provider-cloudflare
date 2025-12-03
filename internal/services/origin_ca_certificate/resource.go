@@ -162,7 +162,7 @@ func (r *OriginCACertificateResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *OriginCACertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *OriginCACertificateModel = new(OriginCACertificateModel)
+	var data = new(OriginCACertificateModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

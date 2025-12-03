@@ -213,7 +213,7 @@ func (r *AccountTokenResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *AccountTokenResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccountTokenModel = new(AccountTokenModel)
+	var data = new(AccountTokenModel)
 
 	path_account_id := ""
 	path_token_id := ""

@@ -214,7 +214,7 @@ func (r *ZeroTrustAccessTagResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessTagModel = new(ZeroTrustAccessTagModel)
+	var data = new(ZeroTrustAccessTagModel)
 
 	path_account_id := ""
 	path_tag_name := ""

@@ -211,7 +211,7 @@ func (r *CloudConnectorRulesResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *CloudConnectorRulesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudConnectorRulesModel = new(CloudConnectorRulesModel)
+	var data = new(CloudConnectorRulesModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

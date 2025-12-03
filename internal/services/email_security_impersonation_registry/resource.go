@@ -210,7 +210,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Delete(ctx context.Context,
 }
 
 func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailSecurityImpersonationRegistryModel = new(EmailSecurityImpersonationRegistryModel)
+	var data = new(EmailSecurityImpersonationRegistryModel)
 
 	path_account_id := ""
 	path_display_name_id := int64(0)

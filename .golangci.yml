@@ -1,0 +1,20 @@
+# yaml-language-server: schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
+---
+version: '2'
+linters:
+  settings:
+    staticcheck:
+      checks:
+        - all
+
+        - -SA1019
+        - -SA5008
+        - -ST1000
+        - -ST1003
+        - -ST1020
+        - -ST1022
+
+        - -QF1008
+    govet:
+      disable:
+        - structtag

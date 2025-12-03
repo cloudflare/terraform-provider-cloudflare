@@ -4,6 +4,7 @@ package workers_kv
 
 import (
 	"bytes"
+	"errors"
 	"mime/multipart"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
@@ -28,7 +29,9 @@ func (r WorkersKVModel) MarshalMultipart() (data []byte, contentType string, err
 	writer := multipart.NewWriter(buf)
 
 	if err := writer.WriteField("value", r.Value.ValueString()); err != nil {
-		writer.Close()
+		if e := writer.Close(); e != nil {
+			err = errors.Join(err, e)
+		}
 		return nil, "", err
 	}
 

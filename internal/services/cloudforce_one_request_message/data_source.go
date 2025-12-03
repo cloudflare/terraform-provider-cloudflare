@@ -83,6 +83,7 @@ func (d *CloudforceOneRequestMessageDataSource) Read(ctx context.Context, req da
 		return
 	}
 	data = &env.Result
+	data.ID = data.RequestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

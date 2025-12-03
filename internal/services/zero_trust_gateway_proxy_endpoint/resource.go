@@ -210,7 +210,7 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Delete(ctx context.Context, req 
 }
 
 func (r *ZeroTrustGatewayProxyEndpointResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustGatewayProxyEndpointModel = new(ZeroTrustGatewayProxyEndpointModel)
+	var data = new(ZeroTrustGatewayProxyEndpointModel)
 
 	path_account_id := ""
 	path_proxy_endpoint_id := ""

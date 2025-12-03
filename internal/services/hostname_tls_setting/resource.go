@@ -218,7 +218,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *HostnameTLSSettingModel = new(HostnameTLSSettingModel)
+	var data = new(HostnameTLSSettingModel)
 
 	path_zone_id := ""
 	path_setting_id := ""

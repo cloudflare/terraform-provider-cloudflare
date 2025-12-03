@@ -184,7 +184,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Delete(ctx context.Context, 
 }
 
 func (r *APIShieldSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldSchemaValidationSettingsModel = new(APIShieldSchemaValidationSettingsModel)
+	var data = new(APIShieldSchemaValidationSettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

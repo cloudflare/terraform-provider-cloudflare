@@ -210,7 +210,7 @@ func (r *AddressMapResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *AddressMapResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AddressMapModel = new(AddressMapModel)
+	var data = new(AddressMapModel)
 
 	path_account_id := ""
 	path_address_map_id := ""

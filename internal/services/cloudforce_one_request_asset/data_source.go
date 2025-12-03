@@ -84,6 +84,7 @@ func (d *CloudforceOneRequestAssetDataSource) Read(ctx context.Context, req data
 		return
 	}
 	data = &env.Result
+	data.ID = data.AssetID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

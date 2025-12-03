@@ -165,7 +165,7 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *WorkersCustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersCustomDomainModel = new(WorkersCustomDomainModel)
+	var data = new(WorkersCustomDomainModel)
 
 	path_account_id := ""
 	path_domain_id := ""

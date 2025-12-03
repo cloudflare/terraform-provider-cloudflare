@@ -68,9 +68,6 @@ func (m *TokenValidationRulesDataSourceModel) toListParams(_ context.Context) (p
 	if !m.Filter.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
 	}
-	if !m.Filter.RuleID.IsNull() {
-		params.RuleID = cloudflare.F(m.Filter.RuleID.ValueString())
-	}
 
 	return
 }
@@ -94,6 +91,5 @@ type TokenValidationRulesFindOneByDataSourceModel struct {
 	Enabled            types.Bool      `tfsdk:"enabled" query:"enabled,optional"`
 	Host               types.String    `tfsdk:"host" query:"host,optional"`
 	Hostname           types.String    `tfsdk:"hostname" query:"hostname,optional"`
-	RuleID             types.String    `tfsdk:"rule_id" query:"rule_id,optional"`
 	TokenConfiguration *[]types.String `tfsdk:"token_configuration" query:"token_configuration,optional"`
 }

@@ -146,7 +146,7 @@ func (r *WorkersDeploymentResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *WorkersDeploymentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersDeploymentModel = new(WorkersDeploymentModel)
+	var data = new(WorkersDeploymentModel)
 
 	path_account_id := ""
 	path_script_name := ""

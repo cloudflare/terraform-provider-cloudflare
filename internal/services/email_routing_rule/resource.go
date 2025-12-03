@@ -210,7 +210,7 @@ func (r *EmailRoutingRuleResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *EmailRoutingRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingRuleModel = new(EmailRoutingRuleModel)
+	var data = new(EmailRoutingRuleModel)
 
 	path_zone_id := ""
 	path_rule_identifier := ""

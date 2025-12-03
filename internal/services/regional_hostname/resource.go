@@ -214,7 +214,7 @@ func (r *RegionalHostnameResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *RegionalHostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *RegionalHostnameModel = new(RegionalHostnameModel)
+	var data = new(RegionalHostnameModel)
 
 	path_zone_id := ""
 	path_hostname := ""

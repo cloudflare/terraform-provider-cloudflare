@@ -210,7 +210,7 @@ func (r *NotificationPolicyWebhooksResource) Delete(ctx context.Context, req res
 }
 
 func (r *NotificationPolicyWebhooksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *NotificationPolicyWebhooksModel = new(NotificationPolicyWebhooksModel)
+	var data = new(NotificationPolicyWebhooksModel)
 
 	path_account_id := ""
 	path_webhook_id := ""

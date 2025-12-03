@@ -218,7 +218,7 @@ func (r *PagesDomainResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *PagesDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *PagesDomainModel = new(PagesDomainModel)
+	var data = new(PagesDomainModel)
 
 	path_account_id := ""
 	path_project_name := ""

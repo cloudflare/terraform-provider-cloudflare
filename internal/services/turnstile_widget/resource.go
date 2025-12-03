@@ -214,7 +214,7 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *TurnstileWidgetModel = new(TurnstileWidgetModel)
+	var data = new(TurnstileWidgetModel)
 
 	path_account_id := ""
 	path_sitekey := ""

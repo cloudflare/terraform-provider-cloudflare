@@ -210,7 +210,7 @@ func (r *DNSZoneTransfersPeerResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *DNSZoneTransfersPeerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSZoneTransfersPeerModel = new(DNSZoneTransfersPeerModel)
+	var data = new(DNSZoneTransfersPeerModel)
 
 	path_account_id := ""
 	path_peer_id := ""

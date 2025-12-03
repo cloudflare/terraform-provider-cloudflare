@@ -214,7 +214,7 @@ func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomEventModel = new(WaitingRoomEventModel)
+	var data = new(WaitingRoomEventModel)
 
 	path_zone_id := ""
 	path_waiting_room_id := ""

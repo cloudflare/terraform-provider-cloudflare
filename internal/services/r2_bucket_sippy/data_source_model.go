@@ -33,15 +33,15 @@ func (m *R2BucketSippyDataSourceModel) toReadParams(_ context.Context) (params r
 }
 
 type R2BucketSippyDestinationDataSourceModel struct {
-	AccessKeyID types.String `tfsdk:"access_key_id" json:"accessKeyId,computed"`
-	Account     types.String `tfsdk:"account" json:"account,computed"`
-	Bucket      types.String `tfsdk:"bucket" json:"bucket,computed"`
-	Provider    types.String `tfsdk:"provider" json:"provider,computed"`
+	AccessKeyID           types.String `tfsdk:"access_key_id" json:"accessKeyId,computed"`
+	Account               types.String `tfsdk:"account" json:"account,computed"`
+	Bucket                types.String `tfsdk:"bucket" json:"bucket,computed"`
+	R2BucketSippyProvider types.String `tfsdk:"r2_bucket_sippy_provider" json:"provider,computed"`
 }
 
 type R2BucketSippySourceDataSourceModel struct {
-	Bucket    types.String `tfsdk:"bucket" json:"bucket,computed"`
-	BucketURL types.String `tfsdk:"bucket_url" json:"bucketUrl,computed"`
-	Provider  types.String `tfsdk:"provider" json:"provider,computed"`
-	Region    types.String `tfsdk:"region" json:"region,computed"`
+	Bucket                types.String `tfsdk:"bucket" json:"bucket,computed"`
+	BucketURL             types.String `tfsdk:"bucket_url" json:"bucketUrl,computed"`
+	R2BucketSippyProvider types.String `tfsdk:"r2_bucket_sippy_provider" json:"provider,computed"`
+	Region                types.String `tfsdk:"region" json:"region,computed"`
 }

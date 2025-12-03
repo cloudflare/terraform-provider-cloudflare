@@ -190,7 +190,7 @@ func (r *APIShieldResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *APIShieldResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldModel = new(APIShieldModel)
+	var data = new(APIShieldModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

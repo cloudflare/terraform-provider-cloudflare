@@ -210,7 +210,7 @@ func (r *DNSZoneTransfersTSIGResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *DNSZoneTransfersTSIGResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSZoneTransfersTSIGModel = new(DNSZoneTransfersTSIGModel)
+	var data = new(DNSZoneTransfersTSIGModel)
 
 	path_account_id := ""
 	path_tsig_id := ""

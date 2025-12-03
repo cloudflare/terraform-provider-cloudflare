@@ -210,7 +210,7 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustRiskScoringIntegrationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustRiskScoringIntegrationModel = new(ZeroTrustRiskScoringIntegrationModel)
+	var data = new(ZeroTrustRiskScoringIntegrationModel)
 
 	path_account_id := ""
 	path_integration_id := ""

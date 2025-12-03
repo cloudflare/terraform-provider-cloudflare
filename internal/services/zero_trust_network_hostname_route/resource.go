@@ -210,7 +210,7 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Delete(ctx context.Context, req 
 }
 
 func (r *ZeroTrustNetworkHostnameRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustNetworkHostnameRouteModel = new(ZeroTrustNetworkHostnameRouteModel)
+	var data = new(ZeroTrustNetworkHostnameRouteModel)
 
 	path_account_id := ""
 	path_hostname_route_id := ""

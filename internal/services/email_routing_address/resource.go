@@ -165,7 +165,7 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingAddressModel = new(EmailRoutingAddressModel)
+	var data = new(EmailRoutingAddressModel)
 
 	path_account_id := ""
 	path_destination_address_identifier := ""

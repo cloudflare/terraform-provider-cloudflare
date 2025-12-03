@@ -214,7 +214,7 @@ func (r *MagicTransitSiteWANResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicTransitSiteWANResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicTransitSiteWANModel = new(MagicTransitSiteWANModel)
+	var data = new(MagicTransitSiteWANModel)
 
 	path_account_id := ""
 	path_site_id := ""

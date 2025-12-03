@@ -210,7 +210,7 @@ func (r *TokenValidationConfigResource) Delete(ctx context.Context, req resource
 }
 
 func (r *TokenValidationConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *TokenValidationConfigModel = new(TokenValidationConfigModel)
+	var data = new(TokenValidationConfigModel)
 
 	path_zone_id := ""
 	path_config_id := ""

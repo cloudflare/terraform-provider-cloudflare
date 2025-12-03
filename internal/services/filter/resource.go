@@ -210,7 +210,7 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *FilterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *FilterModel = new(FilterModel)
+	var data = new(FilterModel)
 
 	path_zone_id := ""
 	path_filter_id := ""

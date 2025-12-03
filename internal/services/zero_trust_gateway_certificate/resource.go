@@ -269,7 +269,7 @@ func (r *ZeroTrustGatewayCertificateResource) Delete(ctx context.Context, req re
 }
 
 func (r *ZeroTrustGatewayCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustGatewayCertificateModel = new(ZeroTrustGatewayCertificateModel)
+	var data = new(ZeroTrustGatewayCertificateModel)
 
 	path_account_id := ""
 	path_certificate_id := ""

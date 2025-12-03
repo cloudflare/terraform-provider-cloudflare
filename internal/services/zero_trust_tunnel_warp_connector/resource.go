@@ -210,7 +210,7 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Delete(ctx context.Context, req r
 }
 
 func (r *ZeroTrustTunnelWARPConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustTunnelWARPConnectorModel = new(ZeroTrustTunnelWARPConnectorModel)
+	var data = new(ZeroTrustTunnelWARPConnectorModel)
 
 	path_account_id := ""
 	path_tunnel_id := ""

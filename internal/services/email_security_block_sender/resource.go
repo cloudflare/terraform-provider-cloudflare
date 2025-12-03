@@ -210,7 +210,7 @@ func (r *EmailSecurityBlockSenderResource) Delete(ctx context.Context, req resou
 }
 
 func (r *EmailSecurityBlockSenderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailSecurityBlockSenderModel = new(EmailSecurityBlockSenderModel)
+	var data = new(EmailSecurityBlockSenderModel)
 
 	path_account_id := ""
 	path_pattern_id := int64(0)

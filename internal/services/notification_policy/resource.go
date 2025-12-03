@@ -210,7 +210,7 @@ func (r *NotificationPolicyResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *NotificationPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *NotificationPolicyModel = new(NotificationPolicyModel)
+	var data = new(NotificationPolicyModel)
 
 	path_account_id := ""
 	path_policy_id := ""

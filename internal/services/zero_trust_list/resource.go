@@ -210,7 +210,7 @@ func (r *ZeroTrustListResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustListModel = new(ZeroTrustListModel)
+	var data = new(ZeroTrustListModel)
 
 	path_account_id := ""
 	path_list_id := ""

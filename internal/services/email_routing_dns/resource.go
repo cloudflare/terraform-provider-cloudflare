@@ -209,7 +209,7 @@ func (r *EmailRoutingDNSResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *EmailRoutingDNSResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingDNSModel = new(EmailRoutingDNSModel)
+	var data = new(EmailRoutingDNSModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

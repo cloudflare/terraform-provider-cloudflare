@@ -211,7 +211,7 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 }
 
 func (r *CustomHostnameFallbackOriginResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomHostnameFallbackOriginModel = new(CustomHostnameFallbackOriginModel)
+	var data = new(CustomHostnameFallbackOriginModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

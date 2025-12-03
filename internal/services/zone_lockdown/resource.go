@@ -210,7 +210,7 @@ func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *ZoneLockdownResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneLockdownModel = new(ZoneLockdownModel)
+	var data = new(ZoneLockdownModel)
 
 	path_zone_id := ""
 	path_lock_downs_id := ""

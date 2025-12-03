@@ -190,7 +190,7 @@ func (r *WaitingRoomSettingsResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *WaitingRoomSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomSettingsModel = new(WaitingRoomSettingsModel)
+	var data = new(WaitingRoomSettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

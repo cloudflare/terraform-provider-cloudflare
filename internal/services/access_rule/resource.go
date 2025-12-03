@@ -234,7 +234,7 @@ func (r *AccessRuleResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *AccessRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccessRuleModel = new(AccessRuleModel)
+	var data = new(AccessRuleModel)
 	params := firewall.AccessRuleGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

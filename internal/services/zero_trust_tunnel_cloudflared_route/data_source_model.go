@@ -65,9 +65,6 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 	if !m.Filter.NetworkSuperset.IsNull() {
 		params.NetworkSuperset = cloudflare.F(m.Filter.NetworkSuperset.ValueString())
 	}
-	if !m.Filter.RouteID.IsNull() {
-		params.RouteID = cloudflare.F(m.Filter.RouteID.ValueString())
-	}
 	if !m.Filter.TunnelID.IsNull() {
 		params.TunnelID = cloudflare.F(m.Filter.TunnelID.ValueString())
 	}
@@ -84,7 +81,6 @@ type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
 	IsDeleted        types.Bool      `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String    `tfsdk:"network_subset" query:"network_subset,optional"`
 	NetworkSuperset  types.String    `tfsdk:"network_superset" query:"network_superset,optional"`
-	RouteID          types.String    `tfsdk:"route_id" query:"route_id,optional"`
 	TunTypes         *[]types.String `tfsdk:"tun_types" query:"tun_types,optional"`
 	TunnelID         types.String    `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
 	VirtualNetworkID types.String    `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`

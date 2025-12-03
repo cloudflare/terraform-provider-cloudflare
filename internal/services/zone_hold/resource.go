@@ -211,7 +211,7 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *ZoneHoldResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneHoldModel = new(ZoneHoldModel)
+	var data = new(ZoneHoldModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

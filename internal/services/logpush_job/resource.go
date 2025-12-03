@@ -258,7 +258,7 @@ func (r *LogpushJobResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LogpushJobModel = new(LogpushJobModel)
+	var data = new(LogpushJobModel)
 	params := logpush.JobGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

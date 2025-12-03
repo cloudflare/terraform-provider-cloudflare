@@ -210,7 +210,7 @@ func (r *HyperdriveConfigResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *HyperdriveConfigModel = new(HyperdriveConfigModel)
+	var data = new(HyperdriveConfigModel)
 
 	path_account_id := ""
 	path_hyperdrive_id := ""

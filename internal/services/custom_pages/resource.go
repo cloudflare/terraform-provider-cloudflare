@@ -220,7 +220,7 @@ func (r *CustomPagesResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *CustomPagesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomPagesModel = new(CustomPagesModel)
+	var data = new(CustomPagesModel)
 	params := custom_pages.CustomPageGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

@@ -145,7 +145,7 @@ func (r *LogpullRetentionResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *LogpullRetentionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LogpullRetentionModel = new(LogpullRetentionModel)
+	var data = new(LogpullRetentionModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

@@ -190,7 +190,7 @@ func (r *ArgoSmartRoutingResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *ArgoSmartRoutingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ArgoSmartRoutingModel = new(ArgoSmartRoutingModel)
+	var data = new(ArgoSmartRoutingModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

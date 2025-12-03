@@ -210,7 +210,7 @@ func (r *CloudforceOneRequestPriorityResource) Delete(ctx context.Context, req r
 }
 
 func (r *CloudforceOneRequestPriorityResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestPriorityModel = new(CloudforceOneRequestPriorityModel)
+	var data = new(CloudforceOneRequestPriorityModel)
 
 	path_account_id := ""
 	path_priority_id := ""
