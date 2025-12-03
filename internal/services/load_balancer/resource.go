@@ -210,7 +210,7 @@ func (r *LoadBalancerResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *LoadBalancerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LoadBalancerModel = new(LoadBalancerModel)
+	var data = new(LoadBalancerModel)
 
 	path_zone_id := ""
 	path_load_balancer_id := ""

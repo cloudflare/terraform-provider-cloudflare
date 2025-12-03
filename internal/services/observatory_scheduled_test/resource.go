@@ -169,7 +169,7 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 }
 
 func (r *ObservatoryScheduledTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ObservatoryScheduledTestModel = new(ObservatoryScheduledTestModel)
+	var data = new(ObservatoryScheduledTestModel)
 
 	path_zone_id := ""
 	path_url := ""

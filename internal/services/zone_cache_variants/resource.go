@@ -211,7 +211,7 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *ZoneCacheVariantsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneCacheVariantsModel = new(ZoneCacheVariantsModel)
+	var data = new(ZoneCacheVariantsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

@@ -214,7 +214,7 @@ func (r *ZeroTrustDeviceCustomProfileResource) Delete(ctx context.Context, req r
 }
 
 func (r *ZeroTrustDeviceCustomProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceCustomProfileModel = new(ZeroTrustDeviceCustomProfileModel)
+	var data = new(ZeroTrustDeviceCustomProfileModel)
 
 	path_account_id := ""
 	path_policy_id := ""

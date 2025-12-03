@@ -187,7 +187,7 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Delete(ctx context.Contex
 }
 
 func (r *ZeroTrustAccessShortLivedCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessShortLivedCertificateModel = new(ZeroTrustAccessShortLivedCertificateModel)
+	var data = new(ZeroTrustAccessShortLivedCertificateModel)
 	params := zero_trust.AccessApplicationCAGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

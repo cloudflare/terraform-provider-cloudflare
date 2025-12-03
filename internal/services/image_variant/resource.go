@@ -210,7 +210,7 @@ func (r *ImageVariantResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ImageVariantModel = new(ImageVariantModel)
+	var data = new(ImageVariantModel)
 
 	path_account_id := ""
 	path_variant_id := ""

@@ -210,7 +210,7 @@ func (r *CustomSSLResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *CustomSSLResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomSSLModel = new(CustomSSLModel)
+	var data = new(CustomSSLModel)
 
 	path_zone_id := ""
 	path_custom_certificate_id := ""

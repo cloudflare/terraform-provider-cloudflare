@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "ID of a Cloudflare API token.\nThis is the value labelled \"Access Key ID\" when creating an API.\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
 					},
-					"provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "r2".`,
 						Optional:    true,
 						Validators: []validator.String{
@@ -62,7 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Name of the AWS S3 bucket.",
 						Optional:    true,
 					},
-					"provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "aws", "gcs", "s3".`,
 						Optional:    true,
 						Validators: []validator.String{

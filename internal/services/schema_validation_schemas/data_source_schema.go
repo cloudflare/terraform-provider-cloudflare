@@ -63,11 +63,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"omit_source": schema.BoolAttribute{
-						Description: "Omit the source-files of schemas and only retrieve their meta-data.",
-						Computed:    true,
-						Optional:    true,
-					},
 					"validation_enabled": schema.BoolAttribute{
 						Description: "Filter for enabled schemas",
 						Optional:    true,

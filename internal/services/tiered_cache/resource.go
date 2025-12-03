@@ -211,7 +211,7 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *TieredCacheResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *TieredCacheModel = new(TieredCacheModel)
+	var data = new(TieredCacheModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

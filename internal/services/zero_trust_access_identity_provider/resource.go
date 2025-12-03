@@ -234,7 +234,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessIdentityProviderModel = new(ZeroTrustAccessIdentityProviderModel)
+	var data = new(ZeroTrustAccessIdentityProviderModel)
 	params := zero_trust.IdentityProviderGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

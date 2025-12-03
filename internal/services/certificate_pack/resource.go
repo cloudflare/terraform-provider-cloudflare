@@ -210,7 +210,7 @@ func (r *CertificatePackResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *CertificatePackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CertificatePackModel = new(CertificatePackModel)
+	var data = new(CertificatePackModel)
 
 	path_zone_id := ""
 	path_certificate_pack_id := ""

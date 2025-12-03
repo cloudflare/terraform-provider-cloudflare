@@ -127,10 +127,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Select rules with this host in `include`.",
 						Optional:    true,
 					},
-					"rule_id": schema.StringAttribute{
-						Description: "Select rules with these IDs.",
-						Optional:    true,
-					},
 					"token_configuration": schema.ListAttribute{
 						Description: "Select rules using any of these token configurations.",
 						Optional:    true,

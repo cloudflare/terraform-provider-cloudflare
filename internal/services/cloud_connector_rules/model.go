@@ -26,12 +26,12 @@ func (m CloudConnectorRulesModel) MarshalJSONForUpdate(state CloudConnectorRules
 }
 
 type CloudConnectorRulesRulesModel struct {
-	ID          types.String                             `tfsdk:"id" json:"id,optional"`
-	Description types.String                             `tfsdk:"description" json:"description,optional"`
-	Enabled     types.Bool                               `tfsdk:"enabled" json:"enabled,optional"`
-	Expression  types.String                             `tfsdk:"expression" json:"expression,optional"`
-	Parameters  *CloudConnectorRulesRulesParametersModel `tfsdk:"parameters" json:"parameters,optional"`
-	Provider    types.String                             `tfsdk:"provider" json:"provider,optional"`
+	ID                          types.String                             `tfsdk:"id" json:"id,optional"`
+	Description                 types.String                             `tfsdk:"description" json:"description,optional"`
+	Enabled                     types.Bool                               `tfsdk:"enabled" json:"enabled,optional"`
+	Expression                  types.String                             `tfsdk:"expression" json:"expression,optional"`
+	Parameters                  *CloudConnectorRulesRulesParametersModel `tfsdk:"parameters" json:"parameters,optional"`
+	CloudConnectorRulesProvider types.String                             `tfsdk:"cloud_connector_rules_provider" json:"provider,optional"`
 }
 
 type CloudConnectorRulesRulesParametersModel struct {

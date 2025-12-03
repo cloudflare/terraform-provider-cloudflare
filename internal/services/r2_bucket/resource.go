@@ -214,7 +214,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *R2BucketModel = new(R2BucketModel)
+	var data = new(R2BucketModel)
 
 	path_account_id := ""
 	path_bucket_name := ""

@@ -4,6 +4,7 @@ package snippet
 
 import (
 	"bytes"
+	"errors"
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
@@ -28,7 +29,9 @@ func (r SnippetModel) MarshalMultipart() (data []byte, contentType string, err e
 	writer := multipart.NewWriter(buf)
 	err = apiform.MarshalRoot(r, writer)
 	if err != nil {
-		writer.Close()
+		if e := writer.Close(); e != nil {
+			err = errors.Join(err, e)
+		}
 		return nil, "", err
 	}
 	err = writer.Close()

@@ -214,7 +214,7 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Delete(ctx context.Context, req
 }
 
 func (r *ZeroTrustDeviceManagedNetworksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceManagedNetworksModel = new(ZeroTrustDeviceManagedNetworksModel)
+	var data = new(ZeroTrustDeviceManagedNetworksModel)
 
 	path_account_id := ""
 	path_network_id := ""

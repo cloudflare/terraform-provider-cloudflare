@@ -207,7 +207,7 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *WorkersScriptResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersScriptModel = new(WorkersScriptModel)
+	var data = new(WorkersScriptModel)
 
 	path_account_id := ""
 	path_script_name := ""

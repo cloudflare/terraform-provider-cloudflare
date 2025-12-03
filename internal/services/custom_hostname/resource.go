@@ -210,7 +210,7 @@ func (r *CustomHostnameResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *CustomHostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomHostnameModel = new(CustomHostnameModel)
+	var data = new(CustomHostnameModel)
 
 	path_zone_id := ""
 	path_custom_hostname_id := ""

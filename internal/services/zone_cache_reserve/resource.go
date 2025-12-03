@@ -190,7 +190,7 @@ func (r *ZoneCacheReserveResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *ZoneCacheReserveResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneCacheReserveModel = new(ZoneCacheReserveModel)
+	var data = new(ZoneCacheReserveModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

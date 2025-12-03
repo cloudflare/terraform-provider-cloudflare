@@ -164,7 +164,7 @@ func (r *StreamKeyResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *StreamKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *StreamKeyModel = new(StreamKeyModel)
+	var data = new(StreamKeyModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

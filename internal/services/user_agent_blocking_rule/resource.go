@@ -210,7 +210,7 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 }
 
 func (r *UserAgentBlockingRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *UserAgentBlockingRuleModel = new(UserAgentBlockingRuleModel)
+	var data = new(UserAgentBlockingRuleModel)
 
 	path_zone_id := ""
 	path_ua_rule_id := ""

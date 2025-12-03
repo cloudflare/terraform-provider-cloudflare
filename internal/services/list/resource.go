@@ -210,7 +210,7 @@ func (r *ListResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 }
 
 func (r *ListResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ListModel = new(ListModel)
+	var data = new(ListModel)
 
 	path_account_id := ""
 	path_list_id := ""

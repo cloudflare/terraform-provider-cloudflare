@@ -211,7 +211,7 @@ func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *ZoneDNSSECResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneDNSSECModel = new(ZoneDNSSECModel)
+	var data = new(ZoneDNSSECModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

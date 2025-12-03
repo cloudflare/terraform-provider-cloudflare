@@ -92,8 +92,8 @@ type EmailRoutingDNSResultRecordModel struct {
 }
 
 type EmailRoutingDNSResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
+	EmailRoutingDNSCount types.Float64 `tfsdk:"email_routing_dns_count" json:"count,computed"`
+	Page                 types.Float64 `tfsdk:"page" json:"page,computed"`
+	PerPage              types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
+	TotalCount           types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
 }

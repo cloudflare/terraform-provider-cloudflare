@@ -210,7 +210,7 @@ func (r *ZeroTrustAccessAIControlsMcpServerResource) Delete(ctx context.Context,
 }
 
 func (r *ZeroTrustAccessAIControlsMcpServerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessAIControlsMcpServerModel = new(ZeroTrustAccessAIControlsMcpServerModel)
+	var data = new(ZeroTrustAccessAIControlsMcpServerModel)
 
 	path_account_id := ""
 	path_id := ""

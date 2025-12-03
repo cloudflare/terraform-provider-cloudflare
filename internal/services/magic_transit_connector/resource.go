@@ -210,7 +210,7 @@ func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicTransitConnectorModel = new(MagicTransitConnectorModel)
+	var data = new(MagicTransitConnectorModel)
 
 	path_account_id := ""
 	path_connector_id := ""

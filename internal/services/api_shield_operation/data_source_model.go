@@ -32,16 +32,16 @@ type APIShieldOperationDataSourceModel struct {
 }
 
 func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (params api_gateway.OperationGetParams, diags diag.Diagnostics) {
-	mFilterFeature := []api_gateway.OperationListParamsFeature{}
-	if m.Filter.Feature != nil {
-		for _, item := range *m.Filter.Feature {
-			mFilterFeature = append(mFilterFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+	mFeature := []api_gateway.OperationGetParamsFeature{}
+	if m.Feature != nil {
+		for _, item := range *m.Feature {
+			mFeature = append(mFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
 		}
 	}
 
 	params = api_gateway.OperationGetParams{
 		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
-		Feature: cloudflare.F(mFilterFeature),
+		Feature: cloudflare.F(mFeature),
 	}
 
 	return

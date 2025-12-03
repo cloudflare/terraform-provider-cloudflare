@@ -190,7 +190,7 @@ func (r *BotManagementResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *BotManagementResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *BotManagementModel = new(BotManagementModel)
+	var data = new(BotManagementModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

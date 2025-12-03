@@ -190,7 +190,7 @@ func (r *EmailRoutingCatchAllResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *EmailRoutingCatchAllResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingCatchAllModel = new(EmailRoutingCatchAllModel)
+	var data = new(EmailRoutingCatchAllModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

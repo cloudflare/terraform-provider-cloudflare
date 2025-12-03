@@ -210,7 +210,7 @@ func (r *MagicWANStaticRouteResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicWANStaticRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicWANStaticRouteModel = new(MagicWANStaticRouteModel)
+	var data = new(MagicWANStaticRouteModel)
 
 	path_account_id := ""
 	path_route_id := ""

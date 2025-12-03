@@ -210,7 +210,7 @@ func (r *SSOConnectorResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *SSOConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *SSOConnectorModel = new(SSOConnectorModel)
+	var data = new(SSOConnectorModel)
 
 	path_account_id := ""
 	path_sso_connector_id := ""

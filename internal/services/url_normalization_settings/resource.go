@@ -211,7 +211,7 @@ func (r *URLNormalizationSettingsResource) Delete(ctx context.Context, req resou
 }
 
 func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *URLNormalizationSettingsModel = new(URLNormalizationSettingsModel)
+	var data = new(URLNormalizationSettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

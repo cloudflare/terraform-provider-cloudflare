@@ -190,7 +190,7 @@ func (r *ZoneSubscriptionResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *ZoneSubscriptionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneSubscriptionModel = new(ZoneSubscriptionModel)
+	var data = new(ZoneSubscriptionModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

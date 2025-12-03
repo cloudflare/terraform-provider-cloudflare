@@ -580,8 +580,11 @@ func TestEncode(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
 			writer := multipart.NewWriter(buf)
-			writer.SetBoundary("xxx")
-			err := MarshalRoot(test.val, writer)
+			err := writer.SetBoundary("xxx")
+			if err != nil {
+				t.Errorf("serialization of %v\nfailed with error:\n%v", test.val, err)
+			}
+			err = MarshalRoot(test.val, writer)
 			if err != nil {
 				t.Errorf("serialization of %v\nfailed with error:\n%v", test.val, err)
 			}

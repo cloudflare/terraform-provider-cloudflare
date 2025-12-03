@@ -146,7 +146,7 @@ func (r *WorkerVersionResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkerVersionModel = new(WorkerVersionModel)
+	var data = new(WorkerVersionModel)
 
 	path_account_id := ""
 	path_worker_id := ""

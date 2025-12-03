@@ -83,10 +83,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "If set, only list routes that contain this IP range.",
 						Optional:    true,
 					},
-					"route_id": schema.StringAttribute{
-						Description: "UUID of the route.",
-						Optional:    true,
-					},
 					"tun_types": schema.ListAttribute{
 						Description: "The types of tunnels to filter by, separated by commas.",
 						Optional:    true,

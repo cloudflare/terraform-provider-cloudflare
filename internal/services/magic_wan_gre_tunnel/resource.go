@@ -210,7 +210,7 @@ func (r *MagicWANGRETunnelResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *MagicWANGRETunnelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicWANGRETunnelModel = new(MagicWANGRETunnelModel)
+	var data = new(MagicWANGRETunnelModel)
 
 	path_account_id := ""
 	path_gre_tunnel_id := ""

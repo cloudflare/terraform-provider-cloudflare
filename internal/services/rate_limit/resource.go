@@ -210,7 +210,7 @@ func (r *RateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *RateLimitResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *RateLimitModel = new(RateLimitModel)
+	var data = new(RateLimitModel)
 
 	path_zone_id := ""
 	path_rate_limit_id := ""

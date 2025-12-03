@@ -205,7 +205,7 @@ func (r *AccountResource) Delete(ctx context.Context, req resource.DeleteRequest
 }
 
 func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccountModel = new(AccountModel)
+	var data = new(AccountModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

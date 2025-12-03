@@ -17,6 +17,7 @@ type CloudforceOneRequestMessageResultDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestMessageDataSourceModel struct {
+	ID                types.String      `tfsdk:"id" path:"request_id,computed"`
 	RequestID         types.String      `tfsdk:"request_id" path:"request_id,required"`
 	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Page              types.Int64       `tfsdk:"page" json:"page,required"`

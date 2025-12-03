@@ -210,7 +210,7 @@ func (r *AccountDNSSettingsInternalViewResource) Delete(ctx context.Context, req
 }
 
 func (r *AccountDNSSettingsInternalViewResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccountDNSSettingsInternalViewModel = new(AccountDNSSettingsInternalViewModel)
+	var data = new(AccountDNSSettingsInternalViewModel)
 
 	path_account_id := ""
 	path_view_id := ""

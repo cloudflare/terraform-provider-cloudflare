@@ -210,7 +210,7 @@ func (r *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 }
 
 func (r *ImageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ImageModel = new(ImageModel)
+	var data = new(ImageModel)
 
 	path_account_id := ""
 	path_image_id := ""

@@ -210,7 +210,7 @@ func (r *DNSRecordResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSRecordModel = new(DNSRecordModel)
+	var data = new(DNSRecordModel)
 
 	path_zone_id := ""
 	path_dns_record_id := ""

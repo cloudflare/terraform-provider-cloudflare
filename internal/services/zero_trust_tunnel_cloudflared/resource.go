@@ -210,7 +210,7 @@ func (r *ZeroTrustTunnelCloudflaredResource) Delete(ctx context.Context, req res
 }
 
 func (r *ZeroTrustTunnelCloudflaredResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustTunnelCloudflaredModel = new(ZeroTrustTunnelCloudflaredModel)
+	var data = new(ZeroTrustTunnelCloudflaredModel)
 
 	path_account_id := ""
 	path_tunnel_id := ""

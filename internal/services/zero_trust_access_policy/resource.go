@@ -210,7 +210,7 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 }
 
 func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessPolicyModel = new(ZeroTrustAccessPolicyModel)
+	var data = new(ZeroTrustAccessPolicyModel)
 
 	path_account_id := ""
 	path_policy_id := ""

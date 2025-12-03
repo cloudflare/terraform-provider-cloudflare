@@ -214,7 +214,7 @@ func (r *QueueResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 }
 
 func (r *QueueResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *QueueModel = new(QueueModel)
+	var data = new(QueueModel)
 
 	path_account_id := ""
 	path_queue_id := ""

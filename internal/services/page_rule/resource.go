@@ -210,7 +210,7 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *PageRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *PageRuleModel = new(PageRuleModel)
+	var data = new(PageRuleModel)
 
 	path_zone_id := ""
 	path_pagerule_id := ""

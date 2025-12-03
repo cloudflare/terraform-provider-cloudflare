@@ -3,13 +3,13 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
   bucket_name = "example-bucket"
   destination = {
     access_key_id = "accessKeyId"
-    provider = "r2"
+    r2_bucket_sippy_provider = "r2"
     secret_access_key = "secretAccessKey"
   }
   source = {
     access_key_id = "accessKeyId"
     bucket = "bucket"
-    provider = "aws"
+    r2_bucket_sippy_provider = "aws"
     region = "region"
     secret_access_key = "secretAccessKey"
   }

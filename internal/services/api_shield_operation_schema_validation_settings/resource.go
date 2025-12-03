@@ -187,7 +187,7 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Delete(ctx context.
 }
 
 func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldOperationSchemaValidationSettingsModel = new(APIShieldOperationSchemaValidationSettingsModel)
+	var data = new(APIShieldOperationSchemaValidationSettingsModel)
 
 	path_zone_id := ""
 	path_operation_id := ""

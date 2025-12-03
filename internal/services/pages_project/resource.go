@@ -214,7 +214,7 @@ func (r *PagesProjectResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *PagesProjectResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *PagesProjectModel = new(PagesProjectModel)
+	var data = new(PagesProjectModel)
 
 	path_account_id := ""
 	path_project_name := ""

@@ -210,7 +210,7 @@ func (r *ZeroTrustDNSLocationResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *ZeroTrustDNSLocationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDNSLocationModel = new(ZeroTrustDNSLocationModel)
+	var data = new(ZeroTrustDNSLocationModel)
 
 	path_account_id := ""
 	path_location_id := ""

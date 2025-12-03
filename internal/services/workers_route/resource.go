@@ -210,7 +210,7 @@ func (r *WorkersRouteResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *WorkersRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersRouteModel = new(WorkersRouteModel)
+	var data = new(WorkersRouteModel)
 
 	path_zone_id := ""
 	path_route_id := ""

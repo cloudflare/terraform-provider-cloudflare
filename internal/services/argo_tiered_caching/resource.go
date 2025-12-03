@@ -190,7 +190,7 @@ func (r *ArgoTieredCachingResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *ArgoTieredCachingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ArgoTieredCachingModel = new(ArgoTieredCachingModel)
+	var data = new(ArgoTieredCachingModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

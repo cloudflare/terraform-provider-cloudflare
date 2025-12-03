@@ -200,7 +200,7 @@ func (r *APITokenResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *APITokenResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APITokenModel = new(APITokenModel)
+	var data = new(APITokenModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

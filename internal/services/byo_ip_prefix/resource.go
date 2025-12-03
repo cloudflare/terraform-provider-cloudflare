@@ -210,7 +210,7 @@ func (r *ByoIPPrefixResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *ByoIPPrefixResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ByoIPPrefixModel = new(ByoIPPrefixModel)
+	var data = new(ByoIPPrefixModel)
 
 	path_account_id := ""
 	path_prefix_id := ""

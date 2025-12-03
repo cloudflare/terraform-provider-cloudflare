@@ -193,7 +193,7 @@ func (r *WorkersCronTriggerResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *WorkersCronTriggerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersCronTriggerModel = new(WorkersCronTriggerModel)
+	var data = new(WorkersCronTriggerModel)
 
 	path_account_id := ""
 	path_script_name := ""

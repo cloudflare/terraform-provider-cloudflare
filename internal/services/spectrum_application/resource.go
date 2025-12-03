@@ -210,7 +210,7 @@ func (r *SpectrumApplicationResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *SpectrumApplicationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *SpectrumApplicationModel = new(SpectrumApplicationModel)
+	var data = new(SpectrumApplicationModel)
 
 	path_zone_id := ""
 	path_app_id := ""

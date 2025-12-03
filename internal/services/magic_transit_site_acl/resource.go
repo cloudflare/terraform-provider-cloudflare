@@ -214,7 +214,7 @@ func (r *MagicTransitSiteACLResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicTransitSiteACLResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicTransitSiteACLModel = new(MagicTransitSiteACLModel)
+	var data = new(MagicTransitSiteACLModel)
 
 	path_account_id := ""
 	path_site_id := ""

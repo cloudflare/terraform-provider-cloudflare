@@ -210,7 +210,7 @@ func (r *PageShieldPolicyResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *PageShieldPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *PageShieldPolicyModel = new(PageShieldPolicyModel)
+	var data = new(PageShieldPolicyModel)
 
 	path_zone_id := ""
 	path_policy_id := ""

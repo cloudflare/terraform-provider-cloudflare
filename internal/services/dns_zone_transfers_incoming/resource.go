@@ -207,7 +207,7 @@ func (r *DNSZoneTransfersIncomingResource) Delete(ctx context.Context, req resou
 }
 
 func (r *DNSZoneTransfersIncomingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSZoneTransfersIncomingModel = new(DNSZoneTransfersIncomingModel)
+	var data = new(DNSZoneTransfersIncomingModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

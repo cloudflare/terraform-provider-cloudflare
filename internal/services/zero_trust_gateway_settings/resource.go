@@ -190,7 +190,7 @@ func (r *ZeroTrustGatewaySettingsResource) Delete(ctx context.Context, req resou
 }
 
 func (r *ZeroTrustGatewaySettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustGatewaySettingsModel = new(ZeroTrustGatewaySettingsModel)
+	var data = new(ZeroTrustGatewaySettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

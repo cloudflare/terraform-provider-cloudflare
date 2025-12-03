@@ -190,7 +190,7 @@ func (r *UniversalSSLSettingResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *UniversalSSLSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *UniversalSSLSettingModel = new(UniversalSSLSettingModel)
+	var data = new(UniversalSSLSettingModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

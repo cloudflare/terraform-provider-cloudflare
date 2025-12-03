@@ -94,10 +94,10 @@ const (
 	// Some values had to fudged a bit, for example by converting a string to an
 	// int, or an enum with extra values.
 	loose exactness = iota
-	// There are some extra arguments, but other wise it matches the union.
-	extras
 	// Exactly right.
 	exact
+	// There are some extra arguments, but other wise it matches the union.
+	// extras
 )
 
 type decoderFunc func(node gjson.Result, value reflect.Value, state *decoderState) error
@@ -996,7 +996,7 @@ func shouldUpdatePrimitive(value reflect.Value, behavior TerraformUpdateBehavior
 
 func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 	// map of json field name to struct field decoders
-	decoderFields := map[string]decoderField{}
+	decoderFields := map[string][]decoderField{}
 	extraDecoder := (*decoderField)(nil)
 	inlineDecoder := (*decoderField)(nil)
 
@@ -1074,7 +1074,7 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 					d.dateFormat = "2006-01-02"
 				}
 			}
-			decoderFields[ptag.name] = decoderField{ptag, d.typeDecoder(field.Type), idx, field.Name}
+			decoderFields[ptag.name] = append(decoderFields[ptag.name], decoderField{ptag, d.typeDecoder(field.Type), idx, field.Name})
 			d.dateFormat = oldFormat
 			d.updateBehavior = Always // reset the flag
 		}
@@ -1108,45 +1108,46 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 		nodeMap := node.Map()
 
 		for fieldName, itemNode := range nodeMap {
-			df, explicit := decoderFields[fieldName]
-			var (
-				dest reflect.Value
-				fn   decoderFunc
-			)
-			if explicit {
-				fn = df.fn
-				dest = value.FieldByIndex(df.idx)
-			}
-			if !explicit && extraDecoder != nil {
-				dest = reflect.New(typedExtraType.Elem()).Elem()
-				fn = extraDecoder.fn
-			}
+			dfs, explicit := decoderFields[fieldName]
+			for i := range max(len(dfs), 1) {
+				dest, fn := reflect.Value{}, (decoderFunc)(nil)
+				if explicit {
+					df := dfs[i]
+					fn = df.fn
+					dest = value.FieldByIndex(df.idx)
+				}
+				if !explicit && extraDecoder != nil {
+					dest = reflect.New(typedExtraType.Elem()).Elem()
+					fn = extraDecoder.fn
+				}
 
-			if dest.IsValid() {
-				_ = fn(itemNode, dest, state)
-			}
+				if dest.IsValid() {
+					_ = fn(itemNode, dest, state)
+				}
 
-			if !explicit && extraDecoder != nil {
-				typedExtraFields.SetMapIndex(reflect.ValueOf(fieldName), dest)
+				if !explicit && extraDecoder != nil {
+					typedExtraFields.SetMapIndex(reflect.ValueOf(fieldName), dest)
+				}
 			}
 		}
 
 		// Handle struct fields that are not present in the JSON
 		// this is in case they should be initialized to a "null" value
 		// that is different from the zero value
-		for fieldName, df := range decoderFields {
-			_, existsInJson := nodeMap[fieldName]
-			if existsInJson {
+		for fieldName, dfs := range decoderFields {
+			if _, existsInJson := nodeMap[fieldName]; existsInJson {
 				continue
 			}
-			fn := df.fn
-			dest := value.FieldByIndex(df.idx)
+			for _, df := range dfs {
+				fn := df.fn
+				dest := value.FieldByIndex(df.idx)
 
-			// note that we don't include pointers to structs, because
-			// that could be recursive and would cause an infinite loop.
-			// if dest.IsValid() && dest.Kind() == reflect.Struct {
-			if dest.IsValid() {
-				_ = fn(gjson.Result{}, dest, state)
+				// note that we don't include pointers to structs, because
+				// that could be recursive and would cause an infinite loop.
+				// if dest.IsValid() && dest.Kind() == reflect.Struct {
+				if dest.IsValid() {
+					_ = fn(gjson.Result{}, dest, state)
+				}
 			}
 		}
 		if extraDecoder != nil && typedExtraFields.Len() > 0 {

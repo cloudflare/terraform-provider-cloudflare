@@ -45,7 +45,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Name of the bucket on the provider.",
 						Computed:    true,
 					},
-					"provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "r2".`,
 						Computed:    true,
 						Validators: []validator.String{
@@ -67,7 +67,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "S3-compatible URL (Generic S3-compatible providers only).",
 						Computed:    true,
 					},
-					"provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "aws", "gcs", "s3".`,
 						Computed:    true,
 						Validators: []validator.String{

@@ -211,7 +211,7 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersKVModel = new(WorkersKVModel)
+	var data = new(WorkersKVModel)
 
 	path_account_id := ""
 	path_namespace_id := ""

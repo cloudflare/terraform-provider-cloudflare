@@ -210,7 +210,7 @@ func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicWANIPSECTunnelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicWANIPSECTunnelModel = new(MagicWANIPSECTunnelModel)
+	var data = new(MagicWANIPSECTunnelModel)
 
 	path_account_id := ""
 	path_ipsec_tunnel_id := ""

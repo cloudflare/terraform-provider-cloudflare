@@ -25,16 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"description": schema.StringAttribute{
-				Computed: true,
-			},
-			"enabled": schema.BoolAttribute{
-				Computed: true,
-			},
-			"expression": schema.StringAttribute{
-				Computed: true,
-			},
-			"provider": schema.StringAttribute{
+			"cloud_connector_rules_provider": schema.StringAttribute{
 				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
 				Computed:    true,
 				Validators: []validator.String{
@@ -45,6 +36,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"azure_storage",
 					),
 				},
+			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
+			"enabled": schema.BoolAttribute{
+				Computed: true,
+			},
+			"expression": schema.StringAttribute{
+				Computed: true,
 			},
 			"parameters": schema.SingleNestedAttribute{
 				Description: "Parameters of Cloud Connector Rule",

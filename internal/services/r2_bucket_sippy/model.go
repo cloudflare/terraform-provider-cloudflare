@@ -28,18 +28,18 @@ func (m R2BucketSippyModel) MarshalJSONForUpdate(state R2BucketSippyModel) (data
 }
 
 type R2BucketSippyDestinationModel struct {
-	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional"`
-	Provider        types.String `tfsdk:"provider" json:"provider,optional"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
+	AccessKeyID           types.String `tfsdk:"access_key_id" json:"accessKeyId,optional"`
+	R2BucketSippyProvider types.String `tfsdk:"r2_bucket_sippy_provider" json:"provider,optional"`
+	SecretAccessKey       types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
 }
 
 type R2BucketSippySourceModel struct {
-	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional,no_refresh"`
-	Bucket          types.String `tfsdk:"bucket" json:"bucket,optional"`
-	Provider        types.String `tfsdk:"provider" json:"provider,optional"`
-	Region          types.String `tfsdk:"region" json:"region,optional"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
-	ClientEmail     types.String `tfsdk:"client_email" json:"clientEmail,optional,no_refresh"`
-	PrivateKey      types.String `tfsdk:"private_key" json:"privateKey,optional,no_refresh"`
-	BucketURL       types.String `tfsdk:"bucket_url" json:"bucketUrl,optional"`
+	AccessKeyID           types.String `tfsdk:"access_key_id" json:"accessKeyId,optional,no_refresh"`
+	Bucket                types.String `tfsdk:"bucket" json:"bucket,optional"`
+	R2BucketSippyProvider types.String `tfsdk:"r2_bucket_sippy_provider" json:"provider,optional"`
+	Region                types.String `tfsdk:"region" json:"region,optional"`
+	SecretAccessKey       types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
+	ClientEmail           types.String `tfsdk:"client_email" json:"clientEmail,optional,no_refresh"`
+	PrivateKey            types.String `tfsdk:"private_key" json:"privateKey,optional,no_refresh"`
+	BucketURL             types.String `tfsdk:"bucket_url" json:"bucketUrl,optional"`
 }

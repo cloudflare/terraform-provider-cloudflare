@@ -210,7 +210,7 @@ func (r *Web3HostnameResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *Web3HostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *Web3HostnameModel = new(Web3HostnameModel)
+	var data = new(Web3HostnameModel)
 
 	path_zone_id := ""
 	path_identifier := ""

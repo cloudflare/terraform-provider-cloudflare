@@ -210,7 +210,7 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *FirewallRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *FirewallRuleModel = new(FirewallRuleModel)
+	var data = new(FirewallRuleModel)
 
 	path_zone_id := ""
 	path_rule_id := ""

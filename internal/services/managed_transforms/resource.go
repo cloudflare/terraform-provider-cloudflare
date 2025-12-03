@@ -211,7 +211,7 @@ func (r *ManagedTransformsResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ManagedTransformsModel = new(ManagedTransformsModel)
+	var data = new(ManagedTransformsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
