@@ -114,6 +114,30 @@ func testPagesProjectUpdated(resourceID, accountID, projectName string) string {
 	return acctest.LoadTestCase("pagesprojectupdated.tf", resourceID, accountID, projectName)
 }
 
+func testPagesProjectRemoveEnvVarsStep1(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremoveenvvars_step1.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectRemoveEnvVarsStep2(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremoveenvvars_step2.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectRemoveEnvVarsStep3(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremoveenvvars_step3.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectRemoveBindingsStep1(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremovebindings_step1.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectRemoveBindingsStep2(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremovebindings_step2.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectRemoveBindingsStep3(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectremovebindings_step3.tf", resourceID, accountID, projectName)
+}
+
 func testAccCheckCloudflarePageProjectDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 
@@ -652,79 +676,21 @@ func TestAccCloudflarePagesProject_RemoveEnvVars(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_pages_project" "%s" {
-	account_id = "%s"
-	name = "%s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {
-				VAR_ONE = { type = "plain_text", value = "value1" }
-				VAR_TWO = { type = "secret_text", value = "secret1" }
-			}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {
-				PROD_VAR = { type = "plain_text", value = "prodvalue" }
-			}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveEnvVarsStep1(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
 				},
 			},
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_pages_project" "%s" {
-	account_id = "%s"
-	name = "%s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {
-				VAR_ONE = { type = "plain_text", value = "value1" }
-			}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveEnvVarsStep2(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(0)),
 				},
 			},
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_pages_project" "%s" {
-	account_id = "%s"
-	name = "%s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			env_vars = {}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveEnvVarsStep3(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(0)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(0)),
@@ -748,44 +714,7 @@ func TestAccCloudflarePagesProject_RemoveBindings(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
-	account_id = "%[2]s"
-	title = "tfacctest-pages-bindings-kv"
-}
-
-resource "cloudflare_pages_project" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[3]s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {
-				KV_BINDING_1 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
-				KV_BINDING_2 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
-			}
-			r2_buckets = {
-				R2_BINDING = { name = "test-bucket" }
-			}
-			d1_databases = {
-				D1_BINDING = { id = "445e2955-951a-4358-a35b-a4d0c813f63" }
-			}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {
-				KV_BINDING = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
-			}
-			r2_buckets = {
-				R2_BINDING_1 = { name = "bucket-one" }
-				R2_BINDING_2 = { name = "bucket-two" }
-			}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveBindingsStep1(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(1)),
@@ -795,36 +724,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 				},
 			},
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
-	account_id = "%[2]s"
-	title = "tfacctest-pages-bindings-kv"
-}
-
-resource "cloudflare_pages_project" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[3]s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {
-				KV_BINDING_1 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
-			}
-			r2_buckets = {}
-			d1_databases = {}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {}
-			r2_buckets = {
-				R2_BINDING_1 = { name = "bucket-one" }
-			}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveBindingsStep2(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(0)),
@@ -834,32 +734,7 @@ resource "cloudflare_pages_project" "%[1]s" {
 				},
 			},
 			{
-				Config: fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
-	account_id = "%[2]s"
-	title = "tfacctest-pages-bindings-kv"
-}
-
-resource "cloudflare_pages_project" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[3]s"
-	production_branch = "main"
-	deployment_configs = {
-		preview = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {}
-			r2_buckets = {}
-			d1_databases = {}
-		}
-		production = {
-			compatibility_date = "2023-06-01"
-			compatibility_flags = []
-			kv_namespaces = {}
-			r2_buckets = {}
-		}
-	}
-}`, rnd, accountID, projectName),
+				Config: testPagesProjectRemoveBindingsStep3(rnd, accountID, projectName),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(0)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(0)),
