@@ -116,7 +116,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -148,7 +148,7 @@ func TestAccCloudflareAccountMember_Import(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -190,7 +190,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
@@ -225,7 +225,7 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 
 	initialRoleID := getRoleId(t, accountID, "Administrator")
 	updatedRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
@@ -280,7 +280,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	roleID := getRoleId(t, accountID, "Administrator")
 
 	resource.Test(t, resource.TestCase{
@@ -341,7 +341,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
 
 	resource.Test(t, resource.TestCase{
@@ -395,7 +395,7 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "domain_admin_readonly")
 
 	zones := getDomains(t, accountID)
