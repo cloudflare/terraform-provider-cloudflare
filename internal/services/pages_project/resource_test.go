@@ -638,7 +638,7 @@ func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePagesProject_RemoveEnvVarsAndBindings(t *testing.T) {
+func TestAccCloudflarePagesProject_RemoveEnvVars(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := resourcePrefix + rnd
@@ -728,6 +728,144 @@ resource "cloudflare_pages_project" "%s" {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(0)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(0)),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePagesProject_RemoveBindings(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := resourcePrefix + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
+	account_id = "%[2]s"
+	title = "tfacctest-pages-bindings-kv"
+}
+
+resource "cloudflare_pages_project" "%[1]s" {
+	account_id = "%[2]s"
+	name = "%[3]s"
+	production_branch = "main"
+	deployment_configs = {
+		preview = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {
+				KV_BINDING_1 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
+				KV_BINDING_2 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
+			}
+			r2_buckets = {
+				R2_BINDING = { name = "test-bucket" }
+			}
+			d1_databases = {
+				D1_BINDING = { id = "445e2955-951a-4358-a35b-a4d0c813f63" }
+			}
+		}
+		production = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {
+				KV_BINDING = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
+			}
+			r2_buckets = {
+				R2_BINDING_1 = { name = "bucket-one" }
+				R2_BINDING_2 = { name = "bucket-two" }
+			}
+		}
+	}
+}`, rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(2)),
+				},
+			},
+			{
+				Config: fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
+	account_id = "%[2]s"
+	title = "tfacctest-pages-bindings-kv"
+}
+
+resource "cloudflare_pages_project" "%[1]s" {
+	account_id = "%[2]s"
+	name = "%[3]s"
+	production_branch = "main"
+	deployment_configs = {
+		preview = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {
+				KV_BINDING_1 = { namespace_id = cloudflare_workers_kv_namespace.%[1]s_kv.id }
+			}
+			r2_buckets = {}
+			d1_databases = {}
+		}
+		production = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {}
+			r2_buckets = {
+				R2_BINDING_1 = { name = "bucket-one" }
+			}
+		}
+	}
+}`, rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(1)),
+				},
+			},
+			{
+				Config: fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s_kv" {
+	account_id = "%[2]s"
+	title = "tfacctest-pages-bindings-kv"
+}
+
+resource "cloudflare_pages_project" "%[1]s" {
+	account_id = "%[2]s"
+	name = "%[3]s"
+	production_branch = "main"
+	deployment_configs = {
+		preview = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {}
+			r2_buckets = {}
+			d1_databases = {}
+		}
+		production = {
+			compatibility_date = "2023-06-01"
+			compatibility_flags = []
+			kv_namespaces = {}
+			r2_buckets = {}
+		}
+	}
+}`, rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(0)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("r2_buckets"), knownvalue.MapSizeExact(0)),
 				},
 			},
 		},
