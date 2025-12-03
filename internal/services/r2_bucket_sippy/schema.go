@@ -77,10 +77,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"cloud_provider": schema.StringAttribute{
-						Description: `Available values: "aws", "gcs".`,
+						Description: `Available values: "aws", "gcs", "s3".`,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("aws", "gcs"),
+							stringvalidator.OneOfCaseInsensitive(
+								"aws",
+								"gcs",
+								"s3",
+							),
 						},
 					},
 					"region": schema.StringAttribute{
@@ -100,6 +104,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Private Key of an IAM credential (ideally scoped to a single GCS bucket).",
 						Optional:    true,
 						Sensitive:   true,
+					},
+					"bucket_url": schema.StringAttribute{
+						Description: "URL to the S3-compatible API of the bucket.",
+						Optional:    true,
 					},
 				},
 			},

@@ -42,4 +42,5 @@ type R2BucketSippySourceModel struct {
 	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
 	ClientEmail     types.String `tfsdk:"client_email" json:"clientEmail,optional,no_refresh"`
 	PrivateKey      types.String `tfsdk:"private_key" json:"privateKey,optional,no_refresh"`
+	BucketURL       types.String `tfsdk:"bucket_url" json:"bucketUrl,optional"`
 }

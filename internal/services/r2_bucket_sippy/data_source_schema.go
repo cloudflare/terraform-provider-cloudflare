@@ -60,14 +60,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[R2BucketSippySourceDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"bucket": schema.StringAttribute{
-						Description: "Name of the bucket on the provider.",
+						Description: "Name of the bucket on the provider (AWS, GCS only).",
+						Computed:    true,
+					},
+					"bucket_url": schema.StringAttribute{
+						Description: "S3-compatible URL (Generic S3-compatible providers only).",
 						Computed:    true,
 					},
 					"provider": schema.StringAttribute{
-						Description: `Available values: "aws", "gcs".`,
+						Description: `Available values: "aws", "gcs", "s3".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("aws", "gcs"),
+							stringvalidator.OneOfCaseInsensitive(
+								"aws",
+								"gcs",
+								"s3",
+							),
 						},
 					},
 					"region": schema.StringAttribute{
