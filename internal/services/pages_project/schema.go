@@ -11,7 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -180,10 +183,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"always_use_latest_compatibility_date": schema.BoolAttribute{
-								Description: "Whether to always use the latest compatibility date for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
+								Description:   "Whether to always use the latest compatibility date for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								Default:       booldefault.StaticBool(false),
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
@@ -205,15 +209,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     int64default.StaticInt64(3),
+								Description:   "The major version of the build image to use for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								Default:       int64default.StaticInt64(3),
+								PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 							},
 							"compatibility_date": schema.StringAttribute{
-								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Compatibility date used for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
@@ -265,10 +271,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"fail_open": schema.BoolAttribute{
-								Description: "Whether to fail open when the deployment config cannot be applied.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Description:   "Whether to fail open when the deployment config cannot be applied.",
+								Computed:      true,
+								Optional:      true,
+								Default:       booldefault.StaticBool(true),
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
@@ -421,10 +428,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"always_use_latest_compatibility_date": schema.BoolAttribute{
-								Description: "Whether to always use the latest compatibility date for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
+								Description:   "Whether to always use the latest compatibility date for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								Default:       booldefault.StaticBool(false),
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
@@ -446,15 +454,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								Default:     int64default.StaticInt64(3),
+								Description:   "The major version of the build image to use for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								Default:       int64default.StaticInt64(3),
+								PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 							},
 							"compatibility_date": schema.StringAttribute{
-								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Compatibility date used for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
@@ -506,10 +516,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"fail_open": schema.BoolAttribute{
-								Description: "Whether to fail open when the deployment config cannot be applied.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Description:   "Whether to fail open when the deployment config cannot be applied.",
+								Computed:      true,
+								Optional:      true,
+								Default:       booldefault.StaticBool(true),
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
@@ -647,39 +658,47 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the project was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"framework": schema.StringAttribute{
-				Description: "Framework the project is using.",
-				Computed:    true,
+				Description:   "Framework the project is using.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"framework_version": schema.StringAttribute{
-				Description: "Version of the framework the project is using.",
-				Computed:    true,
+				Description:   "Version of the framework the project is using.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"preview_script_name": schema.StringAttribute{
-				Description: "Name of the preview script.",
-				Computed:    true,
+				Description:   "Name of the preview script.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"production_script_name": schema.StringAttribute{
-				Description: "Name of the production script.",
-				Computed:    true,
+				Description:   "Name of the production script.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"subdomain": schema.StringAttribute{
-				Description: "The Cloudflare subdomain associated with the project.",
-				Computed:    true,
+				Description:   "The Cloudflare subdomain associated with the project.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"uses_functions": schema.BoolAttribute{
-				Description: "Whether the project uses functions.",
-				Computed:    true,
+				Description:   "Whether the project uses functions.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"domains": schema.ListAttribute{
-				Description: "A list of associated custom domains for the project.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:   "A list of associated custom domains for the project.",
+				Computed:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent production deployment of the project.",

@@ -17,7 +17,7 @@ const (
 
 // GenerateRandomResourceName builds a unique-ish resource identifier to use in
 // tests. All test resources should use this function to ensure they follow
-// the standard naming convention (cf-tf-test-XXXXXXXXXX).
+// the standard naming convention (cftftestXXXXXXXXXX).
 func GenerateRandomResourceName() string {
 	result := make([]byte, ResourceNameLength)
 	for i := 0; i < ResourceNameLength; i++ {

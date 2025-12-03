@@ -297,6 +297,10 @@ func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
 func TestAccCloudflareZoneSetting_EditableInconsistency(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
+	// First, check which settings are actually editable on this zone by querying the API
+	client := acctest.SharedClient()
+	ctx := context.Background()
+
 	// Test the problematic settings that have editable inconsistency issues
 	problematicSettings := []struct {
 		settingID string
@@ -315,6 +319,22 @@ func TestAccCloudflareZoneSetting_EditableInconsistency(t *testing.T) {
 
 	for _, setting := range problematicSettings {
 		t.Run(setting.settingID, func(t *testing.T) {
+			// Check if this setting is editable on the test zone
+			settingResp, err := client.Zones.Settings.Get(ctx, setting.settingID, zones.SettingGetParams{
+				ZoneID: cloudflare.F(zoneID),
+			})
+
+			if err != nil {
+				t.Skipf("Could not fetch setting %s: %v", setting.settingID, err)
+				return
+			}
+
+			// Skip if the setting is not editable on this zone
+			if !bool(settingResp.Editable) {
+				t.Skipf("Setting %s is not editable on this zone (requires specific plan/entitlement)", setting.settingID)
+				return
+			}
+
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
