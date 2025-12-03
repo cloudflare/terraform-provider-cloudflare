@@ -59,6 +59,7 @@ jobs:
         run: ./scripts/build-tf-migrate.sh
 
       ######## Magic Tests ########
+      # Magic tests must run sequentially due to dependencies
       - name: Run Magic Acceptance Tests
         id: magic_acceptance_tests
         run: ./scripts/run-ci-tests magic acceptance
@@ -67,28 +68,336 @@ jobs:
           TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
-      # - name: Run Magic Migration Tests
-      #   id: magic_migration_tests
-      #   run: ./scripts/run-ci-tests magic migration
-      #   env:
-      #     TF_ACC: 1
-      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-      #   continue-on-error: true
-
-      ######## Organization Tests ########
-      # These tests require a specific user with organization permissions
+      ######## All Other Tests (Run in Parallel) ########
+      # Organization tests require special credentials
       - name: Run Organization Acceptance Tests
         id: organization_acceptance_tests
         run: ./scripts/run-ci-tests organization acceptance
         env:
           TF_ACC: 1
-          # Override credentials for organization tests
           CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
           CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
         continue-on-error: true
 
-      ######## Everything Else ########
+      # Zone-related test groups
+      - name: Run Zone Core Tests
+        id: zone_core_tests
+        run: ./scripts/run-ci-tests zone-core acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Zone Settings Tests
+        id: zone_settings_tests
+        run: ./scripts/run-ci-tests zone-settings acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run DNS Tests
+        id: dns_tests
+        run: ./scripts/run-ci-tests dns acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Load Balancing Tests
+        id: load_balancing_tests
+        run: ./scripts/run-ci-tests load-balancing acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Workers test groups
+      - name: Run Workers Core Tests
+        id: workers_core_tests
+        run: ./scripts/run-ci-tests workers-core acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Workers Extended Tests
+        id: workers_extended_tests
+        run: ./scripts/run-ci-tests workers-extended acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Workers Platform Tests
+        id: workers_platform_tests
+        run: ./scripts/run-ci-tests workers-platform acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Email test groups
+      - name: Run Email Routing Tests
+        id: email_routing_tests
+        run: ./scripts/run-ci-tests email-routing acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Email Security Tests
+        id: email_security_tests
+        run: ./scripts/run-ci-tests email-security acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Security test groups
+      - name: Run Security Core Tests
+        id: security_core_tests
+        run: ./scripts/run-ci-tests security-core acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Security Advanced Tests
+        id: security_advanced_tests
+        run: ./scripts/run-ci-tests security-advanced acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Rules and policy test groups
+      - name: Run Rules and Policies Tests
+        id: rules_and_policies_tests
+        run: ./scripts/run-ci-tests rules-and-policies acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Snippets Tests
+        id: snippets_tests
+        run: ./scripts/run-ci-tests snippets acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # TLS and SSL test groups
+      - name: Run TLS and Certificates Tests
+        id: tls_and_certificates_tests
+        run: ./scripts/run-ci-tests tls-and-certificates acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run SSL Config Tests
+        id: ssl_config_tests
+        run: ./scripts/run-ci-tests ssl-config acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Web feature test groups
+      - name: Run Web Features Tests
+        id: web_features_tests
+        run: ./scripts/run-ci-tests web-features acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Web Monitoring Tests
+        id: web_monitoring_tests
+        run: ./scripts/run-ci-tests web-monitoring acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Waiting Room Tests
+        id: waiting_room_tests
+        run: ./scripts/run-ci-tests waiting-room acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Performance test groups
+      - name: Run Performance Tests
+        id: performance_tests
+        run: ./scripts/run-ci-tests performance acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run CDN Advanced Tests
+        id: cdn_advanced_tests
+        run: ./scripts/run-ci-tests cdn-advanced acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Zero Trust test groups
+      - name: Run Gateway and Policies Tests
+        id: gateway_and_policies_tests
+        run: ./scripts/run-ci-tests gateway-and-policies acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run DLP Config Tests
+        id: dlp_config_tests
+        run: ./scripts/run-ci-tests dlp-config acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Access Core Tests
+        id: access_core_tests
+        run: ./scripts/run-ci-tests access-core acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Access Identity Tests
+        id: access_identity_tests
+        run: ./scripts/run-ci-tests access-identity acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Access mTLS Tests
+        id: access_mtls_tests
+        run: ./scripts/run-ci-tests access-mtls acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Access Applications Tests
+        id: access_applications_tests
+        run: ./scripts/run-ci-tests access-applications acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Zero Trust Organization Tests
+        id: zero_trust_org_tests
+        run: ./scripts/run-ci-tests zero-trust-org acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Zero Trust List Tests
+        id: zero_trust_list_tests
+        run: ./scripts/run-ci-tests zero-trust-list acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Tunnel test groups
+      - name: Run Tunnel Cloudflared Tests
+        id: tunnel_cloudflared_tests
+        run: ./scripts/run-ci-tests tunnel-cloudflared acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Tunnel Devices Tests
+        id: tunnel_devices_tests
+        run: ./scripts/run-ci-tests tunnel-devices acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Account test groups
+      - name: Run Account Core Tests
+        id: account_core_tests
+        run: ./scripts/run-ci-tests account-core acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Account Settings Tests
+        id: account_settings_tests
+        run: ./scripts/run-ci-tests account-settings acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Storage and platform test groups
+      - name: Run R2 Storage Tests
+        id: r2_storage_tests
+        run: ./scripts/run-ci-tests r2-storage acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Pages Tests
+        id: pages_tests
+        run: ./scripts/run-ci-tests pages acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Queue and Messaging Tests
+        id: queue_and_messaging_tests
+        run: ./scripts/run-ci-tests queue-and-messaging acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # General API and miscellaneous test groups
+      - name: Run General API Tests
+        id: general_api_tests
+        run: ./scripts/run-ci-tests general-api acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Misc Account Tools Tests
+        id: misc_account_tools_tests
+        run: ./scripts/run-ci-tests misc-account-tools acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      - name: Run Platform and Advanced Tests
+        id: platform_and_advanced_tests
+        run: ./scripts/run-ci-tests platform-and-advanced acceptance
+        env:
+          TF_ACC: 1
+          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+        continue-on-error: true
+
+      # Remaining services not in specific groups
       - name: Run Default Acceptance Tests
         id: default_acceptance_tests
         run: ./scripts/run-ci-tests default acceptance
@@ -97,19 +406,48 @@ jobs:
           TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
         continue-on-error: true
 
-      # - name: Run Default Migration Tests
-      #   id: default_migration_tests
-      #   run: ./scripts/run-ci-tests default migration
-      #   env:
-      #     TF_ACC: 1
-      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-      #   continue-on-error: true
-
       - name: Check Test Status
         if: ${{
           steps.magic_acceptance_tests.outcome == 'failure' ||
-          steps.magic_migration_tests.outcome == 'failure' ||
-          steps.default_acceptance_tests.outcome == 'failure' ||
-          steps.default_migration_tests.outcome == 'failure' ||
-          steps.organization_acceptance_tests.outcome == 'failure'}}
+          steps.organization_acceptance_tests.outcome == 'failure' ||
+          steps.zone_core_tests.outcome == 'failure' ||
+          steps.zone_settings_tests.outcome == 'failure' ||
+          steps.dns_tests.outcome == 'failure' ||
+          steps.load_balancing_tests.outcome == 'failure' ||
+          steps.workers_core_tests.outcome == 'failure' ||
+          steps.workers_extended_tests.outcome == 'failure' ||
+          steps.workers_platform_tests.outcome == 'failure' ||
+          steps.email_routing_tests.outcome == 'failure' ||
+          steps.email_security_tests.outcome == 'failure' ||
+          steps.security_core_tests.outcome == 'failure' ||
+          steps.security_advanced_tests.outcome == 'failure' ||
+          steps.rules_and_policies_tests.outcome == 'failure' ||
+          steps.snippets_tests.outcome == 'failure' ||
+          steps.tls_and_certificates_tests.outcome == 'failure' ||
+          steps.ssl_config_tests.outcome == 'failure' ||
+          steps.web_features_tests.outcome == 'failure' ||
+          steps.web_monitoring_tests.outcome == 'failure' ||
+          steps.waiting_room_tests.outcome == 'failure' ||
+          steps.performance_tests.outcome == 'failure' ||
+          steps.cdn_advanced_tests.outcome == 'failure' ||
+          steps.gateway_and_policies_tests.outcome == 'failure' ||
+          steps.dlp_config_tests.outcome == 'failure' ||
+          steps.access_core_tests.outcome == 'failure' ||
+          steps.access_identity_tests.outcome == 'failure' ||
+          steps.access_mtls_tests.outcome == 'failure' ||
+          steps.access_applications_tests.outcome == 'failure' ||
+          steps.zero_trust_org_tests.outcome == 'failure' ||
+          steps.zero_trust_list_tests.outcome == 'failure' ||
+          steps.tunnel_cloudflared_tests.outcome == 'failure' ||
+          steps.tunnel_devices_tests.outcome == 'failure' ||
+          steps.account_core_tests.outcome == 'failure' ||
+          steps.account_settings_tests.outcome == 'failure' ||
+          steps.r2_storage_tests.outcome == 'failure' ||
+          steps.pages_tests.outcome == 'failure' ||
+          steps.queue_and_messaging_tests.outcome == 'failure' ||
+          steps.general_api_tests.outcome == 'failure' ||
+          steps.misc_account_tools_tests.outcome == 'failure' ||
+          steps.platform_and_advanced_tests.outcome == 'failure' ||
+          steps.default_acceptance_tests.outcome == 'failure'
+        }}
         run: exit 1
