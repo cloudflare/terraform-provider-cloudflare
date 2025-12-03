@@ -92,16 +92,17 @@ func testSweepCloudflareAccountMembers(r string) error {
 		return fmt.Errorf("failed to fetch account tokens: %w", err)
 	}
 
-	// Delete domain groups (those created by our tests)
 	for _, resourceGroup := range resourceGroups.Result {
-		if strings.Contains(resourceGroup.Name, "terraform") {
+		// Only sweep test resource groups with names matching test patterns
+		if utils.ShouldSweepResource(resourceGroup.Name) {
 			_, err := client2.IAM.ResourceGroups.Delete(ctx, resourceGroup.ID, iam.ResourceGroupDeleteParams{
-				// AccountID: cloudflare.AccountIdentifier(accountID),
-				AccountID: cloudflarev6.String(""),
+				AccountID: cloudflarev6.String(accountID),
 			})
 			if err != nil {
-				return fmt.Errorf("failed to delete resource group %s: %w", resourceGroup.ID, err)
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete resource group %s: %s", resourceGroup.ID, err))
+				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted domain group: %s", resourceGroup.ID))
 		}
 	}
 
@@ -117,7 +118,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -149,7 +150,7 @@ func TestAccCloudflareAccountMember_Import(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
@@ -191,7 +192,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
@@ -224,7 +225,7 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 
 	initialRoleID := getRoleId(t, accountID, "Administrator")
 	updatedRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
@@ -275,7 +276,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	roleID := getRoleId(t, accountID, "Administrator")
 
 	resource.Test(t, resource.TestCase{
@@ -332,7 +333,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
 
 	resource.Test(t, resource.TestCase{
@@ -382,7 +383,7 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("terraform-test-%s@example.com", rnd)
+	email := fmt.Sprintf("%s@example.com", rnd)
 	permissionGroupID := getPermissionGroupId(t, accountID, "domain_admin_readonly")
 
 	zones := getDomains(t, accountID)
@@ -506,7 +507,7 @@ func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
 	client := acctest.SharedClient()
 	domainGroup, err := client.IAM.ResourceGroups.New(ctx, iam.ResourceGroupNewParams{
 		AccountID: cloudflarev6.String(accountID),
-		Name:      cloudflarev6.String(fmt.Sprintf("terraform-test-%s-%s", rnd, domainID)),
+		Name:      cloudflarev6.String(fmt.Sprintf("%s-%s", rnd, domainID)),
 		Scope: cloudflarev6.F(iam.ResourceGroupNewParamsScope{
 			Key: cloudflarev6.String(fmt.Sprintf("com.cloudflare.api.account.%s", accountID)),
 			Objects: cloudflarev6.F([]iam.ResourceGroupNewParamsScopeObject{
