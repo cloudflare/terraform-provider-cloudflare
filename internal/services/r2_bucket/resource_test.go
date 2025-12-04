@@ -7,10 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/r2"
@@ -49,67 +45,23 @@ func testSweepCloudflareR2Bucket(r string) error {
 		return nil // Skip sweep if account ID not set
 	}
 
-	accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
-	accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
-
-	if accessKeyId == "" || accessKeySecret == "" {
-		// Skip sweep if R2 credentials aren't available
-		return nil
-	}
-
 	buckets, err := client.ListR2Buckets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListR2BucketsParams{})
 	if err != nil {
 		return fmt.Errorf("failed to fetch R2 buckets: %w", err)
 	}
 
 	for _, bucket := range buckets {
-		// hard coded bucket name for Worker script acceptance tests
-		// until we can break out the packages without cyclic errors.
-		if bucket.Name == "bnfywlzwpt" {
-			continue
-		}
-
 		// Use standard filtering helper
 		if !utils.ShouldSweepResource(bucket.Name) {
 			continue
 		}
 
-		r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-			return aws.Endpoint{
-				URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com", accountID),
-			}, nil
-		})
-
-		cfg, err := config.LoadDefaultConfig(context.TODO(),
-			config.WithEndpointResolverWithOptions(r2Resolver),
-			config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
-			config.WithRegion("auto"),
-		)
-		if err != nil {
-			return err
-		}
-
-		s3client := s3.NewFromConfig(cfg)
-		listObjectsOutput, err := s3client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
-			Bucket: &bucket.Name,
-		})
-		if err != nil {
-			return err
-		}
-
-		for _, object := range listObjectsOutput.Contents {
-			_, err = s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
-				Bucket: &bucket.Name,
-				Key:    object.Key,
-			})
-			if err != nil {
-				return err
-			}
-		}
-
 		err = client.DeleteR2Bucket(ctx, cfv1.AccountIdentifier(accountID), bucket.Name)
 		if err != nil {
-			return fmt.Errorf("failed to delete R2 bucket %q: %w", bucket.Name, err)
+			// Log error but continue with other buckets
+			// Buckets with objects will fail to delete, which is expected
+			fmt.Printf("Warning: failed to delete R2 bucket %q: %v\n", bucket.Name, err)
+			continue
 		}
 	}
 
