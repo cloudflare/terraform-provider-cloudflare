@@ -5,6 +5,7 @@ package account_subscription
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -33,12 +34,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"frequency": schema.StringAttribute{
 				Description: "How often the subscription is renewed automatically.\nAvailable values: \"weekly\", \"monthly\", \"quarterly\", \"yearly\".",
 				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"weekly",
 						"monthly",
 						"quarterly",
 						"yearly",
+						"not-applicable",
 					),
 				},
 			},
@@ -47,46 +50,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_ent\".",
+						Description: "The ID of the rate plan.",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"free",
-								"lite",
-								"pro",
-								"pro_plus",
-								"business",
-								"enterprise",
-								"partners_free",
-								"partners_pro",
-								"partners_business",
-								"partners_ent",
-							),
-						},
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"externally_managed": schema.BoolAttribute{
 						Description: "Whether this rate plan is managed externally from Cloudflare.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"is_contract": schema.BoolAttribute{
 						Description: "Whether a rate plan is enterprise-based (or newly adopted term contract).",
-						Optional:    true,
+						Computed:    true,
 					},
 					"public_name": schema.StringAttribute{
 						Description: "The full name of the rate plan.",
-						Optional:    true,
+						Computed:    true,
 					},
 					"scope": schema.StringAttribute{
 						Description: "The scope that this rate plan applies to.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
 						Description: "The list of sets this rate plan applies to.",
-						Optional:    true,
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 				},
