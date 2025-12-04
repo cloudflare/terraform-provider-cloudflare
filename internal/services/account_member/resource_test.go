@@ -491,10 +491,6 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 			},
 		},
 	})
-
-	//cleanup
-	deleteDomainGroup(accountID, domainGroupID1)
-	deleteDomainGroup(accountID, domainGroupID2)
 }
 
 func testCloudflareAccountMemberPoliciesConfig(accountID, emailAddress, permgroupId string) string {
