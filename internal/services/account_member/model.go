@@ -31,9 +31,9 @@ func (m AccountMemberModel) MarshalJSONForUpdate(state AccountMemberModel) (data
 }
 
 type AccountMemberPoliciesModel struct {
-	Access           types.String                                   `tfsdk:"access" json:"access,required"`
-	PermissionGroups *[]*AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	ResourceGroups   *[]*AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`
+	Access           types.String                                                            `tfsdk:"access" json:"access,required"`
+	PermissionGroups customfield.NestedObjectSet[AccountMemberPoliciesPermissionGroupsModel] `tfsdk:"permission_groups" json:"permission_groups,required"`
+	ResourceGroups   customfield.NestedObjectSet[AccountMemberPoliciesResourceGroupsModel]   `tfsdk:"resource_groups" json:"resource_groups,required"`
 }
 
 type AccountMemberPoliciesPermissionGroupsModel struct {

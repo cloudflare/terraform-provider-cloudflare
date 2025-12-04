@@ -391,6 +391,11 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 	domainGroupID1 := createDomainGroup(t, rnd, accountID, zones[0].ID)
 	domainGroupID2 := createDomainGroup(t, rnd, accountID, zones[1].ID)
 
+	t.Cleanup(func() {
+		deleteDomainGroup(accountID, domainGroupID1)
+		deleteDomainGroup(accountID, domainGroupID2)
+	})
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
@@ -400,6 +405,25 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("cloudflare_account_member-add-resource-group1.tf", accountID, email, permissionGroupID, domainGroupID1),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(domainGroupID1)),
+				},
+			},
+			{
+				// Another apply should not cause any changes (stable state)
+				Config: acctest.LoadTestCase("cloudflare_account_member-add-resource-group1.tf", accountID, email, permissionGroupID, domainGroupID1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
@@ -425,12 +449,34 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(domainGroupID2)),
 				},
 			},
+			{
+				// Another apply should not cause any changes (stable state)
+				Config: acctest.LoadTestCase("cloudflare_account_member-add-resource-group2.tf", accountID, email, permissionGroupID, domainGroupID1, domainGroupID2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(permissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(domainGroupID1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact(domainGroupID2)),
+				},
+			},
+			{
+				ResourceName:        resourceName,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
 		},
 	})
-
-	//cleanup
-	deleteDomainGroup(accountID, domainGroupID1)
-	deleteDomainGroup(accountID, domainGroupID2)
 }
 
 func testCloudflareAccountMemberPoliciesConfig(accountID, emailAddress, permgroupId string) string {
