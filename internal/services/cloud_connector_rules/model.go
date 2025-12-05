@@ -31,7 +31,7 @@ type CloudConnectorRulesRulesModel struct {
 	Enabled                     types.Bool                               `tfsdk:"enabled" json:"enabled,optional"`
 	Expression                  types.String                             `tfsdk:"expression" json:"expression,optional"`
 	Parameters                  *CloudConnectorRulesRulesParametersModel `tfsdk:"parameters" json:"parameters,optional"`
-	CloudConnectorRulesProvider types.String                             `tfsdk:"cloud_connector_rules_provider" json:"provider,optional"`
+	CloudConnectorRulesProvider types.String                             `tfsdk:"provider" json:"provider,optional"`
 }
 
 type CloudConnectorRulesRulesParametersModel struct {
