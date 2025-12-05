@@ -218,7 +218,7 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
-	if os.Getenv("TF_ACC") != "" {
+	if os.Getenv("TF_ACC") == "" {
 		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
 	}
 	rnd := utils.GenerateRandomResourceName()
@@ -272,7 +272,7 @@ func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	if os.Getenv("TF_ACC") != "" {
+	if os.Getenv("TF_ACC") == "" {
 		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
 	}
 
@@ -333,7 +333,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	if os.Getenv("TF_ACC") != "" {
+	if os.Getenv("TF_ACC") == "" {
 		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
 	}
 
@@ -387,10 +387,10 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	if os.Getenv("TF_ACC") != "" {
+	if os.Getenv("TF_ACC") == "" {
 		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
 	}
-	
+
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -504,10 +504,10 @@ func getPermissionGroupId(t *testing.T, accountID string, label string) string {
 		Label:     cloudflarev6.String(label),
 	})
 	if err != nil {
-		t.Fatalf("Failed to list permission groups: %v", err)
+		t.Fatalf("Failed to list permission groups: %v for account %s", err, accountID)
 	}
 	if len(res.Result) == 0 {
-		t.Fatalf("Expected at least one permission group with label '%s' but got none", label)
+		t.Fatalf("Expected at least one permission group with label '%s' but got none for account %s", label, accountID)
 	}
 	return res.Result[0].ID
 }
@@ -521,10 +521,10 @@ func getRoleId(t *testing.T, accountID string, label string) string {
 		PerPage: cloudflarev6.Float(100),
 	})
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to list roles for account %s: %s", accountID, err)
 	}
 	if len(roles.Result) == 0 {
-		t.Fatal("no roles available for testing")
+		t.Fatalf("no roles available for testing for account %s", accountID)
 	}
 	var roleID string
 	for i, role := range roles.Result {
