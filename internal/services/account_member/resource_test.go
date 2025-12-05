@@ -2,7 +2,6 @@ package account_member_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -540,16 +539,6 @@ func getDomains(t *testing.T, accountID string) []zones.Zone {
 	return res.Result
 }
 
-// TODO unfortunately the SDK for resource groups is broken and the ID that comes
-// back is empty so we need to manually parse the json here
-type domaingroup struct {
-	ID string `json:"id"`
-}
-
-type response struct {
-	Result domaingroup `json:"result"`
-}
-
 func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
 	ctx := context.Background()
 	client := acctest.SharedClient()
@@ -566,14 +555,9 @@ func createDomainGroup(t *testing.T, rnd, accountID, domainID string) string {
 		}),
 	})
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Failed to create domain group: %v", err)
 	}
-	response := response{}
-	err = json.Unmarshal([]byte(domainGroup.JSON.RawJSON()), &response)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return response.Result.ID
+	return domainGroup.ID
 }
 
 func deleteDomainGroup(accountID, domainID string) error {
