@@ -14,6 +14,7 @@ import (
 )
 
 func TestAccCloudflareAccountSubscription_Basic(t *testing.T) {
+	t.Skip("Account requires an active payment method")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_subscription." + rnd
@@ -56,6 +57,7 @@ func TestAccCloudflareAccountSubscription_Basic(t *testing.T) {
 
 // https://github.com/cloudflare/terraform-provider-cloudflare/issues/5803
 func TestAccCloudflareAccountSubscription_ImportNoChanges(t *testing.T) {
+	t.Skip("Account requires an active payment method")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_subscription." + rnd
@@ -96,6 +98,7 @@ func TestAccCloudflareAccountSubscription_ImportNoChanges(t *testing.T) {
 
 // Test that import fails with invalid format
 func TestAccCloudflareAccountSubscription_ImportInvalidFormat(t *testing.T) {
+	t.Skip("Account requires an active payment method")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_subscription." + rnd
@@ -122,6 +125,7 @@ func TestAccCloudflareAccountSubscription_ImportInvalidFormat(t *testing.T) {
 
 // Test that import fails with non-existent subscription
 func TestAccCloudflareAccountSubscription_ImportNonExistent(t *testing.T) {
+	t.Skip("Account requires an active payment method")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_subscription." + rnd
@@ -147,6 +151,7 @@ func TestAccCloudflareAccountSubscription_ImportNonExistent(t *testing.T) {
 
 // Test computed fields are populated correctly after import
 func TestAccCloudflareAccountSubscription_ComputedFieldsAfterImport(t *testing.T) {
+	t.Skip("Account requires an active payment method")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_subscription." + rnd
