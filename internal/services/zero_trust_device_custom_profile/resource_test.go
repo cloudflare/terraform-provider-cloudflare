@@ -95,6 +95,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Basic(t *testing.T) {
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
+				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"exclude", "include"},
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 			},
@@ -154,6 +155,14 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Complete(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Updated custom device profile")),
 				},
 			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"exclude", "include"},
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			},
 		},
 	})
 }
@@ -190,6 +199,14 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_WithExclude(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(2)),
 				},
 			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"exclude", "include"},
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			},
 		},
 	})
 }
@@ -214,6 +231,14 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(3128)),
 				},
+			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"exclude", "include"},
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})
