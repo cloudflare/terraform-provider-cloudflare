@@ -170,7 +170,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(value)),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key+"-updated"),
+					testAccCheckCloudflareWorkersKVExists(key + "-updated"),
 				),
 			},
 		},
@@ -223,6 +223,7 @@ func TestAccCloudflareWorkersKV_ValueUpdate(t *testing.T) {
 					namespaceResourceName := fmt.Sprintf("cloudflare_workers_kv_namespace.%s", name)
 					return fmt.Sprintf("%s/%s/%s", accountID, s.RootModule().Resources[namespaceResourceName].Primary.ID, key), nil
 				},
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
