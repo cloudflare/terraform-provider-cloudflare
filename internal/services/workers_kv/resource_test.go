@@ -170,7 +170,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(value)),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key+"-updated"),
+					testAccCheckCloudflareWorkersKVExists(key + "-updated"),
 				),
 			},
 		},
@@ -223,6 +223,10 @@ func TestAccCloudflareWorkersKV_ValueUpdate(t *testing.T) {
 					namespaceResourceName := fmt.Sprintf("cloudflare_workers_kv_namespace.%s", name)
 					return fmt.Sprintf("%s/%s/%s", accountID, s.RootModule().Resources[namespaceResourceName].Primary.ID, key), nil
 				},
+				// After the update step above, the value configured will eventually be consistent. So at times when
+				// test immediately does a read after the update, the updated value may not have propagated completely
+				// and the API returns the old value.
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
