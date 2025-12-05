@@ -218,7 +218,9 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
-
+	if os.Getenv("TF_ACC") != "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -268,6 +270,10 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 func TestAccCloudflareAccountMember_RolesVsPolicies(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	if os.Getenv("TF_ACC") != "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
 	}
 
 	rnd := utils.GenerateRandomResourceName()
@@ -327,6 +333,10 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	if os.Getenv("TF_ACC") != "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
+
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -377,6 +387,10 @@ func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	if os.Getenv("TF_ACC") != "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
+	
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_account_member.test_member"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

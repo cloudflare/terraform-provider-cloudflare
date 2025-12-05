@@ -1027,9 +1027,6 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			if !ok {
 				continue
 			}
-			if ptag.name == "-" {
-				continue
-			}
 
 			// sets the appropriate unmarshal behavior if we are only un-marshaling
 			// computed properties.
@@ -1064,6 +1061,9 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				continue
 			}
 			if ptag.metadata {
+				continue
+			}
+			if ptag.name == "-" {
 				continue
 			}
 

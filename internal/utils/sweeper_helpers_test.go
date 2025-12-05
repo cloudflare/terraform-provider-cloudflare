@@ -11,8 +11,8 @@ func TestIsTestResource(t *testing.T) {
 		input    string
 		expected bool
 	}{
-		{"valid test resource", "cf-tf-test-abcdefghij", true},
-		{"valid test resource with suffix", "cf-tf-test-abcdefghij-updated", true},
+		{"valid test resource", "cftftestabcdefghij", true},
+		{"valid test resource with suffix", "cftftestabcdefghijupdated", true},
 		{"legacy test resource", "tf-acctest-abcdefghij", false},
 		{"production resource", "my-production-resource", false},
 		{"empty string", "", false},
@@ -34,10 +34,8 @@ func TestShouldSweepResource(t *testing.T) {
 		input    string
 		expected bool
 	}{
-		{"new test resource", "cf-tf-test-abcdefghij", true},
-		{"legacy test resource", "tf-acctest-abcdefghij", true},
-		{"new test resource with suffix", "cf-tf-test-basic", true},
-		{"legacy test resource with suffix", "tf-acctest-basic", true},
+		{"test resource", "cftftestabcdefghij", true},
+		{"test resource with suffix", "cftftestbasic", true},
 		{"production resource", "my-production-resource", false},
 		{"empty string", "", false},
 		{"similar but not matching", "cf-test-resource", false},
@@ -75,7 +73,7 @@ func TestShouldSweepResource_DangerMode(t *testing.T) {
 		{"production resource in danger mode", "my-production-resource", true},
 		{"random resource in danger mode", "anything-goes", true},
 		{"empty string in danger mode", "", true},
-		{"test resource in danger mode", "cf-tf-test-abc", true},
+		{"test resource in danger mode", "cftftestabc", true},
 	}
 
 	for _, tt := range tests {
