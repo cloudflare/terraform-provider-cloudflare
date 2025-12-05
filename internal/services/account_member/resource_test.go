@@ -227,8 +227,11 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email := fmt.Sprintf("%s@example.com", rnd)
 
-	initialRoleID := getRoleId(t, accountID, "Administrator")
-	updatedRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
+	adminRoleID := getRoleId(t, accountID, "Administrator")
+	superAdminRoleID := getRoleId(t, accountID, "Super Administrator - All Privileges")
+
+	adminPermissionGroupID := getPermissionGroupId(t, accountID, "admin")
+	superAdminPermissionGroupID := getPermissionGroupId(t, accountID, "all_privileges")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -239,28 +242,82 @@ func TestAccCloudflareAccountMember_RolesUpdate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Create with initial role
-				Config: testCloudflareAccountMemberRolesConfig(email, accountID, initialRoleID),
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, adminRoleID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(initialRoleID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(adminRoleID)),
+					// there are policies created by the server that are now on the state
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(adminPermissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
 				},
 			},
 			{
-				// Update role in-place (tests custom marshal logic)
-				Config: testCloudflareAccountMemberRolesConfig(email, accountID, updatedRoleID),
+				// Another apply should not cause any changes (stable state)
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, adminRoleID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRoleID)),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(updatedRoleID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(adminRoleID)),
+
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(adminPermissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+				},
+			},
+			{
+				// Update role in-place (tests custom marshal logic)
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, superAdminRoleID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(superAdminRoleID)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(superAdminRoleID)),
+
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(superAdminPermissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+				},
+			},
+			{
+				// Another apply should not cause any changes (stable state)
+				Config: testCloudflareAccountMemberRolesConfig(email, accountID, superAdminRoleID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(superAdminRoleID)),
+
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact(superAdminPermissionGroupID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
 				},
 			},
 		},

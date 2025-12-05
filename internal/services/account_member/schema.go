@@ -47,8 +47,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString("pending"),
 			},
-			"roles": schema.ListAttribute{
-				Description: "Array of roles associated with this member.",
+			"roles": schema.SetAttribute{
+				Description: "Set of roles associated with this member.",
+				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
 			},
