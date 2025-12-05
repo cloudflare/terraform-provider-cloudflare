@@ -129,7 +129,7 @@ func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -170,7 +170,7 @@ func TestAccCertificatePack_WaitForActive(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -249,7 +249,7 @@ func TestAccCertificatePack_Basic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -287,7 +287,7 @@ func TestAccCertificatePack_GoogleCA(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -325,7 +325,7 @@ func TestAccCertificatePack_SSLComCA(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -363,7 +363,7 @@ func TestAccCertificatePack_HttpValidation(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})
@@ -424,7 +424,7 @@ func TestAccCertificatePack_ValidityDays(t *testing.T) {
 						ImportState:             true,
 						ImportStateVerify:       true,
 						ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-						ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+						ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 					},
 				},
 			})
@@ -464,7 +464,7 @@ func TestAccCertificatePack_CloudflareBranding(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"certificate_authority", "cloudflare_branding", "hosts", "status", "type", "validation_method", "validity_days"},
+				ImportStateVerifyIgnore: []string{"certificate_authority", "certificates", "cloudflare_branding", "hosts", "primary_certificate", "status", "type", "validation_errors", "validation_method", "validation_records", "validity_days"},
 			},
 		},
 	})

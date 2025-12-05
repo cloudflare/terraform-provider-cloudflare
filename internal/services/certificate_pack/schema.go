@@ -90,12 +90,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"primary_certificate": schema.StringAttribute{
-				Description: "Identifier of the primary certificate in a pack.",
-				Computed:    true,
+				Description:   "Identifier of the primary certificate in a pack.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of certificate pack.\nAvailable values: \"initializing\", \"pending_validation\", \"deleted\", \"pending_issuance\", \"pending_deployment\", \"pending_deletion\", \"pending_expiration\", \"expired\", \"active\", \"initializing_timed_out\", \"validation_timed_out\", \"issuance_timed_out\", \"deployment_timed_out\", \"deletion_timed_out\", \"pending_cleanup\", \"staging_deployment\", \"staging_active\", \"deactivating\", \"inactive\", \"backup_issued\", \"holding_deployment\".",
 				Computed:    true,
+			PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -123,9 +125,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"certificates": schema.ListNestedAttribute{
-				Description: "Array of certificates in this pack.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CertificatePackCertificatesModel](ctx),
+				Description:   "Array of certificates in this pack.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackCertificatesModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -199,9 +202,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"validation_errors": schema.ListNestedAttribute{
-				Description: "Domain validation errors that have been received by the certificate authority (CA).",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationErrorsModel](ctx),
+				Description:   "Domain validation errors that have been received by the certificate authority (CA).",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackValidationErrorsModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"message": schema.StringAttribute{
@@ -212,9 +216,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"validation_records": schema.ListNestedAttribute{
-				Description: "Certificates' validation records.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationRecordsModel](ctx),
+				Description:   "Certificates' validation records.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackValidationRecordsModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"emails": schema.ListAttribute{
