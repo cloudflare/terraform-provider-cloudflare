@@ -177,7 +177,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_excludes").AtSliceIndex(0), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_excludes").AtSliceIndex(1), knownvalue.StringExact("prod")),
 				},
-				ExpectNonEmptyPlan: true, // Computed fields like canonical_deployment, latest_deployment can change
+				//ExpectNonEmptyPlan: true, // Computed fields like canonical_deployment, latest_deployment can change
 			},
 			{
 				ResourceName:        name,

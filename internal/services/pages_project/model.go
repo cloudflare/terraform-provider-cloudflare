@@ -56,19 +56,19 @@ type PagesProjectSourceModel struct {
 }
 
 type PagesProjectSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool      `tfsdk:"deployments_enabled" json:"deployments_enabled,optional"`
-	Owner                        types.String    `tfsdk:"owner" json:"owner,optional"`
-	OwnerID                      types.String    `tfsdk:"owner_id" json:"owner_id,optional"`
-	PathExcludes                 *[]types.String `tfsdk:"path_excludes" json:"path_excludes,optional"`
-	PathIncludes                 *[]types.String `tfsdk:"path_includes" json:"path_includes,optional"`
-	PrCommentsEnabled            types.Bool      `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,optional"`
-	PreviewBranchExcludes        *[]types.String `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,optional"`
-	PreviewBranchIncludes        *[]types.String `tfsdk:"preview_branch_includes" json:"preview_branch_includes,optional"`
-	PreviewDeploymentSetting     types.String    `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,optional"`
-	ProductionBranch             types.String    `tfsdk:"production_branch" json:"production_branch,optional"`
-	ProductionDeploymentsEnabled types.Bool      `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,optional"`
-	RepoID                       types.String    `tfsdk:"repo_id" json:"repo_id,optional"`
-	RepoName                     types.String    `tfsdk:"repo_name" json:"repo_name,optional"`
+	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed_optional"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed_optional"`
+	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed_optional"`
+	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed_optional"`
+	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed_optional"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed_optional"`
+	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed_optional"`
+	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed_optional"`
+	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed_optional"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed_optional"`
+	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed_optional"`
+	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed_optional"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed_optional"`
 }
 
 type PagesProjectDeploymentConfigsModel struct {

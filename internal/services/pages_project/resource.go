@@ -441,20 +441,20 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 		}
 	}
 
-	// Normalize source.config pointer slices
+	// Normalize source.config empty lists to null
 	if data.Source != nil && data.Source.Config != nil {
 		config := data.Source.Config
-		if config.PathExcludes != nil && len(*config.PathExcludes) == 0 {
-			config.PathExcludes = nil
+		if !config.PathExcludes.IsNull() && !config.PathExcludes.IsUnknown() && len(config.PathExcludes.Elements()) == 0 {
+			config.PathExcludes = customfield.NullList[types.String](ctx)
 		}
-		if config.PathIncludes != nil && len(*config.PathIncludes) == 0 {
-			config.PathIncludes = nil
+		if !config.PathIncludes.IsNull() && !config.PathIncludes.IsUnknown() && len(config.PathIncludes.Elements()) == 0 {
+			config.PathIncludes = customfield.NullList[types.String](ctx)
 		}
-		if config.PreviewBranchExcludes != nil && len(*config.PreviewBranchExcludes) == 0 {
-			config.PreviewBranchExcludes = nil
+		if !config.PreviewBranchExcludes.IsNull() && !config.PreviewBranchExcludes.IsUnknown() && len(config.PreviewBranchExcludes.Elements()) == 0 {
+			config.PreviewBranchExcludes = customfield.NullList[types.String](ctx)
 		}
-		if config.PreviewBranchIncludes != nil && len(*config.PreviewBranchIncludes) == 0 {
-			config.PreviewBranchIncludes = nil
+		if !config.PreviewBranchIncludes.IsNull() && !config.PreviewBranchIncludes.IsUnknown() && len(config.PreviewBranchIncludes.Elements()) == 0 {
+			config.PreviewBranchIncludes = customfield.NullList[types.String](ctx)
 		}
 	}
 
