@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -86,31 +84,6 @@ func testSweepCloudflareWorkerScripts(r string) error {
 	}
 
 	return nil
-}
-
-// supportsTerraformWriteOnly checks if the current Terraform version supports WriteOnly attributes (1.11+)
-func supportsTerraformWriteOnly() bool {
-	cmd := exec.Command("terraform", "version")
-	output, err := cmd.Output()
-	if err != nil {
-		return false
-	}
-
-	versionStr := string(output)
-	re := regexp.MustCompile(`Terraform v(\d+)\.(\d+)`)
-	matches := re.FindStringSubmatch(versionStr)
-	if len(matches) < 3 {
-		return false
-	}
-
-	major, err1 := strconv.Atoi(matches[1])
-	minor, err2 := strconv.Atoi(matches[2])
-	if err1 != nil || err2 != nil {
-		return false
-	}
-
-	// WriteOnly attributes require Terraform 1.11+
-	return major > 1 || (major == 1 && minor >= 11)
 }
 
 func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
@@ -505,10 +478,6 @@ func TestAcc_WorkerScriptWithAssets(t *testing.T) {
 func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	t.Parallel()
 
-	if !supportsTerraformWriteOnly() {
-		t.Skip("Skipping test: WriteOnly attributes require Terraform 1.11+ (DurableObject migrations are required)")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
 	name := "cloudflare_workers_script." + resourceName
@@ -533,7 +502,7 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "migrations", "startup_time_ms"},
 			},
 		},
 	})
