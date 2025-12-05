@@ -1,6 +1,6 @@
-resource "cloudflare_account_member" "%[1]s" {
-  account_id = "%[3]s"
-  email      = "%[2]s"
-  roles      = ["%[4]s"]
+resource "cloudflare_account_member" "test_member" {
+  account_id = "%[2]s"
+  email      = "%[1]s"
+  roles      = ["%[3]s"]
   status     = "pending"
 }

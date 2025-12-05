@@ -107,7 +107,7 @@ func unmarshalCustom(data []byte, configuredModel *AccountMemberModel) (*Account
 
 		if err := json.Unmarshal(data, &fullResponse); err == nil && len(fullResponse.Result.Policies) > 0 {
 			policies := append([]AccountMemberPoliciesModel(nil), fullResponse.Result.Policies...)
-			policiesList, diags := customfield.NewObjectList(context.Background(), policies)
+			policiesList, diags := customfield.NewObjectSet(context.Background(), policies)
 			if !diags.HasError() {
 				result.Policies = policiesList
 			} else {
