@@ -23,7 +23,7 @@ data "cloudflare_pages_project" "example_pages_project" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `project_name` (String) Name of the project.
 
 ### Read-Only
@@ -41,7 +41,7 @@ data "cloudflare_pages_project" "example_pages_project" {
 - `preview_script_name` (String) Name of the preview script.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
 - `production_script_name` (String) Name of the production script.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--source))
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
 - `uses_functions` (Boolean) Whether the project uses functions.
 
@@ -52,7 +52,7 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
@@ -77,9 +77,10 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--canonical_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--canonical_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
 
 <a id="nestedatt--canonical_deployment--build_config"></a>
 ### Nested Schema for `canonical_deployment.build_config`
@@ -88,7 +89,7 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
@@ -101,7 +102,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
-Available values: "push", "ad_hoc".
+Available values: "github:push", "ad_hoc", "deploy_hook".
 
 <a id="nestedatt--canonical_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `canonical_deployment.deployment_trigger.metadata`
@@ -109,6 +110,7 @@ Available values: "push", "ad_hoc".
 Read-Only:
 
 - `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
 - `commit_hash` (String) Hash of the deployment trigger commit.
 - `commit_message` (String) Message of the deployment trigger commit.
 
@@ -153,6 +155,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -162,6 +165,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 
@@ -508,9 +512,10 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--latest_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--latest_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
 
 <a id="nestedatt--latest_deployment--build_config"></a>
 ### Nested Schema for `latest_deployment.build_config`
@@ -519,7 +524,7 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
@@ -532,7 +537,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
-Available values: "push", "ad_hoc".
+Available values: "github:push", "ad_hoc", "deploy_hook".
 
 <a id="nestedatt--latest_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `latest_deployment.deployment_trigger.metadata`
@@ -540,6 +545,7 @@ Available values: "push", "ad_hoc".
 Read-Only:
 
 - `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
 - `commit_hash` (String) Hash of the deployment trigger commit.
 - `commit_message` (String) Message of the deployment trigger commit.
 
@@ -584,6 +590,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -593,6 +600,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 
@@ -628,6 +636,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -637,6 +646,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 

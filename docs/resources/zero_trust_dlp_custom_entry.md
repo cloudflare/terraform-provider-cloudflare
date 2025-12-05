@@ -46,6 +46,7 @@ Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
 - `id` (String) The ID of this resource.
+- `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
@@ -71,6 +72,15 @@ Read-Only:
 
 - `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
 - `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
+
+
+<a id="nestedatt--profiles"></a>
+### Nested Schema for `profiles`
+
+Read-Only:
+
+- `id` (String)
+- `name` (String)
 
 
 <a id="nestedatt--variant"></a>

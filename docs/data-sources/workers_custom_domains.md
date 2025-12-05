@@ -47,7 +47,7 @@ data "cloudflare_workers_custom_domains" "example_workers_custom_domains" {
 
 Read-Only:
 
-- `environment` (String) Worker environment associated with the zone and hostname.
+- `environment` (String, Deprecated) Worker environment associated with the zone and hostname.
 - `hostname` (String) Hostname of the Worker Domain.
 - `id` (String) Identifer of the Worker Domain.
 - `service` (String) Worker service associated with the zone and hostname.

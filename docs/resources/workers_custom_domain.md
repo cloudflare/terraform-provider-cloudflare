@@ -14,10 +14,10 @@ description: |-
 ```terraform
 resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
   account_id = "9a7806061c88ada191ed06f989cc3dac"
-  environment = "production"
   hostname = "foo.example.com"
   service = "foo"
   zone_id = "593c9c94de529bbbfaac7c53ced0447d"
+  environment = "production"
 }
 ```
 
@@ -27,10 +27,13 @@ resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
 ### Required
 
 - `account_id` (String) Identifer of the account.
-- `environment` (String) Worker environment associated with the zone and hostname.
 - `hostname` (String) Hostname of the Worker Domain.
 - `service` (String) Worker service associated with the zone and hostname.
 - `zone_id` (String) Identifier of the zone.
+
+### Optional
+
+- `environment` (String, Deprecated) Worker environment associated with the zone and hostname.
 
 ### Read-Only
 

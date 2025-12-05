@@ -47,7 +47,6 @@ Available values: "openapi_v3".
 
 Optional:
 
-- `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
 - `validation_enabled` (Boolean) Filter for enabled schemas
 
 

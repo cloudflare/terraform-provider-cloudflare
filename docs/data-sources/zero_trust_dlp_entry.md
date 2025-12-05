@@ -38,6 +38,7 @@ Cannot be set to false if secret is true
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 - `profile_id` (String)
+- `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
@@ -60,6 +61,15 @@ Read-Only:
 
 - `regex` (String)
 - `validation` (String, Deprecated) Available values: "luhn".
+
+
+<a id="nestedatt--profiles"></a>
+### Nested Schema for `profiles`
+
+Read-Only:
+
+- `id` (String)
+- `name` (String)
 
 
 <a id="nestedatt--variant"></a>
