@@ -25,7 +25,6 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
 	resource.AddTestSweepers("cloudflare_custom_hostname", &resource.Sweeper{
 		Name: "cloudflare_custom_hostname",
@@ -55,7 +54,6 @@ func TestAccCloudflareCustomHostname_LetsEncryptCA(t *testing.T) {
 		},
 	})
 }
-
 
 func TestAccCloudflareCustomHostname_InvalidHostname(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -463,7 +461,7 @@ func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) s
 // }
 
 func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
-
+	t.Skip("CLOUDFLARE_ALT_DOMAIN doesn't have the entitlements for custom hostnames")
 	var before, after cloudflare.CustomHostname
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
@@ -650,7 +648,6 @@ resource "cloudflare_custom_hostname" "%s" {
 }
 `, rnd, zoneID, rnd, domain, ca)
 }
-
 
 func testAccCheckCloudflareCustomHostnameWithTLSVersion(zoneID, rnd, domain, tlsVersion string) string {
 	return fmt.Sprintf(`
