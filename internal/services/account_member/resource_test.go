@@ -381,6 +381,7 @@ func TestAccCloudflareAccountMember_Policies(t *testing.T) {
 }
 
 func TestAccCloudflareAccountMember_PoliciesAddResourceGroup(t *testing.T) {
+	t.Skip("Needs a DSR enabled user")
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
