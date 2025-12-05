@@ -18,6 +18,7 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
   cidr = "192.0.2.0/24"
   delegate_loa_creation = true
   description = "Internal test prefix"
+  loa_document_id = "d933b1530bc56c9953cf8ce166da8004"
 }
 ```
 
@@ -34,6 +35,7 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 - `delegate_loa_creation` (Boolean) Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.
 - `description` (String) Description of the prefix.
+- `loa_document_id` (String) Identifier for the uploaded LOA document.
 
 ### Read-Only
 
@@ -43,7 +45,6 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 - `created_at` (String)
 - `id` (String) Identifier of an IP Prefix.
 - `irr_validation_state` (String) State of one kind of validation for an IP prefix.
-- `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean, Deprecated) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
 - `on_demand_locked` (Boolean, Deprecated) Whether advertisement status of the prefix is locked, meaning it cannot be changed.

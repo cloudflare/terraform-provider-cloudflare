@@ -45,7 +45,7 @@ Read-Only:
 - `name` (String) The name of the device posture rule.
 - `schedule` (String) Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.
 - `type` (String) The type of device posture rule.
-Available values: "file", "application", "tanium", "gateway", "warp", "disk_encryption", "serial_number", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s", "custom_s2s".
+Available values: "file", "application", "tanium", "gateway", "warp", "disk_encryption", "serial_number", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "antivirus", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s", "custom_s2s".
 
 <a id="nestedatt--result--input"></a>
 ### Nested Schema for `result.input`
@@ -100,6 +100,7 @@ Available values: "online", "offline", "unknown".
 - `subject_alternative_names` (List of String) List of certificate Subject Alternative Names.
 - `thumbprint` (String) Signing certificate thumbprint.
 - `total_score` (Number) For more details on total score, refer to the Tanium documentation.
+- `update_window_days` (Number) Number of days that the antivirus should be updated within.
 - `version` (String) Version of OS.
 - `version_operator` (String) Version Operator.
 Available values: "<", "<=", ">", ">=", "==".

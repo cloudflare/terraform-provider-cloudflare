@@ -41,7 +41,7 @@ Read-Only:
 bucket.
 - `account` (String)
 - `bucket` (String) Name of the bucket on the provider.
-- `provider` (String) Available values: "r2".
+- `r2_bucket_sippy_provider` (String) Available values: "r2".
 
 
 <a id="nestedatt--source"></a>
@@ -49,8 +49,9 @@ bucket.
 
 Read-Only:
 
-- `bucket` (String) Name of the bucket on the provider.
-- `provider` (String) Available values: "aws", "gcs".
+- `bucket` (String) Name of the bucket on the provider (AWS, GCS only).
+- `bucket_url` (String) S3-compatible URL (Generic S3-compatible providers only).
+- `r2_bucket_sippy_provider` (String) Available values: "aws", "gcs", "s3".
 - `region` (String) Region where the bucket resides (AWS only).
 
 

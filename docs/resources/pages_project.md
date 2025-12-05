@@ -94,15 +94,15 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       r2_buckets = {
         R2_BINDING = {
-          jurisdiction = "eu"
           name = "some-bucket"
+          jurisdiction = "eu"
         }
       }
       services = {
         SERVICE_BINDING = {
+          service = "example-worker"
           entrypoint = "MyHandler"
           environment = "production"
-          service = "example-worker"
         }
       }
       usage_model = "standard"
@@ -178,15 +178,15 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       r2_buckets = {
         R2_BINDING = {
-          jurisdiction = "eu"
           name = "some-bucket"
+          jurisdiction = "eu"
         }
       }
       services = {
         SERVICE_BINDING = {
+          service = "example-worker"
           entrypoint = "MyHandler"
           environment = "production"
-          service = "example-worker"
         }
       }
       usage_model = "standard"
@@ -202,6 +202,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
     config = {
       deployments_enabled = true
       owner = "my-org"
+      owner_id = "12345678"
       path_excludes = ["string"]
       path_includes = ["string"]
       pr_comments_enabled = true
@@ -210,6 +211,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
       preview_deployment_setting = "all"
       production_branch = "main"
       production_deployments_enabled = true
+      repo_id = "12345678"
       repo_name = "my-repo"
     }
     type = "github"
@@ -221,7 +223,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `name` (String) Name of the project.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
 
@@ -229,7 +231,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
 
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--build_config))
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
-- `source` (Attributes) (see [below for nested schema](#nestedatt--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--source))
 
 ### Read-Only
 
@@ -298,7 +300,7 @@ Available values: "standard", "bundled", "unbound".
 <a id="nestedatt--deployment_configs--preview--ai_bindings"></a>
 ### Nested Schema for `deployment_configs.preview.ai_bindings`
 
-Optional:
+Required:
 
 - `project_id` (String)
 
@@ -306,7 +308,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--analytics_engine_datasets"></a>
 ### Nested Schema for `deployment_configs.preview.analytics_engine_datasets`
 
-Optional:
+Required:
 
 - `dataset` (String) Name of the dataset.
 
@@ -318,7 +320,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--d1_databases"></a>
 ### Nested Schema for `deployment_configs.preview.d1_databases`
 
-Optional:
+Required:
 
 - `id` (String) UUID of the D1 database.
 
@@ -326,7 +328,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--durable_object_namespaces"></a>
 ### Nested Schema for `deployment_configs.preview.durable_object_namespaces`
 
-Optional:
+Required:
 
 - `namespace_id` (String) ID of the Durable Object namespace.
 
@@ -343,7 +345,7 @@ Required:
 <a id="nestedatt--deployment_configs--preview--hyperdrive_bindings"></a>
 ### Nested Schema for `deployment_configs.preview.hyperdrive_bindings`
 
-Optional:
+Required:
 
 - `id` (String)
 
@@ -351,7 +353,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--kv_namespaces"></a>
 ### Nested Schema for `deployment_configs.preview.kv_namespaces`
 
-Optional:
+Required:
 
 - `namespace_id` (String) ID of the KV namespace.
 
@@ -359,7 +361,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--limits"></a>
 ### Nested Schema for `deployment_configs.preview.limits`
 
-Optional:
+Required:
 
 - `cpu_ms` (Number) CPU time limit in milliseconds.
 
@@ -367,7 +369,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--mtls_certificates"></a>
 ### Nested Schema for `deployment_configs.preview.mtls_certificates`
 
-Optional:
+Required:
 
 - `certificate_id` (String)
 
@@ -383,7 +385,7 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--queue_producers"></a>
 ### Nested Schema for `deployment_configs.preview.queue_producers`
 
-Optional:
+Required:
 
 - `name` (String) Name of the Queue.
 
@@ -391,26 +393,32 @@ Optional:
 <a id="nestedatt--deployment_configs--preview--r2_buckets"></a>
 ### Nested Schema for `deployment_configs.preview.r2_buckets`
 
+Required:
+
+- `name` (String) Name of the R2 bucket.
+
 Optional:
 
 - `jurisdiction` (String) Jurisdiction of the R2 bucket.
-- `name` (String) Name of the R2 bucket.
 
 
 <a id="nestedatt--deployment_configs--preview--services"></a>
 ### Nested Schema for `deployment_configs.preview.services`
 
+Required:
+
+- `service` (String) The Service name.
+
 Optional:
 
 - `entrypoint` (String) The entrypoint to bind to.
 - `environment` (String) The Service environment.
-- `service` (String) The Service name.
 
 
 <a id="nestedatt--deployment_configs--preview--vectorize_bindings"></a>
 ### Nested Schema for `deployment_configs.preview.vectorize_bindings`
 
-Optional:
+Required:
 
 - `index_name` (String)
 
@@ -448,7 +456,7 @@ Available values: "standard", "bundled", "unbound".
 <a id="nestedatt--deployment_configs--production--ai_bindings"></a>
 ### Nested Schema for `deployment_configs.production.ai_bindings`
 
-Optional:
+Required:
 
 - `project_id` (String)
 
@@ -456,7 +464,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--analytics_engine_datasets"></a>
 ### Nested Schema for `deployment_configs.production.analytics_engine_datasets`
 
-Optional:
+Required:
 
 - `dataset` (String) Name of the dataset.
 
@@ -468,7 +476,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--d1_databases"></a>
 ### Nested Schema for `deployment_configs.production.d1_databases`
 
-Optional:
+Required:
 
 - `id` (String) UUID of the D1 database.
 
@@ -476,7 +484,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--durable_object_namespaces"></a>
 ### Nested Schema for `deployment_configs.production.durable_object_namespaces`
 
-Optional:
+Required:
 
 - `namespace_id` (String) ID of the Durable Object namespace.
 
@@ -493,7 +501,7 @@ Required:
 <a id="nestedatt--deployment_configs--production--hyperdrive_bindings"></a>
 ### Nested Schema for `deployment_configs.production.hyperdrive_bindings`
 
-Optional:
+Required:
 
 - `id` (String)
 
@@ -501,7 +509,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--kv_namespaces"></a>
 ### Nested Schema for `deployment_configs.production.kv_namespaces`
 
-Optional:
+Required:
 
 - `namespace_id` (String) ID of the KV namespace.
 
@@ -509,7 +517,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--limits"></a>
 ### Nested Schema for `deployment_configs.production.limits`
 
-Optional:
+Required:
 
 - `cpu_ms` (Number) CPU time limit in milliseconds.
 
@@ -517,7 +525,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--mtls_certificates"></a>
 ### Nested Schema for `deployment_configs.production.mtls_certificates`
 
-Optional:
+Required:
 
 - `certificate_id` (String)
 
@@ -533,7 +541,7 @@ Optional:
 <a id="nestedatt--deployment_configs--production--queue_producers"></a>
 ### Nested Schema for `deployment_configs.production.queue_producers`
 
-Optional:
+Required:
 
 - `name` (String) Name of the Queue.
 
@@ -541,26 +549,32 @@ Optional:
 <a id="nestedatt--deployment_configs--production--r2_buckets"></a>
 ### Nested Schema for `deployment_configs.production.r2_buckets`
 
+Required:
+
+- `name` (String) Name of the R2 bucket.
+
 Optional:
 
 - `jurisdiction` (String) Jurisdiction of the R2 bucket.
-- `name` (String) Name of the R2 bucket.
 
 
 <a id="nestedatt--deployment_configs--production--services"></a>
 ### Nested Schema for `deployment_configs.production.services`
 
+Required:
+
+- `service` (String) The Service name.
+
 Optional:
 
 - `entrypoint` (String) The entrypoint to bind to.
 - `environment` (String) The Service environment.
-- `service` (String) The Service name.
 
 
 <a id="nestedatt--deployment_configs--production--vectorize_bindings"></a>
 ### Nested Schema for `deployment_configs.production.vectorize_bindings`
 
-Optional:
+Required:
 
 - `index_name` (String)
 
@@ -570,7 +584,7 @@ Optional:
 <a id="nestedatt--source"></a>
 ### Nested Schema for `source`
 
-Optional:
+Required:
 
 - `config` (Attributes) (see [below for nested schema](#nestedatt--source--config))
 - `type` (String) The source control management provider.
@@ -584,6 +598,7 @@ Optional:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -593,6 +608,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 
@@ -616,9 +632,10 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--canonical_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--canonical_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
 
 <a id="nestedatt--canonical_deployment--build_config"></a>
 ### Nested Schema for `canonical_deployment.build_config`
@@ -627,7 +644,7 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
@@ -640,7 +657,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
-Available values: "push", "ad_hoc".
+Available values: "github:push", "ad_hoc", "deploy_hook".
 
 <a id="nestedatt--canonical_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `canonical_deployment.deployment_trigger.metadata`
@@ -648,6 +665,7 @@ Available values: "push", "ad_hoc".
 Read-Only:
 
 - `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
 - `commit_hash` (String) Hash of the deployment trigger commit.
 - `commit_message` (String) Message of the deployment trigger commit.
 
@@ -692,6 +710,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -701,6 +720,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 
@@ -738,9 +758,10 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment--source))
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--latest_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--latest_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
 
 <a id="nestedatt--latest_deployment--build_config"></a>
 ### Nested Schema for `latest_deployment.build_config`
@@ -749,7 +770,7 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
@@ -762,7 +783,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
-Available values: "push", "ad_hoc".
+Available values: "github:push", "ad_hoc", "deploy_hook".
 
 <a id="nestedatt--latest_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `latest_deployment.deployment_trigger.metadata`
@@ -770,6 +791,7 @@ Available values: "push", "ad_hoc".
 Read-Only:
 
 - `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
 - `commit_hash` (String) Hash of the deployment trigger commit.
 - `commit_message` (String) Message of the deployment trigger commit.
 
@@ -814,6 +836,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -823,6 +846,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
 
 

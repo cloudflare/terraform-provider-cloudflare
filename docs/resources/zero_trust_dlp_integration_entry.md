@@ -31,8 +31,8 @@ resource "cloudflare_zero_trust_dlp_integration_entry" "example_zero_trust_dlp_i
 
 ### Optional
 
-- `profile_id` (String) This field is not actually used as the owning profile for a predefined entry is already set
-to a predefined profile
+- `profile_id` (String) This field is not used as the owning profile.
+For predefined entries it is already set to a predefined profile.
 
 ### Read-Only
 
@@ -44,6 +44,7 @@ Cannot be set to false if secret is true
 - `id` (String) The ID of this resource.
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
+- `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
@@ -66,6 +67,15 @@ Read-Only:
 
 - `regex` (String)
 - `validation` (String, Deprecated) Available values: "luhn".
+
+
+<a id="nestedatt--profiles"></a>
+### Nested Schema for `profiles`
+
+Read-Only:
+
+- `id` (String)
+- `name` (String)
 
 
 <a id="nestedatt--variant"></a>

@@ -23,11 +23,86 @@ data "cloudflare_certificate_pack" "example_certificate_pack" {
 
 ### Required
 
-- `certificate_pack_id` (String) Identifier.
 - `zone_id` (String) Identifier.
+
+### Optional
+
+- `certificate_pack_id` (String) Identifier.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
+- `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
+Available values: "google", "lets_encrypt", "ssl_com".
+- `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--certificates))
+- `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.
+- `hosts` (List of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
 - `id` (String) Identifier.
+- `primary_certificate` (String) Identifier of the primary certificate in a pack.
+- `status` (String) Status of certificate pack.
+Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
+- `type` (String) Type of certificate pack.
+Available values: "mh_custom", "managed_hostname", "sni_custom", "universal", "advanced", "total_tls", "keyless", "legacy_custom".
+- `validation_errors` (Attributes List) Domain validation errors that have been received by the certificate authority (CA). (see [below for nested schema](#nestedatt--validation_errors))
+- `validation_method` (String) Validation Method selected for the order.
+Available values: "txt", "http", "email".
+- `validation_records` (Attributes List) Certificates' validation records. (see [below for nested schema](#nestedatt--validation_records))
+- `validity_days` (Number) Validity Days selected for the order.
+Available values: 14, 30, 90, 365.
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `status` (String) Include Certificate Packs of all statuses, not just active ones.
+Available values: "all".
+
+
+<a id="nestedatt--certificates"></a>
+### Nested Schema for `certificates`
+
+Read-Only:
+
+- `bundle_method` (String) Certificate bundle method.
+- `expires_on` (String) When the certificate from the authority expires.
+- `geo_restrictions` (Attributes) Specify the region where your private key can be held locally. (see [below for nested schema](#nestedatt--certificates--geo_restrictions))
+- `hosts` (List of String) Hostnames covered by this certificate.
+- `id` (String) Certificate identifier.
+- `issuer` (String) The certificate authority that issued the certificate.
+- `modified_on` (String) When the certificate was last modified.
+- `priority` (Number) The order/priority in which the certificate will be used.
+- `signature` (String) The type of hash used for the certificate.
+- `status` (String) Certificate status.
+- `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
+- `zone_id` (String) Identifier.
+
+<a id="nestedatt--certificates--geo_restrictions"></a>
+### Nested Schema for `certificates.geo_restrictions`
+
+Read-Only:
+
+- `label` (String) Available values: "us", "eu", "highest_security".
+
+
+
+<a id="nestedatt--validation_errors"></a>
+### Nested Schema for `validation_errors`
+
+Read-Only:
+
+- `message` (String) A domain validation error.
+
+
+<a id="nestedatt--validation_records"></a>
+### Nested Schema for `validation_records`
+
+Read-Only:
+
+- `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
+- `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.
+- `http_url` (String) The url that will be checked during domain validation.
+- `txt_name` (String) The hostname that the certificate authority (CA) will check for a TXT record during domain validation .
+- `txt_value` (String) The TXT record that the certificate authority (CA) will check during domain validation.
 
 
