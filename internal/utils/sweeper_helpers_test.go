@@ -28,29 +28,6 @@ func TestIsTestResource(t *testing.T) {
 	}
 }
 
-func TestIsLegacyTestResource(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected bool
-	}{
-		{"legacy test resource", "tf-acctest-abcdefghij", true},
-		{"legacy test resource with suffix", "tf-acctest-basic", true},
-		{"new test resource", "cf-tf-test-abcdefghij", false},
-		{"production resource", "my-production-resource", false},
-		{"empty string", "", false},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := IsLegacyTestResource(tt.input)
-			if result != tt.expected {
-				t.Errorf("IsLegacyTestResource(%q) = %v, want %v", tt.input, result, tt.expected)
-			}
-		})
-	}
-}
-
 func TestShouldSweepResource(t *testing.T) {
 	tests := []struct {
 		name     string
