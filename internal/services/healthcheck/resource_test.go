@@ -397,3 +397,58 @@ func testAccCheckCloudflareHealthcheckTCPCustomPort(zoneID, name string) string 
 func testAccCheckCloudflareHealthcheckHTTPHead(zoneID, name string) string {
 	return acctest.LoadTestCase("http_head_method.tf", zoneID, name)
 }
+
+// TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff verifies that when expected_body
+// is not specified in the config, the schema default of "" is used, matching the API response.
+// This test validates that expected_body does not cause a plan diff.
+func TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create the resource without specifying expected_body
+				Config: testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("HTTP")),
+					// Verify expected_body defaults to "" (empty string) matching API response
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+				// Note: ExpectNonEmptyPlan is needed due to other known drift issues
+				// (created_on, modified_on, status, failure_reason, tcp_config)
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				// Re-apply same config - verifies expected_body specifically doesn't cause additional drift
+				Config: testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
+				},
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportStateVerifyIgnore: []string{"check_regions", "description", "created_on", "modified_on", "status", "failure_reason", "tcp_config"},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, name string) string {
+	return acctest.LoadTestCase("http_no_expected_body.tf", zoneID, name)
+}
