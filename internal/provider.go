@@ -132,6 +132,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
@@ -491,6 +492,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		managed_transforms.NewResource,
 		page_shield_policy.NewResource,
 		ruleset.NewResource,
+		ruleset_rule.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
 		regional_hostname.NewResource,
@@ -766,6 +768,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_shield_cookies.NewPageShieldCookiesListDataSource,
 		ruleset.NewRulesetDataSource,
 		ruleset.NewRulesetsDataSource,
+		ruleset_rule.NewRulesetRuleDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
