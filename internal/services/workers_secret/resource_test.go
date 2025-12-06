@@ -10,9 +10,30 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_workers_secret", &resource.Sweeper{
+		Name: "cloudflare_workers_secret",
+		F:    testSweepCloudflareWorkersSecret,
+	})
+}
+
+func testSweepCloudflareWorkersSecret(r string) error {
+	ctx := context.Background()
+	// Workers Secret is a worker script-level secret configuration.
+	// When worker scripts are swept, secrets are cleaned up automatically.
+	// No sweeping required.
+	tflog.Info(ctx, "Workers Secret doesn't require sweeping (worker script secret)")
+	return nil
+}
 
 const scriptContentForSecret = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 

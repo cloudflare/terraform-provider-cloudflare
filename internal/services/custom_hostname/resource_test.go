@@ -3,7 +3,6 @@ package custom_hostname_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -20,13 +19,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-	"github.com/pkg/errors"
 )
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-
 
 func init() {
 	resource.AddTestSweepers("cloudflare_custom_hostname", &resource.Sweeper{
@@ -57,7 +54,6 @@ func TestAccCloudflareCustomHostname_LetsEncryptCA(t *testing.T) {
 		},
 	})
 }
-
 
 func TestAccCloudflareCustomHostname_InvalidHostname(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -185,30 +181,37 @@ func testSweepCloudflareCustomHostnames(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
-		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+		tflog.Info(ctx, "Skipping custom hostnames sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
 	}
 
-	hostnames, _, hostnamesErr := client.CustomHostnames(context.Background(), zoneID, 1, cloudflare.CustomHostname{})
+	hostnames, _, hostnamesErr := client.CustomHostnames(ctx, zoneID, 1, cloudflare.CustomHostname{})
 	if hostnamesErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare custom hostnames: %s", hostnamesErr))
+		return hostnamesErr
 	}
 
 	if len(hostnames) == 0 {
-		log.Print("[DEBUG] No Cloudflare custom hostnames to sweep")
+		tflog.Info(ctx, "No Cloudflare custom hostnames to sweep")
 		return nil
 	}
 
 	for _, hostname := range hostnames {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare custom hostname: %s", hostname.ID))
-		err := client.DeleteCustomHostname(context.Background(), zoneID, hostname.ID)
-
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare custom hostname (%s): %s", hostname.Hostname, err))
+		if !utils.ShouldSweepResource(hostname.Hostname) {
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting custom hostname: %s (%s)", hostname.Hostname, hostname.ID))
+		err := client.DeleteCustomHostname(ctx, zoneID, hostname.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete custom hostname %s (%s): %s", hostname.Hostname, hostname.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted custom hostname: %s (%s)", hostname.Hostname, hostname.ID))
 	}
 
 	return nil
@@ -458,7 +461,7 @@ func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) s
 // }
 
 func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
-
+	t.Skip("CLOUDFLARE_ALT_DOMAIN doesn't have the entitlements for custom hostnames")
 	var before, after cloudflare.CustomHostname
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
@@ -645,7 +648,6 @@ resource "cloudflare_custom_hostname" "%s" {
 }
 `, rnd, zoneID, rnd, domain, ca)
 }
-
 
 func testAccCheckCloudflareCustomHostnameWithTLSVersion(zoneID, rnd, domain, tlsVersion string) string {
 	return fmt.Sprintf(`

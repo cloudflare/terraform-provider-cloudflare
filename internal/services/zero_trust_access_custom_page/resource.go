@@ -214,7 +214,7 @@ func (r *ZeroTrustAccessCustomPageResource) Delete(ctx context.Context, req reso
 }
 
 func (r *ZeroTrustAccessCustomPageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessCustomPageModel = new(ZeroTrustAccessCustomPageModel)
+	var data = new(ZeroTrustAccessCustomPageModel)
 
 	path_account_id := ""
 	path_custom_page_id := ""

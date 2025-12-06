@@ -17,6 +17,7 @@ type CloudforceOneRequestAssetResultDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestAssetDataSourceModel struct {
+	ID          types.String      `tfsdk:"id" path:"asset_id,computed"`
 	AssetID     types.String      `tfsdk:"asset_id" path:"asset_id,required"`
 	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
 	RequestID   types.String      `tfsdk:"request_id" path:"request_id,required"`

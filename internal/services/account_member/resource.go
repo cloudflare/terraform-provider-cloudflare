@@ -206,7 +206,7 @@ func (r *AccountMemberResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *AccountMemberResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccountMemberModel = new(AccountMemberModel)
+	var data = new(AccountMemberModel)
 
 	path_account_id := ""
 	path_member_id := ""

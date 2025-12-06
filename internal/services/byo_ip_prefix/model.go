@@ -17,6 +17,7 @@ type ByoIPPrefixModel struct {
 	AccountID                types.String      `tfsdk:"account_id" path:"account_id,required"`
 	ASN                      types.Int64       `tfsdk:"asn" json:"asn,required"`
 	CIDR                     types.String      `tfsdk:"cidr" json:"cidr,required"`
+	LOADocumentID            types.String      `tfsdk:"loa_document_id" json:"loa_document_id,optional"`
 	DelegateLOACreation      types.Bool        `tfsdk:"delegate_loa_creation" json:"delegate_loa_creation,computed_optional"`
 	Description              types.String      `tfsdk:"description" json:"description,optional"`
 	Advertised               types.Bool        `tfsdk:"advertised" json:"advertised,computed"`
@@ -24,7 +25,6 @@ type ByoIPPrefixModel struct {
 	Approved                 types.String      `tfsdk:"approved" json:"approved,computed"`
 	CreatedAt                timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IrrValidationState       types.String      `tfsdk:"irr_validation_state" json:"irr_validation_state,computed"`
-	LOADocumentID            types.String      `tfsdk:"loa_document_id" json:"loa_document_id,computed"`
 	ModifiedAt               timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	OnDemandEnabled          types.Bool        `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
 	OnDemandLocked           types.Bool        `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`

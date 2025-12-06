@@ -217,7 +217,7 @@ func (r *LoadBalancerMonitorResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *LoadBalancerMonitorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LoadBalancerMonitorModel = new(LoadBalancerMonitorModel)
+	var data = new(LoadBalancerMonitorModel)
 
 	path_account_id := ""
 	path_monitor_id := ""

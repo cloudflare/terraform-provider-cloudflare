@@ -3,26 +3,25 @@ package zero_trust_access_group_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-
 
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_group", &resource.Sweeper{
@@ -37,42 +36,66 @@ func testSweepCloudflareAccessGroups(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	// Zone level Access Groups
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping zone-level Access Groups sweep: CLOUDFLARE_ZONE_ID not set")
+		zoneID = "skip" // Use placeholder to skip zone sweep
+	}
 	zoneAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
 	}
 
 	if len(zoneAccessGroups) == 0 {
-		log.Print("[DEBUG] No Cloudflare zone level Access Groups to sweep")
-		return nil
+		tflog.Info(ctx, "No Cloudflare zone level Access Groups to sweep")
 	}
 
 	for _, accessGroup := range zoneAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessGroup.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(accessGroup.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting zone-level Access Group: %s (%s)", accessGroup.Name, accessGroup.ID))
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessGroup.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone-level Access Group %s (%s): %s", accessGroup.Name, accessGroup.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted zone-level Access Group: %s (%s)", accessGroup.Name, accessGroup.ID))
 	}
 
 	// Account level Access Groups
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping account-level Access Groups sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
 	accountAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
 	}
 
 	if len(accountAccessGroups) == 0 {
-		log.Print("[DEBUG] No Cloudflare account level Access Groups to sweep")
+		tflog.Info(ctx, "No Cloudflare account level Access Groups to sweep")
 		return nil
 	}
 
 	for _, accessGroup := range accountAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(accountID), accessGroup.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(accessGroup.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account-level Access Group: %s (%s)", accessGroup.Name, accessGroup.ID))
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(accountID), accessGroup.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account-level Access Group %s (%s): %s", accessGroup.Name, accessGroup.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account-level Access Group: %s (%s)", accessGroup.Name, accessGroup.ID))
 	}
 
 	return nil
@@ -576,7 +599,6 @@ func testAccCloudflareAccessGroupConfigLoginMethod(resourceName, accountID strin
 	return acctest.LoadTestCase("accessgroupconfigloginmethod.tf", resourceName, accountID)
 }
 
-
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -867,7 +889,6 @@ func TestAccCloudflareAccessGroup_ComplexRuleCombinations(t *testing.T) {
 		},
 	})
 }
-
 
 func TestAccCloudflareAccessGroup_UpdateOptionalAttributes(t *testing.T) {
 	var before, after cloudflare.AccessGroup

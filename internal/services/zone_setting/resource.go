@@ -193,7 +193,7 @@ func (r *ZoneSettingResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *ZoneSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneSettingModel = new(ZoneSettingModel)
+	var data = new(ZoneSettingModel)
 
 	path_zone_id := ""
 	path_setting_id := ""

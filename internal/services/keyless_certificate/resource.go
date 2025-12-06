@@ -210,7 +210,7 @@ func (r *KeylessCertificateResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *KeylessCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *KeylessCertificateModel = new(KeylessCertificateModel)
+	var data = new(KeylessCertificateModel)
 
 	path_zone_id := ""
 	path_keyless_certificate_id := ""

@@ -13,8 +13,8 @@ jobs:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     env:
       CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
-      CLOUDFLARE_ALT_DOMAIN: terraform2.cfapi.net
-      CLOUDFLARE_ALT_ZONE_ID: b72110c08e3382597095c29ba7e661ea
+      CLOUDFLARE_ALT_DOMAIN: terraform-alt.cfapi.net
+      CLOUDFLARE_ALT_ZONE_ID: ed9caae55809bfe3209699f602ce17fc
       CLOUDFLARE_DOMAIN: terraform.cfapi.net
       CLOUDFLARE_EMAIL: terraform-acceptance-test@cfapi.net
       CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711

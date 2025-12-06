@@ -214,7 +214,7 @@ func (r *SchemaValidationSchemasResource) Delete(ctx context.Context, req resour
 }
 
 func (r *SchemaValidationSchemasResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *SchemaValidationSchemasModel = new(SchemaValidationSchemasModel)
+	var data = new(SchemaValidationSchemasModel)
 
 	path_zone_id := ""
 	path_schema_id := ""

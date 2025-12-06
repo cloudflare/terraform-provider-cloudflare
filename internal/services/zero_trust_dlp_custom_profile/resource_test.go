@@ -73,8 +73,8 @@ func testSweepCloudflareZeroTrustDlpCustomProfile(r string) error {
 			continue
 		}
 
-		// Filter by test naming convention
-		if !isTestResource(profile.Name) {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(profile.Name) {
 			continue
 		}
 
@@ -83,7 +83,7 @@ func testSweepCloudflareZeroTrustDlpCustomProfile(r string) error {
 		})
 		if err != nil {
 			// Log but don't fail - continue sweeping
-			fmt.Printf("Failed to delete DLP custom profile %s (%s): %v\n", profile.Name, profile.ID, err)
+			continue
 		}
 	}
 

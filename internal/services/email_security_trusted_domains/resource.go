@@ -210,7 +210,7 @@ func (r *EmailSecurityTrustedDomainsResource) Delete(ctx context.Context, req re
 }
 
 func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailSecurityTrustedDomainsModel = new(EmailSecurityTrustedDomainsModel)
+	var data = new(EmailSecurityTrustedDomainsModel)
 
 	path_account_id := ""
 	path_trusted_domain_id := int64(0)

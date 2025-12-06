@@ -214,7 +214,7 @@ func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *ZeroTrustDEXTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDEXTestModel = new(ZeroTrustDEXTestModel)
+	var data = new(ZeroTrustDEXTestModel)
 
 	path_account_id := ""
 	path_dex_test_id := ""

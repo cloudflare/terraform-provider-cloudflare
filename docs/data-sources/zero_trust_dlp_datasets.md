@@ -47,7 +47,7 @@ Read-Only:
 - `num_cells` (Number)
 - `secret` (Boolean)
 - `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `updated_at` (String) When the dataset was last updated.
+- `updated_at` (String) Stores when the dataset was last updated.
 
 This includes name or description changes as well as uploads.
 - `uploads` (Attributes List) (see [below for nested schema](#nestedatt--result--uploads))

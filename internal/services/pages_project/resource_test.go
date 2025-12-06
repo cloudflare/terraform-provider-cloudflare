@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/pages"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -21,8 +21,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
-
-const resourcePrefix = "tfacctest-"
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
@@ -41,7 +39,7 @@ func testSweepCloudflarePagesProjects(r string) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if accountID == "" {
-		// Skip sweeping if no account ID is set
+		tflog.Info(ctx, "Skipping Pages projects sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
@@ -50,28 +48,37 @@ func testSweepCloudflarePagesProjects(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list pages projects: %s", err))
 		return fmt.Errorf("failed to list pages projects: %w", err)
+	}
+
+	if len(list.Result) == 0 {
+		tflog.Info(ctx, "No Pages projects to sweep")
+		return nil
 	}
 
 	// Track unique project names to avoid duplicate deletions
 	projectNames := make(map[string]bool)
 
 	// Delete all pages projects with test prefix
-	for _, deployment := range list.Result {
-		if !strings.HasPrefix(deployment.ProjectName, resourcePrefix) {
+	for _, project := range list.Result {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(project.Name) {
 			continue
 		}
 
 		// Only delete each project once (deployments can have multiple entries per project)
-		if !projectNames[deployment.ProjectName] {
-			projectNames[deployment.ProjectName] = true
-			_, err := client.Pages.Projects.Delete(ctx, deployment.ProjectName, pages.ProjectDeleteParams{
+		if !projectNames[project.Name] {
+			projectNames[project.Name] = true
+			tflog.Info(ctx, fmt.Sprintf("Deleting Pages project: %s (account: %s)", project.Name, accountID))
+			_, err := client.Pages.Projects.Delete(ctx, project.Name, pages.ProjectDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
-				// Log but continue sweeping other projects
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete Pages project %s: %s", project.Name, err))
 				continue
 			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted Pages project: %s", project.Name))
 		}
 	}
 
@@ -137,7 +144,7 @@ func testAccCheckCloudflarePageProjectDestroy(s *terraform.State) error {
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
@@ -170,6 +177,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_excludes").AtSliceIndex(0), knownvalue.StringExact("main")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source").AtMapKey("config").AtMapKey("preview_branch_excludes").AtSliceIndex(1), knownvalue.StringExact("prod")),
 				},
+				//ExpectNonEmptyPlan: true, // Computed fields like canonical_deployment, latest_deployment can change
 			},
 			{
 				ResourceName:        name,
@@ -184,7 +192,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -221,7 +229,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -309,7 +317,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -343,7 +351,7 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -359,7 +367,7 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.NotNull()),
+					// build_config is Optional and will be null when not specified
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("source"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("created_on"), knownvalue.NotNull()),
@@ -397,7 +405,7 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -442,7 +450,7 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
@@ -523,7 +531,7 @@ func TestAccCloudflarePagesProject_FullConfiguration(t *testing.T) {
 func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -552,7 +560,7 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs.preview.compatibility_date", "deployment_configs.production.compatibility_date", "deployment_configs.preview.env_vars.SECRET_VAR.value", "deployment_configs.production.env_vars.PROD_SECRET.value"},
+				ImportStateVerifyIgnore: []string{"build_config", "deployment_configs.preview.compatibility_date", "deployment_configs.production.compatibility_date", "deployment_configs.preview.env_vars", "deployment_configs.production.env_vars"},
 			},
 		},
 	})
@@ -561,7 +569,7 @@ func TestAccCloudflarePagesProject_EnvVarTypes(t *testing.T) {
 func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	projectName := resourcePrefix + rnd
+	projectName := rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")

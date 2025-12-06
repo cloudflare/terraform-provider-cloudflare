@@ -50,11 +50,40 @@ Available values: 14, 30, 90, 365.
 
 ### Read-Only
 
+- `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--certificates))
 - `id` (String) Identifier.
+- `primary_certificate` (String) Identifier of the primary certificate in a pack.
 - `status` (String) Status of certificate pack.
 Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
 - `validation_errors` (Attributes List) Domain validation errors that have been received by the certificate authority (CA). (see [below for nested schema](#nestedatt--validation_errors))
-- `validation_records` (Attributes List) Certificates' validation records. Only present when certificate pack is in "pending_validation" status (see [below for nested schema](#nestedatt--validation_records))
+- `validation_records` (Attributes List) Certificates' validation records. (see [below for nested schema](#nestedatt--validation_records))
+
+<a id="nestedatt--certificates"></a>
+### Nested Schema for `certificates`
+
+Read-Only:
+
+- `bundle_method` (String) Certificate bundle method.
+- `expires_on` (String) When the certificate from the authority expires.
+- `geo_restrictions` (Attributes) Specify the region where your private key can be held locally. (see [below for nested schema](#nestedatt--certificates--geo_restrictions))
+- `hosts` (List of String) Hostnames covered by this certificate.
+- `id` (String) Certificate identifier.
+- `issuer` (String) The certificate authority that issued the certificate.
+- `modified_on` (String) When the certificate was last modified.
+- `priority` (Number) The order/priority in which the certificate will be used.
+- `signature` (String) The type of hash used for the certificate.
+- `status` (String) Certificate status.
+- `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
+- `zone_id` (String) Identifier.
+
+<a id="nestedatt--certificates--geo_restrictions"></a>
+### Nested Schema for `certificates.geo_restrictions`
+
+Read-Only:
+
+- `label` (String) Available values: "us", "eu", "highest_security".
+
+
 
 <a id="nestedatt--validation_errors"></a>
 ### Nested Schema for `validation_errors`

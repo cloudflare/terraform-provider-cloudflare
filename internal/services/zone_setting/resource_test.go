@@ -11,12 +11,33 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zone_setting", &resource.Sweeper{
+		Name: "cloudflare_zone_setting",
+		F:    testSweepCloudflareZoneSetting,
+	})
+}
+
+func testSweepCloudflareZoneSetting(r string) error {
+	ctx := context.Background()
+	// Zone Setting is a zone-level configuration setting.
+	// Settings are zone configurations, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zone Setting doesn't require sweeping (zone configuration)")
+	return nil
+}
 
 func TestAccCloudflareZoneSetting_OnOff(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -276,6 +297,10 @@ func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
 func TestAccCloudflareZoneSetting_EditableInconsistency(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
+	// First, check which settings are actually editable on this zone by querying the API
+	client := acctest.SharedClient()
+	ctx := context.Background()
+
 	// Test the problematic settings that have editable inconsistency issues
 	problematicSettings := []struct {
 		settingID string
@@ -294,6 +319,22 @@ func TestAccCloudflareZoneSetting_EditableInconsistency(t *testing.T) {
 
 	for _, setting := range problematicSettings {
 		t.Run(setting.settingID, func(t *testing.T) {
+			// Check if this setting is editable on the test zone
+			settingResp, err := client.Zones.Settings.Get(ctx, setting.settingID, zones.SettingGetParams{
+				ZoneID: cloudflare.F(zoneID),
+			})
+
+			if err != nil {
+				t.Skipf("Could not fetch setting %s: %v", setting.settingID, err)
+				return
+			}
+
+			// Skip if the setting is not editable on this zone
+			if !bool(settingResp.Editable) {
+				t.Skipf("Setting %s is not editable on this zone (requires specific plan/entitlement)", setting.settingID)
+				return
+			}
+
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 

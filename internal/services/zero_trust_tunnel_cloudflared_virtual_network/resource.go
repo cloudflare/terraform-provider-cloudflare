@@ -216,7 +216,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Delete(ctx context.Co
 }
 
 func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustTunnelCloudflaredVirtualNetworkModel = new(ZeroTrustTunnelCloudflaredVirtualNetworkModel)
+	var data = new(ZeroTrustTunnelCloudflaredVirtualNetworkModel)
 
 	path_account_id := ""
 	path_virtual_network_id := ""

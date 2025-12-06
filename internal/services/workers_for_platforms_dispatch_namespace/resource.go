@@ -168,7 +168,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Contex
 }
 
 func (r *WorkersForPlatformsDispatchNamespaceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersForPlatformsDispatchNamespaceModel = new(WorkersForPlatformsDispatchNamespaceModel)
+	var data = new(WorkersForPlatformsDispatchNamespaceModel)
 
 	path_account_id := ""
 	path_dispatch_namespace := ""

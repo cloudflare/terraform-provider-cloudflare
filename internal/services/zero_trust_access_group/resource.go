@@ -250,7 +250,7 @@ func (r *ZeroTrustAccessGroupResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *ZeroTrustAccessGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessGroupModel = new(ZeroTrustAccessGroupModel)
+	var data = new(ZeroTrustAccessGroupModel)
 	params := zero_trust.AccessGroupGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

@@ -15,6 +15,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_waiting_room_rules", &resource.Sweeper{
+		Name: "cloudflare_waiting_room_rules",
+		F:    testSweepCloudflareWaitingRoomRules,
+	})
+}
+
+func testSweepCloudflareWaitingRoomRules(r string) error {
+	ctx := context.Background()
+	// Waiting Room Rules is a waiting room-level configuration.
+	// Rules are tied to waiting rooms, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Waiting Room Rules doesn't require sweeping (waiting room configuration)")
+	return nil
+}
+
 func TestAccCloudflareWaitingRoomRules_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

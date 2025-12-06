@@ -12,8 +12,10 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -64,6 +66,7 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	// Save plan deployment_configs to preserve secret env vars later
 	planDeploymentConfigs := data.DeploymentConfigs
 
 	dataBytes, err := data.MarshalJSON()
@@ -94,6 +97,14 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	data = &env.Result
 	data.ID = data.Name
+
+	// Normalize empty build_config and empty pointer slices to null before preserving env vars
+	var normDiags diag.Diagnostics
+	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	if normDiags.HasError() {
+		resp.Diagnostics.Append(normDiags...)
+		return
+	}
 
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
@@ -154,6 +165,14 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 	data = &env.Result
 	data.ID = data.Name
 
+	// Normalize empty pointer slices and structs to null before preserving env vars
+	var normDiags diag.Diagnostics
+	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	if normDiags.HasError() {
+		resp.Diagnostics.Append(normDiags...)
+		return
+	}
+
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, planDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
 		resp.Diagnostics.Append(diags...)
@@ -173,6 +192,8 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	// Preserve state values for comparison
+	stateData := *data
 	stateDeploymentConfigs := data.DeploymentConfigs
 
 	res := new(http.Response)
@@ -203,6 +224,20 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 	data.ID = data.Name
+
+	// Preserve build_config from state only if API didn't return it
+	// This handles the case where the API inconsistently returns build_config
+	if data.BuildConfig == nil && stateData.BuildConfig != nil {
+		data.BuildConfig = stateData.BuildConfig
+	}
+
+	// Normalize empty pointer slices to null before preserving env vars
+	var normDiags diag.Diagnostics
+	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	if normDiags.HasError() {
+		resp.Diagnostics.Append(normDiags...)
+		return
+	}
 
 	updatedDeploymentConfigs, diags := PreserveSecretEnvVars(ctx, stateDeploymentConfigs, data.DeploymentConfigs)
 	if diags.HasError() {
@@ -241,7 +276,7 @@ func (r *PagesProjectResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *PagesProjectResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *PagesProjectModel = new(PagesProjectModel)
+	var data = new(PagesProjectModel)
 
 	path_account_id := ""
 	path_project_name := ""
@@ -283,9 +318,209 @@ func (r *PagesProjectResource) ImportState(ctx context.Context, req resource.Imp
 	data = &env.Result
 	data.ID = data.Name
 
+	// Normalize deployment_configs to match API behavior - empty pointer slices should be null
+	var normDiags diag.Diagnostics
+	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	if normDiags.HasError() {
+		resp.Diagnostics.Append(normDiags...)
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *PagesProjectResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *PagesProjectResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// If we're deleting the resource, no need to modify the plan
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 
+	// If the state is null (resource doesn't exist yet), no need to modify the plan
+	if req.State.Raw.IsNull() {
+		return
+	}
+
+	var plan, state *PagesProjectModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Preserve computed-only and computed_optional fields from state during refresh
+	// These fields are marked as Computed or ComputedOptional in the schema and should
+	// not change during a refresh unless the user explicitly updates the configuration
+
+	// Preserve canonical_deployment if it's unknown in the plan but present in state
+	if plan.CanonicalDeployment.IsUnknown() && !state.CanonicalDeployment.IsNull() {
+		plan.CanonicalDeployment = state.CanonicalDeployment
+	}
+
+	// Preserve latest_deployment if it's unknown in the plan but present in state
+	if plan.LatestDeployment.IsUnknown() && !state.LatestDeployment.IsNull() {
+		plan.LatestDeployment = state.LatestDeployment
+	}
+
+	// Preserve deployment_configs if it's unknown in the plan but present in state
+	// This is a computed_optional field that can have nested unknown values
+	if plan.DeploymentConfigs.IsUnknown() && !state.DeploymentConfigs.IsNull() {
+		plan.DeploymentConfigs = state.DeploymentConfigs
+	}
+
+	// Preserve other computed fields
+	if plan.CreatedOn.IsUnknown() && !state.CreatedOn.IsNull() {
+		plan.CreatedOn = state.CreatedOn
+	}
+
+	if plan.Framework.IsUnknown() && !state.Framework.IsNull() {
+		plan.Framework = state.Framework
+	}
+
+	if plan.FrameworkVersion.IsUnknown() && !state.FrameworkVersion.IsNull() {
+		plan.FrameworkVersion = state.FrameworkVersion
+	}
+
+	if plan.PreviewScriptName.IsUnknown() && !state.PreviewScriptName.IsNull() {
+		plan.PreviewScriptName = state.PreviewScriptName
+	}
+
+	if plan.ProductionScriptName.IsUnknown() && !state.ProductionScriptName.IsNull() {
+		plan.ProductionScriptName = state.ProductionScriptName
+	}
+
+	if plan.Subdomain.IsUnknown() && !state.Subdomain.IsNull() {
+		plan.Subdomain = state.Subdomain
+	}
+
+	if plan.UsesFunctions.IsUnknown() && !state.UsesFunctions.IsNull() {
+		plan.UsesFunctions = state.UsesFunctions
+	}
+
+	if plan.Domains.IsUnknown() && !state.Domains.IsNull() {
+		plan.Domains = state.Domains
+	}
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+}
+
+// NormalizeDeploymentConfigs normalizes empty pointer slices to null
+// to match API behavior and prevent drift during import/refresh
+func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*PagesProjectModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	if data == nil {
+		return data, diags
+	}
+
+	// Normalize build_config to null if all fields are empty/null
+	if data.BuildConfig != nil {
+		bc := data.BuildConfig
+		allFieldsEmpty := true
+		if !bc.BuildCaching.IsNull() && !bc.BuildCaching.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if !bc.BuildCommand.IsNull() && !bc.BuildCommand.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if !bc.DestinationDir.IsNull() && !bc.DestinationDir.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if !bc.RootDir.IsNull() && !bc.RootDir.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if !bc.WebAnalyticsTag.IsNull() && !bc.WebAnalyticsTag.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if !bc.WebAnalyticsToken.IsNull() && !bc.WebAnalyticsToken.IsUnknown() {
+			allFieldsEmpty = false
+		}
+		if allFieldsEmpty {
+			data.BuildConfig = nil
+		}
+	}
+
+	// Normalize source.config empty lists to null
+	if data.Source != nil && data.Source.Config != nil {
+		config := data.Source.Config
+		if !config.PathExcludes.IsNull() && !config.PathExcludes.IsUnknown() && len(config.PathExcludes.Elements()) == 0 {
+			config.PathExcludes = customfield.NullList[types.String](ctx)
+		}
+		if !config.PathIncludes.IsNull() && !config.PathIncludes.IsUnknown() && len(config.PathIncludes.Elements()) == 0 {
+			config.PathIncludes = customfield.NullList[types.String](ctx)
+		}
+		if !config.PreviewBranchExcludes.IsNull() && !config.PreviewBranchExcludes.IsUnknown() && len(config.PreviewBranchExcludes.Elements()) == 0 {
+			config.PreviewBranchExcludes = customfield.NullList[types.String](ctx)
+		}
+		if !config.PreviewBranchIncludes.IsNull() && !config.PreviewBranchIncludes.IsUnknown() && len(config.PreviewBranchIncludes.Elements()) == 0 {
+			config.PreviewBranchIncludes = customfield.NullList[types.String](ctx)
+		}
+	}
+
+	// Normalize deployment_configs empty pointer slices
+	if !data.DeploymentConfigs.IsNull() && !data.DeploymentConfigs.IsUnknown() {
+		configsValue, d := data.DeploymentConfigs.Value(ctx)
+		diags.Append(d...)
+		if diags.HasError() {
+			return data, diags
+		}
+
+		previewModified := false
+		productionModified := false
+
+		// Normalize Preview config
+		if !configsValue.Preview.IsNull() && !configsValue.Preview.IsUnknown() {
+			previewValue, d := configsValue.Preview.Value(ctx)
+			diags.Append(d...)
+			if diags.HasError() {
+				return data, diags
+			}
+
+			if previewValue.CompatibilityFlags != nil && len(*previewValue.CompatibilityFlags) == 0 {
+				previewValue.CompatibilityFlags = nil
+				previewModified = true
+			}
+
+			if previewModified {
+				configsValue.Preview, d = customfield.NewObject(ctx, previewValue)
+				diags.Append(d...)
+				if diags.HasError() {
+					return data, diags
+				}
+			}
+		}
+
+		// Normalize Production config
+		if !configsValue.Production.IsNull() && !configsValue.Production.IsUnknown() {
+			productionValue, d := configsValue.Production.Value(ctx)
+			diags.Append(d...)
+			if diags.HasError() {
+				return data, diags
+			}
+
+			if productionValue.CompatibilityFlags != nil && len(*productionValue.CompatibilityFlags) == 0 {
+				productionValue.CompatibilityFlags = nil
+				productionModified = true
+			}
+
+			if productionModified {
+				configsValue.Production, d = customfield.NewObject(ctx, productionValue)
+				diags.Append(d...)
+				if diags.HasError() {
+					return data, diags
+				}
+			}
+		}
+
+		if previewModified || productionModified {
+			data.DeploymentConfigs, d = customfield.NewObject(ctx, configsValue)
+			diags.Append(d...)
+			if diags.HasError() {
+				return data, diags
+			}
+		}
+	}
+
+	return data, diags
 }

@@ -193,7 +193,7 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Delete(ctx con
 }
 
 func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceCustomProfileLocalDomainFallbackModel = new(ZeroTrustDeviceCustomProfileLocalDomainFallbackModel)
+	var data = new(ZeroTrustDeviceCustomProfileLocalDomainFallbackModel)
 
 	path_account_id := ""
 	path_policy_id := ""

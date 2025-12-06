@@ -1,6 +1,7 @@
 package zone_hold_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -9,8 +10,29 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zone_hold", &resource.Sweeper{
+		Name: "cloudflare_zone_hold",
+		F:    testSweepCloudflareZoneHold,
+	})
+}
+
+func testSweepCloudflareZoneHold(r string) error {
+	ctx := context.Background()
+	// Zone Hold is a zone-level hold status setting.
+	// It's a singleton setting per zone, not something that accumulates.
+	// No sweeping required.
+	tflog.Info(ctx, "Zone Hold doesn't require sweeping (zone setting)")
+	return nil
+}
 
 func TestAccCloudflareZoneHold_Full(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

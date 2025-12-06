@@ -10,8 +10,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func TestMain(m *testing.M) {
@@ -30,22 +30,39 @@ func testSweepCloudflareFilterSweeper(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s",clientErr))
+		return clientErr
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	filters, _, filtersErr := client.Filters(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.FilterListParams{})
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping filters sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+	filters, _, filtersErr := client.Filters(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.FilterListParams{})
 
 	if filtersErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare filters: %s", filtersErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare filters: %s",filtersErr))
+		return filtersErr
+	}
+	if len(filters) == 0 {
+		tflog.Info(ctx, "No Cloudflare filters to sweep")
+		return nil
 	}
 
 	for _, filter := range filters {
-		err := client.DeleteFilter(context.Background(), cloudflare.ZoneIdentifier(zoneID), filter.ID)
-
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID))
+		// Use standard filtering helper on the description field
+		if !utils.ShouldSweepResource(filter.Description) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting filter: %s (zone: %s)", filter.ID, zoneID))
+		err := client.DeleteFilter(ctx, cloudflare.ZoneIdentifier(zoneID), filter.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete filter %s: %s", filter.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted filter: %s", filter.ID))
 	}
 
 	return nil

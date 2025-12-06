@@ -214,7 +214,7 @@ func (r *CloudforceOneRequestMessageResource) Delete(ctx context.Context, req re
 }
 
 func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestMessageModel = new(CloudforceOneRequestMessageModel)
+	var data = new(CloudforceOneRequestMessageModel)
 
 	path_account_id := ""
 	path_request_id := ""

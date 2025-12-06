@@ -214,7 +214,7 @@ func (r *ConnectivityDirectoryServiceResource) Delete(ctx context.Context, req r
 }
 
 func (r *ConnectivityDirectoryServiceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ConnectivityDirectoryServiceModel = new(ConnectivityDirectoryServiceModel)
+	var data = new(ConnectivityDirectoryServiceModel)
 
 	path_account_id := ""
 	path_service_id := ""

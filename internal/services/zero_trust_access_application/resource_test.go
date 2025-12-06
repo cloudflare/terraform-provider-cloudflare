@@ -3,7 +3,6 @@ package zero_trust_access_application_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -39,42 +38,66 @@ func testSweepCloudflareAccessApplications(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
 	// Zone level Access Applications.
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping zone-level Access Applications sweep: CLOUDFLARE_ZONE_ID not set")
+		zoneID = "skip" // Use placeholder to skip zone sweep
+	}
 	zoneAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
 	}
 
 	if len(zoneAccessApps) == 0 {
-		log.Print("[DEBUG] No Cloudflare zone level Access Applications to sweep")
-		return nil
+		tflog.Info(ctx, "No Cloudflare zone level Access Applications to sweep")
 	}
 
 	for _, accessApp := range zoneAccessApps {
-		if err := client.DeleteAccessApplication(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessApp.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(accessApp.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting zone-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
+		if err := client.DeleteAccessApplication(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone-level Access Application %s (%s): %s", accessApp.Name, accessApp.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted zone-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
 	}
 
 	// Account level Access Applications.
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping account-level Access Applications sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
 	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
 	}
 
 	if len(accountAccessApps) == 0 {
-		log.Print("[DEBUG] No Cloudflare account level Access Applications to sweep")
+		tflog.Info(ctx, "No Cloudflare account level Access Applications to sweep")
 		return nil
 	}
 
 	for _, accessApp := range accountAccessApps {
-		if err := client.DeleteAccessApplication(context.Background(), cloudflare.AccountIdentifier(accountID), accessApp.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Application %s", accessApp.ID))
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(accessApp.Name) {
+			continue
 		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting account-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
+		if err := client.DeleteAccessApplication(context.Background(), cloudflare.AccountIdentifier(accountID), accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account-level Access Application %s (%s): %s", accessApp.Name, accessApp.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted account-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
 	}
 
 	return nil

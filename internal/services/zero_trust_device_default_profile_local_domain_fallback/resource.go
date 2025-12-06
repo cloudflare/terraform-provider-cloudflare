@@ -190,7 +190,7 @@ func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) Delete(ctx co
 }
 
 func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel = new(ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel)
+	var data = new(ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

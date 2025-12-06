@@ -22,7 +22,7 @@ data "cloudflare_pages_projects" "example_pages_projects" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
@@ -37,23 +37,22 @@ data "cloudflare_pages_projects" "example_pages_projects" {
 
 Read-Only:
 
-- `aliases` (List of String) A list of alias URLs pointing to this deployment.
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--result--build_config))
-- `created_on` (String) When the deployment was created.
-- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--result--deployment_trigger))
-- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--env_vars))
-- `environment` (String) Type of deploy.
-Available values: "preview", "production".
-- `id` (String) Id of the deployment.
-- `is_skipped` (Boolean) If the deployment has been skipped.
-- `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--result--latest_stage))
-- `modified_on` (String) When the deployment was last modified.
-- `project_id` (String) Id of the project.
-- `project_name` (String) Name of the project.
-- `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--result--source))
-- `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--stages))
-- `url` (String) The live URL to view this deployment.
+- `canonical_deployment` (Attributes) Most recent production deployment of the project. (see [below for nested schema](#nestedatt--result--canonical_deployment))
+- `created_on` (String) When the project was created.
+- `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--result--deployment_configs))
+- `domains` (List of String) A list of associated custom domains for the project.
+- `framework` (String) Framework the project is using.
+- `framework_version` (String) Version of the framework the project is using.
+- `id` (String) ID of the project.
+- `latest_deployment` (Attributes) Most recent deployment of the project. (see [below for nested schema](#nestedatt--result--latest_deployment))
+- `name` (String) Name of the project.
+- `preview_script_name` (String) Name of the preview script.
+- `production_branch` (String) Production branch of the project. Used to identify production deployments.
+- `production_script_name` (String) Name of the production script.
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--result--source))
+- `subdomain` (String) The Cloudflare subdomain associated with the project.
+- `uses_functions` (Boolean) Whether the project uses functions.
 
 <a id="nestedatt--result--build_config"></a>
 ### Nested Schema for `result.build_config`
@@ -62,34 +61,72 @@ Read-Only:
 
 - `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
+- `destination_dir` (String) Assets output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
 
 
-<a id="nestedatt--result--deployment_trigger"></a>
-### Nested Schema for `result.deployment_trigger`
+<a id="nestedatt--result--canonical_deployment"></a>
+### Nested Schema for `result.canonical_deployment`
 
 Read-Only:
 
-- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--result--deployment_trigger--metadata))
-- `type` (String) What caused the deployment.
-Available values: "push", "ad_hoc".
+- `aliases` (List of String) A list of alias URLs pointing to this deployment.
+- `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--result--canonical_deployment--build_config))
+- `created_on` (String) When the deployment was created.
+- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--result--canonical_deployment--deployment_trigger))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--canonical_deployment--env_vars))
+- `environment` (String) Type of deploy.
+Available values: "preview", "production".
+- `id` (String) Id of the deployment.
+- `is_skipped` (Boolean) If the deployment has been skipped.
+- `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--result--canonical_deployment--latest_stage))
+- `modified_on` (String) When the deployment was last modified.
+- `project_id` (String) Id of the project.
+- `project_name` (String) Name of the project.
+- `short_id` (String) Short Id (8 character) of the deployment.
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--result--canonical_deployment--source))
+- `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--canonical_deployment--stages))
+- `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
 
-<a id="nestedatt--result--deployment_trigger--metadata"></a>
-### Nested Schema for `result.deployment_trigger.metadata`
+<a id="nestedatt--result--canonical_deployment--build_config"></a>
+### Nested Schema for `result.canonical_deployment.build_config`
+
+Read-Only:
+
+- `build_caching` (Boolean) Enable build caching for the project.
+- `build_command` (String) Command used to build project.
+- `destination_dir` (String) Assets output directory of the build.
+- `root_dir` (String) Directory to run the command.
+- `web_analytics_tag` (String) The classifying tag for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
+
+
+<a id="nestedatt--result--canonical_deployment--deployment_trigger"></a>
+### Nested Schema for `result.canonical_deployment.deployment_trigger`
+
+Read-Only:
+
+- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--result--canonical_deployment--deployment_trigger--metadata))
+- `type` (String) What caused the deployment.
+Available values: "github:push", "ad_hoc", "deploy_hook".
+
+<a id="nestedatt--result--canonical_deployment--deployment_trigger--metadata"></a>
+### Nested Schema for `result.canonical_deployment.deployment_trigger.metadata`
 
 Read-Only:
 
 - `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
 - `commit_hash` (String) Hash of the deployment trigger commit.
 - `commit_message` (String) Message of the deployment trigger commit.
 
 
 
-<a id="nestedatt--result--env_vars"></a>
-### Nested Schema for `result.env_vars`
+<a id="nestedatt--result--canonical_deployment--env_vars"></a>
+### Nested Schema for `result.canonical_deployment.env_vars`
 
 Read-Only:
 
@@ -97,8 +134,8 @@ Read-Only:
 - `value` (String, Sensitive) Environment variable value.
 
 
-<a id="nestedatt--result--latest_stage"></a>
-### Nested Schema for `result.latest_stage`
+<a id="nestedatt--result--canonical_deployment--latest_stage"></a>
+### Nested Schema for `result.canonical_deployment.latest_stage`
 
 Read-Only:
 
@@ -108,6 +145,487 @@ Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
 Available values: "success", "idle", "active", "failure", "canceled".
+
+
+<a id="nestedatt--result--canonical_deployment--source"></a>
+### Nested Schema for `result.canonical_deployment.source`
+
+Read-Only:
+
+- `config` (Attributes) (see [below for nested schema](#nestedatt--result--canonical_deployment--source--config))
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
+
+<a id="nestedatt--result--canonical_deployment--source--config"></a>
+### Nested Schema for `result.canonical_deployment.source.config`
+
+Read-Only:
+
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
+- `repo_name` (String) The name of the repository.
+
+
+
+<a id="nestedatt--result--canonical_deployment--stages"></a>
+### Nested Schema for `result.canonical_deployment.stages`
+
+Read-Only:
+
+- `ended_on` (String) When the stage ended.
+- `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
+- `started_on` (String) When the stage started.
+- `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
+
+
+
+<a id="nestedatt--result--deployment_configs"></a>
+### Nested Schema for `result.deployment_configs`
+
+Read-Only:
+
+- `preview` (Attributes) Configs for preview deploys. (see [below for nested schema](#nestedatt--result--deployment_configs--preview))
+- `production` (Attributes) Configs for production deploys. (see [below for nested schema](#nestedatt--result--deployment_configs--production))
+
+<a id="nestedatt--result--deployment_configs--preview"></a>
+### Nested Schema for `result.deployment_configs.preview`
+
+Read-Only:
+
+- `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--ai_bindings))
+- `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
+- `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--analytics_engine_datasets))
+- `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--browsers))
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
+- `compatibility_date` (String) Compatibility date used for Pages Functions.
+- `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
+- `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--d1_databases))
+- `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--durable_object_namespaces))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--env_vars))
+- `fail_open` (Boolean) Whether to fail open when the deployment config cannot be applied.
+- `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--hyperdrive_bindings))
+- `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--kv_namespaces))
+- `limits` (Attributes) Limits for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--limits))
+- `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--mtls_certificates))
+- `placement` (Attributes) Placement setting used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--placement))
+- `queue_producers` (Attributes Map) Queue Producer bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--queue_producers))
+- `r2_buckets` (Attributes Map) R2 buckets used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--r2_buckets))
+- `services` (Attributes Map) Services used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--services))
+- `usage_model` (String, Deprecated) The usage model for Pages Functions.
+Available values: "standard", "bundled", "unbound".
+- `vectorize_bindings` (Attributes Map) Vectorize bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--vectorize_bindings))
+- `wrangler_config_hash` (String) Hash of the Wrangler configuration used for the deployment.
+
+<a id="nestedatt--result--deployment_configs--preview--ai_bindings"></a>
+### Nested Schema for `result.deployment_configs.preview.ai_bindings`
+
+Read-Only:
+
+- `project_id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--preview--analytics_engine_datasets"></a>
+### Nested Schema for `result.deployment_configs.preview.analytics_engine_datasets`
+
+Read-Only:
+
+- `dataset` (String) Name of the dataset.
+
+
+<a id="nestedatt--result--deployment_configs--preview--browsers"></a>
+### Nested Schema for `result.deployment_configs.preview.browsers`
+
+
+<a id="nestedatt--result--deployment_configs--preview--d1_databases"></a>
+### Nested Schema for `result.deployment_configs.preview.d1_databases`
+
+Read-Only:
+
+- `id` (String) UUID of the D1 database.
+
+
+<a id="nestedatt--result--deployment_configs--preview--durable_object_namespaces"></a>
+### Nested Schema for `result.deployment_configs.preview.durable_object_namespaces`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the Durable Object namespace.
+
+
+<a id="nestedatt--result--deployment_configs--preview--env_vars"></a>
+### Nested Schema for `result.deployment_configs.preview.env_vars`
+
+Read-Only:
+
+- `type` (String) Available values: "plain_text", "secret_text".
+- `value` (String, Sensitive) Environment variable value.
+
+
+<a id="nestedatt--result--deployment_configs--preview--hyperdrive_bindings"></a>
+### Nested Schema for `result.deployment_configs.preview.hyperdrive_bindings`
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--preview--kv_namespaces"></a>
+### Nested Schema for `result.deployment_configs.preview.kv_namespaces`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the KV namespace.
+
+
+<a id="nestedatt--result--deployment_configs--preview--limits"></a>
+### Nested Schema for `result.deployment_configs.preview.limits`
+
+Read-Only:
+
+- `cpu_ms` (Number) CPU time limit in milliseconds.
+
+
+<a id="nestedatt--result--deployment_configs--preview--mtls_certificates"></a>
+### Nested Schema for `result.deployment_configs.preview.mtls_certificates`
+
+Read-Only:
+
+- `certificate_id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--preview--placement"></a>
+### Nested Schema for `result.deployment_configs.preview.placement`
+
+Read-Only:
+
+- `mode` (String) Placement mode.
+
+
+<a id="nestedatt--result--deployment_configs--preview--queue_producers"></a>
+### Nested Schema for `result.deployment_configs.preview.queue_producers`
+
+Read-Only:
+
+- `name` (String) Name of the Queue.
+
+
+<a id="nestedatt--result--deployment_configs--preview--r2_buckets"></a>
+### Nested Schema for `result.deployment_configs.preview.r2_buckets`
+
+Read-Only:
+
+- `jurisdiction` (String) Jurisdiction of the R2 bucket.
+- `name` (String) Name of the R2 bucket.
+
+
+<a id="nestedatt--result--deployment_configs--preview--services"></a>
+### Nested Schema for `result.deployment_configs.preview.services`
+
+Read-Only:
+
+- `entrypoint` (String) The entrypoint to bind to.
+- `environment` (String) The Service environment.
+- `service` (String) The Service name.
+
+
+<a id="nestedatt--result--deployment_configs--preview--vectorize_bindings"></a>
+### Nested Schema for `result.deployment_configs.preview.vectorize_bindings`
+
+Read-Only:
+
+- `index_name` (String)
+
+
+
+<a id="nestedatt--result--deployment_configs--production"></a>
+### Nested Schema for `result.deployment_configs.production`
+
+Read-Only:
+
+- `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--ai_bindings))
+- `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
+- `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--analytics_engine_datasets))
+- `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--browsers))
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
+- `compatibility_date` (String) Compatibility date used for Pages Functions.
+- `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
+- `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--d1_databases))
+- `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--durable_object_namespaces))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--env_vars))
+- `fail_open` (Boolean) Whether to fail open when the deployment config cannot be applied.
+- `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--hyperdrive_bindings))
+- `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--kv_namespaces))
+- `limits` (Attributes) Limits for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--limits))
+- `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--mtls_certificates))
+- `placement` (Attributes) Placement setting used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--placement))
+- `queue_producers` (Attributes Map) Queue Producer bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--queue_producers))
+- `r2_buckets` (Attributes Map) R2 buckets used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--r2_buckets))
+- `services` (Attributes Map) Services used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--services))
+- `usage_model` (String, Deprecated) The usage model for Pages Functions.
+Available values: "standard", "bundled", "unbound".
+- `vectorize_bindings` (Attributes Map) Vectorize bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--vectorize_bindings))
+- `wrangler_config_hash` (String) Hash of the Wrangler configuration used for the deployment.
+
+<a id="nestedatt--result--deployment_configs--production--ai_bindings"></a>
+### Nested Schema for `result.deployment_configs.production.ai_bindings`
+
+Read-Only:
+
+- `project_id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--production--analytics_engine_datasets"></a>
+### Nested Schema for `result.deployment_configs.production.analytics_engine_datasets`
+
+Read-Only:
+
+- `dataset` (String) Name of the dataset.
+
+
+<a id="nestedatt--result--deployment_configs--production--browsers"></a>
+### Nested Schema for `result.deployment_configs.production.browsers`
+
+
+<a id="nestedatt--result--deployment_configs--production--d1_databases"></a>
+### Nested Schema for `result.deployment_configs.production.d1_databases`
+
+Read-Only:
+
+- `id` (String) UUID of the D1 database.
+
+
+<a id="nestedatt--result--deployment_configs--production--durable_object_namespaces"></a>
+### Nested Schema for `result.deployment_configs.production.durable_object_namespaces`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the Durable Object namespace.
+
+
+<a id="nestedatt--result--deployment_configs--production--env_vars"></a>
+### Nested Schema for `result.deployment_configs.production.env_vars`
+
+Read-Only:
+
+- `type` (String) Available values: "plain_text", "secret_text".
+- `value` (String, Sensitive) Environment variable value.
+
+
+<a id="nestedatt--result--deployment_configs--production--hyperdrive_bindings"></a>
+### Nested Schema for `result.deployment_configs.production.hyperdrive_bindings`
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--production--kv_namespaces"></a>
+### Nested Schema for `result.deployment_configs.production.kv_namespaces`
+
+Read-Only:
+
+- `namespace_id` (String) ID of the KV namespace.
+
+
+<a id="nestedatt--result--deployment_configs--production--limits"></a>
+### Nested Schema for `result.deployment_configs.production.limits`
+
+Read-Only:
+
+- `cpu_ms` (Number) CPU time limit in milliseconds.
+
+
+<a id="nestedatt--result--deployment_configs--production--mtls_certificates"></a>
+### Nested Schema for `result.deployment_configs.production.mtls_certificates`
+
+Read-Only:
+
+- `certificate_id` (String)
+
+
+<a id="nestedatt--result--deployment_configs--production--placement"></a>
+### Nested Schema for `result.deployment_configs.production.placement`
+
+Read-Only:
+
+- `mode` (String) Placement mode.
+
+
+<a id="nestedatt--result--deployment_configs--production--queue_producers"></a>
+### Nested Schema for `result.deployment_configs.production.queue_producers`
+
+Read-Only:
+
+- `name` (String) Name of the Queue.
+
+
+<a id="nestedatt--result--deployment_configs--production--r2_buckets"></a>
+### Nested Schema for `result.deployment_configs.production.r2_buckets`
+
+Read-Only:
+
+- `jurisdiction` (String) Jurisdiction of the R2 bucket.
+- `name` (String) Name of the R2 bucket.
+
+
+<a id="nestedatt--result--deployment_configs--production--services"></a>
+### Nested Schema for `result.deployment_configs.production.services`
+
+Read-Only:
+
+- `entrypoint` (String) The entrypoint to bind to.
+- `environment` (String) The Service environment.
+- `service` (String) The Service name.
+
+
+<a id="nestedatt--result--deployment_configs--production--vectorize_bindings"></a>
+### Nested Schema for `result.deployment_configs.production.vectorize_bindings`
+
+Read-Only:
+
+- `index_name` (String)
+
+
+
+
+<a id="nestedatt--result--latest_deployment"></a>
+### Nested Schema for `result.latest_deployment`
+
+Read-Only:
+
+- `aliases` (List of String) A list of alias URLs pointing to this deployment.
+- `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--result--latest_deployment--build_config))
+- `created_on` (String) When the deployment was created.
+- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--result--latest_deployment--deployment_trigger))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--latest_deployment--env_vars))
+- `environment` (String) Type of deploy.
+Available values: "preview", "production".
+- `id` (String) Id of the deployment.
+- `is_skipped` (Boolean) If the deployment has been skipped.
+- `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--result--latest_deployment--latest_stage))
+- `modified_on` (String) When the deployment was last modified.
+- `project_id` (String) Id of the project.
+- `project_name` (String) Name of the project.
+- `short_id` (String) Short Id (8 character) of the deployment.
+- `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--result--latest_deployment--source))
+- `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--latest_deployment--stages))
+- `url` (String) The live URL to view this deployment.
+- `uses_functions` (Boolean) Whether the deployment uses functions.
+
+<a id="nestedatt--result--latest_deployment--build_config"></a>
+### Nested Schema for `result.latest_deployment.build_config`
+
+Read-Only:
+
+- `build_caching` (Boolean) Enable build caching for the project.
+- `build_command` (String) Command used to build project.
+- `destination_dir` (String) Assets output directory of the build.
+- `root_dir` (String) Directory to run the command.
+- `web_analytics_tag` (String) The classifying tag for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
+
+
+<a id="nestedatt--result--latest_deployment--deployment_trigger"></a>
+### Nested Schema for `result.latest_deployment.deployment_trigger`
+
+Read-Only:
+
+- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--result--latest_deployment--deployment_trigger--metadata))
+- `type` (String) What caused the deployment.
+Available values: "github:push", "ad_hoc", "deploy_hook".
+
+<a id="nestedatt--result--latest_deployment--deployment_trigger--metadata"></a>
+### Nested Schema for `result.latest_deployment.deployment_trigger.metadata`
+
+Read-Only:
+
+- `branch` (String) Where the trigger happened.
+- `commit_dirty` (Boolean) Whether the deployment trigger commit was dirty.
+- `commit_hash` (String) Hash of the deployment trigger commit.
+- `commit_message` (String) Message of the deployment trigger commit.
+
+
+
+<a id="nestedatt--result--latest_deployment--env_vars"></a>
+### Nested Schema for `result.latest_deployment.env_vars`
+
+Read-Only:
+
+- `type` (String) Available values: "plain_text", "secret_text".
+- `value` (String, Sensitive) Environment variable value.
+
+
+<a id="nestedatt--result--latest_deployment--latest_stage"></a>
+### Nested Schema for `result.latest_deployment.latest_stage`
+
+Read-Only:
+
+- `ended_on` (String) When the stage ended.
+- `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
+- `started_on` (String) When the stage started.
+- `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
+
+
+<a id="nestedatt--result--latest_deployment--source"></a>
+### Nested Schema for `result.latest_deployment.source`
+
+Read-Only:
+
+- `config` (Attributes) (see [below for nested schema](#nestedatt--result--latest_deployment--source--config))
+- `type` (String) The source control management provider.
+Available values: "github", "gitlab".
+
+<a id="nestedatt--result--latest_deployment--source--config"></a>
+### Nested Schema for `result.latest_deployment.source.config`
+
+Read-Only:
+
+- `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
+When disabled, no deployments (production or preview) will be triggered automatically.
+- `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
+- `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
+- `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
+- `pr_comments_enabled` (Boolean) Whether to enable PR comments.
+- `preview_branch_excludes` (List of String) A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_branch_includes` (List of String) A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.
+- `preview_deployment_setting` (String) Controls whether commits to preview branches trigger a preview deployment.
+Available values: "all", "none", "custom".
+- `production_branch` (String) The production branch of the repository.
+- `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
+- `repo_name` (String) The name of the repository.
+
+
+
+<a id="nestedatt--result--latest_deployment--stages"></a>
+### Nested Schema for `result.latest_deployment.stages`
+
+Read-Only:
+
+- `ended_on` (String) When the stage ended.
+- `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
+- `started_on` (String) When the stage started.
+- `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
+
 
 
 <a id="nestedatt--result--source"></a>
@@ -127,6 +645,7 @@ Read-Only:
 - `deployments_enabled` (Boolean, Deprecated) Whether to enable automatic deployments when pushing to the source repository.
 When disabled, no deployments (production or preview) will be triggered automatically.
 - `owner` (String) The owner of the repository.
+- `owner_id` (String) The owner ID of the repository.
 - `path_excludes` (List of String) A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.
 - `path_includes` (List of String) A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.
 - `pr_comments_enabled` (Boolean) Whether to enable PR comments.
@@ -136,20 +655,7 @@ When disabled, no deployments (production or preview) will be triggered automati
 Available values: "all", "none", "custom".
 - `production_branch` (String) The production branch of the repository.
 - `production_deployments_enabled` (Boolean) Whether to trigger a production deployment on commits to the production branch.
+- `repo_id` (String) The ID of the repository.
 - `repo_name` (String) The name of the repository.
-
-
-
-<a id="nestedatt--result--stages"></a>
-### Nested Schema for `result.stages`
-
-Read-Only:
-
-- `ended_on` (String) When the stage ended.
-- `name` (String) The current build stage.
-Available values: "queued", "initialize", "clone_repo", "build", "deploy".
-- `started_on` (String) When the stage started.
-- `status` (String) State of the current stage.
-Available values: "success", "idle", "active", "failure", "canceled".
 
 

@@ -312,7 +312,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 }
 
 func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessMTLSCertificateModel = new(ZeroTrustAccessMTLSCertificateModel)
+	var data = new(ZeroTrustAccessMTLSCertificateModel)
 	params := zero_trust.AccessCertificateGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

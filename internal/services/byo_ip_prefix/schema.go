@@ -40,6 +40,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"loa_document_id": schema.StringAttribute{
+				Description:   "Identifier for the uploaded LOA document.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"delegate_loa_creation": schema.BoolAttribute{
 				Description:   "Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.",
 				Computed:      true,
@@ -72,10 +77,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"irr_validation_state": schema.StringAttribute{
 				Description: "State of one kind of validation for an IP prefix.",
-				Computed:    true,
-			},
-			"loa_document_id": schema.StringAttribute{
-				Description: "Identifier for the uploaded LOA document.",
 				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{

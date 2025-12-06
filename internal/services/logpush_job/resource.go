@@ -118,6 +118,18 @@ func (r *LogpushJobResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
+	// Handle kind field: treat "" and "instant-logs" as semantically equivalent
+	// The API doesn't allow changing kind, and "instant-logs" is deprecated in v5
+	// If both plan and state have semantically equivalent values, omit kind from the update
+	planKind := data.Kind.ValueString()
+	stateKind := state.Kind.ValueString()
+
+	// Treat "" and "instant-logs" as equivalent
+	if (planKind == "" || planKind == "instant-logs") && (stateKind == "" || stateKind == "instant-logs") {
+		// Make kind null so it won't be sent in the update at all
+		data.Kind = types.StringNull()
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -152,6 +164,12 @@ func (r *LogpushJobResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	data = &env.Result
+
+	// Normalize instant-logs to empty string (v5 no longer supports instant-logs as a valid value)
+	// The API may still return "instant-logs" for backwards compatibility, but we treat it as ""
+	if data.Kind.ValueString() == "instant-logs" {
+		data.Kind = types.StringValue("")
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -199,6 +217,12 @@ func (r *LogpushJobResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 	data = &env.Result
 
+	// Normalize instant-logs to empty string (v5 no longer supports instant-logs as a valid value)
+	// The API may still return "instant-logs" for backwards compatibility, but we treat it as ""
+	if data.Kind.ValueString() == "instant-logs" {
+		data.Kind = types.StringValue("")
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -234,7 +258,7 @@ func (r *LogpushJobResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LogpushJobModel = new(LogpushJobModel)
+	var data = new(LogpushJobModel)
 	params := logpush.JobGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""

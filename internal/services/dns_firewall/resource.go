@@ -210,7 +210,7 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSFirewallModel = new(DNSFirewallModel)
+	var data = new(DNSFirewallModel)
 
 	path_account_id := ""
 	path_dns_firewall_id := ""

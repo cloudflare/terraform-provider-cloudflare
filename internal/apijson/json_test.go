@@ -56,6 +56,7 @@ type Primitives struct {
 	D float64 `json:"d"`
 	E float32 `json:"e"`
 	F []int   `json:"f"`
+	G int     `json:"b"`
 }
 
 type PrimitivePointers struct {
@@ -220,13 +221,13 @@ var tests = map[string]struct {
 
 	"primitive_struct": {
 		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}`,
-		Primitives{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}},
+		Primitives{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}, G: 237628372683},
 	},
 
 	"slices": {
 		`{"slices":[{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}]}`,
 		Slices{
-			Slice: []Primitives{{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}}},
+			Slice: []Primitives{{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}, G: 237628372683}},
 		},
 	},
 
@@ -1701,6 +1702,7 @@ func TestDecodeUnsetBehaviour(t *testing.T) {
 
 type StructWithComputedFields struct {
 	RegStr            types.String                                             `tfsdk:"str" json:"str,optional"`
+	DerivedStr        types.String                                             `tfsdk:"str" json:"str,optional"`
 	CompStr           types.String                                             `tfsdk:"comp_str" json:"comp_str,computed"`
 	CompOptStr        types.String                                             `tfsdk:"opt_str" json:"opt_str,computed_optional"`
 	CompTime          timetypes.RFC3339                                        `tfsdk:"time" json:"time,computed"`
@@ -2315,6 +2317,7 @@ var decode_computed_only_tests = map[string]struct {
 		exampleNestedJson,
 		StructWithComputedFields{
 			RegStr:      types.StringNull(),
+			DerivedStr:  types.StringNull(),
 			CompStr:     types.StringNull(),
 			CompOptStr:  types.StringNull(),
 			CompTime:    timetypes.NewRFC3339Null(),
@@ -2336,6 +2339,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringNull(),
+			DerivedStr:  types.StringNull(),
 			CompStr:     types.StringValue("comp_str"),
 			CompOptStr:  types.StringValue("opt_str"),
 			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
@@ -2372,6 +2376,7 @@ var decode_computed_only_tests = map[string]struct {
 		exampleNestedJson,
 		StructWithComputedFields{
 			RegStr:      types.StringUnknown(),
+			DerivedStr:  types.StringUnknown(),
 			CompStr:     types.StringUnknown(),
 			CompOptStr:  types.StringUnknown(),
 			CompTime:    timetypes.NewRFC3339Unknown(),
@@ -2388,6 +2393,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringUnknown(),
+			DerivedStr:  types.StringUnknown(),
 			CompStr:     types.StringValue("comp_str"),
 			CompOptStr:  types.StringValue("opt_str"),
 			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
@@ -2418,6 +2424,7 @@ var decode_computed_only_tests = map[string]struct {
 		exampleNestedJson,
 		StructWithComputedFields{
 			RegStr:      types.StringValue("existing_str"),
+			DerivedStr:  types.StringValue("existing_str"),
 			CompStr:     types.StringValue("existing_comp_str"),
 			CompOptStr:  types.StringValue("existing_opt_str"),
 			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
@@ -2449,6 +2456,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringValue("existing_str"),
+			DerivedStr:  types.StringValue("existing_str"),
 			CompStr:     types.StringValue("comp_str"),
 			CompOptStr:  types.StringValue("existing_opt_str"),
 			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
@@ -2492,6 +2500,7 @@ var decode_computed_only_tests = map[string]struct {
 		`{}`,
 		StructWithComputedFields{
 			RegStr:      types.StringValue("existing_str"),
+			DerivedStr:  types.StringValue("existing_str"),
 			CompStr:     types.StringValue("existing_comp_str"),
 			CompOptStr:  types.StringValue("existing_opt_str"),
 			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
@@ -2526,6 +2535,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringValue("existing_str"),
+			DerivedStr:  types.StringValue("existing_str"),
 			CompStr:     types.StringNull(),
 			CompOptStr:  types.StringValue("existing_opt_str"),
 			CompTime:    timetypes.NewRFC3339Null(),

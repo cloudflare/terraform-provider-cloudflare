@@ -97,52 +97,7 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 }
 
 func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *APIShieldOperationModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *APIShieldOperationModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{*data}
-	_, err = r.client.APIGateway.Operations.New(
-		ctx,
-		api_gateway.OperationNewParams{
-			ZoneID: cloudflare.F(data.OperationID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.OperationID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Update is not supported for this resource
 }
 
 func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -213,7 +168,7 @@ func (r *APIShieldOperationResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldOperationModel = new(APIShieldOperationModel)
+	var data = new(APIShieldOperationModel)
 
 	path_zone_id := ""
 	path_operation_id := ""

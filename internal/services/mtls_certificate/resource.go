@@ -165,7 +165,7 @@ func (r *MTLSCertificateResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *MTLSCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MTLSCertificateModel = new(MTLSCertificateModel)
+	var data = new(MTLSCertificateModel)
 
 	path_account_id := ""
 	path_mtls_certificate_id := ""

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -35,25 +34,31 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
-	accessIDPs, _, accessIDPsErr := client.ListAccessIdentityProviders(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessIdentityProvidersParams{})
+	accessIDPs, _, accessIDPsErr := client.ListAccessIdentityProviders(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessIdentityProvidersParams{})
 	if accessIDPsErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Access Identity Providers: %s", accessIDPsErr))
+		return accessIDPsErr
 	}
 
 	if len(accessIDPs) == 0 {
-		log.Print("[DEBUG] No Access Identity Providers to sweep")
+		tflog.Info(ctx, "No Access Identity Providers to sweep")
 		return nil
 	}
 
 	for _, idp := range accessIDPs {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Access Identity Provider ID: %s", idp.ID))
-		_, err := client.DeleteAccessIdentityProvider(context.Background(), cloudflare.AccountIdentifier(accountID), idp.ID)
-
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Identity Provider (%s): %s", idp.ID, err))
+		if !utils.ShouldSweepResource(idp.Name) {
+			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting Access Identity Provider: %s (%s) (account: %s)", idp.Name, idp.ID, accountID))
+		_, err := client.DeleteAccessIdentityProvider(ctx, cloudflare.AccountIdentifier(accountID), idp.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Identity Provider %s (%s): %s", idp.Name, idp.ID, err))
+			continue
+		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted Access Identity Provider: %s", idp.ID))
 	}
 
 	return nil

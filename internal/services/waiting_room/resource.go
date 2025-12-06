@@ -210,7 +210,7 @@ func (r *WaitingRoomResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *WaitingRoomResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomModel = new(WaitingRoomModel)
+	var data = new(WaitingRoomModel)
 
 	path_zone_id := ""
 	path_waiting_room_id := ""

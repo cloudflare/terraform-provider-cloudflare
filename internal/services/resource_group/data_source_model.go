@@ -12,6 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type ResourceGroupResultDataSourceEnvelope struct {
+	Result ResourceGroupDataSourceModel `json:"result,computed"`
+}
+
 type ResourceGroupDataSourceModel struct {
 	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	ResourceGroupID types.String                                                    `tfsdk:"resource_group_id" path:"resource_group_id,required"`

@@ -150,7 +150,6 @@ Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch",
 - `precedence` (Number) Set the order of your rules. Lower values indicate higher precedence. At each processing phase, evaluate applicable rules in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) to manage precedence via Terraform.
 - `rule_settings` (Attributes) Defines settings for this rule. Settings apply only to specific rule types and must use compatible selectors. If Terraform detects drift, confirm the setting supports your rule type and check whether the API modifies the value. Use API-returned values in your configuration to prevent drift. (see [below for nested schema](#nestedatt--rule_settings))
 - `schedule` (Attributes) Defines the schedule for activating DNS policies. Settable only for `dns` and `dns_resolver` rules. (see [below for nested schema](#nestedatt--schedule))
-- `sharable` (Boolean) Indicate that this rule is sharable via the Orgs API.
 - `traffic` (String) Specify the wirefilter expression used for traffic matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 
 ### Read-Only
@@ -159,6 +158,7 @@ Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch",
 - `deleted_at` (String) Indicate the date of deletion, if any.
 - `id` (String) Identify the API resource with a UUID.
 - `read_only` (Boolean) Indicate that this rule is shared via the Orgs API and read only.
+- `sharable` (Boolean) Indicate that this rule is sharable via the Orgs API.
 - `source_account` (String) Provide the account tag of the account that created the rule.
 - `updated_at` (String)
 - `version` (Number) Indicate the version number of the rule(read-only).

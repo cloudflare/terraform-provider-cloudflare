@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -16,6 +14,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -50,6 +49,7 @@ func testSweepCloudflareWorkerScripts(r string) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if accountID == "" {
+		tflog.Info(ctx, "Skipping worker scripts sweep: CLOUDFLARE_ACCOUNT_ID not set")
 		return nil
 	}
 
@@ -57,48 +57,33 @@ func testSweepCloudflareWorkerScripts(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to list worker scripts: %s", err))
 		return fmt.Errorf("failed to list worker scripts: %w", err)
 	}
 
+	if len(list.Result) == 0 {
+		tflog.Info(ctx, "No worker scripts to sweep")
+		return nil
+	}
+
 	for _, script := range list.Result {
-		if !strings.HasPrefix(script.ID, resourcePrefix) {
+		// Use standard filtering helper
+		if !utils.ShouldSweepResource(script.ID) {
 			continue
 		}
 
+		tflog.Info(ctx, fmt.Sprintf("Deleting worker script: %s (account: %s)", script.ID, accountID))
 		_, err := client.Workers.Scripts.Delete(ctx, script.ID, workers.ScriptDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete worker script %s: %s", script.ID, err))
 			continue
 		}
+		tflog.Info(ctx, fmt.Sprintf("Deleted worker script: %s", script.ID))
 	}
 
 	return nil
-}
-
-// supportsTerraformWriteOnly checks if the current Terraform version supports WriteOnly attributes (1.11+)
-func supportsTerraformWriteOnly() bool {
-	cmd := exec.Command("terraform", "version")
-	output, err := cmd.Output()
-	if err != nil {
-		return false
-	}
-
-	versionStr := string(output)
-	re := regexp.MustCompile(`Terraform v(\d+)\.(\d+)`)
-	matches := re.FindStringSubmatch(versionStr)
-	if len(matches) < 3 {
-		return false
-	}
-
-	major, err1 := strconv.Atoi(matches[1])
-	minor, err2 := strconv.Atoi(matches[2])
-	if err1 != nil || err2 != nil {
-		return false
-	}
-
-	// WriteOnly attributes require Terraform 1.11+
-	return major > 1 || (major == 1 && minor >= 11)
 }
 
 func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
@@ -493,10 +478,6 @@ func TestAcc_WorkerScriptWithAssets(t *testing.T) {
 func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	t.Parallel()
 
-	if !supportsTerraformWriteOnly() {
-		t.Skip("Skipping test: WriteOnly attributes require Terraform 1.11+ (DurableObject migrations are required)")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
 	name := "cloudflare_workers_script." + resourceName
@@ -521,7 +502,7 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "migrations", "startup_time_ms"},
 			},
 		},
 	})
@@ -674,6 +655,181 @@ func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstMigration(t *testin
 			},
 		},
 	})
+}
+
+// TestAccCloudflareWorkerScript_UnmanagedSecretNoDrift verifies that unmanaged secrets
+// (secrets that exist on the Worker but are not defined in Terraform config) do not cause drift.
+// This is a regression test for https://github.com/cloudflare/terraform-provider-cloudflare/issues/5892
+func TestAccCloudflareWorkerScript_UnmanagedSecretNoDrift(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithManagedSecret(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MANAGED_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+			{
+				PreConfig: func() {
+					// Add an unmanaged secret via the API (out-of-band)
+					client := acctest.SharedClient()
+					boundary := "--form-data-boundary-unmanaged-secret"
+					body := []byte(fmt.Sprintf(`--%s
+Content-Disposition: form-data; name="files"; filename="worker.mjs"
+Content-Type: application/javascript+module
+
+export default { fetch() { return new Response('Hello world'); } };
+--%s
+Content-Disposition: form-data; name="metadata"; filename="metadata.json"
+Content-Type: application/json
+
+{"main_module": "worker.mjs", "bindings": [{"type": "secret_text", "name": "MANAGED_SECRET", "text": "managed-secret-value"}, {"type": "secret_text", "name": "UNMANAGED_SECRET", "text": "unmanaged-secret-value"}]}
+--%s--
+`,
+						boundary, boundary, boundary,
+					))
+					result, err := client.Workers.Scripts.Update(context.Background(),
+						resourceName,
+						workers.ScriptUpdateParams{AccountID: cloudflare.F(accountID)},
+						option.WithRequestBody("multipart/form-data;boundary="+boundary, body),
+					)
+					if err != nil {
+						t.Errorf("Error adding unmanaged secret out-of-band: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not add unmanaged secret out-of-band.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: false,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Verify state still only contains the managed secret and plan is empty
+				Config: testAccWorkersScriptConfigWithManagedSecret(resourceName, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MANAGED_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_NoSecretsInConfigWithUnmanagedSecrets verifies that workers with
+// unmanaged secrets do not cause drift when config has no secrets at all.
+// This is a common scenario where users manage secrets outside of Terraform (e.g., via wrangler or dashboard).
+func TestAccCloudflareWorkerScript_NoSecretsInConfigWithUnmanagedSecrets(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigNoSecrets(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+				},
+			},
+			{
+				PreConfig: func() {
+					// Add secrets via the API (out-of-band) - simulating wrangler secret put
+					client := acctest.SharedClient()
+					boundary := "--form-data-boundary-unmanaged-secrets"
+					body := []byte(fmt.Sprintf(`--%s
+Content-Disposition: form-data; name="files"; filename="worker.mjs"
+Content-Type: application/javascript+module
+
+export default { fetch() { return new Response('Hello world'); } };
+--%s
+Content-Disposition: form-data; name="metadata"; filename="metadata.json"
+Content-Type: application/json
+
+{"main_module": "worker.mjs", "bindings": [{"type": "secret_text", "name": "API_KEY", "text": "secret-api-key"}, {"type": "secret_text", "name": "DB_PASSWORD", "text": "secret-db-password"}]}
+--%s--
+`,
+						boundary, boundary, boundary,
+					))
+					result, err := client.Workers.Scripts.Update(context.Background(),
+						resourceName,
+						workers.ScriptUpdateParams{AccountID: cloudflare.F(accountID)},
+						option.WithRequestBody("multipart/form-data;boundary="+boundary, body),
+					)
+					if err != nil {
+						t.Errorf("Error adding secrets out-of-band: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not add secrets out-of-band.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: false,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Verify we can still apply the same config without issues
+				Config: testAccWorkersScriptConfigNoSecrets(resourceName, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccWorkersScriptConfigWithManagedSecret(rnd, accountID string) string {
+	return acctest.LoadTestCase("module_with_unmanaged_secret.tf", rnd, accountID)
+}
+
+func testAccWorkersScriptConfigNoSecrets(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_workers_script" "%[1]s" {
+  account_id = "%[2]s"
+  script_name = "%[1]s"
+  content = "export default { fetch() { return new Response('Hello world'); } };"
+  main_module = "worker.mjs"
+}
+`, rnd, accountID)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {

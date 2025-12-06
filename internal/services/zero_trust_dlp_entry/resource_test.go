@@ -97,7 +97,7 @@ func testSweepCloudflareZeroTrustDLPEntry(r string) error {
 	}
 
 	for _, entry := range entries.Result {
-		if entry.Type == "custom" {
+		if entry.Type == "custom" && utils.ShouldSweepResource(entry.Name) {
 			_, err := client.ZeroTrust.DLP.Entries.Delete(context.Background(), entry.ID, zero_trust.DLPEntryDeleteParams{
 				AccountID: cloudflare.F(accountID),
 			})
@@ -146,7 +146,7 @@ func TestAccCloudflareZeroTrustDLPEntry_Basic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", setup.accountID),
-				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at"},
+				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at", "profiles"},
 			},
 			{
 				Config: testAccCloudflareZeroTrustDLPEntryConfigUpdated(rnd, setup.accountID, setup.profileID),
@@ -195,7 +195,7 @@ func TestAccCloudflareZeroTrustDLPEntry_Minimal(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", setup.accountID),
-				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at"},
+				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at", "profiles"},
 			},
 		},
 	})
@@ -253,7 +253,7 @@ func TestAccCloudflareZeroTrustDLPEntry_PatternValidations(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", setup.accountID),
-				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at"},
+				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at", "profiles"},
 			},
 		},
 	})
@@ -300,7 +300,7 @@ func TestAccCloudflareZeroTrustDLPEntry_Comprehensive(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", setup.accountID),
-				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at"},
+				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at", "profiles"},
 			},
 		},
 	})
@@ -344,7 +344,7 @@ func TestAccCloudflareZeroTrustDLPEntry_ToggleEnabled(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", setup.accountID),
-				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at"},
+				ImportStateVerifyIgnore: []string{"type", "case_sensitive", "secret", "confidence", "variant", "word_list", "created_at", "updated_at", "profiles"},
 			},
 		},
 	})

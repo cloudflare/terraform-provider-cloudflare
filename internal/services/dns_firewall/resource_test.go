@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -21,25 +22,41 @@ func init() {
 	resource.AddTestSweepers("cloudflare_dns_firewall", &resource.Sweeper{
 		Name: "cloudflare_dns_firewall",
 		F: func(region string) error {
-			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			ctx := context.Background()
-
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			client := acctest.SharedClient()
+
+			if accountID == "" {
+				tflog.Info(ctx, "Skipping DNS Firewall clusters sweep: CLOUDFLARE_ACCOUNT_ID not set")
+				return nil
+			}
 
 			clusters, err := client.DNSFirewall.List(ctx, dns_firewall.DNSFirewallListParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to fetch DNS Firewall clusters: %s", err))
 				return fmt.Errorf("failed to fetch DNS Firewall clusters: %w", err)
 			}
 
+			if len(clusters.Result) == 0 {
+				tflog.Info(ctx, "No DNS Firewall clusters to sweep")
+				return nil
+			}
+
 			for _, cluster := range clusters.Result {
+				if !utils.ShouldSweepResource(cluster.Name) {
+					continue
+				}
+				tflog.Info(ctx, fmt.Sprintf("Deleting DNS Firewall cluster: %s (%s) (account: %s)", cluster.Name, cluster.ID, accountID))
 				_, err := client.DNSFirewall.Delete(ctx, cluster.ID, dns_firewall.DNSFirewallDeleteParams{
 					AccountID: cloudflare.F(accountID),
 				})
 				if err != nil {
-					return fmt.Errorf("failed to delete DNS Firewall cluster %q: %w", cluster.Name, err)
+					tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS Firewall cluster %s: %s", cluster.Name, err))
+					continue
 				}
+				tflog.Info(ctx, fmt.Sprintf("Deleted DNS Firewall cluster: %s", cluster.ID))
 			}
 
 			return nil

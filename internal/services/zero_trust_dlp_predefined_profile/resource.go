@@ -215,7 +215,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Delete(ctx context.Context, req 
 }
 
 func (r *ZeroTrustDLPPredefinedProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDLPPredefinedProfileModel = new(ZeroTrustDLPPredefinedProfileModel)
+	var data = new(ZeroTrustDLPPredefinedProfileModel)
 
 	path_account_id := ""
 	path_profile_id := ""

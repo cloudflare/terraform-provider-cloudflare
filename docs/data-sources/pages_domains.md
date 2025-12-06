@@ -23,7 +23,7 @@ data "cloudflare_pages_domains" "example_pages_domains" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `project_name` (String) Name of the project.
 
 ### Optional
@@ -43,7 +43,7 @@ Read-Only:
 - `created_on` (String)
 - `domain_id` (String)
 - `id` (String)
-- `name` (String)
+- `name` (String) The domain name.
 - `status` (String) Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".
 - `validation_data` (Attributes) (see [below for nested schema](#nestedatt--result--validation_data))
 - `verification_data` (Attributes) (see [below for nested schema](#nestedatt--result--verification_data))

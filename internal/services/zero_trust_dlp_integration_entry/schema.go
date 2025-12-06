@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"profile_id": schema.StringAttribute{
-				Description:   "This field is not actually used as the owning profile for a predefined entry is already set\nto a predefined profile",
+				Description:   "This field is not used as the owning profile.\nFor predefined entries it is already set to a predefined profile.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -100,6 +100,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						DeprecationMessage: "This attribute is deprecated.",
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("luhn"),
+						},
+					},
+				},
+			},
+			"profiles": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDLPIntegrationEntryProfilesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"name": schema.StringAttribute{
+							Computed: true,
 						},
 					},
 				},

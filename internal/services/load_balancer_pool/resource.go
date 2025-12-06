@@ -214,7 +214,7 @@ func (r *LoadBalancerPoolResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *LoadBalancerPoolResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *LoadBalancerPoolModel = new(LoadBalancerPoolModel)
+	var data = new(LoadBalancerPoolModel)
 
 	path_account_id := ""
 	path_pool_id := ""

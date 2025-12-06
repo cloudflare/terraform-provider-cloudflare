@@ -15,6 +15,10 @@ description: |-
 resource "cloudflare_zero_trust_device_settings" "example_zero_trust_device_settings" {
   account_id = "699d98642c564d2e855e9661899b7252"
   disable_for_time = 0
+  external_emergency_signal_enabled = true
+  external_emergency_signal_fingerprint = "abcd1234567890abcd1234567890abcd1234567890abcd1234567890abcd1234"
+  external_emergency_signal_interval = "5m"
+  external_emergency_signal_url = "https://192.0.2.1/signal"
   gateway_proxy_enabled = true
   gateway_udp_proxy_enabled = true
   root_certificate_installation_enabled = true
@@ -32,6 +36,10 @@ resource "cloudflare_zero_trust_device_settings" "example_zero_trust_device_sett
 ### Optional
 
 - `disable_for_time` (Number) Sets the time limit, in seconds, that a user can use an override code to bypass WARP.
+- `external_emergency_signal_enabled` (Boolean) Controls whether the external emergency disconnect feature is enabled.
+- `external_emergency_signal_fingerprint` (String) The SHA256 fingerprint (64 hexadecimal characters) of the HTTPS server certificate for the external_emergency_signal_url. If provided, the WARP client will use this value to verify the server's identity. The device will ignore any response if the server's certificate fingerprint does not exactly match this value.
+- `external_emergency_signal_interval` (String) The interval at which the WARP client fetches the emergency disconnect signal, formatted as a duration string (e.g., "5m", "2m30s", "1h"). Minimum 30 seconds.
+- `external_emergency_signal_url` (String) The HTTPS URL from which to fetch the emergency disconnect signal. Must use HTTPS and have an IPv4 or IPv6 address as the host.
 - `gateway_proxy_enabled` (Boolean) Enable gateway proxy filtering on TCP.
 - `gateway_udp_proxy_enabled` (Boolean) Enable gateway proxy filtering on UDP.
 - `root_certificate_installation_enabled` (Boolean) Enable installation of cloudflare managed root certificate.

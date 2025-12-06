@@ -11,12 +11,79 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_pages_domain", &resource.Sweeper{
+		Name: "cloudflare_pages_domain",
+		F:    testSweepCloudflarePagesDomains,
+	})
+}
+
+func testSweepCloudflarePagesDomains(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Info(ctx, "Skipping pages domains sweep: CLOUDFLARE_ACCOUNT_ID not set")
+		return nil
+	}
+
+	// List all pages projects
+	projectsPage, err := client.Pages.Projects.List(ctx, pages.ProjectListParams{
+		AccountID: cloudflare.F(accountID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch pages projects: %s", err))
+		return fmt.Errorf("failed to fetch pages projects: %w", err)
+	}
+
+	if len(projectsPage.Result) == 0 {
+		tflog.Info(ctx, "No pages projects found, skipping pages domains sweep")
+		return nil
+	}
+
+	// For each project, list and delete its domains
+	for _, project := range projectsPage.Result {
+		// Only process projects that would be swept themselves
+		if !utils.ShouldSweepResource(project.Name) {
+			continue
+		}
+
+		domainsPage, err := client.Pages.Projects.Domains.List(ctx, project.Name, pages.ProjectDomainListParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch domains for pages project %s: %s", project.Name, err))
+			continue
+		}
+
+		for _, domain := range domainsPage.Result {
+			tflog.Info(ctx, fmt.Sprintf("Deleting pages domain: %s (project: %s, account: %s)", domain.Name, project.Name, accountID))
+			_, err := client.Pages.Projects.Domains.Delete(ctx, project.Name, domain.Name, pages.ProjectDomainDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete pages domain %s: %s", domain.Name, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted pages domain: %s", domain.Name))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflarePagesDomain(t *testing.T) {
 	t.Parallel()
@@ -54,7 +121,7 @@ func TestAccCloudflarePagesDomain(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(fullDomain)),
 				},
 				Check: testAccCheckCloudflarePagesDomainExists(name, accountID, rnd, fullDomain),
-				// ExpectNonEmptyPlan: true,
+				//ExpectNonEmptyPlan: true, // Pages project computed fields (canonical_deployment, latest_deployment, etc.) can change
 			},
 			{
 				ResourceName:        name,

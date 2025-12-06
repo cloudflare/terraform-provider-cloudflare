@@ -38,6 +38,7 @@ resource "cloudflare_zone_subscription" "example_zone_subscription" {
 
 - `frequency` (String) How often the subscription is renewed automatically.
 Available values: "weekly", "monthly", "quarterly", "yearly".
+Note: Some plans may not support frequency configuration and will return "not-applicable".
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
 
 ### Read-Only
@@ -55,13 +56,16 @@ Available values: "Trial", "Provisioned", "Paid", "AwaitingPayment", "Cancelled"
 
 Optional:
 
+- `id` (String) The ID of the rate plan.
+Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "partners_free", "partners_pro", "partners_business", "partners_enterprise", "partners_ent".
+- `scope` (String) The scope that this rate plan applies to.
+
+Read-Only:
+
 - `currency` (String) The currency applied to the rate plan subscription.
 - `externally_managed` (Boolean) Whether this rate plan is managed externally from Cloudflare.
-- `id` (String) The ID of the rate plan.
-Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "partners_free", "partners_pro", "partners_business", "partners_enterprise".
 - `is_contract` (Boolean) Whether a rate plan is enterprise-based (or newly adopted term contract).
 - `public_name` (String) The full name of the rate plan.
-- `scope` (String) The scope that this rate plan applies to.
 - `sets` (List of String) The list of sets this rate plan applies to.
 
 ## Import

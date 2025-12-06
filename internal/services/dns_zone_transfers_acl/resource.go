@@ -210,7 +210,7 @@ func (r *DNSZoneTransfersACLResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *DNSZoneTransfersACLResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSZoneTransfersACLModel = new(DNSZoneTransfersACLModel)
+	var data = new(DNSZoneTransfersACLModel)
 
 	path_account_id := ""
 	path_acl_id := ""

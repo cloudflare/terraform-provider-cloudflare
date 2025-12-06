@@ -50,7 +50,6 @@ Optional:
 - `is_deleted` (Boolean) If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.
 - `network_subset` (String) If set, only list routes that are contained within this IP range.
 - `network_superset` (String) If set, only list routes that contain this IP range.
-- `route_id` (String) UUID of the route.
 - `tun_types` (List of String) The types of tunnels to filter by, separated by commas.
 - `tunnel_id` (String) UUID of the tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.

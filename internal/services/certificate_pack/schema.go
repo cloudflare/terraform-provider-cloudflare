@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -88,9 +89,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
 				Optional:    true,
 			},
+			"primary_certificate": schema.StringAttribute{
+				Description:   "Identifier of the primary certificate in a pack.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"status": schema.StringAttribute{
 				Description: "Status of certificate pack.\nAvailable values: \"initializing\", \"pending_validation\", \"deleted\", \"pending_issuance\", \"pending_deployment\", \"pending_deletion\", \"pending_expiration\", \"expired\", \"active\", \"initializing_timed_out\", \"validation_timed_out\", \"issuance_timed_out\", \"deployment_timed_out\", \"deletion_timed_out\", \"pending_cleanup\", \"staging_deployment\", \"staging_active\", \"deactivating\", \"inactive\", \"backup_issued\", \"holding_deployment\".",
 				Computed:    true,
+			PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -117,10 +124,88 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"certificates": schema.ListNestedAttribute{
+				Description:   "Array of certificates in this pack.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackCertificatesModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Certificate identifier.",
+							Computed:    true,
+						},
+						"hosts": schema.ListAttribute{
+							Description: "Hostnames covered by this certificate.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"status": schema.StringAttribute{
+							Description: "Certificate status.",
+							Computed:    true,
+						},
+						"bundle_method": schema.StringAttribute{
+							Description: "Certificate bundle method.",
+							Computed:    true,
+						},
+						"expires_on": schema.StringAttribute{
+							Description: "When the certificate from the authority expires.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"geo_restrictions": schema.SingleNestedAttribute{
+							Description: "Specify the region where your private key can be held locally.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[CertificatePackCertificatesGeoRestrictionsModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"label": schema.StringAttribute{
+									Description: `Available values: "us", "eu", "highest_security".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"us",
+											"eu",
+											"highest_security",
+										),
+									},
+								},
+							},
+						},
+						"issuer": schema.StringAttribute{
+							Description: "The certificate authority that issued the certificate.",
+							Computed:    true,
+						},
+						"modified_on": schema.StringAttribute{
+							Description: "When the certificate was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"priority": schema.Float64Attribute{
+							Description: "The order/priority in which the certificate will be used.",
+							Computed:    true,
+						},
+						"signature": schema.StringAttribute{
+							Description: "The type of hash used for the certificate.",
+							Computed:    true,
+						},
+						"uploaded_on": schema.StringAttribute{
+							Description: "When the certificate was uploaded to Cloudflare.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"zone_id": schema.StringAttribute{
+							Description: "Identifier.",
+							Computed:    true,
+						},
+					},
+				},
+			},
 			"validation_errors": schema.ListNestedAttribute{
-				Description: "Domain validation errors that have been received by the certificate authority (CA).",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationErrorsModel](ctx),
+				Description:   "Domain validation errors that have been received by the certificate authority (CA).",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackValidationErrorsModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"message": schema.StringAttribute{
@@ -131,9 +216,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"validation_records": schema.ListNestedAttribute{
-				Description: `Certificates' validation records. Only present when certificate pack is in "pending_validation" status`,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationRecordsModel](ctx),
+				Description:   "Certificates' validation records.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectListType[CertificatePackValidationRecordsModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"emails": schema.ListAttribute{

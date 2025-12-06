@@ -305,7 +305,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[EmailRoutingDNSResultInfoModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"count": schema.Float64Attribute{
+					"email_routing_dns_count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service.",
 						Computed:    true,
 					},

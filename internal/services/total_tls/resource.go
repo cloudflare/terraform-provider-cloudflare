@@ -145,7 +145,7 @@ func (r *TotalTLSResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *TotalTLSResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *TotalTLSModel = new(TotalTLSModel)
+	var data = new(TotalTLSModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

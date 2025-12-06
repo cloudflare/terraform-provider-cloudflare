@@ -190,7 +190,7 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustAccessKeyConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessKeyConfigurationModel = new(ZeroTrustAccessKeyConfigurationModel)
+	var data = new(ZeroTrustAccessKeyConfigurationModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

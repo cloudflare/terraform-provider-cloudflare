@@ -52,17 +52,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"policies": schema.ListNestedAttribute{
+			"policies": schema.SetNestedAttribute{
 				Description: "Array of policies associated with this member.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Policy identifier.",
-							Computed:    true,
-						},
 						"access": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,
@@ -70,7 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 							},
 						},
-						"permission_groups": schema.ListNestedAttribute{
+						"permission_groups": schema.SetNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
 							NestedObject: schema.NestedAttributeObject{
@@ -82,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resource_groups": schema.ListNestedAttribute{
+						"resource_groups": schema.SetNestedAttribute{
 							Description: "A list of resource groups that the policy applies to.",
 							Required:    true,
 							NestedObject: schema.NestedAttributeObject{

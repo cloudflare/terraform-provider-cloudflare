@@ -190,7 +190,7 @@ func (r *RegionalTieredCacheResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *RegionalTieredCacheResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *RegionalTieredCacheModel = new(RegionalTieredCacheModel)
+	var data = new(RegionalTieredCacheModel)
 
 	path := ""
 	diags := importpath.ParseImportID(

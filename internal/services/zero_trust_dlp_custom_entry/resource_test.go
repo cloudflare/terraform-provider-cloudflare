@@ -1,18 +1,70 @@
 package zero_trust_dlp_custom_entry_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_dlp_custom_entry", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_dlp_custom_entry",
+		F:    testSweepCloudflareZeroTrustDLPCustomEntry,
+	})
+}
+
+func testSweepCloudflareZeroTrustDLPCustomEntry(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	entriesResp, err := client.ZeroTrust.DLP.Entries.Custom.List(
+		ctx,
+		zero_trust.DLPEntryCustomListParams{
+			AccountID: cloudflare.F(accountID),
+		},
+	)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Zero Trust DLP Custom Entries: %s", err))
+		return err
+	}
+
+	for _, entry := range entriesResp.Result {
+		if !utils.ShouldSweepResource(entry.Name) {
+			continue
+		}
+
+		tflog.Info(ctx, fmt.Sprintf("Deleting Zero Trust DLP Custom Entry: %s", entry.ID))
+		_, err := client.ZeroTrust.DLP.Entries.Custom.Delete(
+			ctx,
+			entry.ID,
+			zero_trust.DLPEntryCustomDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Zero Trust DLP Custom Entry %s: %s", entry.ID, err))
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

@@ -58,7 +58,6 @@ Available values: "log", "block".
 - `host` (String) Select rules with this host in `include`.
 - `hostname` (String) Select rules with this host in `include`.
 - `id` (String) Select rules with these IDs.
-- `rule_id` (String) Select rules with these IDs.
 - `token_configuration` (List of String) Select rules using any of these token configurations.
 
 

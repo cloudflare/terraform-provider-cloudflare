@@ -130,22 +130,22 @@ func TestAccPreCheck_LogpushToken(t *testing.T) {
 	}
 }
 
-// Test helper method checking the Workspace One environment variables are present.
-func TestAccPreCheck_WorkspaceOne(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID must be set for this acceptance test.")
+// Test helper method checking the CrowdStrike environment variables are present.
+func TestAccPreCheck_CrowdStrike(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CLIENT_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_CROWDSTRIKE_CLIENT_ID is not set")
 	}
 
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET must be set for this acceptance test.")
+	if v := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CLIENT_SECRET"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_CROWDSTRIKE_CLIENT_SECRET is not set")
 	}
 
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_URL must be set for this acceptance test.")
+	if v := os.Getenv("CLOUDFLARE_CROWDSTRIKE_API_URL"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_CROWDSTRIKE_API_URL is not set")
 	}
 
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL must be set for this acceptance test.")
+	if v := os.Getenv("CLOUDFLARE_CROWDSTRIKE_CUSTOMER_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_CROWDSTRIKE_CUSTOMER_ID is not set")
 	}
 }
 

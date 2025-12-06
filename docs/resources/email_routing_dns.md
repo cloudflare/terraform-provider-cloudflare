@@ -138,7 +138,7 @@ Available values: "A", "AAAA", "CNAME", "HTTPS", "TXT", "SRV", "LOC", "MX", "NS"
 
 Read-Only:
 
-- `count` (Number) Total number of results for the requested service.
+- `email_routing_dns_count` (Number) Total number of results for the requested service.
 - `page` (Number) Current page within paginated list of results.
 - `per_page` (Number) Number of results per page of results.
 - `total_count` (Number) Total results available without any search parameters.
