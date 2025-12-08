@@ -15,6 +15,7 @@ var _ datasource.DataSourceWithConfigValidators = (*APIShieldOperationSchemaVali
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		DeprecationMessage: "Please use the `cloudflare_schema_validation_operation_settings` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"operation_id": schema.StringAttribute{
 				Description: "UUID.",

@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldSchemaResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		DeprecationMessage: "Please use the `cloudflare_schema_validation_schemas` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
