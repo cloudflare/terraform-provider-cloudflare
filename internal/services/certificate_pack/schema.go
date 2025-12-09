@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -79,11 +79,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
-			"hosts": schema.ListAttribute{
+			"hosts": schema.SetAttribute{
 				Description:   "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewSetType[types.String](ctx),
 				ElementType:   types.StringType,
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"cloudflare_branding": schema.BoolAttribute{
 				Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
