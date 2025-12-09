@@ -9,6 +9,9 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
     extra_prefixes = ["string"]
     md5_key = "md5_key"
   }
+  custom_remote_identities = {
+    fqdn_id = "fqdn_id"
+  }
   customer_endpoint = "203.0.113.1"
   description = "Tunnel for ISP X"
   health_check = {
