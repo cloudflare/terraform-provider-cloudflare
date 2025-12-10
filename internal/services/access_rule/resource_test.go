@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -12,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
@@ -86,38 +88,37 @@ func testSweepCloudflareAccessRules(r string) error {
 	return nil
 }
 
+func testAccCheckCloudflareAccessRuleDestroy(s *terraform.State) error {
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_access_rule" {
+			continue
+		}
+
+		_, err := client.AccountAccessRule(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("cloudflare_access_rule still exists")
+		}
+
+		_, err = client.ZoneAccessRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("cloudflare_access_rule still exists")
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccessRuleAccountConfig(accountID, "challenge", "this is notes", "asn", "AS112", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
-					resource.TestCheckResourceAttr(name, "mode", "challenge"),
-					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
-					resource.TestCheckResourceAttr(name, "configuration.value", "AS112"),
-				),
-			},
-			{
-				// Note: Only notes + mode can be changed in place.
-				Config: testAccessRuleAccountConfig(accountID, "block", "this is updated notes", "asn", "AS112", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
-					resource.TestCheckResourceAttr(name, "mode", "block"),
-					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
-					resource.TestCheckResourceAttr(name, "configuration.value", "AS112"),
-				),
-			},
-		},
-	})
+	testASN(t, testAccessRuleAccountConfig, accountID, consts.AccountIDSchemaKey, rnd, name)
 }
 
 func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
@@ -125,14 +126,24 @@ func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
 	name := "cloudflare_access_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
+	testASN(t, testAccessRuleZoneConfig, zoneID, consts.ZoneIDSchemaKey, rnd, name)
+}
+
+func testASN(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, name string) {
+	pathPrefix := "zones"
+	if schemaKey == consts.AccountIDSchemaKey {
+		pathPrefix = "accounts"
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleZoneConfig(zoneID, "challenge", "this is notes", "asn", "AS112", rnd),
+				Config: configFn(configKey, "challenge", "this is notes", "asn", "AS112", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
@@ -141,32 +152,67 @@ func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
 			},
 			{
 				// Note: Only notes + mode can be changed in place.
-				Config: testAccessRuleZoneConfig(zoneID, "block", "this is updated notes", "asn", "AS112", rnd),
+				Config: configFn(configKey, "block", "this is updated notes", "asn", "AS112", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
 					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
 					resource.TestCheckResourceAttr(name, "mode", "block"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
 					resource.TestCheckResourceAttr(name, "configuration.value", "AS112"),
 				),
 			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s/%s", pathPrefix, configKey, rs.Primary.ID), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modified_on"},
+			},
 		},
 	})
 }
 
-func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
+func TestAccCloudflareAccessRule_AccountIPRange(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	testIPRange(t, testAccessRuleAccountConfig, accountID, consts.AccountIDSchemaKey, rnd, name)
+}
+
+func TestAccCloudflareAccessRule_ZoneIPRange(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testIPRange(t, testAccessRuleZoneConfig, zoneID, consts.ZoneIDSchemaKey, rnd, name)
+}
+
+func testIPRange(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, name string) {
+	pathPrefix := "zones"
+	if schemaKey == consts.AccountIDSchemaKey {
+		pathPrefix = "accounts"
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleAccountConfig(accountID, "challenge", "this is notes", "ip_range", "104.16.0.0/24", rnd),
+				Config:      configFn(configKey, "block", "this is notes", "ip_range", "104.16.0.0/25", rnd),
+				ExpectError: regexp.MustCompile(`IPv4 .* has prefix length .* are allowed`),
+			},
+			{
+				Config: configFn(configKey, "challenge", "this is notes", "ip_range", "104.16.0.0/24", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "ip_range"),
@@ -175,51 +221,229 @@ func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
 			},
 			{
 				// Note: Only notes + mode can be changed in place.
-				Config: testAccessRuleAccountConfig(accountID, "block", "this is updated notes", "ip_range", "104.16.0.0/24", rnd),
+				Config: configFn(configKey, "block", "this is updated notes", "ip_range", "104.16.0.0/24", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
 					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
 					resource.TestCheckResourceAttr(name, "mode", "block"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "ip_range"),
 					resource.TestCheckResourceAttr(name, "configuration.value", "104.16.0.0/24"),
 				),
 			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s/%s", pathPrefix, configKey, rs.Primary.ID), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modified_on"},
+			},
 		},
 	})
 }
 
-func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
+func TestAccCloudflareAccessRule_AccountIPv6(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	testIPv6(t, testAccessRuleAccountConfig, accountID, consts.AccountIDSchemaKey, rnd, name)
+}
+
+func TestAccCloudflareAccessRule_ZoneIPv6(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testIPv6(t, testAccessRuleZoneConfig, zoneID, consts.ZoneIDSchemaKey, rnd, name)
+}
+
+func testIPv6(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, name string) {
+	pathPrefix := "zones"
+	if schemaKey == consts.AccountIDSchemaKey {
+		pathPrefix = "accounts"
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleAccountConfig(accountID, "block", "this is notes", "ip6", "2001:0db8::", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
-					resource.TestCheckResourceAttr(name, "mode", "block"),
-					resource.TestCheckResourceAttr(name, "configuration.target", "ip6"),
-					resource.TestCheckResourceAttr(name, "configuration.value", "2001:0db8::"),
-				),
+				Config:      configFn(configKey, "block", "this is notes", "ip6", "2001:0db8::", rnd),
+				ExpectError: regexp.MustCompile(`IPv6 address must be in long form`),
 			},
 			{
-				Config: testAccessRuleAccountConfig(accountID, "block", "this is notes", "ip6", "2001:0db8:0000:0000:0000:0000:0000:0000", rnd),
+				Config: configFn(configKey, "block", "this is notes", "ip6", "2001:0db8:0000:0000:0000:0000:0000:0000", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "block"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "ip6"),
 					resource.TestCheckResourceAttr(name, "configuration.value", "2001:0db8:0000:0000:0000:0000:0000:0000"),
 				),
 			},
+			{
+				Config: configFn(configKey, "block", "this is notes", "ip6", "2001:0db8:0000:0000:0000:0000:0000:0000", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "ip6"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "2001:0db8:0000:0000:0000:0000:0000:0000"),
+				),
+			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s/%s", pathPrefix, configKey, rs.Primary.ID), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modified_on"},
+			},
 		},
 	})
 }
+
+func TestAccCloudflareAccessRule_AccountIPv4(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	testIPv4(t, testAccessRuleAccountConfig, accountID, consts.AccountIDSchemaKey, rnd, name)
+}
+
+func TestAccCloudflareAccessRule_ZoneIPv4(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testIPv4(t, testAccessRuleZoneConfig, zoneID, consts.ZoneIDSchemaKey, rnd, name)
+}
+
+func testIPv4(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, name string) {
+	pathPrefix := "zones"
+	if schemaKey == consts.AccountIDSchemaKey {
+		pathPrefix = "accounts"
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: configFn(configKey, "challenge", "this is notes", "ip", "192.0.2.1", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "challenge"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "ip"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "192.0.2.1"),
+				),
+			},
+			{
+				Config: configFn(configKey, "block", "this is updated notes", "ip", "192.0.2.1", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
+					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "ip"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "192.0.2.1"),
+				),
+			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s/%s", pathPrefix, configKey, rs.Primary.ID), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modified_on"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessRule_AccountCountry(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	testCountry(t, testAccessRuleAccountConfig, accountID, consts.AccountIDSchemaKey, rnd, name)
+}
+
+func TestAccCloudflareAccessRule_ZoneCountry(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testCountry(t, testAccessRuleZoneConfig, zoneID, consts.ZoneIDSchemaKey, rnd, name)
+}
+
+func testCountry(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, name string) {
+	pathPrefix := "zones"
+	if schemaKey == consts.AccountIDSchemaKey {
+		pathPrefix = "accounts"
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: configFn(configKey, "challenge", "this is notes", "country", "US", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "challenge"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "country"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "US"),
+				),
+			},
+			{
+				Config: configFn(configKey, "block", "this is updated notes", "country", "US", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, schemaKey, configKey),
+					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "country"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "US"),
+				),
+			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s/%s", pathPrefix, configKey, rs.Primary.ID), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modified_on"},
+			},
+		},
+	})
+}
+
+type configFunc = func(string, string, string, string, string, string) string
 
 func testAccessRuleAccountConfig(accountID, mode, notes, target, value, rnd string) string {
 	return acctest.LoadTestCase("accessruleaccountconfig.tf", accountID, mode, notes, target, value, rnd)
@@ -228,29 +452,3 @@ func testAccessRuleAccountConfig(accountID, mode, notes, target, value, rnd stri
 func testAccessRuleZoneConfig(zoneID, mode, notes, target, value, rnd string) string {
 	return acctest.LoadTestCase("accessrulezoneconfig.tf", zoneID, mode, notes, target, value, rnd)
 }
-
-// func TestValidateAccessRuleConfigurationIPRange(t *testing.T) {
-// 	ipRangeValid := map[string]bool{
-// 		"192.168.0.1/32":           false,
-// 		"192.168.0.1/24":           true,
-// 		"192.168.0.1/64":           false,
-// 		"192.168.0.1/31":           false,
-// 		"192.168.0.1/16":           true,
-// 		"fd82:0f75:cf0d:d7b3::/64": true,
-// 		"fd82:0f75:cf0d:d7b3::/48": true,
-// 		"fd82:0f75:cf0d:d7b3::/32": true,
-// 		"fd82:0f75:cf0d:d7b3::/63": false,
-// 		"fd82:0f75:cf0d:d7b3::/16": false,
-// 	}
-
-// 	for ipRange, valid := range ipRangeValid {
-// 		warnings, errors := validateAccessRuleConfigurationIPRange(ipRange)
-// 		isValid := len(errors) == 0
-// 		if len(warnings) != 0 {
-// 			t.Fatalf("ipRange is either invalid or valid, no room for warnings")
-// 		}
-// 		if isValid != valid {
-// 			t.Fatalf("%s resulted in %v, expected %v", ipRange, isValid, valid)
-// 		}
-// 	}
-// }
