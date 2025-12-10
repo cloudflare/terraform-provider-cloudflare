@@ -210,6 +210,10 @@ func testIPRange(t *testing.T, configFn configFunc, configKey, schemaKey, rnd, n
 				ExpectError: regexp.MustCompile(`IPv4 .* has prefix length .* are allowed`),
 			},
 			{
+				Config:      configFn(configKey, "block", "this is notes", "ip_range", "face::/66", rnd),
+				ExpectError: regexp.MustCompile(`IPv6 .* has prefix length .* are allowed`),
+			},
+			{
 				Config: configFn(configKey, "challenge", "this is notes", "ip_range", "104.16.0.0/24", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, schemaKey, configKey),
