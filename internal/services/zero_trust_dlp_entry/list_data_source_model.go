@@ -41,6 +41,7 @@ type ZeroTrustDLPEntriesResultDataSourceModel struct {
 	Type          types.String                                                           `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ProfileID     types.String                                                           `tfsdk:"profile_id" json:"profile_id,computed"`
+	UploadStatus  types.String                                                           `tfsdk:"upload_status" json:"upload_status,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                             `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
