@@ -76,6 +76,7 @@ func testSweepCloudflareObservatoryScheduledTests(r string) error {
 }
 
 func TestAccCloudflareObservatoryScheduledTest_Basic(t *testing.T) {
+	t.Skip("needs to be fixed by service team");
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
