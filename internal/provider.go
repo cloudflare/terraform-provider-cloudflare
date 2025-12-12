@@ -880,6 +880,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workflow.NewWorkflowDataSource,
 		workflow.NewWorkflowsDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
+		leaked_credential_check_rule.NewLeakedCredentialCheckRuleDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
