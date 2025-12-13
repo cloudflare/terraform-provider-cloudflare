@@ -277,4 +277,5 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 	// No changes to user-configurable attributes, so copy updated_on timestamp
 	// from state to avoid spurious changes.
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("updated_on"), state.UpdatedOn)...)
+	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("references"), state.References)...)
 }

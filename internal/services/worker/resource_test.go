@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
@@ -145,25 +147,62 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("updated_on"), knownvalue.NotNull()),
 				},
 			},
-			// { // This fails due to having no target config for the import
-			// 	// Import using an import block and assert there are no changes
-			// 	// reported in the import plan.
-			// 	Config:              testAccCloudflareWorkerConfigUpdate(rnd, accountID),
-			// 	ResourceName:        name,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	ImportState:         true,
-			// 	ImportStateKind:     resource.ImportBlockWithID,
-			// 	ImportPlanChecks: resource.ImportPlanChecks{
-			// 		PreApply: []plancheck.PlanCheck{
-			// 			plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
-			// 		},
-			// 	},
-			// },
+			{
+				// Import using an import block and assert there are no changes
+				// reported in the import plan.
+				Config:       testAccCloudflareWorkerConfigUpdate(resourceName, accountID),
+				ResourceName: name,
+				ImportStateIdFunc: resource.ImportStateIdFunc(func(state *terraform.State) (string, error) {
+					workerId := state.RootModule().Resources[name].Primary.ID
+					return fmt.Sprintf("%s/%s", accountID, workerId), nil
+				}),
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithID,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
 			{
 				ResourceName:        name,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				ImportState:         true,
 				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorker_SubdomainDynamicDefault(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_worker." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Test that when subdomain.enabled = true, previews_enabled defaults to true
+				Config: testAccCloudflareWorkerConfigSubdomainEnabled(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"enabled":          knownvalue.Bool(true),
+						"previews_enabled": knownvalue.Bool(true),
+					})),
+				},
+			},
+			{
+				// Test that explicit previews_enabled = false is respected
+				Config: testAccCloudflareWorkerConfigSubdomainExplicitPreviews(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"enabled":          knownvalue.Bool(true),
+						"previews_enabled": knownvalue.Bool(false),
+					})),
+				},
 			},
 		},
 	})
@@ -175,4 +214,12 @@ func testAccCloudflareWorkerConfig(rnd, accountID string) string {
 
 func testAccCloudflareWorkerConfigUpdate(rnd, accountID string) string {
 	return acctest.LoadTestCase("basic_update.tf", rnd, accountID)
+}
+
+func testAccCloudflareWorkerConfigSubdomainEnabled(rnd, accountID string) string {
+	return acctest.LoadTestCase("subdomain_enabled.tf", rnd, accountID)
+}
+
+func testAccCloudflareWorkerConfigSubdomainExplicitPreviews(rnd, accountID string) string {
+	return acctest.LoadTestCase("subdomain_explicit_previews.tf", rnd, accountID)
 }
