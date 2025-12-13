@@ -13,9 +13,9 @@ resource "cloudflare_queue" "dlq2" {
   queue_name = "%[6]s"
 }
 
-resource "cloudflare_workers_script" "worker_script" {
+resource "cloudflare_workers_script" "worker_script_with_dead_letter" {
   account_id  = "%[9]s"
-  script_name = "test-worker"
+  script_name = "test-worker-consumer-worker-with-dead-letter-update"
   bindings = [
     {
       type       = "queue"
@@ -33,14 +33,21 @@ export default {
 };
 EOT
   main_module         = "index.js"
+
+  depends_on = [cloudflare_queue.test_queue]
 }
 
 resource "cloudflare_queue_consumer" "%[7]s" {
   account_id        = "%[8]s"
   queue_id          = cloudflare_queue.test_queue.id
   type              = "worker"
-  script_name       = cloudflare_workers_script.worker_script.script_name
+  script_name       = cloudflare_workers_script.worker_script_with_dead_letter.script_name
   dead_letter_queue = cloudflare_queue.dlq2.queue_name
 
-  depends_on = [cloudflare_workers_script.worker_script]
+  lifecycle {
+    ignore_changes = [
+      settings
+    ]
+  }
+  depends_on = [cloudflare_workers_script.worker_script_with_dead_letter, cloudflare_queue.test_queue]
 }
