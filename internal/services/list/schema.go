@@ -119,6 +119,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("asn")),
 								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("hostname")),
 								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("redirect")),
+								ipValidator(),
 							},
 						},
 						"redirect": schema.SingleNestedAttribute{
