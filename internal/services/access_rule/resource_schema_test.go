@@ -11,7 +11,6 @@ import (
 )
 
 func TestAccessRuleModelSchemaParity(t *testing.T) {
-	t.Skip("need investigation: currently broken")
 	t.Parallel()
 	model := (*access_rule.AccessRuleModel)(nil)
 	schema := access_rule.ResourceSchema(context.TODO())
