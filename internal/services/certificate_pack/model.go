@@ -20,7 +20,7 @@ type CertificatePackModel struct {
 	Type                 types.String                                                        `tfsdk:"type" json:"type,required"`
 	ValidationMethod     types.String                                                        `tfsdk:"validation_method" json:"validation_method,required"`
 	ValidityDays         types.Int64                                                         `tfsdk:"validity_days" json:"validity_days,required"`
-	Hosts                *[]types.String                                                     `tfsdk:"hosts" json:"hosts,required"`
+	Hosts                customfield.Set[types.String]                                       `tfsdk:"hosts" json:"hosts,computed_optional"`
 	CloudflareBranding   types.Bool                                                          `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
 	PrimaryCertificate   types.String                                                        `tfsdk:"primary_certificate" json:"primary_certificate,computed"`
 	Status               types.String                                                        `tfsdk:"status" json:"status,computed"`

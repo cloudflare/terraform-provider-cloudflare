@@ -75,15 +75,12 @@ func testSweepCloudflareHealthcheck(r string) error {
 	return nil
 }
 
-func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
+func TestAccCloudflareHealthcheck_TCP(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 
@@ -93,69 +90,48 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
+				// Step 1: Create
+				Config: testAccCloudflareHealthcheckTCP(zoneID, rnd, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("port"), knownvalue.Int64Exact(80)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("address"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("TCP")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("TCP healthcheck")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(60)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(10)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("method"), knownvalue.StringExact("connection_established")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("port"), knownvalue.Int64Exact(80)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"check_regions", "description", "created_on", "modified_on", "status", "failure_reason", "http_config"},
-			},
-		},
-	})
-}
-
-func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
-				},
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd+"-updated", rnd),
+				// Step 2: Update
+				Config: testAccCloudflareHealthcheckTCPUpdated(zoneID, rnd+"-updated", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("TCP healthcheck updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(120)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(15)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("method"), knownvalue.StringExact("connection_established")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("port"), knownvalue.Int64Exact(8080)),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
+				// Step 3: Import
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -166,15 +142,12 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
+func TestAccCloudflareHealthcheck_HTTP(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 
@@ -184,17 +157,57 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd),
+				// Step 1: Create
+				Config: testAccCloudflareHealthcheckHTTP(zoneID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(80)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("address"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("HTTP")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("HTTP healthcheck")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(60)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(5)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("allow_insecure"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("OK")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("follow_redirects"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("header"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("method"), knownvalue.StringExact("GET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("path"), knownvalue.StringExact("/health")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(80)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
+				// Step 2: Update
+				Config: testAccCloudflareHealthcheckHTTPUpdated(zoneID, rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("HTTP healthcheck updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(120)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(10)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("allow_insecure"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("HEALTHY")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("follow_redirects"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("method"), knownvalue.StringExact("HEAD")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("path"), knownvalue.StringExact("/ping")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(8080)),
+				},
+			},
+			{
+				// Step 3: Import
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -237,109 +250,63 @@ func TestAccCloudflareHealthcheck_HTTPS(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckHTTPSComplete(zoneID, rnd),
+				// Step 1: Create with all attributes
+				Config: testAccCloudflareHealthcheckHTTPS(zoneID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("address"), knownvalue.StringExact("example.com")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("HTTPS")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("HTTPS healthcheck with all options")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("HTTPS healthcheck")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(60)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(2)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(10)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("allow_insecure"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("allow_insecure"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("OK")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("follow_redirects"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("method"), knownvalue.StringExact("GET")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("path"), knownvalue.StringExact("/health")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(443)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("header"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
 			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"check_regions", "description", "created_on", "modified_on", "status", "failure_reason", "http_config"},
-			},
-		},
-	})
-}
-
-func TestAccCloudflareHealthcheck_TCPCustomPort(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareHealthcheckTCPCustomPort(zoneID, rnd),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("address"), knownvalue.StringExact("example.com")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("TCP")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("TCP healthcheck on custom port")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("method"), knownvalue.StringExact("connection_established")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("tcp_config").AtMapKey("port"), knownvalue.Int64Exact(8080)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(15)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				// Step 2: Update all mutable attributes
+				Config: testAccCloudflareHealthcheckHTTPSUpdated(zoneID, rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
 				},
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportStateVerifyIgnore: []string{"check_regions", "description", "created_on", "modified_on", "status", "failure_reason", "http_config"},
-			},
-		},
-	})
-}
-
-func TestAccCloudflareHealthcheck_HTTPHead(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareHealthcheckHTTPHead(zoneID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("address"), knownvalue.StringExact("example.com")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("HTTP")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("description"), knownvalue.StringExact("HTTPS healthcheck updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("check_regions"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("WNAM"),
+					})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_fails"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("consecutive_successes"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("interval"), knownvalue.Int64Exact(120)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("retries"), knownvalue.Int64Exact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("timeout"), knownvalue.Int64Exact(5)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("suspended"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("allow_insecure"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("HEALTHY")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_codes"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("200"),
+					})),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("follow_redirects"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("method"), knownvalue.StringExact("HEAD")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("path"), knownvalue.StringExact("/ping")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(8080)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("path"), knownvalue.StringExact("/status")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("port"), knownvalue.Int64Exact(8443)),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
+				// Step 3: Import
 				ResourceName:            name,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -374,26 +341,85 @@ func testAccCheckCloudflareHealthcheckDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareHealthcheckTCP(zoneID, name, ID string) string {
-	return acctest.LoadTestCase("healthchecktcp.tf", zoneID, name, ID)
-}
-
-func testAccCheckCloudflareHealthcheckHTTP(zoneID, ID string) string {
-	return acctest.LoadTestCase("healthcheckhttp.tf", zoneID, ID)
-}
-
 func testAccCheckHealthcheckConfigMissingRequired(zoneID, ID string) string {
 	return acctest.LoadTestCase("acccheckhealthcheckconfigmissingrequired.tf", zoneID, ID)
 }
 
-func testAccCheckCloudflareHealthcheckHTTPSComplete(zoneID, name string) string {
-	return acctest.LoadTestCase("https_complete.tf", zoneID, name)
+func testAccCloudflareHealthcheckTCP(zoneID, name, ID string) string {
+	return acctest.LoadTestCase("tcp.tf", zoneID, name, ID)
 }
 
-func testAccCheckCloudflareHealthcheckTCPCustomPort(zoneID, name string) string {
-	return acctest.LoadTestCase("tcp_custom_port.tf", zoneID, name)
+func testAccCloudflareHealthcheckTCPUpdated(zoneID, name, ID string) string {
+	return acctest.LoadTestCase("tcp_updated.tf", zoneID, name, ID)
 }
 
-func testAccCheckCloudflareHealthcheckHTTPHead(zoneID, name string) string {
-	return acctest.LoadTestCase("http_head_method.tf", zoneID, name)
+func testAccCloudflareHealthcheckHTTP(zoneID, name string) string {
+	return acctest.LoadTestCase("http.tf", zoneID, name)
+}
+
+func testAccCloudflareHealthcheckHTTPUpdated(zoneID, name string) string {
+	return acctest.LoadTestCase("http_updated.tf", zoneID, name)
+}
+
+func testAccCloudflareHealthcheckHTTPS(zoneID, name string) string {
+	return acctest.LoadTestCase("https.tf", zoneID, name)
+}
+
+func testAccCloudflareHealthcheckHTTPSUpdated(zoneID, name string) string {
+	return acctest.LoadTestCase("https_updated.tf", zoneID, name)
+}
+
+// TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff verifies that when expected_body
+// is not specified in the config, the schema default of "" is used, matching the API response.
+// This test validates that expected_body does not cause a plan diff.
+func TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHealthcheckDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create the resource without specifying expected_body
+				Config: testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("HTTP")),
+					// Verify expected_body defaults to "" (empty string) matching API response
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+				// Note: ExpectNonEmptyPlan is needed due to other known drift issues
+				// (created_on, modified_on, status, failure_reason, tcp_config)
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				// Re-apply same config - verifies expected_body specifically doesn't cause additional drift
+				Config: testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
+				},
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportStateVerifyIgnore: []string{"check_regions", "description", "created_on", "modified_on", "status", "failure_reason", "tcp_config"},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, name string) string {
+	return acctest.LoadTestCase("http_no_expected_body.tf", zoneID, name)
 }

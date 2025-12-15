@@ -87,6 +87,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"profile_id": schema.StringAttribute{
 							Computed: true,
 						},
+						"upload_status": schema.StringAttribute{
+							Description: `Available values: "empty", "uploading", "pending", "processing", "failed", "complete".`,
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"empty",
+									"uploading",
+									"pending",
+									"processing",
+									"failed",
+									"complete",
+								),
+							},
+						},
 						"confidence": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntriesConfidenceDataSourceModel](ctx),

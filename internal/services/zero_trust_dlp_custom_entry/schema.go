@@ -84,6 +84,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"upload_status": schema.StringAttribute{
+				Description: `Available values: "empty", "uploading", "pending", "processing", "failed", "complete".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"empty",
+						"uploading",
+						"pending",
+						"processing",
+						"failed",
+						"complete",
+					),
+				},
+			},
 			"confidence": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomEntryConfidenceModel](ctx),

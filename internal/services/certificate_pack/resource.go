@@ -345,15 +345,19 @@ func (r *CertificatePackResource) ModifyPlan(ctx context.Context, req resource.M
 	// The API may:
 	// 1. Return hosts in a different order than submitted
 	// 2. Add additional hosts (e.g., cloudflaressl.com subdomain when cloudflare_branding=true)
-	if plan.Hosts != nil && state.Hosts != nil {
+	if !plan.Hosts.IsNull() && !state.Hosts.IsNull() {
 		planSet := make(map[string]bool)
 		stateSet := make(map[string]bool)
 
-		for _, h := range *plan.Hosts {
-			planSet[h.ValueString()] = true
+		for _, h := range plan.Hosts.Elements() {
+			if str, ok := h.(types.String); ok && !str.IsNull() {
+				planSet[str.ValueString()] = true
+			}
 		}
-		for _, h := range *state.Hosts {
-			stateSet[h.ValueString()] = true
+		for _, h := range state.Hosts.Elements() {
+			if str, ok := h.(types.String); ok && !str.IsNull() {
+				stateSet[str.ValueString()] = true
+			}
 		}
 
 		// Check if plan hosts are a subset of state hosts (API may have added extra hosts)
