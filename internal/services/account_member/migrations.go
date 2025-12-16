@@ -28,6 +28,23 @@ func (r *AccountMemberResource) UpgradeState(ctx context.Context) map[int64]reso
 	}
 }
 
+type V0AccountMemberPoliciesModel struct {
+	ID               types.String                                 `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
+	Access           types.String                                 `tfsdk:"access" json:"access,required"`
+	PermissionGroups []AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
+	ResourceGroups   []AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`
+}
+
+type V0AccountMemberModel struct {
+	ID        types.String                                     `tfsdk:"id" json:"id,computed"`
+	AccountID types.String                                     `tfsdk:"account_id" path:"account_id,required"`
+	Email     types.String                                     `tfsdk:"email" json:"email,required"`
+	Status    types.String                                     `tfsdk:"status" json:"status,computed_optional"`
+	Roles     *[]types.String                                  `tfsdk:"roles" json:"roles,optional,no_refresh"`
+	Policies  []V0AccountMemberPoliciesModel                   `tfsdk:"policies" json:"policies,computed_optional"`
+	User      customfield.NestedObject[AccountMemberUserModel] `tfsdk:"user" json:"user,computed"`
+}
+
 // priorSchemaV0 returns the schema for version 0 - policy IDs and lists instead of sets
 func priorSchemaV0(ctx context.Context) *schema.Schema {
 	return &schema.Schema{
@@ -66,7 +83,7 @@ func priorSchemaV0(ctx context.Context) *schema.Schema {
 				Description: "Array of policies associated with this member.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[V0AccountMemberPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -142,13 +159,47 @@ func priorSchemaV0(ctx context.Context) *schema.Schema {
 // upgradeAccountMemberStateV0toV1 upgrades the state from version 0 to version 1
 // This removes policy IDs and ensures that lists are transformed into sets.
 func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	// luckily this isn't too hard
-	var state AccountMemberModel
-	diags := req.State.Get(ctx, &state)
+	var oldState V0AccountMemberModel
+	diags := req.State.Get(ctx, &oldState)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	diags = resp.State.Set(ctx, state)
+
+	var newPolicies []AccountMemberPoliciesModel
+	for _, policy := range oldState.Policies {
+		permissionsSet, diags := customfield.NewObjectSet(ctx, policy.PermissionGroups)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		resourceGroupsSet, diags := customfield.NewObjectSet(ctx, policy.ResourceGroups)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		newPolicies = append(newPolicies, AccountMemberPoliciesModel{
+			Access:           policy.Access,
+			PermissionGroups: permissionsSet,
+			ResourceGroups:   resourceGroupsSet,
+		})
+	}
+	policiesSet, diags := customfield.NewObjectSet(ctx, newPolicies)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var newState = AccountMemberModel{
+		ID:        oldState.ID,
+		AccountID: oldState.AccountID,
+		Email:     oldState.Email,
+		Status:    oldState.Status,
+		Roles:     oldState.Roles,
+		Policies:  policiesSet,
+		User:      oldState.User,
+	}
+
+	diags = resp.State.Set(ctx, newState)
 	resp.Diagnostics.Append(diags...)
 }
