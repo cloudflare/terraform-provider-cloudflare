@@ -192,20 +192,39 @@ func TestMigrateAccountMemberFromV5_13(t *testing.T) {
 	// config in both test changes is the same, we are just ensuring that the
 	// state file can be migrated
 	config := fmt.Sprintf(`
-resource "cloudflare_account_member" "v5_13_account_member" {
+data "cloudflare_resource_groups" "all" {
+  account_id = "%[1]s"
+  name       = "com.cloudflare.api.account.%[1]s"
+}
+
+data "cloudflare_account_permission_groups" "all" {
+  account_id = "%[1]s"
+}
+
+locals {
+  api_token_permissions_groups_map = {
+    for perm in data.cloudflare_account_permission_groups.all.result :
+    perm.name => perm.id
+  }
+}
+
+resource "cloudflare_account_member" "test_member" {
   account_id = "%[1]s"
   email      = "%[2]s"
   policies = [{
     access = "allow"
-    permission_groups = [{
-      id = "116fdf5a52ad4741999c0a9419a35892"
+    resource_groups = [{
+      id : data.cloudflare_resource_groups.all.result[0].id
     }]
-    resource_groups = [
-      { id = "407fdad88b92445b90600ac17057460c" },
-    ]
+    permission_groups = [{
+      id : local.api_token_permissions_groups_map["Administrator"]
+    }]
   }]
 }
+
 `, accountID, email)
+
+	resourceName := "cloudflare_account_member.test_member"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -223,11 +242,30 @@ resource "cloudflare_account_member" "v5_13_account_member" {
 					},
 				},
 				Config: config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					// we should have a policy ID
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+				},
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
+				},
 			},
 		},
 	})

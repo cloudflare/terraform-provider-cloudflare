@@ -28,21 +28,37 @@ func (r *AccountMemberResource) UpgradeState(ctx context.Context) map[int64]reso
 	}
 }
 
-type V0AccountMemberPoliciesModel struct {
-	ID               types.String                                 `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
-	Access           types.String                                 `tfsdk:"access" json:"access,required"`
-	PermissionGroups []AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	ResourceGroups   []AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`
+type V0AccountMemberModel struct {
+	ID        types.String                   `tfsdk:"id" json:"id,computed"`
+	AccountID types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	Email     types.String                   `tfsdk:"email" json:"email,required"`
+	Status    types.String                   `tfsdk:"status" json:"status,computed_optional"`
+	Roles     *[]types.String                `tfsdk:"roles" json:"roles,optional,no_refresh"`
+	Policies  []V0AccountMemberPoliciesModel `tfsdk:"policies" json:"policies,computed_optional"`
+	User      V0AccountMemberUserModel       `tfsdk:"user" json:"user,computed"`
 }
 
-type V0AccountMemberModel struct {
-	ID        types.String                                     `tfsdk:"id" json:"id,computed"`
-	AccountID types.String                                     `tfsdk:"account_id" path:"account_id,required"`
-	Email     types.String                                     `tfsdk:"email" json:"email,required"`
-	Status    types.String                                     `tfsdk:"status" json:"status,computed_optional"`
-	Roles     *[]types.String                                  `tfsdk:"roles" json:"roles,optional,no_refresh"`
-	Policies  []V0AccountMemberPoliciesModel                   `tfsdk:"policies" json:"policies,computed_optional"`
-	User      customfield.NestedObject[AccountMemberUserModel] `tfsdk:"user" json:"user,computed"`
+type V0AccountMemberPoliciesModel struct {
+	ID               types.String                                   `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
+	Access           types.String                                   `tfsdk:"access" json:"access,required"`
+	PermissionGroups []V0AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
+	ResourceGroups   []V0AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`
+}
+
+type V0AccountMemberPoliciesPermissionGroupsModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
+type V0AccountMemberPoliciesResourceGroupsModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
+type V0AccountMemberUserModel struct {
+	Email                          types.String `tfsdk:"email" json:"email,computed"`
+	ID                             types.String `tfsdk:"id" json:"id,computed"`
+	FirstName                      types.String `tfsdk:"first_name" json:"first_name,computed"`
+	LastName                       types.String `tfsdk:"last_name" json:"last_name,computed"`
+	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }
 
 // priorSchemaV0 returns the schema for version 0 - policy IDs and lists instead of sets
@@ -168,12 +184,20 @@ func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeSt
 
 	var newPolicies []AccountMemberPoliciesModel
 	for _, policy := range oldState.Policies {
-		permissionsSet, diags := customfield.NewObjectSet(ctx, policy.PermissionGroups)
+		newPermissionGroups := []AccountMemberPoliciesPermissionGroupsModel{}
+		for _, permissionGroup := range policy.PermissionGroups {
+			newPermissionGroups = append(newPermissionGroups, AccountMemberPoliciesPermissionGroupsModel(permissionGroup))
+		}
+		permissionsSet, diags := customfield.NewObjectSet(ctx, newPermissionGroups)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
 		}
-		resourceGroupsSet, diags := customfield.NewObjectSet(ctx, policy.ResourceGroups)
+		newResourceGroups := []AccountMemberPoliciesResourceGroupsModel{}
+		for _, resourceGroup := range policy.ResourceGroups {
+			newResourceGroups = append(newResourceGroups, AccountMemberPoliciesResourceGroupsModel(resourceGroup))
+		}
+		resourceGroupsSet, diags := customfield.NewObjectSet(ctx, newResourceGroups)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -190,6 +214,19 @@ func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeSt
 		return
 	}
 
+	newUser := AccountMemberUserModel{
+		Email:                          oldState.User.Email,
+		ID:                             oldState.User.ID,
+		FirstName:                      oldState.User.FirstName,
+		LastName:                       oldState.User.LastName,
+		TwoFactorAuthenticationEnabled: oldState.User.TwoFactorAuthenticationEnabled,
+	}
+	userObject, diags := customfield.NewObject(ctx, &newUser)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	var newState = AccountMemberModel{
 		ID:        oldState.ID,
 		AccountID: oldState.AccountID,
@@ -197,7 +234,7 @@ func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeSt
 		Status:    oldState.Status,
 		Roles:     oldState.Roles,
 		Policies:  policiesSet,
-		User:      oldState.User,
+		User:      userObject,
 	}
 
 	diags = resp.State.Set(ctx, newState)
