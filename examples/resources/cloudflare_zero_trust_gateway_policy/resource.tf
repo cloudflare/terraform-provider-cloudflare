@@ -65,6 +65,9 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       ipv4_fallback = "192.0.2.3"
       ipv6 = "2001:DB8::/64"
     }
+    forensic_copy = {
+      enabled = true
+    }
     ignore_cname_category_matches = true
     insecure_disable_dnssec_validation = false
     ip_categories = true
