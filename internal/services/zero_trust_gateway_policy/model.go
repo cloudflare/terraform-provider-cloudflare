@@ -64,6 +64,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	CheckSession                    *ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel         `tfsdk:"check_session" json:"check_session,optional"`
 	DNSResolvers                    *ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel         `tfsdk:"dns_resolvers" json:"dns_resolvers,optional"`
 	Egress                          *ZeroTrustGatewayPolicyRuleSettingsEgressModel               `tfsdk:"egress" json:"egress,optional"`
+	ForensicCopy                    *ZeroTrustGatewayPolicyRuleSettingsForensicCopyModel         `tfsdk:"forensic_copy" json:"forensic_copy,optional"`
 	IgnoreCNAMECategoryMatches      types.Bool                                                   `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed_optional"`
 	InsecureDisableDNSSECValidation types.Bool                                                   `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed_optional"`
 	IPCategories                    types.Bool                                                   `tfsdk:"ip_categories" json:"ip_categories,computed_optional"`
@@ -132,6 +133,10 @@ type ZeroTrustGatewayPolicyRuleSettingsEgressModel struct {
 	IPV4         types.String `tfsdk:"ipv4" json:"ipv4,optional"`
 	IPV4Fallback types.String `tfsdk:"ipv4_fallback" json:"ipv4_fallback,optional"`
 	IPV6         types.String `tfsdk:"ipv6" json:"ipv6,optional"`
+}
+
+type ZeroTrustGatewayPolicyRuleSettingsForensicCopyModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsL4overrideModel struct {

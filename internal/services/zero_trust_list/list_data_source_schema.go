@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\", \"CATEGORY\", \"LOCATION\", \"DEVICE\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -32,6 +32,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"DOMAIN",
 						"EMAIL",
 						"IP",
+						"CATEGORY",
+						"LOCATION",
+						"DEVICE",
 					),
 				},
 			},
@@ -90,7 +93,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+							Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\", \"CATEGORY\", \"LOCATION\", \"DEVICE\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -99,6 +102,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"DOMAIN",
 									"EMAIL",
 									"IP",
+									"CATEGORY",
+									"LOCATION",
+									"DEVICE",
 								),
 							},
 						},
