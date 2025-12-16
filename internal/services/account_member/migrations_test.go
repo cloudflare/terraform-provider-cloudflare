@@ -181,3 +181,54 @@ resource "cloudflare_account_member" "%[2]s" {
 }
 `, accountID, rnd, email, roleID)
 }
+
+// TestMigrateAccountMemberFromV5_13 tests migration from v5.13.0
+func TestMigrateAccountMemberFromV5_13(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	email := fmt.Sprintf("%s@example.com", rnd)
+	tmpDir := t.TempDir()
+
+	// config in both test changes is the same, we are just ensuring that the
+	// state file can be migrated
+	config := fmt.Sprintf(`
+resource "cloudflare_account_member" "v5_13_account_member" {
+  account_id = "%[1]s"
+  email      = "%[2]s"
+  policies = [{
+    access = "allow"
+    permission_groups = [{
+      id = "116fdf5a52ad4741999c0a9419a35892"
+    }]
+    resource_groups = [
+      { id = "407fdad88b92445b90600ac17057460c" },
+    ]
+  }]
+}
+`, accountID, email)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.13 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.13.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+			},
+		},
+	})
+}
