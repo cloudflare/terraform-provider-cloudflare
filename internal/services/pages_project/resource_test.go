@@ -625,3 +625,79 @@ func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 		},
 	})
 }
+
+// TestAccCloudflarePagesProject_NoDriftWithSecretEnvVars tests the fix for issue #6526.
+// It verifies that applying the same config with secret env vars does not cause
+// "inconsistent result after apply" errors.
+func TestAccCloudflarePagesProject_NoDriftWithSecretEnvVars(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Initial apply with secret env vars
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("SECRET_VAR").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+			{
+				// Re-apply the SAME config - should show no changes (fixes #6526)
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflarePagesProject_NoDriftWithMinimalConfig tests the fix for issue #5928.
+// It verifies that a minimal config (without build_config or deployment_configs) does not
+// show drift on subsequent plans.
+func TestAccCloudflarePagesProject_NoDriftWithMinimalConfig(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Initial apply with minimal config
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
+					// deployment_configs will be computed by the API
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Re-apply the SAME config - should show no changes (fixes #5928)
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
