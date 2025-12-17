@@ -35,7 +35,7 @@ type V0AccountMemberModel struct {
 	Status    types.String                   `tfsdk:"status" json:"status,computed_optional"`
 	Roles     *[]types.String                `tfsdk:"roles" json:"roles,optional,no_refresh"`
 	Policies  []V0AccountMemberPoliciesModel `tfsdk:"policies" json:"policies,computed_optional"`
-	User      V0AccountMemberUserModel       `tfsdk:"user" json:"user,computed"`
+	User      *V0AccountMemberUserModel      `tfsdk:"user" json:"user,computed"`
 }
 
 type V0AccountMemberPoliciesModel struct {
@@ -214,12 +214,21 @@ func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeSt
 		return
 	}
 
-	newUser := AccountMemberUserModel{
-		Email:                          oldState.User.Email,
-		ID:                             oldState.User.ID,
-		FirstName:                      oldState.User.FirstName,
-		LastName:                       oldState.User.LastName,
-		TwoFactorAuthenticationEnabled: oldState.User.TwoFactorAuthenticationEnabled,
+	var newUser AccountMemberUserModel
+	if oldState.User != nil {
+		newUser = AccountMemberUserModel{
+			Email:                          oldState.User.Email,
+			ID:                             oldState.User.ID,
+			FirstName:                      oldState.User.FirstName,
+			LastName:                       oldState.User.LastName,
+			TwoFactorAuthenticationEnabled: oldState.User.TwoFactorAuthenticationEnabled,
+		}
+	} else {
+		// older state didn't have a user object, but the only field we really
+		// set in it anyway is the email so we can pull it off of the top level
+		newUser = AccountMemberUserModel{
+			Email: oldState.Email,
+		}
 	}
 	userObject, diags := customfield.NewObject(ctx, &newUser)
 	resp.Diagnostics.Append(diags...)

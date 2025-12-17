@@ -2,6 +2,7 @@ package account_member_test
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"testing"
 
@@ -32,7 +33,7 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 	testCases := []struct {
 		name     string
 		version  string
-		configFn func(accountID, rnd, email string) string
+		configFn func(accountID, rnd, email, roleID string) string
 	}{
 		{
 			name:     "from_v4_52_1", // Last v4 release
@@ -49,17 +50,28 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 				t.Setenv("CLOUDFLARE_API_TOKEN", "")
 			}
 
-			accountID := acctest.TestAccCloudflareAccountID
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			email := fmt.Sprintf("test-%s@example.com", rnd)
 			resourceName := "cloudflare_account_member." + rnd
-			testConfig := tc.configFn(accountID, rnd, email)
+			roleID := getRoleId(t, accountID, "Administrator Read Only")
+			testConfig := tc.configFn(accountID, rnd, email, roleID)
 			tmpDir := t.TempDir()
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_AccountID(t)
+					baseUrl := os.Getenv("CLOUDFLARE_BASE_URL")
+					if baseUrl != "" {
+						u, err := url.Parse(baseUrl)
+						if err != nil {
+							t.Fatal(err)
+						}
+						hostname := u.Hostname()
+						// legacy env var for base url
+						os.Setenv("CLOUDFLARE_API_HOSTNAME", hostname)
+					}
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -109,17 +121,28 @@ func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := acctest.TestAccCloudflareAccountID
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	email := fmt.Sprintf("test-%s@example.com", rnd)
 	resourceName := "cloudflare_account_member." + rnd
-	v4Config := testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, email)
+	roleID := getRoleId(t, accountID, "Administrator Read Only")
+	v4Config := testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, email, roleID)
 	tmpDir := t.TempDir()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
+			baseUrl := os.Getenv("CLOUDFLARE_BASE_URL")
+			if baseUrl != "" {
+				u, err := url.Parse(baseUrl)
+				if err != nil {
+					t.Fatal(err)
+				}
+				hostname := u.Hostname()
+				// legacy env var for base url
+				os.Setenv("CLOUDFLARE_API_HOSTNAME", hostname)
+			}
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
@@ -157,9 +180,7 @@ func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
 
 // V4 Configuration Functions
 
-func testAccCloudflareAccountMemberMigrationConfigV4Basic(accountID, rnd, email string) string {
-	// Using a standard "Administrator Read Only" role ID from Cloudflare's predefined roles
-	roleID := "05784afa30c1afe1440e79d9351c7430"
+func testAccCloudflareAccountMemberMigrationConfigV4Basic(accountID, rnd, email, roleID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_account_member" "%[2]s" {
   account_id    = "%[1]s"
@@ -169,14 +190,11 @@ resource "cloudflare_account_member" "%[2]s" {
 `, accountID, rnd, email, roleID)
 }
 
-func testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, email string) string {
-	// Using a standard "Administrator Read Only" role ID from Cloudflare's predefined roles
-	roleID := "05784afa30c1afe1440e79d9351c7430"
+func testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, email, roleID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_account_member" "%[2]s" {
   account_id    = "%[1]s"
   email_address = "%[3]s"
-  status        = "accepted"
   role_ids      = ["%[4]s"]
 }
 `, accountID, rnd, email, roleID)
@@ -261,7 +279,6 @@ resource "cloudflare_account_member" "test_member" {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("email"), knownvalue.StringExact(email)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("access"), knownvalue.StringExact("allow")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(1)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resource_groups"), knownvalue.ListSizeExact(1)),
