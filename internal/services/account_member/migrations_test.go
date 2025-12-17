@@ -195,6 +195,7 @@ func testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, e
 resource "cloudflare_account_member" "%[2]s" {
   account_id    = "%[1]s"
   email_address = "%[3]s"
+  status        = "accepted"
   role_ids      = ["%[4]s"]
 }
 `, accountID, rnd, email, roleID)
