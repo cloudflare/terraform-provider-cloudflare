@@ -1108,3 +1108,34 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 		ConfigStateChecks: stateChecks,
 	}
 }
+
+// MigrationV2TestStepAllowCreate allows non-empty plans when a v4 resource needs to be split into multiple v5 resources,
+//
+// Example: cloudflare_argo with both smart_routing and tiered_caching becomes two separate resources
+// Returns two steps: one for migration+apply, one for verification
+func MigrationV2TestStepAllowCreate(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	return []resource.TestStep{
+		{
+			// Step 1: Run migration and apply any creates
+			PreConfig: func() {
+				WriteOutConfig(t, v4Config, tmpDir)
+				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			},
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+		},
+		{
+			// Step 2: Verify final state and expect empty plan
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+			},
+			ConfigStateChecks: stateChecks,
+		},
+	}
+}
