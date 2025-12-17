@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
@@ -27,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -79,6 +80,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
+			"cloudflare_branding": schema.BoolAttribute{
+				Description:   "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+			},
 			"hosts": schema.SetAttribute{
 				Description:   "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
 				Computed:      true,
@@ -86,10 +92,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    customfield.NewSetType[types.String](ctx),
 				ElementType:   types.StringType,
 				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplaceIfConfigured()},
-			},
-			"cloudflare_branding": schema.BoolAttribute{
-				Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
-				Optional:    true,
 			},
 			"primary_certificate": schema.StringAttribute{
 				Description: "Identifier of the primary certificate in a pack.",
