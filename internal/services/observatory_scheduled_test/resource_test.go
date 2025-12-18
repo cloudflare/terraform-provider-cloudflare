@@ -15,7 +15,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -72,27 +75,87 @@ func testSweepCloudflareObservatoryScheduledTests(r string) error {
 	return nil
 }
 
-func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
+func TestAccCloudflareObservatoryScheduledTest_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_observatory_scheduled_test.%s", rnd)
+	url1 := url.PathEscape(domain + "/" + rnd)
+	url2 := url.PathEscape(domain + "/" + rnd + "-updated")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		// CheckDestroy:             testAccCheckCloudflareWaitingRoomDestroy,
 		Steps: []resource.TestStep{
+			// Step 1: Create + Read
 			{
-				Config: testAccCloudflareObservatoryScheduledTest(rnd, zoneID, domain),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "url", url.PathEscape(domain+"/"+rnd)),
-					resource.TestCheckResourceAttr(name, "test.url", domain+"/"+rnd),
-					resource.TestCheckResourceAttr(name, "schedule.region", "us-central1"),
-					resource.TestCheckResourceAttr(name, "schedule.frequency", "DAILY"),
-				),
+				Config: testAccCloudflareObservatoryScheduledTestConfig(rnd, zoneID, domain, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New(consts.ZoneIDSchemaKey),
+						knownvalue.StringExact(zoneID),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("url"),
+						knownvalue.StringExact(url1),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("id"),
+						knownvalue.StringExact(url1),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("schedule").AtMapKey("region"),
+						knownvalue.NotNull(),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("schedule").AtMapKey("frequency"),
+						knownvalue.NotNull(),
+					),
+				},
+			},
+			// Step 2: Update + Read
+			{
+				Config: testAccCloudflareObservatoryScheduledTestConfig(rnd, zoneID, domain, rnd+"-updated"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New(consts.ZoneIDSchemaKey),
+						knownvalue.StringExact(zoneID),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("url"),
+						knownvalue.StringExact(url2),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("id"),
+						knownvalue.StringExact(url2),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("schedule").AtMapKey("region"),
+						knownvalue.NotNull(),
+					),
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("schedule").AtMapKey("frequency"),
+						knownvalue.NotNull(),
+					),
+				},
+			},
+			// Step 3: Import
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/%s", zoneID, url2),
 			},
 		},
 	})
@@ -121,6 +184,11 @@ func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) e
 	return nil
 }
 
-func testAccCloudflareObservatoryScheduledTest(resourceName, zoneID, domain string) string {
-	return acctest.LoadTestCase("observatoryscheduledtest.tf", resourceName, zoneID, domain)
+func testAccCloudflareObservatoryScheduledTestConfig(resourceName, zoneID, domain, path string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_observatory_scheduled_test" "%[1]s" {
+  zone_id = %[2]q
+  url     = urlencode("%[3]s/%[4]s")
+}
+`, resourceName, zoneID, domain, path)
 }
