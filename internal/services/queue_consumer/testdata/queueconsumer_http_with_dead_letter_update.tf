@@ -24,4 +24,9 @@ resource "cloudflare_queue_consumer" "%[7]s" {
     retry_delay           = 0
     visibility_timeout_ms = 30000
   }
+  lifecycle {
+    ignore_changes = [
+      settings
+    ]
+  }
 }
