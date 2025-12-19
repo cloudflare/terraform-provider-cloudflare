@@ -29,7 +29,7 @@ data "cloudflare_zero_trust_lists" "example_zero_trust_lists" {
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `type` (String) Specify the list type.
-Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP", "CATEGORY", "LOCATION", "DEVICE".
 
 ### Read-Only
 
@@ -47,7 +47,7 @@ Read-Only:
 - `list_count` (Number) Indicate the number of items in the list.
 - `name` (String) Specify the list name.
 - `type` (String) Specify the list type.
-Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP", "CATEGORY", "LOCATION", "DEVICE".
 - `updated_at` (String)
 
 <a id="nestedatt--result--items"></a>
