@@ -363,10 +363,16 @@ func (r *PagesProjectResource) ModifyPlan(ctx context.Context, req resource.Modi
 		plan.LatestDeployment = state.LatestDeployment
 	}
 
-	// Preserve deployment_configs if it's unknown in the plan but present in state
-	// This is a computed_optional field that can have nested unknown values
-	if plan.DeploymentConfigs.IsUnknown() && !state.DeploymentConfigs.IsNull() {
+	// Preserve deployment_configs if it's unknown or null in the plan but present in state.
+	// This prevents drift when user omits deployment_configs (issue #5928).
+	if (plan.DeploymentConfigs.IsUnknown() || plan.DeploymentConfigs.IsNull()) && !state.DeploymentConfigs.IsNull() {
 		plan.DeploymentConfigs = state.DeploymentConfigs
+	}
+
+	// Preserve build_config if it's null in the plan but present in state.
+	// This prevents drift when user omits build_config (issue #5928).
+	if plan.BuildConfig == nil && state.BuildConfig != nil {
+		plan.BuildConfig = state.BuildConfig
 	}
 
 	// Preserve other computed fields
