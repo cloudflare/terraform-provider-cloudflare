@@ -135,9 +135,7 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 
 	planDeploymentConfigs := data.DeploymentConfigs
 
-	// Prepare the model for update by converting nil binding maps to empty maps.
-	// This is needed because the Cloudflare Pages API requires empty objects {} to delete
-	// bindings, not null values.
+	// Convert nil binding maps to empty maps so the API deletes them.
 	data, diags := PrepareForUpdate(ctx, data, state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -491,63 +489,14 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				previewModified = true
 			}
 
-			// Normalize empty placement to null - the API returns placement: {} when no mode is set
+			// Normalize empty placement to null
 			if previewValue.Placement != nil && (previewValue.Placement.Mode.IsNull() || previewValue.Placement.Mode.ValueString() == "") {
 				previewValue.Placement = nil
 				previewModified = true
 			}
 
 			// Normalize empty binding maps to nil
-			if previewValue.EnvVars != nil && len(*previewValue.EnvVars) == 0 {
-				previewValue.EnvVars = nil
-				previewModified = true
-			}
-			if previewValue.KVNamespaces != nil && len(*previewValue.KVNamespaces) == 0 {
-				previewValue.KVNamespaces = nil
-				previewModified = true
-			}
-			if previewValue.D1Databases != nil && len(*previewValue.D1Databases) == 0 {
-				previewValue.D1Databases = nil
-				previewModified = true
-			}
-			if previewValue.R2Buckets != nil && len(*previewValue.R2Buckets) == 0 {
-				previewValue.R2Buckets = nil
-				previewModified = true
-			}
-			if previewValue.DurableObjectNamespaces != nil && len(*previewValue.DurableObjectNamespaces) == 0 {
-				previewValue.DurableObjectNamespaces = nil
-				previewModified = true
-			}
-			if previewValue.AIBindings != nil && len(*previewValue.AIBindings) == 0 {
-				previewValue.AIBindings = nil
-				previewModified = true
-			}
-			if previewValue.AnalyticsEngineDatasets != nil && len(*previewValue.AnalyticsEngineDatasets) == 0 {
-				previewValue.AnalyticsEngineDatasets = nil
-				previewModified = true
-			}
-			if previewValue.Browsers != nil && len(*previewValue.Browsers) == 0 {
-				previewValue.Browsers = nil
-				previewModified = true
-			}
-			if previewValue.HyperdriveBindings != nil && len(*previewValue.HyperdriveBindings) == 0 {
-				previewValue.HyperdriveBindings = nil
-				previewModified = true
-			}
-			if previewValue.MTLSCertificates != nil && len(*previewValue.MTLSCertificates) == 0 {
-				previewValue.MTLSCertificates = nil
-				previewModified = true
-			}
-			if previewValue.QueueProducers != nil && len(*previewValue.QueueProducers) == 0 {
-				previewValue.QueueProducers = nil
-				previewModified = true
-			}
-			if previewValue.Services != nil && len(*previewValue.Services) == 0 {
-				previewValue.Services = nil
-				previewModified = true
-			}
-			if previewValue.VectorizeBindings != nil && len(*previewValue.VectorizeBindings) == 0 {
-				previewValue.VectorizeBindings = nil
+			if normalizeEmptyMapsPreview(previewValue) {
 				previewModified = true
 			}
 
@@ -573,63 +522,14 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				productionModified = true
 			}
 
-			// Normalize empty placement to null - the API returns placement: {} when no mode is set
+			// Normalize empty placement to null
 			if productionValue.Placement != nil && (productionValue.Placement.Mode.IsNull() || productionValue.Placement.Mode.ValueString() == "") {
 				productionValue.Placement = nil
 				productionModified = true
 			}
 
 			// Normalize empty binding maps to nil
-			if productionValue.EnvVars != nil && len(*productionValue.EnvVars) == 0 {
-				productionValue.EnvVars = nil
-				productionModified = true
-			}
-			if productionValue.KVNamespaces != nil && len(*productionValue.KVNamespaces) == 0 {
-				productionValue.KVNamespaces = nil
-				productionModified = true
-			}
-			if productionValue.D1Databases != nil && len(*productionValue.D1Databases) == 0 {
-				productionValue.D1Databases = nil
-				productionModified = true
-			}
-			if productionValue.R2Buckets != nil && len(*productionValue.R2Buckets) == 0 {
-				productionValue.R2Buckets = nil
-				productionModified = true
-			}
-			if productionValue.DurableObjectNamespaces != nil && len(*productionValue.DurableObjectNamespaces) == 0 {
-				productionValue.DurableObjectNamespaces = nil
-				productionModified = true
-			}
-			if productionValue.AIBindings != nil && len(*productionValue.AIBindings) == 0 {
-				productionValue.AIBindings = nil
-				productionModified = true
-			}
-			if productionValue.AnalyticsEngineDatasets != nil && len(*productionValue.AnalyticsEngineDatasets) == 0 {
-				productionValue.AnalyticsEngineDatasets = nil
-				productionModified = true
-			}
-			if productionValue.Browsers != nil && len(*productionValue.Browsers) == 0 {
-				productionValue.Browsers = nil
-				productionModified = true
-			}
-			if productionValue.HyperdriveBindings != nil && len(*productionValue.HyperdriveBindings) == 0 {
-				productionValue.HyperdriveBindings = nil
-				productionModified = true
-			}
-			if productionValue.MTLSCertificates != nil && len(*productionValue.MTLSCertificates) == 0 {
-				productionValue.MTLSCertificates = nil
-				productionModified = true
-			}
-			if productionValue.QueueProducers != nil && len(*productionValue.QueueProducers) == 0 {
-				productionValue.QueueProducers = nil
-				productionModified = true
-			}
-			if productionValue.Services != nil && len(*productionValue.Services) == 0 {
-				productionValue.Services = nil
-				productionModified = true
-			}
-			if productionValue.VectorizeBindings != nil && len(*productionValue.VectorizeBindings) == 0 {
-				productionValue.VectorizeBindings = nil
+			if normalizeEmptyMapsProduction(productionValue) {
 				productionModified = true
 			}
 
