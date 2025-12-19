@@ -1109,55 +1109,6 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 	}
 }
 
-// MigrationV2TestStepWithStateNormalization creates test steps for migrations where the v5 provider's
-// schema causes state normalization issues. This is needed when:
-// - The v5 provider returns all fields from the API (including nil/empty ones)
-// - The migrated state has only populated fields
-// - Terraform needs a plan cycle to normalize the state (remove nil fields)
-//
-// This helper expects an empty plan in the migration step, then runs a plan-only step
-// to normalize the state, before validating with a clean plan check.
-//
-// Use this when `ExpectEmptyPlanExceptFalseyToNull` is too restrictive because the state
-// changes involve removing entire nil fields rather than just falsey-to-null conversions.
-//
-// Example use case: cloudflare_zero_trust_access_group where selector fields are removed
-// from state during normalization.
-func MigrationV2TestStepWithStateNormalization(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
-	// Step 1: Run migration
-	migrationStep := resource.TestStep{
-		PreConfig: func() {
-			WriteOutConfig(t, v4Config, tmpDir)
-			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
-			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
-		},
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-	}
-
-	// Step 2: Run plan-only to normalize state (removes nil/empty fields)
-	planStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		PlanOnly:                 true,
-	}
-
-	// Step 3: Verify final plan is clean and state is correct after normalization
-	validationStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		ConfigPlanChecks: resource.ConfigPlanChecks{
-			PreApply: []plancheck.PlanCheck{
-				DebugNonEmptyPlan,
-				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after normalization
-			},
-		},
-		ConfigStateChecks: stateChecks,
-	}
-
-	return []resource.TestStep{migrationStep, planStep, validationStep}
-}
-
 // MigrationV2TestStepAllowCreate allows non-empty plans when a v4 resource needs to be split into multiple v5 resources,
 //
 // Example: cloudflare_argo with both smart_routing and tiered_caching becomes two separate resources
