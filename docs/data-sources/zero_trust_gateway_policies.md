@@ -86,6 +86,7 @@ Read-Only:
 - `check_session` (Attributes) Configure session check behavior. Settable only for `l4` and `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--result--rule_settings--check_session))
 - `dns_resolvers` (Attributes) Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--result--rule_settings--dns_resolvers))
 - `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. Settable only for `egress` rules. (see [below for nested schema](#nestedatt--result--rule_settings--egress))
+- `forensic_copy` (Attributes) Configure whether a copy of the HTTP request will be sent to storage when the rule matches. (see [below for nested schema](#nestedatt--result--rule_settings--forensic_copy))
 - `ignore_cname_category_matches` (Boolean) Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.
 - `insecure_disable_dnssec_validation` (Boolean) Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.
 - `ip_categories` (Boolean) Enable IPs in DNS resolver category blocks. The system blocks only domain name categories unless you enable this setting. Settable only for `dns` and `dns_resolver` rules.
@@ -192,6 +193,14 @@ Read-Only:
 - `ipv4` (String) Specify the IPv4 address to use for egress.
 - `ipv4_fallback` (String) Specify the fallback IPv4 address to use for egress when the primary IPv4 fails. Set '0.0.0.0' to indicate local egress via WARP IPs.
 - `ipv6` (String) Specify the IPv6 range to use for egress.
+
+
+<a id="nestedatt--result--rule_settings--forensic_copy"></a>
+### Nested Schema for `result.rule_settings.forensic_copy`
+
+Read-Only:
+
+- `enabled` (Boolean) Enable sending the copy to storage.
 
 
 <a id="nestedatt--result--rule_settings--l4override"></a>

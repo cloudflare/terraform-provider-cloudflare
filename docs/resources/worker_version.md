@@ -103,6 +103,7 @@ Available values: "standard", "bundled", "unbound".
 - `id` (String) Version identifier.
 - `number` (Number) The integer version number, starting from one.
 - `source` (String) The client used to create the version.
+- `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
 
 <a id="nestedatt--annotations"></a>
 ### Nested Schema for `annotations`
