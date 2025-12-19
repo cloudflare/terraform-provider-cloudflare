@@ -105,6 +105,10 @@ func testPagesProjectMinimal(resourceID, accountID, projectName string) string {
 	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID, projectName)
 }
 
+func testPagesProjectMinimalWithDeploymentConfigs(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectminimalwithdeploymentconfigs.tf", resourceID, accountID, projectName)
+}
+
 func testPagesProjectFullConfig(resourceID, accountID, projectName, owner, repo string) string {
 	return acctest.LoadTestCase("pagesprojectfullconfig.tf", resourceID, accountID, projectName, owner, repo)
 }
@@ -413,11 +417,6 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T) {
-	// Skip: This test has issues with computed fields (canonical_deployment, latest_deployment)
-	// that keep changing. The specific functionality of removing env_vars/bindings is tested
-	// by TestAccCloudflarePagesProject_RemoveEnvVarsAndBindings and TestAccCloudflarePagesProject_RemoveSpecificEnvVar.
-	t.Skip("Skipped due to computed field drift - removal of bindings tested by dedicated tests")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := rnd
@@ -436,13 +435,13 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
 				},
 			},
 			{
-				// Going to minimal config should update production_branch.
-				// build_config and deployment_configs will remain as computed values from API
-				// since deployment_configs is computed_optional.
-				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				// Update to config with deployment_configs but no env_vars - should remove env_vars.
+				Config: testPagesProjectMinimalWithDeploymentConfigs(rnd, accountID, projectName),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
@@ -451,16 +450,16 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-					// deployment_configs remains as computed value from API
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
+					// env_vars should be removed (null) after update
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.Null()),
 				},
 			},
 			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"deployment_configs.production.env_vars.PROD_UPDATED.value"},
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})
