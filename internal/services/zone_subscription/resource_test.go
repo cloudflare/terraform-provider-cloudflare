@@ -38,7 +38,7 @@ func testSweepCloudflareZoneSubscription(r string) error {
 
 func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
 
 	resource.Test(t, resource.TestCase{
