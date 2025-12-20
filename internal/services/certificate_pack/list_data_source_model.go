@@ -39,7 +39,7 @@ func (m *CertificatePacksDataSourceModel) toListParams(_ context.Context) (param
 type CertificatePacksResultDataSourceModel struct {
 	ID                   types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	Certificates         customfield.NestedObjectList[CertificatePacksCertificatesDataSourceModel]      `tfsdk:"certificates" json:"certificates,computed"`
-	Hosts                customfield.List[types.String]                                                 `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts                customfield.Set[types.String]                                                  `tfsdk:"hosts" json:"hosts,computed"`
 	Status               types.String                                                                   `tfsdk:"status" json:"status,computed"`
 	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
 	CertificateAuthority types.String                                                                   `tfsdk:"certificate_authority" json:"certificate_authority,computed"`

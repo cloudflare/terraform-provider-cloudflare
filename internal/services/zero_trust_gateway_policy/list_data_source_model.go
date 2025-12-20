@@ -73,6 +73,7 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsCheckSessionDataSourceModel]         `tfsdk:"check_session" json:"check_session,computed"`
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsDNSResolversDataSourceModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsEgressDataSourceModel]               `tfsdk:"egress" json:"egress,computed"`
+	ForensicCopy                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsForensicCopyDataSourceModel]         `tfsdk:"forensic_copy" json:"forensic_copy,computed"`
 	IgnoreCNAMECategoryMatches      types.Bool                                                                                        `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed"`
 	InsecureDisableDNSSECValidation types.Bool                                                                                        `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed"`
 	IPCategories                    types.Bool                                                                                        `tfsdk:"ip_categories" json:"ip_categories,computed"`
@@ -141,6 +142,10 @@ type ZeroTrustGatewayPoliciesRuleSettingsEgressDataSourceModel struct {
 	IPV4         types.String `tfsdk:"ipv4" json:"ipv4,computed"`
 	IPV4Fallback types.String `tfsdk:"ipv4_fallback" json:"ipv4_fallback,computed"`
 	IPV6         types.String `tfsdk:"ipv6" json:"ipv6,computed"`
+}
+
+type ZeroTrustGatewayPoliciesRuleSettingsForensicCopyDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsL4overrideDataSourceModel struct {

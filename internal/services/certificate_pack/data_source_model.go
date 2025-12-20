@@ -28,7 +28,7 @@ type CertificatePackDataSourceModel struct {
 	Type                 types.String                                                                  `tfsdk:"type" json:"type,computed"`
 	ValidationMethod     types.String                                                                  `tfsdk:"validation_method" json:"validation_method,computed"`
 	ValidityDays         types.Int64                                                                   `tfsdk:"validity_days" json:"validity_days,computed"`
-	Hosts                customfield.List[types.String]                                                `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts                customfield.Set[types.String]                                                 `tfsdk:"hosts" json:"hosts,computed"`
 	Certificates         customfield.NestedObjectList[CertificatePackCertificatesDataSourceModel]      `tfsdk:"certificates" json:"certificates,computed"`
 	ValidationErrors     customfield.NestedObjectList[CertificatePackValidationErrorsDataSourceModel]  `tfsdk:"validation_errors" json:"validation_errors,computed"`
 	ValidationRecords    customfield.NestedObjectList[CertificatePackValidationRecordsDataSourceModel] `tfsdk:"validation_records" json:"validation_records,computed"`

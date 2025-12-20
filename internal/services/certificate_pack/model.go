@@ -20,8 +20,8 @@ type CertificatePackModel struct {
 	Type                 types.String                                                        `tfsdk:"type" json:"type,required"`
 	ValidationMethod     types.String                                                        `tfsdk:"validation_method" json:"validation_method,required"`
 	ValidityDays         types.Int64                                                         `tfsdk:"validity_days" json:"validity_days,required"`
-	Hosts                *[]types.String                                                     `tfsdk:"hosts" json:"hosts,required"`
 	CloudflareBranding   types.Bool                                                          `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
+	Hosts                customfield.Set[types.String]                                       `tfsdk:"hosts" json:"hosts,computed_optional"`
 	PrimaryCertificate   types.String                                                        `tfsdk:"primary_certificate" json:"primary_certificate,computed"`
 	Status               types.String                                                        `tfsdk:"status" json:"status,computed"`
 	Certificates         customfield.NestedObjectList[CertificatePackCertificatesModel]      `tfsdk:"certificates" json:"certificates,computed"`
@@ -34,7 +34,7 @@ func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CertificatePackModel) MarshalJSONForUpdate(state CertificatePackModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type CertificatePackCertificatesModel struct {

@@ -3,9 +3,11 @@ resource "cloudflare_healthcheck" "%[2]s" {
   name = "%[2]s"
   address = "example.com"
   type = "HTTP"
+  check_regions = ["WNAM"]
   http_config = {
-    method = "HEAD"
-    path = "/ping"
-    port = 8080
+    method = "GET"
+    path = "/"
+    port = 80
+    expected_codes = ["200"]
   }
 }
