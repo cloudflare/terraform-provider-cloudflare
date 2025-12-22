@@ -58,7 +58,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("500_errors")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -211,7 +211,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("basic_challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -374,7 +374,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("country_challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -458,7 +458,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("waf_block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -541,7 +541,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("ip_block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -639,7 +639,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("country_challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -769,7 +769,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("1000_errors")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -888,7 +888,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("managed_challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -1014,7 +1014,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("ratelimit_block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
@@ -1094,7 +1094,7 @@ resource "cloudflare_custom_pages" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("identifier"), knownvalue.StringExact("under_attack")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("state"), knownvalue.StringExact("customized")),
