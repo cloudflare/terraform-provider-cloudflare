@@ -56,7 +56,7 @@ resource "cloudflare_workers_script" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				// Verify name -> script_name transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
@@ -105,7 +105,7 @@ resource "cloudflare_workers_script" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				// Verify name -> script_name transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
@@ -153,7 +153,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state (note: resource name should be updated by Grit)
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				// Verify name -> script_name transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
@@ -208,7 +208,7 @@ resource "cloudflare_workers_script" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				// Verify name -> script_name transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
@@ -284,10 +284,10 @@ resource "cloudflare_workers_script" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify binding structure (demonstrates migration is working)
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
-				
+
 				// Verify simple binding works (baseline to ensure migration logic is functioning)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("plain_text")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("SIMPLE_VAR")),
