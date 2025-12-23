@@ -68,8 +68,8 @@ func TestMigrateCloudflareSnippetBasic(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -126,8 +126,8 @@ func TestMigrateCloudflareSnippetMultipleFiles(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigMultipleFiles, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigMultipleFiles, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigMultipleFiles, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -191,8 +191,8 @@ func TestMigrateCloudflareSnippetComplexContent(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigComplexContent, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigComplexContent, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigComplexContent, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -248,8 +248,8 @@ func TestMigrateCloudflareSnippetWithImport(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -297,8 +297,8 @@ func TestMigrateCloudflareSnippetURLRewrite(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigURLRewrite, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigURLRewrite, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigURLRewrite, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -354,8 +354,8 @@ func TestMigrateCloudflareSnippetHeaderManipulation(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigHeaderManipulation, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigHeaderManipulation, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigHeaderManipulation, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -410,8 +410,8 @@ func TestMigrateCloudflareSnippetEdgeCases(t *testing.T) {
 					// Write out config
 					acctest.WriteOutConfig(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigEdgeCases, rnd, zoneID), tmpDir)
 
-					// Run migration
-					acctest.RunMigrationCommand(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigEdgeCases, rnd, zoneID), tmpDir)
+					// Run V2 migration
+					acctest.RunMigrationV2Command(t, fmt.Sprintf(testAccCloudflareSnippetMigrationConfigEdgeCases, rnd, zoneID), tmpDir, "v4", "v5")
 				},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
