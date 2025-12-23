@@ -16,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -110,6 +111,19 @@ func (r *LoadBalancerResource) Update(ctx context.Context, req resource.UpdateRe
 
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	// Detect region_pools removal
+	regionPoolsBeingRemoved := !state.RegionPools.IsNull() &&
+		(data.RegionPools.IsNull() || len(data.RegionPools.Elements()) == 0)
+
+	if regionPoolsBeingRemoved {
+		tflog.Info(ctx, "Detected region_pools removal - updating load balancer before pool deletion",
+			map[string]interface{}{
+				"load_balancer_id":   state.ID.ValueString(),
+				"load_balancer_name": state.Name.ValueString(),
+				"prior_regions":      fmt.Sprintf("%v", state.RegionPools.Elements()),
+			})
 	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
@@ -266,6 +280,29 @@ func (r *LoadBalancerResource) ImportState(ctx context.Context, req resource.Imp
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *LoadBalancerResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *LoadBalancerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Skip if resource is being created or destroyed
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan, state *LoadBalancerModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Detect region_pools being removed
+	regionPoolsBeingRemoved := !state.RegionPools.IsNull() && plan.RegionPools.IsNull()
+
+	if regionPoolsBeingRemoved {
+		tflog.Info(ctx, "Load balancer region_pools will be removed",
+			map[string]interface{}{
+				"load_balancer_id":   state.ID.ValueString(),
+				"load_balancer_name": state.Name.ValueString(),
+				"message":            "Update will happen before any referenced pool deletions",
+			})
+	}
 }
