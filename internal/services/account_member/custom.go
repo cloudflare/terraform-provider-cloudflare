@@ -114,10 +114,13 @@ func unmarshalComputedCustom(data []byte, configuredModel *AccountMemberModel) (
 		result.Email = configuredModel.Email
 	}
 
-	// Only preserve status if it was explicitly configured
-	if !configuredModel.Status.IsNull() && !configuredModel.Status.IsUnknown() {
-		result.Status = configuredModel.Status
-	}
+	// Allow the status from the API to override the state,
+    // even if not explicitly set in the config.
+    if result.Status.IsNull() && !configuredModel.Status.IsNull() {
+        result.Status = configuredModel.Status
+    }
+    // If result.Status has a value from the API (e.g., "accepted"),
+    // we let it stay so it updates the Terraform state.
 
 	return parsePoliciesAndRoles(ctx, data, result)
 }
