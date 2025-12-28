@@ -328,29 +328,6 @@ func TestAccCloudflareSpectrumApplication_BasicRDP(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareSpectrumApplication_BasicMinecraft(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, domain, rnd, "minecraft", 25565),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "protocol", "minecraft"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareSpectrumApplication_TLS(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

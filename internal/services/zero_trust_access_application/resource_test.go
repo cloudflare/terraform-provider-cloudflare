@@ -57,11 +57,6 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range zoneAccessApps {
-		// Use standard filtering helper
-		if !utils.ShouldSweepResource(accessApp.Name) {
-			continue
-		}
-
 		tflog.Info(ctx, fmt.Sprintf("Deleting zone-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
 		if err := client.DeleteAccessApplication(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone-level Access Application %s (%s): %s", accessApp.Name, accessApp.ID, err))
@@ -87,11 +82,6 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range accountAccessApps {
-		// Use standard filtering helper
-		if !utils.ShouldSweepResource(accessApp.Name) {
-			continue
-		}
-
 		tflog.Info(ctx, fmt.Sprintf("Deleting account-level Access Application: %s (%s)", accessApp.Name, accessApp.ID))
 		if err := client.DeleteAccessApplication(context.Background(), cloudflare.AccountIdentifier(accountID), accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete account-level Access Application %s (%s): %s", accessApp.Name, accessApp.ID, err))
