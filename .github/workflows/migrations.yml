@@ -4,6 +4,9 @@ concurrency:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "migrations-test**"
 
 env:
   CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
