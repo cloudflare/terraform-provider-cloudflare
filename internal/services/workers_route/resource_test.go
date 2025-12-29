@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -50,12 +51,17 @@ func testSweepCloudflareWorkersRoute(r string) error {
 	}
 
 	hasRoutes := false
-	// Delete all routes (no name validation)
+	// Delete test routes based on pattern matching
 	for page != nil {
 		for _, route := range page.Result {
-			hasRoutes = true
-			// Skip name validation - delete all routes
+			// Only delete routes with patterns matching test patterns
+			// Test routes use patterns like: cftftest*.cfapi.net/*
+			if !strings.Contains(route.Pattern, "cftftest") && !strings.Contains(route.Pattern, ".cfapi.net") {
+				tflog.Debug(ctx, fmt.Sprintf("Skipping non-test route: %s", route.Pattern))
+				continue
+			}
 
+			hasRoutes = true
 			tflog.Info(ctx, fmt.Sprintf("Deleting worker route: %s (zone: %s)", route.Pattern, zoneID))
 			_, err := client.Workers.Routes.Delete(ctx, route.ID, workers.RouteDeleteParams{
 				ZoneID: cloudflare.F(zoneID),
