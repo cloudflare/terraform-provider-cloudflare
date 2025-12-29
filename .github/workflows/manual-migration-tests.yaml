@@ -1,0 +1,871 @@
+name: Manual Migration Tests
+concurrency:
+  group: manual-migration-tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "migrations-test**"
+
+env:
+  CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
+  CLOUDFLARE_ALT_DOMAIN: terraform-alt.cfapi.net
+  CLOUDFLARE_ALT_ZONE_ID: ed9caae55809bfe3209699f602ce17fc
+  CLOUDFLARE_DOMAIN: terraform.cfapi.net
+  CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
+  CLOUDFLARE_MUTUAL_TLS_CERTIFICATE: "-----BEGIN CERTIFICATE-----\nMIIF+DCCA+CgAwIBAgIUWc0b+WiKSZob8wl2g/ujewoKCvgwDQYJKoZIhvcNAQEN\nBQAwgZMxCzAJBgNVBAYTAlVTMQwwCgYDVQQIEwNOL0ExDDAKBgNVBAcTA04vQTEl\nMCMGA1UEChMcVGVycmFmb3JtIEFjY2VwdGFuY2UgVGVzdGluZzEMMAoGA1UECxMD\nTi9BMTMwMQYDVQQDEypUZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2\nMTgyODU5MjYwHhcNMjEwNDEzMDM0ODAwWhcNMjYwNDEyMDM0ODAwWjCBkzELMAkG\nA1UEBhMCVVMxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMSUwIwYDVQQKExxU\nZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nMQwwCgYDVQQLEwNOL0ExMzAxBgNV\nBAMTKlRlcnJhZm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2MTgyODU5MjZDQ\nAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANBzwmNB8g3eVp8Sn30z0U21\niEh/uwa+WLPEGj/F90mWg2EnW+yFvI9O8OETJAgmAQs39Z4ivt488uwLNVplshnW\nU5J7BqNk9MlBeUZwj6omuS1CZMST/YNSzmIHV5LtyJBcFaEZ2TAi4Ql9f+M9Y5HD\ncxofze5n5tfYzgB3/1lFLk7Vr5eVsqeH5QGOdKZAlsIHfTPS6TFDXP/zTInqCUz0\njfuNkRy9Mqg55JREHVGMufHcT7oTNZiLU+4B/2EfYXJ9YD6JwntKnwB2IC+iOfW7\nGc6QtAREPIlsH3yjmO0rPORrT/oAnnWZcAkkklR5XDnY7QwK5JQ3amN1aByXaPtS\nmbIJNMDxE84AeTREAqR8PmsPK5drRHr3qpWk9nUOVGUaeXwPV+M2t3Xe1WSAQwpv\nJup6PyE8O6KZGwbOiYme5KaKhxMB/ObzhajhTH9RQX7+RMwBzlL+/XTFDnd2B3Ep\nyndNFUHN7fAAapNGjPUXzez01G52N9asE8312JRmLaOqGQ2sWMzr8UgRPw7ZYL4v\nsdlqE2fxXddijGM3TEane6CiM3UdO1VcRAjvNFQjY5WQBUdAkj5+V790cxUQZiMR\nwfmh4hePo7bqXt9RjAS7OeFGBz//H5tQf9wFj3yJTsvKS5bIwP86quR969FFU8nW\na0zNkQLwWygqlhW/VlhxAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB\nAf8EBTADAQH/MB0GA1UdDgQWBBT6PStM4ZTFmvpp6lASxuxOkNYZXzANBgkqhkiG\n9w0BAQ0FAAOCAgEACIs9YskrLq3huQXsPDQhHBu8/SLQTAtkj5vtYf1uSq6MXx1k\nj6nDzvixnLam/4HhrsJQyI3FjXnk5yNwaAVA1hQoVw0G2on4qk215fsIRJUKjlzK\npUfW49TFWZ+DPlhBJ/dmHSZsxG940p4xWmNjo2aJ2CraCgP2ns+FfPxXqtpthf1y\nVW5SxKhR9VYNLczXEz8fKvDTLictYYwQ/xFZjxPHpOdV8+DoL18brNKHN8Hs/Nk1\nkzhKrDk8fReEX+jmpG7n/q973nJ31KIBxk85owv/BFgnWpC7HPY+waIH0xNr2iZA\nOu1orlBiBYAqG8zDBq3AGVlxg8yUOc5bik9OhCIwYyT2RFmd6z4O36uIM3LEzJ64\nJj8TTjOP/ktqu+GZrUrnIjfu7mlGvc4u22P8ILJ2AZe5ITp/uhMRJbGbJGEMCCH3\nkAKIEDATrevGdmgWUpdj8RNBS7+BK98eN+vcDqtY4Sudri2TwTkMbAscraacqrSJ\n4rJfjSywVr4oWXyd2P83Hl398X3x04E0Rc15+wrGvaCSN5i1gzc30fTlz1X8dJQ3\nccaHajJlRVZfuCrFBk6m5YRL7AoG4iFfoOuDZZJpjr9nXEzEONhRR5QAG83yMedS\nd8//SuQhuJQTxJW7UzkWaao+32gW/RvuQun0XtCNoow/kMVMOeSjKL9xioM=\n-----END CERTIFICATE-----"
+  CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN: ${{ secrets.CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN }}
+  CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID: d0ed71f01c884e8b94ec4e4d6639f609
+  CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
+  CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
+  CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
+  CLOUDFLARE_PAGES_OWNER: cloudflare
+  CLOUDFLARE_PAGES_REPO: cf-pages-terraform-acceptance-testing
+  CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+  CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
+  CLOUDFLARE_HYPERDRIVE_DATABASE_NAME: neondb
+  CLOUDFLARE_HYPERDRIVE_DATABASE_PORT: 5432
+  CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
+  CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
+  CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+  TF_ACC: 1
+  TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+
+jobs:
+  test_magic:
+    name: Magic Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-magic-magic@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_MAGIC_MAGIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Magic Tests
+        run: ./scripts/run-ci-tests magic migration
+
+  test_organization:
+    name: Organization Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
+      CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Organization Tests
+        run: ./scripts/run-ci-tests organization migration
+
+  test_zone_core:
+    name: Zone Core Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zone-zone-core@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZONE_ZONE_CORE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Zone Core Tests
+        run: ./scripts/run-ci-tests zone-core migration
+
+  test_zone_settings:
+    name: Zone Settings Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zone-zone-settings@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZONE_ZONE_SETTINGS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Zone Settings Tests
+        run: ./scripts/run-ci-tests zone-settings migration
+
+  test_dns:
+    name: DNS Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-dns-dns@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_DNS_DNS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run DNS Tests
+        run: ./scripts/run-ci-tests dns migration
+
+  test_load_balancing:
+    name: Load Balancing Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-load-balancing-load-balancing@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_LOAD_BALANCING_LOAD_BALANCING_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Load Balancing Tests
+        run: ./scripts/run-ci-tests load-balancing migration
+
+  test_workers_core:
+    name: Workers Core Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-workers-workers-core@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WORKERS_WORKERS_CORE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Workers Core Tests
+        run: ./scripts/run-ci-tests workers-core migration
+
+  test_workers_extended:
+    name: Workers Extended Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-workers-workers-extended@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WORKERS_WORKERS_EXTENDED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Workers Extended Tests
+        run: ./scripts/run-ci-tests workers-extended migration
+
+  test_workers_platform:
+    name: Workers Platform Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-workers-workers-platform@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WORKERS_WORKERS_PLATFORM_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Workers Platform Tests
+        run: ./scripts/run-ci-tests workers-platform migration
+
+  test_email_routing:
+    name: Email Routing Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-email-email-routing@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_EMAIL_EMAIL_ROUTING_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Email Routing Tests
+        run: ./scripts/run-ci-tests email-routing migration
+
+  test_email_security:
+    name: Email Security Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-email-email-security@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_EMAIL_EMAIL_SECURITY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Email Security Tests
+        run: ./scripts/run-ci-tests email-security migration
+
+  test_security_core:
+    name: Security Core Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-security-security-core@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_SECURITY_SECURITY_CORE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Security Core Tests
+        run: ./scripts/run-ci-tests security-core migration
+
+  test_security_advanced:
+    name: Security Advanced Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-security-security-advanced@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_SECURITY_SECURITY_ADVANCED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Security Advanced Tests
+        run: ./scripts/run-ci-tests security-advanced migration
+
+  test_rules_and_policies:
+    name: Rules and Policies Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-rules-rules-and-policies@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_RULES_RULES_AND_POLICIES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Rules and Policies Tests
+        run: ./scripts/run-ci-tests rules-and-policies migration
+
+  test_snippets:
+    name: Snippets Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-snippets-snippets@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_SNIPPETS_SNIPPETS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Snippets Tests
+        run: ./scripts/run-ci-tests snippets migration
+
+  test_tls_and_certificates:
+    name: TLS and Certificates Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-tls-tls-and-certificates@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_TLS_TLS_AND_CERTIFICATES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run TLS and Certificates Tests
+        run: ./scripts/run-ci-tests tls-and-certificates migration
+
+  test_ssl_config:
+    name: SSL Config Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-ssl-ssl-config@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_SSL_SSL_CONFIG_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run SSL Config Tests
+        run: ./scripts/run-ci-tests ssl-config migration
+
+  test_web_features:
+    name: Web Features Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-web-web-features@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WEB_WEB_FEATURES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Web Features Tests
+        run: ./scripts/run-ci-tests web-features migration
+
+  test_web_monitoring:
+    name: Web Monitoring Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-web-web-monitoring@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WEB_WEB_MONITORING_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Web Monitoring Tests
+        run: ./scripts/run-ci-tests web-monitoring migration
+
+  test_waiting_room:
+    name: Waiting Room Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-waiting-room-waiting-room@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_WAITING_ROOM_WAITING_ROOM_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Waiting Room Tests
+        run: ./scripts/run-ci-tests waiting-room migration
+
+  test_performance:
+    name: Performance Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-performance-performance@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_PERFORMANCE_PERFORMANCE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Performance Tests
+        run: ./scripts/run-ci-tests performance migration
+
+  test_cdn_advanced:
+    name: CDN Advanced Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-cdn-cdn-advanced@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_CDN_CDN_ADVANCED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run CDN Advanced Tests
+        run: ./scripts/run-ci-tests cdn-advanced migration
+
+  test_gateway_and_policies:
+    name: Gateway and Policies Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-gateway-and-policies@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Gateway and Policies Tests
+        run: ./scripts/run-ci-tests gateway-and-policies migration
+
+  test_dlp_config:
+    name: DLP Config Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-dlp-config@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run DLP Config Tests
+        run: ./scripts/run-ci-tests dlp-config migration
+
+  test_access_core:
+    name: Access Core Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-access-core@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ACCESS_CORE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Access Core Tests
+        run: ./scripts/run-ci-tests access-core migration
+
+  test_access_identity:
+    name: Access Identity Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-access-identity@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ACCESS_IDENTITY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Access Identity Tests
+        run: ./scripts/run-ci-tests access-identity migration
+
+  test_access_mtls:
+    name: Access mTLS Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-access-mtls@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ACCESS_MTLS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Access mTLS Tests
+        run: ./scripts/run-ci-tests access-mtls migration
+
+  test_access_applications:
+    name: Access Applications Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-access-applications@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ACCESS_APPLICATIONS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Access Applications Tests
+        run: ./scripts/run-ci-tests access-applications migration
+
+  test_zero_trust_org:
+    name: Zero Trust Organization Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-zero-trust-org@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ZERO_TRUST_ORG_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Zero Trust Organization Tests
+        run: ./scripts/run-ci-tests zero-trust-org migration
+
+  test_zero_trust_list:
+    name: Zero Trust List Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-zero-trust-zero-trust-list@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ZERO_TRUST_ZERO_TRUST_LIST_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Zero Trust List Tests
+        run: ./scripts/run-ci-tests zero-trust-list migration
+
+  test_tunnel_cloudflared:
+    name: Tunnel Cloudflared Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-tunnel-tunnel-cloudflared@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_TUNNEL_TUNNEL_CLOUDFLARED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Tunnel Cloudflared Tests
+        run: ./scripts/run-ci-tests tunnel-cloudflared migration
+
+  test_tunnel_devices:
+    name: Tunnel Devices Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-tunnel-tunnel-devices@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_TUNNEL_TUNNEL_DEVICES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Tunnel Devices Tests
+        run: ./scripts/run-ci-tests tunnel-devices migration
+
+  test_account_core:
+    name: Account Core Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-account-account-core@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Account Core Tests
+        run: ./scripts/run-ci-tests account-core migration
+
+  test_account_settings:
+    name: Account Settings Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-account-account-settings@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_ACCOUNT_ACCOUNT_SETTINGS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Account Settings Tests
+        run: ./scripts/run-ci-tests account-settings migration
+
+  test_r2_storage:
+    name: R2 Storage Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-storage-r2-storage@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_STORAGE_R2_STORAGE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run R2 Storage Tests
+        run: ./scripts/run-ci-tests r2-storage migration
+
+  test_pages:
+    name: Pages Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-pages-pages@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_PAGES_PAGES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Pages Tests
+        run: ./scripts/run-ci-tests pages migration
+
+  test_queue_and_messaging:
+    name: Queue and Messaging Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-messaging-queue-and-messaging@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_MESSAGING_QUEUE_AND_MESSAGING_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Queue and Messaging Tests
+        run: ./scripts/run-ci-tests queue-and-messaging migration
+
+  test_general_api:
+    name: General API Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-general-general-api@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_GENERAL_GENERAL_API_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run General API Tests
+        run: ./scripts/run-ci-tests general-api migration
+
+  test_misc_account_tools:
+    name: Misc Account Tools Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-misc-misc-account-tools@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_MISC_MISC_ACCOUNT_TOOLS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Misc Account Tools Tests
+        run: ./scripts/run-ci-tests misc-account-tools migration
+
+  test_platform_and_advanced:
+    name: Platform and Advanced Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-platform-platform-and-advanced@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_PLATFORM_PLATFORM_AND_ADVANCED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Platform and Advanced Tests
+        run: ./scripts/run-ci-tests platform-and-advanced migration
+
+  test_default:
+    name: Default Tests
+    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    env:
+      CLOUDFLARE_EMAIL: tf-acct-default-default@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.TF_ACCT_DEFAULT_DEFAULT_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run Default Tests
+        run: ./scripts/run-ci-tests default migration
+
+  check-results:
+    name: Check Test Results
+    runs-on: ubuntu-latest
+    needs: [test_magic, test_organization, test_zone_core, test_zone_settings, test_dns, test_load_balancing, test_workers_core, test_workers_extended, test_workers_platform, test_email_routing, test_email_security, test_security_core, test_security_advanced, test_rules_and_policies, test_snippets, test_tls_and_certificates, test_ssl_config, test_web_features, test_web_monitoring, test_waiting_room, test_performance, test_cdn_advanced, test_gateway_and_policies, test_dlp_config, test_access_core, test_access_identity, test_access_mtls, test_access_applications, test_zero_trust_org, test_zero_trust_list, test_tunnel_cloudflared, test_tunnel_devices, test_account_core, test_account_settings, test_r2_storage, test_pages, test_queue_and_messaging, test_general_api, test_misc_account_tools, test_platform_and_advanced, test_default]
+    if: always()
+    steps:
+      - name: Check if any tests failed
+        run: |
+          echo "Checking test results..."
+          if [ "${{ needs.test_magic.result == 'failure' || needs.test_organization.result == 'failure' || needs.test_zone_core.result == 'failure' || needs.test_zone_settings.result == 'failure' || needs.test_dns.result == 'failure' || needs.test_load_balancing.result == 'failure' || needs.test_workers_core.result == 'failure' || needs.test_workers_extended.result == 'failure' || needs.test_workers_platform.result == 'failure' || needs.test_email_routing.result == 'failure' || needs.test_email_security.result == 'failure' || needs.test_security_core.result == 'failure' || needs.test_security_advanced.result == 'failure' || needs.test_rules_and_policies.result == 'failure' || needs.test_snippets.result == 'failure' || needs.test_tls_and_certificates.result == 'failure' || needs.test_ssl_config.result == 'failure' || needs.test_web_features.result == 'failure' || needs.test_web_monitoring.result == 'failure' || needs.test_waiting_room.result == 'failure' || needs.test_performance.result == 'failure' || needs.test_cdn_advanced.result == 'failure' || needs.test_gateway_and_policies.result == 'failure' || needs.test_dlp_config.result == 'failure' || needs.test_access_core.result == 'failure' || needs.test_access_identity.result == 'failure' || needs.test_access_mtls.result == 'failure' || needs.test_access_applications.result == 'failure' || needs.test_zero_trust_org.result == 'failure' || needs.test_zero_trust_list.result == 'failure' || needs.test_tunnel_cloudflared.result == 'failure' || needs.test_tunnel_devices.result == 'failure' || needs.test_account_core.result == 'failure' || needs.test_account_settings.result == 'failure' || needs.test_r2_storage.result == 'failure' || needs.test_pages.result == 'failure' || needs.test_queue_and_messaging.result == 'failure' || needs.test_general_api.result == 'failure' || needs.test_misc_account_tools.result == 'failure' || needs.test_platform_and_advanced.result == 'failure' || needs.test_default.result == 'failure' }}" == "true" ]; then
+            echo "One or more tests failed"
+            exit 1
+          else
+            echo "All tests passed or were skipped"
+          fi
