@@ -60,11 +60,6 @@ func testSweepCloudflarePageRules(r string) error {
 		tflog.Info(ctx, fmt.Sprintf("No page rules to sweep in zone %s", zoneID))
 	} else {
 		for _, pageRule := range pageRules {
-			// Use standard filtering helper on the target URL
-			if !utils.ShouldSweepResource(pageRule.Targets[0].Target) {
-				continue
-			}
-
 			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, zoneID))
 			err := client.DeletePageRule(ctx, zoneID, pageRule.ID)
 			if err != nil {
@@ -84,10 +79,6 @@ func testSweepCloudflarePageRules(r string) error {
 		tflog.Info(ctx, fmt.Sprintf("No page rules to sweep in alt zone %s", altZoneID))
 	} else {
 		for _, pageRule := range altPageRules {
-			// Use standard filtering helper on the target URL
-			if !utils.ShouldSweepResource(pageRule.Targets[0].Target) {
-				continue
-			}
 
 			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, altZoneID))
 			err := client.DeletePageRule(ctx, altZoneID, pageRule.ID)

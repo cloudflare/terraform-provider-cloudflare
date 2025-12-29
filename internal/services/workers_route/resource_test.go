@@ -50,14 +50,11 @@ func testSweepCloudflareWorkersRoute(r string) error {
 	}
 
 	hasRoutes := false
-	// Delete test routes only (filter by pattern containing test resource names)
+	// Delete all routes (no name validation)
 	for page != nil {
 		for _, route := range page.Result {
 			hasRoutes = true
-			// Use standard filtering helper on the pattern field
-			if !utils.ShouldSweepResource(route.Pattern) {
-				continue
-			}
+			// Skip name validation - delete all routes
 
 			tflog.Info(ctx, fmt.Sprintf("Deleting worker route: %s (zone: %s)", route.Pattern, zoneID))
 			_, err := client.Workers.Routes.Delete(ctx, route.ID, workers.RouteDeleteParams{
