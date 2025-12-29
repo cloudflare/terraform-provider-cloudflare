@@ -1,6 +1,6 @@
-name: Migration Tests
+name: Manual Migration Tests
 concurrency:
-  group: migration-tests
+  group: manual-migration-tests
 
 on:
   workflow_dispatch:
