@@ -67,10 +67,7 @@ func testSweepCloudflareWorkerScripts(r string) error {
 	}
 
 	for _, script := range list.Result {
-		// Use standard filtering helper
-		if !utils.ShouldSweepResource(script.ID) {
-			continue
-		}
+		// Skip name validation - delete all scripts
 
 		tflog.Info(ctx, fmt.Sprintf("Deleting worker script: %s (account: %s)", script.ID, accountID))
 		_, err := client.Workers.Scripts.Delete(ctx, script.ID, workers.ScriptDeleteParams{

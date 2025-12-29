@@ -51,7 +51,8 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 
 			accountID := acctest.TestAccCloudflareAccountID
 			rnd := utils.GenerateRandomResourceName()
-			email := fmt.Sprintf("test-%s@example.com", rnd)
+			// Use real test user email that exists in Cloudflare system
+			email := "terraform-test-user-a@cfapi.net"
 			resourceName := "cloudflare_account_member." + rnd
 			testConfig := tc.configFn(accountID, rnd, email)
 			tmpDir := t.TempDir()
@@ -111,7 +112,8 @@ func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
 
 	accountID := acctest.TestAccCloudflareAccountID
 	rnd := utils.GenerateRandomResourceName()
-	email := fmt.Sprintf("test-%s@example.com", rnd)
+	// Use real test user email that exists in Cloudflare system
+	email := "terraform-test-user-b@cfapi.net"
 	resourceName := "cloudflare_account_member." + rnd
 	v4Config := testAccCloudflareAccountMemberMigrationConfigV4WithStatus(accountID, rnd, email)
 	tmpDir := t.TempDir()
