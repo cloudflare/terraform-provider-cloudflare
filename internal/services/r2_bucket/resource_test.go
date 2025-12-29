@@ -280,7 +280,7 @@ func TestAccCloudflareR2Bucket_ComprehensiveConfiguration(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("creation_date"), knownvalue.NotNull()),
 				},
-				ExpectNonEmptyPlan: true,
+				ExpectNonEmptyPlan: false,
 			},
 			{
 				ResourceName: resourceName,
@@ -428,6 +428,49 @@ func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareR2Bucket_LocationIgnoreChange(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+				// Apply with EEUR - should not be changed
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "EEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Apply with APAC - should not be changed
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "apac"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
 				),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
