@@ -38,32 +38,37 @@ func (v listIPValidator) ValidateString(ctx context.Context, req validator.Strin
 
 	if netmask != nil {
 		ones, bits := netmask.Mask.Size()
-		if bits == 32 {
+		if bits == 32 && ones == 32 {
 			// ipv4
-			if ones == 32 {
-				resp.Diagnostics.AddAttributeError(req.Path,
-					"IPv4 /32 CIDRs should have the /32 suffix stripped",
-					fmt.Sprintf("CIDR \"%s\" must be represented as \"%s\"", value, ip),
-				)
-				return
-			}
-		} else {
+			resp.Diagnostics.AddAttributeError(req.Path,
+				"IPv4 /32 CIDRs should have the /32 suffix stripped",
+				fmt.Sprintf("CIDR %q must be represented as %q", value, ip),
+			)
+			return
+		} else if bits == 128 && ones == 128 {
 			// ipv6
-			if ones == 128 {
-				resp.Diagnostics.AddAttributeError(req.Path,
-					"IPv6 /128 CIDRs should have the /128 suffix stripped",
-					fmt.Sprintf("CIDR \"%s\" must be represented as \"%s\"", value, ip),
-				)
-				return
-			}
+			resp.Diagnostics.AddAttributeError(req.Path,
+				"IPv6 /128 CIDRs should have the /128 suffix stripped",
+				fmt.Sprintf("CIDR %q must be represented as %q", value, ip),
+			)
+			return
 		}
+
+		normalized := netmask.String()
+		if value != normalized {
+			resp.Diagnostics.AddAttributeError(req.Path,
+				"CIDR must be normalized",
+				fmt.Sprintf("CIDR %q must be normalized: %q", value, normalized),
+			)
+		}
+		return
 	}
 
 	normalized := ip.String()
 	if value != normalized {
 		resp.Diagnostics.AddAttributeError(req.Path,
 			"IP address must be normalized",
-			fmt.Sprintf("IP address \"%s\" must be normalized: \"%s\"", value, normalized),
+			fmt.Sprintf("IP address %q must be normalized: %q", value, normalized),
 		)
 	}
 }
