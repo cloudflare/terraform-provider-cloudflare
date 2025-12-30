@@ -67,11 +67,11 @@ func TestMigrateCloudflarePageRule_Basic(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("active")),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("priority"), knownvalue.Float64Exact(1)),
+							// Note: priority is auto-managed by Cloudflare API, so we don't validate it
 						},
 					},
 					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("active")),
@@ -142,10 +142,10 @@ func TestMigrateCloudflarePageRule_CacheDeceptionArmor(t *testing.T) {
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("priority"), knownvalue.Float64Exact(1)),
+							// Note: priority is auto-managed by Cloudflare API, so we don't validate it
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -329,7 +329,7 @@ func TestMigrateCloudflarePageRule_ForwardingURL(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -408,7 +408,7 @@ func TestMigrateCloudflarePageRule_CompleteSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("priority"), knownvalue.NotNull()),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -464,7 +464,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions {
     ssl = "flexible"
@@ -478,7 +477,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions {
     cache_deception_armor = "on"
@@ -521,7 +519,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions {
     forwarding_url {
@@ -538,7 +535,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions {
     cache_level       = "aggressive"
@@ -574,7 +570,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions = {
     ssl = "flexible"
@@ -588,7 +583,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions = {
     cache_deception_armor = "on"
@@ -602,7 +596,6 @@ resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
   status   = "active"
-  priority = 1
 
   actions = {
     forwarding_url = {

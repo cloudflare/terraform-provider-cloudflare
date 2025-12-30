@@ -391,6 +391,16 @@ func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req pl
 				}
 			}
 
+			// Special handling for map attributes that may contain json.Number types or DynamicAttribute fields
+			// This applies to all resources, not just dns_record, to handle Terraform state type variations
+			if beforeMap, ok := beforeValue.(map[string]interface{}); ok {
+				if afterMap, ok := afterValue.(map[string]interface{}); ok {
+					if areMapsSemanticallySame(beforeMap, afterMap) {
+						continue // Maps are semantically equivalent
+					}
+				}
+			}
+
 			// Allow changes from falsey to null
 			if afterValue == nil {
 				if isFalseyValue(beforeValue) {
@@ -574,6 +584,94 @@ func isFalseyValue(v interface{}) bool {
 		}
 		return true
 	}
+}
+
+// areMapsSemanticallySame compares two map values for semantic equality.
+// This handles the case where reflect.DeepEqual fails on maps that are semantically identical
+// but represented differently in memory (e.g., different object instances with same content).
+func areMapsSemanticallySame(before, after interface{}) bool {
+	beforeMap, beforeOk := before.(map[string]interface{})
+	afterMap, afterOk := after.(map[string]interface{})
+
+	if !beforeOk || !afterOk {
+		// If either isn't a map, fall back to reflect.DeepEqual
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Check if maps have the same keys
+	if len(beforeMap) != len(afterMap) {
+		return false
+	}
+
+	// Check each key-value pair
+	for key, beforeVal := range beforeMap {
+		afterVal, exists := afterMap[key]
+		if !exists {
+			return false
+		}
+
+		// For nested maps (like DynamicAttribute structures), recurse
+		if beforeMapNested, ok := beforeVal.(map[string]interface{}); ok {
+			if afterMapNested, ok := afterVal.(map[string]interface{}); ok {
+				if !areMapsSemanticallySame(beforeMapNested, afterMapNested) {
+					return false
+				}
+				continue
+			}
+		}
+
+		// For nil values, both must be nil
+		if beforeVal == nil && afterVal == nil {
+			continue
+		}
+		if beforeVal == nil || afterVal == nil {
+			return false
+		}
+
+		// Handle json.Number type specially - convert to string for comparison
+		// This handles cases where state has json.Number but plan has string or vice versa
+		beforeStr, beforeIsJSONNumber := beforeVal.(json.Number)
+		afterStr, afterIsJSONNumber := afterVal.(json.Number)
+
+		if beforeIsJSONNumber || afterIsJSONNumber {
+			// At least one is json.Number - compare string representations
+			var beforeAsString, afterAsString string
+			if beforeIsJSONNumber {
+				beforeAsString = string(beforeStr)
+			} else if str, ok := beforeVal.(string); ok {
+				beforeAsString = str
+			} else {
+				beforeAsString = fmt.Sprintf("%v", beforeVal)
+			}
+
+			if afterIsJSONNumber {
+				afterAsString = string(afterStr)
+			} else if str, ok := afterVal.(string); ok {
+				afterAsString = str
+			} else {
+				afterAsString = fmt.Sprintf("%v", afterVal)
+			}
+
+			if beforeAsString != afterAsString {
+				return false
+			}
+			continue // Values are semantically equal
+		}
+
+		// Compare types first
+		beforeType := reflect.TypeOf(beforeVal)
+		afterType := reflect.TypeOf(afterVal)
+		if beforeType != afterType {
+			return false
+		}
+
+		// For other values, use reflect.DeepEqual
+		if !reflect.DeepEqual(beforeVal, afterVal) {
+			return false
+		}
+	}
+
+	return true
 }
 
 var ExpectEmptyPlanExceptFalseyToNull = expectEmptyPlanExceptFalseyToNull{}
@@ -1107,6 +1205,55 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 		},
 		ConfigStateChecks: stateChecks,
 	}
+}
+
+// MigrationV2TestStepWithStateNormalization creates test steps for migrations where the v5 provider's
+// schema causes state normalization issues. This is needed when:
+// - The v5 provider returns all fields from the API (including nil/empty ones)
+// - The migrated state has only populated fields
+// - Terraform needs a plan cycle to normalize the state (remove nil fields)
+//
+// This helper expects an empty plan in the migration step, then runs a plan-only step
+// to normalize the state, before validating with a clean plan check.
+//
+// Use this when `ExpectEmptyPlanExceptFalseyToNull` is too restrictive because the state
+// changes involve removing entire nil fields rather than just falsey-to-null conversions.
+//
+// Example use case: cloudflare_zero_trust_access_group where selector fields are removed
+// from state during normalization.
+func MigrationV2TestStepWithStateNormalization(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// Step 1: Run migration
+	migrationStep := resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+	}
+
+	// Step 2: Run plan-only to normalize state (removes nil/empty fields)
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true,
+	}
+
+	// Step 3: Verify final plan is clean and state is correct after normalization
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after normalization
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+
+	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 
 // MigrationV2TestStepAllowCreate allows non-empty plans when a v4 resource needs to be split into multiple v5 resources,

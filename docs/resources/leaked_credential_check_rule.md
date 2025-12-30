@@ -37,5 +37,10 @@ resource "cloudflare_leaked_credential_check_rule" "example_leaked_credential_ch
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_leaked_credential_check_rule.example '<zone_id>/<detection_id>'
+```
+
+

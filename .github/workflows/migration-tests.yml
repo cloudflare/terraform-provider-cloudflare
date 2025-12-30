@@ -1,12 +1,9 @@
-name: Acceptance Tests
+name: Migration Tests
 concurrency:
-  group: acceptance-tests
+  group: migration-tests
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "release-please**"
 
 env:
   CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
@@ -33,7 +30,7 @@ env:
   TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
 
 jobs:
-  acceptance-tests:
+  migration-tests:
     name: ${{ matrix.test.display_name }} Tests
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     strategy:
@@ -220,19 +217,30 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
+      - name: Checkout tf-migrate
+        uses: actions/checkout@v4
+        with:
+          repository: cloudflare/tf-migrate
+          path: tf-migrate-src
+
+      - name: Build tf-migrate
+        run: |
+          cd tf-migrate-src
+          go build -o ../tf-migrate ./cmd/tf-migrate
+
       - name: Run ${{ matrix.test.display_name }} Tests
-        run: ./scripts/run-ci-tests ${{ matrix.test.name }} acceptance
+        run: ./scripts/run-ci-tests ${{ matrix.test.name }} migration
 
   check-results:
     name: Check Test Results
     runs-on: ubuntu-latest
-    needs: acceptance-tests
+    needs: migration-tests
     if: always()
     steps:
       - name: Check if any tests failed
         run: |
           echo "Checking test results..."
-          if [ "${{ needs.acceptance-tests.result }}" == "failure" ]; then
+          if [ "${{ needs.migration-tests.result }}" == "failure" ]; then
             echo "One or more tests failed"
             exit 1
           else

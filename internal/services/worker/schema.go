@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -133,6 +134,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Whether [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/) are enabled for the Worker.",
 						Computed:    true,
 						Optional:    true,
+						PlanModifiers: []planmodifier.Bool{
+							DefaultSubdomainPreviewsEnabledToEnabled(),
+							boolplanmodifier.UseStateForUnknown(),
+						},
 					},
 				},
 				Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerSubdomainModel{

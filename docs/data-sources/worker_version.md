@@ -59,6 +59,7 @@ included as modules named `_headers` and `_redirects` with content type `text/pl
 - `number` (Number) The integer version number, starting from one.
 - `placement` (Attributes) Placement settings for the version. (see [below for nested schema](#nestedatt--placement))
 - `source` (String) The client used to create the version.
+- `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
 - `usage_model` (String, Deprecated) Usage model for the version.
 Available values: "standard", "bundled", "unbound".
 
