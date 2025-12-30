@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
@@ -98,6 +99,57 @@ func TestAccCloudflareD1Database_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareD1Database_ReadReplicationRejected(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareD1DatabaseReadReplication(rnd, accountID),
+				ExpectError: regexp.MustCompile("Invalid Attribute Configuration"),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareD1DatabaseBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("d1databasebasic.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareD1DatabaseReadReplication(rnd, accountID string) string {
+	return acctest.LoadTestCase("d1databasebasicreadreplication.tf", rnd, accountID)
+}
+
+func TestAccCloudflareD1Database_ReadReplicationUpdate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_d1_database." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareD1DatabaseBasic(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareD1DatabaseWithReadReplication(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "read_replication.mode", "auto"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareD1DatabaseWithReadReplication(rnd, accountID string) string {
+	return acctest.LoadTestCase("d1databasewithreadreplication.tf", rnd, accountID)
 }
