@@ -66,8 +66,8 @@ func testSweepCloudflareOrgs(_ string) error {
 func TestAccCloudflareOrganization_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
-	orgName := fmt.Sprintf("tf-acctest-%s", rnd)
-	updatedOrgName := fmt.Sprintf("tf-acctest-%s-updated", rnd)
+	orgName := rnd
+	updatedOrgName := rnd + "-updated"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -114,7 +114,7 @@ func TestAccCloudflareOrganization_Basic(t *testing.T) {
 func TestAccCloudflareOrganization_WithProfile(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
-	orgName := fmt.Sprintf("tf-acctest-%s", rnd)
+	orgName := rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },

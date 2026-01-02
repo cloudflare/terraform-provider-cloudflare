@@ -1,5 +1,36 @@
 # Changelog
 
+## 5.16.0 (2026-01-02)
+
+Full Changelog: [v5.15.0...v5.16.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.15.0...v5.16.0)
+
+### Features
+
+* add v4 to v5 migration tests for  load_balancer_monitor ([07419b2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/07419b28b35d4700323deb9e8acad5466939b067))
+* chore: use 'next' branch for go_sdk_version ([056691a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/056691adf8026671ece066bc2b271b9c5e71e6b8))
+* feat: add terraform id properties to custom_ssl resource ([08b6b8b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/08b6b8b0bd3c73c29f56fe83975251f6f4270d93))
+* **load_balancer:** use v2 migrator ([af769b3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/af769b3c6bf61e4a888dfa388c649e57513ea2be))
+* **worker_route:** use v2 migrator: ([78ffe19](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78ffe1948f088c29b99d6bb79e4e0e7cc97c0473))
+* **zero_trust_access_application:** use v2 migrator ([f81ffd7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f81ffd79e9596f5164c08547189326412c38495e))
+* **zero_trust_access_group:** v4 to v5 migration acceptance tests ([77ca332](https://github.com/cloudflare/terraform-provider-cloudflare/commit/77ca3323befb688c797a095ab5b577068db443ea))
+* **zero_trust_access_mtls_certificate:** use v2 migrator ([e5eae5b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e5eae5b4d4b13ba3417539db4edf5d356a56a375))
+* **zero_trust_access_policy:** use v2 migrator ([f13bf40](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f13bf40890b21a2e4a4caf0f30ea21205cde329c))
+* **zone_setting:** use v2 migrator ([e7d8685](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e7d8685be0b15f10c1cceb96c0d94e078276190e))
+
+
+### Bug Fixes
+
+* add missing migrations ([17f9485](https://github.com/cloudflare/terraform-provider-cloudflare/commit/17f94859eb4b625ff2c4db06daac0f099d1f74cb))
+* failing integration tests ([82d5e00](https://github.com/cloudflare/terraform-provider-cloudflare/commit/82d5e00865fff52cc604108e13082e7464514121))
+* fix broken migrations ([e312e71](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e312e713d497308b543b025ec64327ae1961846a))
+* **kv:** handle special characters correctly ([b6c213e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b6c213ef35e1607ff2c223e6be509b8018f41d4e)), closes [#6542](https://github.com/cloudflare/terraform-provider-cloudflare/issues/6542)
+* **snippet:** v4 to v5 migration acceptance tests ([e0b4c8a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e0b4c8a5e38cd3c3a99869ff911e2c52e0dc5bcd))
+* v4 to v5 migration tests for custom_pages ([6abca48](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6abca48b28c6481dcb70d998efbe1a6c2cd78abd))
+* v4 to v5 migration tests for page_rule ([725874b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/725874b65ca1be2c5271f3c8a42dbca094805a72))
+* workers_route migrations tests ([0f3441b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0f3441b72af1896570e2e5293c872cd2180e38a5))
+* workers_route migrations tests ([ed0dbd4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ed0dbd42530f48596b2a8865ad8f51dc54961c1c))
+* workers_route migrations tests ([260c8c3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/260c8c3f97b10bfad086dde8bdc73e21f8cf5584))
+
 ## 5.15.0 (2025-12-19)
 
 Full Changelog: [v5.14.0...v5.15.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.14.0...v5.15.0)

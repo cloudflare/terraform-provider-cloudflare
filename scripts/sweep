@@ -36,11 +36,12 @@ debug_log() {
 # Usage information
 show_usage() {
     echo "Usage: $0 --account <account_id> [options]"
+    echo "       $0 [options]               (uses CLOUDFLARE_ACCOUNT_ID env var)"
     echo "       $0 <account_id> [options]  (legacy format)"
     echo "       $0 --list                  (list available sweepers)"
     echo ""
     echo "Arguments:"
-    echo "  --account ID       Cloudflare Account ID to sweep resources for"
+    echo "  --account ID       Cloudflare Account ID to sweep resources for (optional if CLOUDFLARE_ACCOUNT_ID is set)"
     echo ""
     echo "Options:"
     echo "  --help, -h                      Show this help message"
@@ -57,6 +58,10 @@ show_usage() {
     echo "  OR"
     echo "  CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL   Your Cloudflare API key and email"
     echo ""
+    echo "Environment variables (optional defaults):"
+    echo "  CLOUDFLARE_ACCOUNT_ID             Default account ID (used when --account not specified)"
+    echo "  CLOUDFLARE_ZONE_ID                Default zone ID (used when --zone not specified)"
+    echo ""
     echo "Other environment variables:"
     echo "  DEBUG_LOGS                        Enable debug logging (default: false)"
     echo "  SWEEP_DANGEROUSLY_DELETE_ALL      Set by --dangerously-delete-resources flag"
@@ -70,6 +75,11 @@ show_usage() {
     echo "  $0 --account c03814971cc44525d34173ca738b615b --sweep-timeout 15m"
     echo "  $0 c03814971cc44525d34173ca738b615b --resource dns_record --debug  # Legacy format"
     echo "  DEBUG_LOGS=true $0 --account c03814971cc44525d34173ca738b615b"
+    echo ""
+    echo "  # Using environment variables:"
+    echo "  export CLOUDFLARE_ACCOUNT_ID=c03814971cc44525d34173ca738b615b"
+    echo "  $0 --resource load_balancer"
+    echo "  $0 --zone 32b08b824a1707e468c6e839df23e57f --resource ruleset"
     echo ""
     echo "  ${RED}DANGEROUS EXAMPLE:${NC}"
     echo "  $0 --account c03814971cc44525d34173ca738b615b --dangerously-delete-resources --resource dns_record"
@@ -703,6 +713,17 @@ done
 if [ "$LIST_ONLY" = "true" ]; then
     display_available_sweepers
     exit 0
+fi
+
+# Use environment variables as defaults if not provided via command line
+if [ -z "$ACCOUNT_ID" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+    ACCOUNT_ID="$CLOUDFLARE_ACCOUNT_ID"
+    log "${WHITE}Using CLOUDFLARE_ACCOUNT_ID from environment: $ACCOUNT_ID${NC}"
+fi
+
+if [ -z "$TARGET_ZONE" ] && [ -n "$CLOUDFLARE_ZONE_ID" ]; then
+    TARGET_ZONE="$CLOUDFLARE_ZONE_ID"
+    log "${WHITE}Using CLOUDFLARE_ZONE_ID from environment: $TARGET_ZONE${NC}"
 fi
 
 # Validate arguments and prerequisites

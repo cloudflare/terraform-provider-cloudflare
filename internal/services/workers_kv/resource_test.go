@@ -294,8 +294,7 @@ func TestAccCloudflareWorkersKV_LargeValue(t *testing.T) {
 
 func TestAccCloudflareWorkersKV_SpecialCharactersInKey(t *testing.T) {
 	name := utils.GenerateRandomResourceName()
-	// Test key with simple special characters (avoid URL encoding issues)
-	key := "test-key_with.special-chars." + utils.GenerateRandomResourceName()
+	key := "test-key_with.special-chars/" + utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_workers_kv." + name

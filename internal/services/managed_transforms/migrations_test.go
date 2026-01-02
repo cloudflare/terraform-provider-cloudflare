@@ -58,7 +58,7 @@ resource "cloudflare_managed_headers" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				// Verify request headers migrated correctly
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
@@ -118,7 +118,7 @@ resource "cloudflare_managed_headers" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				// Verify request headers migrated correctly
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
@@ -169,7 +169,7 @@ resource "cloudflare_managed_headers" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				// Verify request headers exists as empty set (required in v5)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
@@ -215,7 +215,7 @@ resource "cloudflare_managed_headers" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				// Verify both headers exist as empty sets (required in v5)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
@@ -271,7 +271,7 @@ resource "cloudflare_managed_headers" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				// Verify all request headers migrated correctly
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
@@ -355,7 +355,7 @@ func TestMigrateManagedTransformsMultiVersion(t *testing.T) {
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
 			// MigrationTestStep automatically detects v4 vs v5 and only runs migration for v4
 			steps = append(steps,
-				acctest.MigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
+				acctest.MigrationV2TestStep(t, config, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					// Verify request headers migrated correctly
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
@@ -528,7 +528,7 @@ func TestMigrateManagedTransformsEdgeCases(t *testing.T) {
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
 			// MigrationTestStep automatically detects v4 vs v5 and only runs migration for v4
 			steps = append(steps,
-				acctest.MigrationTestStep(t, config, tmpDir, tc.version, expectedChecks),
+				acctest.MigrationV2TestStep(t, config, tmpDir, tc.version, "v4", "v5", expectedChecks),
 			)
 
 			resource.Test(t, resource.TestCase{

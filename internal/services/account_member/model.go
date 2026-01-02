@@ -17,7 +17,7 @@ type AccountMemberModel struct {
 	AccountID types.String                                            `tfsdk:"account_id" path:"account_id,required"`
 	Email     types.String                                            `tfsdk:"email" json:"email,required"`
 	Status    types.String                                            `tfsdk:"status" json:"status,computed_optional"`
-	Roles     *[]types.String                                         `tfsdk:"roles" json:"roles,optional,no_refresh"`
+	Roles     customfield.Set[types.String]                           `tfsdk:"roles" json:"roles,computed_optional,no_refresh"`
 	Policies  customfield.NestedObjectSet[AccountMemberPoliciesModel] `tfsdk:"policies" json:"policies,computed_optional"`
 	User      customfield.NestedObject[AccountMemberUserModel]        `tfsdk:"user" json:"user,computed"`
 }
