@@ -11,6 +11,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 type ResourceGroupsDataSource struct {
@@ -90,6 +92,34 @@ func (d *ResourceGroupsDataSource) Read(ctx context.Context, req datasource.Read
 			return
 		}
 	}
+
+    uniqueAcc := []attr.Value{}
+    seenIDs := make(map[string]bool)
+
+    for _, item := range acc {
+        obj, ok := item.(types.Object)
+        if !ok {
+            continue
+        }
+
+        var itemModel ResourceGroupsResultDataSourceModel
+
+        diags := obj.As(ctx, &itemModel, basetypes.ObjectAsOptions{
+            UnhandledNullAsEmpty:    true,
+            UnhandledUnknownAsEmpty: true,
+        })
+
+        if diags.HasError() {
+            continue
+        }
+
+        id := itemModel.ID.ValueString()
+        if !seenIDs[id] {
+            uniqueAcc = append(uniqueAcc, item)
+            seenIDs[id] = true
+        }
+    }
+    acc = uniqueAcc
 
 	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[ResourceGroupsResultDataSourceModel](ctx, acc)
