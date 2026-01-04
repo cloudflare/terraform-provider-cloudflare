@@ -116,7 +116,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"sets": schema.ListAttribute{
-						Description: "The list of sets this rate plan applies to.",
+						Description: "The list of sets this rate plan applies to. Returns array of strings.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
