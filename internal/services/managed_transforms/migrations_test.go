@@ -353,7 +353,7 @@ func TestMigrateManagedTransformsMultiVersion(t *testing.T) {
 			steps = append(steps, step1)
 
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
-			// MigrationTestStep automatically detects v4 vs v5 and only runs migration for v4
+			// MigrationV2TestStep automatically detects v4 vs v5 and only runs migration for v4
 			steps = append(steps,
 				acctest.MigrationV2TestStep(t, config, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
@@ -526,7 +526,7 @@ func TestMigrateManagedTransformsEdgeCases(t *testing.T) {
 			steps = append(steps, step1)
 
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
-			// MigrationTestStep automatically detects v4 vs v5 and only runs migration for v4
+			// MigrationV2TestStep automatically detects v4 vs v5 and only runs migration for v4
 			steps = append(steps,
 				acctest.MigrationV2TestStep(t, config, tmpDir, tc.version, "v4", "v5", expectedChecks),
 			)
