@@ -156,12 +156,18 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
+	ratePlanModel := &ZoneSubscriptionRatePlanModel{
+		Sets: customfield.NullList[types.String](ctx),
+	}
+	ratePlanObj, diags := customfield.NewObject(ctx, ratePlanModel)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	env := ZoneSubscriptionResultEnvelope{
 		Result: ZoneSubscriptionModel{
-			ZoneID: data.ZoneID,
-			RatePlan: &ZoneSubscriptionRatePlanModel{
-				Sets: customfield.NullList[types.String](ctx),
-			},
+			ZoneID:   data.ZoneID,
+			RatePlan: ratePlanObj,
 		},
 	}
 	_, err := r.client.Zones.Subscriptions.Get(
@@ -214,12 +220,18 @@ func (r *ZoneSubscriptionResource) ImportState(ctx context.Context, req resource
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
+	ratePlanModel := &ZoneSubscriptionRatePlanModel{
+		Sets: customfield.NullList[types.String](ctx),
+	}
+	ratePlanObj, diags := customfield.NewObject(ctx, ratePlanModel)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	env := ZoneSubscriptionResultEnvelope{
 		Result: ZoneSubscriptionModel{
-			ZoneID: data.ZoneID,
-			RatePlan: &ZoneSubscriptionRatePlanModel{
-				Sets: customfield.NullList[types.String](ctx),
-			},
+			ZoneID:   data.ZoneID,
+			RatePlan: ratePlanObj,
 		},
 	}
 	_, err := r.client.Zones.Subscriptions.Get(

@@ -44,6 +44,11 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Skip if acceptance tests are not enabled
+			if os.Getenv("TF_ACC") == "" {
+				t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+			}
+
 			// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 			// permission to manage account members.
 			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -51,6 +56,9 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 			}
 
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			if accountID == "" {
+				t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test.")
+			}
 			rnd := utils.GenerateRandomResourceName()
 			// Use real test user email that exists in Cloudflare system
 			email := "terraform-test-user-a@cfapi.net"
@@ -116,6 +124,11 @@ func TestMigrateCloudflareAccountMember_Migration_Basic_MultiVersion(t *testing.
 // TestMigrateCloudflareAccountMember_Migration_WithStatus tests migration of account members
 // with the optional status field to ensure all fields are properly migrated.
 func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
+	// Skip if acceptance tests are not enabled
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -123,6 +136,9 @@ func TestMigrateCloudflareAccountMember_Migration_WithStatus(t *testing.T) {
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test.")
+	}
 	rnd := utils.GenerateRandomResourceName()
 	// Use real test user email that exists in Cloudflare system
 	email := "terraform-test-user-b@cfapi.net"
