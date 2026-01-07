@@ -11,7 +11,8 @@ description: |-
 
 -> If you are using a `source` block configuration, you must first have a
    connected GitHub or GitLab account connected to Cloudflare. See the
-   [Getting Started with Pages] documentation on how to link your accounts.
+   [Getting Started with Pages](https://developers.cloudflare.com/pages/get-started/git-integration/)
+   documentation on how to link your accounts.
 
 ## Example Usage
 
