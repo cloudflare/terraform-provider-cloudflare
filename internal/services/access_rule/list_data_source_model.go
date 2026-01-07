@@ -24,7 +24,7 @@ type AccessRulesDataSourceModel struct {
 	Mode          types.String                                                   `tfsdk:"mode" query:"mode,optional"`
 	Notes         types.String                                                   `tfsdk:"notes" query:"notes,optional"`
 	Order         types.String                                                   `tfsdk:"order" query:"order,optional"`
-	Configuration *AccessRulesConfigurationDataSourceModel                       `tfsdk:"configuration" query:"configuration,optional"`
+	Configuration *AccessRulesFilterConfigurationDataSourceModel                 `tfsdk:"configuration" query:"configuration,optional"`
 	Match         types.String                                                   `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems      types.Int64                                                    `tfsdk:"max_items"`
 	Result        customfield.NestedObjectList[AccessRulesResultDataSourceModel] `tfsdk:"result"`
@@ -68,6 +68,13 @@ func (m *AccessRulesDataSourceModel) toListParams(_ context.Context) (params fir
 	return
 }
 
+// AccessRulesFilterConfigurationDataSourceModel is used for query parameters (optional input)
+type AccessRulesFilterConfigurationDataSourceModel struct {
+	Target types.String `tfsdk:"target" json:"target,optional"`
+	Value  types.String `tfsdk:"value" json:"value,optional"`
+}
+
+// AccessRulesConfigurationDataSourceModel is used for result data (computed output)
 type AccessRulesConfigurationDataSourceModel struct {
 	Target types.String `tfsdk:"target" json:"target,computed"`
 	Value  types.String `tfsdk:"value" json:"value,computed"`

@@ -105,12 +105,28 @@ func testPagesProjectMinimal(resourceID, accountID, projectName string) string {
 	return acctest.LoadTestCase("pagesprojectminimal.tf", resourceID, accountID, projectName)
 }
 
+func testPagesProjectMinimalWithDeploymentConfigs(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectminimalwithdeploymentconfigs.tf", resourceID, accountID, projectName)
+}
+
 func testPagesProjectFullConfig(resourceID, accountID, projectName, owner, repo string) string {
 	return acctest.LoadTestCase("pagesprojectfullconfig.tf", resourceID, accountID, projectName, owner, repo)
 }
 
 func testPagesProjectEnvVars(resourceID, accountID, projectName string) string {
 	return acctest.LoadTestCase("pagesprojectenvvars.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectWithEnvVars(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectwithenvvars.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectWithoutEnvVars(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectwithoutenvvars.tf", resourceID, accountID, projectName)
+}
+
+func testPagesProjectWithOnlyOneEnvVar(resourceID, accountID, projectName string) string {
+	return acctest.LoadTestCase("pagesprojectwithonlyoneenvvar.tf", resourceID, accountID, projectName)
 }
 
 func testPagesProjectPreviewSettings(resourceID, accountID, projectName, owner, repo, setting, extraConfig string) string {
@@ -401,8 +417,6 @@ func TestAccCloudflarePagesProject_Update_AddOptionalAttributes(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T) {
-	t.Skip("FIXME: waiting on fixes to apijson.MarshalForPatch()")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	projectName := rnd
@@ -421,10 +435,13 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("develop")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2023-06-01")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
 				},
 			},
 			{
-				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				// Update to config with deployment_configs but no env_vars - should remove env_vars.
+				Config: testPagesProjectMinimalWithDeploymentConfigs(rnd, accountID, projectName),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
@@ -433,8 +450,9 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("build_config"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
+					// env_vars should be removed (null) after update
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.Null()),
 				},
 			},
 			{
@@ -442,7 +460,6 @@ func TestAccCloudflarePagesProject_Update_RemoveOptionalAttributes(t *testing.T)
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				// ImportStateVerifyIgnore: []string{"build_config", "deployment_configs", "canonical_deployment", "latest_deployment", "created_on", "subdomain", "domains"},
 			},
 		},
 	})
@@ -621,6 +638,182 @@ func TestAccCloudflarePagesProject_PreviewDeploymentSettings(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePagesProject_RemoveEnvVarsAndBindings(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with env_vars and bindings
+				Config: testPagesProjectWithEnvVars(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.MapSizeExact(1)),
+				},
+			},
+			{
+				// Step 2: Remove all env_vars and bindings
+				Config: testPagesProjectWithoutEnvVars(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("kv_namespaces"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("d1_databases"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("kv_namespaces"), knownvalue.Null()),
+				},
+			},
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePagesProject_RemoveSpecificEnvVar(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with multiple env_vars
+				Config: testPagesProjectWithEnvVars(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(2)),
+				},
+			},
+			{
+				// Step 2: Remove one env_var (SECRET_VAR) from each environment
+				Config: testPagesProjectWithOnlyOneEnvVar(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("type"), knownvalue.StringExact("plain_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars"), knownvalue.MapSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("ENVIRONMENT").AtMapKey("type"), knownvalue.StringExact("plain_text")),
+				},
+			},
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+		},
+	})
+}
+
+// TestAccCloudflarePagesProject_NoDriftWithSecretEnvVars tests the fix for issue #6526.
+// It verifies that applying the same config with secret env vars does not cause
+// "inconsistent result after apply" errors.
+func TestAccCloudflarePagesProject_NoDriftWithSecretEnvVars(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Initial apply with secret env vars
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("env_vars").AtMapKey("SECRET_VAR").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("env_vars").AtMapKey("PROD_SECRET").AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+			{
+				// Re-apply the SAME config - should show no changes (fixes #6526)
+				Config: testPagesProjectEnvVars(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflarePagesProject_NoDriftWithMinimalConfig tests the fix for issue #5928.
+// It verifies that a minimal config (without build_config or deployment_configs) does not
+// show drift on subsequent plans.
+func TestAccCloudflarePagesProject_NoDriftWithMinimalConfig(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_pages_project." + rnd
+	projectName := rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageProjectDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Initial apply with minimal config
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
+					// deployment_configs will be computed by the API
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Re-apply the SAME config - should show no changes (fixes #5928)
+				Config: testPagesProjectMinimal(rnd, accountID, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})

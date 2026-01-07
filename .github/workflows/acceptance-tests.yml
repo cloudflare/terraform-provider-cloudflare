@@ -7,35 +7,208 @@ on:
   push:
     branches:
       - "release-please**"
+
+env:
+  CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
+  CLOUDFLARE_ALT_DOMAIN: terraform-alt.cfapi.net
+  CLOUDFLARE_ALT_ZONE_ID: ed9caae55809bfe3209699f602ce17fc
+  CLOUDFLARE_DOMAIN: terraform.cfapi.net
+  CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
+  CLOUDFLARE_MUTUAL_TLS_CERTIFICATE: "-----BEGIN CERTIFICATE-----\nMIIF+DCCA+CgAwIBAgIUWc0b+WiKSZob8wl2g/ujewoKCvgwDQYJKoZIhvcNAQEN\nBQAwgZMxCzAJBgNVBAYTAlVTMQwwCgYDVQQIEwNOL0ExDDAKBgNVBAcTA04vQTEl\nMCMGA1UEChMcVGVycmFmb3JtIEFjY2VwdGFuY2UgVGVzdGluZzEMMAoGA1UECxMD\nTi9BMTMwMQYDVQQDEypUZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2\nMTgyODU5MjYwHhcNMjEwNDEzMDM0ODAwWhcNMjYwNDEyMDM0ODAwWjCBkzELMAkG\nA1UEBhMCVVMxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMSUwIwYDVQQKExxU\nZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nMQwwCgYDVQQLEwNOL0ExMzAxBgNV\nBAMTKlRlcnJhZm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2MTgyODU5MjZDQ\nAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANBzwmNB8g3eVp8Sn30z0U21\niEh/uwa+WLPEGj/F90mWg2EnW+yFvI9O8OETJAgmAQs39Z4ivt488uwLNVplshnW\nU5J7BqNk9MlBeUZwj6omuS1CZMST/YNSzmIHV5LtyJBcFaEZ2TAi4Ql9f+M9Y5HD\ncxofze5n5tfYzgB3/1lFLk7Vr5eVsqeH5QGOdKZAlsIHfTPS6TFDXP/zTInqCUz0\njfuNkRy9Mqg55JREHVGMufHcT7oTNZiLU+4B/2EfYXJ9YD6JwntKnwB2IC+iOfW7\nGc6QtAREPIlsH3yjmO0rPORrT/oAnnWZcAkkklR5XDnY7QwK5JQ3amN1aByXaPtS\nmbIJNMDxE84AeTREAqR8PmsPK5drRHr3qpWk9nUOVGUaeXwPV+M2t3Xe1WSAQwpv\nJup6PyE8O6KZGwbOiYme5KaKhxMB/ObzhajhTH9RQX7+RMwBzlL+/XTFDnd2B3Ep\nyndNFUHN7fAAapNGjPUXzez01G52N9asE8312JRmLaOqGQ2sWMzr8UgRPw7ZYL4v\nsdlqE2fxXddijGM3TEane6CiM3UdO1VcRAjvNFQjY5WQBUdAkj5+V790cxUQZiMR\nwfmh4hePo7bqXt9RjAS7OeFGBz//H5tQf9wFj3yJTsvKS5bIwP86quR969FFU8nW\na0zNkQLwWygqlhW/VlhxAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB\nAf8EBTADAQH/MB0GA1UdDgQWBBT6PStM4ZTFmvpp6lASxuxOkNYZXzANBgkqhkiG\n9w0BAQ0FAAOCAgEACIs9YskrLq3huQXsPDQhHBu8/SLQTAtkj5vtYf1uSq6MXx1k\nj6nDzvixnLam/4HhrsJQyI3FjXnk5yNwaAVA1hQoVw0G2on4qk215fsIRJUKjlzK\npUfW49TFWZ+DPlhBJ/dmHSZsxG940p4xWmNjo2aJ2CraCgP2ns+FfPxXqtpthf1y\nVW5SxKhR9VYNLczXEz8fKvDTLictYYwQ/xFZjxPHpOdV8+DoL18brNKHN8Hs/Nk1\nkzhKrDk8fReEX+jmpG7n/q973nJ31KIBxk85owv/BFgnWpC7HPY+waIH0xNr2iZA\nOu1orlBiBYAqG8zDBq3AGVlxg8yUOc5bik9OhCIwYyT2RFmd6z4O36uIM3LEzJ64\nJj8TTjOP/ktqu+GZrUrnIjfu7mlGvc4u22P8ILJ2AZe5ITp/uhMRJbGbJGEMCCH3\nkAKIEDATrevGdmgWUpdj8RNBS7+BK98eN+vcDqtY4Sudri2TwTkMbAscraacqrSJ\n4rJfjSywVr4oWXyd2P83Hl398X3x04E0Rc15+wrGvaCSN5i1gzc30fTlz1X8dJQ3\nccaHajJlRVZfuCrFBk6m5YRL7AoG4iFfoOuDZZJpjr9nXEzEONhRR5QAG83yMedS\nd8//SuQhuJQTxJW7UzkWaao+32gW/RvuQun0XtCNoow/kMVMOeSjKL9xioM=\n-----END CERTIFICATE-----"
+  CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN: ${{ secrets.CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN }}
+  CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID: d0ed71f01c884e8b94ec4e4d6639f609
+  CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
+  CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
+  CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
+  CLOUDFLARE_PAGES_OWNER: cloudflare
+  CLOUDFLARE_PAGES_REPO: cf-pages-terraform-acceptance-testing
+  CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+  CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
+  CLOUDFLARE_HYPERDRIVE_DATABASE_NAME: neondb
+  CLOUDFLARE_HYPERDRIVE_DATABASE_PORT: 5432
+  CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
+  CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
+  CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+  TF_ACC: 1
+  TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+
 jobs:
   acceptance-tests:
-    name: Acceptance Tests
+    name: ${{ matrix.test.display_name }} Tests
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - name: magic
+            display_name: Magic
+            email: tf-acct-magic-magic@cfapi.net
+            api_key_secret: TF_ACCT_MAGIC_MAGIC_API_KEY
+          - name: organization
+            display_name: Organization
+            email: orgs-terraform-user@cfapi.net
+            api_key_secret: CLOUDFLARE_ORG_API_KEY
+            org_id: 48684ccf40084424e26b7c0ab79e09dc
+          - name: zone-core
+            display_name: Zone Core
+            email: tf-acct-zone-zone-core@cfapi.net
+            api_key_secret: TF_ACCT_ZONE_ZONE_CORE_API_KEY
+          - name: zone-settings
+            display_name: Zone Settings
+            email: tf-acct-zone-zone-settings@cfapi.net
+            api_key_secret: TF_ACCT_ZONE_ZONE_SETTINGS_API_KEY
+          - name: dns
+            display_name: DNS
+            email: tf-acct-dns-dns@cfapi.net
+            api_key_secret: TF_ACCT_DNS_DNS_API_KEY
+          - name: load-balancing
+            display_name: Load Balancing
+            email: tf-acct-load-balancing-load-balancing@cfapi.net
+            api_key_secret: TF_ACCT_LOAD_BALANCING_LOAD_BALANCING_API_KEY
+          - name: workers-core
+            display_name: Workers Core
+            email: tf-acct-workers-workers-core@cfapi.net
+            api_key_secret: TF_ACCT_WORKERS_WORKERS_CORE_API_KEY
+          - name: workers-extended
+            display_name: Workers Extended
+            email: tf-acct-workers-workers-extended@cfapi.net
+            api_key_secret: TF_ACCT_WORKERS_WORKERS_EXTENDED_API_KEY
+          - name: workers-platform
+            display_name: Workers Platform
+            email: tf-acct-workers-workers-platform@cfapi.net
+            api_key_secret: TF_ACCT_WORKERS_WORKERS_PLATFORM_API_KEY
+          - name: email-routing
+            display_name: Email Routing
+            email: tf-acct-email-email-routing@cfapi.net
+            api_key_secret: TF_ACCT_EMAIL_EMAIL_ROUTING_API_KEY
+          - name: email-security
+            display_name: Email Security
+            email: tf-acct-email-email-security@cfapi.net
+            api_key_secret: TF_ACCT_EMAIL_EMAIL_SECURITY_API_KEY
+          - name: security-core
+            display_name: Security Core
+            email: tf-acct-security-security-core@cfapi.net
+            api_key_secret: TF_ACCT_SECURITY_SECURITY_CORE_API_KEY
+          - name: security-advanced
+            display_name: Security Advanced
+            email: tf-acct-security-security-advanced@cfapi.net
+            api_key_secret: TF_ACCT_SECURITY_SECURITY_ADVANCED_API_KEY
+          - name: rules-and-policies
+            display_name: Rules and Policies
+            email: tf-acct-rules-rules-and-policies@cfapi.net
+            api_key_secret: TF_ACCT_RULES_RULES_AND_POLICIES_API_KEY
+          - name: snippets
+            display_name: Snippets
+            email: tf-acct-snippets-snippets@cfapi.net
+            api_key_secret: TF_ACCT_SNIPPETS_SNIPPETS_API_KEY
+          - name: tls-and-certificates
+            display_name: TLS and Certificates
+            email: tf-acct-tls-tls-and-certificates@cfapi.net
+            api_key_secret: TF_ACCT_TLS_TLS_AND_CERTIFICATES_API_KEY
+          - name: ssl-config
+            display_name: SSL Config
+            email: tf-acct-ssl-ssl-config@cfapi.net
+            api_key_secret: TF_ACCT_SSL_SSL_CONFIG_API_KEY
+          - name: web-features
+            display_name: Web Features
+            email: tf-acct-web-web-features@cfapi.net
+            api_key_secret: TF_ACCT_WEB_WEB_FEATURES_API_KEY
+          - name: web-monitoring
+            display_name: Web Monitoring
+            email: tf-acct-web-web-monitoring@cfapi.net
+            api_key_secret: TF_ACCT_WEB_WEB_MONITORING_API_KEY
+          - name: waiting-room
+            display_name: Waiting Room
+            email: tf-acct-waiting-room-waiting-room@cfapi.net
+            api_key_secret: TF_ACCT_WAITING_ROOM_WAITING_ROOM_API_KEY
+          - name: performance
+            display_name: Performance
+            email: tf-acct-performance-performance@cfapi.net
+            api_key_secret: TF_ACCT_PERFORMANCE_PERFORMANCE_API_KEY
+          - name: cdn-advanced
+            display_name: CDN Advanced
+            email: tf-acct-cdn-cdn-advanced@cfapi.net
+            api_key_secret: TF_ACCT_CDN_CDN_ADVANCED_API_KEY
+          - name: gateway-and-policies
+            display_name: Gateway and Policies
+            email: tf-acct-zero-trust-gateway-and-policies@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_API_KEY
+          - name: dlp-config
+            display_name: DLP Config
+            email: tf-acct-zero-trust-dlp-config@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
+          - name: access-core
+            display_name: Access Core
+            email: tf-acct-zero-trust-access-core@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ACCESS_CORE_API_KEY
+          - name: access-identity
+            display_name: Access Identity
+            email: tf-acct-zero-trust-access-identity@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ACCESS_IDENTITY_API_KEY
+          - name: access-mtls
+            display_name: Access mTLS
+            email: tf-acct-zero-trust-access-mtls@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ACCESS_MTLS_API_KEY
+          - name: access-applications
+            display_name: Access Applications
+            email: tf-acct-zero-trust-access-applications@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ACCESS_APPLICATIONS_API_KEY
+          - name: zero-trust-org
+            display_name: Zero Trust Organization
+            email: tf-acct-zero-trust-zero-trust-org@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ZERO_TRUST_ORG_API_KEY
+          - name: zero-trust-list
+            display_name: Zero Trust List
+            email: tf-acct-zero-trust-zero-trust-list@cfapi.net
+            api_key_secret: TF_ACCT_ZERO_TRUST_ZERO_TRUST_LIST_API_KEY
+          - name: tunnel-cloudflared
+            display_name: Tunnel Cloudflared
+            email: tf-acct-tunnel-tunnel-cloudflared@cfapi.net
+            api_key_secret: TF_ACCT_TUNNEL_TUNNEL_CLOUDFLARED_API_KEY
+          - name: tunnel-devices
+            display_name: Tunnel Devices
+            email: tf-acct-tunnel-tunnel-devices@cfapi.net
+            api_key_secret: TF_ACCT_TUNNEL_TUNNEL_DEVICES_API_KEY
+          - name: account-core
+            display_name: Account Core
+            email: tf-acct-account-account-core@cfapi.net
+            api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY
+          - name: account-settings
+            display_name: Account Settings
+            email: tf-acct-account-account-settings@cfapi.net
+            api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_SETTINGS_API_KEY
+          - name: r2-storage
+            display_name: R2 Storage
+            email: tf-acct-storage-r2-storage@cfapi.net
+            api_key_secret: TF_ACCT_STORAGE_R2_STORAGE_API_KEY
+          - name: pages
+            display_name: Pages
+            email: tf-acct-pages-pages@cfapi.net
+            api_key_secret: TF_ACCT_PAGES_PAGES_API_KEY
+          - name: queue-and-messaging
+            display_name: Queue and Messaging
+            email: tf-acct-messaging-queue-and-messaging@cfapi.net
+            api_key_secret: TF_ACCT_MESSAGING_QUEUE_AND_MESSAGING_API_KEY
+          - name: general-api
+            display_name: General API
+            email: tf-acct-general-general-api@cfapi.net
+            api_key_secret: TF_ACCT_GENERAL_GENERAL_API_API_KEY
+          - name: misc-account-tools
+            display_name: Misc Account Tools
+            email: tf-acct-misc-misc-account-tools@cfapi.net
+            api_key_secret: TF_ACCT_MISC_MISC_ACCOUNT_TOOLS_API_KEY
+          - name: platform-and-advanced
+            display_name: Platform and Advanced
+            email: tf-acct-platform-platform-and-advanced@cfapi.net
+            api_key_secret: TF_ACCT_PLATFORM_PLATFORM_AND_ADVANCED_API_KEY
+          - name: default
+            display_name: Default
+            email: tf-acct-default-default@cfapi.net
+            api_key_secret: TF_ACCT_DEFAULT_DEFAULT_API_KEY
     env:
-      CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
-      CLOUDFLARE_ALT_DOMAIN: terraform-alt.cfapi.net
-      CLOUDFLARE_ALT_ZONE_ID: ed9caae55809bfe3209699f602ce17fc
-      CLOUDFLARE_DOMAIN: terraform.cfapi.net
-      CLOUDFLARE_EMAIL: terraform-acceptance-test@cfapi.net
-      CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
-      CLOUDFLARE_MUTUAL_TLS_CERTIFICATE: "-----BEGIN CERTIFICATE-----\\nMIIF+DCCA+CgAwIBAgIUWc0b+WiKSZob8wl2g/ujewoKCvgwDQYJKoZIhvcNAQEN\\nBQAwgZMxCzAJBgNVBAYTAlVTMQwwCgYDVQQIEwNOL0ExDDAKBgNVBAcTA04vQTEl\\nMCMGA1UEChMcVGVycmFmb3JtIEFjY2VwdGFuY2UgVGVzdGluZzEMMAoGA1UECxMD\\nTi9BMTMwMQYDVQQDEypUZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2\\nMTgyODU5MjYwHhcNMjEwNDEzMDM0ODAwWhcNMjYwNDEyMDM0ODAwWjCBkzELMAkG\\nA1UEBhMCVVMxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMSUwIwYDVQQKExxU\\nZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nMQwwCgYDVQQLEwNOL0ExMzAxBgNV\\nBAMTKlRlcnJhZm9ybSBBY2NlcHRhbmNlIFRlc3RpbmcgQ0EgMTYxODI4NTkyNjCC\\nAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANBzwmNB8g3eVp8Sn30z0U21\\niEh/uwa+WLPEGj/F90mWg2EnW+yFvI9O8OETJAgmAQs39Z4ivt488uwLNVplshnW\\nU5J7BqNk9MlBeUZwj6omuS1CZMST/YNSzmIHV5LtyJBcFaEZ2TAi4Ql9f+M9Y5HD\\ncxofze5n5tfYzgB3/1lFLk7Vr5eVsqeH5QGOdKZAlsIHfTPS6TFDXP/zTInqCUz0\\njfuNkRy9Mqg55JREHVGMufHcT7oTNZiLU+4B/2EfYXJ9YD6JwntKnwB2IC+iOfW7\\nGc6QtAREPIlsH3yjmO0rPORrT/oAnnWZcAkkklR5XDnY7QwK5JQ3amN1aByXaPtS\\nmbIJNMDxE84AeTREAqR8PmsPK5drRHr3qpWk9nUOVGUaeXwPV+M2t3Xe1WSAQwpv\\nJup6PyE8O6KZGwbOiYme5KaKhxMB/ObzhajhTH9RQX7+RMwBzlL+/XTFDnd2B3Ep\\nyndNFUHN7fAAapNGjPUXzez01G52N9asE8312JRmLaOqGQ2sWMzr8UgRPw7ZYL4v\\nsdlqE2fxXddijGM3TEane6CiM3UdO1VcRAjvNFQjY5WQBUdAkj5+V790cxUQZiMR\\nwfmh4hePo7bqXt9RjAS7OeFGBz//H5tQf9wFj3yJTsvKS5bIwP86quR969FFU8nW\\na0zNkQLwWygqlhW/VlhxAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB\\nAf8EBTADAQH/MB0GA1UdDgQWBBT6PStM4ZTFmvpp6lASxuxOkNYZXzANBgkqhkiG\\n9w0BAQ0FAAOCAgEACIs9YskrLq3huQXsPDQhHBu8/SLQTAtkj5vtYf1uSq6MXx1k\\nj6nDzvixnLam/4HhrsJQyI3FjXnk5yNwaAVA1hQoVw0G2on4qk215fsIRJUKjlzK\\npUfW49TFWZ+DPlhBJ/dmHSZsxG940p4xWmNjo2aJ2CraCgP2ns+FfPxXqtpthf1y\\nVW5SxKhR9VYNLczXEz8fKvDTLictYYwQ/xFZjxPHpOdV8+DoL18brNKHN8Hs/Nk1\\nkzhKrDk8fReEX+jmpG7n/q973nJ31KIBxk85owv/BFgnWpC7HPY+waIH0xNr2iZA\\nOu1orlBiBYAqG8zDBq3AGVlxg8yUOc5bik9OhCIwYyT2RFmd6z4O36uIM3LEzJ64\\nJj8TTjOP/ktqu+GZrUrnIjfu7mlGvc4u22P8ILJ2AZe5ITp/uhMRJbGbJGEMCCH3\\nkAKIEDATrevGdmgWUpdj8RNBS7+BK98eN+vcDqtY4Sudri2TwTkMbAscraacqrSJ\\n4rJfjSywVr4oWXyd2P83Hl398X3x04E0Rc15+wrGvaCSN5i1gzc30fTlz1X8dJQ3\\nccaHajJlRVZfuCrFBk6m5YRL7AoG4iFfoOuDZZJpjr9nXEzEONhRR5QAG83yMedS\\nd8//SuQhuJQTxJW7UzkWaao+32gW/RvuQun0XtCNoow/kMVMOeSjKL9xioM=\\n-----END CERTIFICATE-----"
-      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
-      # CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      # CLOUDFLARE_API_USER_SERVICE_KEY: ${{ secrets.CLOUDFLARE_API_USER_SERVICE_KEY }}
-      CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN: ${{ secrets.CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN }}
-      CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID: d0ed71f01c884e8b94ec4e4d6639f609
-      CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
-      CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
-      CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
-      CLOUDFLARE_PAGES_OWNER: cloudflare
-      CLOUDFLARE_PAGES_REPO: cf-pages-terraform-acceptance-testing
-      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
-      CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
-      CLOUDFLARE_HYPERDRIVE_DATABASE_NAME: neondb
-      CLOUDFLARE_HYPERDRIVE_DATABASE_PORT: 5432
-      CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
-      CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
-      CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+      CLOUDFLARE_EMAIL: ${{ matrix.test.email }}
+      CLOUDFLARE_API_KEY: ${{ secrets[matrix.test.api_key_secret] }}
+      CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -44,72 +217,24 @@ jobs:
         with:
           go-version-file: ./go.mod
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Install grit
-        run: npm install -g @getgrit/cli
-
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Build tf-migrate
-        run: ./scripts/build-tf-migrate.sh
+      - name: Run ${{ matrix.test.display_name }} Tests
+        run: ./scripts/run-ci-tests ${{ matrix.test.name }} acceptance
 
-      ######## Magic Tests ########
-      - name: Run Magic Acceptance Tests
-        id: magic_acceptance_tests
-        run: ./scripts/run-ci-tests magic acceptance
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
-
-      # - name: Run Magic Migration Tests
-      #   id: magic_migration_tests
-      #   run: ./scripts/run-ci-tests magic migration
-      #   env:
-      #     TF_ACC: 1
-      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-      #   continue-on-error: true
-
-      ######## Organization Tests ########
-      # These tests require a specific user with organization permissions
-      - name: Run Organization Acceptance Tests
-        id: organization_acceptance_tests
-        run: ./scripts/run-ci-tests organization acceptance
-        env:
-          TF_ACC: 1
-          # Override credentials for organization tests
-          CLOUDFLARE_EMAIL: orgs-terraform-user@cfapi.net
-          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_ORG_API_KEY }}
-          CLOUDFLARE_ORGANIZATION_ID: 48684ccf40084424e26b7c0ab79e09dc
-        continue-on-error: true
-
-      ######## Everything Else ########
-      - name: Run Default Acceptance Tests
-        id: default_acceptance_tests
-        run: ./scripts/run-ci-tests default acceptance
-        env:
-          TF_ACC: 1
-          TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-        continue-on-error: true
-
-      # - name: Run Default Migration Tests
-      #   id: default_migration_tests
-      #   run: ./scripts/run-ci-tests default migration
-      #   env:
-      #     TF_ACC: 1
-      #     TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-      #   continue-on-error: true
-
-      - name: Check Test Status
-        if: ${{
-          steps.magic_acceptance_tests.outcome == 'failure' ||
-          steps.magic_migration_tests.outcome == 'failure' ||
-          steps.default_acceptance_tests.outcome == 'failure' ||
-          steps.default_migration_tests.outcome == 'failure' ||
-          steps.organization_acceptance_tests.outcome == 'failure'}}
-        run: exit 1
+  check-results:
+    name: Check Test Results
+    runs-on: ubuntu-latest
+    needs: acceptance-tests
+    if: always()
+    steps:
+      - name: Check if any tests failed
+        run: |
+          echo "Checking test results..."
+          if [ "${{ needs.acceptance-tests.result }}" == "failure" ]; then
+            echo "One or more tests failed"
+            exit 1
+          else
+            echo "All tests passed or were skipped"
+          fi

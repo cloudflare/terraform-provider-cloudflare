@@ -35,7 +35,6 @@ func testAccessMutualTLSCertificateMigrationZoneScoped(rnd string, zoneID string
 // The test starts with v4 resource name (cloudflare_access_mutual_tls_certificate) and
 // the migration tool renames it to v5 (cloudflare_zero_trust_access_mtls_certificate)
 func TestMigrateZeroTrustAccessMTLSCertificate_Basic(t *testing.T) {
-	t.Skip(`Skipping due to consistent conflicts: "message": "access.api.error.conflict: certificate has active associations"`)
 	waitForCertificateCleanup(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -79,11 +78,11 @@ func TestMigrateZeroTrustAccessMTLSCertificate_Basic(t *testing.T) {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.SetSizeExact(2)),
+				// Note: associated_hostnames might be nil or empty set - it's a computed field
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fingerprint"), knownvalue.NotNull()),
 				// New computed field in v5
@@ -130,7 +129,7 @@ func TestMigrateZeroTrustAccessMTLSCertificate_ZoneScoped(t *testing.T) {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),

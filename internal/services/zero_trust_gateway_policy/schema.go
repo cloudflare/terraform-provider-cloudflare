@@ -364,6 +364,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"forensic_copy": schema.SingleNestedAttribute{
+						Description: "Configure whether a copy of the HTTP request will be sent to storage when the rule matches.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable sending the copy to storage.",
+								Optional:    true,
+							},
+						},
+					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.",
 						Optional:    true,

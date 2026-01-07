@@ -535,6 +535,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The client used to create the version.",
 							Computed:    true,
 						},
+						"startup_time_ms": schema.Int64Attribute{
+							Description: "Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).",
+							Computed:    true,
+						},
 						"usage_model": schema.StringAttribute{
 							Description:        "Usage model for the version.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
 							Computed:           true,

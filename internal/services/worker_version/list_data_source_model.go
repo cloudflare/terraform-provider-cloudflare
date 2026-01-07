@@ -49,6 +49,7 @@ type WorkerVersionsResultDataSourceModel struct {
 	Modules            customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]   `tfsdk:"modules" json:"modules,computed"`
 	Placement          customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]    `tfsdk:"placement" json:"placement,computed"`
 	Source             types.String                                                        `tfsdk:"source" json:"source,computed"`
+	StartupTimeMs      types.Int64                                                         `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	UsageModel         types.String                                                        `tfsdk:"usage_model" json:"usage_model,computed"`
 }
 

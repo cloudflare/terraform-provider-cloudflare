@@ -20,6 +20,120 @@ get_product_group_services() {
         organization)
             echo "organization organization_profile"
             ;;
+        zone-core)
+            echo "zone zone_subscription"
+            ;;
+        zone-settings)
+            echo "zone_setting zone_cache_reserve zone_cache_variants zone_dnssec zone_hold zone_lockdown"
+            ;;
+        dns)
+            echo "dns_record dns_settings_internal_view dns_zone_transfers_acl dns_zone_transfers_tsig"
+            ;;
+        load-balancing)
+            echo "load_balancer load_balancer_monitor load_balancer_pool healthcheck"
+            ;;
+        workers-core)
+            echo "workers_script workers_route workers_kv_namespace workers_kv"
+            ;;
+        workers-extended)
+            echo "workers_cron_trigger workers_custom_domain workers_for_platforms_dispatch_namespace"
+            ;;
+        email-routing)
+            echo "email_routing_catch_all email_routing_dns email_routing_rule"
+            ;;
+        email-security)
+            echo "email_security_impersonation_registry email_security_trusted_domains"
+            ;;
+        security-core)
+            echo "api_shield bot_management"
+            ;;
+        security-advanced)
+            echo "api_shield_operation schema_validation_operation_settings schema_validation_schemas schema_validation_settings"
+            ;;
+        rules-and-policies)
+            echo "ruleset page_rule managed_transforms"
+            ;;
+        snippets)
+            echo "snippet snippet_rules snippets"
+            ;;
+        tls-and-certificates)
+            echo "certificate_pack authenticated_origin_pulls authenticated_origin_pulls_certificate custom_hostname"
+            ;;
+        ssl-config)
+            echo "custom_ssl"
+            ;;
+        web-features)
+            echo "url_normalization_settings token_validation_rules"
+            ;;
+        web-monitoring)
+            echo "logpull_retention logpush_job logpush_ownership_challenge"
+            ;;
+        waiting-room)
+            echo "waiting_room_settings"
+            ;;
+        performance)
+            echo "argo_smart_routing argo_tiered_caching tiered_cache regional_tiered_cache"
+            ;;
+        cdn-advanced)
+            echo "regional_hostname spectrum_application"
+            ;;
+        gateway-and-policies)
+            echo "zero_trust_gateway_policy zero_trust_gateway_settings zero_trust_gateway_proxy_endpoint"
+            ;;
+        dlp-config)
+            echo "zero_trust_dlp_entry zero_trust_dlp_custom_profile"
+            ;;
+        access-core)
+            echo "zero_trust_access_group zero_trust_access_tag zero_trust_access_policy"
+            ;;
+        access-identity)
+            echo "zero_trust_access_identity_provider zero_trust_access_custom_page zero_trust_access_key_configuration"
+            ;;
+        access-mtls)
+            echo "zero_trust_access_mtls_certificate zero_trust_access_mtls_hostname_settings zero_trust_access_short_lived_certificate"
+            ;;
+        access-applications)
+            echo "zero_trust_access_application zero_trust_access_service_token"
+            ;;
+        account-core)
+            echo "account_token account_member account_subscription"
+            ;;
+        account-settings)
+            echo "account_api_token_permission_groups account_dns_settings account_dns_settings_internal_view account_role account_permission_group"
+            ;;
+        zero-trust-org)
+            echo "zero_trust_organization"
+            ;;
+        tunnel-cloudflared)
+            echo "zero_trust_tunnel_cloudflared zero_trust_tunnel_cloudflared_config zero_trust_tunnel_cloudflared_route zero_trust_tunnel_cloudflared_token zero_trust_tunnel_cloudflared_virtual_network"
+            ;;
+        tunnel-devices)
+            echo "zero_trust_device_custom_profile zero_trust_device_custom_profile_local_domain_fallback zero_trust_device_default_profile_certificates zero_trust_device_managed_networks zero_trust_device_posture_rule"
+            ;;
+        workers-platform)
+            echo "worker worker_version"
+            ;;
+        r2-storage)
+            echo "r2_bucket"
+            ;;
+        pages)
+            echo "pages_project pages_domain"
+            ;;
+        queue-and-messaging)
+            echo "queue"
+            ;;
+        general-api)
+            echo "api_token origin_ca_certificate list list_item"
+            ;;
+        misc-account-tools)
+            echo "notification_policy_webhooks observatory_scheduled_test sso_connector"
+            ;;
+        platform-and-advanced)
+            echo "cloud_connector_rules address_map byo_ip_prefix turnstile_widget"
+            ;;
+        zero-trust-list)
+            echo "zero_trust_list"
+            ;;
         *)
             echo ""
             ;;
@@ -27,7 +141,7 @@ get_product_group_services() {
 }
 
 get_available_product_groups() {
-    echo "magic organization"
+    echo "magic organization zone-core zone-settings dns load-balancing workers-core workers-extended email-routing email-security security-core security-advanced rules-and-policies snippets tls-and-certificates ssl-config web-features web-monitoring waiting-room performance cdn-advanced gateway-and-policies dlp-config access-core access-identity access-mtls access-applications account-core account-settings zero-trust-org tunnel-cloudflared tunnel-devices workers-platform r2-storage pages queue-and-messaging general-api misc-account-tools platform-and-advanced zero-trust-list"
 }
 
 # List of services with their parallel test configuration
@@ -309,7 +423,7 @@ resolve_dependencies() {
 set -e
 
 # Configuration
-PARALLEL_JOBS=${PARALLEL_JOBS:-10}  # Number of parallel jobs (can be overridden)
+PARALLEL_JOBS=${PARALLEL_JOBS:-3}  # Number of parallel jobs (can be overridden)
 LOG_DIR="./test-logs"
 SWEEP_TIMEOUT="5m"
 TEST_TIMEOUT="15m"

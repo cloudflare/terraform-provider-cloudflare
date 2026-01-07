@@ -30,6 +30,7 @@ type ZeroTrustDLPCustomEntryDataSourceModel struct {
 	Secret        types.Bool                                                                   `tfsdk:"secret" json:"secret,computed"`
 	Type          types.String                                                                 `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	UploadStatus  types.String                                                                 `tfsdk:"upload_status" json:"upload_status,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomEntryConfidenceDataSourceModel]   `tfsdk:"confidence" json:"confidence,computed"`
 	Pattern       customfield.NestedObject[ZeroTrustDLPCustomEntryPatternDataSourceModel]      `tfsdk:"pattern" json:"pattern,computed"`
 	Profiles      customfield.NestedObjectList[ZeroTrustDLPCustomEntryProfilesDataSourceModel] `tfsdk:"profiles" json:"profiles,computed"`

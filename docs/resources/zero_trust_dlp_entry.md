@@ -50,6 +50,7 @@ Cannot be set to false if secret is true
 - `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
 - `updated_at` (String)
+- `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 

@@ -41,7 +41,7 @@ func TestMigrateSpectrumApplication_Basic(t *testing.T) {
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("protocol"), knownvalue.StringExact("tcp/22")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dns").AtMapKey("type"), knownvalue.StringExact("CNAME")),
@@ -77,7 +77,7 @@ func TestMigrateSpectrumApplication_OriginPortRange(t *testing.T) {
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("protocol"), knownvalue.StringExact("tcp/3306")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dns").AtMapKey("type"), knownvalue.StringExact("CNAME")),
@@ -114,7 +114,7 @@ func TestMigrateSpectrumApplication_EdgeIPs(t *testing.T) {
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("protocol"), knownvalue.StringExact("tcp/443")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dns").AtMapKey("type"), knownvalue.StringExact("CNAME")),
@@ -152,7 +152,7 @@ func TestMigrateSpectrumApplication_OriginDirect(t *testing.T) {
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("protocol"), knownvalue.StringExact("tcp/3306")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dns").AtMapKey("type"), knownvalue.StringExact("CNAME")),
@@ -189,7 +189,7 @@ func TestMigrateSpectrumApplication_Complex(t *testing.T) {
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationTestStepWithPlan(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("protocol"), knownvalue.StringExact("tcp/443")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dns").AtMapKey("type"), knownvalue.StringExact("CNAME")),

@@ -124,10 +124,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"hosts": schema.ListAttribute{
+						"hosts": schema.SetAttribute{
 							Description: "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"status": schema.StringAttribute{

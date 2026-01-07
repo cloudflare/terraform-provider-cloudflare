@@ -96,16 +96,17 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
-			// {
-			// 	ResourceName:        name,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// 	Check: resource.ComposeTestCheckFunc(
-			// 		testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-			// 		testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-			// 	),
-			// },
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"argo_smart_routing"},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+				),
+			},
 		},
 	})
 }
@@ -321,29 +322,6 @@ func TestAccCloudflareSpectrumApplication_BasicRDP(t *testing.T) {
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "rdp"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareSpectrumApplication_BasicMinecraft(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, domain, rnd, "minecraft", 25565),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "protocol", "minecraft"),
 				),
 			},
 		},

@@ -50,6 +50,7 @@ Cannot be set to false if secret is true
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
+- `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `variant` (Attributes) (see [below for nested schema](#nestedatt--result--variant))
 - `word_list` (String)
 

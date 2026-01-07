@@ -30,6 +30,7 @@ type WorkerVersionDataSourceModel struct {
 	MainScriptBase64   types.String                                                       `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
 	Number             types.Int64                                                        `tfsdk:"number" json:"number,computed"`
 	Source             types.String                                                       `tfsdk:"source" json:"source,computed"`
+	StartupTimeMs      types.Int64                                                        `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	UsageModel         types.String                                                       `tfsdk:"usage_model" json:"usage_model,computed"`
 	CompatibilityFlags customfield.Set[types.String]                                      `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	Annotations        customfield.NestedObject[WorkerVersionAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`

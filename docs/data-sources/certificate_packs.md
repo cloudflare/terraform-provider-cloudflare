@@ -44,7 +44,7 @@ Read-Only:
 Available values: "google", "lets_encrypt", "ssl_com".
 - `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--result--certificates))
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.
-- `hosts` (List of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
+- `hosts` (Set of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
 - `id` (String) Identifier.
 - `primary_certificate` (String) Identifier of the primary certificate in a pack.
 - `status` (String) Status of certificate pack.

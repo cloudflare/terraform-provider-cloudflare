@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -12,8 +13,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -44,7 +45,7 @@ func testSweepCloudflareList(r string) error {
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s",err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s", err))
 		return err
 	}
 	if len(lists.Result) == 0 {
@@ -62,7 +63,7 @@ func testSweepCloudflareList(r string) error {
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare List %s (%s): %s", list.Name, list.ID,err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare List %s (%s): %s", list.Name, list.ID, err))
 			continue
 		}
 		tflog.Info(ctx, fmt.Sprintf("Deleted Cloudflare List: %s (%s)", list.Name, list.ID))
@@ -366,6 +367,18 @@ func TestAccCloudflareListWithItems_IP(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config:      testAccCheckCloudflareListWithCustomItem(rndIP, listNameIP, descriptionIP, accountID, `ip = "0f::"`),
+				ExpectError: regexp.MustCompile(`IP address "0f::" must be normalized: "f::"`),
+			},
+			{
+				Config:      testAccCheckCloudflareListWithCustomItem(rndIP, listNameIP, descriptionIP, accountID, `ip = "1.1.1.1/32"`),
+				ExpectError: regexp.MustCompile(`CIDR "1\.1\.1\.1/32" must be represented as "1\.1\.1\.1"`),
+			},
+			{
+				Config:      testAccCheckCloudflareListWithCustomItem(rndIP, listNameIP, descriptionIP, accountID, `ip = "f::/128"`),
+				ExpectError: regexp.MustCompile(`CIDR "f::/128" must be represented as "f::"`),
+			},
+			{
 				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIP, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
@@ -593,6 +606,10 @@ func testAccCheckCloudflareList(resourceName, listName, description, accountID, 
 
 func testAccCheckCloudflareListWithIPItems(resourceName, listName, description, accountID string) string {
 	return acctest.LoadTestCase("listwithipitems.tf", resourceName, listName, description, accountID)
+}
+
+func testAccCheckCloudflareListWithCustomItem(resourceName, listName, description, accountID, itemTf string) string {
+	return acctest.LoadTestCase("listwithcustomitem.tf", resourceName, listName, description, accountID, itemTf)
 }
 
 func testAccCheckCloudflareListWithNullIPItems(resourceName, listName, description, accountID string) string {

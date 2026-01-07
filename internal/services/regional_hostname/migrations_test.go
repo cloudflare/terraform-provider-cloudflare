@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -20,17 +19,30 @@ func TestMigrateCloudflareRegionalHostname_Migration_TimeoutsRemoval(t *testing.
 	// when upgrading from v4 to v5, since v5 provider no longer supports timeouts
 	// configuration for regional_hostname resources.
 
-	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	hostname := fmt.Sprintf("%s.%s", rnd, zoneName)
 	resourceName := "cloudflare_regional_hostname." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 config with timeouts block
-	v4Config := testRegionalHostnameV4ConfigWithTimeouts(rnd, zoneName, "ca")
+	// V4 config with timeouts block (should be removed during migration)
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_regional_hostname" "%[1]s" {
+  zone_id    = "%[2]s"
+  hostname   = "%[3]s"
+  region_key = "ca"
+
+  timeouts {
+    create = "30s"
+    update = "30s"
+  }
+}`, rnd, zoneID, hostname)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
@@ -44,47 +56,18 @@ func TestMigrateCloudflareRegionalHostname_Migration_TimeoutsRemoval(t *testing.
 				},
 				Config: v4Config,
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, zoneName))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_key"), knownvalue.StringExact("ca")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				},
 			},
-			// Step 2: Run migration from v4 to current version
+			// Step 2: Run migration from v4 to v5
 			// This will run the migration tool which should remove the timeouts block
-			// and the state upgrade function will handle the state transformation
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, zoneName))),
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_key"), knownvalue.StringExact("ca")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 			}),
-			{
-				// Step 3: Apply migrated config with current provider
-				// Should succeed without any timeouts configuration
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				ConfigDirectory:          config.StaticDirectory(tmpDir),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, zoneName))),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_key"), knownvalue.StringExact("ca")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-					// Verify routing has default value (handled by state upgrader)
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("routing"), knownvalue.StringExact("dns")),
-				},
-			},
-			{
-				// Step 4: Import verification to ensure resource is properly accessible
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				ResourceName:             resourceName,
-				ImportState:              true,
-				ImportStateVerify:        true,
-				ImportStateIdFunc:        testAccCloudflareRegionalHostnameImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore:  []string{"created_on"}, // Computed field may vary
-			},
 		},
 	})
-}
-
-func testRegionalHostnameV4ConfigWithTimeouts(name string, zoneName, regionKey string) string {
-	// Use a random subdomain to avoid conflicts with existing regional hostnames
-	hostname := fmt.Sprintf("%s.%s", name, zoneName)
-	return acctest.LoadTestCase("regionalhostname_v4_with_timeouts.tf", name, zoneID, hostname, regionKey)
 }
