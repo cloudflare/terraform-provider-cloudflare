@@ -589,6 +589,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The client used to create the version.",
 				Computed:    true,
 			},
+			"main_script_base64": schema.StringAttribute{
+				Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.",
+				Computed:    true,
+			},
 		},
 	}
 }

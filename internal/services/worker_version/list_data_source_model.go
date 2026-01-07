@@ -44,6 +44,7 @@ type WorkerVersionsResultDataSourceModel struct {
 	CompatibilityFlags customfield.Set[types.String]                                       `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	Limits             customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]       `tfsdk:"limits" json:"limits,computed"`
 	MainModule         types.String                                                        `tfsdk:"main_module" json:"main_module,computed"`
+	MainScriptBase64   types.String                                                        `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
 	Migrations         customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]   `tfsdk:"migrations" json:"migrations,computed"`
 	Modules            customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]   `tfsdk:"modules" json:"modules,computed"`
 	Placement          customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]    `tfsdk:"placement" json:"placement,computed"`

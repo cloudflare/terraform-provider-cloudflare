@@ -32,6 +32,7 @@ type WorkerVersionModel struct {
 	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
 	Source             types.String                                             `tfsdk:"source" json:"source,computed"`
+	MainScriptBase64   types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
 }
 
 func (m WorkerVersionModel) MarshalJSON() (data []byte, err error) {
