@@ -236,12 +236,23 @@ func upgradeAccountMemberStateV0toV1(ctx context.Context, req resource.UpgradeSt
 		return
 	}
 
+	// Convert roles from *[]types.String to customfield.Set[types.String]
+	var rolesSlice []types.String
+	if oldState.Roles != nil {
+		rolesSlice = *oldState.Roles
+	}
+	rolesSet, diags := customfield.NewSet[types.String](ctx, rolesSlice)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	var newState = AccountMemberModel{
 		ID:        oldState.ID,
 		AccountID: oldState.AccountID,
 		Email:     oldState.Email,
 		Status:    oldState.Status,
-		Roles:     oldState.Roles,
+		Roles:     rolesSet,
 		Policies:  policiesSet,
 		User:      userObject,
 	}
