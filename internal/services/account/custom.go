@@ -34,7 +34,7 @@ func unmarshalCustom(bytes []byte, configuredModel *AccountModel) (*AccountModel
 	if err != nil {
 		return nil, err
 	}
-
+	// Setting type to whatever the configured type is to avoid state/drift issues
 	env.Result.Type = configuredModel.Type
 
 	if configuredModel.Unit != nil && !configuredModel.Unit.ID.IsNull() {
