@@ -3,14 +3,15 @@ package account_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	cfaccounts "github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -99,7 +100,7 @@ func TestAccCloudflareAccount_Basic(t *testing.T) {
 			},
 			// 2FA update step
 			{
-				Config: testAccCheckCloudflareAccountWith2FA(rnd, rnd),
+				Config: testAccCheckCloudflareAccountWith2FA(rnd, rnd, true),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -113,16 +114,13 @@ func TestAccCloudflareAccount_Basic(t *testing.T) {
 			},
 			// Import step
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"type"},
 			},
 		},
 	})
-}
-
-func testAccCheckCloudflareAccountName(rnd, name string) string {
-	return acctest.LoadTestCase("accountname.tf", rnd, name)
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
@@ -147,7 +145,7 @@ func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccCheckCloudflareAccountWith2FA(rnd, rnd),
+				Config: testAccCheckCloudflareAccountWith2FA(rnd, rnd, true),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -160,7 +158,7 @@ func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccCheckCloudflareAccountName(rnd, rnd),
+				Config: testAccCheckCloudflareAccountWith2FA(rnd, rnd, false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -174,16 +172,104 @@ func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
 			},
 			// Import step
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"type"},
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareAccountWith2FA(rnd, name string) string {
-	return acctest.LoadTestCase("accountwith2fa.tf", rnd, name)
+func TestAccCloudflareAccount_WithMulti(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccountDestroy,
+		Steps: []resource.TestStep{
+			// Create with only the account id
+			{
+				Config: testAccCheckCloudflareAccountName(rnd, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("enforce_twofactor"), knownvalue.Bool(false)),
+				},
+			},
+			// Update to add abuse email
+			{
+				Config: testAccCheckCloudflareAccountWithMulti(rnd, rnd, "standard", false, "abuse@example.com"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("abuse_contact_email"), knownvalue.StringExact("abuse@example.com")),
+				},
+			},
+			// Update to enable 2FA and change type to enterprise
+			{
+				Config: testAccCheckCloudflareAccountWithMulti(rnd, rnd, "enterprise", true, "abuse@example.com"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("enterprise")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("enforce_twofactor"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("abuse_contact_email"), knownvalue.StringExact("abuse@example.com")),
+				},
+			},
+			// Update email
+			{
+				Config: testAccCheckCloudflareAccountWithMulti(rnd, rnd, "enterprise", true, "updated@example.com"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("enterprise")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("abuse_contact_email"), knownvalue.StringExact("updated@example.com")),
+				},
+			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"type"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccount_WithUnit(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
+
+	unitID := os.Getenv("CLOUDFLARE_UNIT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccountDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccountWithUnit(rnd, rnd, unitID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_by").AtMapKey("parent_org_id"), knownvalue.StringExact(unitID)),
+				},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareAccountName(rnd, name string) string {
+	return acctest.LoadTestCase("accountname.tf", rnd, name)
+}
+
+func testAccCheckCloudflareAccountWith2FA(rnd, name string, enforce_twofactor bool) string {
+	return acctest.LoadTestCase("accountwith2fa.tf", rnd, name, enforce_twofactor)
+}
+
+func testAccCheckCloudflareAccountWithMulti(rnd, name, accountType string, enforce2FA bool, email string) string {
+	return acctest.LoadTestCase("accountwithmulti.tf", rnd, name, accountType, enforce2FA, email)
+}
+
+func testAccCheckCloudflareAccountWithUnit(rnd, name, unitID string) string {
+	return acctest.LoadTestCase("accountwithunit.tf", rnd, name, unitID)
 }
 
 func testAccCheckCloudflareAccountDestroy(s *terraform.State) error {
