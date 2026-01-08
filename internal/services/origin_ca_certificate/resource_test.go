@@ -116,12 +116,18 @@ func generateCSR(domain string) (string, error) {
 
 // TestAccOriginCACertificate_Basic tests the basic CRUD lifecycle of an Origin CA certificate.
 // This validates that the resource can be created, read, imported, and deleted.
+// Includes an update scenario that changes requested_validity and hostnames.
 func TestAccOriginCACertificate_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_origin_ca_certificate." + rnd
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	csr, err := generateCSR(domain)
+	if err != nil {
+		t.Fatalf("Failed to generate CSR: %s", err)
+	}
+
+	csr2, err := generateCSR("*." + domain)
 	if err != nil {
 		t.Fatalf("Failed to generate CSR: %s", err)
 	}
@@ -139,6 +145,16 @@ func TestAccOriginCACertificate_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("request_type"), knownvalue.StringExact("origin-ecc")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("requested_validity"), knownvalue.Float64Exact(7)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("certificate"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_on"), knownvalue.NotNull()),
+				},
+			},
+			{
+				Config: testAccOriginCACertificateUpdatedConfig(rnd, csr2, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("request_type"), knownvalue.StringExact("origin-ecc")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("requested_validity"), knownvalue.Float64Exact(30)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("certificate"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("expires_on"), knownvalue.NotNull()),
@@ -166,5 +182,17 @@ EOT
   hostnames          = ["%[3]s"]
   request_type       = "origin-ecc"
   requested_validity = 7
+}`, rnd, csr, domain)
+}
+
+func testAccOriginCACertificateUpdatedConfig(rnd, csr, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_origin_ca_certificate" "%[1]s" {
+  csr                = <<EOT
+%[2]s
+EOT
+  hostnames          = ["*.%[3]s", "%[3]s"]
+  request_type       = "origin-ecc"
+  requested_validity = 30
 }`, rnd, csr, domain)
 }
