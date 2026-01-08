@@ -89,7 +89,7 @@ func testAccCheckCloudflareMTLSCertificateDestroy(s *terraform.State) error {
 }
 
 // TestAccMTLSCertificate_Basic tests the basic CRUD lifecycle of an MTLS certificate.
-// This validates that the resource can be created, read, and deleted.
+// This validates that the resource can be created, read, updated, and deleted.
 // Uses ca=false since GenerateEphemeralCertAndKey creates leaf certificates.
 // Note: Import testing is skipped because certificates/private_key are write-only
 // and the resource has RequiresReplace on all input fields.
@@ -100,6 +100,11 @@ func TestAccMTLSCertificate_Basic(t *testing.T) {
 
 	expiry := time.Now().Add(time.Hour * 24 * 365)
 	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"example.com"}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+
+	cert2, key2, err := utils.GenerateEphemeralCertAndKey([]string{"example2.com"}, expiry)
 	if err != nil {
 		t.Fatalf("Failed to generate certificate: %s", err)
 	}
@@ -126,6 +131,16 @@ func TestAccMTLSCertificate_Basic(t *testing.T) {
 				// that cause RequiresReplace drift on refresh
 				ExpectNonEmptyPlan: true,
 			},
+			{
+				Config: testAccMTLSCertificateUpdatedConfig(accountID, rnd, cert2, key2),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"_updated")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("ca"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+				ExpectNonEmptyPlan: true,
+			},
 		},
 	})
 }
@@ -135,6 +150,21 @@ func testAccMTLSCertificateBasicConfig(accountID, rnd, cert, key string) string 
 resource "cloudflare_mtls_certificate" "%[2]s" {
   account_id   = "%[1]s"
   name         = "%[2]s"
+  certificates = <<EOT
+%[3]s
+EOT
+  private_key  = <<EOT
+%[4]s
+EOT
+  ca           = false
+}`, accountID, rnd, cert, key)
+}
+
+func testAccMTLSCertificateUpdatedConfig(accountID, rnd, cert, key string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_mtls_certificate" "%[2]s" {
+  account_id   = "%[1]s"
+  name         = "%[2]s_updated"
   certificates = <<EOT
 %[3]s
 EOT
