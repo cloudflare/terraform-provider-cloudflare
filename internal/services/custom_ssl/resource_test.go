@@ -89,7 +89,10 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 }
 
 // TestAccCustomSSL_Basic tests the basic CRUD lifecycle of a custom SSL certificate.
-// This validates that the resource can be created, read, updated, imported, and deleted.
+// This validates that the resource can be created, read, imported, and deleted.
+// Note: Update scenarios are not tested here because the Cloudflare API requires replacing
+// the entire certificate (including cert and key) to change any properties like bundle_method.
+// Reference: https://developers.cloudflare.com/api/resources/custom_certificates/methods/edit/
 func TestAccCustomSSL_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_custom_ssl." + rnd
@@ -116,14 +119,6 @@ func TestAccCustomSSL_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("force")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
-				},
-			},
-			{
-				Config: testAccCustomSSLUpdatedConfig(zoneID, rnd, cert, key),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("ubiquitous")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
@@ -196,20 +191,6 @@ EOT
 %[4]s
 EOT
   bundle_method = "force"
-}`, zoneID, rnd, cert, key)
-}
-
-func testAccCustomSSLUpdatedConfig(zoneID, rnd, cert, key string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_ssl" "%[2]s" {
-  zone_id       = "%[1]s"
-  certificate   = <<EOT
-%[3]s
-EOT
-  private_key   = <<EOT
-%[4]s
-EOT
-  bundle_method = "ubiquitous"
 }`, zoneID, rnd, cert, key)
 }
 
