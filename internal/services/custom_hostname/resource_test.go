@@ -139,7 +139,7 @@ func TestAccCustomHostname_Basic(t *testing.T) {
 }
 
 // TestAccCustomHostname_WithSSLSettings tests the optional SSL settings attributes.
-// This validates that optional nested attributes are handled correctly.
+// This validates that optional nested attributes are handled correctly and can be updated.
 func TestAccCustomHostname_WithSSLSettings(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_custom_hostname." + rnd
@@ -162,6 +162,16 @@ func TestAccCustomHostname_WithSSLSettings(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("ssl").AtMapKey("method"), knownvalue.StringExact("txt")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("ssl").AtMapKey("settings").AtMapKey("min_tls_version"), knownvalue.StringExact("1.2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+			{
+				Config: testAccCustomHostnameWithSSLSettingsUpdatedConfig(zoneID, domain, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("ssl").AtMapKey("method"), knownvalue.StringExact("txt")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("ssl").AtMapKey("settings").AtMapKey("min_tls_version"), knownvalue.StringExact("1.1")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
@@ -202,6 +212,32 @@ resource "cloudflare_custom_hostname" "%[3]s" {
     type   = "dv"
     settings = {
       min_tls_version = "1.2"
+    }
+  }
+  lifecycle {
+    ignore_changes = [
+      created_at,
+      ownership_verification,
+      ownership_verification_http,
+      ssl.certificate_authority,
+      ssl.wildcard,
+      status,
+      verification_errors,
+    ]
+  }
+}`, zoneID, domain, rnd)
+}
+
+func testAccCustomHostnameWithSSLSettingsUpdatedConfig(zoneID, domain, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%[3]s" {
+  zone_id  = "%[1]s"
+  hostname = "%[3]s.%[2]s"
+  ssl = {
+    method = "txt"
+    type   = "dv"
+    settings = {
+      min_tls_version = "1.1"
     }
   }
   lifecycle {
