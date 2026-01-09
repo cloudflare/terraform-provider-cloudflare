@@ -182,6 +182,12 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
+	// avoid unnecessary diff
+	if env.Result.AutomaticReturnRouting.IsNull() {
+		env.Result.AutomaticReturnRouting = types.BoolValue(false)
+	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
