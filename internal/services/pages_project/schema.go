@@ -46,10 +46,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Production branch of the project. Used to identify production deployments.",
 				Required:    true,
 			},
-			"build_config": schema.SingleNestedAttribute{
-				Description: "Configs for the project build process.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
+		"build_config": schema.SingleNestedAttribute{
+			Description: "Configs for the project build process.",
+			Optional:    true,
+			Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
 						Computed:    true,
