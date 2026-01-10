@@ -1,0 +1,57 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+### Using API Token with R2
+
+```terraform
+resource "cloudflare_api_token" "cdn_r2_access" {
+  name = "R2 Access Token"
+  policies = [{
+    effect = "allow"
+    permission_groups = [{
+      id = "c8fed203ed3043cba015a93ad1616f1f"
+    }]
+    resources = {
+      "com.cloudflare.api.account.*" = "023e105f4ecef8ad9ca31a8372d0c353"
+    }
+  }]
+}
+
+resource "cloudflare_r2_bucket" "example_r2_bucket" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "example-bucket"
+}
+
+output "cf_access_key_id" {
+  value = cloudflare_api_token.cdn_r2_access.id
+  sensitive = true
+}
+
+output "cf_access_secret" {
+  value = sha256(cloudflare_api_token.cdn_r2_access.value)
+  sensitive = true
+}
+```
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
