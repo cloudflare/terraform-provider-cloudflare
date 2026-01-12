@@ -34,13 +34,10 @@ func TestAccCloudflareAccountMembers_Datasource(t *testing.T) {
 					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("email"), knownvalue.NotNull()),
-
-					// verify complex nested data exists
 					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("user"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("roles"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Consistency check: Single member data matches the list index 0
 					resource.TestCheckResourceAttrPair(singleDataName, "id", listDataName, "result.0.id"),
 					resource.TestCheckResourceAttrPair(singleDataName, "email", listDataName, "result.0.email"),
 					resource.TestCheckResourceAttrPair(singleDataName, "status", listDataName, "result.0.status"),
