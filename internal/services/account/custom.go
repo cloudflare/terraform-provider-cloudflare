@@ -39,19 +39,22 @@ func unmarshalCustom(bytes []byte, configuredModel *AccountModel) (*AccountModel
 
 	if !env.Result.ManagedBy.IsNull() && !env.Result.ManagedBy.IsUnknown() {
 		var managedBy AccountManagedByModel
-		diag := env.Result.ManagedBy.As(context.Background(), &managedBy, basetypes.ObjectAsOptions{})
+		_ = env.Result.ManagedBy.As(context.Background(), &managedBy, basetypes.ObjectAsOptions{})
 
-		if !diag.HasError() {
-			// Backfill unit from managed_by if user expects it OR if we are in discovery/import mode
-			// This allows drift detection while preventing 'Inconsistent Result' panics during Apply
-			if env.Result.Unit == nil || env.Result.Unit.ID.IsNull() || env.Result.Unit.ID.IsUnknown() {
-				unitInConfig := configuredModel.Unit != nil && !configuredModel.Unit.ID.IsNull()
-				if (unitInConfig) || configuredModel.ID.IsNull() {
-					env.Result.Unit = &AccountUnitModel{
-						ID: managedBy.ParentOrgID,
-					}
-				}
+		// Check if the user has 'unit' block in their HCL
+		isUnitInConfig := configuredModel.Unit != nil
+		// Identify an Import: the HCL is empty. Since 'name' is Required, if it's Null in the config but we have an ID in the result, it's an import.
+		isImport := configuredModel.Name.IsNull() && !env.Result.ID.IsNull()
+		// Identify an existing resource (Read/Update): We can check if the ID is already present in "Result"
+		isExisting := !env.Result.ID.IsNull() && !env.Result.ID.IsUnknown()
+
+		if (isImport || (isExisting && isUnitInConfig)) && !managedBy.ParentOrgID.IsNull() {
+			env.Result.Unit = &AccountUnitModel{
+				ID: managedBy.ParentOrgID,
 			}
+		} else {
+			// During a fresh 'Create', isExisting is false or we fall through here.
+			env.Result.Unit = nil
 		}
 	}
 
