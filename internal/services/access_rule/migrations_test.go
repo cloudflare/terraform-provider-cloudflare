@@ -26,7 +26,8 @@ func TestMigrateAccessRule_AccountLevel(t *testing.T) {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
-		WorkingDir: tmpDir,
+		CheckDestroy: testAccCheckCloudflareAccessRuleDestroy,
+		WorkingDir:   tmpDir,
 		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
@@ -44,7 +45,7 @@ func TestMigrateAccessRule_AccountLevel(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("notes"), knownvalue.StringExact("Block malicious IP")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("target"), knownvalue.StringExact("ip")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("198.51.100.10")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("198.51.100.50")),
 			})...),
 	})
 }
@@ -62,7 +63,8 @@ func TestMigrateAccessRule_ZoneLevel(t *testing.T) {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_ZoneID(t)
 		},
-		WorkingDir: tmpDir,
+		CheckDestroy: testAccCheckCloudflareAccessRuleDestroy,
+		WorkingDir:   tmpDir,
 		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
@@ -80,7 +82,7 @@ func TestMigrateAccessRule_ZoneLevel(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("challenge")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("notes"), knownvalue.StringExact("Challenge suspicious country")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("target"), knownvalue.StringExact("country")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("XX")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("TV")),
 			})...),
 	})
 }
@@ -98,7 +100,8 @@ func TestMigrateAccessRule_WithoutNotes(t *testing.T) {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
-		WorkingDir: tmpDir,
+		CheckDestroy: testAccCheckCloudflareAccessRuleDestroy,
+		WorkingDir:   tmpDir,
 		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
@@ -115,7 +118,7 @@ func TestMigrateAccessRule_WithoutNotes(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("whitelist")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("target"), knownvalue.StringExact("ip_range")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("192.0.2.0/24")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("configuration").AtMapKey("value"), knownvalue.StringExact("198.51.100.0/24")),
 			})...),
 	})
 }

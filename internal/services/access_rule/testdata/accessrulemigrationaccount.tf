@@ -5,6 +5,6 @@ resource "cloudflare_access_rule" "%[2]s" {
 
   configuration {
     target = "ip"
-    value  = "198.51.100.10"
+    value  = "198.51.100.50"
   }
 }

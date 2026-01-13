@@ -5,6 +5,6 @@ resource "cloudflare_access_rule" "%[2]s" {
 
   configuration {
     target = "country"
-    value  = "XX"
+    value  = "TV"
   }
 }
