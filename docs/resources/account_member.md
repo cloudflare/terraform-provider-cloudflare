@@ -31,7 +31,7 @@ resource "cloudflare_account_member" "example_account_member" {
 ### Optional
 
 - `policies` (Attributes Set) Array of policies associated with this member. (see [below for nested schema](#nestedatt--policies))
-- `roles` (List of String) Array of roles associated with this member.
+- `roles` (Set of String) Set of roles associated with this member.
 - `status` (String) Available values: "accepted", "pending".
 
 ### Read-Only

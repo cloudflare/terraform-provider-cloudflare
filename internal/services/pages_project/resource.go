@@ -135,6 +135,13 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 
 	planDeploymentConfigs := data.DeploymentConfigs
 
+	// Convert nil binding maps to empty maps so the API deletes them.
+	data, diags := PrepareForUpdate(ctx, data, state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -488,6 +495,17 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				previewModified = true
 			}
 
+			// Normalize empty placement to null
+			if previewValue.Placement != nil && (previewValue.Placement.Mode.IsNull() || previewValue.Placement.Mode.ValueString() == "") {
+				previewValue.Placement = nil
+				previewModified = true
+			}
+
+			// Normalize empty binding maps to nil
+			if normalizeEmptyMapsPreview(previewValue) {
+				previewModified = true
+			}
+
 			if previewModified {
 				configsValue.Preview, d = customfield.NewObject(ctx, previewValue)
 				diags.Append(d...)
@@ -507,6 +525,17 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 
 			if productionValue.CompatibilityFlags != nil && len(*productionValue.CompatibilityFlags) == 0 {
 				productionValue.CompatibilityFlags = nil
+				productionModified = true
+			}
+
+			// Normalize empty placement to null
+			if productionValue.Placement != nil && (productionValue.Placement.Mode.IsNull() || productionValue.Placement.Mode.ValueString() == "") {
+				productionValue.Placement = nil
+				productionModified = true
+			}
+
+			// Normalize empty binding maps to nil
+			if normalizeEmptyMapsProduction(productionValue) {
 				productionModified = true
 			}
 

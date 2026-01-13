@@ -3,23 +3,46 @@ package account_member
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type ConfiguredPermissionType int
+
+const (
+	Unknown ConfiguredPermissionType = iota
+	Policies
+	Roles
+)
+
+// Given a config value, determine which permission type is configured. This
+// should only be called with the config value, never the plan or state value.
+func checkConfiguredPermissionType(configuredModel *AccountMemberModel) ConfiguredPermissionType {
+	permissionType := Unknown
+
+	if !configuredModel.Roles.IsNull() && len(configuredModel.Roles.Elements()) > 0 {
+		permissionType = Roles
+	}
+	if !configuredModel.Policies.IsNull() && len(configuredModel.Policies.Elements()) > 0 {
+		if permissionType == Roles {
+			// if both are found, return Unknown
+			return Unknown
+		}
+		return Policies
+	}
+	return permissionType
+}
+
 func (m AccountMemberModel) marshalCustom() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m AccountMemberModel) marshalCustomForUpdate(state AccountMemberModel) (data []byte, err error) {
+func (m AccountMemberModel) marshalCustomForUpdate(state AccountMemberModel, configuredPermissionType ConfiguredPermissionType) (data []byte, err error) {
 	data, err = apijson.MarshalForUpdate(m, state)
 	if err != nil {
-		return
-	}
-
-	if m.Roles == nil || len(*m.Roles) == 0 {
 		return
 	}
 
@@ -28,18 +51,32 @@ func (m AccountMemberModel) marshalCustomForUpdate(state AccountMemberModel) (da
 		return
 	}
 
-	// Transform roles: ["role_id"] -> [{"id": "role_id"}]
-	roleObjects := make([]map[string]interface{}, 0, len(*m.Roles))
-	for _, role := range *m.Roles {
-		if !role.IsNull() && !role.IsUnknown() {
-			roleObjects = append(roleObjects, map[string]interface{}{
-				"id": role.ValueString(),
-			})
+	if configuredPermissionType == Roles {
+		delete(payload, "policies")
+
+		roles := m.Roles.Elements()
+
+		// Transform roles: ["role_id"] -> [{"id": "role_id"}]
+		roleObjects := make([]map[string]interface{}, 0, len(roles))
+		for _, role := range roles {
+			if !role.IsNull() && !role.IsUnknown() {
+				roleString, ok := role.(types.String)
+				if !ok {
+					return nil, fmt.Errorf("unexpected role type: %T", role)
+				}
+				roleObjects = append(roleObjects, map[string]interface{}{
+					"id": roleString.ValueString(),
+				})
+			}
+		}
+
+		if len(roleObjects) > 0 {
+			payload["roles"] = roleObjects
 		}
 	}
 
-	if len(roleObjects) > 0 {
-		payload["roles"] = roleObjects
+	if configuredPermissionType == Policies {
+		delete(payload, "roles")
 	}
 
 	// Ensure account_id is included for the API even though it's a path param
@@ -51,75 +88,77 @@ func (m AccountMemberModel) marshalCustomForUpdate(state AccountMemberModel) (da
 }
 
 func unmarshalCustom(data []byte, configuredModel *AccountMemberModel) (*AccountMemberModel, error) {
+	ctx := context.Background()
+	var env AccountMemberResultEnvelope
+	if err := apijson.Unmarshal(data, &env); err != nil {
+		return nil, err
+	}
+	result := &env.Result
+
+	result.AccountID = configuredModel.AccountID
+
+	return parsePoliciesAndRoles(ctx, data, result)
+}
+
+func unmarshalComputedCustom(data []byte, configuredModel *AccountMemberModel) (*AccountMemberModel, error) {
+	ctx := context.Background()
 	var env AccountMemberResultEnvelope
 	if err := apijson.UnmarshalComputed(data, &env); err != nil {
 		return nil, err
 	}
-
 	result := &env.Result
 
-	// Preserve required fields from configured model to avoid replacement
 	result.AccountID = configuredModel.AccountID
-	result.Email = configuredModel.Email
-
-	// Only preserve status if it was explicitly configured
-	if !configuredModel.Status.IsNull() && !configuredModel.Status.IsUnknown() {
-		result.Status = configuredModel.Status
+	if result.Email.IsNull() && !configuredModel.Email.IsNull() {
+		// Preserve required fields from configured model to avoid replacement
+		result.Email = configuredModel.Email
 	}
 
-	// Determine comparison strategy based on what's configured in Terraform
-	// as user can use roles or policies to configure the account member
-	configUsesRoles := configuredModel.Roles != nil && len(*configuredModel.Roles) > 0
-	configUsesPolicies := !configuredModel.Policies.IsNull() && !configuredModel.Policies.IsUnknown()
+	// Allow the status from the API to override the state,
+    // even if not explicitly set in the config.
+    if result.Status.IsNull() && !configuredModel.Status.IsNull() {
+        result.Status = configuredModel.Status
+    }
+    // If result.Status has a value from the API (e.g., "accepted"),
+    // we let it stay so it updates the Terraform state.
 
-	if configUsesRoles && !configUsesPolicies {
-		// User configured roles - preserve computed policies from API to prevent diffs
-		// Don't modify result.Policies - let it keep the computed values from API response
+	return parsePoliciesAndRoles(ctx, data, result)
+}
 
-		// Extract role IDs from GET response (roles come as objects with id field)
-		var fullResponse struct {
-			Result struct {
-				Roles []struct {
-					ID string `json:"id"`
-				} `json:"roles"`
-			} `json:"result"`
-		}
+func parsePoliciesAndRoles(ctx context.Context, data []byte, result *AccountMemberModel) (*AccountMemberModel, error) {
+	// Extract role IDs from GET response (roles come as objects with id field)
+	var fullResponse struct {
+		Result struct {
+			Policies []AccountMemberPoliciesModel `json:"policies"`
+			Roles    []struct {
+				ID types.String `json:"id"`
+			} `json:"roles"`
+		} `json:"result"`
+	}
 
-		if err := json.Unmarshal(data, &fullResponse); err == nil && len(fullResponse.Result.Roles) > 0 {
-			roleIDs := make([]types.String, 0, len(fullResponse.Result.Roles))
-			for _, role := range fullResponse.Result.Roles {
-				roleIDs = append(roleIDs, types.StringValue(role.ID))
-			}
-			result.Roles = &roleIDs
-		} else {
-			result.Roles = configuredModel.Roles
-		}
-	} else if configUsesPolicies && !configUsesRoles {
-		// User configured policies - ignore roles, set roles to nil to prevent diffs
-		result.Roles = nil
+	err := apijson.Unmarshal(data, &fullResponse)
+	if err != nil {
+		return nil, err
+	}
 
-		// Extract policies from the API response and ensure they match the configured structure
-		var fullResponse struct {
-			Result struct {
-				Policies []AccountMemberPoliciesModel `json:"policies"`
-			} `json:"result"`
-		}
+	roleIDs := make([]types.String, 0, len(fullResponse.Result.Roles))
+	for _, role := range fullResponse.Result.Roles {
+		roleIDs = append(roleIDs, role.ID)
+	}
 
-		if err := json.Unmarshal(data, &fullResponse); err == nil && len(fullResponse.Result.Policies) > 0 {
-			policies := append([]AccountMemberPoliciesModel(nil), fullResponse.Result.Policies...)
-			policiesList, diags := customfield.NewObjectSet(context.Background(), policies)
-			if !diags.HasError() {
-				result.Policies = policiesList
-			} else {
-				result.Policies = configuredModel.Policies
-			}
-		} else {
-			result.Policies = configuredModel.Policies
-		}
+	roleSet, diags := customfield.NewSet[types.String](ctx, roleIDs)
+	if !diags.HasError() {
+		result.Roles = roleSet
 	} else {
-		// Fallback: preserve configured values
-		result.Roles = configuredModel.Roles
-		result.Policies = configuredModel.Policies
+		return result, fmt.Errorf("failed to parse roles")
+	}
+
+	policies := append([]AccountMemberPoliciesModel(nil), fullResponse.Result.Policies...)
+	policiesSet, diags := customfield.NewObjectSet(ctx, policies)
+	if !diags.HasError() {
+		result.Policies = policiesSet
+	} else {
+		return result, fmt.Errorf("failed to parse policies")
 	}
 
 	return result, nil

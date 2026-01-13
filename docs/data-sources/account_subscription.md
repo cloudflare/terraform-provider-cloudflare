@@ -49,6 +49,6 @@ Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "
 - `is_contract` (Boolean) Whether a rate plan is enterprise-based (or newly adopted term contract).
 - `public_name` (String) The full name of the rate plan.
 - `scope` (String) The scope that this rate plan applies to.
-- `sets` (List of String) The list of sets this rate plan applies to.
+- `sets` (List of String) The list of sets this rate plan applies to. Returns array of strings.
 
 
