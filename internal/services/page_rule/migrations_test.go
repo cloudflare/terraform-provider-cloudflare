@@ -463,6 +463,7 @@ func testAccCloudflarePageRuleMigrationConfigV4Basic(zoneID, target, rnd string)
 resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
+  priority = 1
   status   = "active"
 
   actions {
@@ -476,6 +477,7 @@ func testAccCloudflarePageRuleMigrationConfigV4CacheDeceptionArmor(zoneID, targe
 resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
+  priority = 1
   status   = "active"
 
   actions {
@@ -487,9 +489,10 @@ resource "cloudflare_page_rule" "%[3]s" {
 func testAccCloudflarePageRuleMigrationConfigV4CacheKeyFields(zoneID, target, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "%[3]s" {
-  zone_id = "%[1]s"
-  target  = "%[2]s"
-  status  = "active"
+  zone_id  = "%[1]s"
+  target   = "%[2]s"
+  priority = 1
+  status   = "active"
 
   actions {
     cache_level = "aggressive"
@@ -518,6 +521,7 @@ func testAccCloudflarePageRuleMigrationConfigV4ForwardingURL(zoneID, target, rnd
 resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
+  priority = 1
   status   = "active"
 
   actions {
@@ -534,6 +538,7 @@ func testAccCloudflarePageRuleMigrationConfigV4Complete(zoneID, target, rnd stri
 resource "cloudflare_page_rule" "%[3]s" {
   zone_id  = "%[1]s"
   target   = "%[2]s"
+  priority = 1
   status   = "active"
 
   actions {
