@@ -471,9 +471,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The text value to use.",
 							Optional:    true,
 							Sensitive:   true,
-							PlanModifiers: []planmodifier.String{
-								UseStateForUnknownOrNullSensitive(),
-							},
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",

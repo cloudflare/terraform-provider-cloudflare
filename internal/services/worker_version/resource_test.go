@@ -494,18 +494,6 @@ func testAccCloudflareWorkerVersionConfigPlainTextImport(rnd, accountID, content
 	return acctest.LoadTestCase("plain_text_import.tf", rnd, accountID, contentFile)
 }
 
-func testAccCloudflareWorkerVersionConfigPlainTextImportWithoutText(rnd, accountID, contentFile string) string {
-	return acctest.LoadTestCase("plain_text_import_without_text.tf", rnd, accountID, contentFile)
-}
-
-func testAccCloudflareWorkerVersionConfigPlainTextImportBase64(rnd, accountID string) string {
-	return acctest.LoadTestCase("plain_text_import_base64.tf", rnd, accountID)
-}
-
-func testAccCloudflareWorkerVersionConfigPlainTextImportBase64WithoutText(rnd, accountID string) string {
-	return acctest.LoadTestCase("plain_text_import_base64_without_text.tf", rnd, accountID)
-}
-
 // Regression test: importing with plain_text bindings should not force replacement.
 func TestAccCloudflareWorkerVersion_ImportWithPlainTextBindings(t *testing.T) {
 	t.Parallel()
@@ -572,72 +560,6 @@ func TestAccCloudflareWorkerVersion_ImportWithPlainTextBindings(t *testing.T) {
 					writeContentFile(t, `export default {fetch() {return new Response()}}`)
 				},
 				Config: testAccCloudflareWorkerVersionConfigPlainTextImport(rnd, accountID, contentFile),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectEmptyPlan(),
-					},
-				},
-			},
-		},
-	})
-}
-
-// TestAccCloudflareWorkerVersion_ImportPlainTextWithoutTextInConfig tests the scenario
-// where a worker version with plain_text bindings is imported and the config doesn't
-// have the text values (simulating Terraform's -generate-config-out behavior which
-// omits sensitive values). Without the fix, this would force replacement.
-func TestAccCloudflareWorkerVersion_ImportPlainTextWithoutTextInConfig(t *testing.T) {
-	t.Parallel()
-	rnd := utils.GenerateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_worker_version." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create resource with text values using content_base64
-				Config: testAccCloudflareWorkerVersionConfigPlainTextImportBase64(rnd, accountID),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.SetExact([]knownvalue.Check{
-						knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"name": knownvalue.StringExact("BLOCKED_CITIES"),
-							"type": knownvalue.StringExact("plain_text"),
-							"text": knownvalue.StringExact("kyiv,kharkiv"),
-						}),
-						knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"name": knownvalue.StringExact("COUNTRY_CODE"),
-							"type": knownvalue.StringExact("plain_text"),
-							"text": knownvalue.StringExact("UA"),
-						}),
-					})),
-				},
-			},
-			{
-				// Step 2: Re-apply same config - should be no changes
-				Config: testAccCloudflareWorkerVersionConfigPlainTextImportBase64(rnd, accountID),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectEmptyPlan(),
-					},
-				},
-			},
-			{
-				// Step 3: Apply with config that doesn't have text values
-				// Without the fix, this would force replacement (delete/create)
-				// With the fix, it may still show update (which is acceptable as it's a no-op)
-				Config: testAccCloudflareWorkerVersionConfigPlainTextImportBase64WithoutText(rnd, accountID),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						// The key is that we don't get delete/create (replacement)
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-					},
-				},
-			},
-			{
-				// Step 4: Re-apply same config - should now be stable with empty plan
-				Config: testAccCloudflareWorkerVersionConfigPlainTextImportBase64WithoutText(rnd, accountID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),
