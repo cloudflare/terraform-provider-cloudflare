@@ -3,59 +3,58 @@ package account_role_test
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareAccountRoles_Datasource(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("data.cloudflare_account_roles.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	listDataName := fmt.Sprintf("data.cloudflare_account_roles.%s", rnd)
+	singleDataName := fmt.Sprintf("data.cloudflare_account_role.%s", rnd)
+
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck_AccountID(t)
-		},
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccountRoles_Config(rnd, accountID),
+				Config: testAccCloudflareAccountRolesBasic(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					// verify LIST api call
+					statecheck.ExpectKnownValue(listDataName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+
+					// verify READ api call
+					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("name"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(singleDataName, tfjsonpath.New("permissions"), knownvalue.NotNull()),
+				},
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					testAccCheckExampleWidgetExists(name),
+					resource.TestCheckResourceAttrPair(singleDataName, "id", listDataName, "result.0.id"),
+					resource.TestCheckResourceAttrPair(singleDataName, "name", listDataName, "result.0.name"),
+					resource.TestCheckResourceAttrPair(singleDataName, "description", listDataName, "result.0.description"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckExampleWidgetExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// retrieve the resource by name from state
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
+func testAccCloudflareAccountRolesBasic(rnd, accountID string) string {
+	return fmt.Sprintf(`
+		data "cloudflare_account_roles" "%[1]s" {
+		  account_id = "%[2]s"
 		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("ID is not set")
-		}
-
-		i, _ := strconv.Atoi(rs.Primary.Attributes["result.#"])
-		if i < 30 {
-			return fmt.Errorf("role size is suspiciously low. should be > 30, got: %d", i)
-		}
-
-		return nil
-	}
-}
-
-func testAccCloudflareAccountRoles_Config(rnd, accountID string) string {
-	return acctest.LoadTestCase("datasource.tf", rnd, accountID)
+		
+		data "cloudflare_account_role" "%[1]s" {
+		  account_id = "%[2]s"
+		  role_id    = data.cloudflare_account_roles.%[1]s.result[0].id
+		}`, rnd, accountID,
+	)
 }

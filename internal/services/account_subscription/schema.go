@@ -47,7 +47,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rate_plan": schema.SingleNestedAttribute{
 				Description: "The rate plan applied to the subscription.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountSubscriptionRatePlanModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The ID of the rate plan.",
@@ -75,7 +77,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
-						Description: "The list of sets this rate plan applies to.",
+						Description: "The list of sets this rate plan applies to. Returns array of strings.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
