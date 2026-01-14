@@ -107,6 +107,8 @@ func TestAccCloudflareGRETunnelExists(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", cfIP),
 					resource.TestCheckResourceAttr(name, "interface_address", "10.213.0.20/31"),
 					resource.TestCheckResourceAttr(name, "health_check.target.effective", "203.0.113.10"),
+					resource.TestCheckResourceAttr(name, "automatic_return_routing", "true"),
+					resource.TestCheckResourceAttr(name, "bgp.customer_asn", "65002"),
 				),
 			},
 			{

@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_zone_subscription" "example_zone_subscription" {
-  zone_id = "506e3185e9c882d175a2d0cb0093d9f2"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_zone_subscription" "example_zone_subscription" {
 
 ### Required
 
-- `zone_id` (String) Subscription identifier tag.
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
@@ -30,8 +30,8 @@ data "cloudflare_zone_subscription" "example_zone_subscription" {
 - `current_period_end` (String) The end of the current period and also when the next billing is due.
 - `current_period_start` (String) When the current billing period started. May match initial_period_start if this is the first period.
 - `frequency` (String) How often the subscription is renewed automatically.
-Available values: "weekly", "monthly", "quarterly", "yearly".
-- `id` (String) Subscription identifier tag.
+Available values: "weekly", "monthly", "quarterly", "yearly", "not-applicable".
+- `id` (String) Identifier
 - `price` (Number) The price of the subscription that will be billed, in US dollars.
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
 - `state` (String) The state that the subscription is in.
@@ -49,6 +49,6 @@ Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "
 - `is_contract` (Boolean) Whether a rate plan is enterprise-based (or newly adopted term contract).
 - `public_name` (String) The full name of the rate plan.
 - `scope` (String) The scope that this rate plan applies to.
-- `sets` (List of String) The list of sets this rate plan applies to.
+- `sets` (List of String) The list of sets this rate plan applies to. Returns array of strings.
 
 
