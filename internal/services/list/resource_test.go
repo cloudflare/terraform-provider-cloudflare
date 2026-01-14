@@ -380,11 +380,11 @@ func TestAccCloudflareListWithItems_IP(t *testing.T) {
 			},
 			{
 				Config:      testAccCheckCloudflareListWithCustomItem(rndIP, listNameIP, descriptionIP, accountID, `ip = "1.1.1.1/24"`),
-				ExpectError: regexp.MustCompile(`CIDR "1\.1\.1\.1/24" must be represented as "1\.1\.1\.0/24"`),
+				ExpectError: regexp.MustCompile(`CIDR "1\.1\.1\.1/24" must be normalized: "1\.1\.1\.0/24"`),
 			},
 			{
 				Config:      testAccCheckCloudflareListWithCustomItem(rndIP, listNameIP, descriptionIP, accountID, `ip = "f::1/64"`),
-				ExpectError: regexp.MustCompile(`CIDR "f::1/64" must be represented as "f::/64"`),
+				ExpectError: regexp.MustCompile(`CIDR "f::1/64" must be normalized: "f::/64"`),
 			},
 			{
 				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIP, accountID),
