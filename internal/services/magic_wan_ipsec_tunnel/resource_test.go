@@ -112,6 +112,8 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "health_check.rate", "low"),
 					resource.TestCheckResourceAttr(name, "psk", "asdf1234"),
 					resource.TestCheckResourceAttr(name, "replay_protection", "true"),
+					resource.TestCheckResourceAttr(name, "automatic_return_routing", "true"),
+					resource.TestCheckResourceAttr(name, "bgp.customer_asn", "65001"),
 				),
 			},
 			{
