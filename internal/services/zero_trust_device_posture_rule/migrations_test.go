@@ -14,7 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-// TestMigrateDevicePostureRuleBasic tests migration of a basic posture rule with input and match transformations
+// TestMigrateDevicePostureRuleBasic tests migration of a basic posture rule with input and match transformations 
 func TestMigrateDevicePostureRuleBasic(t *testing.T) {
 	// Zero Trust resources require API_KEY + EMAIL, not API_TOKEN
 	originalToken := os.Getenv("CLOUDFLARE_API_TOKEN")
@@ -92,13 +92,12 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 }
 
 // TestMigrateDevicePostureRuleWithoutName tests optional->required transformation for name field
-// This test documents expected behavior when name is missing from v4 config but required in v5.
-// The migration will succeed, but users must manually add the name to their config since the
-// migration tool cannot automatically extract it from state during config transformation.
+// This test verifies that when name is missing from v4 config (and empty in API),
+// the migration automatically populates it using the Terraform resource name as a fallback.
+// Since v4 didn't set the name in the API, v5 will update it during apply.
 func TestMigrateDevicePostureRuleWithoutName(t *testing.T) {
-	t.Skip("Skipping: v4 configs without 'name' field will need manual intervention during migration. " +
-		"Users must add the name from their state to the config for v5 compatibility. " +
-		"This is documented as a known migration limitation since TransformConfig cannot access state.")
+	// NOTE: This test passes because TransformConfigWithState automatically generates
+	// a name (using the Terraform resource name) when state/API don't have one.
 
 	// Zero Trust resources require API_KEY + EMAIL, not API_TOKEN
 	originalToken := os.Getenv("CLOUDFLARE_API_TOKEN")
@@ -112,8 +111,8 @@ func TestMigrateDevicePostureRuleWithoutName(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	// V4 config without name field (name was optional in v4, required in v5)
-	// This configuration will successfully create a v4 resource (API generates/requires name),
-	// but after migration, the v5 provider will reject it because name is missing from config.
+	// When v4 creates this resource without a name, the API stores it with empty name.
+	// After migration, we auto-generate a name, and v5 will update the API resource.
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_device_posture_rule" "%[1]s" {
   account_id = "%[2]s"
@@ -130,41 +129,45 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
   }
 }`, rnd, accountID)
 
+	// Build test steps
+	steps := []resource.TestStep{
+		{
+			// Step 1: Create with v4 provider (without name in config)
+			ExternalProviders: map[string]resource.ExternalProvider{
+				"cloudflare": {
+					Source:            "cloudflare/cloudflare",
+					VersionConstraint: "4.52.1",
+				},
+			},
+			Config: v4Config,
+		},
+	}
+
+	// Step 2: Migration adds name to config/state, v5 updates API with the name
+	// A plan diff is expected because the API resource needs to be updated with the name
+	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+		// Migration auto-populates name using Terraform resource name
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("os_version")),
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("schedule"), knownvalue.StringExact("5m")),
+
+		// Match should be converted to array
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("match").AtSliceIndex(0).AtMapKey("platform"), knownvalue.StringExact("linux")),
+
+		// Input should be object
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("version"), knownvalue.StringExact("10.0.0")),
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("operator"), knownvalue.StringExact(">=")),
+	})
+	steps = append(steps, migrationSteps...)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider (without name in config)
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
-					},
-				},
-				Config: v4Config,
-			},
-			// Step 2: This will fail because name is required in v5 but not present in migrated config
-			// Expected error: "The argument 'name' is required, but no definition was found."
-			// MANUAL ACTION REQUIRED: Users must add name from state to their config file
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-				// Name exists in state but migration won't add it to config
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("name"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("os_version")),
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("schedule"), knownvalue.StringExact("5m")),
-
-				// Match should be converted to array
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("match").AtSliceIndex(0).AtMapKey("platform"), knownvalue.StringExact("linux")),
-
-				// Input should be object
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("version"), knownvalue.StringExact("10.0.0")),
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("operator"), knownvalue.StringExact(">=")),
-			}),
-		},
+		Steps:      steps,
 	})
 }
 
@@ -363,3 +366,124 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 		},
 	})
 }
+
+// TestMigrateDevicePostureRuleFileType tests file type with multiple input attributes
+func TestMigrateDevicePostureRuleFileType(t *testing.T) {
+	originalToken := os.Getenv("CLOUDFLARE_API_TOKEN")
+	if originalToken != "" {
+		os.Unsetenv("CLOUDFLARE_API_TOKEN")
+		defer os.Setenv("CLOUDFLARE_API_TOKEN", originalToken)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("tf-test-file-%s", rnd)
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_device_posture_rule" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  type       = "file"
+  schedule   = "5m"
+
+  match {
+    platform = "windows"
+  }
+
+  input {
+    path       = "C:\\Program Files\\app.exe"
+    exists     = true
+    thumbprint = "0123456789abcdef"
+    sha256     = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+  }
+}`, rnd, accountID, name)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(name)),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("file")),
+
+				// Input fields for file type
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("path"), knownvalue.StringExact("C:\\Program Files\\app.exe")),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("exists"), knownvalue.Bool(true)),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("thumbprint"), knownvalue.StringExact("0123456789abcdef")),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("sha256"), knownvalue.StringExact("abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")),
+			}),
+		},
+	})
+}
+
+// TestMigrateDevicePostureRuleDomainJoined tests domain_joined type
+func TestMigrateDevicePostureRuleDomainJoined(t *testing.T) {
+	originalToken := os.Getenv("CLOUDFLARE_API_TOKEN")
+	if originalToken != "" {
+		os.Unsetenv("CLOUDFLARE_API_TOKEN")
+		defer os.Setenv("CLOUDFLARE_API_TOKEN", originalToken)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("tf-test-domain-%s", rnd)
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_device_posture_rule" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  type       = "domain_joined"
+  schedule   = "5m"
+
+  match {
+    platform = "windows"
+  }
+
+  input {
+    domain = "example.com"
+  }
+}`, rnd, accountID, name)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(name)),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("domain_joined")),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("input").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+			}),
+		},
+	})
+}
+
+// Note: Tests for integration and certificate types (client_certificate, client_certificate_v2, sentinelone_s2s,
+// tanium_s2s, kolide, crowdstrike_s2s, intune, workspace_one)
+// are not included because they require valid connection_id values from real integrations.
+// These would need to be tested manually with actual integration setups.
