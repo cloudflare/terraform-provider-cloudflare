@@ -15,6 +15,5 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
   shared_entries = [{
     enabled = true
     entry_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-    entry_type = "custom"
   }]
 }

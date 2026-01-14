@@ -5,6 +5,7 @@ package account_subscription
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -44,7 +45,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rate_plan": schema.SingleNestedAttribute{
 				Description: "The rate plan applied to the subscription.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountSubscriptionRatePlanModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_enterprise\".",
@@ -66,26 +69,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"externally_managed": schema.BoolAttribute{
 						Description: "Whether this rate plan is managed externally from Cloudflare.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"is_contract": schema.BoolAttribute{
 						Description: "Whether a rate plan is enterprise-based (or newly adopted term contract).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"public_name": schema.StringAttribute{
 						Description: "The full name of the rate plan.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"scope": schema.StringAttribute{
 						Description: "The scope that this rate plan applies to.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
-						Description: "The list of sets this rate plan applies to.",
+						Description: "The list of sets this rate plan applies to. Returns array of strings.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},

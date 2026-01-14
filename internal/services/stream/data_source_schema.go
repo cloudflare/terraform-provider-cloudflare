@@ -158,7 +158,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"pct_complete": schema.StringAttribute{
-						Description: "Indicates the size of the entire upload in bytes. The value must be a non-negative integer.",
+						Description: "Indicates the progress as a percentage between 0 and 100.",
 						Computed:    true,
 					},
 					"state": schema.StringAttribute{

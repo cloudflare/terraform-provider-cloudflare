@@ -60,7 +60,6 @@ type ZeroTrustDLPCustomProfileEntriesPatternModel struct {
 }
 
 type ZeroTrustDLPCustomProfileSharedEntriesModel struct {
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,required"`
-	EntryID   types.String `tfsdk:"entry_id" json:"entry_id,required"`
-	EntryType types.String `tfsdk:"entry_type" json:"entry_type,required"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
+	EntryID types.String `tfsdk:"entry_id" json:"entry_id,required"`
 }

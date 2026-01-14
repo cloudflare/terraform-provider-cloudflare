@@ -37,9 +37,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"custom_origin_server": schema.StringAttribute{
+				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Optional:    true,
+			},
+			"custom_origin_sni": schema.StringAttribute{
+				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Optional:    true,
+			},
+			"custom_metadata": schema.MapAttribute{
+				Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"ssl": schema.SingleNestedAttribute{
 				Description: "SSL properties used when creating the custom hostname.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"bundle_method": schema.StringAttribute{
 						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
@@ -163,19 +178,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-			},
-			"custom_origin_server": schema.StringAttribute{
-				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
-				Optional:    true,
-			},
-			"custom_origin_sni": schema.StringAttribute{
-				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
-				Optional:    true,
-			},
-			"custom_metadata": schema.MapAttribute{
-				Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
-				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the hostname was created.",

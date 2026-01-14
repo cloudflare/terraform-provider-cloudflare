@@ -19,7 +19,6 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Match                      types.String                                                                   `tfsdk:"match" json:"match,required"`
 	Name                       types.String                                                                   `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                  `tfsdk:"precedence" json:"precedence,required"`
-	Description                types.String                                                                   `tfsdk:"description" json:"description,optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	Exclude                    *[]*ZeroTrustDeviceCustomProfileExcludeModel                                   `tfsdk:"exclude" json:"exclude,optional"`
@@ -30,6 +29,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	AllowedToLeave             types.Bool                                                                     `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
 	AutoConnect                types.Float64                                                                  `tfsdk:"auto_connect" json:"auto_connect,computed_optional"`
 	CaptivePortal              types.Float64                                                                  `tfsdk:"captive_portal" json:"captive_portal,computed_optional"`
+	Description                types.String                                                                   `tfsdk:"description" json:"description,computed_optional"`
 	DisableAutoFallback        types.Bool                                                                     `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
 	Enabled                    types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExcludeOfficeIPs           types.Bool                                                                     `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`

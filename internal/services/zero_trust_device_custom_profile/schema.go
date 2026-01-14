@@ -45,10 +45,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 				Required:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "A description of the policy.",
-				Optional:    true,
-			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
 				Optional:    true,
@@ -139,6 +135,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     float64default.StaticFloat64(180),
+			},
+			"description": schema.StringAttribute{
+				Description: "A description of the policy.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",

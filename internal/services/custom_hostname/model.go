@@ -17,10 +17,10 @@ type CustomHostnameModel struct {
 	ID                        types.String                                                           `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,required"`
-	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,required"`
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,optional"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,optional"`
 	CustomMetadata            *map[string]types.String                                               `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
+	SSL                       customfield.NestedObject[CustomHostnameSSLModel]                       `tfsdk:"ssl" json:"ssl,computed_optional"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
