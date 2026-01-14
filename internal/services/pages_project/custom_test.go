@@ -401,3 +401,129 @@ func TestCompatibilityFlagsEqual(t *testing.T) {
 	}
 }
 
+// TestNormalizeBuildConfig_EmptyStrings tests that build_config with empty strings
+// is normalized to nil. This is the fix for the issue where the API returns empty
+// strings for build_config fields (like build_command = ""), and the provider would
+// incorrectly preserve these in the plan, causing "planned value for a non-computed
+// attribute" errors.
+func TestNormalizeBuildConfig_EmptyStrings(t *testing.T) {
+	ctx := context.Background()
+
+	// Create a model with build_config that has empty strings (as API returns)
+	data := &PagesProjectModel{
+		Name:             types.StringValue("test-project"),
+		AccountID:        types.StringValue("abc123"),
+		ProductionBranch: types.StringValue("main"),
+		BuildConfig: &PagesProjectBuildConfigModel{
+			BuildCaching:      types.BoolNull(),         // null bool
+			BuildCommand:      types.StringValue(""),    // empty string
+			DestinationDir:    types.StringValue(""),    // empty string
+			RootDir:           types.StringValue(""),    // empty string
+			WebAnalyticsTag:   types.StringValue(""),    // empty string
+			WebAnalyticsToken: types.StringValue(""),    // empty string
+		},
+	}
+
+	// Call NormalizeDeploymentConfigs
+	result, diags := NormalizeDeploymentConfigs(ctx, data)
+
+	if diags.HasError() {
+		t.Fatalf("unexpected diagnostics: %v", diags)
+	}
+
+	// build_config should be normalized to nil when all fields are empty/null
+	if result.BuildConfig != nil {
+		t.Errorf("expected build_config to be nil when all fields are empty/null, got %+v", result.BuildConfig)
+	}
+}
+
+// TestNormalizeBuildConfig_WithActualValues tests that build_config with actual
+// values is NOT normalized to nil.
+func TestNormalizeBuildConfig_WithActualValues(t *testing.T) {
+	ctx := context.Background()
+
+	// Create a model with build_config that has actual values
+	data := &PagesProjectModel{
+		Name:             types.StringValue("test-project"),
+		AccountID:        types.StringValue("abc123"),
+		ProductionBranch: types.StringValue("main"),
+		BuildConfig: &PagesProjectBuildConfigModel{
+			BuildCaching:      types.BoolValue(true),
+			BuildCommand:      types.StringValue("npm run build"),
+			DestinationDir:    types.StringValue("dist"),
+			RootDir:           types.StringValue("/"),
+			WebAnalyticsTag:   types.StringValue(""),  // empty is ok if others have values
+			WebAnalyticsToken: types.StringValue(""),  // empty is ok if others have values
+		},
+	}
+
+	// Call NormalizeDeploymentConfigs
+	result, diags := NormalizeDeploymentConfigs(ctx, data)
+
+	if diags.HasError() {
+		t.Fatalf("unexpected diagnostics: %v", diags)
+	}
+
+	// build_config should NOT be nil when fields have actual values
+	if result.BuildConfig == nil {
+		t.Error("expected build_config to be preserved when fields have actual values")
+	}
+}
+
+// TestMergeBuildConfigFromState tests that partial build_config in plan
+// is properly merged with values from state.
+func TestMergeBuildConfigFromState(t *testing.T) {
+	// Plan has some values but not all
+	plan := &PagesProjectBuildConfigModel{
+		BuildCaching:      types.BoolNull(),           // not specified by user
+		BuildCommand:      types.StringValue("yarn build"), // user specified
+		DestinationDir:    types.StringUnknown(),      // unknown
+		RootDir:           types.StringValue("/app"),  // user specified
+		WebAnalyticsTag:   types.StringNull(),         // not specified
+		WebAnalyticsToken: types.StringNull(),         // not specified
+	}
+
+	// State has values from a previous apply/import
+	state := &PagesProjectBuildConfigModel{
+		BuildCaching:      types.BoolValue(false),
+		BuildCommand:      types.StringValue("npm run build"),
+		DestinationDir:    types.StringValue("dist"),
+		RootDir:           types.StringValue("/"),
+		WebAnalyticsTag:   types.StringValue("tag123"),
+		WebAnalyticsToken: types.StringValue("token456"),
+	}
+
+	// Merge state into plan
+	mergeBuildConfigFromState(plan, state)
+
+	// User-specified values should be preserved
+	if plan.BuildCommand.ValueString() != "yarn build" {
+		t.Errorf("expected build_command to be 'yarn build', got %q", plan.BuildCommand.ValueString())
+	}
+	if plan.RootDir.ValueString() != "/app" {
+		t.Errorf("expected root_dir to be '/app', got %q", plan.RootDir.ValueString())
+	}
+
+	// Unknown/null values should be filled from state
+	if plan.BuildCaching.ValueBool() != false {
+		t.Errorf("expected build_caching to be false from state, got %v", plan.BuildCaching.ValueBool())
+	}
+	if plan.DestinationDir.ValueString() != "dist" {
+		t.Errorf("expected destination_dir to be 'dist' from state, got %q", plan.DestinationDir.ValueString())
+	}
+	if plan.WebAnalyticsTag.ValueString() != "tag123" {
+		t.Errorf("expected web_analytics_tag to be 'tag123' from state, got %q", plan.WebAnalyticsTag.ValueString())
+	}
+	if plan.WebAnalyticsToken.ValueString() != "token456" {
+		t.Errorf("expected web_analytics_token to be 'token456' from state, got %q", plan.WebAnalyticsToken.ValueString())
+	}
+}
+
+// TestMergeBuildConfigFromState_NilInputs tests nil handling
+func TestMergeBuildConfigFromState_NilInputs(t *testing.T) {
+	// Should not panic with nil inputs
+	mergeBuildConfigFromState(nil, nil)
+	mergeBuildConfigFromState(nil, &PagesProjectBuildConfigModel{})
+	mergeBuildConfigFromState(&PagesProjectBuildConfigModel{}, nil)
+}
+
