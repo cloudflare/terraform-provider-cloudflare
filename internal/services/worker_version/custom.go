@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func readFile(path string) (string, error) {
@@ -121,6 +122,12 @@ func (c computeSHA256HashOfContentModifier) PlanModifyString(ctx context.Context
 	}
 }
 
+// Binding types with sensitive text fields not returned by the API.
+var bindingTypesWithSensitiveText = map[string]bool{
+	"secret_text": true,
+	"plain_text":  true,
+}
+
 func UpdateSecretTextsFromState[T any](
 	ctx context.Context,
 	refreshed customfield.NestedObjectList[T],
@@ -163,7 +170,8 @@ func UpdateSecretTextsFromState[T any](
 			continue
 		}
 
-		if typeAttr.(types.String).ValueString() != "secret_text" {
+		bindingType := typeAttr.(types.String).ValueString()
+		if !bindingTypesWithSensitiveText[bindingType] {
 			updatedElems = append(updatedElems, val)
 			continue
 		}
@@ -178,8 +186,10 @@ func UpdateSecretTextsFromState[T any](
 				continue
 			}
 			stateAttrs := stateObj.Attributes()
-			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
-				stateAttrs["name"].(types.String).ValueString() == name {
+			stateType := stateAttrs["type"].(types.String).ValueString()
+			stateName := stateAttrs["name"].(types.String).ValueString()
+			// Match by name and binding type (both secret_text and plain_text have sensitive text)
+			if bindingTypesWithSensitiveText[stateType] && stateName == name {
 				originalText = stateAttrs["text"]
 				foundInState = true
 				break
@@ -187,6 +197,7 @@ func UpdateSecretTextsFromState[T any](
 		}
 
 		if !foundInState {
+			updatedElems = append(updatedElems, refreshedObj)
 			continue
 		}
 
@@ -429,4 +440,49 @@ func RequiresReplaceIfStateValueExists() planmodifier.String {
 		description,
 		description,
 	)
+}
+
+// UseStateForUnknownOrNullSensitive preserves state value when config is null/unknown.
+func UseStateForUnknownOrNullSensitive() planmodifier.String {
+	return useStateForUnknownOrNullSensitiveModifier{}
+}
+
+type useStateForUnknownOrNullSensitiveModifier struct{}
+
+func (m useStateForUnknownOrNullSensitiveModifier) Description(_ context.Context) string {
+	return "Preserves state value when config is null or unknown."
+}
+
+func (m useStateForUnknownOrNullSensitiveModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m useStateForUnknownOrNullSensitiveModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	tflog.Debug(ctx, "UseStateForUnknownOrNullSensitive plan modifier called",
+		map[string]interface{}{
+			"path":         req.Path.String(),
+			"state_value":  req.StateValue.String(),
+			"config_value": req.ConfigValue.String(),
+			"plan_value":   req.PlanValue.String(),
+		})
+
+	// If there's no prior state (e.g., during create), nothing to do
+	if req.StateValue.IsNull() || req.StateValue.IsUnknown() {
+		tflog.Debug(ctx, "UseStateForUnknownOrNullSensitive: state is null/unknown, skipping")
+		return
+	}
+
+	// If config explicitly sets a value, use it
+	if !req.ConfigValue.IsNull() && !req.ConfigValue.IsUnknown() {
+		tflog.Debug(ctx, "UseStateForUnknownOrNullSensitive: config has value, using config")
+		return
+	}
+
+	// Config is null or unknown, but state has a value - use state value
+	// This handles the import case where Terraform generates config without sensitive values
+	tflog.Debug(ctx, "UseStateForUnknownOrNullSensitive: preserving state value",
+		map[string]interface{}{
+			"preserved_value": req.StateValue.String(),
+		})
+	resp.PlanValue = req.StateValue
 }
