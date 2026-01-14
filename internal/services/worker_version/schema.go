@@ -589,6 +589,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The client used to create the version.",
 				Computed:    true,
 			},
+			"main_script_base64": schema.StringAttribute{
+				Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.",
+				Computed:    true,
+			},
 			"startup_time_ms": schema.Int64Attribute{
 				Description: "Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).",
 				Computed:    true,

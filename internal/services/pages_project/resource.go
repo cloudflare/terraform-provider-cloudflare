@@ -418,6 +418,35 @@ func (r *PagesProjectResource) ModifyPlan(ctx context.Context, req resource.Modi
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
 
+// mergeBuildConfigFromState merges unknown or null fields from state into plan.
+// This handles the case where a user specifies build_config with only some fields,
+// and we need to preserve the computed values from state for the unspecified fields.
+func mergeBuildConfigFromState(plan, state *PagesProjectBuildConfigModel) {
+	if plan == nil || state == nil {
+		return
+	}
+
+	// For each field, if the plan value is unknown or null, use the state value
+	if plan.BuildCaching.IsUnknown() || plan.BuildCaching.IsNull() {
+		plan.BuildCaching = state.BuildCaching
+	}
+	if plan.BuildCommand.IsUnknown() || plan.BuildCommand.IsNull() {
+		plan.BuildCommand = state.BuildCommand
+	}
+	if plan.DestinationDir.IsUnknown() || plan.DestinationDir.IsNull() {
+		plan.DestinationDir = state.DestinationDir
+	}
+	if plan.RootDir.IsUnknown() || plan.RootDir.IsNull() {
+		plan.RootDir = state.RootDir
+	}
+	if plan.WebAnalyticsTag.IsUnknown() || plan.WebAnalyticsTag.IsNull() {
+		plan.WebAnalyticsTag = state.WebAnalyticsTag
+	}
+	if plan.WebAnalyticsToken.IsUnknown() || plan.WebAnalyticsToken.IsNull() {
+		plan.WebAnalyticsToken = state.WebAnalyticsToken
+	}
+}
+
 // NormalizeDeploymentConfigs normalizes empty pointer slices to null
 // to match API behavior and prevent drift during import/refresh
 func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*PagesProjectModel, diag.Diagnostics) {
@@ -428,25 +457,31 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 	}
 
 	// Normalize build_config to null if all fields are empty/null
+	// This handles the case where the API returns empty strings for build_config fields,
+	// which would otherwise cause "planned value for a non-computed attribute" errors
+	// when the user doesn't specify build_config in their configuration.
 	if data.BuildConfig != nil {
 		bc := data.BuildConfig
 		allFieldsEmpty := true
+		// For bool fields, check if not null and not unknown
 		if !bc.BuildCaching.IsNull() && !bc.BuildCaching.IsUnknown() {
 			allFieldsEmpty = false
 		}
-		if !bc.BuildCommand.IsNull() && !bc.BuildCommand.IsUnknown() {
+		// For string fields, check if not null, not unknown, AND not empty string
+		// The API often returns empty strings "" which are different from null
+		if !bc.BuildCommand.IsNull() && !bc.BuildCommand.IsUnknown() && bc.BuildCommand.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.DestinationDir.IsNull() && !bc.DestinationDir.IsUnknown() {
+		if !bc.DestinationDir.IsNull() && !bc.DestinationDir.IsUnknown() && bc.DestinationDir.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.RootDir.IsNull() && !bc.RootDir.IsUnknown() {
+		if !bc.RootDir.IsNull() && !bc.RootDir.IsUnknown() && bc.RootDir.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.WebAnalyticsTag.IsNull() && !bc.WebAnalyticsTag.IsUnknown() {
+		if !bc.WebAnalyticsTag.IsNull() && !bc.WebAnalyticsTag.IsUnknown() && bc.WebAnalyticsTag.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.WebAnalyticsToken.IsNull() && !bc.WebAnalyticsToken.IsUnknown() {
+		if !bc.WebAnalyticsToken.IsNull() && !bc.WebAnalyticsToken.IsUnknown() && bc.WebAnalyticsToken.ValueString() != "" {
 			allFieldsEmpty = false
 		}
 		if allFieldsEmpty {
