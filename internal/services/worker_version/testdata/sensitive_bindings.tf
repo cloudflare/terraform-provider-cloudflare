@@ -14,6 +14,9 @@ resource "cloudflare_worker_version" "%[1]s" {
     }
   ]
   main_module = "index.js"
+  annotations = {
+    workers_message = "Test import with annotations"
+  }
   bindings = [
     {
       type = "plain_text"

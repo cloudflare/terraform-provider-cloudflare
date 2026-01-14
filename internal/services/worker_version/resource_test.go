@@ -531,6 +531,9 @@ func TestAccCloudflareWorkerVersion_SensitiveBindingsImport(t *testing.T) {
 				Config: testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, contentFile),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("annotations"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
+						"workers_message": knownvalue.StringExact("Test import with annotations"),
+					})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.SetExact([]knownvalue.Check{
 						knownvalue.ObjectPartial(map[string]knownvalue.Check{
 							"name": knownvalue.StringExact("PLAIN_TEXT_VAR"),

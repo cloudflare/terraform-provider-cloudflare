@@ -555,3 +555,66 @@ func bindingsEqualIgnoringSensitiveText(stateBinding, planBinding basetypes.Obje
 	}
 	return true
 }
+
+// RequiresReplaceIfConfiguredIgnoringComputedDiff requires replacement when
+// configured, but ignores diffs in computed-only fields (e.g. workers_triggered_by).
+func RequiresReplaceIfConfiguredIgnoringComputedDiff(computedFields ...string) planmodifier.Object {
+	return &annotationsRequiresReplaceModifier{computedFields: computedFields}
+}
+
+type annotationsRequiresReplaceModifier struct {
+	computedFields []string
+}
+
+func (m *annotationsRequiresReplaceModifier) Description(_ context.Context) string {
+	return "Requires replacement if configured, ignoring computed-only field diffs."
+}
+
+func (m *annotationsRequiresReplaceModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m *annotationsRequiresReplaceModifier) PlanModifyObject(ctx context.Context, req planmodifier.ObjectRequest, resp *planmodifier.ObjectResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() || req.StateValue.IsNull() {
+		return
+	}
+
+	stateAttrs := req.StateValue.Attributes()
+	planAttrs := req.PlanValue.Attributes()
+
+	for key, stateVal := range stateAttrs {
+		planVal, exists := planAttrs[key]
+		if !exists {
+			resp.RequiresReplace = true
+			return
+		}
+		// Skip computed-only fields
+		if m.isComputedField(key) {
+			continue
+		}
+		if !stateVal.Equal(planVal) {
+			resp.RequiresReplace = true
+			return
+		}
+	}
+
+	for key := range planAttrs {
+		if _, exists := stateAttrs[key]; !exists {
+			if m.isComputedField(key) {
+				continue
+			}
+			resp.RequiresReplace = true
+			return
+		}
+	}
+	resp.RequiresReplace = false
+}
+
+func (m *annotationsRequiresReplaceModifier) isComputedField(key string) bool {
+	for _, f := range m.computedFields {
+		if f == key {
+			return true
+		}
+	}
+	return false
+}
