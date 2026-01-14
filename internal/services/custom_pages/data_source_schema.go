@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\".",
+				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\", \"waf_challenge\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -35,11 +35,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"ratelimit_block",
 						"under_attack",
 						"waf_block",
+						"waf_challenge",
 					),
 				},
 			},
 			"identifier": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\".",
+				Description: "Error Page Types\nAvailable values: \"1000_errors\", \"500_errors\", \"basic_challenge\", \"country_challenge\", \"ip_block\", \"managed_challenge\", \"ratelimit_block\", \"under_attack\", \"waf_block\", \"waf_challenge\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -52,6 +53,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"ratelimit_block",
 						"under_attack",
 						"waf_block",
+						"waf_challenge",
 					),
 				},
 			},

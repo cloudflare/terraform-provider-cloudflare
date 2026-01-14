@@ -112,6 +112,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									),
 								},
 							},
+							"region": schema.StringAttribute{
+								Description: "Cloud region for targeted placement in format 'provider:region'.",
+								Optional:    true,
+							},
+							"hostname": schema.StringAttribute{
+								Description: "HTTP hostname for targeted placement.",
+								Optional:    true,
+							},
+							"host": schema.StringAttribute{
+								Description: "TCP host and port for targeted placement.",
+								Optional:    true,
+							},
+							"region": schema.StringAttribute{
+								Description: "Cloud region for targeted placement in format 'provider:region'.",
+								Optional:    true,
+							},
+							"hostname": schema.StringAttribute{
+								Description: "HTTP hostname for targeted placement.",
+								Optional:    true,
+							},
+							"host": schema.StringAttribute{
+								Description: "TCP host and port for targeted placement.",
+								Optional:    true,
+							},
+							"region": schema.StringAttribute{
+								Description: "Cloud region for targeted placement in format 'provider:region'.",
+								Optional:    true,
+							},
+							"hostname": schema.StringAttribute{
+								Description: "HTTP hostname for targeted placement.",
+								Optional:    true,
+							},
+							"host": schema.StringAttribute{
+								Description: "TCP host and port for targeted placement.",
+								Optional:    true,
+							},
 							"not_found_handling": schema.StringAttribute{
 								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\nAvailable values: \"none\", \"404-page\", \"single-page-application\".",
 								Optional:    true,
@@ -673,22 +709,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"placement": schema.SingleNestedAttribute{
-				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify either mode for Smart Placement, or one of region/hostname/host for targeted placement.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"last_analyzed_at": schema.StringAttribute{
-						Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
 					"mode": schema.StringAttribute{
 						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("smart"),
 						},
+					},
+					"last_analyzed_at": schema.StringAttribute{
+						Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
@@ -700,6 +736,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"INSUFFICIENT_INVOCATIONS",
 							),
 						},
+					},
+					"region": schema.StringAttribute{
+						Description: "Cloud region for targeted placement in format 'provider:region'.",
+						Computed:    true,
+					},
+					"hostname": schema.StringAttribute{
+						Description: "HTTP hostname for targeted placement.",
+						Computed:    true,
+					},
+					"host": schema.StringAttribute{
+						Description: "TCP host and port for targeted placement.",
+						Computed:    true,
 					},
 				},
 			},

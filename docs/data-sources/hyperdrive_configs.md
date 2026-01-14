@@ -42,7 +42,7 @@ Read-Only:
 - `id` (String) Define configurations using a unique string identifier.
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
 - `mtls` (Attributes) (see [below for nested schema](#nestedatt--result--mtls))
-- `name` (String)
+- `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
@@ -52,8 +52,8 @@ Read-Only:
 Read-Only:
 
 - `disabled` (Boolean) Set to true to disable caching of SQL responses. Default is false.
-- `max_age` (Number) Specify the maximum duration items should persist in the cache. Not returned if set to the default (60).
-- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Omitted if set to the default (15).
+- `max_age` (Number) Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.
+- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.
 
 
 <a id="nestedatt--result--mtls"></a>
@@ -76,7 +76,7 @@ Read-Only:
 - `database` (String) Set the name of your origin database.
 - `host` (String) Defines the host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) Set the password needed to access your origin database. The API never returns this write-only value.
-- `port` (Number) Defines the port (default: 5432 for Postgres) of your origin database.
+- `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 Available values: "postgres", "postgresql", "mysql".
 - `user` (String) Set the user of your origin database.

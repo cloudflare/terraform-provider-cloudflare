@@ -116,7 +116,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `main_module` (String) Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
-- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify either mode for Smart Placement, or one of region/hostname/host for targeted placement. (see [below for nested schema](#nestedatt--placement))
 - `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard", "bundled", "unbound".
@@ -154,11 +154,14 @@ Read-Only:
 Optional:
 
 - `headers` (String) The contents of a _headers file (used to attach custom headers on asset responses).
+- `host` (String) TCP host and port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
 Available values: "none", "404-page", "single-page-application".
 - `redirects` (String) The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving).
+- `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `run_worker_first` (Dynamic) When a boolean true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script. When a list of strings, contains path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.
 - `serve_directly` (Boolean, Deprecated) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
@@ -339,7 +342,10 @@ Available values: "smart".
 
 Read-Only:
 
+- `host` (String) TCP host and port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
 - `last_analyzed_at` (String) The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+- `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 

@@ -1,12 +1,14 @@
 package zero_trust_device_default_profile_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -16,6 +18,34 @@ import (
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zero_trust_device_default_profile", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_device_default_profile",
+		F:    testSweepCloudflareZeroTrustDeviceDefaultProfile,
+	})
+}
+
+// testSweepCloudflareZeroTrustDeviceDefaultProfile is a no-op sweeper for the default device profile.
+//
+// The default device profile is a singleton configuration per account - there's only one default
+// profile per account. Tests modify the existing default profile rather than creating new resources.
+// Since nothing accumulates, no sweeping is required.
+//
+// This sweeper is registered to maintain consistency with other resources, but performs no actions.
+//
+// API behavior:
+// - Create operation uses Policies.Default.Edit() (modifies existing profile)
+// - Delete operation is a no-op (can't delete the default profile)
+// - Resource represents account-level configuration, not creatable/deletable resources
+//
+// Run with: go test ./internal/services/zero_trust_device_default_profile/ -v -sweep=all
+// (No cleanup will be performed)
+func testSweepCloudflareZeroTrustDeviceDefaultProfile(r string) error {
+	ctx := context.Background()
+	tflog.Info(ctx, "Zero Trust Device Default Profile doesn't require sweeping (singleton account setting)")
+	return nil
 }
 
 func TestAccCloudflareZeroTrustDeviceDefaultProfile_Basic(t *testing.T) {

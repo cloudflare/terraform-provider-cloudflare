@@ -77,10 +77,6 @@ func TestMigrateCloudflareLoadBalancerPool_Basic_MultiVersion(t *testing.T) {
 		})
 		steps = append(steps, migrationSteps...)
 
-		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-		})
-
 		resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -155,10 +151,6 @@ func TestMigrateCloudflareLoadBalancerPool_AllOptionalAttributes_MultiVersion(t 
 		})
 		steps = append(steps, migrationSteps...)
 
-		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-		})
-
 		resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -219,9 +211,6 @@ func TestMigrateCloudflareLoadBalancerPool_OriginSteering_MultiVersion(t *testin
 							},
 						},
 						Config: testConfig,
-						Check: resource.ComposeTestCheckFunc(
-							acctest.DumpState,
-						),
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-steering-%s", rnd))),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
@@ -323,10 +312,6 @@ func TestMigrateCloudflareLoadBalancerPool_CheckRegions_MultiVersion(t *testing.
 			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-regions-%s", rnd))),
 		})
 		steps = append(steps, migrationSteps...)
-
-		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-		})
 
 		resource.Test(t, resource.TestCase{
 				PreCheck: func() {
@@ -604,10 +589,6 @@ func TestMigrateCloudflareLoadBalancerPool_DynamicOrigins_MultiVersion(t *testin
 			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
 		})
 		steps = append(steps, migrationSteps...)
-
-		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-		})
 
 		resource.Test(t, resource.TestCase{
 				PreCheck: func() {
