@@ -35,10 +35,17 @@ func (m ZoneSubscriptionModel) MarshalJSONForUpdate(state ZoneSubscriptionModel)
 
 type ZoneSubscriptionRatePlanModel struct {
 	ID                types.String                   `tfsdk:"id" json:"id,optional"`
+<<<<<<< HEAD
 	Currency          types.String                   `tfsdk:"currency" json:"currency,computed"`
 	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed"`
 	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed"`
 	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed"`
+=======
+	Currency          types.String                   `tfsdk:"currency" json:"currency,computed_optional"`
+	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed_optional"`
+	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed_optional"`
+	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed_optional"`
+>>>>>>> origin/generated--merge-conflict
 	Scope             types.String                   `tfsdk:"scope" json:"scope,computed_optional"`
 	Sets              customfield.List[types.String] `tfsdk:"sets" json:"sets,computed"`
 }
