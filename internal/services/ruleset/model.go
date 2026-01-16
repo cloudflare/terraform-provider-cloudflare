@@ -77,6 +77,8 @@ type RulesetRulesActionParametersModel struct {
 	Mirage                  types.Bool                                                                `tfsdk:"mirage" json:"mirage,optional"`
 	OpportunisticEncryption types.Bool                                                                `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
 	Polish                  types.String                                                              `tfsdk:"polish" json:"polish,optional"`
+	RequestBodyBuffering    types.String                                                              `tfsdk:"request_body_buffering" json:"request_body_buffering,optional"`
+	ResponseBodyBuffering   types.String                                                              `tfsdk:"response_body_buffering" json:"response_body_buffering,optional"`
 	RocketLoader            types.Bool                                                                `tfsdk:"rocket_loader" json:"rocket_loader,optional"`
 	SecurityLevel           types.String                                                              `tfsdk:"security_level" json:"security_level,optional"`
 	ServerSideExcludes      types.Bool                                                                `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`

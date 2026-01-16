@@ -6919,6 +6919,165 @@ func TestAccCloudflareRuleset_SetConfigRules(t *testing.T) {
 					),
 				},
 			},
+			{
+				ConfigFile:      config.TestNameFile("5.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("set_config"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"request_body_buffering":  knownvalue.StringExact("none"),
+										"response_body_buffering": knownvalue.StringExact("none"),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("none"),
+									"response_body_buffering": knownvalue.StringExact("none"),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("none"),
+									"response_body_buffering": knownvalue.StringExact("none"),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("6.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("set_config"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"request_body_buffering":  knownvalue.StringExact("standard"),
+										"response_body_buffering": knownvalue.StringExact("standard"),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("standard"),
+									"response_body_buffering": knownvalue.StringExact("standard"),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("standard"),
+									"response_body_buffering": knownvalue.StringExact("standard"),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("7.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("set_config"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"request_body_buffering":  knownvalue.StringExact("full"),
+										"response_body_buffering": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("full"),
+									"response_body_buffering": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_config"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"request_body_buffering":  knownvalue.StringExact("full"),
+									"response_body_buffering": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
 		},
 	})
 }
