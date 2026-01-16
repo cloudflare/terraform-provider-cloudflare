@@ -136,7 +136,7 @@ jobs:
           # - name: dlp-config
           #   display_name: DLP Config
           #   email: tf-acct-zero-trust-dlp-config@cfapi.net
-            api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
+          #   api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
           - name: access-core
             display_name: Access Core
             email: tf-acct-zero-trust-access-core@cfapi.net
