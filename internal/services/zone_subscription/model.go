@@ -18,7 +18,7 @@ type ZoneSubscriptionModel struct {
 	ZoneID             types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
 	Frequency          types.String                                            `tfsdk:"frequency" json:"frequency,computed_optional"`
 	RatePlan           customfield.NestedObject[ZoneSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
-	Currency           types.String                   `tfsdk:"currency" json:"currency,computed"`
+	Currency           types.String                                            `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                                       `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
 	CurrentPeriodStart timetypes.RFC3339                                       `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
 	Price              types.Float64                                           `tfsdk:"price" json:"price,computed"`
@@ -35,17 +35,10 @@ func (m ZoneSubscriptionModel) MarshalJSONForUpdate(state ZoneSubscriptionModel)
 
 type ZoneSubscriptionRatePlanModel struct {
 	ID                types.String                   `tfsdk:"id" json:"id,optional"`
-<<<<<<< HEAD
 	Currency          types.String                   `tfsdk:"currency" json:"currency,computed"`
 	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed"`
 	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed"`
 	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed"`
-=======
-	Currency          types.String                   `tfsdk:"currency" json:"currency,computed_optional"`
-	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed_optional"`
-	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed_optional"`
-	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed_optional"`
->>>>>>> origin/generated--merge-conflict
 	Scope             types.String                   `tfsdk:"scope" json:"scope,computed_optional"`
 	Sets              customfield.List[types.String] `tfsdk:"sets" json:"sets,computed"`
 }
