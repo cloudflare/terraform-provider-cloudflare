@@ -15,6 +15,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func TestAccCloudflareLeakedCredentialsCheck_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -75,6 +79,38 @@ func TestAccCloudflareLeakedCredentialsCheck_StateConsistency(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLeakedCredentialsCheck_Import(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_leaked_credential_check.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Step 1: Create the resource
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+				},
+			},
+			// Step 2: Import the resource using zone_id
+			{
+				ResourceName:                         resourceName,
+				ImportState:                          true,
+				ImportStateVerify:                    true,
+				ImportStateId:                        zoneID,
+				ImportStateVerifyIdentifierAttribute: consts.ZoneIDSchemaKey,
 			},
 		},
 	})
