@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/leaked_credential_checks"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*LeakedCredentialCheckResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*LeakedCredentialCheckResource)(nil)
+var _ resource.ResourceWithImportState = (*LeakedCredentialCheckResource)(nil)
 
 func NewResource() resource.Resource {
 	return &LeakedCredentialCheckResource{}
@@ -199,4 +202,49 @@ func (r *LeakedCredentialCheckResource) ModifyPlan(ctx context.Context, req reso
 				"in the API, refer to the documentation for how to do it manually.",
 		)
 	}
+}
+
+func (r *LeakedCredentialCheckResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *LeakedCredentialCheckModel = new(LeakedCredentialCheckModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := LeakedCredentialCheckResultEnvelope{*data}
+	_, err := r.client.LeakedCredentialChecks.Get(
+		ctx,
+		leaked_credential_checks.LeakedCredentialCheckGetParams{
+			ZoneID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
