@@ -72,6 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"permission_groups": schema.SetNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
+							CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesPermissionGroupsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -84,6 +85,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"resource_groups": schema.SetNestedAttribute{
 							Description: "A list of resource groups that the policy applies to.",
 							Required:    true,
+							CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesResourceGroupsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
