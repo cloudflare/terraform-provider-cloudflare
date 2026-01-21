@@ -161,10 +161,19 @@ func TestAccPreCheck_Pages(t *testing.T) {
 	}
 }
 
-// Test helper method checking `CLOUDFLARE_BYO_IP_PREFIX_ID` is present.
+// Test helper method checking all required environment variables for BYOIP
+// acceptance tests are present.
 func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
-		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")
+	requiredKeys := []string{
+		"CLOUDFLARE_BYO_IP_CIDR",
+		"CLOUDFLARE_BYO_IP_ASN",
+		"CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID",
+	}
+
+	for _, k := range requiredKeys {
+		if os.Getenv(k) == "" {
+			t.Skipf("%s must be set for this acceptance test", k)
+		}
 	}
 }
 
