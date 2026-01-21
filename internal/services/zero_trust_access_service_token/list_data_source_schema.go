@@ -58,7 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"duration": schema.StringAttribute{
-							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
+							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Use the literal value `forever` to create a non-expiring token. The default is 1 year in hours (8760h).",
 							Computed:    true,
 						},
 						"expires_at": schema.StringAttribute{
