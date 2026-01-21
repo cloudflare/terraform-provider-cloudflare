@@ -6,12 +6,13 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*AccountMemberResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Membership identifier tag.",
@@ -45,11 +47,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
-				Default:       stringdefault.StaticString("pending"),
 			},
-			"roles": schema.ListAttribute{
-				Description: "Array of roles associated with this member.",
+			"roles": schema.SetAttribute{
+				Description: "Set of roles associated with this member.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"policies": schema.SetNestedAttribute{
@@ -69,6 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"permission_groups": schema.SetNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
+							CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesPermissionGroupsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -81,6 +85,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"resource_groups": schema.SetNestedAttribute{
 							Description: "A list of resource groups that the policy applies to.",
 							Required:    true,
+							CustomType:  customfield.NewNestedObjectSetType[AccountMemberPoliciesResourceGroupsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -130,5 +135,10 @@ func (r *AccountMemberResource) Schema(ctx context.Context, req resource.SchemaR
 }
 
 func (r *AccountMemberResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{
+		resourcevalidator.ExactlyOneOf(
+			path.MatchRoot("roles"),
+			path.MatchRoot("policies"),
+		),
+	}
 }

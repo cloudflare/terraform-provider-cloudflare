@@ -2,6 +2,7 @@ package pages_project
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -416,4 +417,186 @@ func preserveSecretEnvVarsInMap[T EnvVarModel](
 	}
 
 	return &updatedEnvVars
+}
+
+// PrepareForUpdate converts nil binding maps to empty maps so the API deletes them.
+func PrepareForUpdate(ctx context.Context, plan *PagesProjectModel, state *PagesProjectModel) (*PagesProjectModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	if plan == nil || state == nil {
+		return plan, diags
+	}
+
+	// Only process if both plan and state have deployment configs
+	if plan.DeploymentConfigs.IsNull() || plan.DeploymentConfigs.IsUnknown() ||
+		state.DeploymentConfigs.IsNull() || state.DeploymentConfigs.IsUnknown() {
+		return plan, diags
+	}
+
+	planConfigs, d := plan.DeploymentConfigs.Value(ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return plan, diags
+	}
+
+	stateConfigs, d := state.DeploymentConfigs.Value(ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return plan, diags
+	}
+
+	modified := false
+
+	// Process Preview config
+	if !planConfigs.Preview.IsNull() && !planConfigs.Preview.IsUnknown() &&
+		!stateConfigs.Preview.IsNull() && !stateConfigs.Preview.IsUnknown() {
+		planPreview, d := planConfigs.Preview.Value(ctx)
+		diags.Append(d...)
+		if diags.HasError() {
+			return plan, diags
+		}
+
+		statePreview, d := stateConfigs.Preview.Value(ctx)
+		diags.Append(d...)
+		if diags.HasError() {
+			return plan, diags
+		}
+
+		previewModified := false
+		planPreview, previewModified = convertNilToEmptyMapsPreview(planPreview, statePreview)
+		if previewModified {
+			planConfigs.Preview, d = customfield.NewObject(ctx, planPreview)
+			diags.Append(d...)
+			if diags.HasError() {
+				return plan, diags
+			}
+			modified = true
+		}
+	}
+
+	// Process Production config
+	if !planConfigs.Production.IsNull() && !planConfigs.Production.IsUnknown() &&
+		!stateConfigs.Production.IsNull() && !stateConfigs.Production.IsUnknown() {
+		planProduction, d := planConfigs.Production.Value(ctx)
+		diags.Append(d...)
+		if diags.HasError() {
+			return plan, diags
+		}
+
+		stateProduction, d := stateConfigs.Production.Value(ctx)
+		diags.Append(d...)
+		if diags.HasError() {
+			return plan, diags
+		}
+
+		productionModified := false
+		planProduction, productionModified = convertNilToEmptyMapsProduction(planProduction, stateProduction)
+		if productionModified {
+			planConfigs.Production, d = customfield.NewObject(ctx, planProduction)
+			diags.Append(d...)
+			if diags.HasError() {
+				return plan, diags
+			}
+			modified = true
+		}
+	}
+
+	if modified {
+		plan.DeploymentConfigs, d = customfield.NewObject(ctx, planConfigs)
+		diags.Append(d...)
+	}
+
+	return plan, diags
+}
+
+// bindingFields lists the struct field names that contain binding maps.
+var bindingFields = []string{
+	"EnvVars", "KVNamespaces", "D1Databases", "R2Buckets", "DurableObjectNamespaces",
+	"AIBindings", "AnalyticsEngineDatasets", "Browsers", "HyperdriveBindings",
+	"MTLSCertificates", "QueueProducers", "Services", "VectorizeBindings",
+}
+
+// normalizeEmptyMaps sets empty binding map pointers to nil using reflection.
+func normalizeEmptyMaps(v any) bool {
+	if v == nil {
+		return false
+	}
+	rv := reflect.ValueOf(v)
+	if rv.Kind() == reflect.Ptr {
+		rv = rv.Elem()
+	}
+	if rv.Kind() != reflect.Struct {
+		return false
+	}
+	modified := false
+	for _, name := range bindingFields {
+		field := rv.FieldByName(name)
+		if !field.IsValid() || field.Kind() != reflect.Ptr || field.IsNil() {
+			continue
+		}
+		mapVal := field.Elem()
+		if mapVal.Kind() == reflect.Map && mapVal.Len() == 0 {
+			field.Set(reflect.Zero(field.Type()))
+			modified = true
+		}
+	}
+	return modified
+}
+
+// convertNilToEmptyMaps sets nil binding maps to empty maps when state has values.
+func convertNilToEmptyMaps(plan, state any) bool {
+	if plan == nil || state == nil {
+		return false
+	}
+	planVal := reflect.ValueOf(plan)
+	stateVal := reflect.ValueOf(state)
+	if planVal.Kind() == reflect.Ptr {
+		planVal = planVal.Elem()
+	}
+	if stateVal.Kind() == reflect.Ptr {
+		stateVal = stateVal.Elem()
+	}
+	if planVal.Kind() != reflect.Struct || stateVal.Kind() != reflect.Struct {
+		return false
+	}
+	modified := false
+	for _, name := range bindingFields {
+		planField := planVal.FieldByName(name)
+		stateField := stateVal.FieldByName(name)
+		if !planField.IsValid() || !stateField.IsValid() {
+			continue
+		}
+		if planField.Kind() != reflect.Ptr || stateField.Kind() != reflect.Ptr {
+			continue
+		}
+		if planField.IsNil() && !stateField.IsNil() {
+			stateMap := stateField.Elem()
+			if stateMap.Kind() == reflect.Map && stateMap.Len() > 0 {
+				// Create empty map of the same type
+				emptyMap := reflect.MakeMap(stateMap.Type())
+				newPtr := reflect.New(stateMap.Type())
+				newPtr.Elem().Set(emptyMap)
+				planField.Set(newPtr)
+				modified = true
+			}
+		}
+	}
+	return modified
+}
+
+// Typed wrappers for the reflection-based helpers.
+func normalizeEmptyMapsPreview(v *PagesProjectDeploymentConfigsPreviewModel) bool {
+	return normalizeEmptyMaps(v)
+}
+
+func normalizeEmptyMapsProduction(v *PagesProjectDeploymentConfigsProductionModel) bool {
+	return normalizeEmptyMaps(v)
+}
+
+func convertNilToEmptyMapsPreview(plan, state *PagesProjectDeploymentConfigsPreviewModel) (*PagesProjectDeploymentConfigsPreviewModel, bool) {
+	return plan, convertNilToEmptyMaps(plan, state)
+}
+
+func convertNilToEmptyMapsProduction(plan, state *PagesProjectDeploymentConfigsProductionModel) (*PagesProjectDeploymentConfigsProductionModel, bool) {
+	return plan, convertNilToEmptyMaps(plan, state)
 }

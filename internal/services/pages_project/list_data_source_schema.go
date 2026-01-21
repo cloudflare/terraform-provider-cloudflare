@@ -235,26 +235,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:   true,
 											CustomType: customfield.NewNestedObjectType[PagesProjectsCanonicalDeploymentSourceConfigDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
-												"owner": schema.StringAttribute{
-													Description: "The owner of the repository.",
-													Computed:    true,
-												},
-												"pr_comments_enabled": schema.BoolAttribute{
-													Description: "Whether to enable PR comments.",
-													Computed:    true,
-												},
-												"production_branch": schema.StringAttribute{
-													Description: "The production branch of the repository.",
-													Computed:    true,
-												},
-												"repo_name": schema.StringAttribute{
-													Description: "The name of the repository.",
-													Computed:    true,
-												},
 												"deployments_enabled": schema.BoolAttribute{
 													Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 													Computed:           true,
 													DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+												},
+												"owner": schema.StringAttribute{
+													Description: "The owner of the repository.",
+													Computed:    true,
 												},
 												"owner_id": schema.StringAttribute{
 													Description: "The owner ID of the repository.",
@@ -271,6 +259,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 													CustomType:  customfield.NewListType[types.String](ctx),
 													ElementType: types.StringType,
+												},
+												"pr_comments_enabled": schema.BoolAttribute{
+													Description: "Whether to enable PR comments.",
+													Computed:    true,
 												},
 												"preview_branch_excludes": schema.ListAttribute{
 													Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -295,12 +287,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														),
 													},
 												},
+												"production_branch": schema.StringAttribute{
+													Description: "The production branch of the repository.",
+													Computed:    true,
+												},
 												"production_deployments_enabled": schema.BoolAttribute{
 													Description: "Whether to trigger a production deployment on commits to the production branch.",
 													Computed:    true,
 												},
 												"repo_id": schema.StringAttribute{
 													Description: "The ID of the repository.",
+													Computed:    true,
+												},
+												"repo_name": schema.StringAttribute{
+													Description: "The name of the repository.",
 													Computed:    true,
 												},
 											},
@@ -1077,26 +1077,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:   true,
 											CustomType: customfield.NewNestedObjectType[PagesProjectsLatestDeploymentSourceConfigDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
-												"owner": schema.StringAttribute{
-													Description: "The owner of the repository.",
-													Computed:    true,
-												},
-												"pr_comments_enabled": schema.BoolAttribute{
-													Description: "Whether to enable PR comments.",
-													Computed:    true,
-												},
-												"production_branch": schema.StringAttribute{
-													Description: "The production branch of the repository.",
-													Computed:    true,
-												},
-												"repo_name": schema.StringAttribute{
-													Description: "The name of the repository.",
-													Computed:    true,
-												},
 												"deployments_enabled": schema.BoolAttribute{
 													Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 													Computed:           true,
 													DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+												},
+												"owner": schema.StringAttribute{
+													Description: "The owner of the repository.",
+													Computed:    true,
 												},
 												"owner_id": schema.StringAttribute{
 													Description: "The owner ID of the repository.",
@@ -1113,6 +1101,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 													CustomType:  customfield.NewListType[types.String](ctx),
 													ElementType: types.StringType,
+												},
+												"pr_comments_enabled": schema.BoolAttribute{
+													Description: "Whether to enable PR comments.",
+													Computed:    true,
 												},
 												"preview_branch_excludes": schema.ListAttribute{
 													Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -1137,12 +1129,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														),
 													},
 												},
+												"production_branch": schema.StringAttribute{
+													Description: "The production branch of the repository.",
+													Computed:    true,
+												},
 												"production_deployments_enabled": schema.BoolAttribute{
 													Description: "Whether to trigger a production deployment on commits to the production branch.",
 													Computed:    true,
 												},
 												"repo_id": schema.StringAttribute{
 													Description: "The ID of the repository.",
+													Computed:    true,
+												},
+												"repo_name": schema.StringAttribute{
+													Description: "The name of the repository.",
 													Computed:    true,
 												},
 											},
@@ -1278,26 +1278,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:   true,
 									CustomType: customfield.NewNestedObjectType[PagesProjectsSourceConfigDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
-										"owner": schema.StringAttribute{
-											Description: "The owner of the repository.",
-											Computed:    true,
-										},
-										"pr_comments_enabled": schema.BoolAttribute{
-											Description: "Whether to enable PR comments.",
-											Computed:    true,
-										},
-										"production_branch": schema.StringAttribute{
-											Description: "The production branch of the repository.",
-											Computed:    true,
-										},
-										"repo_name": schema.StringAttribute{
-											Description: "The name of the repository.",
-											Computed:    true,
-										},
 										"deployments_enabled": schema.BoolAttribute{
 											Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 											Computed:           true,
 											DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+										},
+										"owner": schema.StringAttribute{
+											Description: "The owner of the repository.",
+											Computed:    true,
 										},
 										"owner_id": schema.StringAttribute{
 											Description: "The owner ID of the repository.",
@@ -1314,6 +1302,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
+										},
+										"pr_comments_enabled": schema.BoolAttribute{
+											Description: "Whether to enable PR comments.",
+											Computed:    true,
 										},
 										"preview_branch_excludes": schema.ListAttribute{
 											Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -1338,12 +1330,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												),
 											},
 										},
+										"production_branch": schema.StringAttribute{
+											Description: "The production branch of the repository.",
+											Computed:    true,
+										},
 										"production_deployments_enabled": schema.BoolAttribute{
 											Description: "Whether to trigger a production deployment on commits to the production branch.",
 											Computed:    true,
 										},
 										"repo_id": schema.StringAttribute{
 											Description: "The ID of the repository.",
+											Computed:    true,
+										},
+										"repo_name": schema.StringAttribute{
+											Description: "The name of the repository.",
 											Computed:    true,
 										},
 									},

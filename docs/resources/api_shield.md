@@ -2,12 +2,102 @@
 page_title: "cloudflare_api_shield Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Manages API Shield configuration properties for a zone, specifically auth ID characteristics.
 ---
 
 # cloudflare_api_shield (Resource)
 
+Manages API Shield configuration properties for a zone, specifically auth ID characteristics.
 
+When using `type = "jwt"` for auth ID characteristics, the `name` field must be a claim location expressed as `$(token_config_id):$(json_path)`, where:
+- `token_config_id` is the ID of the token configuration used in validating the JWT
+- `json_path` is a [RFC 9535](https://www.rfc-editor.org/rfc/rfc9535.html) [JSONPath](https://goessner.net/articles/JsonPath/) expression that returns a singleton value (interpreted as a string)
+
+The JSONPath expression may be in dot or bracket notation and may only specify literal keys or array indexes.
+
+### Header Example
+
+```terraform
+resource "cloudflare_api_shield" "header_example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  auth_id_characteristics = [{
+    name = "authorization"
+    type = "header"
+  }]
+}
+```
+
+This configuration uses the `Authorization` header as the session identifier.
+
+### Cookie Example
+
+```terraform
+resource "cloudflare_api_shield" "cookie_example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  auth_id_characteristics = [{
+    name = "session_id"
+    type = "cookie"
+  }]
+}
+```
+
+This configuration uses a cookie named `session_id` as the session identifier.
+
+### JWT Example
+
+```terraform
+resource "cloudflare_api_shield" "jwt_example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  auth_id_characteristics = [{
+    name = "d5902294-00c3-4aed-b517-57e752e9cd58:$.sub"
+    type = "jwt"
+  }]
+}
+```
+
+This configuration extracts the `sub` (subject) claim from a JWT token validated by the token configuration with ID `d5902294-00c3-4aed-b517-57e752e9cd58`. The extracted claim value is then used as the session identifier.
+
+### Multiple Session Identifiers
+
+You can combine multiple session identifiers to handle different authentication methods:
+
+```terraform
+resource "cloudflare_api_shield" "multiple_identifiers" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  auth_id_characteristics = [
+    {
+      name = "x-api-key"
+      type = "header"
+    },
+    {
+      name = "session_token"
+      type = "cookie"
+    }
+  ]
+}
+```
+
+This configuration identifies API consumers using either the `x-api-key` header or a `session_token` cookie.
+
+### Combining Header and JWT
+
+```terraform
+resource "cloudflare_api_shield" "header_and_jwt" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  auth_id_characteristics = [
+    {
+      name = "x-client-id"
+      type = "header"
+    },
+    {
+      name = "d5902294-00c3-4aed-b517-57e752e9cd58:$.email"
+      type = "jwt"
+    }
+  ]
+}
+```
+
+This configuration uses a custom `x-client-id` header alongside a JWT `email` claim for session identification.
 
 ## Example Usage
 
@@ -38,7 +128,7 @@ resource "cloudflare_api_shield" "example_api_shield" {
 
 Required:
 
-- `name` (String) The name of the characteristic field, i.e., the header or cookie name.
+- `name` (String) The name of the characteristic field, i.e., the header or cookie name. When using type "jwt", this must be a claim location expressed as `$(token_config_id):$(json_path)`, where `token_config_id` is the ID of the token configuration used in validating the JWT, and `json_path` is a RFC 9535 JSONPath expression.
 - `type` (String) The type of characteristic.
 Available values: "header", "cookie", "jwt".
 
@@ -49,5 +139,3 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_api_shield.example '<zone_id>'
 ```
-
-

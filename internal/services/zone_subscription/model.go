@@ -14,15 +14,15 @@ type ZoneSubscriptionResultEnvelope struct {
 }
 
 type ZoneSubscriptionModel struct {
-	ID                 types.String                   `tfsdk:"id" json:"-,computed"`
-	ZoneID             types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,computed_optional"`
-	RatePlan           *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
-	Currency           types.String                   `tfsdk:"currency" json:"currency,computed"`
-	CurrentPeriodEnd   timetypes.RFC3339              `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
-	CurrentPeriodStart timetypes.RFC3339              `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
-	Price              types.Float64                  `tfsdk:"price" json:"price,computed"`
-	State              types.String                   `tfsdk:"state" json:"state,computed"`
+	ID                 types.String                                            `tfsdk:"id" json:"-,computed"`
+	ZoneID             types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	Frequency          types.String                                            `tfsdk:"frequency" json:"frequency,computed_optional"`
+	RatePlan           customfield.NestedObject[ZoneSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
+	Currency           types.String                                            `tfsdk:"currency" json:"currency,computed"`
+	CurrentPeriodEnd   timetypes.RFC3339                                       `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
+	CurrentPeriodStart timetypes.RFC3339                                       `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
+	Price              types.Float64                                           `tfsdk:"price" json:"price,computed"`
+	State              types.String                                            `tfsdk:"state" json:"state,computed"`
 }
 
 func (m ZoneSubscriptionModel) MarshalJSON() (data []byte, err error) {

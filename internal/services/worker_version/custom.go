@@ -121,6 +121,12 @@ func (c computeSHA256HashOfContentModifier) PlanModifyString(ctx context.Context
 	}
 }
 
+// bindingTypeHasSensitiveText returns true if the binding type has a sensitive
+// "text" field not returned by the API.
+func bindingTypeHasSensitiveText(bindingType string) bool {
+	return bindingType == "secret_text" || bindingType == "plain_text"
+}
+
 func UpdateSecretTextsFromState[T any](
 	ctx context.Context,
 	refreshed customfield.NestedObjectList[T],
@@ -163,7 +169,8 @@ func UpdateSecretTextsFromState[T any](
 			continue
 		}
 
-		if typeAttr.(types.String).ValueString() != "secret_text" {
+		bindingType := typeAttr.(types.String).ValueString()
+		if !bindingTypeHasSensitiveText(bindingType) {
 			updatedElems = append(updatedElems, val)
 			continue
 		}
@@ -178,7 +185,8 @@ func UpdateSecretTextsFromState[T any](
 				continue
 			}
 			stateAttrs := stateObj.Attributes()
-			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
+			stateBindingType := stateAttrs["type"].(types.String).ValueString()
+			if bindingTypeHasSensitiveText(stateBindingType) &&
 				stateAttrs["name"].(types.String).ValueString() == name {
 				originalText = stateAttrs["text"]
 				foundInState = true
@@ -187,6 +195,7 @@ func UpdateSecretTextsFromState[T any](
 		}
 
 		if !foundInState {
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
@@ -429,4 +438,183 @@ func RequiresReplaceIfStateValueExists() planmodifier.String {
 		description,
 		description,
 	)
+}
+
+// RequiresReplaceIfConfiguredIgnoringSensitiveTextDiff requires replacement when
+// configured, but ignores text field diffs where state is null (e.g. after import).
+func RequiresReplaceIfConfiguredIgnoringSensitiveTextDiff() planmodifier.List {
+	return &bindingsRequiresReplaceModifier{}
+}
+
+type bindingsRequiresReplaceModifier struct{}
+
+func (m *bindingsRequiresReplaceModifier) Description(_ context.Context) string {
+	return "Requires replacement if configured, ignoring null-state sensitive text diffs."
+}
+
+func (m *bindingsRequiresReplaceModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m *bindingsRequiresReplaceModifier) PlanModifyList(ctx context.Context, req planmodifier.ListRequest, resp *planmodifier.ListResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() || req.StateValue.IsNull() {
+		return
+	}
+
+	stateElems := req.StateValue.Elements()
+	planElems := req.PlanValue.Elements()
+
+	if len(stateElems) != len(planElems) {
+		resp.RequiresReplace = true
+		return
+	}
+
+	stateBindingsByName := make(map[string]basetypes.ObjectValue)
+	for _, val := range stateElems {
+		obj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			continue
+		}
+		attrs := obj.Attributes()
+		if nameAttr, ok := attrs["name"]; ok {
+			if nameStr, ok := nameAttr.(types.String); ok && !nameStr.IsNull() {
+				stateBindingsByName[nameStr.ValueString()] = obj
+			}
+		}
+	}
+
+	planBindingsByName := make(map[string]basetypes.ObjectValue)
+	for _, val := range planElems {
+		obj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			continue
+		}
+		attrs := obj.Attributes()
+		if nameAttr, ok := attrs["name"]; ok {
+			if nameStr, ok := nameAttr.(types.String); ok && !nameStr.IsNull() {
+				planBindingsByName[nameStr.ValueString()] = obj
+			}
+		}
+	}
+
+	// Check if binding names match
+	if len(stateBindingsByName) != len(planBindingsByName) {
+		resp.RequiresReplace = true
+		return
+	}
+
+	for name, stateBinding := range stateBindingsByName {
+		planBinding, exists := planBindingsByName[name]
+		if !exists {
+			resp.RequiresReplace = true
+			return
+		}
+		if !bindingsEqualIgnoringSensitiveText(stateBinding, planBinding) {
+			resp.RequiresReplace = true
+			return
+		}
+	}
+	resp.RequiresReplace = false
+}
+
+// bindingsEqualIgnoringSensitiveText compares bindings, treating null state text
+// as equal to any plan text for sensitive binding types.
+func bindingsEqualIgnoringSensitiveText(stateBinding, planBinding basetypes.ObjectValue) bool {
+	stateAttrs := stateBinding.Attributes()
+	planAttrs := planBinding.Attributes()
+
+	bindingType := ""
+	if typeAttr, ok := stateAttrs["type"]; ok {
+		if typeStr, ok := typeAttr.(types.String); ok && !typeStr.IsNull() {
+			bindingType = typeStr.ValueString()
+		}
+	}
+	hasSensitiveText := bindingTypeHasSensitiveText(bindingType)
+
+	for key, stateVal := range stateAttrs {
+		planVal, exists := planAttrs[key]
+		if !exists {
+			return false
+		}
+		// Skip text diff if state is null (from import) and binding has sensitive text
+		if key == "text" && hasSensitiveText && stateVal.IsNull() && !planVal.IsNull() {
+			continue
+		}
+		if !stateVal.Equal(planVal) {
+			return false
+		}
+	}
+
+	for key := range planAttrs {
+		if _, exists := stateAttrs[key]; !exists {
+			if key == "text" && hasSensitiveText && !planAttrs[key].IsNull() {
+				continue
+			}
+			return false
+		}
+	}
+	return true
+}
+
+// RequiresReplaceIfConfiguredIgnoringComputedDiff requires replacement when
+// configured, but ignores diffs in computed-only fields (e.g. workers_triggered_by).
+func RequiresReplaceIfConfiguredIgnoringComputedDiff(computedFields ...string) planmodifier.Object {
+	return &annotationsRequiresReplaceModifier{computedFields: computedFields}
+}
+
+type annotationsRequiresReplaceModifier struct {
+	computedFields []string
+}
+
+func (m *annotationsRequiresReplaceModifier) Description(_ context.Context) string {
+	return "Requires replacement if configured, ignoring computed-only field diffs."
+}
+
+func (m *annotationsRequiresReplaceModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m *annotationsRequiresReplaceModifier) PlanModifyObject(ctx context.Context, req planmodifier.ObjectRequest, resp *planmodifier.ObjectResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() || req.StateValue.IsNull() {
+		return
+	}
+
+	stateAttrs := req.StateValue.Attributes()
+	planAttrs := req.PlanValue.Attributes()
+
+	for key, stateVal := range stateAttrs {
+		planVal, exists := planAttrs[key]
+		if !exists {
+			resp.RequiresReplace = true
+			return
+		}
+		// Skip computed-only fields
+		if m.isComputedField(key) {
+			continue
+		}
+		if !stateVal.Equal(planVal) {
+			resp.RequiresReplace = true
+			return
+		}
+	}
+
+	for key := range planAttrs {
+		if _, exists := stateAttrs[key]; !exists {
+			if m.isComputedField(key) {
+				continue
+			}
+			resp.RequiresReplace = true
+			return
+		}
+	}
+	resp.RequiresReplace = false
+}
+
+func (m *annotationsRequiresReplaceModifier) isComputedField(key string) bool {
+	for _, f := range m.computedFields {
+		if f == key {
+			return true
+		}
+	}
+	return false
 }
