@@ -18,7 +18,7 @@ type PagesProjectModel struct {
 	Name                 types.String                                                   `tfsdk:"name" json:"name,required"`
 	AccountID            types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ProductionBranch     types.String                                                   `tfsdk:"production_branch" json:"production_branch,required"`
-	BuildConfig          *PagesProjectBuildConfigModel                                  `tfsdk:"build_config" json:"build_config,optional"`
+	BuildConfig          *PagesProjectBuildConfigModel                                  `tfsdk:"build_config" json:"build_config,computed_optional"`
 	Source               *PagesProjectSourceModel                                       `tfsdk:"source" json:"source,optional"`
 	DeploymentConfigs    customfield.NestedObject[PagesProjectDeploymentConfigsModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed_optional"`
 	CreatedOn            timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
