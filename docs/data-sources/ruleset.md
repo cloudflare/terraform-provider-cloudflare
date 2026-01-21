@@ -105,9 +105,13 @@ Available values: "off", "lossless", "lossy", "webp".
 Available values: "bic", "hot", "rateLimit", "securityLevel", "uaBlock", "waf", "zoneLockdown".
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
+- `request_body_buffering` (String) The request body buffering mode to configure.
+Available values: "none", "standard", "full".
 - `request_fields` (Attributes List) The raw request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))
 - `respect_strong_etags` (Boolean) Whether Cloudflare should respect strong ETag (entity tag) headers. If false, Cloudflare converts strong ETag headers to weak ETag headers.
 - `response` (Attributes) The response to show when the block is applied. (see [below for nested schema](#nestedatt--rules--action_parameters--response))
+- `response_body_buffering` (String) The response body buffering mode to configure.
+Available values: "none", "standard".
 - `response_fields` (Attributes List) The transformed response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
 - `rocket_loader` (Boolean) Whether to enable Rocket Loader.
 - `rules` (Map of List of String) A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.

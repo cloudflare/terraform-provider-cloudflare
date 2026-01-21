@@ -888,6 +888,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"request_body_buffering": schema.StringAttribute{
+									Description: "The request body buffering mode to configure.\nAvailable values: \"none\", \"standard\", \"full\".",
+									Optional:    true,
+									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+										stringvalidator.OneOfCaseInsensitive(
+											"none",
+											"standard",
+											"full",
+										),
+									},
+								},
+								"response_body_buffering": schema.StringAttribute{
+									Description: "The response body buffering mode to configure.\nAvailable values: \"none\", \"standard\".",
+									Optional:    true,
+									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+										stringvalidator.OneOfCaseInsensitive(
+											"none",
+											"standard",
+										),
+									},
+								},
 								"rocket_loader": schema.BoolAttribute{
 									Description: "Whether to enable Rocket Loader.",
 									Optional:    true,

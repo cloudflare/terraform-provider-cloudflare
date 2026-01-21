@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          # - name: magic
+          # - name: magic # commented out due to test account inconsistencies
           #   display_name: Magic
           #   email: tf-acct-magic-magic@cfapi.net
           #   api_key_secret: TF_ACCT_MAGIC_MAGIC_API_KEY
@@ -138,7 +138,7 @@ jobs:
             display_name: Gateway and Policies
             email: tf-acct-zero-trust-gateway-and-policies@cfapi.net
             api_key_secret: TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_API_KEY
-          # - name: dlp-config
+          # - name: dlp-config # commented out due to test account inconsistencies
           #   display_name: DLP Config
           #   email: tf-acct-zero-trust-dlp-config@cfapi.net
           #   api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
@@ -174,10 +174,10 @@ jobs:
             display_name: Tunnel Devices
             email: tf-acct-tunnel-tunnel-devices@cfapi.net
             api_key_secret: TF_ACCT_TUNNEL_TUNNEL_DEVICES_API_KEY
-          - name: account-core
-            display_name: Account Core
-            email: tf-acct-account-account-core@cfapi.net
-            api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY
+          # - name: account-core  # commented out due to test account inconsistencies
+          #   display_name: Account Core
+          #   email: tf-acct-account-account-core@cfapi.net
+          #   api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY
           - name: account-settings
             display_name: Account Settings
             email: tf-acct-account-account-settings@cfapi.net
