@@ -52,6 +52,7 @@ included as modules named `_headers` and `_redirects` with content type `text/pl
 - `id` (String) Version identifier.
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--result--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
+- `main_script_base64` (String) The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules).
 - `migrations` (Attributes) Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed. (see [below for nested schema](#nestedatt--result--migrations))
 - `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime.
 

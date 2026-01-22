@@ -1,3 +1,3 @@
 data "cloudflare_zone_subscription" "example_zone_subscription" {
-  zone_id = "506e3185e9c882d175a2d0cb0093d9f2"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }

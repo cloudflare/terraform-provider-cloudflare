@@ -2,7 +2,6 @@ package r2_bucket
 
 import (
 	"context"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,15 +15,9 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		return
 	}
 
-	// Handle case-insensitive location comparison
-	if stateApp != nil && !planApp.Location.IsNull() && !stateApp.Location.IsNull() &&
-		!planApp.Location.IsUnknown() && !stateApp.Location.IsUnknown() {
-		planAppLocation := planApp.Location.ValueString()
-		stateAppLocation := stateApp.Location.ValueString()
-		// If locations match case-insensitively, preserve the state's case
-		if strings.EqualFold(planAppLocation, stateAppLocation) {
-			res.Diagnostics.Append(res.Plan.SetAttribute(ctx, path.Root("location"), stateApp.Location)...)
-		}
+	// Location of a bucket cannot be changed after it is already created
+	if stateApp != nil && !stateApp.Location.IsNull() && !stateApp.Location.IsUnknown() {
+		res.Diagnostics.Append(res.Plan.SetAttribute(ctx, path.Root("location"), stateApp.Location)...)
 	}
 
 	if stateApp != nil {

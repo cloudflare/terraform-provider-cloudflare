@@ -6,4 +6,8 @@
 	cloudflare_gre_endpoint = "%[5]s"
 	interface_address = "%[7]s"
 	description = "%[3]s"
+	automatic_return_routing = true
+	bgp = {
+		customer_asn = 65002
+	}
   }

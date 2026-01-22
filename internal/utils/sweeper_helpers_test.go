@@ -13,6 +13,8 @@ func TestIsTestResource(t *testing.T) {
 	}{
 		{"valid test resource", "cftftestabcdefghij", true},
 		{"valid test resource with suffix", "cftftestabcdefghijupdated", true},
+		{"test resource with prefix", "my-tf-pool-basic-cftftestabcdefghij", true},
+		{"test resource with multiple prefixes", "tf-testacc-lb-cftftestxyz", true},
 		{"legacy test resource", "tf-acctest-abcdefghij", false},
 		{"production resource", "my-production-resource", false},
 		{"empty string", "", false},
@@ -36,6 +38,8 @@ func TestShouldSweepResource(t *testing.T) {
 	}{
 		{"test resource", "cftftestabcdefghij", true},
 		{"test resource with suffix", "cftftestbasic", true},
+		{"test resource with prefix", "my-tf-pool-basic-cftftestabcdefghij", true},
+		{"test resource with load balancer prefix", "tf-testacc-lb-cftftestxyz", true},
 		{"production resource", "my-production-resource", false},
 		{"empty string", "", false},
 		{"similar but not matching", "cf-test-resource", false},

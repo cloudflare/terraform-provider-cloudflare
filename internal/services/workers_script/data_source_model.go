@@ -15,6 +15,7 @@ type WorkersScriptDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" path:"script_name,computed"`
 	ScriptName types.String                           `tfsdk:"script_name" path:"script_name,optional"`
 	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
+	Script     types.String                           `tfsdk:"script" json:"script,computed"`
 	Filter     *WorkersScriptFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

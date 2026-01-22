@@ -1196,7 +1196,7 @@ func testAccCheckCloudflareRecordConfigComprehensiveDrift(zoneID, rnd, domain st
 	if updated {
 		content = "192.168.1.2"
 	}
-	return fmt.Sprintf(acctest.LoadTestCase("dns_record_comprehensive_drift.tf", rnd, zoneID, domain, content))
+	return acctest.LoadTestCase("dns_record_comprehensive_drift.tf", rnd, zoneID, domain, content)
 }
 
 func testAccCheckCloudflareRecordRecreated(before, after *dns.RecordResponse) resource.TestCheckFunc {

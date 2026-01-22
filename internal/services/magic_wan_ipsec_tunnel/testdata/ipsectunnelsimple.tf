@@ -14,4 +14,8 @@
 	}
 	psk = "%[4]s"
 	replay_protection = true
+	automatic_return_routing = true
+	bgp = {
+		customer_asn = 65001
+	}
   }

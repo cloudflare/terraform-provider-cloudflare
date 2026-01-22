@@ -51,13 +51,8 @@ func TestMigrateCloudflareLoadBalancerPool_Basic_MultiVersion(t *testing.T) {
 			testConfig := tc.configFn(rnd, accountID)
 			tmpDir := t.TempDir()
 
-			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_AccountID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
+		// Build test steps
+		steps := []resource.TestStep{
 					{
 						// Step 1: Create pool with specific version
 						ExternalProviders: map[string]resource.ExternalProvider{
@@ -74,30 +69,22 @@ func TestMigrateCloudflareLoadBalancerPool_Basic_MultiVersion(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("minimum_origins"), knownvalue.Int64Exact(1)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-basic-%s", rnd))),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("minimum_origins"), knownvalue.Int64Exact(1)),
-						// Verify origins structure changed correctly
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(1)),
-					}),
-					{
-						// Step 3 - Import and verify
-						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-						ResourceName:             resourceName,
-						ImportState:              true,
-						ImportStateIdFunc: func(s *terraform.State) (string, error) {
-							rs, ok := s.RootModule().Resources[resourceName]
-							if !ok {
-								return "", fmt.Errorf("resource not found: %s", resourceName)
-							}
-							return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
-						},
-						ImportStateVerify: true,
-					},
+		}
+
+		// Step 2: Migrate to v5 provider
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-basic-%s", rnd))),
+		})
+		steps = append(steps, migrationSteps...)
+
+		resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
 				},
-			})
+				WorkingDir: tmpDir,
+			Steps:        steps,
+		})
 		})
 	}
 }
@@ -134,14 +121,8 @@ func TestMigrateCloudflareLoadBalancerPool_AllOptionalAttributes_MultiVersion(t 
 			testConfig := tc.configFn(rnd, accountID, domain)
 			tmpDir := t.TempDir()
 
-			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_AccountID(t)
-					acctest.TestAccPreCheck_Domain(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
+		// Build test steps
+		steps := []resource.TestStep{
 					{
 						// Step 1: Create pool with specific version with all optional attributes
 						ExternalProviders: map[string]resource.ExternalProvider{
@@ -162,45 +143,23 @@ func TestMigrateCloudflareLoadBalancerPool_AllOptionalAttributes_MultiVersion(t 
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("notification_email"), knownvalue.StringExact("someone@example.com")),
 						},
 					},
-					// Step 2 - migrate to new provider, check that there's no diff, and verify results
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-full-%s", rnd))),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("minimum_origins"), knownvalue.Int64Exact(2)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("tfacc-fully-specified")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("latitude"), knownvalue.Float64Exact(12.3)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("longitude"), knownvalue.Float64Exact(55)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("notification_email"), knownvalue.StringExact("someone@example.com")),
-						// Verify origins structure changed correctly
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(2)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("header").AtMapKey("host"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("test1." + domain)})),
-						// Verify load_shedding structure changed correctly
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("load_shedding").AtMapKey("default_percent"), knownvalue.Float64Exact(55)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("load_shedding").AtMapKey("default_policy"), knownvalue.StringExact("random")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("load_shedding").AtMapKey("session_percent"), knownvalue.Float64Exact(12)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("load_shedding").AtMapKey("session_policy"), knownvalue.StringExact("hash")),
-						// Verify origin_steering structure changed correctly
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origin_steering").AtMapKey("policy"), knownvalue.StringExact("random")),
-						// Verify check_regions changed from set to list
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("check_regions"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("WEU")})),
-					}),
-					{
-						// Step 3 - Import and verify
-						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-						ResourceName:             resourceName,
-						ImportState:              true,
-						ImportStateIdFunc: func(s *terraform.State) (string, error) {
-							rs, ok := s.RootModule().Resources[resourceName]
-							if !ok {
-								return "", fmt.Errorf("resource not found: %s", resourceName)
-							}
-							return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
-						},
-						ImportStateVerify: true,
-					},
+		}
+
+		// Step 2: Migrate to v5 provider
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-full-%s", rnd))),
+		})
+		steps = append(steps, migrationSteps...)
+
+		resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+					acctest.TestAccPreCheck_Domain(t)
 				},
-			})
+				WorkingDir: tmpDir,
+			Steps:        steps,
+		})
 		})
 	}
 }
@@ -252,9 +211,6 @@ func TestMigrateCloudflareLoadBalancerPool_OriginSteering_MultiVersion(t *testin
 							},
 						},
 						Config: testConfig,
-						Check: resource.ComposeTestCheckFunc(
-							acctest.DumpState,
-						),
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-steering-%s", rnd))),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
@@ -333,13 +289,8 @@ func TestMigrateCloudflareLoadBalancerPool_CheckRegions_MultiVersion(t *testing.
 			testConfig := tc.configFn(rnd, accountID)
 			tmpDir := t.TempDir()
 
-			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_AccountID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
+		// Build test steps
+		steps := []resource.TestStep{
 					{
 						// Step 1: Create pool with specific version with multiple check regions
 						ExternalProviders: map[string]resource.ExternalProvider{
@@ -354,28 +305,22 @@ func TestMigrateCloudflareLoadBalancerPool_CheckRegions_MultiVersion(t *testing.
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						},
 					},
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-regions-%s", rnd))),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-						// Verify check_regions changed from set to list
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("check_regions"), knownvalue.ListSizeExact(3)),
-					}),
-					{
-						// Step 3 - Import and verify
-						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-						ResourceName:             resourceName,
-						ImportState:              true,
-						ImportStateIdFunc: func(s *terraform.State) (string, error) {
-							rs, ok := s.RootModule().Resources[resourceName]
-							if !ok {
-								return "", fmt.Errorf("resource not found: %s", resourceName)
-							}
-							return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
-						},
-						ImportStateVerify: true,
-					},
+		}
+
+		// Step 2: Migrate to v5 provider
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-regions-%s", rnd))),
+		})
+		steps = append(steps, migrationSteps...)
+
+		resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
 				},
-			})
+				WorkingDir: tmpDir,
+			Steps:        steps,
+		})
 		})
 	}
 }
@@ -619,14 +564,8 @@ func TestMigrateCloudflareLoadBalancerPool_DynamicOrigins_MultiVersion(t *testin
 			testConfig := tc.configFn(rnd, accountID, domain)
 			tmpDir := t.TempDir()
 
-			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_AccountID(t)
-					acctest.TestAccPreCheck_Domain(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
+		// Build test steps
+		steps := []resource.TestStep{
 					{
 						// Step 1: Create pool with specific version using dynamic origins block
 						ExternalProviders: map[string]resource.ExternalProvider{
@@ -643,38 +582,23 @@ func TestMigrateCloudflareLoadBalancerPool_DynamicOrigins_MultiVersion(t *testin
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(3)),
 						},
 					},
-					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-						// Verify origins structure remains correct after migration
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(3)),
-						// Check that origins have the expected values
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("origin-0")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("address"), knownvalue.StringExact("192.0.2.1")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("origin-1")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(1).AtMapKey("address"), knownvalue.StringExact("192.0.2.2")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(2).AtMapKey("name"), knownvalue.StringExact("origin-2")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(2).AtMapKey("address"), knownvalue.StringExact("192.0.2.3")),
-						// Check headers are preserved
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("header").AtMapKey("host"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("test0." + domain)})),
-					}),
-					{
-						// Step 3: Import and verify
-						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-						ResourceName:             resourceName,
-						ImportState:              true,
-						ImportStateIdFunc: func(s *terraform.State) (string, error) {
-							rs, ok := s.RootModule().Resources[resourceName]
-							if !ok {
-								return "", fmt.Errorf("resource not found: %s", resourceName)
-							}
-							return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
-						},
-						ImportStateVerify: true,
-					},
+		}
+
+		// Step 2: Migrate to v5 provider
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
+		})
+		steps = append(steps, migrationSteps...)
+
+		resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+					acctest.TestAccPreCheck_Domain(t)
 				},
-			})
+				WorkingDir: tmpDir,
+			Steps:        steps,
+		})
 		})
 	}
 }

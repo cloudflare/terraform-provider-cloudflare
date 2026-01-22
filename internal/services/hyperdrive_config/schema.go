@@ -32,7 +32,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Required: true,
+				Description: "The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.",
+				Required:    true,
 			},
 			"origin": schema.SingleNestedAttribute{
 				Required: true,
@@ -51,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Sensitive:   true,
 					},
 					"port": schema.Int64Attribute{
-						Description: "Defines the port (default: 5432 for Postgres) of your origin database.",
+						Description: "Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.",
 						Optional:    true,
 					},
 					"scheme": schema.StringAttribute{
@@ -97,11 +98,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"max_age": schema.Int64Attribute{
-						Description: "Specify the maximum duration items should persist in the cache. Not returned if set to the default (60).",
+						Description: "Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.",
 						Optional:    true,
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
-						Description: "Specify the number of seconds the cache may serve a stale response. Omitted if set to the default (15).",
+						Description: "Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.",
 						Optional:    true,
 					},
 				},

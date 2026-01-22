@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
@@ -270,7 +269,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.Object{RequiresReplaceIfConfiguredIgnoringComputedDiff("workers_triggered_by")},
 			},
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker.\n\n[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
@@ -561,7 +560,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.List{RequiresReplaceIfConfiguredIgnoringSensitiveTextDiff()},
 			},
 			"limits": schema.SingleNestedAttribute{
 				Description: "Resource limits enforced at runtime.",
@@ -587,6 +586,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"source": schema.StringAttribute{
 				Description: "The client used to create the version.",
+				Computed:    true,
+			},
+			"main_script_base64": schema.StringAttribute{
+				Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.",
 				Computed:    true,
 			},
 			"startup_time_ms": schema.Int64Attribute{

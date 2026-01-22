@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/accounts"
@@ -14,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -92,6 +94,38 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 
+	// Due to a bug in the POST endpoint, roles are not returned on the POST
+	// response. But, they are returned later on the GET response (and PUT). So,
+	// to get around this we are doing a GET after every POST to retrieve the
+	// full actual state of the member.
+	// This can be removed once either the POST endpoint is fixed or roles are
+	// removed.
+	res = new(http.Response)
+	_, err = r.client.Accounts.Members.Get(
+		ctx,
+		data.ID.ValueString(),
+		accounts.MemberGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	data, err = unmarshalCustom(bytes, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -112,7 +146,18 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	dataBytes, err := data.marshalCustomForUpdate(*state)
+	// check if the user has configured roles or policies
+	var config *AccountMemberModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	permissionType := checkConfiguredPermissionType(config)
+
+	dataBytes, err := data.marshalCustomForUpdate(*state, permissionType)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -171,7 +216,7 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(bytes, data)
+	data, err = unmarshalComputedCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -225,7 +270,6 @@ func (r *AccountMemberResource) ImportState(ctx context.Context, req resource.Im
 	data.ID = types.StringValue(path_member_id)
 
 	res := new(http.Response)
-	env := AccountMemberResultEnvelope{*data}
 	_, err := r.client.Accounts.Members.Get(
 		ctx,
 		path_member_id,
@@ -240,12 +284,11 @@ func (r *AccountMemberResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -262,27 +305,36 @@ func (r *AccountMemberResource) ModifyPlan(ctx context.Context, req resource.Mod
 		return
 	}
 
-	// If destroying or creating, no need to modify plan
-	if config == nil || state == nil || plan == nil {
+	if config == nil && plan == nil {
+		// no plan changes for destroy
 		return
 	}
 
-	// Determine what's configured
-	configUsesRoles := config.Roles != nil && len(*config.Roles) > 0
-	configUsesPolicies := !config.Policies.IsNull() && !config.Policies.IsUnknown()
-
-	if configUsesRoles && !configUsesPolicies {
-		// When roles are configured, suppress policies diffs by keeping state value
-		plan.Policies = state.Policies
-	} else if configUsesPolicies && !configUsesRoles {
-		// When policies are configured, suppress roles diffs by keeping state value
-		plan.Roles = state.Roles
+	if state != nil {
+		// Always suppress user field diffs since it's computed and can change independently
+		// The user field contains computed values that may be updated by the API
+		resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("user"), state.User)...)
 	}
 
-	// Always suppress user field diffs since it's computed and can change independently
-	// The user field contains computed values that may be updated by the API
-	plan.User = state.User
-
-	// Set the modified plan
-	resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
+	if config != nil {
+		configurePermissionType := checkConfiguredPermissionType(config)
+		switch configurePermissionType {
+		case Roles:
+			if state == nil || !reflect.DeepEqual(plan.Roles, state.Roles) {
+				// if roles are changing, set policies to unknown
+				resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("policies"), plan.Policies.UnknownValue(ctx))...)
+			} else {
+				// else preserve state policies
+				resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("policies"), state.Policies)...)
+			}
+		case Policies:
+			if state == nil || !plan.Policies.Equal(state.Policies) {
+				// if policies are changing, set roles to unknown
+				resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("roles"), types.SetUnknown(types.StringType))...)
+			} else {
+				// else preserve state roles
+				resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("roles"), state.Roles)...)
+			}
+		}
+	}
 }

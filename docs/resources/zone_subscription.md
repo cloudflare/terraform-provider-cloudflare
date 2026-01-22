@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_zone_subscription" "example_zone_subscription" {
-  zone_id = "506e3185e9c882d175a2d0cb0093d9f2"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   frequency = "monthly"
   rate_plan = {
     id = "free"
@@ -32,7 +32,7 @@ resource "cloudflare_zone_subscription" "example_zone_subscription" {
 
 ### Required
 
-- `zone_id` (String) Subscription identifier tag.
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -46,7 +46,7 @@ Note: Some plans may not support frequency configuration and will return "not-ap
 - `currency` (String) The monetary unit in which pricing information is displayed.
 - `current_period_end` (String) The end of the current period and also when the next billing is due.
 - `current_period_start` (String) When the current billing period started. May match initial_period_start if this is the first period.
-- `id` (String) Subscription identifier tag.
+- `id` (String) Identifier
 - `price` (Number) The price of the subscription that will be billed, in US dollars.
 - `state` (String) The state that the subscription is in.
 Available values: "Trial", "Provisioned", "Paid", "AwaitingPayment", "Cancelled", "Failed", "Expired".
@@ -66,7 +66,7 @@ Read-Only:
 - `externally_managed` (Boolean) Whether this rate plan is managed externally from Cloudflare.
 - `is_contract` (Boolean) Whether a rate plan is enterprise-based (or newly adopted term contract).
 - `public_name` (String) The full name of the rate plan.
-- `sets` (List of String) The list of sets this rate plan applies to.
+- `sets` (List of String) The list of sets this rate plan applies to. Returns array of strings.
 
 ## Import
 

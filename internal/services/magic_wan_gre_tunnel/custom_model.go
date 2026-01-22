@@ -13,19 +13,22 @@ type CustomMagicWANGRETunnelResultEnvelope struct {
 }
 
 type CustomMagicWANGRETunnelModel struct {
-	ID                    types.String                                                `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                                                `tfsdk:"account_id" path:"account_id,required"`
-	CloudflareGREEndpoint types.String                                                `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required"`
-	CustomerGREEndpoint   types.String                                                `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required"`
-	InterfaceAddress      types.String                                                `tfsdk:"interface_address" json:"interface_address,required"`
-	Name                  types.String                                                `tfsdk:"name" json:"name,required"`
-	Description           types.String                                                `tfsdk:"description" json:"description,optional"`
-	InterfaceAddress6     types.String                                                `tfsdk:"interface_address6" json:"interface_address6,optional"`
-	Mtu                   types.Int64                                                 `tfsdk:"mtu" json:"mtu,computed_optional"`
-	TTL                   types.Int64                                                 `tfsdk:"ttl" json:"ttl,computed_optional"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed_optional"`
-	CreatedOn             timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn            timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ID                     types.String                                                `tfsdk:"id" json:"id,computed"`
+	AccountID              types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	BGP                    *MagicWANGRETunnelBGPModel                                  `tfsdk:"bgp" json:"bgp,optional"`
+	CloudflareGREEndpoint  types.String                                                `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required"`
+	CustomerGREEndpoint    types.String                                                `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required"`
+	InterfaceAddress       types.String                                                `tfsdk:"interface_address" json:"interface_address,required"`
+	Name                   types.String                                                `tfsdk:"name" json:"name,required"`
+	Description            types.String                                                `tfsdk:"description" json:"description,optional"`
+	InterfaceAddress6      types.String                                                `tfsdk:"interface_address6" json:"interface_address6,optional"`
+	AutomaticReturnRouting types.Bool                                                  `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed_optional"`
+	Mtu                    types.Int64                                                 `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                    types.Int64                                                 `tfsdk:"ttl" json:"ttl,computed_optional"`
+	HealthCheck            customfield.NestedObject[MagicWANGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed_optional"`
+	CreatedOn              timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn             timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	BGPStatus              customfield.NestedObject[MagicWANGRETunnelBGPStatusModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
 }
 
 func (m CustomMagicWANGRETunnelModel) MarshalJSON() (data []byte, err error) {

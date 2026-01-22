@@ -14,7 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-// TestMigrateWorkersRouteMigrationFromV4Basic tests basic migration from v4 to v5
+// TestMigrateWorkersRouteMigrationFromV4Basic tests basic migration from v4 to v5 
 func TestMigrateWorkersRouteMigrationFromV4Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -24,6 +24,7 @@ func TestMigrateWorkersRouteMigrationFromV4Basic(t *testing.T) {
 	scriptName := fmt.Sprintf("test-script-%s", rnd)
 
 	// V4 config using script_name attribute - create worker first, then route
+	// Use unique pattern based on random name to avoid conflicts
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_workers_script" "test_script_%[1]s" {
   account_id = "%[4]s"
@@ -33,7 +34,7 @@ resource "cloudflare_workers_script" "test_script_%[1]s" {
 
 resource "cloudflare_workers_route" "%[1]s" {
   zone_id     = "%[2]s"
-  pattern     = "example.cfapi.net/*"
+  pattern     = "%[1]s.cfapi.net/*"
   script_name = "%[3]s"
   depends_on  = [cloudflare_workers_script.test_script_%[1]s]
 }`, rnd, zoneID, scriptName, accountID)
@@ -57,9 +58,9 @@ resource "cloudflare_workers_route" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact("example.cfapi.net/*")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact(fmt.Sprintf("%s.cfapi.net/*", rnd))),
 				// Verify script_name -> script transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script"), knownvalue.StringExact(scriptName)),
 			}),
@@ -75,10 +76,11 @@ func TestMigrateWorkersRouteMigrationFromV4NoScript(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	// V4 config without script_name (optional attribute)
+	// Use unique pattern based on random name to avoid conflicts
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_workers_route" "%[1]s" {
   zone_id = "%[2]s"
-  pattern = "example.cfapi.net/api/*"
+  pattern = "%[1]s.cfapi.net/api/*"
 }`, rnd, zoneID)
 
 	resource.Test(t, resource.TestCase{
@@ -99,9 +101,9 @@ resource "cloudflare_workers_route" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact("example.cfapi.net/api/*")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact(fmt.Sprintf("%s.cfapi.net/api/*", rnd))),
 				// Verify script attribute doesn't exist (wasn't set in v4)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script"), knownvalue.Null()),
 			}),
@@ -119,6 +121,7 @@ func TestMigrateWorkersRouteMigrationFromV4SingleResource(t *testing.T) {
 	scriptName := fmt.Sprintf("test-script-%s", rnd)
 
 	// V4 config using old singular resource name - create worker first, then route
+	// Use unique pattern based on random name to avoid conflicts
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_worker_script" "test_script_%[1]s" {
   account_id = "%[4]s"
@@ -128,7 +131,7 @@ resource "cloudflare_worker_script" "test_script_%[1]s" {
 
 resource "cloudflare_worker_route" "%[1]s" {
   zone_id     = "%[2]s"
-  pattern     = "*.cfapi.net/v1/*"
+  pattern     = "%[1]s.cfapi.net/v1/*"
   script_name = "%[3]s"
   depends_on  = [cloudflare_worker_script.test_script_%[1]s]
 }`, rnd, zoneID, scriptName, accountID)
@@ -152,9 +155,9 @@ resource "cloudflare_worker_route" "%[1]s" {
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact("*.cfapi.net/v1/*")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("pattern"), knownvalue.StringExact(fmt.Sprintf("%s.cfapi.net/v1/*", rnd))),
 				// Verify script_name -> script transformation
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script"), knownvalue.StringExact(scriptName)),
 			}),

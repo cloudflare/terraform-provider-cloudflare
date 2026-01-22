@@ -4,7 +4,6 @@ package r2_bucket
 
 import (
 	"context"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -17,38 +16,32 @@ import (
 
 var _ resource.ResourceWithConfigValidators = (*R2BucketResource)(nil)
 
-// locationNormalizePlanModifier normalizes location values to lowercase
-func locationNormalizePlanModifier() planmodifier.String {
+// locationIgnorePlanModifier normalizes location values to lowercase
+func locationIgnorePlanModifier() planmodifier.String {
 	return &locationNormalizer{}
 }
 
 type locationNormalizer struct{}
 
 func (m *locationNormalizer) Description(ctx context.Context) string {
-	return "Normalizes location to lowercase"
+	return "Ignores changes to location"
 }
 
 func (m *locationNormalizer) MarkdownDescription(ctx context.Context) string {
-	return "Normalizes location to lowercase"
+	return "Ignores changes to location"
 }
 
 func (m *locationNormalizer) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
 	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
 		return
 	}
-	
-	// If state exists and values are case-insensitively equal, preserve state value
+
+	// If state exists, preserve state value
 	if !req.StateValue.IsNull() {
-		configVal := req.ConfigValue.ValueString()
-		stateVal := req.StateValue.ValueString()
-		
-		// If they're case-insensitively equal but different case, preserve state
-		if strings.EqualFold(configVal, stateVal) && configVal != stateVal {
-			resp.PlanValue = req.StateValue
-			return
-		}
+		resp.PlanValue = req.StateValue
+		return
 	}
-	
+
 	// Otherwise, use the config value as-is (no normalization)
 	resp.PlanValue = req.ConfigValue
 }
@@ -72,7 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"location": schema.StringAttribute{
-				Description: "Location of the bucket.\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
+				Description: "Location of the bucket.\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".  Note: `location` is only honored the first time a bucket with a given name is created. If you delete and recreate a bucket with the same name, the original bucket location will be used. It is also a best-effort, not a guarantee, of bucket location.",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -87,7 +80,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
-					locationNormalizePlanModifier(),
+					locationIgnorePlanModifier(),
 				},
 			},
 			"jurisdiction": schema.StringAttribute{

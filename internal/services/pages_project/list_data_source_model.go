@@ -109,19 +109,19 @@ type PagesProjectsCanonicalDeploymentSourceDataSourceModel struct {
 }
 
 type PagesProjectsCanonicalDeploymentSourceConfigDataSourceModel struct {
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
 	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed"`
 	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
 	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
 	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
 	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
 	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
 	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 }
 
 type PagesProjectsCanonicalDeploymentStagesDataSourceModel struct {
@@ -371,19 +371,19 @@ type PagesProjectsLatestDeploymentSourceDataSourceModel struct {
 }
 
 type PagesProjectsLatestDeploymentSourceConfigDataSourceModel struct {
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
 	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed"`
 	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
 	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
 	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
 	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
 	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
 	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 }
 
 type PagesProjectsLatestDeploymentStagesDataSourceModel struct {
@@ -408,17 +408,17 @@ type PagesProjectsSourceDataSourceModel struct {
 }
 
 type PagesProjectsSourceConfigDataSourceModel struct {
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
 	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed"`
 	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
 	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
 	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
 	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
 	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
 	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 }

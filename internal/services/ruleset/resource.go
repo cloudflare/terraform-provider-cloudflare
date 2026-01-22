@@ -17,6 +17,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -92,6 +94,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -143,6 +146,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -189,6 +193,12 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+
+	// Transform query_string structure in raw JSON before unmarshaling
+	// API returns: "include": ["item1", "item2"]
+	// Schema expects: "include": { "list": ["item1", "item2"] }
+	bytes = transformQueryStringJSON(bytes)
+
 	err = apijsoncustom.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -275,6 +285,7 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -354,4 +365,68 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 	}
 
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+}
+
+// transformQueryStringJSON transforms query_string.include from API format to schema format in raw JSON
+// The Cloudflare API returns include as a direct array, but the v5 schema expects it wrapped in an object
+// API format: { "include": ["param1", "param2"] }
+// Schema format: { "include": { "list": ["param1", "param2"] } }
+func transformQueryStringJSON(jsonBytes []byte) []byte {
+	jsonStr := string(jsonBytes)
+	parsed := gjson.Parse(jsonStr)
+
+	// Navigate to rules array in the result
+	rules := parsed.Get("result.rules")
+	if !rules.Exists() || !rules.IsArray() {
+		return jsonBytes
+	}
+
+	modified := false
+	rules.ForEach(func(key, rule gjson.Result) bool {
+		rulePath := fmt.Sprintf("result.rules.%s", key.String())
+
+		// Check if action_parameters.cache_key.custom_key.query_string.include exists
+		includePath := rulePath + ".action_parameters.cache_key.custom_key.query_string.include"
+		includeValue := gjson.Get(jsonStr, includePath)
+
+		if includeValue.Exists() && includeValue.IsArray() {
+			// Transform array to object with "list" field
+			// Check if it's a wildcard case: ["*"]
+			if len(includeValue.Array()) == 1 && includeValue.Array()[0].String() == "*" {
+				// Convert ["*"] to { "all": true }
+				newInclude := map[string]interface{}{
+					"all": true,
+				}
+				jsonStr, _ = sjson.Set(jsonStr, includePath, newInclude)
+				modified = true
+			} else {
+				// Convert ["item1", "item2"] to { "list": ["item1", "item2"] }
+				newInclude := map[string]interface{}{
+					"list": includeValue.Value(),
+				}
+				jsonStr, _ = sjson.Set(jsonStr, includePath, newInclude)
+				modified = true
+			}
+		}
+
+		// Also handle exclude if present
+		excludePath := rulePath + ".action_parameters.cache_key.custom_key.query_string.exclude"
+		excludeValue := gjson.Get(jsonStr, excludePath)
+
+		if excludeValue.Exists() && excludeValue.IsArray() {
+			// Convert ["item1", "item2"] to { "list": ["item1", "item2"] }
+			newExclude := map[string]interface{}{
+				"list": excludeValue.Value(),
+			}
+			jsonStr, _ = sjson.Set(jsonStr, excludePath, newExclude)
+			modified = true
+		}
+
+		return true
+	})
+
+	if modified {
+		return []byte(jsonStr)
+	}
+	return jsonBytes
 }

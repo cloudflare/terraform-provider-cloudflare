@@ -161,10 +161,19 @@ func TestAccPreCheck_Pages(t *testing.T) {
 	}
 }
 
-// Test helper method checking `CLOUDFLARE_BYO_IP_PREFIX_ID` is present.
+// Test helper method checking all required environment variables for BYOIP
+// acceptance tests are present.
 func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
-		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")
+	requiredKeys := []string{
+		"CLOUDFLARE_BYO_IP_CIDR",
+		"CLOUDFLARE_BYO_IP_ASN",
+		"CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID",
+	}
+
+	for _, k := range requiredKeys {
+		if os.Getenv(k) == "" {
+			t.Skipf("%s must be set for this acceptance test", k)
+		}
 	}
 }
 
@@ -391,6 +400,16 @@ func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req pl
 				}
 			}
 
+			// Special handling for map attributes that may contain json.Number types or DynamicAttribute fields
+			// This applies to all resources, not just dns_record, to handle Terraform state type variations
+			if beforeMap, ok := beforeValue.(map[string]interface{}); ok {
+				if afterMap, ok := afterValue.(map[string]interface{}); ok {
+					if areMapsSemanticallySame(beforeMap, afterMap) {
+						continue // Maps are semantically equivalent
+					}
+				}
+			}
+
 			// Allow changes from falsey to null
 			if afterValue == nil {
 				if isFalseyValue(beforeValue) {
@@ -574,6 +593,94 @@ func isFalseyValue(v interface{}) bool {
 		}
 		return true
 	}
+}
+
+// areMapsSemanticallySame compares two map values for semantic equality.
+// This handles the case where reflect.DeepEqual fails on maps that are semantically identical
+// but represented differently in memory (e.g., different object instances with same content).
+func areMapsSemanticallySame(before, after interface{}) bool {
+	beforeMap, beforeOk := before.(map[string]interface{})
+	afterMap, afterOk := after.(map[string]interface{})
+
+	if !beforeOk || !afterOk {
+		// If either isn't a map, fall back to reflect.DeepEqual
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Check if maps have the same keys
+	if len(beforeMap) != len(afterMap) {
+		return false
+	}
+
+	// Check each key-value pair
+	for key, beforeVal := range beforeMap {
+		afterVal, exists := afterMap[key]
+		if !exists {
+			return false
+		}
+
+		// For nested maps (like DynamicAttribute structures), recurse
+		if beforeMapNested, ok := beforeVal.(map[string]interface{}); ok {
+			if afterMapNested, ok := afterVal.(map[string]interface{}); ok {
+				if !areMapsSemanticallySame(beforeMapNested, afterMapNested) {
+					return false
+				}
+				continue
+			}
+		}
+
+		// For nil values, both must be nil
+		if beforeVal == nil && afterVal == nil {
+			continue
+		}
+		if beforeVal == nil || afterVal == nil {
+			return false
+		}
+
+		// Handle json.Number type specially - convert to string for comparison
+		// This handles cases where state has json.Number but plan has string or vice versa
+		beforeStr, beforeIsJSONNumber := beforeVal.(json.Number)
+		afterStr, afterIsJSONNumber := afterVal.(json.Number)
+
+		if beforeIsJSONNumber || afterIsJSONNumber {
+			// At least one is json.Number - compare string representations
+			var beforeAsString, afterAsString string
+			if beforeIsJSONNumber {
+				beforeAsString = string(beforeStr)
+			} else if str, ok := beforeVal.(string); ok {
+				beforeAsString = str
+			} else {
+				beforeAsString = fmt.Sprintf("%v", beforeVal)
+			}
+
+			if afterIsJSONNumber {
+				afterAsString = string(afterStr)
+			} else if str, ok := afterVal.(string); ok {
+				afterAsString = str
+			} else {
+				afterAsString = fmt.Sprintf("%v", afterVal)
+			}
+
+			if beforeAsString != afterAsString {
+				return false
+			}
+			continue // Values are semantically equal
+		}
+
+		// Compare types first
+		beforeType := reflect.TypeOf(beforeVal)
+		afterType := reflect.TypeOf(afterVal)
+		if beforeType != afterType {
+			return false
+		}
+
+		// For other values, use reflect.DeepEqual
+		if !reflect.DeepEqual(beforeVal, afterVal) {
+			return false
+		}
+	}
+
+	return true
 }
 
 var ExpectEmptyPlanExceptFalseyToNull = expectEmptyPlanExceptFalseyToNull{}

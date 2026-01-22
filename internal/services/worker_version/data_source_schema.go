@@ -56,6 +56,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).",
 				Computed:    true,
 			},
+			"main_script_base64": schema.StringAttribute{
+				Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules).",
+				Computed:    true,
+			},
 			"number": schema.Int64Attribute{
 				Description: "The integer version number, starting from one.",
 				Computed:    true,

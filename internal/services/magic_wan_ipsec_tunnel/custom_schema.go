@@ -5,14 +5,18 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func customResourceSchema(ctx context.Context) schema.Schema {
@@ -56,6 +60,44 @@ func customResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A randomly generated or provided string for use in the IPsec tunnel.",
 				Optional:    true,
 				Sensitive:   true,
+			},
+			"bgp": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"customer_asn": schema.Int64Attribute{
+						Description: "ASN used on the customer end of the BGP session",
+						Required:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(0),
+						},
+					},
+					"extra_prefixes": schema.ListAttribute{
+						Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
+						Optional:    true,
+						Computed:    true,
+						ElementType: types.StringType,
+						Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
+					},
+					"md5_key": schema.StringAttribute{
+						Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
+						Optional:    true,
+					},
+				},
+			},
+			"custom_remote_identities": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"fqdn_id": schema.StringAttribute{
+						Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
+						Optional:    true,
+					},
+				},
+			},
+			"automatic_return_routing": schema.BoolAttribute{
+				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+				Computed:    true,
+				Optional:    true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"replay_protection": schema.BoolAttribute{
 				Description:   "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
@@ -136,6 +178,51 @@ func customResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The date and time the tunnel was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"bgp_status": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelBGPStatusModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"state": schema.StringAttribute{
+						Description: `Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"BGP_DOWN",
+								"BGP_UP",
+								"BGP_ESTABLISHING",
+							),
+						},
+					},
+					"tcp_established": schema.BoolAttribute{
+						Computed: true,
+					},
+					"updated_at": schema.StringAttribute{
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
+					},
+					"bgp_state": schema.StringAttribute{
+						Computed: true,
+					},
+					"cf_speaker_ip": schema.StringAttribute{
+						Computed: true,
+					},
+					"cf_speaker_port": schema.Int64Attribute{
+						Computed: true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 65535),
+						},
+					},
+					"customer_speaker_ip": schema.StringAttribute{
+						Computed: true,
+					},
+					"customer_speaker_port": schema.Int64Attribute{
+						Computed: true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 65535),
+						},
+					},
+				},
 			},
 			"psk_metadata": schema.SingleNestedAttribute{
 				Description: "The PSK metadata that includes when the PSK was generated.",

@@ -187,6 +187,10 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 	if env.Result.ReplayProtection.IsNull() {
 		env.Result.ReplayProtection = types.BoolValue(false)
 	}
+	if env.Result.AutomaticReturnRouting.IsNull() {
+		env.Result.AutomaticReturnRouting = types.BoolValue(false)
+	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

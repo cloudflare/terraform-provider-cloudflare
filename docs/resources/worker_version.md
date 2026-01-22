@@ -101,6 +101,7 @@ Available values: "standard", "bundled", "unbound".
 
 - `created_on` (String) When the version was created.
 - `id` (String) Version identifier.
+- `main_script_base64` (String) The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.
 - `number` (Number) The integer version number, starting from one.
 - `source` (String) The client used to create the version.
 - `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).

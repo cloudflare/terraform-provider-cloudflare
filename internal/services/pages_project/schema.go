@@ -46,10 +46,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Production branch of the project. Used to identify production deployments.",
 				Required:    true,
 			},
-			"build_config": schema.SingleNestedAttribute{
-				Description: "Configs for the project build process.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
+		"build_config": schema.SingleNestedAttribute{
+			Description: "Configs for the project build process.",
+			Optional:    true,
+			Computed:    true,
+			Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
 						Computed:    true,
@@ -917,26 +918,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:   true,
 								CustomType: customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentSourceConfigModel](ctx),
 								Attributes: map[string]schema.Attribute{
-									"owner": schema.StringAttribute{
-										Description: "The owner of the repository.",
-										Computed:    true,
-									},
-									"pr_comments_enabled": schema.BoolAttribute{
-										Description: "Whether to enable PR comments.",
-										Computed:    true,
-									},
-									"production_branch": schema.StringAttribute{
-										Description: "The production branch of the repository.",
-										Computed:    true,
-									},
-									"repo_name": schema.StringAttribute{
-										Description: "The name of the repository.",
-										Computed:    true,
-									},
 									"deployments_enabled": schema.BoolAttribute{
 										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 										Computed:           true,
 										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+									},
+									"owner": schema.StringAttribute{
+										Description: "The owner of the repository.",
+										Computed:    true,
 									},
 									"owner_id": schema.StringAttribute{
 										Description: "The owner ID of the repository.",
@@ -953,6 +942,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Description: "Whether to enable PR comments.",
+										Computed:    true,
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -977,12 +970,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											),
 										},
 									},
+									"production_branch": schema.StringAttribute{
+										Description: "The production branch of the repository.",
+										Computed:    true,
+									},
 									"production_deployments_enabled": schema.BoolAttribute{
 										Description: "Whether to trigger a production deployment on commits to the production branch.",
 										Computed:    true,
 									},
 									"repo_id": schema.StringAttribute{
 										Description: "The ID of the repository.",
+										Computed:    true,
+									},
+									"repo_name": schema.StringAttribute{
+										Description: "The name of the repository.",
 										Computed:    true,
 									},
 								},
@@ -1245,26 +1246,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:   true,
 								CustomType: customfield.NewNestedObjectType[PagesProjectLatestDeploymentSourceConfigModel](ctx),
 								Attributes: map[string]schema.Attribute{
-									"owner": schema.StringAttribute{
-										Description: "The owner of the repository.",
-										Computed:    true,
-									},
-									"pr_comments_enabled": schema.BoolAttribute{
-										Description: "Whether to enable PR comments.",
-										Computed:    true,
-									},
-									"production_branch": schema.StringAttribute{
-										Description: "The production branch of the repository.",
-										Computed:    true,
-									},
-									"repo_name": schema.StringAttribute{
-										Description: "The name of the repository.",
-										Computed:    true,
-									},
 									"deployments_enabled": schema.BoolAttribute{
 										Description:        "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.",
 										Computed:           true,
 										DeprecationMessage: "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control.",
+									},
+									"owner": schema.StringAttribute{
+										Description: "The owner of the repository.",
+										Computed:    true,
 									},
 									"owner_id": schema.StringAttribute{
 										Description: "The owner ID of the repository.",
@@ -1281,6 +1270,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Description: "Whether to enable PR comments.",
+										Computed:    true,
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
@@ -1305,12 +1298,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											),
 										},
 									},
+									"production_branch": schema.StringAttribute{
+										Description: "The production branch of the repository.",
+										Computed:    true,
+									},
 									"production_deployments_enabled": schema.BoolAttribute{
 										Description: "Whether to trigger a production deployment on commits to the production branch.",
 										Computed:    true,
 									},
 									"repo_id": schema.StringAttribute{
 										Description: "The ID of the repository.",
+										Computed:    true,
+									},
+									"repo_name": schema.StringAttribute{
+										Description: "The name of the repository.",
 										Computed:    true,
 									},
 								},

@@ -64,7 +64,7 @@ Read-Only:
 - `externally_managed` (Boolean) Whether this rate plan is managed externally from Cloudflare.
 - `is_contract` (Boolean) Whether a rate plan is enterprise-based (or newly adopted term contract).
 - `public_name` (String) The full name of the rate plan.
-- `sets` (List of String) The list of sets this rate plan applies to.
+- `sets` (List of String) The list of sets this rate plan applies to. Returns array of strings.
 
 ## Import
 

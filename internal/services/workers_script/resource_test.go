@@ -67,7 +67,7 @@ func testSweepCloudflareWorkerScripts(r string) error {
 	}
 
 	for _, script := range list.Result {
-		// Use standard filtering helper
+		// Use standard filtering helper to only delete test worker scripts
 		if !utils.ShouldSweepResource(script.ID) {
 			continue
 		}

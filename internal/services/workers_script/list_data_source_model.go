@@ -81,9 +81,12 @@ type WorkersScriptsObservabilityLogsDataSourceModel struct {
 }
 
 type WorkersScriptsPlacementDataSourceModel struct {
-	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
 	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
+	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
 	Status         types.String      `tfsdk:"status" json:"status,computed"`
+	Region         types.String      `tfsdk:"region" json:"region,computed"`
+	Hostname       types.String      `tfsdk:"hostname" json:"hostname,computed"`
+	Host           types.String      `tfsdk:"host" json:"host,computed"`
 }
 
 type WorkersScriptsRoutesDataSourceModel struct {

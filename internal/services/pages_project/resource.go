@@ -135,6 +135,13 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 
 	planDeploymentConfigs := data.DeploymentConfigs
 
+	// Convert nil binding maps to empty maps so the API deletes them.
+	data, diags := PrepareForUpdate(ctx, data, state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -411,6 +418,35 @@ func (r *PagesProjectResource) ModifyPlan(ctx context.Context, req resource.Modi
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
 
+// mergeBuildConfigFromState merges unknown or null fields from state into plan.
+// This handles the case where a user specifies build_config with only some fields,
+// and we need to preserve the computed values from state for the unspecified fields.
+func mergeBuildConfigFromState(plan, state *PagesProjectBuildConfigModel) {
+	if plan == nil || state == nil {
+		return
+	}
+
+	// For each field, if the plan value is unknown or null, use the state value
+	if plan.BuildCaching.IsUnknown() || plan.BuildCaching.IsNull() {
+		plan.BuildCaching = state.BuildCaching
+	}
+	if plan.BuildCommand.IsUnknown() || plan.BuildCommand.IsNull() {
+		plan.BuildCommand = state.BuildCommand
+	}
+	if plan.DestinationDir.IsUnknown() || plan.DestinationDir.IsNull() {
+		plan.DestinationDir = state.DestinationDir
+	}
+	if plan.RootDir.IsUnknown() || plan.RootDir.IsNull() {
+		plan.RootDir = state.RootDir
+	}
+	if plan.WebAnalyticsTag.IsUnknown() || plan.WebAnalyticsTag.IsNull() {
+		plan.WebAnalyticsTag = state.WebAnalyticsTag
+	}
+	if plan.WebAnalyticsToken.IsUnknown() || plan.WebAnalyticsToken.IsNull() {
+		plan.WebAnalyticsToken = state.WebAnalyticsToken
+	}
+}
+
 // NormalizeDeploymentConfigs normalizes empty pointer slices to null
 // to match API behavior and prevent drift during import/refresh
 func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*PagesProjectModel, diag.Diagnostics) {
@@ -421,25 +457,31 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 	}
 
 	// Normalize build_config to null if all fields are empty/null
+	// This handles the case where the API returns empty strings for build_config fields,
+	// which would otherwise cause "planned value for a non-computed attribute" errors
+	// when the user doesn't specify build_config in their configuration.
 	if data.BuildConfig != nil {
 		bc := data.BuildConfig
 		allFieldsEmpty := true
+		// For bool fields, check if not null and not unknown
 		if !bc.BuildCaching.IsNull() && !bc.BuildCaching.IsUnknown() {
 			allFieldsEmpty = false
 		}
-		if !bc.BuildCommand.IsNull() && !bc.BuildCommand.IsUnknown() {
+		// For string fields, check if not null, not unknown, AND not empty string
+		// The API often returns empty strings "" which are different from null
+		if !bc.BuildCommand.IsNull() && !bc.BuildCommand.IsUnknown() && bc.BuildCommand.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.DestinationDir.IsNull() && !bc.DestinationDir.IsUnknown() {
+		if !bc.DestinationDir.IsNull() && !bc.DestinationDir.IsUnknown() && bc.DestinationDir.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.RootDir.IsNull() && !bc.RootDir.IsUnknown() {
+		if !bc.RootDir.IsNull() && !bc.RootDir.IsUnknown() && bc.RootDir.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.WebAnalyticsTag.IsNull() && !bc.WebAnalyticsTag.IsUnknown() {
+		if !bc.WebAnalyticsTag.IsNull() && !bc.WebAnalyticsTag.IsUnknown() && bc.WebAnalyticsTag.ValueString() != "" {
 			allFieldsEmpty = false
 		}
-		if !bc.WebAnalyticsToken.IsNull() && !bc.WebAnalyticsToken.IsUnknown() {
+		if !bc.WebAnalyticsToken.IsNull() && !bc.WebAnalyticsToken.IsUnknown() && bc.WebAnalyticsToken.ValueString() != "" {
 			allFieldsEmpty = false
 		}
 		if allFieldsEmpty {
@@ -488,6 +530,17 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				previewModified = true
 			}
 
+			// Normalize empty placement to null
+			if previewValue.Placement != nil && (previewValue.Placement.Mode.IsNull() || previewValue.Placement.Mode.ValueString() == "") {
+				previewValue.Placement = nil
+				previewModified = true
+			}
+
+			// Normalize empty binding maps to nil
+			if normalizeEmptyMapsPreview(previewValue) {
+				previewModified = true
+			}
+
 			if previewModified {
 				configsValue.Preview, d = customfield.NewObject(ctx, previewValue)
 				diags.Append(d...)
@@ -507,6 +560,17 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 
 			if productionValue.CompatibilityFlags != nil && len(*productionValue.CompatibilityFlags) == 0 {
 				productionValue.CompatibilityFlags = nil
+				productionModified = true
+			}
+
+			// Normalize empty placement to null
+			if productionValue.Placement != nil && (productionValue.Placement.Mode.IsNull() || productionValue.Placement.Mode.ValueString() == "") {
+				productionValue.Placement = nil
+				productionModified = true
+			}
+
+			// Normalize empty binding maps to nil
+			if normalizeEmptyMapsProduction(productionValue) {
 				productionModified = true
 			}
 

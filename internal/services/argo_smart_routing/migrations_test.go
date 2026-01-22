@@ -243,3 +243,145 @@ resource "cloudflare_argo" "%[1]s" {
 		},
 	})
 }
+
+// TestMigrateArgoWithDependsOn tests migration with depends_on meta-argument
+func TestMigrateArgoWithDependsOn(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_argo_smart_routing." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with depends_on to test meta-argument preservation
+	v4Config := fmt.Sprintf(`
+variable "zone_id" {
+  type    = string
+  default = "%[2]s"
+}
+
+resource "cloudflare_argo" "%[1]s" {
+  zone_id       = var.zone_id
+  smart_routing = "on"
+
+  depends_on = [var.zone_id]
+}`, rnd, zoneID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.Bool(true)),
+			}),
+		},
+	})
+}
+
+// TestMigrateArgoWithLifecycle tests migration with lifecycle meta-argument
+func TestMigrateArgoWithLifecycle(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_argo_smart_routing." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with lifecycle block to test preservation
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_argo" "%[1]s" {
+  zone_id       = "%[2]s"
+  smart_routing = "on"
+
+  lifecycle {
+    ignore_changes = [smart_routing]
+  }
+}`, rnd, zoneID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.Bool(true)),
+			}),
+		},
+	})
+}
+
+// TestMigrateArgoWithConditional tests migration with conditional expression
+func TestMigrateArgoWithConditional(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_argo_smart_routing." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with conditional expression
+	v4Config := fmt.Sprintf(`
+variable "enable_smart_routing" {
+  type    = bool
+  default = true
+}
+
+resource "cloudflare_argo" "%[1]s" {
+  zone_id       = "%[2]s"
+  smart_routing = var.enable_smart_routing ? "on" : "off"
+}`, rnd, zoneID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state (should evaluate to "on" since default is true)
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.Bool(true)),
+			}),
+		},
+	})
+}

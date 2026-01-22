@@ -29,8 +29,16 @@ env:
   CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
   CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
   CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+  TEST_CLOUDFLARE_KV_NAMESPACE_ID: '933eee2a7f3e4c2db31770733d8bfb90'
+  TEST_CLOUDFLARE_D1_DATABASE_ID: '273c3daf-3caf-4428-8050-c01c0497ed07'
+  TEST_CLOUDFLARE_WORKER_NAME: 'do-not-delete-migration-test-worker'
+  TEST_CLOUDFLARE_DO_NAMESPACE_ID: "760c12fbc5164cd6bac2adeac77f84c9"
+  CLOUDFLARE_TENANT_ID: "87e3716205cc6db5aea009400a92941b"
   TF_ACC: 1
   TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+  CLOUDFLARE_BYO_IP_CIDR: 2606:54c2:3::/48
+  CLOUDFLARE_BYO_IP_ASN: 13335
+  CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID: c8af01b0dd8f4779980824d9a8c84136
 
 jobs:
   acceptance-tests:
@@ -40,10 +48,10 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          - name: magic
-            display_name: Magic
-            email: tf-acct-magic-magic@cfapi.net
-            api_key_secret: TF_ACCT_MAGIC_MAGIC_API_KEY
+          # - name: magic # commented out due to test account inconsistencies
+          #   display_name: Magic
+          #   email: tf-acct-magic-magic@cfapi.net
+          #   api_key_secret: TF_ACCT_MAGIC_MAGIC_API_KEY
           - name: organization
             display_name: Organization
             email: orgs-terraform-user@cfapi.net
@@ -133,10 +141,10 @@ jobs:
             display_name: Gateway and Policies
             email: tf-acct-zero-trust-gateway-and-policies@cfapi.net
             api_key_secret: TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_API_KEY
-          - name: dlp-config
-            display_name: DLP Config
-            email: tf-acct-zero-trust-dlp-config@cfapi.net
-            api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
+          # - name: dlp-config # commented out due to test account inconsistencies
+          #   display_name: DLP Config
+          #   email: tf-acct-zero-trust-dlp-config@cfapi.net
+          #   api_key_secret: TF_ACCT_ZERO_TRUST_DLP_CONFIG_API_KEY
           - name: access-core
             display_name: Access Core
             email: tf-acct-zero-trust-access-core@cfapi.net
@@ -169,10 +177,10 @@ jobs:
             display_name: Tunnel Devices
             email: tf-acct-tunnel-tunnel-devices@cfapi.net
             api_key_secret: TF_ACCT_TUNNEL_TUNNEL_DEVICES_API_KEY
-          - name: account-core
-            display_name: Account Core
-            email: tf-acct-account-account-core@cfapi.net
-            api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY
+          # - name: account-core  # commented out due to test account inconsistencies
+          #   display_name: Account Core
+          #   email: tf-acct-account-account-core@cfapi.net
+          #   api_key_secret: TF_ACCT_ACCOUNT_ACCOUNT_CORE_API_KEY
           - name: account-settings
             display_name: Account Settings
             email: tf-acct-account-account-settings@cfapi.net

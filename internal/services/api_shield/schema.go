@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Manages API Shield configuration properties for a zone, specifically auth ID characteristics.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -33,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "The name of the characteristic field, i.e., the header or cookie name.",
+							Description: "The name of the characteristic field, i.e., the header or cookie name. When using type \"jwt\", this must be a claim location expressed as `$(token_config_id):$(json_path)`, where `token_config_id` is the ID of the token configuration used in validating the JWT, and `json_path` is a RFC 9535 JSONPath expression.",
 							Required:    true,
 						},
 						"type": schema.StringAttribute{

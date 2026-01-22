@@ -490,6 +490,116 @@ func testAccCloudflareWorkerVersionConfigWithAssetsWithRunWorkerFirst(rnd, accou
 	return acctest.LoadTestCase("assets_with_run_worker_first.tf", rnd, accountID, assetsDir, workerFile, runWorkerFirst)
 }
 
+func testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, contentFile string) string {
+	return acctest.LoadTestCase("sensitive_bindings.tf", rnd, accountID, contentFile)
+}
+
+// TestAccCloudflareWorkerVersion_SensitiveBindingsImport tests that importing
+// with sensitive bindings (plain_text/secret_text) doesn't force replacement.
+func TestAccCloudflareWorkerVersion_SensitiveBindingsImport(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_worker_version." + rnd
+
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "index.js")
+
+	writeContentFile := func(t *testing.T, content string) {
+		err := os.WriteFile(contentFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(contentFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t, `export default {fetch() {return new Response()}}`)
+				},
+				Config: testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, contentFile),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("annotations"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
+						"workers_message": knownvalue.StringExact("Test import with annotations"),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("PLAIN_TEXT_VAR"),
+							"type": knownvalue.StringExact("plain_text"),
+							"text": knownvalue.StringExact("plain-text-value"),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("SECRET_VAR"),
+							"type": knownvalue.StringExact("secret_text"),
+							"text": knownvalue.StringExact("secret-value"),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("VERSION_METADATA"),
+							"type": knownvalue.StringExact("version_metadata"),
+						}),
+					})),
+				},
+			},
+			// Re-apply same config - expect no changes
+			{
+				Config: testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Import (API won't return sensitive text values)
+			{
+				ResourceName:            resourceName,
+				ImportStateIdFunc:       testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modules.0.content_file", "modules.0.content_base64", "bindings"},
+			},
+			// After import, applying config should NOT force replacement
+			{
+				Config: testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("PLAIN_TEXT_VAR"),
+							"type": knownvalue.StringExact("plain_text"),
+							"text": knownvalue.StringExact("plain-text-value"),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("SECRET_VAR"),
+							"type": knownvalue.StringExact("secret_text"),
+							"text": knownvalue.StringExact("secret-value"),
+						}),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("VERSION_METADATA"),
+							"type": knownvalue.StringExact("version_metadata"),
+						}),
+					})),
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareWorkerVersion_RunWorkerFirstUpgrade(t *testing.T) {
 	t.Parallel()
 
