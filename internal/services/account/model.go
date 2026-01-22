@@ -32,7 +32,7 @@ func (m AccountModel) MarshalJSONForUpdate(state AccountModel) (data []byte, err
 }
 
 type AccountUnitModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type AccountManagedByModel struct {
