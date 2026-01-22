@@ -28,6 +28,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
+			"script": schema.StringAttribute{
+				Computed: true,
+			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{

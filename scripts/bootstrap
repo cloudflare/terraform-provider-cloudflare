@@ -18,8 +18,8 @@ if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ] && [ "$SKIP_BREW" != "1" ] 
     echo
   }
 fi
-echo "==> Installing Go dependencies…"
 
+echo "==> Installing Go dependencies…"
 # Set GOPRIVATE if the repository appears to be private
 REPO_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://github.com/cloudflare/cloudflare-go)
 if [ "$REPO_STATUS" = "404" ]; then

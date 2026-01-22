@@ -5,6 +5,7 @@ package workers_kv
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -29,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"namespace_id": schema.StringAttribute{
 				Description: "Namespace identifier tag.",
 				Required:    true,
+			},
+			"value": schema.StringAttribute{
+				Computed:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

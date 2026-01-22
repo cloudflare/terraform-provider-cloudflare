@@ -18,6 +18,7 @@ type ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredTokenDataSourceModel struct {
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	Token     types.String `tfsdk:"token" json:"token,computed"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredTokenGetParams, diags diag.Diagnostics) {
