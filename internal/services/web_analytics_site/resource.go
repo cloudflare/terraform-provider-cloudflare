@@ -260,8 +260,6 @@ func (r *WebAnalyticsSiteResource) ImportState(ctx context.Context, req resource
 		data.ZoneTag = zoneTag.(types.String)
 	}
 
-	resp.Diagnostics.AddWarning("data obj", fmt.Sprintf("%+v", data))
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
