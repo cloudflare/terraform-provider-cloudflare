@@ -255,6 +255,10 @@ func (r *WebAnalyticsSiteResource) ImportState(ctx context.Context, req resource
 	}
 	data = &env.Result
 	data.ID = data.SiteTag
+	attributes := env.Result.Ruleset.Attributes()
+	if zoneTag, ok := attributes["zone_tag"]; ok && !zoneTag.IsNull() && zoneTag.Type(ctx) == types.StringType {
+		data.ZoneTag = zoneTag.(types.String)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

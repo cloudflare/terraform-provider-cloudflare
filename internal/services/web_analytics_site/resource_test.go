@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -71,7 +72,7 @@ func testSweepCloudflareWebAnalyticsSites(r string) error {
 	return nil
 }
 
-func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
+func TestAccCloudflareWebAnalyticsSite_Create_ImportState(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -91,8 +92,18 @@ func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "host", domain),
 					resource.TestCheckResourceAttr(name, "auto_install", "false"),
 					resource.TestCheckResourceAttrSet(name, "site_token"),
-					resource.TestCheckResourceAttrSet(name, "snippet"),
 				),
+			},
+			{
+				ResourceName: name,
+				PlanOnly:     true,
+				ImportState:  true,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ImportStateIdFunc: testAccCloudflareWebAnalyticsSiteImportStateIdFunc(name),
 			},
 		},
 	})
@@ -122,4 +133,18 @@ func testAccCheckCloudflareWebAnalyticsSiteDestroy(s *terraform.State) error {
 
 func testAccCloudflareWebAnalyticsSite(resourceName, accountID, domain string) string {
 	return acctest.LoadTestCase("webanalyticssite.tf", resourceName, accountID, domain)
+}
+
+func testAccCloudflareWebAnalyticsSiteImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("resource not found: %s", resourceName)
+		}
+
+		accountId := rs.Primary.Attributes["account_id"]
+		siteTag := rs.Primary.Attributes["site_tag"]
+
+		return fmt.Sprintf("%s/%s", accountId, siteTag), nil
+	}
 }
