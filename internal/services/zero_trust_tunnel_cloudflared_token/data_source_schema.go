@@ -25,6 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"token": schema.StringAttribute{
 				Description: "The Tunnel Token is used as a mechanism to authenticate the operation of a tunnel.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

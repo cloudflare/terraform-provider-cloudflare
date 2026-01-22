@@ -106,7 +106,7 @@ func (d *WorkersScriptDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &data.Script)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
