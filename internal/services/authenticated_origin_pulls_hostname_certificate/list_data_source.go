@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package authenticated_origin_pulls_certificate
+package authenticated_origin_pulls_hostname_certificate
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type AuthenticatedOriginPullsCertificatesDataSource struct {
+type AuthenticatedOriginPullsHostnameCertificatesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*AuthenticatedOriginPullsCertificatesDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*AuthenticatedOriginPullsHostnameCertificatesDataSource)(nil)
 
-func NewAuthenticatedOriginPullsCertificatesDataSource() datasource.DataSource {
-	return &AuthenticatedOriginPullsCertificatesDataSource{}
+func NewAuthenticatedOriginPullsHostnameCertificatesDataSource() datasource.DataSource {
+	return &AuthenticatedOriginPullsHostnameCertificatesDataSource{}
 }
 
-func (d *AuthenticatedOriginPullsCertificatesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_authenticated_origin_pulls_certificates"
+func (d *AuthenticatedOriginPullsHostnameCertificatesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_authenticated_origin_pulls_hostname_certificates"
 }
 
-func (d *AuthenticatedOriginPullsCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AuthenticatedOriginPullsHostnameCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Configure(ctx context.C
 	d.client = client
 }
 
-func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *AuthenticatedOriginPullsCertificatesDataSourceModel
+func (d *AuthenticatedOriginPullsHostnameCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *AuthenticatedOriginPullsHostnameCertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 		return
 	}
 
-	env := AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope{}
+	env := AuthenticatedOriginPullsHostnameCertificatesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.OriginTLSClientAuth.ZoneCertificates.List(ctx, params)
+	page, err := d.client.OriginTLSClientAuth.HostnameCertificates.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[AuthenticatedOriginPullsCertificatesResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[AuthenticatedOriginPullsHostnameCertificatesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 
