@@ -69,9 +69,9 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
 	}
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
-	_, err = r.client.OriginTLSClientAuth.New(
+	_, err = r.client.OriginTLSClientAuth.ZoneCertificates.New(
 		ctx,
-		origin_tls_client_auth.OriginTLSClientAuthNewParams{
+		origin_tls_client_auth.ZoneCertificateNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -110,10 +110,10 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context, 
 	privateKey := data.PrivateKey
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
-	_, err := r.client.OriginTLSClientAuth.Get(
+	_, err := r.client.OriginTLSClientAuth.ZoneCertificates.Get(
 		ctx,
 		data.CertificateID.ValueString(),
-		origin_tls_client_auth.OriginTLSClientAuthGetParams{
+		origin_tls_client_auth.ZoneCertificateGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -150,10 +150,10 @@ func (r *AuthenticatedOriginPullsCertificateResource) Delete(ctx context.Context
 		return
 	}
 
-	_, err := r.client.OriginTLSClientAuth.Delete(
+	_, err := r.client.OriginTLSClientAuth.ZoneCertificates.Delete(
 		ctx,
 		data.CertificateID.ValueString(),
-		origin_tls_client_auth.OriginTLSClientAuthDeleteParams{
+		origin_tls_client_auth.ZoneCertificateDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
