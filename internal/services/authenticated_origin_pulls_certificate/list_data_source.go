@@ -67,7 +67,7 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.OriginTLSClientAuth.ZoneCertificates.List(ctx, params)
+	page, err := d.client.OriginTLSClientAuth.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

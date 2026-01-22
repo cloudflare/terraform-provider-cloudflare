@@ -65,7 +65,7 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsCertificateResultDataSourceEnvelope{*data}
-	_, err := d.client.OriginTLSClientAuth.ZoneCertificates.Get(
+	_, err := d.client.OriginTLSClientAuth.Get(
 		ctx,
 		data.CertificateID.ValueString(),
 		params,
