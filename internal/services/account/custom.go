@@ -4,18 +4,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 func (m *AccountModel) marshalCustom() (data []byte, err error) {
-	// Removing type data that is no longer accepted by the API
-	savedType := m.Type
-	m.Type = types.StringNull()
-	bytes, err := apijson.MarshalRoot(m)
-	// Adding it back
-	m.Type = savedType
-	return bytes, err
+	return apijson.MarshalRoot(m)
 }
 
 func (m *AccountModel) marshalCustomForUpdate(state AccountModel) (data []byte, err error) {
@@ -29,34 +23,40 @@ func (m *AccountModel) marshalCustomForUpdate(state AccountModel) (data []byte, 
 }
 
 func unmarshalCustom(bytes []byte, configuredModel *AccountModel) (*AccountModel, error) {
-	env := AccountResultEnvelope{}
-	err := apijson.Unmarshal(bytes, &env)
-	if err != nil {
+	var env AccountResultEnvelope
+	if err := apijson.Unmarshal(bytes, &env); err != nil {
 		return nil, err
 	}
-	// Setting type to whatever the configured type is to avoid state/drift issues
-	env.Result.Type = configuredModel.Type
+	result := &env.Result
 
-	if !env.Result.ManagedBy.IsNull() && !env.Result.ManagedBy.IsUnknown() {
-		var managedBy AccountManagedByModel
-		_ = env.Result.ManagedBy.As(context.Background(), &managedBy, basetypes.ObjectAsOptions{})
+	return parseUnitAndManagedBy(context.Background(), bytes, result)
+}
 
-		// Check if the user has 'unit' block in their HCL
-		isUnitInConfig := configuredModel.Unit != nil
-		// Identify an Import: the HCL is empty. Since 'name' is Required, if it's Null in the config but we have an ID in the result, it's an import.
-		isImport := configuredModel.Name.IsNull() && !env.Result.ID.IsNull()
-		// Identify an existing resource (Read/Update): We can check if the ID is already present in "Result"
-		isExisting := !env.Result.ID.IsNull() && !env.Result.ID.IsUnknown()
-
-		if (isImport || (isExisting && isUnitInConfig)) && !managedBy.ParentOrgID.IsNull() {
-			env.Result.Unit = &AccountUnitModel{
-				ID: managedBy.ParentOrgID,
-			}
-		} else {
-			// During a fresh 'Create', isExisting is false or we fall through here.
-			env.Result.Unit = nil
-		}
+func parseUnitAndManagedBy(ctx context.Context, bytes []byte, result *AccountModel) (*AccountModel, error) {
+	// Manually extract parent_org_id from the response JSON
+	var fullResponse struct {
+		Result struct {
+			ManagedBy struct {
+				ParentOrgID types.String `json:"parent_org_id"`
+			} `json:"managed_by"`
+		} `json:"result"`
 	}
 
-	return &env.Result, nil
+	if err := apijson.Unmarshal(bytes, &fullResponse); err != nil {
+		return nil, err
+	}
+
+	// Direct mapping: Whenever parent_org_id is not null, map it to unit.id
+	if !fullResponse.Result.ManagedBy.ParentOrgID.IsNull() {
+		unit := AccountUnitModel{
+			ID: fullResponse.Result.ManagedBy.ParentOrgID,
+		}
+
+		unitAttrTypes := map[string]attr.Type{"id": types.StringType}
+		unitObj, _ := types.ObjectValueFrom(ctx, unitAttrTypes, unit)
+
+		result.Unit.ObjectValue = unitObj
+	}
+
+	return result, nil
 }

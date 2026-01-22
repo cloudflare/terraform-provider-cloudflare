@@ -15,9 +15,9 @@ type AccountResultEnvelope struct {
 
 type AccountModel struct {
 	ID        types.String                                    `tfsdk:"id" json:"id,computed"`
-	Unit      *AccountUnitModel                               `tfsdk:"unit" json:"unit,optional,no_refresh"`
+	Unit      customfield.NestedObject[AccountUnitModel]      `tfsdk:"unit" json:"unit,computed_optional"`
 	Name      types.String                                    `tfsdk:"name" json:"name,required"`
-	Type      types.String                                    `tfsdk:"type" json:"type,optional"`
+	Type      types.String                                    `tfsdk:"type" json:"type,computed_optional"`
 	ManagedBy customfield.NestedObject[AccountManagedByModel] `tfsdk:"managed_by" json:"managed_by,computed_optional"`
 	Settings  customfield.NestedObject[AccountSettingsModel]  `tfsdk:"settings" json:"settings,computed_optional"`
 	CreatedOn timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
