@@ -36,25 +36,6 @@ import (
  *    ✗ Cannot test v4→v5 migration directly (v4 Create fails)
  *    ✗ Cannot test multi-step workflows (unknown org values)
  *
- * 2. resource_test.go:
- *    ✓ Full CRUD operations (v5 Create calls Update internally, so it works)
- *    ✓ All field combinations
- *    ✓ login_design and custom_pages attributes
- *    ✓ Boolean defaults behavior
- *    ✓ Update operations
- *
- * 3. tf-migrate tests (in tf-migrate/):
- *    ✓ Actual v4→v5 migration transformations
- *    ✓ Resource rename: cloudflare_access_organization → cloudflare_zero_trust_organization
- *    ✓ Resource rename: cloudflare_zero_trust_access_organization → cloudflare_zero_trust_organization
- *    ✓ login_design: TypeList MaxItems:1 block → SingleNestedAttribute
- *    ✓ custom_pages: TypeList MaxItems:1 block → SingleNestedAttribute
- *    ✓ Boolean defaults: auto_redirect_to_identity, allow_authenticate_via_warp, is_ui_read_only
- *    ✓ Config transformations (HCL rewriting)
- *    ✓ State transformations (JSON manipulation)
- *
- * This distributed approach provides comprehensive coverage despite the import-only limitation.
- *
  * ═══════════════════════════════════════════════════════════════════════════════
  * REAL-WORLD MIGRATION WORKFLOW
  * ═══════════════════════════════════════════════════════════════════════════════
