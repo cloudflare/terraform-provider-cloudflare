@@ -64,6 +64,9 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// Preserve plan data for write-only fields
+	planData := *data
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -92,6 +95,12 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 	}
 	data = &env.Result
 
+	// Preserve write-only fields from plan since API never returns them
+	preserveWriteOnlyFields(&planData, data)
+
+	// Normalize API response to match plan when values are semantically equivalent
+	normalizeAPIResponse(&planData, data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -111,6 +120,9 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Preserve plan data for write-only fields
+	planData := *data
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -141,6 +153,12 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	}
 	data = &env.Result
 
+	// Preserve write-only fields from plan since API never returns them
+	preserveWriteOnlyFields(&planData, data)
+
+	// Normalize API response to match plan when values are semantically equivalent
+	normalizeAPIResponse(&planData, data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -152,6 +170,9 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Preserve state for write-only fields and optional fields
+	stateData := *data
 
 	res := new(http.Response)
 	env := HyperdriveConfigResultEnvelope{*data}
@@ -180,6 +201,12 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+
+	// Preserve write-only fields from state since API never returns them
+	preserveWriteOnlyFields(&stateData, data)
+
+	// Normalize API response to match state when values are semantically equivalent
+	normalizeAPIResponse(&stateData, data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -254,6 +281,6 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *HyperdriveConfigResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *HyperdriveConfigResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, resp)
 }
