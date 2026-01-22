@@ -23,8 +23,8 @@ type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
 	Result   customfield.NestedObjectList[AuthenticatedOriginPullsCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams(_ context.Context) (params origin_tls_client_auth.ZoneCertificateListParams, diags diag.Diagnostics) {
-	params = origin_tls_client_auth.ZoneCertificateListParams{
+func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams(_ context.Context) (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.OriginTLSClientAuthListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

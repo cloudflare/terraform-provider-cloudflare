@@ -30,8 +30,8 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	UploadedOn    timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 }
 
-func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.ZoneCertificateGetParams, diags diag.Diagnostics) {
-	params = origin_tls_client_auth.ZoneCertificateGetParams{
+func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.OriginTLSClientAuthGetParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.OriginTLSClientAuthGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
