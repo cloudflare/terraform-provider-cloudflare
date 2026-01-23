@@ -406,13 +406,13 @@ resource "cloudflare_access_application" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.43.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run v2 migration from v4 to v5
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.43.0", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
