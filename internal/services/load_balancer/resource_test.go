@@ -1023,3 +1023,174 @@ func testAccCheckCloudflareLoadBalancerConfigRules(zoneID, zone, id string) stri
 func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
 	return acctest.LoadTestCase("loadbalancerpoolconfigbasic.tf", id, accountID)
 }
+
+// TestAccLoadBalancer_RegionPoolsRemovalWithPoolDeletion tests the fix for the bug
+// where removing region_pools and deleting pools in a single apply causes error 1005.
+// This is User Story 1 (P1) - the core bug fix.
+func TestAccLoadBalancer_RegionPoolsRemovalWithPoolDeletion(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create load balancer with region_pools and the pools
+				Config: testAccLoadBalancerConfigWithRegionPools(zoneID, zone, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					resource.TestCheckResourceAttr(name, "description", "tf-acctest load balancer with region pools"),
+					resource.TestCheckResourceAttr(name, "steering_policy", "geo"),
+					resource.TestCheckResourceAttr(name, "region_pools.%", "2"), // WNAM and OC regions
+				),
+			},
+			{
+				// Step 2: Remove region_pools and delete the pools in a single apply
+				// This is the critical test - should NOT fail with error 1005
+				Config: testAccLoadBalancerConfigWithoutRegionPools(zoneID, zone, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					resource.TestCheckResourceAttr(name, "description", "tf-acctest load balancer without region pools"),
+					resource.TestCheckResourceAttr(name, "steering_policy", "dynamic"),
+					resource.TestCheckNoResourceAttr(name, "region_pools.%"), // region_pools removed
+				),
+			},
+		},
+	})
+}
+
+// testAccLoadBalancerConfigWithRegionPools creates a load balancer with region_pools
+// configuration that references two pools (CA and SG) across different regions.
+func testAccLoadBalancerConfigWithRegionPools(zoneID, zone, id, accountID string) string {
+	return fmt.Sprintf(`
+# Create pools that will be referenced in region_pools
+resource "cloudflare_load_balancer_pool" "test_pool_ca_%[3]s" {
+  account_id = "%[4]s"
+  name       = "tf-acctest-pool-ca-%[3]s"
+  description = "CA region pool for region_pools test"
+  enabled    = true
+  minimum_origins = 1
+
+  origins {
+    name    = "origin-ca"
+    address = "192.0.2.1"
+    enabled = true
+  }
+
+  check_regions = ["WEU"]
+}
+
+resource "cloudflare_load_balancer_pool" "test_pool_sg_%[3]s" {
+  account_id = "%[4]s"
+  name       = "tf-acctest-pool-sg-%[3]s"
+  description = "SG region pool for region_pools test"
+  enabled    = true
+  minimum_origins = 1
+
+  origins {
+    name    = "origin-sg"
+    address = "192.0.2.2"
+    enabled = true
+  }
+
+  check_regions = ["WEU"]
+}
+
+# Create a default pool (remains throughout the test)
+resource "cloudflare_load_balancer_pool" "test_pool_default_%[3]s" {
+  account_id = "%[4]s"
+  name       = "tf-acctest-pool-default-%[3]s"
+  description = "Default pool for region_pools test"
+  enabled    = true
+  minimum_origins = 1
+
+  origins {
+    name    = "origin-default"
+    address = "192.0.2.10"
+    enabled = true
+  }
+
+  check_regions = ["WEU"]
+}
+
+# Load balancer with region_pools configuration
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id        = "%[1]s"
+  name           = "tf-acctest-lb-%[3]s.%[2]s"
+  description    = "tf-acctest load balancer with region pools"
+  default_pools  = [cloudflare_load_balancer_pool.test_pool_default_%[3]s.id]
+  fallback_pool  = cloudflare_load_balancer_pool.test_pool_default_%[3]s.id
+  steering_policy = "geo"
+  proxied        = true
+  ttl            = 30
+
+  # Geographic steering with region_pools
+  region_pools {
+    region   = "WNAM"
+    pool_ids = [
+      cloudflare_load_balancer_pool.test_pool_ca_%[3]s.id,
+      cloudflare_load_balancer_pool.test_pool_default_%[3]s.id
+    ]
+  }
+
+  region_pools {
+    region   = "OC"
+    pool_ids = [
+      cloudflare_load_balancer_pool.test_pool_sg_%[3]s.id,
+      cloudflare_load_balancer_pool.test_pool_default_%[3]s.id
+    ]
+  }
+}
+`, zoneID, zone, id, accountID)
+}
+
+// testAccLoadBalancerConfigWithoutRegionPools creates the same load balancer
+// WITHOUT region_pools and WITHOUT the CA/SG pool resources.
+// This tests the scenario where region_pools is removed and pools are deleted
+// in a single apply - the core bug fix scenario.
+func testAccLoadBalancerConfigWithoutRegionPools(zoneID, zone, id, accountID string) string {
+	return fmt.Sprintf(`
+# Default pool remains (not deleted)
+resource "cloudflare_load_balancer_pool" "test_pool_default_%[3]s" {
+  account_id = "%[4]s"
+  name       = "tf-acctest-pool-default-%[3]s"
+  description = "Default pool for region_pools test"
+  enabled    = true
+  minimum_origins = 1
+
+  origins {
+    name    = "origin-default"
+    address = "192.0.2.10"
+    enabled = true
+  }
+
+  check_regions = ["WEU"]
+}
+
+# NOTE: test_pool_ca and test_pool_sg resources are REMOVED from configuration
+# This causes them to be deleted in the same apply where region_pools is removed
+
+# Load balancer WITHOUT region_pools configuration
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id        = "%[1]s"
+  name           = "tf-acctest-lb-%[3]s.%[2]s"
+  description    = "tf-acctest load balancer without region pools"
+  default_pools  = [cloudflare_load_balancer_pool.test_pool_default_%[3]s.id]
+  fallback_pool  = cloudflare_load_balancer_pool.test_pool_default_%[3]s.id
+  steering_policy = "dynamic"  # Changed from "geo" to "dynamic"
+  proxied        = true
+  ttl            = 30
+
+  # region_pools configuration REMOVED
+  # The pools referenced in region_pools are also DELETED from configuration
+  # This is the scenario that triggers error 1005 before the fix
+}
+`, zoneID, zone, id, accountID)
+}
