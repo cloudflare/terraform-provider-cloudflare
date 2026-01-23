@@ -22,6 +22,7 @@ func TestMigrateDNSRecordBasicA(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-a-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -55,7 +56,7 @@ resource "cloudflare_record" "%[1]s" {
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Resource should be renamed to cloudflare_dns_record
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("A")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("52.152.96.252")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("ttl"), knownvalue.Float64Exact(1)),
@@ -73,6 +74,7 @@ func TestMigrateDNSRecordCAARecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-caa-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	// V4 config with data as a block - based on oaistatic_com/dns.tf
 	v4Config := fmt.Sprintf(`
@@ -110,7 +112,7 @@ resource "cloudflare_record" "%[1]s" {
 			// Step 2: Run migration and verify state
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("CAA")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("ttl"), knownvalue.Float64Exact(1)),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("proxied"), knownvalue.Bool(false)),
@@ -130,6 +132,7 @@ func TestMigrateDNSRecordMXRecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-mx-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -158,7 +161,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("MX")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("mail.example.com")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("priority"), knownvalue.Float64Exact(10)),
@@ -173,6 +176,7 @@ func TestMigrateDNSRecordSRVRecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("_sip._tcp.tf-test-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -190,21 +194,21 @@ resource "cloudflare_record" "%[1]s" {
 }`, rnd, zoneID, name)
 
 	// V5 config needs priority at root level
-	v5Config := fmt.Sprintf(`
-resource "cloudflare_dns_record" "%[1]s" {
-  zone_id = "%[2]s"
-  name    = "%[3]s"
-  type    = "SRV"
-  ttl     = 3600
-  priority = 10
-  
-  data = {
-    priority = 10
-    weight   = 60
-    port     = 5060
-    target   = "sipserver.example.com"
-  }
-}`, rnd, zoneID, name)
+	//	v5Config := fmt.Sprintf(`
+	//resource "cloudflare_dns_record" "%[1]s" {
+	//  zone_id = "%[2]s"
+	//  name    = "%[3]s"
+	//  type    = "SRV"
+	//  ttl     = 3600
+	//  priority = 10
+	//
+	//  data = {
+	//    priority = 10
+	//    weight   = 60
+	//    port     = 5060
+	//    target   = "sipserver.example.com"
+	//  }
+	//}`, rnd, zoneID, name)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -222,9 +226,9 @@ resource "cloudflare_dns_record" "%[1]s" {
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v5Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("SRV")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("priority"), knownvalue.Float64Exact(10)),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("data").AtMapKey("priority"), knownvalue.Float64Exact(10)),
@@ -242,6 +246,7 @@ func TestMigrateDNSRecordTXTRecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-txt-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	// V4 config - based on oaiusercontent_com/dns.tf
 	v4Config := fmt.Sprintf(`
@@ -272,7 +277,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("TXT")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("v=spf1 -all")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("ttl"), knownvalue.Float64Exact(1)),
@@ -288,6 +293,7 @@ func TestMigrateDNSRecordCNAMERecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-cname-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -318,7 +324,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("CNAME")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("abc-browser-external.foo.com")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("ttl"), knownvalue.Float64Exact(1)),
@@ -335,6 +341,7 @@ func TestMigrateDNSRecordWithAllowOverwrite(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-overwrite-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	// V4 config with allow_overwrite (should be removed in v5)
 	v4Config := fmt.Sprintf(`
@@ -365,7 +372,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("A")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("192.0.2.2")),
 				// allow_overwrite should not exist in v5 state
@@ -451,7 +458,7 @@ resource "cloudflare_record" "%[1]s_txt" {
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd+"_a", tfjsonpath.New("tags"), knownvalue.ListSizeExact(2)),
 
 				// CNAME record checks (value should be migrated to content)
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd+"_cname", tfjsonpath.New("content"), knownvalue.StringExact(fmt.Sprintf("api-%s.terraform.cfapi.net", rnd))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd+"_cname", tfjsonpath.New("content"), knownvalue.StringExact(fmt.Sprintf("api-%s.%s", rnd, "terraform.cfapi.net"))),
 
 				// CAA record checks
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd+"_caa", tfjsonpath.New("data").AtMapKey("flags"), knownvalue.Float64Exact(0)),
@@ -472,6 +479,7 @@ func TestMigrateDNSRecordAAAARecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-aaaa-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -500,7 +508,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("AAAA")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("2001:db8::1")),
 			}),
@@ -514,6 +522,7 @@ func TestMigrateDNSRecordNSRecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-ns-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -542,7 +551,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("NS")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("ns1.example.com")),
 			}),
@@ -556,6 +565,7 @@ func TestMigrateDNSRecordWithTags(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-tags-%s", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -585,7 +595,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("A")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("192.0.2.3")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("tags"), knownvalue.ListExact([]knownvalue.Check{
@@ -603,6 +613,7 @@ func TestMigrateDNSRecordPTRRecord(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("1.2.0.192.in-addr.%s.arpa", rnd)
 	tmpDir := t.TempDir()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	v4Config := fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
@@ -631,7 +642,7 @@ resource "cloudflare_record" "%[1]s" {
 			},
 			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.terraform.cfapi.net", name))),
+				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("PTR")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("example.com")),
 			}),
@@ -644,6 +655,7 @@ func TestMigrateDNSRecord_Issue6076(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("tf-test-6076-%s", rnd)
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	// Config that reproduces the issue
 	config := fmt.Sprintf(`
@@ -692,7 +704,7 @@ resource "cloudflare_dns_record" "%[1]s" {
 				Config:                   config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "zone_id", zoneID),
-					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "name", name+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "name", name+"."+domain),
 					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "type", "CNAME"),
 					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "content", "kay.ns.cloudflare.com"),
 					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "ttl", "1"),

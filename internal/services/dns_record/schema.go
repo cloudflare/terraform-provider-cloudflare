@@ -27,6 +27,7 @@ var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 4,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
