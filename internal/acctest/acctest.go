@@ -917,23 +917,24 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		t.Fatalf("tf-migrate binary not found at %s. Please set TF_MIGRATE_BINARY_PATH or ensure the binary is built.", migratorPath)
 	}
 
+	// TODO:: Needs to be commented so the state upgraders run
 	// Find state file in tmpDir
-	entries, err := os.ReadDir(tmpDir)
-	var stateDir string
-	if err != nil {
-		t.Logf("Failed to read test directory: %v", err)
-	} else {
-		for _, entry := range entries {
-			if entry.IsDir() {
-				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
-				for _, inner_entry := range inner_entries {
-					if inner_entry.Name() == "terraform.tfstate" {
-						stateDir = filepath.Join(tmpDir, entry.Name())
-					}
-				}
-			}
-		}
-	}
+	//entries, err := os.ReadDir(tmpDir)
+	//var stateDir string
+	//if err != nil {
+	//	t.Logf("Failed to read test directory: %v", err)
+	//} else {
+	//for _, entry := range entries {
+	//	if entry.IsDir() {
+	//		inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+	//		for _, inner_entry := range inner_entries {
+	//			if inner_entry.Name() == "terraform.tfstate" {
+	//				stateDir = filepath.Join(tmpDir, entry.Name())
+	//			}
+	//		}
+	//	}
+	//}
+	//}
 
 	// Build the command
 	args := []string{
@@ -944,9 +945,9 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 	}
 
 	// Add state file argument if found
-	if stateDir != "" {
-		args = append(args, "--state-file", filepath.Join(stateDir, "terraform.tfstate"))
-	}
+	//if stateDir != "" {
+	//	args = append(args, "--state-file", filepath.Join(stateDir, "terraform.tfstate"))
+	//}
 
 	// Add debug logging if TF_LOG is set
 	if strings.ToLower(os.Getenv("TF_LOG")) == "debug" {
@@ -1021,8 +1022,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
 		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",                      // Disable Grit transformations
-		"-transformer=true",                // Enable YAML transformations
+		"-grit=false",       // Disable Grit transformations
+		"-transformer=true", // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging

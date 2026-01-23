@@ -27,6 +27,11 @@ var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		// Version 4 because:
+		// - cloudflare_record (v4 provider) was at schema version 3
+		// - terraform state mv preserves version 3
+		// - We need Version > 3 to trigger StateUpgrader for v4->v5 migrations
+		Version: 4,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
