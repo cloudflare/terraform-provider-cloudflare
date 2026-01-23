@@ -23,6 +23,8 @@ func (r *APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.
 			PriorSchema:   priorSchemaV0(),
 			StateUpgrader: upgradeAPITokenStateV0toV1,
 		},
+		1:   {},
+		130: {},
 	}
 }
 
