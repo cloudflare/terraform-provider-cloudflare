@@ -19,7 +19,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Match                      types.String                                                                   `tfsdk:"match" json:"match,required"`
 	Name                       types.String                                                                   `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                  `tfsdk:"precedence" json:"precedence,computed_optional"`
-	Description                types.String                                                                   `tfsdk:"description" json:"description,optional"`
+	Description                types.String                                                                   `tfsdk:"description" json:"description,computed_optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
