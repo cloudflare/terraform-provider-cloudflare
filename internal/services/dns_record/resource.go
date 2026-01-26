@@ -58,6 +58,29 @@ func (r *DNSRecordResource) Configure(ctx context.Context, req resource.Configur
 	r.client = client
 }
 
+// ensureQuotedTXT wraps s in a single pair of double quotes if not already wrapped.
+// It tolerates surrounding whitespace and preserves already-quoted strings.
+func ensureQuotedTXT(s string) string {
+	cs := strings.TrimSpace(s)
+	if cs == "" {
+		return s
+	}
+	if strings.HasPrefix(cs, "\"") && strings.HasSuffix(cs, "\"") {
+		return s
+	}
+	return `"` + s + `"`
+}
+
+// stripOuterQuotes removes a single surrounding pair of quotes if present.
+// Used to normalize state and avoid quoted/unquoted drift for TXT records.
+func stripOuterQuotes(s string) string {
+	cs := strings.TrimSpace(s)
+	if len(cs) >= 2 && strings.HasPrefix(cs, "\"") && strings.HasSuffix(cs, "\"") {
+		return cs[1 : len(cs)-1]
+	}
+	return s
+}
+
 func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *DNSRecordModel
 
@@ -73,6 +96,18 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 			"When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.",
 		)
 		return
+	}
+
+	// Auto-quote TXT content prior to serialization (only when using content, not data)
+	if data != nil &&
+		!data.Type.IsNull() && !data.Type.IsUnknown() &&
+		strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		val := data.Content.ValueString()
+		if val != "" {
+			data.Content = types.StringValue(ensureQuotedTXT(val))
+		}
 	}
 
 	dataBytes, err := data.MarshalJSON()
@@ -103,6 +138,14 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 	}
 	data = &env.Result
 
+	// Normalize state: store TXT content unquoted to avoid perpetual diffs
+	if data != nil &&
+		!data.Type.IsNull() && strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		data.Content = types.StringValue(stripOuterQuotes(data.Content.ValueString()))
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -121,6 +164,18 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	// Auto-quote TXT content prior to serialization (only when using content, not data)
+	if data != nil &&
+		!data.Type.IsNull() && !data.Type.IsUnknown() &&
+		strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		val := data.Content.ValueString()
+		if val != "" {
+			data.Content = types.StringValue(ensureQuotedTXT(val))
+		}
 	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
@@ -151,6 +206,14 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	data = &env.Result
+
+	// Normalize state: store TXT content unquoted to avoid perpetual diffs
+	if data != nil &&
+		!data.Type.IsNull() && strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		data.Content = types.StringValue(stripOuterQuotes(data.Content.ValueString()))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -191,6 +254,14 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+
+	// Normalize state: store TXT content unquoted to avoid perpetual diffs
+	if data != nil &&
+		!data.Type.IsNull() && strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		data.Content = types.StringValue(stripOuterQuotes(data.Content.ValueString()))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -261,6 +332,14 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 	data = &env.Result
+
+	// Normalize state: store TXT content unquoted to avoid perpetual diffs
+	if data != nil &&
+		!data.Type.IsNull() && strings.EqualFold(data.Type.ValueString(), "TXT") &&
+		data.Data == nil &&
+		!data.Content.IsNull() && !data.Content.IsUnknown() {
+		data.Content = types.StringValue(stripOuterQuotes(data.Content.ValueString()))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
