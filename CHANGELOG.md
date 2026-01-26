@@ -1,5 +1,37 @@
 # Changelog
 
+## 5.17.0 (2026-01-26)
+
+Full Changelog: [v5.16.0...v5.17.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.16.0...v5.17.0)
+
+### Features
+
+* chore: use 'next' branch of Go SDK in Terraform ([809a3f3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/809a3f35a77e6215a25a10ee19cae72b0fee089e))
+* **leaked_credential_check:** add import functionality. add tests for import ([76e44f0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/76e44f06b3ed6ebe99d57fb43e80bd62eaf22e92))
+* refactor(terraform): restructure origin_tls_client_auth to peer subresources ([6c12fea](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6c12fead7f3fa947ce4c8bd2a488bb0b001b6cd3))
+* **turstile_widget:** add v4 to v5 migration tests ([a1e27af](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a1e27afe229e2812ab7b5e570eb78066b134d6dd))
+
+
+### Bug Fixes
+
+* prevent unnecessary diffs on consecutive applies for hyperdrive_config ([8755bf9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8755bf9d36e1b994821a3e7a4893845083023f48))
+* **zero_trust_access_application:** update v4 version on migration tests ([45a825e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/45a825ef3cb0f9f26ce5f5cbd2e343344f277a76))
+
+
+### Reverts
+
+* **pages_project:** "fix(pages_project) build_config to computed optional" ([b9c13c9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b9c13c9dfb341d9fd7ff49c47c217730afec9abd))
+
+
+### Chores
+
+* add CODEOWNERS ([3abbb08](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3abbb0810b16d8607653d7be8e1cacd372f758f1))
+* improve contribution guide ([85584b7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/85584b7ab508fb75cf5ee9213aa87b8a7f18e86f))
+* **internal:** codegen related update ([0211418](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0211418984d901b0617c0842e92a99aa1a727f7f))
+* **internal:** codegen related update ([2bcbbd5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2bcbbd5d2f2aa17267a10042e864ad7fca0b41ed))
+* **internal:** codegen related update ([09f9d99](https://github.com/cloudflare/terraform-provider-cloudflare/commit/09f9d998f1fb0ec5aa4c3f866168bcbf367cda0b))
+* Update CHANGELOG.md ([f4a1b58](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f4a1b588006049af00ad051c35c1b9453649a0e8))
+
 ## 5.16.0 (2026-01-20)
 
 Full Changelog: [v5.15.0...v5.16.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.15.0...v5.16.0)
