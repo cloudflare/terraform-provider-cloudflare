@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -22,14 +23,14 @@ func (m *AccountModel) marshalCustomForUpdate(state AccountModel) (data []byte, 
 	return bytes, err
 }
 
-func unmarshalCustom(bytes []byte, configuredModel *AccountModel) (*AccountModel, error) {
+func unmarshalCustom(ctx context.Context, bytes []byte, configuredModel *AccountModel) (*AccountModel, error) {
 	var env AccountResultEnvelope
 	if err := apijson.Unmarshal(bytes, &env); err != nil {
 		return nil, err
 	}
 	result := &env.Result
 
-	return parseUnitAndManagedBy(context.Background(), bytes, result)
+	return parseUnitAndManagedBy(ctx, bytes, result)
 }
 
 func parseUnitAndManagedBy(ctx context.Context, bytes []byte, result *AccountModel) (*AccountModel, error) {
@@ -53,7 +54,10 @@ func parseUnitAndManagedBy(ctx context.Context, bytes []byte, result *AccountMod
 		}
 
 		unitAttrTypes := map[string]attr.Type{"id": types.StringType}
-		unitObj, _ := types.ObjectValueFrom(ctx, unitAttrTypes, unit)
+		unitObj, diags := types.ObjectValueFrom(ctx, unitAttrTypes, unit)
+		if diags.HasError() {
+			return nil, fmt.Errorf("failed to create unit object: %s", diags.Errors())
+		}
 
 		result.Unit.ObjectValue = unitObj
 	}

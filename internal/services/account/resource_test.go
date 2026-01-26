@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -66,7 +67,7 @@ func testSweepCloudflareAccount(r string) error {
 }
 
 func TestAccCloudflareAccount_Basic(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Requires account creation permissions not available on default test account.")
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
@@ -126,7 +127,7 @@ func TestAccCloudflareAccount_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Requires account creation permissions not available on default test account.")
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
@@ -256,6 +257,27 @@ func TestAccCloudflareAccount_WithUnit(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("unit").AtMapKey("id"), knownvalue.StringExact(unitID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_by").AtMapKey("parent_org_id"), knownvalue.StringExact(unitID)),
 				},
+			},
+			// Import step
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccount_InvalidType(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareAccountWithType(rnd, rnd, "invalid_type"),
+				ExpectError: regexp.MustCompile(`Attribute type value must be one of`),
 			},
 		},
 	})
