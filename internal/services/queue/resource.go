@@ -157,6 +157,14 @@ func (r *QueueResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
+	// If QueueID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.QueueID.IsNull() || data.QueueID.IsUnknown() || data.QueueID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := QueueResultEnvelope{*data}
 	_, err := r.client.Queues.Get(

@@ -155,6 +155,14 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	// If Sitekey is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.Sitekey.IsNull() || data.Sitekey.IsUnknown() || data.Sitekey.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
 	_, err := r.client.Turnstile.Widgets.Get(

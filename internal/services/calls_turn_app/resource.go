@@ -150,6 +150,14 @@ func (r *CallsTURNAppResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	// If KeyID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.KeyID.IsNull() || data.KeyID.IsUnknown() || data.KeyID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := CallsTURNAppResultEnvelope{*data}
 	_, err := r.client.Calls.TURN.Get(

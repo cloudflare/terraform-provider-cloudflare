@@ -155,6 +155,14 @@ func (r *ZeroTrustAccessCustomPageResource) Read(ctx context.Context, req resour
 		return
 	}
 
+	// If UID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.UID.IsNull() || data.UID.IsUnknown() || data.UID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustAccessCustomPageResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.CustomPages.Get(

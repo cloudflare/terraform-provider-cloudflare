@@ -155,6 +155,14 @@ func (r *ConnectivityDirectoryServiceResource) Read(ctx context.Context, req res
 		return
 	}
 
+	// If ServiceID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.ServiceID.IsNull() || data.ServiceID.IsUnknown() || data.ServiceID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := ConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err := r.client.Connectivity.Directory.Services.Get(

@@ -155,6 +155,14 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Read(ctx context.Context, req r
 		return
 	}
 
+	// If NetworkID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.NetworkID.IsNull() || data.NetworkID.IsUnknown() || data.NetworkID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.Networks.Get(

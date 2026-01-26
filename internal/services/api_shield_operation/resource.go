@@ -109,6 +109,14 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
+	// If OperationID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.OperationID.IsNull() || data.OperationID.IsUnknown() || data.OperationID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := APIShieldOperationResultEnvelope{*data}
 	_, err := r.client.APIGateway.Operations.Get(

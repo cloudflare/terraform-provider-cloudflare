@@ -25,8 +25,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"app_id": schema.StringAttribute{
 				Description:   "A Cloudflare-generated unique identifier for a item.",
+				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "A short description of Calls app, not shown to end users.",
@@ -48,10 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Bearer token",
 				Computed:    true,
 				Sensitive:   true,
-			},
-			"uid": schema.StringAttribute{
-				Description: "A Cloudflare-generated unique identifier for a item.",
-				Computed:    true,
 			},
 		},
 	}

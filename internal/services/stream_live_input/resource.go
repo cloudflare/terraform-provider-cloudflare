@@ -150,6 +150,14 @@ func (r *StreamLiveInputResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	// If LiveInputIdentifier is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.LiveInputIdentifier.IsNull() || data.LiveInputIdentifier.IsUnknown() || data.LiveInputIdentifier.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := StreamLiveInputResultEnvelope{*data}
 	_, err := r.client.Stream.LiveInputs.Get(
