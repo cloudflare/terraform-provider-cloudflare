@@ -259,6 +259,6 @@ func (r *D1DatabaseResource) ImportState(ctx context.Context, req resource.Impor
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *D1DatabaseResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *D1DatabaseResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, resp)
 }
