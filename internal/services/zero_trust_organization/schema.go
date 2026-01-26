@@ -44,10 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
 				Optional:    true,
 			},
-			"ui_read_only_toggle_reason": schema.StringAttribute{
-				Description: "A description of the reason why the UI read only field is being toggled.",
-				Optional:    true,
-			},
 			"user_seat_expiration_inactive_time": schema.StringAttribute{
 				Description: "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count.  Minimum value for this setting is 1 month (730h). Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.",
 				Optional:    true,
@@ -116,6 +112,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"ui_read_only_toggle_reason": schema.StringAttribute{
+				Description: "A description of the reason why the UI read only field is being toggled.",
+				Computed:    true,
+				Optional:    true,
 			},
 		},
 	}
