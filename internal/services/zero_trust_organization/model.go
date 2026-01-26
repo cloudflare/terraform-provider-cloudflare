@@ -18,7 +18,6 @@ type ZeroTrustOrganizationModel struct {
 	DenyUnmatchedRequests                  types.Bool                             `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,optional"`
 	Name                                   types.String                           `tfsdk:"name" json:"name,optional"`
 	SessionDuration                        types.String                           `tfsdk:"session_duration" json:"session_duration,optional"`
-	UIReadOnlyToggleReason                 types.String                           `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,optional"`
 	UserSeatExpirationInactiveTime         types.String                           `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,optional"`
 	WARPAuthSessionDuration                types.String                           `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,optional"`
 	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                        `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,optional"`
@@ -27,6 +26,7 @@ type ZeroTrustOrganizationModel struct {
 	AllowAuthenticateViaWARP               types.Bool                             `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
 	AutoRedirectToIdentity                 types.Bool                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	IsUIReadOnly                           types.Bool                             `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`
+	UIReadOnlyToggleReason                 types.String                           `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed_optional"`
 }
 
 func (m ZeroTrustOrganizationModel) MarshalJSON() (data []byte, err error) {
