@@ -92,8 +92,6 @@ func TestAccPreCheck_ZeroTrustOrganization(t *testing.T) {
 		t.Skipf("Skipping test: Zero Trust organization response is nil for account %s", accountID)
 	}
 
-	t.Logf("✓ Zero Trust organization found with v6 API for account %s", accountID)
-
 	// Test 2: Check with v1 API (used by v4 provider) using the Access Organization endpoint
 	// This is critical because v4 uses cloudflare-go v1 which calls the Access Organization API
 	v1Client, err := cfv1.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
@@ -114,8 +112,6 @@ func TestAccPreCheck_ZeroTrustOrganization(t *testing.T) {
 	if v1Org.Name == "" {
 		t.Skipf("Skipping test: Access Organization exists but has empty name for account %s", accountID)
 	}
-
-	t.Logf("✓ Access Organization readable with v1 API (v4 compatible) for account %s: Name=%s", accountID, v1Org.Name)
 }
 
 // TestMigrateZeroTrustOrganization_V4ToV5 tests the complete v4→v5 migration flow:
@@ -421,41 +417,6 @@ resource "cloudflare_zero_trust_organization" "%s" {
 						}
 					}
 
-					// If login_design exists, validate it's structured as an object not array
-					// This is critical for v4→v5 migration (TypeList MaxItems:1 → SingleNestedAttribute)
-					if attrs["login_design.%"] != "" && attrs["login_design.%"] != "0" {
-						// The .% syntax indicates it's a map/object (good)
-						// If it were an array, we'd see login_design.# instead
-						t.Logf("✓ login_design is correctly structured as object (not array)")
-
-						// Validate nested fields exist
-						loginDesignFields := []string{
-							"background_color", "text_color", "logo_path",
-							"header_text", "footer_text",
-						}
-						for _, field := range loginDesignFields {
-							key := "login_design." + field
-							if _, exists := attrs[key]; exists {
-								t.Logf("✓ login_design.%s exists", field)
-							}
-						}
-					}
-
-					// If custom_pages exists, validate it's structured as an object not array
-					// This is critical for v4→v5 migration (TypeList MaxItems:1 → SingleNestedAttribute)
-					if attrs["custom_pages.%"] != "" && attrs["custom_pages.%"] != "0" {
-						t.Logf("✓ custom_pages is correctly structured as object (not array)")
-
-						customPagesFields := []string{"forbidden", "identity_denied"}
-						for _, field := range customPagesFields {
-							key := "custom_pages." + field
-							if _, exists := attrs[key]; exists {
-								t.Logf("✓ custom_pages.%s exists", field)
-							}
-						}
-					}
-
-					t.Logf("✓ Import structure validation passed")
 					return nil
 				},
 			},
