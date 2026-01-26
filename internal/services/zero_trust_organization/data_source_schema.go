@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustOrganizationDataSource)(nil)
@@ -37,6 +38,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When set to `true`, users skip the identity provider selection step during login.",
 				Computed:    true,
 			},
+			"deny_unmatched_requests": schema.BoolAttribute{
+				Description: "Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.",
+				Computed:    true,
+			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
 				Computed:    true,
@@ -60,6 +65,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"warp_auth_session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.",
 				Computed:    true,
+			},
+			"deny_unmatched_requests_exempted_zone_names": schema.ListAttribute{
+				Description: "Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"custom_pages": schema.SingleNestedAttribute{
 				Computed:   true,

@@ -188,14 +188,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
 			},
 			"placement": schema.SingleNestedAttribute{
-				Description: "Placement settings for the version.",
+				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Placement mode for the version.\nAvailable values: \"smart\".",
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("smart"),
+							stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
+						},
+					},
+					"region": schema.StringAttribute{
+						Description: "Cloud region for targeted placement in format 'provider:region'.",
+						Optional:    true,
+					},
+					"hostname": schema.StringAttribute{
+						Description: "HTTP hostname for targeted placement.",
+						Optional:    true,
+					},
+					"host": schema.StringAttribute{
+						Description: "TCP host and port for targeted placement.",
+						Optional:    true,
+					},
+					"target": schema.ListNestedAttribute{
+						Description: "Array of placement targets (currently limited to single target).",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"region": schema.StringAttribute{
+									Description: "Cloud region in format 'provider:region'.",
+									Optional:    true,
+								},
+								"hostname": schema.StringAttribute{
+									Description: "HTTP hostname for targeted placement.",
+									Optional:    true,
+								},
+								"host": schema.StringAttribute{
+									Description: "TCP host:port for targeted placement.",
+									Optional:    true,
+								},
+							},
 						},
 					},
 				},

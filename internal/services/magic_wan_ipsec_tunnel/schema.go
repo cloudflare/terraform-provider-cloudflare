@@ -87,7 +87,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"fqdn_id": schema.StringAttribute{
-						Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
+						Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom\nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels\ncannot have the same cloudflare_endpoint.",
 						Optional:    true,
 					},
 				},
@@ -333,7 +333,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelCustomRemoteIdentitiesModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"fqdn_id": schema.StringAttribute{
-								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
+								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom\nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels\ncannot have the same cloudflare_endpoint.",
 								Computed:    true,
 							},
 						},
@@ -535,7 +535,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelCustomRemoteIdentitiesModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"fqdn_id": schema.StringAttribute{
-								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
+								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom\nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels\ncannot have the same cloudflare_endpoint.",
 								Computed:    true,
 							},
 						},

@@ -91,7 +91,17 @@ type WorkerVersionModulesModel struct {
 }
 
 type WorkerVersionPlacementModel struct {
-	Mode types.String `tfsdk:"mode" json:"mode,optional"`
+	Mode     types.String                          `tfsdk:"mode" json:"mode,optional"`
+	Region   types.String                          `tfsdk:"region" json:"region,optional"`
+	Hostname types.String                          `tfsdk:"hostname" json:"hostname,optional"`
+	Host     types.String                          `tfsdk:"host" json:"host,optional"`
+	Target   *[]*WorkerVersionPlacementTargetModel `tfsdk:"target" json:"target,optional"`
+}
+
+type WorkerVersionPlacementTargetModel struct {
+	Region   types.String `tfsdk:"region" json:"region,optional"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,optional"`
+	Host     types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type WorkerVersionAnnotationsModel struct {

@@ -42,19 +42,19 @@ func (m *CustomSSLsDataSourceModel) toListParams(_ context.Context) (params cust
 
 type CustomSSLsResultDataSourceModel struct {
 	ID              types.String                                                       `tfsdk:"id" json:"id,computed"`
+	ZoneID          types.String                                                       `tfsdk:"zone_id" json:"zone_id,computed"`
 	BundleMethod    types.String                                                       `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn       timetypes.RFC3339                                                  `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	GeoRestrictions customfield.NestedObject[CustomSSLsGeoRestrictionsDataSourceModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed"`
 	Hosts           customfield.List[types.String]                                     `tfsdk:"hosts" json:"hosts,computed"`
 	Issuer          types.String                                                       `tfsdk:"issuer" json:"issuer,computed"`
+	KeylessServer   customfield.NestedObject[CustomSSLsKeylessServerDataSourceModel]   `tfsdk:"keyless_server" json:"keyless_server,computed"`
 	ModifiedOn      timetypes.RFC3339                                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Policy          types.String                                                       `tfsdk:"policy" json:"policy,computed"`
 	Priority        types.Float64                                                      `tfsdk:"priority" json:"priority,computed"`
 	Signature       types.String                                                       `tfsdk:"signature" json:"signature,computed"`
 	Status          types.String                                                       `tfsdk:"status" json:"status,computed"`
 	UploadedOn      timetypes.RFC3339                                                  `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
-	ZoneID          types.String                                                       `tfsdk:"zone_id" json:"zone_id,computed"`
-	GeoRestrictions customfield.NestedObject[CustomSSLsGeoRestrictionsDataSourceModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed"`
-	KeylessServer   customfield.NestedObject[CustomSSLsKeylessServerDataSourceModel]   `tfsdk:"keyless_server" json:"keyless_server,computed"`
-	Policy          types.String                                                       `tfsdk:"policy" json:"policy,computed"`
 }
 
 type CustomSSLsGeoRestrictionsDataSourceModel struct {

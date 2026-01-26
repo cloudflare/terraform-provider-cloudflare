@@ -38,10 +38,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
-			"physport": schema.Int64Attribute{
-				Required: true,
+			"bond_id": schema.Int64Attribute{
+				Optional: true,
 			},
 			"name": schema.StringAttribute{
+				Optional: true,
+			},
+			"physport": schema.Int64Attribute{
 				Optional: true,
 			},
 			"vlan_tag": schema.Int64Attribute{

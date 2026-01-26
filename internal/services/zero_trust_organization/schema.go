@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustOrganizationResource)(nil)
@@ -31,6 +32,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique subdomain assigned to your Zero Trust organization.",
 				Optional:    true,
 			},
+			"deny_unmatched_requests": schema.BoolAttribute{
+				Description: "Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.",
+				Optional:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of your Zero Trust organization.",
 				Optional:    true,
@@ -50,6 +55,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"warp_auth_session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.",
 				Optional:    true,
+			},
+			"deny_unmatched_requests_exempted_zone_names": schema.ListAttribute{
+				Description: "Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"custom_pages": schema.SingleNestedAttribute{
 				Optional: true,
