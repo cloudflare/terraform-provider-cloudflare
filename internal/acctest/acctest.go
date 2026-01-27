@@ -1310,38 +1310,3 @@ func MigrationV2TestStepAllowCreate(t *testing.T, v4Config string, tmpDir string
 
 // ImportResourceWithV4Provider imports a resource using the v4 provider before migration testing.
 // This is used for import-only resources that cannot be created via Terraform.
-func ImportResourceWithV4Provider(t *testing.T, v4Config string, tmpDir string, providerVersion string, resourceName string, importID string) {
-	t.Helper()
-
-	// Write the config file
-	configPath := filepath.Join(tmpDir, "test_migration.tf")
-	if err := os.WriteFile(configPath, []byte(v4Config), 0644); err != nil {
-		t.Fatalf("Failed to write config file: %v", err)
-	}
-
-	// Run terraform init with the specific provider version
-	initCmd := exec.Command("terraform", "init")
-	initCmd.Dir = tmpDir
-	initCmd.Env = append(os.Environ(),
-		"TF_CLI_CONFIG_FILE=/dev/null", // Prevent local terraform config from interfering
-	)
-
-	initOutput, err := initCmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("terraform init failed: %v\nOutput:\n%s", err, string(initOutput))
-	}
-
-	// Run terraform import
-	importCmd := exec.Command("terraform", "import", resourceName, importID)
-	importCmd.Dir = tmpDir
-	importCmd.Env = append(os.Environ(),
-		"TF_CLI_CONFIG_FILE=/dev/null",
-	)
-
-	importOutput, err := importCmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("terraform import failed: %v\nOutput:\n%s", err, string(importOutput))
-	}
-
-	t.Logf("Successfully imported %s with ID %s using v4 provider", resourceName, importID)
-}

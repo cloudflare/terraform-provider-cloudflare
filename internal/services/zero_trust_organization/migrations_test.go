@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -128,152 +129,142 @@ func TestMigrateZeroTrustOrganization_V4ToV5(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	// V4 config using deprecated resource name - minimal config for import
-	// Must include terraform block to specify provider source
-	// Must include provider block (even if empty) for v4 to recognize environment variables
+	// Include terraform block to specify provider SOURCE (but not version - ExternalProviders handles that)
+	// This prevents terraform from defaulting to "hashicorp/cloudflare" instead of "cloudflare/cloudflare"
 	v4Config := fmt.Sprintf(`
 terraform {
   required_providers {
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "4.52.1"
     }
   }
 }
 
-provider "cloudflare" {
-  # Credentials will be read from environment variables:
-  # CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL
-}
+provider "cloudflare" {}
 
 resource "cloudflare_access_organization" "%s" {
   account_id = "%s"
 }
 `, rnd, accountID)
 
-	// Step 0: Import with v4 provider before test steps begin
-	acctest.ImportResourceWithV4Provider(t, v4Config, tmpDir, "4.52.1", v4ResourceName, accountID)
+	// Helper function to build config with imported values from state
+	buildConfigFromState := func() string {
+		// Find the state file - test framework creates subdirectories like 001/, 002/, etc.
+		var stateFile string
+		entries, err := os.ReadDir(tmpDir)
+		if err != nil {
+			t.Fatalf("Failed to read test directory: %v", err)
+		}
 
-	// Read the imported state to get the actual values returned from the API
-	// This is necessary because import-only resources bring in all fields from the API,
-	// and we need to include them in the config to prevent Terraform from trying to null them out
-	stateFile := filepath.Join(tmpDir, "terraform.tfstate")
-	stateBytes, err := os.ReadFile(stateFile)
-	if err != nil {
-		t.Fatalf("Failed to read state file: %v", err)
-	}
+		// Look for terraform.tfstate in subdirectories (sorted by name, so 001 comes first)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				candidateState := filepath.Join(tmpDir, entry.Name(), "terraform.tfstate")
+				if _, err := os.Stat(candidateState); err == nil {
+					stateFile = candidateState
+					break
+				}
+			}
+		}
 
-	// Extract the imported values from state
-	// We need to include all fields that have non-default values to prevent Terraform
-	// from trying to apply defaults during the migration test
-	attrs := gjson.Get(string(stateBytes), "resources.0.instances.0.attributes")
+		if stateFile == "" {
+			t.Fatalf("Could not find terraform.tfstate in any subdirectory of %s", tmpDir)
+		}
 
-	// Required fields (always present)
-	importedName := attrs.Get("name").String()
-	importedAuthDomain := attrs.Get("auth_domain").String()
+		stateBytes, err := os.ReadFile(stateFile)
+		if err != nil {
+			t.Fatalf("Failed to read state file %s: %v", stateFile, err)
+		}
 
-	// Optional string fields
-	importedSessionDuration := attrs.Get("session_duration").String()
-	importedUIReadOnlyReason := attrs.Get("ui_read_only_toggle_reason").String()
-	importedUserSeatExpiration := attrs.Get("user_seat_expiration_inactive_time").String()
-	importedWARPAuthDuration := attrs.Get("warp_auth_session_duration").String()
+		// Extract the imported values from state
+		attrs := gjson.Get(string(stateBytes), "resources.0.instances.0.attributes")
 
-	// Boolean fields (may have non-default values)
-	importedAllowAuthViaWarp := attrs.Get("allow_authenticate_via_warp").Bool()
-	importedAutoRedirect := attrs.Get("auto_redirect_to_identity").Bool()
-	importedIsUIReadOnly := attrs.Get("is_ui_read_only").Bool()
+		// Required fields (always present)
+		importedName := attrs.Get("name").String()
+		importedAuthDomain := attrs.Get("auth_domain").String()
 
-	// Nested objects (check if they exist in state)
-	// In v4 state, these are arrays with MaxItems:1, so access with .0
-	loginDesign := attrs.Get("login_design.0")
-	customPages := attrs.Get("custom_pages.0")
+		// Optional string fields
+		importedSessionDuration := attrs.Get("session_duration").String()
+		importedUIReadOnlyReason := attrs.Get("ui_read_only_toggle_reason").String()
+		importedUserSeatExpiration := attrs.Get("user_seat_expiration_inactive_time").String()
+		importedWARPAuthDuration := attrs.Get("warp_auth_session_duration").String()
 
-	// Clean up v4 provider cache and lockfile so the test framework can inject v5 provider
-	// Keep the tfstate file which contains the imported resource
-	terraformDir := filepath.Join(tmpDir, ".terraform")
-	if err := os.RemoveAll(terraformDir); err != nil && !os.IsNotExist(err) {
-		t.Fatalf("Failed to remove .terraform directory: %v", err)
-	}
-	lockFile := filepath.Join(tmpDir, ".terraform.lock.hcl")
-	if err := os.Remove(lockFile); err != nil && !os.IsNotExist(err) {
-		t.Fatalf("Failed to remove .terraform.lock.hcl: %v", err)
-	}
+		// Boolean fields (may have non-default values)
+		importedAllowAuthViaWarp := attrs.Get("allow_authenticate_via_warp").Bool()
+		importedAutoRedirect := attrs.Get("auto_redirect_to_identity").Bool()
+		importedIsUIReadOnly := attrs.Get("is_ui_read_only").Bool()
 
-	// Update config to remove version constraint and include imported values
-	// so test framework can inject v5 provider and config matches state
-	configPath := filepath.Join(tmpDir, "test_migration.tf")
+		// Nested objects (check if they exist in state)
+		// In v4 state, these are arrays with MaxItems:1, so access with .0
+		loginDesign := attrs.Get("login_design.0")
+		customPages := attrs.Get("custom_pages.0")
 
-	// Build config dynamically - include all fields from imported state to prevent
-	// Terraform from trying to apply defaults during migration test
-	configTemplate := `
-provider "cloudflare" {
-  # Credentials will be read from environment variables:
-  # CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL
-}
-
+		// Build config dynamically - include all fields from imported state to prevent
+		// Terraform from trying to apply defaults during migration test
+		configTemplate := `
 resource "cloudflare_access_organization" "%s" {
   account_id  = "%s"
   name        = "%s"
   auth_domain = "%s"%s
 }
 `
-	var additionalLines string
+		var additionalLines string
 
-	// Include optional string fields if present
-	if importedSessionDuration != "" {
-		additionalLines += fmt.Sprintf("\n  session_duration = \"%s\"", importedSessionDuration)
-	}
-	if importedUIReadOnlyReason != "" {
-		additionalLines += fmt.Sprintf("\n  ui_read_only_toggle_reason = \"%s\"", importedUIReadOnlyReason)
-	}
-	if importedUserSeatExpiration != "" {
-		additionalLines += fmt.Sprintf("\n  user_seat_expiration_inactive_time = \"%s\"", importedUserSeatExpiration)
-	}
-	if importedWARPAuthDuration != "" {
-		additionalLines += fmt.Sprintf("\n  warp_auth_session_duration = \"%s\"", importedWARPAuthDuration)
+		// Include optional string fields if present
+		if importedSessionDuration != "" {
+			additionalLines += fmt.Sprintf("\n  session_duration = \"%s\"", importedSessionDuration)
+		}
+		if importedUIReadOnlyReason != "" {
+			additionalLines += fmt.Sprintf("\n  ui_read_only_toggle_reason = \"%s\"", importedUIReadOnlyReason)
+		}
+		if importedUserSeatExpiration != "" {
+			additionalLines += fmt.Sprintf("\n  user_seat_expiration_inactive_time = \"%s\"", importedUserSeatExpiration)
+		}
+		if importedWARPAuthDuration != "" {
+			additionalLines += fmt.Sprintf("\n  warp_auth_session_duration = \"%s\"", importedWARPAuthDuration)
+		}
+
+		// Include boolean fields (always include to match state)
+		additionalLines += fmt.Sprintf("\n  allow_authenticate_via_warp = %t", importedAllowAuthViaWarp)
+		additionalLines += fmt.Sprintf("\n  auto_redirect_to_identity = %t", importedAutoRedirect)
+		additionalLines += fmt.Sprintf("\n  is_ui_read_only = %t", importedIsUIReadOnly)
+
+		// Include nested objects if present in state
+		// In v4 config, these use block syntax, but we need to preserve them
+		if loginDesign.Exists() {
+			additionalLines += "\n  login_design {"
+			if bg := loginDesign.Get("background_color").String(); bg != "" {
+				additionalLines += fmt.Sprintf("\n    background_color = %q", bg)
+			}
+			if tc := loginDesign.Get("text_color").String(); tc != "" {
+				additionalLines += fmt.Sprintf("\n    text_color = %q", tc)
+			}
+			if lp := loginDesign.Get("logo_path").String(); lp != "" {
+				additionalLines += fmt.Sprintf("\n    logo_path = %q", lp)
+			}
+			if ht := loginDesign.Get("header_text").String(); ht != "" {
+				additionalLines += fmt.Sprintf("\n    header_text = %q", ht)
+			}
+			if ft := loginDesign.Get("footer_text").String(); ft != "" {
+				additionalLines += fmt.Sprintf("\n    footer_text = %q", ft)
+			}
+			additionalLines += "\n  }"
+		}
+
+		if customPages.Exists() {
+			additionalLines += "\n  custom_pages {"
+			if f := customPages.Get("forbidden").String(); f != "" {
+				additionalLines += fmt.Sprintf("\n    forbidden = %q", f)
+			}
+			if id := customPages.Get("identity_denied").String(); id != "" {
+				additionalLines += fmt.Sprintf("\n    identity_denied = %q", id)
+			}
+			additionalLines += "\n  }"
+		}
+
+		return fmt.Sprintf(configTemplate, rnd, accountID, importedName, importedAuthDomain, additionalLines)
 	}
 
-	// Include boolean fields (always include to match state)
-	additionalLines += fmt.Sprintf("\n  allow_authenticate_via_warp = %t", importedAllowAuthViaWarp)
-	additionalLines += fmt.Sprintf("\n  auto_redirect_to_identity = %t", importedAutoRedirect)
-	additionalLines += fmt.Sprintf("\n  is_ui_read_only = %t", importedIsUIReadOnly)
-
-	// Include nested objects if present in state
-	// In v4 config, these use block syntax, but we need to preserve them
-	if loginDesign.Exists() {
-		additionalLines += "\n  login_design {"
-		if bg := loginDesign.Get("background_color").String(); bg != "" {
-			additionalLines += fmt.Sprintf("\n    background_color = %q", bg)
-		}
-		if tc := loginDesign.Get("text_color").String(); tc != "" {
-			additionalLines += fmt.Sprintf("\n    text_color = %q", tc)
-		}
-		if lp := loginDesign.Get("logo_path").String(); lp != "" {
-			additionalLines += fmt.Sprintf("\n    logo_path = %q", lp)
-		}
-		if ht := loginDesign.Get("header_text").String(); ht != "" {
-			additionalLines += fmt.Sprintf("\n    header_text = %q", ht)
-		}
-		if ft := loginDesign.Get("footer_text").String(); ft != "" {
-			additionalLines += fmt.Sprintf("\n    footer_text = %q", ft)
-		}
-		additionalLines += "\n  }"
-	}
-
-	if customPages.Exists() {
-		additionalLines += "\n  custom_pages {"
-		if f := customPages.Get("forbidden").String(); f != "" {
-			additionalLines += fmt.Sprintf("\n    forbidden = %q", f)
-		}
-		if id := customPages.Get("identity_denied").String(); id != "" {
-			additionalLines += fmt.Sprintf("\n    identity_denied = %q", id)
-		}
-		additionalLines += "\n  }"
-	}
-
-	v4ConfigWithoutVersion := fmt.Sprintf(configTemplate, rnd, accountID, importedName, importedAuthDomain, additionalLines)
-	if err := os.WriteFile(configPath, []byte(v4ConfigWithoutVersion), 0644); err != nil {
-		t.Fatalf("Failed to update config: %v", err)
-	}
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -282,14 +273,63 @@ resource "cloudflare_access_organization" "%s" {
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
-			// Step 1: Run migration and verify with v5
-			acctest.MigrationV2TestStep(t, v4ConfigWithoutVersion, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
-				// Verify resource was renamed from v4 to v5 name
-				statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-				// Verify core fields exist (we can't check exact values since we imported an unknown org)
-				statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New("name"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New("auth_domain"), knownvalue.NotNull()),
-			}),
+			{
+				// Step 1: Import with v4 provider using test framework
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						VersionConstraint: "4.52.1",
+						Source:            "cloudflare/cloudflare",
+					},
+				},
+				Config:             v4Config,
+				ResourceName:       v4ResourceName,
+				ImportState:        true,
+				ImportStateId:      accountID,
+				ImportStatePersist: true, // Keep imported state for migration step
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) == 0 {
+						return fmt.Errorf("no states returned from import")
+					}
+					state := states[0]
+					if state.Attributes[consts.AccountIDSchemaKey] != accountID {
+						return fmt.Errorf("account_id mismatch: got %s, want %s",
+							state.Attributes[consts.AccountIDSchemaKey], accountID)
+					}
+					if state.Attributes["name"] == "" {
+						return fmt.Errorf("name is empty after import")
+					}
+					if state.Attributes["auth_domain"] == "" {
+						return fmt.Errorf("auth_domain is empty after import")
+					}
+					return nil
+				},
+			},
+			{
+				// Step 2: Build config from imported state, then run migration
+				PreConfig: func() {
+					// Build config that matches imported state
+					v4ConfigWithValues := buildConfigFromState()
+
+					// Write config to the main tmpDir (not subdirectory)
+					// Migration tool will look here and also find state in subdirectories
+					configPath := filepath.Join(tmpDir, "test_migration.tf")
+					if err := os.WriteFile(configPath, []byte(v4ConfigWithValues), 0644); err != nil {
+						t.Fatalf("Failed to write config: %v", err)
+					}
+
+					// Run migration
+					acctest.RunMigrationV2Command(t, v4ConfigWithValues, tmpDir, "v4", "v5")
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				ConfigDirectory:          config.StaticDirectory(tmpDir), // Read config from tmpDir
+				ConfigStateChecks: []statecheck.StateCheck{
+					// Verify resource was renamed from v4 to v5 name
+					statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					// Verify core fields exist
+					statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New("name"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(v5ResourceName, tfjsonpath.New("auth_domain"), knownvalue.NotNull()),
+				},
+			},
 		},
 	})
 }
