@@ -243,6 +243,9 @@ func TestAccCloudflareAccount_WithUnit(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
 
 	unitID := os.Getenv("CLOUDFLARE_UNIT_ID")
+	if unitID == "" {
+		t.Skip("CLOUDFLARE_UNIT_ID is not set")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
