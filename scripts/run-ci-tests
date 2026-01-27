@@ -3,6 +3,16 @@
 # Generic parallel CI test runner
 # Supports both acceptance tests and migration tests
 # Dynamically detects which services have sweeper implementations by grepping for AddTestSweepers
+#
+# Migration Tests:
+#   When TEST_TYPE=migration, the script will:
+#   1. Check for a migration/ subdirectory in each service
+#   2. Run tests matching ^TestMigrate pattern
+#   3. Set TF_MIGRATE_BINARY_PATH environment variable
+#   4. Adjust test path from ./internal/services/SERVICE/... to ./internal/services/SERVICE/migration/...
+#
+# Environment Variables:
+#   TF_MIGRATE_BINARY_PATH: Path to tf-migrate binary (default: /Users/tjozsa/cf-repos/sdks/migration-work/agent-a/tf-migrate/bin/tf-migrate)
 
 # ./internal/services/account
 # account creation can only be done by a tenant admin and the current CI does 
@@ -235,7 +245,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/workers_kv_namespace"
     "resource=./internal/services/workers_route"
     "resource=./internal/services/workers_script"
-#    "resource=./internal/services/workflow" 
+#    "resource=./internal/services/workflow"
     "resource=./internal/services/zero_trust_access_application"
     "resource=./internal/services/zero_trust_access_custom_page"
     "resource=./internal/services/zero_trust_access_group"
@@ -576,35 +586,49 @@ run_tests() {
     local log_file="$LOG_DIR/$(basename "$service")-tests.log"
     local start_time=$(date +%s)
     local test_pattern test_name
-    
+    local test_path="$service"
+
     # Set test pattern and name based on test type
     if [ "$TEST_TYPE" = "migration" ]; then
         test_pattern="^TestMigrate"
         test_name="migration tests"
-        
-        # Check if this service has migration tests
-        if ! has_migration_tests "$service"; then
-            log "${YELLOW}Skipping $test_name for $service (no migration tests found)${NC}" > "$log_file"
-            log "Skipping $test_name for $service (no migration tests found)"
+
+        # For migration tests, adjust path to include /migration/...
+        # Example: ./internal/services/dns_record/... -> ./internal/services/dns_record/migration/...
+        test_path="${service%/...}/migration/..."
+
+        # Check if this service has migration tests by checking if migration directory exists
+        local migration_dir="${service%/...}/migration"
+        if [ ! -d "$migration_dir" ]; then
+            log "${YELLOW}Skipping $test_name for $service (no migration directory found)${NC}" > "$log_file"
+            log "Skipping $test_name for $service (no migration directory found)"
             return 0
         fi
     else
         test_pattern="^TestAcc"
         test_name="acceptance tests"
     fi
-    
-    log "${WHITE}Running $test_name: $service${NC}" > "$log_file"
-    log "Running $test_name: $service"
-    
+
+    log "${WHITE}Running $test_name: $test_path${NC}" > "$log_file"
+    log "Running $test_name: $test_path"
+
+    # Build command with optional TF_MIGRATE_BINARY_PATH for migration tests
+    local env_prefix=""
+    if [ "$TEST_TYPE" = "migration" ]; then
+        # Set TF_MIGRATE_BINARY_PATH for migration tests
+        local tf_migrate_path="${TF_MIGRATE_BINARY_PATH:-/Users/tjozsa/cf-repos/sdks/migration-work/agent-a/tf-migrate/bin/tf-migrate}"
+        env_prefix="TF_MIGRATE_BINARY_PATH=$tf_migrate_path "
+    fi
+
     # Build command with optional parallel flag
-    local test_cmd="TF_ACC=1 go test -run \"$test_pattern\" -count 1 -timeout \"$TEST_TIMEOUT\""
-    
+    local test_cmd="${env_prefix}TF_ACC=1 go test -v -run \"$test_pattern\" -count 1 -timeout \"$TEST_TIMEOUT\""
+
     # Add parallel flag if specified and not 0
     if [ "$parallel_count" -gt 0 ]; then
         test_cmd="$test_cmd -parallel $parallel_count"
     fi
-    
-    test_cmd="$test_cmd \"$service\""
+
+    test_cmd="$test_cmd \"$test_path\""
     
     # Retry logic for test failures
     local max_retries=3
@@ -1207,7 +1231,9 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  --debug            Enable debug logging (default: disabled)"
     echo ""
     echo "Environment variables:"
-    echo "  PARALLEL_JOBS      Override default parallel job count"
+    echo "  PARALLEL_JOBS           Override default parallel job count"
+    echo "  TF_MIGRATE_BINARY_PATH  Path to tf-migrate binary for migration tests"
+    echo "                          (default: /Users/tjozsa/cf-repos/sdks/migration-work/agent-a/tf-migrate/bin/tf-migrate)"
     echo ""
     echo "Product Groups:"
     for group in $(get_available_product_groups); do

@@ -917,25 +917,6 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		t.Fatalf("tf-migrate binary not found at %s. Please set TF_MIGRATE_BINARY_PATH or ensure the binary is built.", migratorPath)
 	}
 
-	// TODO:: Needs to be commented so the state upgraders run
-	// Find state file in tmpDir
-	//entries, err := os.ReadDir(tmpDir)
-	//var stateDir string
-	//if err != nil {
-	//	t.Logf("Failed to read test directory: %v", err)
-	//} else {
-	//for _, entry := range entries {
-	//	if entry.IsDir() {
-	//		inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
-	//		for _, inner_entry := range inner_entries {
-	//			if inner_entry.Name() == "terraform.tfstate" {
-	//				stateDir = filepath.Join(tmpDir, entry.Name())
-	//			}
-	//		}
-	//	}
-	//}
-	//}
-
 	// Build the command
 	args := []string{
 		"migrate",
@@ -943,11 +924,6 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		"--source-version", sourceVersion,
 		"--target-version", targetVersion,
 	}
-
-	// Add state file argument if found
-	//if stateDir != "" {
-	//	args = append(args, "--state-file", filepath.Join(stateDir, "terraform.tfstate"))
-	//}
 
 	// Add debug logging if TF_LOG is set
 	if strings.ToLower(os.Getenv("TF_LOG")) == "debug" {
@@ -1022,8 +998,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
 		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",       // Disable Grit transformations
-		"-transformer=true", // Enable YAML transformations
+		"-grit=false",                      // Disable Grit transformations
+		"-transformer=true",                // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging
@@ -1069,6 +1045,16 @@ func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exa
 	}
 
 	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
+// DetermineSourceTargetVersion determines the source and target versions for migration tests
+// based on the test version being used. For v4 versions, returns "v4" -> "v5" migration.
+// For v5 versions, returns "v5" -> "v5" which tests StateUpgrader idempotency only.
+func DetermineSourceTargetVersion(version string) (source, target string) {
+	if strings.HasPrefix(version, "5.") {
+		return "v5", "v5"
+	}
+	return "v4", "v5"
 }
 
 // MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing
@@ -1167,8 +1153,14 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 	return resource.TestStep{
 		PreConfig: func() {
 			WriteOutConfig(t, v4Config, tmpDir)
-			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
-			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			// Only run migration command if source version is v4
+			// v5→v5 "migrations" only test StateUpgrader idempotency, no config changes needed
+			if sourceVersion == "v4" {
+				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			} else {
+				debugLogf(t, "Skipping migration command for version: %s (%s -> %s) - testing StateUpgrader only", exactVersion, sourceVersion, targetVersion)
+			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),

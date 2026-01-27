@@ -1,14 +1,14 @@
-package dns_record
+package v500
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// V4CloudflareRecordSchema returns the v4 cloudflare_record schema (schema version 3)
-// This is used by MoveState to parse the source state from v4 provider.
+// SourceCloudflareRecordSchema returns the legacy cloudflare_record schema (schema_version=3).
+// This is used by MoveState and UpgradeFromLegacyV3 to parse state from the legacy SDKv2 provider.
 // Reference: https://github.com/cloudflare/terraform-provider-cloudflare/blob/v4/internal/sdkv2provider/schema_cloudflare_record.go
-func V4CloudflareRecordSchema() schema.Schema {
+func SourceCloudflareRecordSchema() schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -23,11 +23,11 @@ func V4CloudflareRecordSchema() schema.Schema {
 			"type": schema.StringAttribute{
 				Required: true,
 			},
-			// v4 uses "value", v5 uses "content"
+			// Source uses "value", target uses "content"
 			"value": schema.StringAttribute{
 				Optional: true,
 			},
-			// v4 also has content (used by API response)
+			// Source also has content (used by API response)
 			"content": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -50,7 +50,7 @@ func V4CloudflareRecordSchema() schema.Schema {
 				ElementType: types.StringType,
 				Optional:    true,
 			},
-			// Deprecated/removed in v5
+			// Deprecated/removed in target
 			"allow_overwrite": schema.BoolAttribute{
 				Optional: true,
 			},
@@ -72,8 +72,8 @@ func V4CloudflareRecordSchema() schema.Schema {
 			},
 		},
 		Blocks: map[string]schema.Block{
-			// v4 data is a list block with MaxItems: 1
-			// v5 data is a SingleNestedAttribute
+			// Source data is a list block with MaxItems: 1
+			// Target data is a SingleNestedAttribute
 			"data": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
@@ -84,7 +84,7 @@ func V4CloudflareRecordSchema() schema.Schema {
 						"tag": schema.StringAttribute{
 							Optional: true,
 						},
-						// v4 CAA uses "content", v5 uses "value"
+						// Source CAA uses "content", target uses "value"
 						"content": schema.StringAttribute{
 							Optional: true,
 						},
