@@ -62,7 +62,7 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 		if !data.LoginDesign.TextColor.IsNull() && data.LoginDesign.TextColor.ValueString() != "" {
 			allEmpty = false
 		}
-
+		
 		if allEmpty {
 			data.LoginDesign = nil
 		}
