@@ -61,11 +61,11 @@ import (
  * - v5: terraform import cloudflare_zero_trust_organization.x 123 (only account-scoped supported)
  */
 
-// TestAccPreCheck_ZeroTrustOrganization verifies a Zero Trust organization exists for the account
+// testAccPreCheck_ZeroTrustOrganization verifies a Zero Trust organization exists for the account
 // and can be read by both the v6 API (used by v5 provider) and v1 API (used by v4 provider).
 // This is required because zero_trust_organization is a singleton resource that must be imported,
 // not created. The organization must exist before the test can run.
-func TestAccPreCheck_ZeroTrustOrganization(t *testing.T) {
+func testAccPreCheck_ZeroTrustOrganization(t *testing.T) {
 	t.Helper()
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -269,7 +269,7 @@ resource "cloudflare_access_organization" "%s" {
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
-			TestAccPreCheck_ZeroTrustOrganization(t)
+			testAccPreCheck_ZeroTrustOrganization(t)
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
@@ -356,7 +356,7 @@ resource "cloudflare_zero_trust_organization" "%s" {
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
-			TestAccPreCheck_ZeroTrustOrganization(t)
+			testAccPreCheck_ZeroTrustOrganization(t)
 		},
 		Steps: []resource.TestStep{
 			{
@@ -409,7 +409,7 @@ resource "cloudflare_zero_trust_organization" "%s" {
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
-			TestAccPreCheck_ZeroTrustOrganization(t)
+			testAccPreCheck_ZeroTrustOrganization(t)
 		},
 		Steps: []resource.TestStep{
 			{
