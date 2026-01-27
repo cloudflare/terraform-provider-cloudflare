@@ -11,7 +11,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -82,7 +81,7 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(bytes, data)
+	data, err = unmarshalCustom(ctx, bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -128,7 +127,7 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(bytes, data)
+	data, err = unmarshalCustom(ctx, bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -165,7 +164,7 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(bytes, data)
+	data, err = unmarshalCustom(ctx, bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -215,7 +214,6 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 	data.ID = types.StringValue(path)
 
 	res := new(http.Response)
-	env := AccountResultEnvelope{*data}
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
@@ -229,12 +227,11 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	data, err = unmarshalCustom(ctx, bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
