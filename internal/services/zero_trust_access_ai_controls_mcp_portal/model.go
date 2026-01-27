@@ -14,16 +14,17 @@ type ZeroTrustAccessAIControlsMcpPortalResultEnvelope struct {
 }
 
 type ZeroTrustAccessAIControlsMcpPortalModel struct {
-	ID          types.String                                                                 `tfsdk:"id" json:"id,required"`
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	Hostname    types.String                                                                 `tfsdk:"hostname" json:"hostname,required"`
-	Name        types.String                                                                 `tfsdk:"name" json:"name,required"`
-	Description types.String                                                                 `tfsdk:"description" json:"description,optional"`
-	Servers     customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersModel] `tfsdk:"servers" json:"servers,computed_optional"`
-	CreatedAt   timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CreatedBy   types.String                                                                 `tfsdk:"created_by" json:"created_by,computed"`
-	ModifiedAt  timetypes.RFC3339                                                            `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	ModifiedBy  types.String                                                                 `tfsdk:"modified_by" json:"modified_by,computed"`
+	ID               types.String                                                                 `tfsdk:"id" json:"id,required"`
+	AccountID        types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	Hostname         types.String                                                                 `tfsdk:"hostname" json:"hostname,required"`
+	Name             types.String                                                                 `tfsdk:"name" json:"name,required"`
+	Description      types.String                                                                 `tfsdk:"description" json:"description,optional"`
+	SecureWebGateway types.Bool                                                                   `tfsdk:"secure_web_gateway" json:"secure_web_gateway,optional"`
+	Servers          customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersModel] `tfsdk:"servers" json:"servers,computed_optional"`
+	CreatedAt        timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedBy        types.String                                                                 `tfsdk:"created_by" json:"created_by,computed"`
+	ModifiedAt       timetypes.RFC3339                                                            `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	ModifiedBy       types.String                                                                 `tfsdk:"modified_by" json:"modified_by,computed"`
 }
 
 func (m ZeroTrustAccessAIControlsMcpPortalModel) MarshalJSON() (data []byte, err error) {

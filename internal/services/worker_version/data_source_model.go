@@ -169,5 +169,15 @@ type WorkerVersionModulesDataSourceModel struct {
 }
 
 type WorkerVersionPlacementDataSourceModel struct {
-	Mode types.String `tfsdk:"mode" json:"mode,computed"`
+	Mode     types.String                                                              `tfsdk:"mode" json:"mode,computed"`
+	Region   types.String                                                              `tfsdk:"region" json:"region,computed"`
+	Hostname types.String                                                              `tfsdk:"hostname" json:"hostname,computed"`
+	Host     types.String                                                              `tfsdk:"host" json:"host,computed"`
+	Target   customfield.NestedObjectList[WorkerVersionPlacementTargetDataSourceModel] `tfsdk:"target" json:"target,computed"`
+}
+
+type WorkerVersionPlacementTargetDataSourceModel struct {
+	Region   types.String `tfsdk:"region" json:"region,computed"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
+	Host     types.String `tfsdk:"host" json:"host,computed"`
 }

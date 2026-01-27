@@ -518,15 +518,48 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"placement": schema.SingleNestedAttribute{
-							Description: "Placement settings for the version.",
+							Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[WorkerVersionsPlacementDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"mode": schema.StringAttribute{
-									Description: "Placement mode for the version.\nAvailable values: \"smart\".",
+									Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("smart"),
+										stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
+									},
+								},
+								"region": schema.StringAttribute{
+									Description: "Cloud region for targeted placement in format 'provider:region'.",
+									Computed:    true,
+								},
+								"hostname": schema.StringAttribute{
+									Description: "HTTP hostname for targeted placement.",
+									Computed:    true,
+								},
+								"host": schema.StringAttribute{
+									Description: "TCP host and port for targeted placement.",
+									Computed:    true,
+								},
+								"target": schema.ListNestedAttribute{
+									Description: "Array of placement targets (currently limited to single target).",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[WorkerVersionsPlacementTargetDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"region": schema.StringAttribute{
+												Description: "Cloud region in format 'provider:region'.",
+												Computed:    true,
+											},
+											"hostname": schema.StringAttribute{
+												Description: "HTTP hostname for targeted placement.",
+												Computed:    true,
+											},
+											"host": schema.StringAttribute{
+												Description: "TCP host:port for targeted placement.",
+												Computed:    true,
+											},
+										},
 									},
 								},
 							},

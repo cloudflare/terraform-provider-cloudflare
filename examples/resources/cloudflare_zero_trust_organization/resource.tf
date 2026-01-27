@@ -7,6 +7,8 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
     forbidden = "699d98642c564d2e855e9661899b7252"
     identity_denied = "699d98642c564d2e855e9661899b7252"
   }
+  deny_unmatched_requests = true
+  deny_unmatched_requests_exempted_zone_names = ["example.com"]
   is_ui_read_only = true
   login_design = {
     background_color = "#c5ed1b"
