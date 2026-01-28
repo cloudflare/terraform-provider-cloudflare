@@ -50,11 +50,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"enabled_entries": schema.ListAttribute{
+				Description: "Entries to enable for this predefined profile. Any entries not provided will be disabled.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"entries": schema.ListNestedAttribute{
+				Description:        "This field has been deprecated for `enabled_entries`.",
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         customfield.NewNestedObjectListType[ZeroTrustDLPPredefinedProfileEntriesDataSourceModel](ctx),

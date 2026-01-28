@@ -236,12 +236,19 @@ type WorkersScriptMetadataObservabilityLogsModel struct {
 }
 
 type WorkersScriptMetadataPlacementModel struct {
-	Mode           types.String      `tfsdk:"mode" json:"mode,optional"`
-	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
-	Status         types.String      `tfsdk:"status" json:"status,computed"`
-	Region         types.String      `tfsdk:"region" json:"region,optional"`
-	Hostname       types.String      `tfsdk:"hostname" json:"hostname,optional"`
-	Host           types.String      `tfsdk:"host" json:"host,optional"`
+	Mode           types.String                                  `tfsdk:"mode" json:"mode,optional"`
+	LastAnalyzedAt timetypes.RFC3339                             `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
+	Status         types.String                                  `tfsdk:"status" json:"status,computed"`
+	Region         types.String                                  `tfsdk:"region" json:"region,optional"`
+	Hostname       types.String                                  `tfsdk:"hostname" json:"hostname,optional"`
+	Host           types.String                                  `tfsdk:"host" json:"host,optional"`
+	Target         *[]*WorkersScriptMetadataPlacementTargetModel `tfsdk:"target" json:"target,optional"`
+}
+
+type WorkersScriptMetadataPlacementTargetModel struct {
+	Region   types.String `tfsdk:"region" json:"region,optional"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,optional"`
+	Host     types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type WorkersScriptMetadataTailConsumersModel struct {
@@ -253,6 +260,36 @@ type WorkersScriptMetadataTailConsumersModel struct {
 type WorkersScriptNamedHandlersModel struct {
 	Handlers customfield.List[types.String] `tfsdk:"handlers" json:"handlers,computed"`
 	Name     types.String                   `tfsdk:"name" json:"name,computed"`
+}
+
+type WorkersScriptObservabilityModel struct {
+	Enabled          types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed"`
+}
+
+type WorkersScriptObservabilityLogsModel struct {
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkersScriptPlacementModel struct {
+	Mode           types.String                                                    `tfsdk:"mode" json:"mode,computed"`
+	LastAnalyzedAt timetypes.RFC3339                                               `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
+	Status         types.String                                                    `tfsdk:"status" json:"status,computed"`
+	Region         types.String                                                    `tfsdk:"region" json:"region,computed"`
+	Hostname       types.String                                                    `tfsdk:"hostname" json:"hostname,computed"`
+	Host           types.String                                                    `tfsdk:"host" json:"host,computed"`
+	Target         customfield.NestedObjectList[WorkersScriptPlacementTargetModel] `tfsdk:"target" json:"target,computed"`
+}
+
+type WorkersScriptPlacementTargetModel struct {
+	Region   types.String `tfsdk:"region" json:"region,computed"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
+	Host     types.String `tfsdk:"host" json:"host,computed"`
 }
 
 type WorkersScriptTailConsumersModel struct {

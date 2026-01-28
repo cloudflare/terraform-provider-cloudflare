@@ -57,6 +57,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"hostname": schema.StringAttribute{
 				Computed: true,
 			},
+			"last_successful_sync": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"last_synced": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},

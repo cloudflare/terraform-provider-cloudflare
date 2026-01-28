@@ -38,7 +38,7 @@ func testSweepCloudflareZoneSubscription(r string) error {
 
 func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -86,7 +86,7 @@ func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 
 func TestAccCloudflareZoneSubscriptionResource_WithPlanChange(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -186,7 +186,7 @@ func TestAccCloudflareZoneSubscriptionResource_CreateZoneWithPlan_CUSTESC_57375(
 // Tests that importing a zone subscription with frequency="not-applicable" doesn't cause drift
 func TestAccCloudflareZoneSubscriptionResource_ImportNoChanges_BILLSUB_247(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -233,7 +233,7 @@ func TestAccCloudflareZoneSubscriptionResource_ImportNoChanges_BILLSUB_247(t *te
 // The API accepts the value during create/update but returns "not-applicable" on read, causing drift
 func TestAccCloudflareZoneSubscriptionResource_FrequencyNotSupported(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
 
 	resource.ParallelTest(t, resource.TestCase{

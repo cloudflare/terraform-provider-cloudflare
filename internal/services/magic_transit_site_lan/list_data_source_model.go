@@ -33,6 +33,7 @@ func (m *MagicTransitSiteLANsDataSourceModel) toListParams(_ context.Context) (p
 
 type MagicTransitSiteLANsResultDataSourceModel struct {
 	ID               types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	BondID           types.Int64                                                                    `tfsdk:"bond_id" json:"bond_id,computed"`
 	HaLink           types.Bool                                                                     `tfsdk:"ha_link" json:"ha_link,computed"`
 	Name             types.String                                                                   `tfsdk:"name" json:"name,computed"`
 	Nat              customfield.NestedObject[MagicTransitSiteLANsNatDataSourceModel]               `tfsdk:"nat" json:"nat,computed"`

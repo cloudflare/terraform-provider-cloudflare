@@ -69,6 +69,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"last_successful_sync": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"last_synced": schema.StringAttribute{
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},

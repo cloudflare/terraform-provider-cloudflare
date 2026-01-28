@@ -37,6 +37,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Optional: true,
 			},
+			"secure_web_gateway": schema.BoolAttribute{
+				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway",
+				Optional:    true,
+			},
 			"servers": schema.ListNestedAttribute{
 				Computed:   true,
 				Optional:   true,

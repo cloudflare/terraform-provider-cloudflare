@@ -57,6 +57,24 @@ This library uses the standard gofmt code formatter:
 $ ./scripts/format
 ```
 
-## Running Tests
+## Commit Format
 
-To run schema tests,
+We use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) in this repository. If the change is specific to a single resource, include it in the scope of the commit.
+
+Example commit: `fix(account_member): fix detected drift in post-import refresh plan`
+
+### Overview of Commit Types
+
+| Commit Type | Title                    | Description                                                                                                 |
+| ----------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `feat`      | Features                 | A new feature                                                                                               |
+| `fix`       | Bug Fixes                | A bug fix                                                                                                   |
+| `docs`      | Documentation            | Documentation only changes                                                                                  |
+| `style`     | Styles                   | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)      |
+| `refactor`  | Code Refactoring         | A code change that neither fixes a bug nor adds a feature                                                   |
+| `perf`      | Performance Improvements | A code change that improves performance                                                                     |
+| `test`      | Tests                    | Adding or modifying tests and/or test data                                                                  |
+| `build`     | Builds                   | Changes that affect the build system or external dependencies                                               |
+| `ci`        | Continuous Integrations  | Changes to our CI configuration files and scripts                                                           |
+| `chore`     | Chores                   | Other changes that don't modify source code or test files                                                   |
+| `revert`    | Reverts                  | Reverts a previous commit                                                                                   |

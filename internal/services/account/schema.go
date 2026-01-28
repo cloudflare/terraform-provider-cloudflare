@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -29,10 +30,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"unit": schema.SingleNestedAttribute{
 				Description: "information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/",
 				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountUnitModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Tenant unit ID",
 						Optional:    true,
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 				},
 			},
@@ -41,10 +51,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "standard", "enterprise".`,
-				Optional:    true,
+				Description:        `Available values: "standard", "enterprise".`,
+				Optional:           true,
+				Computed:           true,
+				DeprecationMessage: "The 'type' field should no longer be set through the API.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
+				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"managed_by": schema.SingleNestedAttribute{
