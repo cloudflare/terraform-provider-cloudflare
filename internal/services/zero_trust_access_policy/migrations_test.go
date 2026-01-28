@@ -496,3 +496,367 @@ resource "cloudflare_access_policy" "%[1]s" {
 		},
 	})
 }
+
+// TestMigrateZeroTrustAccessPolicyFromV5_12 tests migration from v5.12.0 to latest
+func TestMigrateZeroTrustAccessPolicyFromV5_12(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+  include = [
+    { everyone = {} }
+  ]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.12 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.12.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyFromV5_14 tests migration from v5.14.0 to latest
+func TestMigrateZeroTrustAccessPolicyFromV5_14(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+  include = [
+    { everyone = {} }
+  ]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.14 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.14.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyFromV5_15 tests migration from v5.15.0 to latest
+func TestMigrateZeroTrustAccessPolicyFromV5_15(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+  include = [
+    { everyone = {} }
+  ]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.15 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.15.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyFromV5_12_Complex tests v5.12 to latest with complex conditions
+func TestMigrateZeroTrustAccessPolicyFromV5_12_Complex(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+  approval_required = true
+  purpose_justification_required = true
+  purpose_justification_prompt = "Why do you need access?"
+
+  approval_groups = [
+    {
+      approvals_needed = 2
+      email_addresses = ["admin1@example.com", "admin2@example.com"]
+    }
+  ]
+
+  include = [
+    { email = { email = "user1@example.com" } },
+    { email = { email = "user2@example.com" } },
+    { everyone = {} }
+  ]
+
+  exclude = [
+    { email = { email = "blocked@example.com" } }
+  ]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.12 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.12.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(3)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(1)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyFromV5_14_WithDecisionTypes tests v5.14 with different decision types
+func TestMigrateZeroTrustAccessPolicyFromV5_14_WithDecisionTypes(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	testCases := []struct {
+		decision string
+		name     string
+	}{
+		{"allow", "Allow"},
+		{"deny", "Deny"},
+		{"non_identity", "NonIdentity"},
+		{"bypass", "Bypass"},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(fmt.Sprintf("Decision_%s", tc.name), func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+			config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "%[3]s"
+  session_duration = "24h"
+  include = [
+    { everyone = {} }
+  ]
+}`, rnd, accountID, tc.decision)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				Steps: []resource.TestStep{
+					{
+						ExternalProviders: map[string]resource.ExternalProvider{
+							"cloudflare": {
+								Source:            "cloudflare/cloudflare",
+								VersionConstraint: "5.14.0",
+							},
+						},
+						Config: config,
+					},
+					{
+						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+						Config:                   config,
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact(tc.decision)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+						},
+					},
+				},
+			})
+		})
+	}
+}
+
+// TestMigrateZeroTrustAccessPolicyFromV5_15_WithConditionTypes tests v5.15 with various condition types
+func TestMigrateZeroTrustAccessPolicyFromV5_15_WithConditionTypes(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+
+  include = [
+    { email = { email = "user@example.com" } },
+    { email_domain = { domain = "example.com" } },
+    { ip = { ip = "192.168.1.0/24" } },
+    { everyone = {} },
+    { certificate = {} },
+    { any_valid_service_token = {} }
+  ]
+
+  exclude = [
+    { geo = { country_code = "CN" } },
+    { geo = { country_code = "RU" } }
+  ]
+
+  require = [
+    { certificate = {} }
+  ]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.15 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.15.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 2: Upgrade to latest provider
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(6)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("require"), knownvalue.ListSizeExact(1)),
+				},
+			},
+		},
+	})
+}
