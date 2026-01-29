@@ -4,7 +4,6 @@ package dns_record
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -23,34 +22,14 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 
-// GetSchemaVersion returns the appropriate schema version based on TF_MIG_TEST environment variable.
-//
-// This function allows controlled rollout of StateUpgrader migrations:
-//   - During development/testing: Set TF_MIG_TEST=1 to enable migrations (returns postMigration version)
-//   - In production: StateUpgraders remain dormant (returns preMigration version)
-//   - For coordinated release: Remove this wrapper and set Version directly to enable all migrations at once
-//
-// Parameters:
-//   - preMigration: The version to use when migrations are disabled (typically 0)
-//   - postMigration: The version to use when migrations are enabled (typically 500)
-//
-// Example usage:
-//
-//	Version: GetSchemaVersion(0, 500)  // Returns 0 normally, 500 when TF_MIG_TEST=1
-func GetSchemaVersion(preMigration, postMigration int64) int64 {
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return preMigration
-	}
-	return postMigration
-}
-
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: GetSchemaVersion(0, 500),
+		Version: utils.GetSchemaVersion(0, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
