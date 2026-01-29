@@ -105,6 +105,14 @@ func (r *StreamWatermarkResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	// If Identifier is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.Identifier.IsNull() || data.Identifier.IsUnknown() || data.Identifier.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := StreamWatermarkResultEnvelope{*data}
 	_, err := r.client.Stream.Watermarks.Get(

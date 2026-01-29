@@ -150,6 +150,14 @@ func (r *ZeroTrustDLPDatasetResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	// If DatasetID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.DatasetID.IsNull() || data.DatasetID.IsUnknown() || data.DatasetID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDLPDatasetResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Datasets.Get(

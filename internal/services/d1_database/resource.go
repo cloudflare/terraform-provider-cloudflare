@@ -155,6 +155,14 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
+	// If UUID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.UUID.IsNull() || data.UUID.IsUnknown() || data.UUID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := D1DatabaseResultEnvelope{*data}
 	_, err := r.client.D1.Database.Get(

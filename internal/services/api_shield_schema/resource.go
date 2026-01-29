@@ -150,6 +150,14 @@ func (r *APIShieldSchemaResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	// If SchemaID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.SchemaID.IsNull() || data.SchemaID.IsUnknown() || data.SchemaID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err := r.client.APIGateway.UserSchemas.Get(

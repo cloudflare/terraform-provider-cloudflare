@@ -150,6 +150,14 @@ func (r *CallsSFUAppResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	// If AppID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.AppID.IsNull() || data.AppID.IsUnknown() || data.AppID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := CallsSFUAppResultEnvelope{*data}
 	_, err := r.client.Calls.SFU.Get(

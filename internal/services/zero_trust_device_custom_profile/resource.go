@@ -155,6 +155,14 @@ func (r *ZeroTrustDeviceCustomProfileResource) Read(ctx context.Context, req res
 		return
 	}
 
+	// If PolicyID is empty, null, or unknown, the resource doesn't exist yet.
+	// This occurs when terraform/tofu runs refresh before create for new resources.
+	// Return early to signal that the resource needs to be created.
+	if data.PolicyID.IsNull() || data.PolicyID.IsUnknown() || data.PolicyID.ValueString() == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDeviceCustomProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.Policies.Custom.Get(
