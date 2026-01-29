@@ -1,13 +1,17 @@
 package leaked_credential_check_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/leaked_credential_checks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -15,8 +19,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
+func init() {
+	resource.AddTestSweepers("cloudflare_leaked_credential_check", &resource.Sweeper{
+		Name: "cloudflare_leaked_credential_check",
+		F:    testSweepCloudflareLeakedCredentialCheck,
+	})
 }
 
 func TestAccCloudflareLeakedCredentialsCheck_Basic(t *testing.T) {
@@ -114,6 +121,62 @@ func TestAccCloudflareLeakedCredentialsCheck_Import(t *testing.T) {
 			},
 		},
 	})
+}
+
+// testSweepCloudflareLeakedCredentialCheck resets the leaked credential check setting to disabled.
+//
+// This sweeper:
+// - Resets the zone-level leaked credential check setting to disabled (default state)
+// - Note: This is a zone-level singleton setting, not a traditional resource with instances
+// - Tests may enable this setting, so the sweeper ensures it's reset to default after test runs
+//
+// Run with: go test ./internal/services/leaked_credential_check/ -v -sweep=all
+//
+// Requires:
+// - CLOUDFLARE_ZONE_ID (zone ID to reset the setting for)
+// - CLOUDFLARE_EMAIL + CLOUDFLARE_API_KEY or CLOUDFLARE_API_TOKEN
+func testSweepCloudflareLeakedCredentialCheck(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		tflog.Info(ctx, "Skipping leaked credential check sweep: CLOUDFLARE_ZONE_ID not set")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Checking leaked credential check setting for zone: %s", zoneID))
+
+	// Get current setting
+	setting, err := client.LeakedCredentialChecks.Get(ctx, leaked_credential_checks.LeakedCredentialCheckGetParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to get leaked credential check setting: %s", err))
+		// Don't fail the sweep - setting may not exist or zone may not support it
+		return nil
+	}
+
+	// If already disabled, nothing to do
+	if !setting.Enabled {
+		tflog.Info(ctx, fmt.Sprintf("Leaked credential check already disabled for zone: %s", zoneID))
+		return nil
+	}
+
+	// Reset to disabled state
+	tflog.Info(ctx, fmt.Sprintf("Resetting leaked credential check to disabled for zone: %s", zoneID))
+	_, err = client.LeakedCredentialChecks.New(ctx, leaked_credential_checks.LeakedCredentialCheckNewParams{
+		ZoneID:  cloudflare.F(zoneID),
+		Enabled: cloudflare.F(false),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to reset leaked credential check: %s", err))
+		// Continue anyway - don't fail the sweep
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Successfully reset leaked credential check to disabled for zone: %s", zoneID))
+	return nil
 }
 
 // Helper functions to load test case configurations
