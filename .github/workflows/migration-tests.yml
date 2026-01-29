@@ -28,6 +28,7 @@ env:
   CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
   TF_ACC: 1
   TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
+  TF_MIG_TEST: true
 
 jobs:
   migration-tests:
