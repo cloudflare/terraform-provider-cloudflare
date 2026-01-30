@@ -10,9 +10,8 @@ resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
   name = "HTTP dash health check"
   description = "Checks the dash endpoint every 30 minutes"
   target_policies = [{
-    id = "id"
+    id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
     default = true
     name = "name"
   }]
-  targeted = true
 }

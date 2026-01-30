@@ -18,6 +18,8 @@ type ZeroTrustDEXTestsResultListDataSourceEnvelope struct {
 
 type ZeroTrustDEXTestsDataSourceModel struct {
 	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	Kind      types.String                                                         `tfsdk:"kind" query:"kind,optional"`
+	TestName  types.String                                                         `tfsdk:"test_name" query:"testName,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDEXTestsResultDataSourceModel] `tfsdk:"result"`
 }
@@ -25,6 +27,13 @@ type ZeroTrustDEXTestsDataSourceModel struct {
 func (m *ZeroTrustDEXTestsDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceDEXTestListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Kind.IsNull() {
+		params.Kind = cloudflare.F(zero_trust.DeviceDEXTestListParamsKind(m.Kind.ValueString()))
+	}
+	if !m.TestName.IsNull() {
+		params.TestName = cloudflare.F(m.TestName.ValueString())
 	}
 
 	return

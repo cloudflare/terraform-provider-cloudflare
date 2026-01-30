@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -19,6 +20,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required: true,
+			},
+			"kind": schema.StringAttribute{
+				Description: "Filter by test type\nAvailable values: \"http\", \"traceroute\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+				},
+			},
+			"test_name": schema.StringAttribute{
+				Description: "Filter by test name",
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -47,12 +59,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"kind": schema.StringAttribute{
-									Description: "The type of test.",
+									Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
 									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+									},
 								},
 								"method": schema.StringAttribute{
-									Description: "The HTTP request method type.",
+									Description: "The HTTP request method type.\nAvailable values: \"GET\".",
 									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("GET"),
+									},
 								},
 							},
 						},
@@ -79,7 +97,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "The id of the DEX rule",
+										Description: "API Resource UUID tag.",
 										Computed:    true,
 									},
 									"default": schema.BoolAttribute{

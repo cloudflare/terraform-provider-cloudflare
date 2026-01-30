@@ -6,8 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDEXTestDataSource)(nil)
@@ -21,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"dex_test_id": schema.StringAttribute{
 				Description: "The unique identifier for the test.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -59,12 +63,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"kind": schema.StringAttribute{
-						Description: "The type of test.",
+						Description: "The type of test.\nAvailable values: \"http\", \"traceroute\".",
 						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+						},
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP request method type.",
+						Description: "The HTTP request method type.\nAvailable values: \"GET\".",
 						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("GET"),
+						},
 					},
 				},
 			},
@@ -75,7 +85,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The id of the DEX rule",
+							Description: "API Resource UUID tag.",
 							Computed:    true,
 						},
 						"default": schema.BoolAttribute{
@@ -89,6 +99,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"kind": schema.StringAttribute{
+						Description: "Filter by test type\nAvailable values: \"http\", \"traceroute\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
+						},
+					},
+					"test_name": schema.StringAttribute{
+						Description: "Filter by test name",
+						Optional:    true,
+					},
+				},
+			},
 		},
 	}
 }
@@ -98,5 +124,7 @@ func (d *ZeroTrustDEXTestDataSource) Schema(ctx context.Context, req datasource.
 }
 
 func (d *ZeroTrustDEXTestDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("dex_test_id"), path.MatchRoot("filter")),
+	}
 }

@@ -18,7 +18,7 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 
 type ZeroTrustDEXTestDataSourceModel struct {
 	ID             types.String                                                                `tfsdk:"id" path:"dex_test_id,computed"`
-	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,required"`
+	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`
 	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`
 	Enabled        types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
@@ -28,11 +28,27 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	TestID         types.String                                                                `tfsdk:"test_id" json:"test_id,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
+	Filter         *ZeroTrustDEXTestFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDEXTestDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceDEXTestGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceDEXTestGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustDEXTestDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
+	params = zero_trust.DeviceDEXTestListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Kind.IsNull() {
+		params.Kind = cloudflare.F(zero_trust.DeviceDEXTestListParamsKind(m.Filter.Kind.ValueString()))
+	}
+	if !m.Filter.TestName.IsNull() {
+		params.TestName = cloudflare.F(m.Filter.TestName.ValueString())
 	}
 
 	return
@@ -48,4 +64,9 @@ type ZeroTrustDEXTestTargetPoliciesDataSourceModel struct {
 	ID      types.String `tfsdk:"id" json:"id,computed"`
 	Default types.Bool   `tfsdk:"default" json:"default,computed"`
 	Name    types.String `tfsdk:"name" json:"name,computed"`
+}
+
+type ZeroTrustDEXTestFindOneByDataSourceModel struct {
+	Kind     types.String `tfsdk:"kind" query:"kind,optional"`
+	TestName types.String `tfsdk:"test_name" query:"testName,optional"`
 }
