@@ -18,11 +18,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 func P[T any](v T) *T { return &v }
+
+// float64With512BitPrecision creates a Float64Value with 512-bit precision
+// to match how the decoder now creates Float64Values (matching HCL config parsing).
+// This is needed for test expectations that use reflect.DeepEqual.
+func float64With512BitPrecision(s string) types.Float64 {
+	bigF, _, err := big.ParseFloat(s, 10, 512, big.ToNearestEven)
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse float: %v", err))
+	}
+	tfVal := tftypes.NewValue(tftypes.Number, bigF)
+	f64Val, err := basetypes.Float64Type{}.ValueFromTerraform(context.Background(), tfVal)
+	if err != nil {
+		panic(fmt.Sprintf("failed to convert to Float64Value: %v", err))
+	}
+	return f64Val.(basetypes.Float64Value)
+}
 
 type TfsdkStructs struct {
 	BoolValue        types.Bool                                        `tfsdk:"tfsdk_bool_value" json:"bool_value"`
@@ -304,8 +321,8 @@ var tests = map[string]struct {
 	"tfsdk_int_bigger":         {"12324", types.Int64Value(12324)},
 	"tfsdk_int_string_coerce":  {`"65"`, types.Int64Value(65)},
 	"tfsdk_int_boolean_coerce": {"true", types.BoolValue(true)},
-	"tfsdk_float_1.54":         {"1.54", types.Float64Value(1.54)},
-	"tfsdk_float_1.89":         {"1.89", types.Float64Value(1.89)},
+	"tfsdk_float_1.54":         {"1.54", float64With512BitPrecision("1.54")},
+	"tfsdk_float_1.89":         {"1.89", float64With512BitPrecision("1.89")},
 	"tfsdk_array_ptr":          {"[\"hi\",null]", &[]types.String{types.StringValue("hi"), types.StringNull()}},
 	"tfsdk_dynamic_string":     {`"hey"`, types.DynamicValue(types.StringValue("hey"))},
 	"tfsdk_dynamic_int":        {"5", types.DynamicValue(types.Int64Value(5))},
@@ -382,7 +399,7 @@ var tests = map[string]struct {
 				EmbeddedInt:    types.Int64Value(21),
 				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			}}),
-			FloatValue:    types.Float64Value(3.14),
+			FloatValue:    float64With512BitPrecision("3.14"),
 			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
 		},
 	},
@@ -1846,7 +1863,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectExample{
 			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
-				ComputedMap: map[string]types.Float64{"key1": types.Float64Value(1.5), "key2": types.Float64Value(2.5)},
+				ComputedMap: map[string]types.Float64{"key1": float64With512BitPrecision("1.5"), "key2": float64With512BitPrecision("2.5")},
 			}),
 		},
 	},
@@ -1857,8 +1874,8 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectListExample{
 			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
-				{ComputedMap: map[string]types.Float64{"a": types.Float64Value(1.0)}},
-				{ComputedMap: map[string]types.Float64{"b": types.Float64Value(2.0)}},
+				{ComputedMap: map[string]types.Float64{"a": float64With512BitPrecision("1.0")}},
+				{ComputedMap: map[string]types.Float64{"b": float64With512BitPrecision("2.0")}},
 			}),
 		},
 	},
@@ -1869,8 +1886,8 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectSetExample{
 			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
-				{ComputedMap: map[string]types.Float64{"x": types.Float64Value(10.0)}},
-				{ComputedMap: map[string]types.Float64{"y": types.Float64Value(20.0)}},
+				{ComputedMap: map[string]types.Float64{"x": float64With512BitPrecision("10.0")}},
+				{ComputedMap: map[string]types.Float64{"y": float64With512BitPrecision("20.0")}},
 			}),
 		},
 	},
@@ -1997,7 +2014,7 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectExample{
 			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
-				ComputedMap: map[string]types.Float64{"unknown1": types.Float64Value(3.5), "unknown2": types.Float64Value(4.5)},
+				ComputedMap: map[string]types.Float64{"unknown1": float64With512BitPrecision("3.5"), "unknown2": float64With512BitPrecision("4.5")},
 			}),
 		},
 	},
@@ -2008,8 +2025,8 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectListExample{
 			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
-				{ComputedMap: map[string]types.Float64{"u1": types.Float64Value(5.0)}},
-				{ComputedMap: map[string]types.Float64{"u2": types.Float64Value(6.0)}},
+				{ComputedMap: map[string]types.Float64{"u1": float64With512BitPrecision("5.0")}},
+				{ComputedMap: map[string]types.Float64{"u2": float64With512BitPrecision("6.0")}},
 			}),
 		},
 	},
@@ -2020,8 +2037,8 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedObjectSetExample{
 			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
-				{ComputedMap: map[string]types.Float64{"ux": types.Float64Value(30.0)}},
-				{ComputedMap: map[string]types.Float64{"uy": types.Float64Value(40.0)}},
+				{ComputedMap: map[string]types.Float64{"ux": float64With512BitPrecision("30.0")}},
+				{ComputedMap: map[string]types.Float64{"uy": float64With512BitPrecision("40.0")}},
 			}),
 		},
 	},
@@ -2095,7 +2112,7 @@ var decode_computed_only_tests = map[string]struct {
 			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("tag-u1"), types.StringValue("tag-u2"), types.StringValue("tag-u3")}),
 			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"env": types.StringValue("prod"), "tier": types.StringValue("premium")}),
 			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(3000), types.Int64Value(3001), types.Int64Value(3002)}),
-			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(51.5074), types.Float64Value(-0.1278)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{float64With512BitPrecision("51.5074"), float64With512BitPrecision("-0.1278")}),
 			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
 				{
 					Priority: types.Int64Value(10),
@@ -2154,7 +2171,7 @@ var decode_computed_only_tests = map[string]struct {
 			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("auto-tag1"), types.StringValue("auto-tag2")}),
 			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"created_by": types.StringValue("system"), "version": types.StringValue("1.0")}),
 			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(8080), types.Int64Value(8443)}),
-			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(40.7128), types.Float64Value(-74.006)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{float64With512BitPrecision("40.7128"), float64With512BitPrecision("-74.006")}),
 			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
 				{
 					Priority: types.Int64Value(1),
@@ -2182,7 +2199,7 @@ var decode_computed_only_tests = map[string]struct {
 			// BUG: These unconfigured fields should be populated from API
 			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"created_by": types.StringValue("system"), "version": types.StringValue("1.0")}),
 			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(8080), types.Int64Value(8443)}),
-			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(40.7128), types.Float64Value(-74.006)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{float64With512BitPrecision("40.7128"), float64With512BitPrecision("-74.006")}),
 			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
 				{
 					Priority: types.Int64Value(1),
@@ -2936,4 +2953,127 @@ func TestCustomMarshalerForUpdate(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestFloat64PrecisionEquality verifies that Float64Value objects unmarshaled from JSON
+// are equal to Float64Value objects created with 512-bit precision (as HCL config values are).
+// This is a regression test for a bug where API-sourced float64 values would not Equal()
+// HCL-sourced values despite having the same numeric value, due to different big.Float precisions.
+func TestFloat64PrecisionEquality(t *testing.T) {
+	type TestStruct struct {
+		Value types.Float64 `tfsdk:"value" json:"value"`
+	}
+
+	testCases := []struct {
+		name      string
+		jsonValue string
+	}{
+		{"small decimal", `{"value": 0.0001}`},
+		{"one tenth", `{"value": 0.1}`},
+		{"one third approx", `{"value": 0.333333}`},
+		{"scientific notation small", `{"value": 1e-4}`},
+		{"scientific notation large", `{"value": 1e10}`},
+		{"integer as float", `{"value": 1.0}`},
+		{"exact binary fraction", `{"value": 0.5}`},
+		{"zero", `{"value": 0}`},
+		{"negative decimal", `{"value": -0.0001}`},
+		{"negative integer", `{"value": -1}`},
+		{"very small", `{"value": 1e-10}`},
+		{"pi approximation", `{"value": 3.14159265358979}`},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Unmarshal from JSON (simulating API response)
+			var result TestStruct
+			err := Unmarshal([]byte(tc.jsonValue), &result)
+			if err != nil {
+				t.Fatalf("Unmarshal failed: %v", err)
+			}
+
+			// Create HCL-style value (512-bit precision via ParseFloat)
+			// This simulates how terraform-plugin-go parses HCL config values
+			// Reference: terraform-plugin-go/tftypes/value_msgpack.go lines 106-115
+			rawValue := extractJSONNumber(tc.jsonValue)
+			bigF, _, err := big.ParseFloat(rawValue, 10, 512, big.ToNearestEven)
+			if err != nil {
+				t.Fatalf("ParseFloat failed: %v", err)
+			}
+
+			hclStyleValue := float64ValueFrom512BitPrecision(bigF)
+
+			// The key assertion: API value should Equal() HCL-style value
+			if !result.Value.Equal(hclStyleValue) {
+				t.Errorf("API-unmarshaled Float64Value should equal HCL-style Float64Value\n"+
+					"API value: %v (float64: %v)\n"+
+					"HCL value: %v (float64: %v)",
+					result.Value, result.Value.ValueFloat64(),
+					hclStyleValue, hclStyleValue.ValueFloat64())
+			}
+
+			// Also verify the actual float64 values match
+			if result.Value.ValueFloat64() != hclStyleValue.ValueFloat64() {
+				t.Errorf("Underlying float64 values should be identical: %v != %v",
+					result.Value.ValueFloat64(), hclStyleValue.ValueFloat64())
+			}
+		})
+	}
+}
+
+// TestFloat64PrecisionEquality_Regression is a specific regression test for the bug
+// that was fixed. Before the fix, this test would fail because API-unmarshaled values
+// used 53-bit precision (via types.Float64Value) while HCL values use 512-bit precision.
+func TestFloat64PrecisionEquality_Regression(t *testing.T) {
+	type TestStruct struct {
+		Rate types.Float64 `tfsdk:"rate" json:"rate"`
+	}
+
+	// This specific value (0.0001) was causing issues in the worker resource's
+	// observability.logs.head_sampling_rate field during import
+	jsonData := `{"rate": 0.0001}`
+
+	var apiValue TestStruct
+	err := Unmarshal([]byte(jsonData), &apiValue)
+	if err != nil {
+		t.Fatalf("Unmarshal failed: %v", err)
+	}
+
+	// Create 512-bit precision value (as HCL parser does)
+	bigF, _, _ := big.ParseFloat("0.0001", 10, 512, big.ToNearestEven)
+	hclValue := float64ValueFrom512BitPrecision(bigF)
+
+	// This assertion would FAIL before the fix, PASS after
+	if !apiValue.Rate.Equal(hclValue) {
+		t.Fatalf("Regression test failed: API and HCL float values must be equal to prevent spurious plan changes\n"+
+			"API value: %v\n"+
+			"HCL value: %v",
+			apiValue.Rate, hclValue)
+	}
+}
+
+// extractJSONNumber extracts the numeric value from a simple JSON object like {"value": 0.0001}
+func extractJSONNumber(jsonStr string) string {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(jsonStr), &m); err != nil {
+		return ""
+	}
+	for _, v := range m {
+		return string(v)
+	}
+	return ""
+}
+
+// float64ValueFrom512BitPrecision creates a Float64Value with 512-bit precision
+// by going through tftypes.Value, matching how HCL config values are created.
+func float64ValueFrom512BitPrecision(bigF *big.Float) basetypes.Float64Value {
+	// Import is at the top of the file, but we need to use tftypes here
+	// This mirrors the approach in the decoder fix
+	tfVal := tftypes.NewValue(tftypes.Number, bigF)
+	f64Val, err := basetypes.Float64Type{}.ValueFromTerraform(context.Background(), tfVal)
+	if err != nil {
+		// Fall back if conversion fails (shouldn't happen in tests)
+		f64, _ := bigF.Float64()
+		return types.Float64Value(f64)
+	}
+	return f64Val.(basetypes.Float64Value)
 }

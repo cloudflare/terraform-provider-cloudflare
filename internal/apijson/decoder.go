@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/tidwall/gjson"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -483,7 +484,30 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
 				return fmt.Errorf("apijson: failed to parse types.Float64Value")
 			}
-			value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
+
+			// Parse with 512-bit precision to match how HCL config values are parsed
+			// by terraform-plugin-go. This ensures Equal() comparisons work correctly
+			// between API-sourced values and HCL config values, avoiding spurious
+			// "value changed" detections during planning.
+			// Reference: terraform-plugin-go/tftypes/value_msgpack.go lines 106-115
+			bigF, _, err := big.ParseFloat(node.Raw, 10, 512, big.ToNearestEven)
+			if err != nil {
+				// Fall back to the original method if parsing fails
+				value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
+				return nil
+			}
+
+			// Create tftypes.Value with the 512-bit precision big.Float, then convert
+			// to Float64Value via ValueFromTerraform to preserve the precision
+			tfVal := tftypes.NewValue(tftypes.Number, bigF)
+			f64Val, err := basetypes.Float64Type{}.ValueFromTerraform(context.Background(), tfVal)
+			if err != nil {
+				// Fall back to the original method if conversion fails
+				value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
+				return nil
+			}
+
+			value.Set(reflect.ValueOf(f64Val))
 			return nil
 		})
 	}
