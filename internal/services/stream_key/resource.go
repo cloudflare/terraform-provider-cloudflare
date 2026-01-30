@@ -113,7 +113,7 @@ func (r *StreamKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 	_, err := r.client.Stream.Keys.Get(
 		ctx,
 		stream.KeyGetParams{
-			AccountID: cloudflare.F(data.ID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

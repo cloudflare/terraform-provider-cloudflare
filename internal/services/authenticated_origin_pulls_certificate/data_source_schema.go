@@ -17,6 +17,10 @@ var _ datasource.DataSourceWithConfigValidators = (*AuthenticatedOriginPullsCert
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"certificate_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
@@ -37,10 +41,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the certificate from the authority expires.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
-				Computed:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",

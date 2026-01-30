@@ -158,7 +158,7 @@ func (r *AccountSubscriptionResource) Read(ctx context.Context, req resource.Rea
 	_, err := r.client.Accounts.Subscriptions.Get(
 		ctx,
 		accounts.SubscriptionGetParams{
-			AccountID: cloudflare.F(data.ID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

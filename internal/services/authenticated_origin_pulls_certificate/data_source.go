@@ -83,6 +83,7 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 		return
 	}
 	data = &env.Result
+	data.ID = data.CertificateID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

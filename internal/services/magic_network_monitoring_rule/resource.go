@@ -122,7 +122,7 @@ func (r *MagicNetworkMonitoringRuleResource) Update(ctx context.Context, req res
 	_, err = r.client.MagicNetworkMonitoring.Rules.Update(
 		ctx,
 		magic_network_monitoring.RuleUpdateParams{
-			AccountID: cloudflare.F(data.ID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),

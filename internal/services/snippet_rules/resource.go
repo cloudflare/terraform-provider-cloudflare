@@ -119,7 +119,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -156,7 +156,7 @@ func (r *SnippetRulesResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := r.client.Snippets.Rules.Delete(
 		ctx,
 		snippets.RuleDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

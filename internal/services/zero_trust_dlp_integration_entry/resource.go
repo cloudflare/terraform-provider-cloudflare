@@ -121,7 +121,7 @@ func (r *ZeroTrustDLPIntegrationEntryResource) Update(ctx context.Context, req r
 	env := ZeroTrustDLPIntegrationEntryResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Entries.Integration.Update(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryIntegrationUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +157,7 @@ func (r *ZeroTrustDLPIntegrationEntryResource) Read(ctx context.Context, req res
 	env := ZeroTrustDLPIntegrationEntryResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Entries.Integration.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryIntegrationGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,7 +195,7 @@ func (r *ZeroTrustDLPIntegrationEntryResource) Delete(ctx context.Context, req r
 
 	_, err := r.client.ZeroTrust.DLP.Entries.Integration.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryIntegrationDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

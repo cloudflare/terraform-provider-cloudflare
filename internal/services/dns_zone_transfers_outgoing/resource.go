@@ -122,7 +122,7 @@ func (r *DNSZoneTransfersOutgoingResource) Update(ctx context.Context, req resou
 	_, err = r.client.DNS.ZoneTransfers.Outgoing.Update(
 		ctx,
 		dns.ZoneTransferOutgoingUpdateParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -157,7 +157,7 @@ func (r *DNSZoneTransfersOutgoingResource) Read(ctx context.Context, req resourc
 	_, err := r.client.DNS.ZoneTransfers.Outgoing.Get(
 		ctx,
 		dns.ZoneTransferOutgoingGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -194,7 +194,7 @@ func (r *DNSZoneTransfersOutgoingResource) Delete(ctx context.Context, req resou
 	_, err := r.client.DNS.ZoneTransfers.Outgoing.Delete(
 		ctx,
 		dns.ZoneTransferOutgoingDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

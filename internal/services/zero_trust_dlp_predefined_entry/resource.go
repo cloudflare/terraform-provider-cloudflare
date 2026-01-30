@@ -121,7 +121,7 @@ func (r *ZeroTrustDLPPredefinedEntryResource) Update(ctx context.Context, req re
 	env := ZeroTrustDLPPredefinedEntryResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Entries.Predefined.Update(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryPredefinedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +157,7 @@ func (r *ZeroTrustDLPPredefinedEntryResource) Read(ctx context.Context, req reso
 	env := ZeroTrustDLPPredefinedEntryResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Entries.Predefined.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryPredefinedGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,7 +195,7 @@ func (r *ZeroTrustDLPPredefinedEntryResource) Delete(ctx context.Context, req re
 
 	_, err := r.client.ZeroTrust.DLP.Entries.Predefined.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.EntryID.ValueString(),
 		zero_trust.DLPEntryPredefinedDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

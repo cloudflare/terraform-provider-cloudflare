@@ -123,7 +123,7 @@ func (r *WorkflowResource) Update(ctx context.Context, req resource.UpdateReques
 	env := WorkflowResultEnvelope{*data}
 	_, err = r.client.Workflows.Update(
 		ctx,
-		data.Name.ValueString(),
+		data.WorkflowName.ValueString(),
 		workflows.WorkflowUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -160,7 +160,7 @@ func (r *WorkflowResource) Read(ctx context.Context, req resource.ReadRequest, r
 	env := WorkflowResultEnvelope{*data}
 	_, err := r.client.Workflows.Get(
 		ctx,
-		data.Name.ValueString(),
+		data.WorkflowName.ValueString(),
 		workflows.WorkflowGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -199,7 +199,7 @@ func (r *WorkflowResource) Delete(ctx context.Context, req resource.DeleteReques
 
 	_, err := r.client.Workflows.Delete(
 		ctx,
-		data.Name.ValueString(),
+		data.WorkflowName.ValueString(),
 		workflows.WorkflowDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

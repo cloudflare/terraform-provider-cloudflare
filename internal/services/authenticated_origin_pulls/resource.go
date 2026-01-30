@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*AuthenticatedOriginPullsResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*AuthenticatedOriginPullsResource)(nil)
+var _ resource.ResourceWithImportState = (*AuthenticatedOriginPullsResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AuthenticatedOriginPullsResource{}
@@ -88,6 +91,7 @@ func (r *AuthenticatedOriginPullsResource) Create(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -136,6 +140,7 @@ func (r *AuthenticatedOriginPullsResource) Update(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -176,12 +181,59 @@ func (r *AuthenticatedOriginPullsResource) Read(ctx context.Context, req resourc
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AuthenticatedOriginPullsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *AuthenticatedOriginPullsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(AuthenticatedOriginPullsModel)
+
+	path_zone_id := ""
+	path_hostname := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<hostname>",
+		&path_zone_id,
+		&path_hostname,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.Hostname = types.StringValue(path_hostname)
+
+	res := new(http.Response)
+	env := AuthenticatedOriginPullsResultEnvelope{*data}
+	_, err := r.client.OriginTLSClientAuth.Hostnames.Get(
+		ctx,
+		path_hostname,
+		origin_tls_client_auth.HostnameGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Hostname
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AuthenticatedOriginPullsResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
