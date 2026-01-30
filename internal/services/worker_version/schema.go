@@ -345,7 +345,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -366,6 +366,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"plain_text",
 									"pipelines",
 									"queue",
+									"ratelimit",
 									"r2_bucket",
 									"secret_text",
 									"send_email",
@@ -470,6 +471,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"queue_name": schema.StringAttribute{
 							Description: "Name of the Queue to bind to.",
 							Optional:    true,
+						},
+						"simple": schema.SingleNestedAttribute{
+							Description: "The rate limit configuration.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"limit": schema.Float64Attribute{
+									Description: "The limit (requests per period).",
+									Required:    true,
+								},
+								"period": schema.Int64Attribute{
+									Description: "The period in seconds.",
+									Required:    true,
+								},
+							},
 						},
 						"bucket_name": schema.StringAttribute{
 							Description: "R2 bucket to bind to.",

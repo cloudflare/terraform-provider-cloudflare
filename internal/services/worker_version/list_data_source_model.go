@@ -88,6 +88,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	Text                        types.String                                                            `tfsdk:"text" json:"text,computed"`
 	Pipeline                    types.String                                                            `tfsdk:"pipeline" json:"pipeline,computed"`
 	QueueName                   types.String                                                            `tfsdk:"queue_name" json:"queue_name,computed"`
+	Simple                      customfield.NestedObject[WorkerVersionsBindingsSimpleDataSourceModel]   `tfsdk:"simple" json:"simple,computed"`
 	BucketName                  types.String                                                            `tfsdk:"bucket_name" json:"bucket_name,computed"`
 	Jurisdiction                types.String                                                            `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	AllowedDestinationAddresses customfield.List[types.String]                                          `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,computed"`
@@ -113,6 +114,11 @@ type WorkerVersionsBindingsOutboundDataSourceModel struct {
 type WorkerVersionsBindingsOutboundWorkerDataSourceModel struct {
 	Environment types.String `tfsdk:"environment" json:"environment,computed"`
 	Service     types.String `tfsdk:"service" json:"service,computed"`
+}
+
+type WorkerVersionsBindingsSimpleDataSourceModel struct {
+	Limit  types.Float64 `tfsdk:"limit" json:"limit,computed"`
+	Period types.Int64   `tfsdk:"period" json:"period,computed"`
 }
 
 type WorkerVersionsLimitsDataSourceModel struct {
