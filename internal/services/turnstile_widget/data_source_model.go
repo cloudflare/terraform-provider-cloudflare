@@ -51,6 +51,9 @@ func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Filter.Direction.ValueString()))
 	}
+	if !m.Filter.Filter.IsNull() {
+		params.Filter = cloudflare.F(m.Filter.Filter.ValueString())
+	}
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(turnstile.WidgetListParamsOrder(m.Filter.Order.ValueString()))
 	}
@@ -60,5 +63,6 @@ func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params
 
 type TurnstileWidgetFindOneByDataSourceModel struct {
 	Direction types.String `tfsdk:"direction" query:"direction,optional"`
+	Filter    types.String `tfsdk:"filter" query:"filter,optional"`
 	Order     types.String `tfsdk:"order" query:"order,optional"`
 }

@@ -37,59 +37,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
 				Optional:    true,
 			},
-			"exclude": schema.ListNestedAttribute{
-				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"address": schema.StringAttribute{
-							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
-							Optional:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Optional:    true,
-						},
-						"host": schema.StringAttribute{
-							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
-							Optional:    true,
-						},
-					},
-				},
-			},
-			"include": schema.ListNestedAttribute{
-				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"address": schema.StringAttribute{
-							Description: "The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.",
-							Optional:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Optional:    true,
-						},
-						"host": schema.StringAttribute{
-							Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
-							Optional:    true,
-						},
-					},
-				},
-			},
-			"service_mode_v2": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"mode": schema.StringAttribute{
-						Description: "The mode to run the WARP client under.",
-						Optional:    true,
-					},
-					"port": schema.Float64Attribute{
-						Description: "The port number when used with proxy mode.",
-						Optional:    true,
-					},
-				},
-			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
 				Computed:    true,
@@ -161,6 +108,73 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
+			},
+			"exclude": schema.ListNestedAttribute{
+				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileExcludeModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the Split Tunnel item, displayed in the client UI.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"include": schema.ListNestedAttribute{
+				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileIncludeModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the Split Tunnel item, displayed in the client UI.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"service_mode_v2": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustDeviceDefaultProfileServiceModeV2Model](ctx),
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "The mode to run the WARP client under.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"port": schema.Float64Attribute{
+						Description: "The port number when used with proxy mode.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"default": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",

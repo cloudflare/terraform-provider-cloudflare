@@ -20,6 +20,7 @@ type TurnstileWidgetsResultListDataSourceEnvelope struct {
 type TurnstileWidgetsDataSourceModel struct {
 	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String                                                        `tfsdk:"direction" query:"direction,optional"`
+	Filter    types.String                                                        `tfsdk:"filter" query:"filter,optional"`
 	Order     types.String                                                        `tfsdk:"order" query:"order,optional"`
 	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[TurnstileWidgetsResultDataSourceModel] `tfsdk:"result"`
@@ -32,6 +33,9 @@ func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (param
 
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Filter.IsNull() {
+		params.Filter = cloudflare.F(m.Filter.ValueString())
 	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(turnstile.WidgetListParamsOrder(m.Order.ValueString()))
