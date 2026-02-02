@@ -127,10 +127,9 @@ EOT
 // TestAccAuthenticatedOriginPullsCertificate_FullLifecycle tests the full lifecycle
 // of an authenticated origin pulls certificate (zone-level) including create, read, and import.
 // Note: This resource does not support in-place updates - all input fields have RequiresReplace.
-// Note: ExpectNonEmptyPlan is required because the certificate field returned from the API has
-// different formatting (whitespace/newlines) than what was sent. Combined with RequiresReplace,
-// this causes Terraform to plan a replacement on every refresh. This is a known issue that should
-// be addressed in cloudflare-config by adding a plan modifier to normalize certificate fields.
+// Certificate normalization is handled via RequiresReplaceIfNotCertificateSemantic plan modifier,
+// which ensures that certificates with different whitespace/newline formatting are treated as
+// semantically equal and don't trigger replacements.
 func TestAccAuthenticatedOriginPullsCertificate_FullLifecycle(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_authenticated_origin_pulls_certificate." + rnd
@@ -164,11 +163,6 @@ func TestAccAuthenticatedOriginPullsCertificate_FullLifecycle(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("uploaded_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("signature"), knownvalue.NotNull()),
 				},
-				// KNOWN ISSUE: The certificate field returned from the API has different formatting
-				// than what was sent, causing RequiresReplace drift on every refresh.
-				// This triggers an attempted replacement that fails with "certificate already exists".
-				// Should be fixed in cloudflare-config with a certificate normalization plan modifier.
-				ExpectNonEmptyPlan: true,
 			},
 			// Step 2: Import
 			{

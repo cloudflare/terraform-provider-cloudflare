@@ -5,6 +5,7 @@ package authenticated_origin_pulls_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -33,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"certificate": schema.StringAttribute{
 				Description:   "The zone's leaf certificate.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{utils.RequiresReplaceIfNotCertificateSemantic()},
 			},
 			"private_key": schema.StringAttribute{
 				Description:   "The zone's private key.",
