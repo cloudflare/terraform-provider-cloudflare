@@ -41,7 +41,7 @@ type RegistrarDomainsResultDataSourceModel struct {
 	Locked            types.Bool                                                                 `tfsdk:"locked" json:"locked,computed"`
 	RegistrantContact customfield.NestedObject[RegistrarDomainsRegistrantContactDataSourceModel] `tfsdk:"registrant_contact" json:"registrant_contact,computed"`
 	RegistryStatuses  types.String                                                               `tfsdk:"registry_statuses" json:"registry_statuses,computed"`
-	SupportedTld      types.Bool                                                                 `tfsdk:"supported_tld" json:"supported_tld,computed"`
+	SupportedTLD      types.Bool                                                                 `tfsdk:"supported_tld" json:"supported_tld,computed"`
 	TransferIn        customfield.NestedObject[RegistrarDomainsTransferInDataSourceModel]        `tfsdk:"transfer_in" json:"transfer_in,computed"`
 	UpdatedAt         timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
