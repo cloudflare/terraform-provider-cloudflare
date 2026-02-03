@@ -100,7 +100,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
@@ -446,7 +445,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_connector.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
-		mtls_certificate.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
 		registrar_domain.NewResource,
@@ -730,8 +728,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_network_monitoring_configuration.NewMagicNetworkMonitoringConfigurationDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRuleDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
-		mtls_certificate.NewMTLSCertificateDataSource,
-		mtls_certificate.NewMTLSCertificatesDataSource,
 		pages_project.NewPagesProjectDataSource,
 		pages_project.NewPagesProjectsDataSource,
 		pages_domain.NewPagesDomainDataSource,
