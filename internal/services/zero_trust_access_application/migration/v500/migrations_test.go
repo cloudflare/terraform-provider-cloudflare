@@ -1,6 +1,7 @@
-package zero_trust_access_application_test
+package v500_test
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"testing"
@@ -11,19 +12,85 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+var (
+	currentProviderVersion = internal.PackageVersion
+)
+
+// Migration Test Configuration
+//
+// Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
+// - Last stable v4 release: default 4.52.0
+// - Current v5 release: auto-updates with releases (internal.PackageVersion)
+//
+// Based on breaking changes analysis:
+// - All breaking changes happened between 4.x and 5.0.0
+// - Key changes: cloudflare_access_application → cloudflare_zero_trust_access_application
+// - Block to attribute conversions (cors_headers, saas_app, landing_page_design, scim_config)
+
+// Embed migration test configuration files
+//
+//go:embed testdata/v4_basic.tf
+var v4BasicConfig string
+
+//go:embed testdata/v5_basic.tf
+var v5BasicConfig string
+
+//go:embed testdata/v4_minimal.tf
+var v4MinimalConfig string
+
+//go:embed testdata/v5_minimal.tf
+var v5MinimalConfig string
+
+//go:embed testdata/v4_zone_scope.tf
+var v4ZoneScopeConfig string
+
+//go:embed testdata/v5_zone_scope.tf
+var v5ZoneScopeConfig string
+
+//go:embed testdata/v4_cors_headers.tf
+var v4CORSHeadersConfig string
+
+//go:embed testdata/v5_cors_headers.tf
+var v5CORSHeadersConfig string
+
+//go:embed testdata/v4_saas_app.tf
+var v4SAASAppConfig string
+
+//go:embed testdata/v5_saas_app.tf
+var v5SAASAppConfig string
+
+//go:embed testdata/v4_saas_app_oidc.tf
+var v4SAASAppOIDCConfig string
+
+//go:embed testdata/v5_saas_app_oidc.tf
+var v5SAASAppOIDCConfig string
+
+//go:embed testdata/v4_self_hosted_domains.tf
+var v4SelfHostedDomainsConfig string
+
+//go:embed testdata/v5_self_hosted_domains.tf
+var v5SelfHostedDomainsConfig string
+
+//go:embed testdata/v4_landing_page_design.tf
+var v4LandingPageDesignConfig string
+
+//go:embed testdata/v5_landing_page_design.tf
+var v5LandingPageDesignConfig string
+
+//go:embed testdata/v4_with_policies.tf
+var v4WithPoliciesConfig string
+
+//go:embed testdata/v5_with_policies.tf
+var v5WithPoliciesConfig string
+
 // TestMigrateZeroTrustAccessApplication_Basic tests basic state schema migration within v5 provider
-// Note: This tests the state migration (v0->v1) within the same resource type,
-// not the resource type migration (cloudflare_access_application -> cloudflare_zero_trust_access_application)
-// which requires the cmd/migrate tool and terraform state mv commands.
 func TestMigrateZeroTrustAccessApplication_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -33,14 +100,7 @@ func TestMigrateZeroTrustAccessApplication_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Test config for state schema migration test
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -51,7 +111,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -74,15 +134,7 @@ func TestMigrateZeroTrustAccessApplication_ZoneScope(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  service_auth_401_redirect = true
-}`, rnd, zoneID, domain)
+	testConfig := fmt.Sprintf(v5ZoneScopeConfig, rnd, zoneID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -93,7 +145,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -117,22 +169,7 @@ func TestMigrateZeroTrustAccessApplication_CORSHeaders(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Test config with CORS headers
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id   = "%[2]s"
-  name         = "%[1]s"
-  domain       = "%[1]s.%[3]s"
-  type         = "self_hosted"
-
-  cors_headers = {
-    allowed_methods = ["GET", "POST", "OPTIONS"]
-    allowed_origins = ["https://example.com", "https://test.com"]
-    allowed_headers = ["Authorization", "Content-Type"]
-    allow_credentials = false
-    max_age         = 600
-  }
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5CORSHeadersConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -143,7 +180,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -168,13 +205,7 @@ func TestMigrateZeroTrustAccessApplication_AllowedIDPs(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test config without allowed_idps (requires valid IDP resources)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id   = "%[2]s"
-  name         = "%[1]s"
-  domain       = "%[1]s.%[3]s"
-  type         = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -185,7 +216,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -208,14 +239,7 @@ func TestMigrateZeroTrustAccessApplication_SelfHostedDomains(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Test config with unique self_hosted_domains to avoid conflicts
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id            = "%[2]s"
-  name                  = "%[1]s"
-  type                  = "self_hosted"
-  self_hosted_domains   = ["%[1]s-app1.%[3]s", "%[1]s-app2.%[3]s", "%[1]s-app3.%[3]s"]
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5SelfHostedDomainsConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -226,7 +250,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -249,13 +273,7 @@ func TestMigrateZeroTrustAccessApplication_CustomPages(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test config without custom_pages (requires valid custom page resources)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id   = "%[2]s"
-  name         = "%[1]s"
-  domain       = "%[1]s.%[3]s"
-  type         = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -266,7 +284,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -290,13 +308,7 @@ func TestMigrateZeroTrustAccessApplication_Tags(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test config without tags (requires pre-created tag resources)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -307,7 +319,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -329,27 +341,7 @@ func TestMigrateZeroTrustAccessApplication_SAASAppBasic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Test config with SAAS app using correct structure
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  type       = "saas"
-  session_duration = "24h"
-
-  saas_app = {
-    consumer_service_url = "https://example.com/sso/saml/consume"
-    sp_entity_id        = "example.com"
-    name_id_format      = "email"
-    
-    custom_attributes = [{
-      name   = "email"
-      name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-      source = { name = "user_email" }
-    }]
-  }
-  auto_redirect_to_identity = false
-}`, rnd, accountID)
+	testConfig := fmt.Sprintf(v5SAASAppConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -359,7 +351,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),
@@ -383,16 +375,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_Basic(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration using the old resource type
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-  session_duration = "24h"
-  enable_binding_cookie = true
-}`, rnd, accountID, domain)
+	v4Config := fmt.Sprintf(v4BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -427,7 +410,6 @@ resource "cloudflare_access_application" "%[1]s" {
 
 // TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies tests migration with policies using v2 migrator
 func TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies(t *testing.T) {
-
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -439,26 +421,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies(t *testing.T) {
 	policyResourceName := "cloudflare_zero_trust_access_policy." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration with policies (string array)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_policy" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s-policy"
-  decision   = "allow"
-  include {
-    everyone = true
-  }
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-  session_duration = "24h"
-
-  policies = [cloudflare_access_policy.%[1]s.id]
-}`, rnd, accountID, domain)
+	v4Config := fmt.Sprintf(v4WithPoliciesConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -501,37 +464,7 @@ func TestMigrateZeroTrustAccessApplication_SAASAppOIDC(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Test config with OIDC SAAS app using valid grant types and no read-only attributes
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  type       = "saas"
-  session_duration = "24h"
-
-  saas_app = {
-    auth_type         = "oidc"
-    redirect_uris     = ["https://example.com/callback"]
-    grant_types       = ["authorization_code", "hybrid"]
-    scopes            = ["openid", "profile", "email"]
-    app_launcher_url  = "https://example.com/app"
-    group_filter_regex = ".*"
-    allow_pkce_without_client_secret = false
-    
-    custom_claims = [{
-      name     = "rank"
-      required = true
-      scope    = "profile"
-      source = { name = "rank" }
-    }]
-    
-    hybrid_and_implicit_options = {
-      return_id_token_from_authorization_endpoint = true
-      return_access_token_from_authorization_endpoint = true
-    }
-  }
-  auto_redirect_to_identity = false
-}`, rnd, accountID)
+	testConfig := fmt.Sprintf(v5SAASAppOIDCConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -541,7 +474,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),
@@ -565,13 +498,7 @@ func TestMigrateZeroTrustAccessApplication_LandingPageDesign(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test basic self_hosted app (app_launcher has naming conflicts)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -582,7 +509,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -606,13 +533,7 @@ func TestMigrateZeroTrustAccessApplication_FooterLinks(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test basic self_hosted app (app_launcher has naming conflicts)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -623,7 +544,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -646,20 +567,7 @@ func TestMigrateZeroTrustAccessApplication_SCIMConfig(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
 	// Test basic SAAS app without SCIM (SCIM requires complex IDP setup)
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  type       = "saas"
-  session_duration = "24h"
-
-  saas_app = {
-    consumer_service_url = "https://example.com/sso/saml/consume"
-    sp_entity_id        = "example.com"
-    name_id_format      = "email"
-  }
-  auto_redirect_to_identity = false
-}`, rnd, accountID)
+	testConfig := fmt.Sprintf(v5SAASAppConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -669,7 +577,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),
@@ -682,7 +590,6 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 }
 
 // TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual tests that cors_headers works correctly as an object
-// This used to require manual state editing, but the v2 migrator now handles this automatically
 func TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -693,21 +600,7 @@ func TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	// Configuration that should work with both old and new schema
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id   = "%[2]s"
-  name         = "%[1]s"
-  domain       = "%[1]s.%[3]s"
-  type         = "self_hosted"
-  
-  cors_headers = {
-    allowed_methods = ["GET", "POST", "OPTIONS"]
-    allowed_origins = ["https://example.com"]
-    allow_credentials = true
-    max_age = 600
-  }
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5CORSHeadersConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -718,7 +611,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -748,22 +641,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_CORSHeaders(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration with cors_headers block (becomes array in state)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-  type       = "self_hosted"
-
-  cors_headers {
-    allowed_methods   = ["GET", "POST", "OPTIONS"]
-    allowed_origins   = ["https://example.com"]
-    allowed_headers   = ["Authorization", "Content-Type"]
-    allow_credentials = true
-    max_age           = 600
-  }
-}`, rnd, accountID, domain)
+	v4Config := fmt.Sprintf(v4CORSHeadersConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -808,27 +686,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_SAASApp(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration with saas_app block
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  type       = "saas"
-
-  saas_app {
-    consumer_service_url = "https://example.com/sso/saml/consume"
-    sp_entity_id         = "example.com"
-    name_id_format       = "email"
-
-    custom_attribute {
-      name         = "email"
-      name_format  = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-      source {
-        name = "user_email"
-      }
-    }
-  }
-}`, rnd, accountID)
+	v4Config := fmt.Sprintf(v4SAASAppConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -873,13 +731,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_Minimal(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 minimal configuration - tests null field handling
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  domain     = "%[1]s.%[3]s"
-}`, rnd, accountID, domain)
+	v4Config := fmt.Sprintf(v4MinimalConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -923,22 +775,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_LandingPageDesign(t *testing.T
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration with landing_page_design (app_launcher type)
-	// Note: app_launcher type always returns name="App Launcher" from the API regardless of input,
-	// so we expect a plan diff for the name field
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "%[1]s"
-  type       = "app_launcher"
-
-  landing_page_design {
-    title             = "Welcome to App"
-    message           = "Please select an application"
-    button_color      = "#0051c3"
-    button_text_color = "#ffffff"
-  }
-}`, rnd, accountID)
+	v4Config := fmt.Sprintf(v4LandingPageDesignConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -957,15 +794,8 @@ resource "cloudflare_access_application" "%[1]s" {
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // API always returns name="App Launcher" for app_launcher type
-				//ConfigPlanChecks: resource.ConfigPlanChecks{
-				//	PostApplyPostRefresh: []plancheck.PlanCheck{
-				//		plancheck.ExpectDeferredChange(),
-				//	},
-				//},
 			},
 			// Step 2: Migrate to v5 - landing_page_design should be transformed from array to object
-			// Note: ExpectNonEmptyPlan is true because app_launcher type always returns name="App Launcher"
-			// from the API regardless of what name is configured
 			{
 				PreConfig: func() {
 					acctest.WriteOutConfig(t, v4Config, tmpDir)
@@ -975,7 +805,6 @@ resource "cloudflare_access_application" "%[1]s" {
 				ConfigDirectory:          config.StaticDirectory(tmpDir),
 				ExpectNonEmptyPlan:       true, // API always returns name="App Launcher" for app_launcher type
 				ConfigStateChecks: []statecheck.StateCheck{
-					// State should have "App Launcher" as the name (from API)
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("app_launcher")),
 					// Verify landing_page_design is now an object (MaxItems:1 transformation)
@@ -1000,14 +829,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_SelfHostedDomains(t *testing.T
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 configuration with self_hosted_domains (set type)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id          = "%[2]s"
-  name                = "%[1]s"
-  type                = "self_hosted"
-  self_hosted_domains = ["%[1]s-a.%[3]s", "%[1]s-b.%[3]s"]
-}`, rnd, accountID, domain)
+	v4Config := fmt.Sprintf(v4SelfHostedDomainsConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1049,14 +871,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_12(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1073,12 +888,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.12.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -1102,14 +917,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_14(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1126,12 +934,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.14.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -1155,14 +963,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_15(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1179,12 +980,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.15.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
@@ -1208,21 +1009,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_12_WithCORSHeaders(t *testing.
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  cors_headers = {
-    allowed_methods   = ["GET", "POST", "OPTIONS"]
-    allowed_origins   = ["https://example.com"]
-    allow_credentials = true
-    max_age           = 600
-  }
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5CORSHeadersConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1239,12 +1026,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.12.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -1268,14 +1055,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_14_WithSelfHostedDomains(t *te
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id          = "%[2]s"
-  name                = "%[1]s"
-  type                = "self_hosted"
-  session_duration    = "24h"
-  self_hosted_domains = ["%[1]s-a.%[3]s", "%[1]s-b.%[3]s"]
-}`, rnd, accountID, domain)
+	testConfig := fmt.Sprintf(v5SelfHostedDomainsConfig, rnd, accountID, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1292,12 +1072,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.14.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -1318,21 +1098,7 @@ func TestMigrateZeroTrustAccessApplication_FromV5_15_SAASApp(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_application." + rnd
 
-	config := fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "saas"
-  session_duration = "24h"
-
-  saas_app = {
-    auth_type         = "oidc"
-    redirect_uris     = ["https://example.com/callback"]
-    grant_types       = ["authorization_code"]
-    scopes            = ["openid", "profile", "email"]
-    app_launcher_url  = "https://example.com/app"
-  }
-}`, rnd, accountID)
+	testConfig := fmt.Sprintf(v5SAASAppOIDCConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1348,12 +1114,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 						VersionConstraint: "5.15.0",
 					},
 				},
-				Config: config,
+				Config: testConfig,
 			},
 			{
 				// Step 2: Upgrade to latest provider
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   config,
+				Config:                   testConfig,
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),

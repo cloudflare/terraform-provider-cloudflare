@@ -1,13 +1,13 @@
-package zero_trust_access_application
+package v500
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// V4AccessApplicationSchema returns the v4 cloudflare_access_application schema.
-// This is used by MoveState to parse the source state from v4 provider.
-func V4AccessApplicationSchema() schema.Schema {
+// SourceAccessApplicationSchema returns the v4 cloudflare_access_application schema.
+// This is used by MoveState and UpgradeFromV4 to parse the source state from v4 provider.
+func SourceAccessApplicationSchema() schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
