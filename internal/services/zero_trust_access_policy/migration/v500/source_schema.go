@@ -1,13 +1,13 @@
-package zero_trust_access_policy
+package v500
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// V4AccessPolicySchema returns the v4 cloudflare_access_policy schema.
+// SourceAccessPolicySchema returns the v4 cloudflare_access_policy schema.
 // This is used by MoveState to parse the source state from v4 provider.
-func V4AccessPolicySchema() schema.Schema {
+func SourceAccessPolicySchema() schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -51,20 +51,20 @@ func V4AccessPolicySchema() schema.Schema {
 			// v4 include/exclude/require are list blocks
 			"include": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
-					Attributes: v4ConditionGroupAttributes(),
-					Blocks:     v4ConditionGroupBlocks(),
+					Attributes: sourceConditionGroupAttributes(),
+					Blocks:     sourceConditionGroupBlocks(),
 				},
 			},
 			"exclude": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
-					Attributes: v4ConditionGroupAttributes(),
-					Blocks:     v4ConditionGroupBlocks(),
+					Attributes: sourceConditionGroupAttributes(),
+					Blocks:     sourceConditionGroupBlocks(),
 				},
 			},
 			"require": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
-					Attributes: v4ConditionGroupAttributes(),
-					Blocks:     v4ConditionGroupBlocks(),
+					Attributes: sourceConditionGroupAttributes(),
+					Blocks:     sourceConditionGroupBlocks(),
 				},
 			},
 			// v4 approval_group is a list block
@@ -108,8 +108,8 @@ func V4AccessPolicySchema() schema.Schema {
 	}
 }
 
-// v4ConditionGroupAttributes returns the attributes for condition groups
-func v4ConditionGroupAttributes() map[string]schema.Attribute {
+// sourceConditionGroupAttributes returns the attributes for condition groups
+func sourceConditionGroupAttributes() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"everyone": schema.BoolAttribute{
 			Optional: true,
@@ -170,8 +170,8 @@ func v4ConditionGroupAttributes() map[string]schema.Attribute {
 	}
 }
 
-// v4ConditionGroupBlocks returns the nested blocks for condition groups
-func v4ConditionGroupBlocks() map[string]schema.Block {
+// sourceConditionGroupBlocks returns the nested blocks for condition groups
+func sourceConditionGroupBlocks() map[string]schema.Block {
 	return map[string]schema.Block{
 		"saml": schema.ListNestedBlock{
 			NestedObject: schema.NestedBlockObject{

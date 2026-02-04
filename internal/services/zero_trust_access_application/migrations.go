@@ -29,21 +29,28 @@ func (r *ZeroTrustAccessApplicationResource) MoveState(ctx context.Context) []re
 }
 
 // UpgradeState handles schema version upgrades.
+// Both v4 cloudflare_access_application and early v5 cloudflare_zero_trust_access_application have schema_version=0.
+//
+// We use v5Schema at version 0, which means:
+// - Early v5 state (v5.12-v5.15): works correctly, passes through as no-op
+// - v4 state via `terraform state mv`: will FAIL (schema mismatch)
+//
+// For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
 func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	v4Schema := v500.SourceAccessApplicationSchema()
 	v5Schema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
-		// Handle upgrades from earlier v5 versions (no schema changes, just version bump)
+		// Handle early v5 state with schema_version=0 (v5.12-v5.15)
+		// Uses v5Schema - only works for v5 format, NOT v4
+		// v4 migration must use `moved` blocks which go through MoveState
 		0: {
 			PriorSchema:   &v5Schema,
 			StateUpgrader: v500.UpgradeFromV0,
 		},
-		// Handle state moved from cloudflare_access_application (v4 provider)
-		// When users run `terraform state mv cloudflare_access_application.x cloudflare_zero_trust_access_application.x`,
-		// the old schema_version=2 is preserved, triggering this upgrader.
-		2: {
-			PriorSchema:   &v4Schema,
-			StateUpgrader: v500.UpgradeFromV4,
+		// Handle upgrades from v5 with schema_version=1
+		// This is a no-op since the schema is compatible.
+		1: {
+			PriorSchema:   &v5Schema,
+			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
 }
