@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"consumer_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"dead_letter_queue": schema.StringAttribute{
 				Optional: true,
@@ -77,11 +77,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"script": schema.StringAttribute{
-				Description: "Name of a Worker",
-				Computed:    true,
+				Description:   "Name of a Worker",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

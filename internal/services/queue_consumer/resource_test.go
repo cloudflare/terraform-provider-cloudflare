@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -415,6 +416,48 @@ func TestAccCloudflareQueueConsumer_Worker_UpdateSettings(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareQueueConsumer_HttpPull_NoDiffAfterApply verifies that there is no diff
+// when running terraform plan after an initial apply. This tests the fix for the issue
+// where consumer_id was marked with RequiresReplace() which caused infinite replacements
+// because the computed consumer_id value showed as "unknown" on subsequent plans.
+// See: https://github.com/cloudflare/terraform-provider-cloudflare/issues/XXXX
+func TestAccCloudflareQueueConsumer_HttpPull_NoDiffAfterApply(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	queueName := "test-queue-" + rnd
+	resourceName := "cloudflare_queue_consumer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Initial apply
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullNoDiff(rnd, accountID, queueName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("consumer_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("http_pull")),
+				},
+			},
+			// Step 2: Same config - should produce no changes (empty plan)
+			// This verifies that consumer_id doesn't cause unnecessary replacements
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullNoDiff(rnd, accountID, queueName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareQueueConsumerDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 
@@ -493,4 +536,75 @@ func testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetter(rnd, accountID, q
 
 func testAccCheckCloudflareQueueConsumerHttpPullWithDeadLetterUpdate(rnd, accountID, queueName, dlqName1, dlqName2 string) string {
 	return acctest.LoadTestCase("queueconsumer_http_with_dead_letter_update.tf", accountID, queueName, accountID, dlqName1, accountID, dlqName2, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullNoDiff(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_http_no_diff.tf", accountID, queueName, rnd, accountID)
+}
+
+func testAccCheckCloudflareQueueConsumerHttpPullReproduceBug(rnd, accountID, queueName string) string {
+	return acctest.LoadTestCase("queueconsumer_http_reproduce_bug.tf", accountID, queueName, rnd, accountID)
+}
+
+// TestAccCloudflareQueueConsumer_HttpPull_ConsumerIdNoReplacement is a regression test
+// that verifies the consumer_id computed field does not trigger resource replacement.
+// Before the fix, consumer_id had RequiresReplace() which caused the resource to be
+// destroyed and recreated on every terraform plan after initial apply.
+func TestAccCloudflareQueueConsumer_HttpPull_ConsumerIdNoReplacement(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	queueName := "test-queue-" + rnd
+	resourceName := "cloudflare_queue_consumer." + rnd
+
+	var consumerIdStep1 string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareQueueConsumerDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Initial apply - capture the consumer_id
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullReproduceBug(rnd, accountID, queueName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "consumer_id"),
+					// Capture the consumer_id for comparison in step 2
+					resource.TestCheckResourceAttrWith(resourceName, "consumer_id", func(value string) error {
+						consumerIdStep1 = value
+						return nil
+					}),
+				),
+				// Allow non-empty plan due to settings/script drift (separate issue)
+				// The key test is that there's NO REPLACEMENT in step 2
+				ExpectNonEmptyPlan: true,
+			},
+			// Step 2: Same config - verify consumer_id is preserved (not recreated)
+			// This would fail before the fix because consumer_id triggered replacement
+			{
+				Config: testAccCheckCloudflareQueueConsumerHttpPullReproduceBug(rnd, accountID, queueName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						// Verify NO replacement action - this is the key assertion
+						// Before the fix, this would show ResourceActionDestroyBeforeCreate
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					// Verify the consumer_id is the SAME as step 1 (no replacement occurred)
+					resource.TestCheckResourceAttrWith(resourceName, "consumer_id", func(value string) error {
+						if value != consumerIdStep1 {
+							return fmt.Errorf("consumer_id changed from %s to %s - resource was replaced when it shouldn't have been", consumerIdStep1, value)
+						}
+						return nil
+					}),
+				),
+				// Allow non-empty plan due to settings/script drift (separate issue)
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
 }
