@@ -139,7 +139,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	ClassName                   types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
 	NamespaceID                 types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
 	ScriptName                  types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	Json                        types.String                                `tfsdk:"json" json:"json,optional"`
+	Json                        jsontypes.Normalized                        `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`

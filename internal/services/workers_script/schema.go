@@ -440,6 +440,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"certificate_id": schema.StringAttribute{
 							Description: "Identifier of the certificate to bind to.",

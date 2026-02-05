@@ -85,7 +85,7 @@ type WorkerVersionBindingsDataSourceModel struct {
 	ScriptName                  types.String                                                           `tfsdk:"script_name" json:"script_name,computed"`
 	OldName                     types.String                                                           `tfsdk:"old_name" json:"old_name,computed"`
 	VersionID                   types.String                                                           `tfsdk:"version_id" json:"version_id,computed"`
-	Json                        types.String                                                           `tfsdk:"json" json:"json,computed"`
+	Json                        jsontypes.Normalized                                                   `tfsdk:"json" json:"json,computed"`
 	CertificateID               types.String                                                           `tfsdk:"certificate_id" json:"certificate_id,computed"`
 	Text                        types.String                                                           `tfsdk:"text" json:"text,computed"`
 	Pipeline                    types.String                                                           `tfsdk:"pipeline" json:"pipeline,computed"`
