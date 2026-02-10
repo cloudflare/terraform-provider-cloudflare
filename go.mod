@@ -5,7 +5,7 @@ go 1.24.0
 toolchain go1.24.12
 
 require (
-	github.com/cloudflare/cloudflare-go/v6 v6.6.1-0.20260210164325-60b52ca5c929
+	github.com/cloudflare/cloudflare-go/v6 v6.6.1-0.20260210220526-a29d4728fa64
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
