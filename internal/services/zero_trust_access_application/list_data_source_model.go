@@ -80,6 +80,7 @@ type ZeroTrustAccessApplicationsResultDataSourceModel struct {
 	OptionsPreflightBypass      types.Bool                                                                             `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,computed"`
 	PathCookieAttribute         types.Bool                                                                             `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,computed"`
 	Policies                    customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesDataSourceModel]       `tfsdk:"policies" json:"policies,computed"`
+	PrivateAddress              types.String                                                                             `tfsdk:"private_address" json:"private_address,computed"`
 	ReadServiceTokensFromHeader types.String                                                                           `tfsdk:"read_service_tokens_from_header" json:"read_service_tokens_from_header,computed"`
 	SameSiteCookieAttribute     types.String                                                                           `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,computed"`
 	SCIMConfig                  customfield.NestedObject[ZeroTrustAccessApplicationsSCIMConfigDataSourceModel]         `tfsdk:"scim_config" json:"scim_config,computed"`

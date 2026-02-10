@@ -40,6 +40,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	Name                        types.String                                                                          `tfsdk:"name" json:"name,computed"`
 	OptionsPreflightBypass      types.Bool                                                                            `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,computed"`
 	PathCookieAttribute         types.Bool                                                                            `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,computed"`
+	PrivateAddress              types.String                                                                          `tfsdk:"private_address" json:"private_address,computed"`
 	ReadServiceTokensFromHeader types.String                                                                          `tfsdk:"read_service_tokens_from_header" json:"read_service_tokens_from_header,computed"`
 	SameSiteCookieAttribute     types.String                                                                          `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,computed"`
 	ServiceAuth401Redirect      types.Bool                                                                            `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect,computed"`

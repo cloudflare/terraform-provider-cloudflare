@@ -104,6 +104,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"private_address": schema.StringAttribute{
+				Description: "The private IP of the resource protected by this application. This is required for `private_ip` type applications.",
+				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "private_ip"),
+					customvalidator.RequiredWhenOtherStringIsOneOf(path.MatchRoot("type"), "private_ip"),
+				},
+			},
 			"options_preflight_bypass": schema.BoolAttribute{
 				Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
 				Optional:    true,
@@ -140,7 +148,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\", \"proxy_endpoint\".",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\", \"proxy_endpoint\", \"private_ip\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -158,6 +166,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"mcp",
 						"mcp_portal",
 						"proxy_endpoint",
+						"private_ip",
 					),
 				},
 			},

@@ -28,6 +28,7 @@ type ZeroTrustAccessApplicationModel struct {
 	HeaderBgColor               types.String                                                               `tfsdk:"header_bg_color" json:"header_bg_color,optional"`
 	LogoURL                     types.String                                                               `tfsdk:"logo_url" json:"logo_url,optional"`
 	Name                        types.String                                                               `tfsdk:"name" json:"name,computed_optional"`
+	PrivateAddress              types.String                                                               `tfsdk:"private_address" json:"private_address,optional"`
 	OptionsPreflightBypass      types.Bool                                                                 `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,optional"`
 	ReadServiceTokensFromHeader types.String                                                               `tfsdk:"read_service_tokens_from_header" json:"read_service_tokens_from_header,optional"`
 	SameSiteCookieAttribute     types.String                                                               `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,optional"`

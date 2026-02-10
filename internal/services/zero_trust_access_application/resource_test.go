@@ -1681,6 +1681,25 @@ func TestAccCloudflareAccessApplicationWithInvalidSaas(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithInvalidPrivateIP(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidPrivateIP(rnd, accountID),
+				ExpectError: regexp.MustCompile("\"private_address\" has to be set if \"type\" is one of: \"private_ip\""),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WarpInvalid(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accoundID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -1778,6 +1797,10 @@ func testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPreceden
 
 func testAccessApplicationWithInvalidSaas(resourceID, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithinvalidsaas.tf", resourceID, accountID)
+}
+
+func testAccessApplicationWithInvalidPrivateIP(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithinvalidprivateip.tf", resourceID, accountID)
 }
 
 func testAccCloudflareAccessApplicationWarpInvalid(rnd, accountID string) string {

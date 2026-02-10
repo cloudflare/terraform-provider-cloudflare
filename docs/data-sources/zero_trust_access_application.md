@@ -57,6 +57,7 @@ data "cloudflare_zero_trust_access_application" "example_zero_trust_access_appli
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
 - `policies` (Attributes List) (see [below for nested schema](#nestedatt--policies))
+- `private_address` (String) The private IP of the resource protected by this application. This is required for `private_ip` type applications.
 - `read_service_tokens_from_header` (String) Allows matching Access Service Tokens passed HTTP in a single header with this name.
 This works as an alternative to the (CF-Access-Client-Id, CF-Access-Client-Secret) pair of headers.
 The header value will be interpreted as a json object similar to: 
@@ -75,7 +76,7 @@ The header value will be interpreted as a json object similar to:
 - `tags` (Set of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--target_criteria))
 - `type` (String) The application type.
-Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp", "mcp", "mcp_portal".
+Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp", "mcp", "mcp_portal", "private_ip".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
