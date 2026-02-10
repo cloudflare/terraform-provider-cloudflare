@@ -19,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*PagesDomainResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(1, 500), // v5 dormant (1), enables migration (500) when TF_MIG_TEST=1
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The domain name.",
