@@ -1,19 +1,20 @@
 resource "cloudflare_list" "%[1]s" {
   account_id  = "%[2]s"
   name        = "%[3]s"
-  kind        = "asn"
+  kind        = "ip"
   description = "%[4]s"
-  
+
   item {
     value {
-      asn = 12345
+      ip = "192.0.2.1"
     }
-    comment = "Test ASN 1"
+    comment = "Test IP 1"
   }
-  
+
   item {
     value {
-      asn = 67890
+      ip = "192.0.2.2"
     }
+    comment = "Test IP 2"
   }
 }
