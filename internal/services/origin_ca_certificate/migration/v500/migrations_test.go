@@ -2,6 +2,8 @@ package v500_test
 
 import (
 	_ "embed"
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal"
@@ -61,13 +63,15 @@ func TestMigrateOriginCACertificate_V4ToV5_Basic(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rnd := utils.GenerateRandomResourceName()
-			testConfig := tc.configFn()
+			domain := os.Getenv("CLOUDFLARE_DOMAIN")
+			testConfig := fmt.Sprintf(tc.configFn(), rnd, domain)
 			tmpDir := t.TempDir()
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_Domain(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -163,13 +167,15 @@ func TestMigrateOriginCACertificate_V4ToV5_DefaultValidity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rnd := utils.GenerateRandomResourceName()
-			testConfig := tc.configFn()
+			domain := os.Getenv("CLOUDFLARE_DOMAIN")
+			testConfig := fmt.Sprintf(tc.configFn(), rnd, domain)
 			tmpDir := t.TempDir()
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_Domain(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
