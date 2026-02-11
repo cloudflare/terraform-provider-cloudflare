@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestMain(m *testing.M) {
@@ -246,4 +247,37 @@ func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID, cfI
 
 func testAccCheckCloudflareGRETunnelMultiUpdate(ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr string) string {
 	return acctest.LoadTestCase("gretunnelmultiupdate.tf", ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr)
+}
+
+func TestAccUpgradeMagicWanGreTunnel_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	customerEndpoint := "203.0.113.10"
+	interfaceAddr := "10.213.0.20/31"
+	config := testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID, cfIP, customerEndpoint, interfaceAddr)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck_AccountID(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

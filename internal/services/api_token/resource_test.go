@@ -712,3 +712,33 @@ resource "cloudflare_api_token" "crud_test" {
 }
 `, name, expiresOn, ipCondition)
 }
+
+func TestAccUpgradeApiToken_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	config := acctest.LoadTestCase("api_token-without-condition.tf", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

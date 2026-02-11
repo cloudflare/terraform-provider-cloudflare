@@ -898,3 +898,37 @@ func testAccCheckCloudflareManagedTransformsDestroy(s *terraform.State) error {
 // We can't test the state import when there are disabled transformations: those won't exist in
 // the new state (and there's no way to change that in `ImportState()` because it doesn't have access
 // to the previous state), so terraform would see a state diff from an import.
+
+func TestAccUpgradeManagedTransforms_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	config := testAccCheckCloudflareManagedTransforms(rnd, zoneID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

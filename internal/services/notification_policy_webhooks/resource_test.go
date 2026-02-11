@@ -332,3 +332,38 @@ func testAccCheckCloudflareNotificationPolicyWebhooksDestroy(s *terraform.State)
 
 	return nil
 }
+
+func TestAccUpgradeNotificationPolicyWebhooks_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	webhookName := "my webhook destination for notifications"
+	webhookURL := "https://postman-echo.com/post"
+
+	config := testCloudflareNotificationPolicyWebhooksBasic(rnd, accountID, webhookName, webhookURL)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

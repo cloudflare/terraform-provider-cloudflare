@@ -754,3 +754,33 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 
 	return nil
 }
+
+func TestAccUpgradeZeroTrustDevicePostureRule_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	config := testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

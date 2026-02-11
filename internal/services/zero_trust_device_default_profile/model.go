@@ -31,7 +31,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	TunnelProtocol             types.String                                                                    `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeModel]         `tfsdk:"include" json:"include,computed_optional"`
-	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
+	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,optional"`
 	Default                    types.Bool                                                                      `tfsdk:"default" json:"default,computed"`
 	Enabled                    types.Bool                                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	GatewayUniqueID            types.String                                                                    `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
@@ -47,20 +47,20 @@ func (m ZeroTrustDeviceDefaultProfileModel) MarshalJSONForUpdate(state ZeroTrust
 }
 
 type ZeroTrustDeviceDefaultProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type ZeroTrustDeviceDefaultProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type ZeroTrustDeviceDefaultProfileServiceModeV2Model struct {
-	Mode types.String  `tfsdk:"mode" json:"mode,computed_optional"`
-	Port types.Float64 `tfsdk:"port" json:"port,computed_optional"`
+	Mode types.String  `tfsdk:"mode" json:"mode,optional"`
+	Port types.Float64 `tfsdk:"port" json:"port,optional"`
 }
 
 type ZeroTrustDeviceDefaultProfileFallbackDomainsModel struct {

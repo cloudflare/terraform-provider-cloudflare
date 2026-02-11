@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -271,4 +272,48 @@ func testAccCheckCloudflareMTLSCertificateChainConfigWithNewline(accountID, name
 
 func testAccCheckCloudflareMTLSCertificateChainConfigNormalized(accountID, name string) string {
 	return acctest.LoadTestCase("mtlscertificatechainnormalized.tf", accountID, name)
+}
+
+func TestAccUpgradeMtlsCertificate_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	expiry := time.Now().Add(time.Hour * 24 * 365)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"example.com"}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+
+	config := testAccMTLSCertificateBasicConfig(accountID, rnd, cert, key)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ExpectNonEmptyPlan:       true,
+			},
+		},
+	})
 }

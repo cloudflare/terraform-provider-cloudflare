@@ -699,3 +699,47 @@ func TestAccCloudflareWorkerVersion_RunWorkerFirstUpgrade(t *testing.T) {
 		},
 	})
 }
+
+func TestAccUpgradeWorkerVersion_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "index.js")
+
+	writeContentFile := func(t *testing.T, content string) {
+		err := os.WriteFile(contentFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	config := testAccCloudflareWorkerVersionConfig(rnd, accountID, contentFile)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t, `export default {fetch() {return new Response()}}`)
+				},
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

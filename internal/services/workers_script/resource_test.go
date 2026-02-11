@@ -864,3 +864,38 @@ func testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir string) stri
 func testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, runWorkerFirst string) string {
 	return acctest.LoadTestCase("module_with_assets_with_run_worker_first.tf", rnd, accountID, contentFile, assetsDir, runWorkerFirst)
 }
+
+func TestAccUpgradeWorkersScript_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	config := testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(resourceName, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
