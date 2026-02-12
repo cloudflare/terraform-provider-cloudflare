@@ -1,6 +1,7 @@
 package v500
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -9,8 +10,9 @@ import (
 // ============================================================================
 
 // SourceCloudflareLogpushJobModel represents the source cloudflare_logpush_job state structure.
-// This corresponds to schema_version=0 from the legacy (SDKv2) cloudflare provider.
-// Used by UpgradeFromLegacyV0 to parse legacy state.
+// This corresponds to version 0 state after tf-migrate has transformed it to v5 format.
+// Also handles early v5 releases like v5.16.0 that use version 0.
+// Used by UpgradeFromV4 to parse version 0 state.
 type SourceCloudflareLogpushJobModel struct {
 	ID                       types.String                            `tfsdk:"id"`
 	AccountID                types.String                            `tfsdk:"account_id"`
@@ -27,7 +29,7 @@ type SourceCloudflareLogpushJobModel struct {
 	MaxUploadRecords         types.Int64                             `tfsdk:"max_upload_records"`
 	Name                     types.String                            `tfsdk:"name"`
 	OwnershipChallenge       types.String                            `tfsdk:"ownership_challenge"`
-	OutputOptions            []SourceLogpushJobOutputOptionsModel    `tfsdk:"output_options"` // SDKv2 TypeList MaxItems:1 stored as array
+	OutputOptions            *SourceLogpushJobOutputOptionsModel     `tfsdk:"output_options"` // v5 format: object/pointer, not array
 }
 
 // SourceLogpushJobOutputOptionsModel represents the source output_options nested structure.
@@ -70,7 +72,9 @@ type TargetLogpushJobModel struct {
 	Enabled                  types.Bool                              `tfsdk:"enabled"`
 	Frequency                types.String                            `tfsdk:"frequency"`
 	Kind                     types.String                            `tfsdk:"kind"`
-	// Note: error_message, last_complete, last_error are computed-only and not included in migration
+	ErrorMessage             types.String                            `tfsdk:"error_message"`
+	LastComplete             timetypes.RFC3339                       `tfsdk:"last_complete"`
+	LastError                timetypes.RFC3339                       `tfsdk:"last_error"`
 }
 
 // TargetLogpushJobOutputOptionsModel represents the target output_options nested structure.

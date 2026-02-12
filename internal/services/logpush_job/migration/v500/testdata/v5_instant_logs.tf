@@ -1,7 +1,7 @@
-resource "cloudflare_logpush_job" "%s" {
-  zone_id          = "%s"
+resource "cloudflare_logpush_job" "%[1]s" {
+  zone_id          = "%[2]s"
   dataset          = "http_requests"
-  destination_conf = "s3://terraform-provider-cloudflare-test-bucket/logpush?region=us-west-2"
+  destination_conf = "https://logpush-receiver.sd.cfplat.com"
   enabled          = true
   kind             = ""
 }

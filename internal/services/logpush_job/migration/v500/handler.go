@@ -7,30 +7,36 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
+// UpgradeFromV4 handles state upgrades from version 0 to v5 (version=500).
 //
-// This performs a full transformation from v4 → v5 format.
-// The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
+// This handles state from:
+// - v4 SDKv2 provider after tf-migrate (schema_version=0, already transformed to v5 format)
+// - Early v5 releases like v5.16.0 (version=0, already in v5 format)
+//
+// tf-migrate transforms the state to v5 format before the provider sees it, so by the
+// time this function runs, the state is already in v5 format (output_options as object).
+// This function just needs to convert field types (e.g., ID string→int64) and bump the version.
 func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading logpush_job state from v4 SDKv2 provider (schema_version=0)")
+	tflog.Info(ctx, "Upgrading logpush_job state from version 0 (post-tf-migrate)")
+	tflog.Info(ctx, "[DEBUG] UpgradeFromV4 called - this should only happen with TF_MIG_TEST=1")
 
-	// Parse v4 state using v4 model
+	// Parse state using v5 source model (state is already in v5 format after tf-migrate)
 	var v4State SourceCloudflareLogpushJobModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Transform v4 → v5
+	// Transform: mainly type conversions (ID string→int64) and field adjustments
 	v5State, diags := Transform(ctx, v4State)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Write transformed state
+	// Write upgraded state
 	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
-	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
+	tflog.Info(ctx, "State upgrade from version 0 to 500 completed successfully")
 }
 
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
