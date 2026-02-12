@@ -982,37 +982,27 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
 
 	// Find state file in tmpDir
-	// First check if state file exists directly in tmpDir (from v4 import)
-	var stateFilePath string
-	directStateFile := filepath.Join(tmpDir, "terraform.tfstate")
-	if _, err := os.Stat(directStateFile); err == nil {
-		stateFilePath = directStateFile
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
 	} else {
-		// Look for state file in subdirectories (from test framework)
-		entries, err := os.ReadDir(tmpDir)
-		if err != nil {
-			t.Logf("Failed to read test directory: %v", err)
-		} else {
-			for _, entry := range entries {
-				if entry.IsDir() {
-					inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
-					for _, inner_entry := range inner_entries {
-						if inner_entry.Name() == "terraform.tfstate" {
-							stateFilePath = filepath.Join(tmpDir, entry.Name(), "terraform.tfstate")
-							break
-						}
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
 					}
 				}
-				if stateFilePath != "" {
-					break
-				}
 			}
+
 		}
 	}
 
 	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
-	debugLogf(t, "State file path: %s", stateFilePath)
-	state, err := os.ReadFile(stateFilePath)
+	debugLogf(t, "StateDir: %s", stateDir)
+	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
@@ -1024,7 +1014,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Running migration with YAML transformations")
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
-		"-state", stateFilePath,
+		"-state", filepath.Join(stateDir, "terraform.tfstate"),
 		"-grit=false",                      // Disable Grit transformations
 		"-transformer=true",                // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
@@ -1037,7 +1027,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Migration command failed: %v\nMigration output:\n%s", err, string(output))
 	}
-	newState, err := os.ReadFile(stateFilePath)
+	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
