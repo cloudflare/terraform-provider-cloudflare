@@ -185,6 +185,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ips": schema.ListAttribute{
 						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
+						Computed:    true,
 						Optional:    true,
 						ElementType: types.StringType,
 					},
