@@ -62,51 +62,48 @@ func SourceCloudflareLogpushJobSchema() schema.Schema {
 			"ownership_challenge": schema.StringAttribute{
 				Optional: true,
 			},
-		},
-		Blocks: map[string]schema.Block{
-			// output_options in v4 is TypeList with MaxItems: 1
-			// Stored as array in SDKv2 state
-			"output_options": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"batch_prefix": schema.StringAttribute{
-							Optional: true,
-						},
-						"batch_suffix": schema.StringAttribute{
-							Optional: true,
-						},
-						// Note: v4 field name is cve20214428, not cve_2021_44228
-						"cve20214428": schema.BoolAttribute{
-							Optional: true,
-						},
-						"field_delimiter": schema.StringAttribute{
-							Optional: true,
-						},
-						"field_names": schema.ListAttribute{
-							ElementType: types.StringType,
-							Optional:    true,
-						},
-						"output_type": schema.StringAttribute{
-							Optional: true,
-						},
-						"record_delimiter": schema.StringAttribute{
-							Optional: true,
-						},
-						"record_prefix": schema.StringAttribute{
-							Optional: true,
-						},
-						"record_suffix": schema.StringAttribute{
-							Optional: true,
-						},
-						"record_template": schema.StringAttribute{
-							Optional: true,
-						},
-						"sample_rate": schema.Float64Attribute{
-							Optional: true,
-						},
-						"timestamp_format": schema.StringAttribute{
-							Optional: true,
-						},
+			// output_options: After tf-migrate transforms the state, it's already in v5 format (object)
+			// So we expect SingleNestedAttribute, not ListNestedBlock
+			"output_options": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"batch_prefix": schema.StringAttribute{
+						Optional: true,
+					},
+					"batch_suffix": schema.StringAttribute{
+						Optional: true,
+					},
+					// Note: v4 field name is cve20214428, not cve_2021_44228
+					"cve20214428": schema.BoolAttribute{
+						Optional: true,
+					},
+					"field_delimiter": schema.StringAttribute{
+						Optional: true,
+					},
+					"field_names": schema.ListAttribute{
+						ElementType: types.StringType,
+						Optional:    true,
+					},
+					"output_type": schema.StringAttribute{
+						Optional: true,
+					},
+					"record_delimiter": schema.StringAttribute{
+						Optional: true,
+					},
+					"record_prefix": schema.StringAttribute{
+						Optional: true,
+					},
+					"record_suffix": schema.StringAttribute{
+						Optional: true,
+					},
+					"record_template": schema.StringAttribute{
+						Optional: true,
+					},
+					"sample_rate": schema.Float64Attribute{
+						Optional: true,
+					},
+					"timestamp_format": schema.StringAttribute{
+						Optional: true,
 					},
 				},
 			},

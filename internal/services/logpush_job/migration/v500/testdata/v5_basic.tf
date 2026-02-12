@@ -1,9 +1,9 @@
-resource "cloudflare_logpush_job" "%s" {
-  account_id      = "%s"
-  dataset         = "audit_logs"
-  destination_conf = "s3://terraform-provider-cloudflare-test-bucket/logpush?region=us-west-2"
-  enabled         = true
-  name            = "%s"
+resource "cloudflare_logpush_job" "%[1]s" {
+  account_id       = "%[2]s"
+  dataset          = "audit_logs"
+  destination_conf = "https://logpush-receiver.sd.cfplat.com"
+  enabled          = true
+  name             = "%[3]s"
 
   output_options = {
     cve_2021_44228   = false

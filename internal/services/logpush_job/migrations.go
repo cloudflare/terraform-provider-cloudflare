@@ -4,8 +4,10 @@ package logpush_job
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job/migration/v500"
 )
@@ -18,11 +20,27 @@ var _ resource.ResourceWithUpgradeState = (*LogpushJobResource)(nil)
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
 // 2. v5 state (version=1) → v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
 //
-// The separation of schema versions (v4=0, v5=1/500) eliminates the need for
-// dual-format detection that was required in earlier implementations.
+// In production (no TF_MIG_TEST), only a no-op upgrader is registered at slot 0
+// to safely bump existing v5 users from version 0 to 1 without triggering the
+// v4→v5 transformation (which would fail on v5-format state).
 func (r *LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	sourceSchema := v500.SourceCloudflareLogpushJobSchema()
+	tfMigTest := os.Getenv("TF_MIG_TEST")
+	tflog.Info(ctx, "[DEBUG] UpgradeState called", map[string]any{"TF_MIG_TEST": tfMigTest})
+
 	targetSchema := ResourceSchema(ctx)
+
+	if tfMigTest == "" {
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	sourceSchema := v500.SourceCloudflareLogpushJobSchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)

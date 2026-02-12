@@ -2,6 +2,7 @@ package v500
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,10 +29,26 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 		return nil, diags
 	}
 
-	// Step 2: Initialize target with direct copies
+	// Step 2: Convert ID from String (v4) to Int64 (v5)
+	var targetID types.Int64
+	if !source.ID.IsNull() && !source.ID.IsUnknown() {
+		idStr := source.ID.ValueString()
+		idInt, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			diags.AddError(
+				"Invalid ID",
+				"Failed to convert ID from string to int64: "+err.Error(),
+			)
+			return nil, diags
+		}
+		targetID = types.Int64Value(idInt)
+	} else {
+		targetID = types.Int64Null()
+	}
+
+	// Step 3: Initialize target with direct copies
 	target := &TargetLogpushJobModel{
-		// ID is computed, but copy from source (it's a String in source, Int64 in target - but tfsdk handles this)
-		// The framework will handle the type conversion from String to Int64 during state.Set()
+		ID:              targetID,
 		AccountID:       source.AccountID,
 		ZoneID:          source.ZoneID,
 		Dataset:         source.Dataset,
@@ -41,13 +58,13 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 		OwnershipChallenge: source.OwnershipChallenge,
 	}
 
-	// Step 3: Handle empty string → null transformations
+	// Step 4: Handle empty string → null transformations
 	// v4 sets these to "" when not configured, v5 uses null
 	target.Filter = emptyStringToNull(source.Filter)
 	target.LogpullOptions = emptyStringToNull(source.LogpullOptions)
 	target.Name = emptyStringToNull(source.Name)
 
-	// Step 4: Handle kind field - "instant-logs" no longer valid in v5
+	// Step 5: Handle kind field - "instant-logs" no longer valid in v5
 	if !source.Kind.IsNull() && source.Kind.ValueString() == "instant-logs" {
 		// Remove "instant-logs" value (set to null)
 		target.Kind = types.StringNull()
@@ -55,15 +72,15 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 		target.Kind = source.Kind
 	}
 
-	// Step 5: Handle integer fields - convert 0 to null (0 means "not set" in v5)
+	// Step 6: Handle integer fields - convert 0 to null (0 means "not set" in v5)
 	target.MaxUploadBytes = zeroInt64ToNull(source.MaxUploadBytes)
 	target.MaxUploadRecords = zeroInt64ToNull(source.MaxUploadRecords)
 	target.MaxUploadIntervalSeconds = zeroInt64ToNull(source.MaxUploadIntervalSeconds)
 
-	// Step 6: Handle output_options - most complex transformation
-	// v4: Array (SDKv2 TypeList MaxItems:1) → v5: Pointer to nested object
-	if len(source.OutputOptions) > 0 {
-		targetOutputOptions, err := transformOutputOptions(ctx, source.OutputOptions[0])
+	// Step 7: Handle output_options
+	// After tf-migrate, output_options is already in v5 format (pointer to object)
+	if source.OutputOptions != nil {
+		targetOutputOptions, err := transformOutputOptions(ctx, *source.OutputOptions)
 		if err.HasError() {
 			diags.Append(err...)
 			return nil, diags
@@ -73,7 +90,7 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 		target.OutputOptions = nil
 	}
 
-	// Step 7: Computed-only fields are NOT migrated (error_message, last_complete, last_error)
+	// Step 8: Computed-only fields are NOT migrated (error_message, last_complete, last_error)
 	// These will be populated by API on next refresh
 
 	return target, diags

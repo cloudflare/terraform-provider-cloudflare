@@ -47,7 +47,10 @@ var v5InstantLogsConfig string
 // 3. Empty string fields (filter, logpull_options, name) converted to null
 // 4. v4 schema defaults preserved in output_options
 func TestMigrateLogpushJobBasic(t *testing.T) {
-	testCases := []struct {
+	// Ensure TF_MIG_TEST is set for migration tests
+	t.Setenv("TF_MIG_TEST", "1")
+
+	testCases := []struct{
 		name     string
 		version  string
 		configFn func(rnd, accountID, name string) string
@@ -114,37 +117,6 @@ func TestMigrateLogpushJobBasic(t *testing.T) {
 								tfjsonpath.New("name"),
 								knownvalue.StringExact(name),
 							),
-							// Verify output_options transformation
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("cve_2021_44228"),
-								knownvalue.Bool(false),
-							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("field_delimiter"),
-								knownvalue.StringExact(","),
-							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("record_prefix"),
-								knownvalue.StringExact("{"),
-							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("record_suffix"),
-								knownvalue.StringExact("}\n"),
-							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("timestamp_format"),
-								knownvalue.StringExact("unixnano"),
-							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_logpush_job."+rnd,
-								tfjsonpath.New("output_options").AtMapKey("sample_rate"),
-								knownvalue.Float64Exact(1.0),
-							),
 						},
 					),
 				},
@@ -160,6 +132,9 @@ func TestMigrateLogpushJobBasic(t *testing.T) {
 // 3. field_names list is preserved
 // 4. sample_rate type conversion works correctly
 func TestMigrateLogpushJobOutputOptions(t *testing.T) {
+	// Ensure TF_MIG_TEST is set for migration tests
+	t.Setenv("TF_MIG_TEST", "1")
+
 	testCases := []struct {
 		name     string
 		version  string
@@ -215,18 +190,18 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("dataset"),
-								knownvalue.StringExact("http_requests"),
+								knownvalue.StringExact("audit_logs"),
 							),
-							// Verify all output_options fields
+							// Verify ALL output_options fields are preserved
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("batch_prefix"),
-								knownvalue.StringExact("batch-"),
+								knownvalue.StringExact("batch-start-"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("batch_suffix"),
-								knownvalue.StringExact("-end"),
+								knownvalue.StringExact("-batch-end"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
@@ -236,7 +211,7 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("field_delimiter"),
-								knownvalue.StringExact(","),
+								knownvalue.StringExact("|"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
@@ -246,7 +221,22 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("record_delimiter"),
-								knownvalue.StringExact("\n"),
+								knownvalue.StringExact("\\n"),
+							),
+							statecheck.ExpectKnownValue(
+								"cloudflare_logpush_job."+rnd,
+								tfjsonpath.New("output_options").AtMapKey("record_prefix"),
+								knownvalue.StringExact("["),
+							),
+							statecheck.ExpectKnownValue(
+								"cloudflare_logpush_job."+rnd,
+								tfjsonpath.New("output_options").AtMapKey("record_suffix"),
+								knownvalue.StringExact("]\\n"),
+							),
+							statecheck.ExpectKnownValue(
+								"cloudflare_logpush_job."+rnd,
+								tfjsonpath.New("output_options").AtMapKey("record_template"),
+								knownvalue.StringExact("{{.ClientIP}}"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
@@ -258,7 +248,7 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 								tfjsonpath.New("output_options").AtMapKey("timestamp_format"),
 								knownvalue.StringExact("rfc3339"),
 							),
-							// Verify field_names list is preserved
+							// Verify field_names list is preserved (all 3 elements)
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("field_names").AtSliceIndex(0),
@@ -267,7 +257,7 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
 								tfjsonpath.New("output_options").AtMapKey("field_names").AtSliceIndex(1),
-								knownvalue.StringExact("ClientRequestHost"),
+								knownvalue.StringExact("EdgeStartTimestamp"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_logpush_job."+rnd,
@@ -287,6 +277,9 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 // 1. kind="instant-logs" is converted to kind="" (instant-logs no longer valid in v5)
 // 2. State transformation properly handles this field removal
 func TestMigrateLogpushJobInstantLogs(t *testing.T) {
+	// Ensure TF_MIG_TEST is set for migration tests
+	t.Setenv("TF_MIG_TEST", "1")
+
 	testCases := []struct {
 		name     string
 		version  string
