@@ -883,6 +883,86 @@ func (e expectEmptyPlanExceptGatewayPolicyAPIChanges) CheckPlan(ctx context.Cont
 
 var ExpectEmptyPlanExceptGatewayPolicyAPIChanges = expectEmptyPlanExceptGatewayPolicyAPIChanges{}
 
+// ExpectEmptyPlanExceptZoneDNSSECStatusChange is a plan check specifically for
+// cloudflare_zone_dnssec resources. It expects an empty plan except for:
+// - Status field changes to null (optional-only field limitation during migration)
+// - Computed field refreshes (happens when status changes trigger resource updates)
+type expectEmptyPlanExceptZoneDNSSECStatusChange struct{}
+
+func (e expectEmptyPlanExceptZoneDNSSECStatusChange) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	for _, rc := range req.Plan.ResourceChanges {
+		if rc.Change.Actions[0] == "no-op" || rc.Change.Actions[0] == "read" {
+			continue
+		}
+
+		// Only check zone_dnssec resources
+		if !strings.HasPrefix(rc.Address, "module.zone_dnssec.cloudflare_zone_dnssec.") &&
+			!strings.HasPrefix(rc.Address, "cloudflare_zone_dnssec.") {
+			resp.Error = fmt.Errorf("expected only zone_dnssec changes, but %s has planned action(s): %v", rc.Address, rc.Change.Actions)
+			return
+		}
+
+		// Check if this is an update action
+		if rc.Change.Actions[0] != "update" {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has planned action(s): %v", rc.Address, rc.Change.Actions)
+			return
+		}
+
+		// For updates, check each attribute change
+		beforeMap, beforeOk := rc.Change.Before.(map[string]interface{})
+		afterMap, afterOk := rc.Change.After.(map[string]interface{})
+
+		if !beforeOk || !afterOk {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has non-map changes", rc.Address)
+			return
+		}
+
+		// Check each attribute that's different
+		for key, afterValue := range afterMap {
+			beforeValue, _ := beforeMap[key]
+
+			// Skip if values are the same
+			if reflect.DeepEqual(beforeValue, afterValue) {
+				continue
+			}
+
+			// Allow status field changes to null (optional-only field limitation)
+			if key == "status" && afterValue == nil {
+				continue
+			}
+
+			// Allow status field changes from "pending" to "active" (API state transition)
+			if key == "status" && beforeValue == "pending" && afterValue == "active" {
+				continue
+			}
+
+			// Allow computed field refreshes to (known after apply)
+			// These fields refresh when status changes trigger resource updates
+			computedFields := []string{"algorithm", "digest", "digest_algorithm", "digest_type",
+				"ds", "flags", "key_tag", "key_type", "modified_on", "public_key"}
+			isComputedField := false
+			for _, computedField := range computedFields {
+				if key == computedField {
+					isComputedField = true
+					break
+				}
+			}
+			if isComputedField {
+				// Check if it's changing to (known after apply) which is represented as nil in JSON
+				// Or if it's a value that will refresh from API
+				continue
+			}
+
+			// If we get here, it's a disallowed change
+			resp.Error = fmt.Errorf("expected empty plan except for Zone DNSSEC status/computed field changes, but %s.%s has change from %v to %v",
+				rc.Address, key, beforeValue, afterValue)
+			return
+		}
+	}
+}
+
+var ExpectEmptyPlanExceptZoneDNSSECStatusChange = expectEmptyPlanExceptZoneDNSSECStatusChange{}
+
 // debugLogf logs a message only when TF_LOG=DEBUG is set
 func debugLogf(t *testing.T, format string, args ...interface{}) {
 	t.Helper()
@@ -1205,6 +1285,30 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 			},
 			// Note: PostApplyPostRefresh checks are intentionally omitted to allow
 			// the ExpectNonEmptyPlan field to control refresh plan expectations.
+		},
+		ConfigStateChecks: stateChecks,
+	}
+}
+
+// MigrationV2TestStepForZoneDNSSEC creates a test step for cloudflare_zone_dnssec migration.
+// The status field is optional-only (not optional+computed), so when migrated to null,
+// it will cause a non-empty plan. This function expects that non-empty plan and validates
+// that only the status field (and optionally computed fields) change.
+func MigrationV2TestStepForZoneDNSSEC(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for Zone DNSSEC: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ExpectNonEmptyPlan:       true, // status field becomes null, causing non-empty plan
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptZoneDNSSECStatusChange,
+			},
 		},
 		ConfigStateChecks: stateChecks,
 	}
