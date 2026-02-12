@@ -25,7 +25,7 @@ var _ resource.ResourceWithConfigValidators = (*ListResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(0, 500),
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique ID of the list.",

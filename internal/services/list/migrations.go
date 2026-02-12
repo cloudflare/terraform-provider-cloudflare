@@ -14,13 +14,21 @@ var _ resource.ResourceWithUpgradeState = (*ListResource)(nil)
 
 func (r *ListResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	sourceSchema := v500.SourceListSchema()
+	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
-		// Handle upgrades from schema_version=0 (both v4 and v5 state).
-		// The published v5 provider writes schema_version=0 (no Version field set),
-		// so both v4 and v5 state arrive here. The handler detects the format.
+		// Handle upgrades from v4 state (schema_version=0).
+		// v4 SDKv2 provider used schema_version=0 (default).
 		0: {
 			PriorSchema:   &sourceSchema,
 			StateUpgrader: v500.UpgradeFromV0,
+		},
+
+		// Handle upgrades from v5 state (schema_version=1).
+		// Users must upgrade to the v5 release with Version: 1 before running tf-migrate.
+		// No-op upgrade that just bumps the version to 500.
+		1: {
+			PriorSchema:   &targetSchema,
+			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
 }

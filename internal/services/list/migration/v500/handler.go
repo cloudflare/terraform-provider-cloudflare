@@ -50,6 +50,15 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 	resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
 }
 
+// UpgradeFromV1 handles state upgrades from v5 provider (schema_version=1) to v500.
+// This is a no-op upgrade that just bumps the version.
+// Some published v5 versions set Version: 1 before GetSchemaVersion was introduced.
+func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading cloudflare_list state from version=1 to version=500 (no-op)")
+	resp.State.Raw = req.State.Raw
+	tflog.Info(ctx, "State version bump from 1 to 500 completed")
+}
+
 // transformV5State converts v5 state (or empty state) to the target model.
 // The main work is converting items from plain types.Set to customfield.NestedObjectSet.
 func transformV5State(ctx context.Context, source SourceListModel) (*TargetListModel, diag.Diagnostics) {
