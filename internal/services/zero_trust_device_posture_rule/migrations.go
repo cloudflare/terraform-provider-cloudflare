@@ -2,6 +2,7 @@ package zero_trust_device_posture_rule
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -27,29 +28,46 @@ func (r *ZeroTrustDevicePostureRuleResource) MoveState(ctx context.Context) []re
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// Clear schema version separation:
-// - v4 SDKv2 provider: schema_version=0, input/match as blocks
-// - v5 Plugin Framework provider: version=1 (production) or version=500 (test)
+// Both v4 and published v5 used schema_version=0 (neither set an explicit Version).
+// This requires a conditional approach based on TF_MIG_TEST:
+//
+// Production (no TF_MIG_TEST): schema returns version 1
+//   - Slot 0: no-op upgrader (safely bumps existing v5 users from 0→1)
+//
+// Testing (TF_MIG_TEST=1): schema returns version 500
+//   - Slot 0: v4→v5 full transformation (v4 state has schema_version=0)
+//   - Slot 1: v5 no-op (v5 users already bumped to version=1 in prod)
+//
+// Note: v4 SDKv2 provider used resource type cloudflare_device_posture_rule,
+// which is handled by MoveState, not UpgradeState.
 func (r *ZeroTrustDevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	// v4 schema for version=0 upgrader
-	v4Schema := v500.SourceDevicePostureRuleSchema()
+	targetSchema := ResourceSchema(ctx)
 
-	// v5 schema for version=1 upgrader (override version to match production state)
-	v5SchemaVersion1 := ResourceSchema(ctx)
-	v5SchemaVersion1.Version = 1
+	if os.Getenv("TF_MIG_TEST") == "" {
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	sourceSchema := v500.SourceDevicePostureRuleSchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
-		// Uses v4 PriorSchema to parse, then transforms to v5
+		// Full transformation: list→single nested, blocks→attributes, etc.
 		0: {
-			PriorSchema:   &v4Schema,
+			PriorSchema:   &sourceSchema,
 			StateUpgrader: v500.UpgradeFromV0,
 		},
 
-		// Handle state from v5 Plugin Framework provider (version=1)
-		// Uses v5 PriorSchema, no-op version bump to 500
+		// Handle state from v5 provider with version=1 (production dormant state)
+		// No-op upgrade that just bumps the version to 500
 		1: {
-			PriorSchema:   &v5SchemaVersion1,
+			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
