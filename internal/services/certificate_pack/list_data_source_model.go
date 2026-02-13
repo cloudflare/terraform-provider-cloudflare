@@ -19,6 +19,7 @@ type CertificatePacksResultListDataSourceEnvelope struct {
 
 type CertificatePacksDataSourceModel struct {
 	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	Deploy   types.String                                                        `tfsdk:"deploy" query:"deploy,optional"`
 	Status   types.String                                                        `tfsdk:"status" query:"status,optional"`
 	MaxItems types.Int64                                                         `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[CertificatePacksResultDataSourceModel] `tfsdk:"result"`
@@ -29,6 +30,9 @@ func (m *CertificatePacksDataSourceModel) toListParams(_ context.Context) (param
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.Deploy.IsNull() {
+		params.Deploy = cloudflare.F(ssl.CertificatePackListParamsDeploy(m.Deploy.ValueString()))
+	}
 	if !m.Status.IsNull() {
 		params.Status = cloudflare.F(ssl.CertificatePackListParamsStatus(m.Status.ValueString()))
 	}
