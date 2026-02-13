@@ -459,13 +459,6 @@ func TestAccCloudflareWorkerVersion_AssetsConfigRunWorkerFirst(t *testing.T) {
 	})
 }
 
-// TestAccCloudflareWorkerVersion_AssetsConfigNoDirectory reproduces the bug reported in
-// https://github.com/cloudflare/terraform-provider-cloudflare/issues/6714
-// When assets.config is set (with not_found_handling/run_worker_first) but assets.directory
-// is NOT set, the computed asset_manifest_sha256 attribute remains unknown after apply because
-// the ComputeSHA256HashOfAssetManifest plan modifier returns early when directory is null,
-// leaving the value unresolved. Terraform then reports:
-// "the provider still indicated an unknown value for assets.asset_manifest_sha256"
 func TestAccCloudflareWorkerVersion_AssetsConfigNoDirectory(t *testing.T) {
 	t.Parallel()
 

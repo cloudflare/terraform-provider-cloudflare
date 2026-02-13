@@ -290,10 +290,6 @@ func (c computeSHA256HashOfAssetManifestModifier) PlanModifyString(ctx context.C
 	}
 
 	if directory.IsNull() {
-		// No directory configured, so there is no asset manifest to hash.
-		// Set to null rather than leaving as unknown (which would cause
-		// "provider returned invalid result object after apply" errors).
-		// See: https://github.com/cloudflare/terraform-provider-cloudflare/issues/6714
 		resp.PlanValue = types.StringNull()
 		return
 	}
