@@ -91,6 +91,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"description": schema.StringAttribute{
+							Optional: true,
+						},
 					},
 				},
 			},

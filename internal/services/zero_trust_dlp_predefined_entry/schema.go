@@ -49,6 +49,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
 			"name": schema.StringAttribute{
 				Computed: true,
 			},

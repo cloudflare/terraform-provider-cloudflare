@@ -14,23 +14,25 @@ type CustomSSLResultEnvelope struct {
 }
 
 type CustomSSLModel struct {
-	ID              types.String                                          `tfsdk:"id" json:"id,computed"`
-	ZoneID          types.String                                          `tfsdk:"zone_id" path:"zone_id,required"`
-	Type            types.String                                          `tfsdk:"type" json:"type,computed_optional,no_refresh"`
-	Certificate     types.String                                          `tfsdk:"certificate" json:"certificate,required,no_refresh"`
-	PrivateKey      types.String                                          `tfsdk:"private_key" json:"private_key,required,no_refresh"`
-	Policy          types.String                                          `tfsdk:"policy" json:"policy,optional"`
-	GeoRestrictions *CustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions" json:"geo_restrictions,optional"`
-	BundleMethod    types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	ExpiresOn       timetypes.RFC3339                                     `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	Issuer          types.String                                          `tfsdk:"issuer" json:"issuer,computed"`
-	ModifiedOn      timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Priority        types.Float64                                         `tfsdk:"priority" json:"priority,computed"`
-	Signature       types.String                                          `tfsdk:"signature" json:"signature,computed"`
-	Status          types.String                                          `tfsdk:"status" json:"status,computed"`
-	UploadedOn      timetypes.RFC3339                                     `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
-	Hosts           customfield.List[types.String]                        `tfsdk:"hosts" json:"hosts,computed"`
-	KeylessServer   customfield.NestedObject[CustomSSLKeylessServerModel] `tfsdk:"keyless_server" json:"keyless_server,computed"`
+	ID                 types.String                                          `tfsdk:"id" json:"id,computed"`
+	ZoneID             types.String                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	Type               types.String                                          `tfsdk:"type" json:"type,computed_optional,no_refresh"`
+	Certificate        types.String                                          `tfsdk:"certificate" json:"certificate,required,no_refresh"`
+	PrivateKey         types.String                                          `tfsdk:"private_key" json:"private_key,required,no_refresh"`
+	Policy             types.String                                          `tfsdk:"policy" json:"policy,optional,no_refresh"`
+	GeoRestrictions    *CustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions" json:"geo_restrictions,optional"`
+	BundleMethod       types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
+	Deploy             types.String                                          `tfsdk:"deploy" json:"deploy,computed_optional,no_refresh"`
+	ExpiresOn          timetypes.RFC3339                                     `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	Issuer             types.String                                          `tfsdk:"issuer" json:"issuer,computed"`
+	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PolicyRestrictions types.String                                          `tfsdk:"policy_restrictions" json:"policy_restrictions,computed"`
+	Priority           types.Float64                                         `tfsdk:"priority" json:"priority,computed"`
+	Signature          types.String                                          `tfsdk:"signature" json:"signature,computed"`
+	Status             types.String                                          `tfsdk:"status" json:"status,computed"`
+	UploadedOn         timetypes.RFC3339                                     `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	Hosts              customfield.List[types.String]                        `tfsdk:"hosts" json:"hosts,computed"`
+	KeylessServer      customfield.NestedObject[CustomSSLKeylessServerModel] `tfsdk:"keyless_server" json:"keyless_server,computed"`
 }
 
 func (m CustomSSLModel) MarshalJSON() (data []byte, err error) {

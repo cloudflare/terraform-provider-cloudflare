@@ -4,6 +4,7 @@ package queue_consumer
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,12 +16,12 @@ type QueueConsumerModel struct {
 	AccountID       types.String                `tfsdk:"account_id" path:"account_id,required"`
 	QueueID         types.String                `tfsdk:"queue_id" path:"queue_id,required"`
 	ConsumerID      types.String                `tfsdk:"consumer_id" path:"consumer_id,optional"`
-	DeadLetterQueue types.String                `tfsdk:"dead_letter_queue" json:"dead_letter_queue,optional,no_refresh"`
+	Type            types.String                `tfsdk:"type" json:"type,required"`
+	DeadLetterQueue types.String                `tfsdk:"dead_letter_queue" json:"dead_letter_queue,optional"`
 	ScriptName      types.String                `tfsdk:"script_name" json:"script_name,optional"`
-	Type            types.String                `tfsdk:"type" json:"type,optional"`
 	Settings        *QueueConsumerSettingsModel `tfsdk:"settings" json:"settings,optional"`
-	CreatedOn       types.String                `tfsdk:"created_on" json:"created_on,computed"`
-	Script          types.String                `tfsdk:"script" json:"script,computed"`
+	CreatedOn       timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	QueueName       types.String                `tfsdk:"queue_name" json:"queue_name,computed"`
 }
 
 func (m QueueConsumerModel) MarshalJSON() (data []byte, err error) {

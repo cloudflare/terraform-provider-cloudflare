@@ -19,21 +19,22 @@ type ZeroTrustDLPCustomProfileResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPCustomProfileDataSourceModel struct {
-	ID                  types.String                                                                       `tfsdk:"id" path:"profile_id,computed"`
-	ProfileID           types.String                                                                       `tfsdk:"profile_id" path:"profile_id,required"`
-	AccountID           types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
-	AIContextEnabled    types.Bool                                                                         `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed"`
-	AllowedMatchCount   types.Int64                                                                        `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
-	ConfidenceThreshold types.String                                                                       `tfsdk:"confidence_threshold" json:"confidence_threshold,computed"`
-	CreatedAt           timetypes.RFC3339                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Description         types.String                                                                       `tfsdk:"description" json:"description,computed"`
-	Name                types.String                                                                       `tfsdk:"name" json:"name,computed"`
-	OCREnabled          types.Bool                                                                         `tfsdk:"ocr_enabled" json:"ocr_enabled,computed"`
-	OpenAccess          types.Bool                                                                         `tfsdk:"open_access" json:"open_access,computed"`
-	Type                types.String                                                                       `tfsdk:"type" json:"type,computed"`
-	UpdatedAt           timetypes.RFC3339                                                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	ContextAwareness    customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel] `tfsdk:"context_awareness" json:"context_awareness,computed"`
-	Entries             customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesDataSourceModel]      `tfsdk:"entries" json:"entries,computed"`
+	ID                  types.String                                                                        `tfsdk:"id" path:"profile_id,computed"`
+	ProfileID           types.String                                                                        `tfsdk:"profile_id" path:"profile_id,required"`
+	AccountID           types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AIContextEnabled    types.Bool                                                                          `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed"`
+	AllowedMatchCount   types.Int64                                                                         `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
+	ConfidenceThreshold types.String                                                                        `tfsdk:"confidence_threshold" json:"confidence_threshold,computed"`
+	CreatedAt           timetypes.RFC3339                                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Description         types.String                                                                        `tfsdk:"description" json:"description,computed"`
+	Name                types.String                                                                        `tfsdk:"name" json:"name,computed"`
+	OCREnabled          types.Bool                                                                          `tfsdk:"ocr_enabled" json:"ocr_enabled,computed"`
+	OpenAccess          types.Bool                                                                          `tfsdk:"open_access" json:"open_access,computed"`
+	Type                types.String                                                                        `tfsdk:"type" json:"type,computed"`
+	UpdatedAt           timetypes.RFC3339                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ContextAwareness    customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel]  `tfsdk:"context_awareness" json:"context_awareness,computed"`
+	Entries             customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesDataSourceModel]       `tfsdk:"entries" json:"entries,computed"`
+	SharedEntries       customfield.NestedObjectList[ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel] `tfsdk:"shared_entries" json:"shared_entries,computed"`
 }
 
 func (m *ZeroTrustDLPCustomProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPProfileCustomGetParams, diags diag.Diagnostics) {
@@ -61,6 +62,7 @@ type ZeroTrustDLPCustomProfileEntriesDataSourceModel struct {
 	Pattern       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesPatternDataSourceModel]    `tfsdk:"pattern" json:"pattern,computed"`
 	Type          types.String                                                                        `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Description   types.String                                                                        `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                        `tfsdk:"profile_id" json:"profile_id,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
@@ -80,6 +82,39 @@ type ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel struct {
 }
 
 type ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel struct {
+	TopicType   types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type        types.String `tfsdk:"type" json:"type,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
+}
+
+type ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel struct {
+	ID            types.String                                                                              `tfsdk:"id" json:"id,computed"`
+	CreatedAt     timetypes.RFC3339                                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Enabled       types.Bool                                                                                `tfsdk:"enabled" json:"enabled,computed"`
+	Name          types.String                                                                              `tfsdk:"name" json:"name,computed"`
+	Pattern       customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesPatternDataSourceModel]    `tfsdk:"pattern" json:"pattern,computed"`
+	Type          types.String                                                                              `tfsdk:"type" json:"type,computed"`
+	UpdatedAt     timetypes.RFC3339                                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Description   types.String                                                                              `tfsdk:"description" json:"description,computed"`
+	ProfileID     types.String                                                                              `tfsdk:"profile_id" json:"profile_id,computed"`
+	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
+	CaseSensitive types.Bool                                                                                `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
+	Secret        types.Bool                                                                                `tfsdk:"secret" json:"secret,computed"`
+	WordList      jsontypes.Normalized                                                                      `tfsdk:"word_list" json:"word_list,computed"`
+}
+
+type ZeroTrustDLPCustomProfileSharedEntriesPatternDataSourceModel struct {
+	Regex      types.String `tfsdk:"regex" json:"regex,computed"`
+	Validation types.String `tfsdk:"validation" json:"validation,computed"`
+}
+
+type ZeroTrustDLPCustomProfileSharedEntriesConfidenceDataSourceModel struct {
+	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
+	Available          types.Bool `tfsdk:"available" json:"available,computed"`
+}
+
+type ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel struct {
 	TopicType   types.String `tfsdk:"topic_type" json:"topic_type,computed"`
 	Type        types.String `tfsdk:"type" json:"type,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`

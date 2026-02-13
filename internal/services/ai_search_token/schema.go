@@ -30,13 +30,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"cf_api_key": schema.StringAttribute{
-				Required: true,
+				Required:  true,
+				Sensitive: true,
 			},
 			"name": schema.StringAttribute{
 				Required: true,
-			},
-			"account_tag": schema.StringAttribute{
-				Computed: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
@@ -59,10 +57,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"modified_by": schema.StringAttribute{
 				Computed: true,
-			},
-			"synced_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

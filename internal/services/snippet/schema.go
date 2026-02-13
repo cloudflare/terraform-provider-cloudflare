@@ -18,32 +18,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
-				Description:   "The identifying name of the snippet.",
+				Description:   "Identify the snippet.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "The unique ID of the zone.",
+				Description:   "Use this field to specify the unique ID of the zone.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"metadata": schema.SingleNestedAttribute{
-				Description: "Metadata about the snippet.",
+				Description: "Provide metadata about the snippet.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"main_module": schema.StringAttribute{
-						Description: "Name of the file that contains the main module of the snippet.",
+						Description: "Specify the name of the file that contains the main module of the snippet.",
 						Required:    true,
 					},
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "The timestamp of when the snippet was created.",
+				Description: "Indicates when the snippet was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
-				Description: "The timestamp of when the snippet was last modified.",
+				Description: "Indicates when the snippet was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

@@ -84,6 +84,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
+						"description": schema.StringAttribute{
+							Computed: true,
+						},
 						"profile_id": schema.StringAttribute{
 							Computed: true,
 						},

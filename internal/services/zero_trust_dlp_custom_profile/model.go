@@ -19,7 +19,7 @@ type ZeroTrustDLPCustomProfileModel struct {
 	Description         types.String                                    `tfsdk:"description" json:"description,optional"`
 	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
 	Entries             *[]*ZeroTrustDLPCustomProfileEntriesModel       `tfsdk:"entries" json:"entries,optional"`
-	SharedEntries       *[]*ZeroTrustDLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional,no_refresh"`
+	SharedEntries       *[]*ZeroTrustDLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional"`
 	AIContextEnabled    types.Bool                                      `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed_optional"`
 	AllowedMatchCount   types.Int64                                     `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
 	ConfidenceThreshold types.String                                    `tfsdk:"confidence_threshold" json:"confidence_threshold,computed_optional"`
@@ -48,10 +48,11 @@ type ZeroTrustDLPCustomProfileContextAwarenessSkipModel struct {
 }
 
 type ZeroTrustDLPCustomProfileEntriesModel struct {
-	Enabled types.Bool                                    `tfsdk:"enabled" json:"enabled,required"`
-	EntryID types.String                                  `tfsdk:"entry_id" json:"entry_id,optional,no_refresh"`
-	Name    types.String                                  `tfsdk:"name" json:"name,required"`
-	Pattern *ZeroTrustDLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern,required"`
+	Enabled     types.Bool                                    `tfsdk:"enabled" json:"enabled,required"`
+	EntryID     types.String                                  `tfsdk:"entry_id" json:"entry_id,optional,no_refresh"`
+	Name        types.String                                  `tfsdk:"name" json:"name,required"`
+	Pattern     *ZeroTrustDLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern,required"`
+	Description types.String                                  `tfsdk:"description" json:"description,optional"`
 }
 
 type ZeroTrustDLPCustomProfileEntriesPatternModel struct {
@@ -61,5 +62,5 @@ type ZeroTrustDLPCustomProfileEntriesPatternModel struct {
 
 type ZeroTrustDLPCustomProfileSharedEntriesModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
-	EntryID types.String `tfsdk:"entry_id" json:"entry_id,required"`
+	EntryID types.String `tfsdk:"entry_id" json:"entry_id,required,no_refresh"`
 }

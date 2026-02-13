@@ -190,6 +190,49 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
 							Computed:    true,
 						},
+						"dcv_delegation_records": schema.ListNestedAttribute{
+							Description: "DCV Delegation records for domain validation.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[CertificatePacksDCVDelegationRecordsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"cname": schema.StringAttribute{
+										Description: "The CNAME record hostname for DCV delegation.",
+										Computed:    true,
+									},
+									"cname_target": schema.StringAttribute{
+										Description: "The CNAME record target value for DCV delegation.",
+										Computed:    true,
+									},
+									"emails": schema.ListAttribute{
+										Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
+										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
+										ElementType: types.StringType,
+									},
+									"http_body": schema.StringAttribute{
+										Description: "The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.",
+										Computed:    true,
+									},
+									"http_url": schema.StringAttribute{
+										Description: "The url that will be checked during domain validation.",
+										Computed:    true,
+									},
+									"status": schema.StringAttribute{
+										Description: "Status of the validation record.",
+										Computed:    true,
+									},
+									"txt_name": schema.StringAttribute{
+										Description: "The hostname that the certificate authority (CA) will check for a TXT record during domain validation .",
+										Computed:    true,
+									},
+									"txt_value": schema.StringAttribute{
+										Description: "The TXT record that the certificate authority (CA) will check during domain validation.",
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"primary_certificate": schema.StringAttribute{
 							Description: "Identifier of the primary certificate in a pack.",
 							Computed:    true,
@@ -224,6 +267,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectListType[CertificatePacksValidationRecordsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
+									"cname": schema.StringAttribute{
+										Description: "The CNAME record hostname for DCV delegation.",
+										Computed:    true,
+									},
+									"cname_target": schema.StringAttribute{
+										Description: "The CNAME record target value for DCV delegation.",
+										Computed:    true,
+									},
 									"emails": schema.ListAttribute{
 										Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
 										Computed:    true,
@@ -236,6 +287,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"http_url": schema.StringAttribute{
 										Description: "The url that will be checked during domain validation.",
+										Computed:    true,
+									},
+									"status": schema.StringAttribute{
+										Description: "Status of the validation record.",
 										Computed:    true,
 									},
 									"txt_name": schema.StringAttribute{

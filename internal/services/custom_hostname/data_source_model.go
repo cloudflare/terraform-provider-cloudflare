@@ -78,25 +78,37 @@ type CustomHostnameOwnershipVerificationHTTPDataSourceModel struct {
 }
 
 type CustomHostnameSSLDataSourceModel struct {
-	ID                   types.String                                                                    `tfsdk:"id" json:"id,computed"`
-	BundleMethod         types.String                                                                    `tfsdk:"bundle_method" json:"bundle_method,computed"`
-	CertificateAuthority types.String                                                                    `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
-	CustomCertificate    types.String                                                                    `tfsdk:"custom_certificate" json:"custom_certificate,computed"`
-	CustomCsrID          types.String                                                                    `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
-	CustomKey            types.String                                                                    `tfsdk:"custom_key" json:"custom_key,computed"`
-	ExpiresOn            timetypes.RFC3339                                                               `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	Hosts                customfield.List[types.String]                                                  `tfsdk:"hosts" json:"hosts,computed"`
-	Issuer               types.String                                                                    `tfsdk:"issuer" json:"issuer,computed"`
-	Method               types.String                                                                    `tfsdk:"method" json:"method,computed"`
-	SerialNumber         types.String                                                                    `tfsdk:"serial_number" json:"serial_number,computed"`
-	Settings             customfield.NestedObject[CustomHostnameSSLSettingsDataSourceModel]              `tfsdk:"settings" json:"settings,computed"`
-	Signature            types.String                                                                    `tfsdk:"signature" json:"signature,computed"`
-	Status               types.String                                                                    `tfsdk:"status" json:"status,computed"`
-	Type                 types.String                                                                    `tfsdk:"type" json:"type,computed"`
-	UploadedOn           timetypes.RFC3339                                                               `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
-	ValidationErrors     customfield.NestedObjectList[CustomHostnameSSLValidationErrorsDataSourceModel]  `tfsdk:"validation_errors" json:"validation_errors,computed"`
-	ValidationRecords    customfield.NestedObjectList[CustomHostnameSSLValidationRecordsDataSourceModel] `tfsdk:"validation_records" json:"validation_records,computed"`
-	Wildcard             types.Bool                                                                      `tfsdk:"wildcard" json:"wildcard,computed"`
+	ID                   types.String                                                                       `tfsdk:"id" json:"id,computed"`
+	BundleMethod         types.String                                                                       `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	CertificateAuthority types.String                                                                       `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
+	CustomCertificate    types.String                                                                       `tfsdk:"custom_certificate" json:"custom_certificate,computed"`
+	CustomCsrID          types.String                                                                       `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
+	CustomKey            types.String                                                                       `tfsdk:"custom_key" json:"custom_key,computed"`
+	DCVDelegationRecords customfield.NestedObjectList[CustomHostnameSSLDCVDelegationRecordsDataSourceModel] `tfsdk:"dcv_delegation_records" json:"dcv_delegation_records,computed"`
+	ExpiresOn            timetypes.RFC3339                                                                  `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	Hosts                customfield.List[types.String]                                                     `tfsdk:"hosts" json:"hosts,computed"`
+	Issuer               types.String                                                                       `tfsdk:"issuer" json:"issuer,computed"`
+	Method               types.String                                                                       `tfsdk:"method" json:"method,computed"`
+	SerialNumber         types.String                                                                       `tfsdk:"serial_number" json:"serial_number,computed"`
+	Settings             customfield.NestedObject[CustomHostnameSSLSettingsDataSourceModel]                 `tfsdk:"settings" json:"settings,computed"`
+	Signature            types.String                                                                       `tfsdk:"signature" json:"signature,computed"`
+	Status               types.String                                                                       `tfsdk:"status" json:"status,computed"`
+	Type                 types.String                                                                       `tfsdk:"type" json:"type,computed"`
+	UploadedOn           timetypes.RFC3339                                                                  `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	ValidationErrors     customfield.NestedObjectList[CustomHostnameSSLValidationErrorsDataSourceModel]     `tfsdk:"validation_errors" json:"validation_errors,computed"`
+	ValidationRecords    customfield.NestedObjectList[CustomHostnameSSLValidationRecordsDataSourceModel]    `tfsdk:"validation_records" json:"validation_records,computed"`
+	Wildcard             types.Bool                                                                         `tfsdk:"wildcard" json:"wildcard,computed"`
+}
+
+type CustomHostnameSSLDCVDelegationRecordsDataSourceModel struct {
+	CNAME       types.String                   `tfsdk:"cname" json:"cname,computed"`
+	CNAMETarget types.String                   `tfsdk:"cname_target" json:"cname_target,computed"`
+	Emails      customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody    types.String                   `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL     types.String                   `tfsdk:"http_url" json:"http_url,computed"`
+	Status      types.String                   `tfsdk:"status" json:"status,computed"`
+	TXTName     types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue    types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type CustomHostnameSSLSettingsDataSourceModel struct {
@@ -112,11 +124,14 @@ type CustomHostnameSSLValidationErrorsDataSourceModel struct {
 }
 
 type CustomHostnameSSLValidationRecordsDataSourceModel struct {
-	Emails   customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
-	HTTPBody types.String                   `tfsdk:"http_body" json:"http_body,computed"`
-	HTTPURL  types.String                   `tfsdk:"http_url" json:"http_url,computed"`
-	TXTName  types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
-	TXTValue types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
+	CNAME       types.String                   `tfsdk:"cname" json:"cname,computed"`
+	CNAMETarget types.String                   `tfsdk:"cname_target" json:"cname_target,computed"`
+	Emails      customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody    types.String                   `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL     types.String                   `tfsdk:"http_url" json:"http_url,computed"`
+	Status      types.String                   `tfsdk:"status" json:"status,computed"`
+	TXTName     types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue    types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type CustomHostnameFindOneByDataSourceModel struct {
