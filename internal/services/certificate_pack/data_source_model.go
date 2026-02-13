@@ -49,6 +49,9 @@ func (m *CertificatePackDataSourceModel) toListParams(_ context.Context) (params
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.Filter.Deploy.IsNull() {
+		params.Deploy = cloudflare.F(ssl.CertificatePackListParamsDeploy(m.Filter.Deploy.ValueString()))
+	}
 	if !m.Filter.Status.IsNull() {
 		params.Status = cloudflare.F(ssl.CertificatePackListParamsStatus(m.Filter.Status.ValueString()))
 	}
@@ -102,5 +105,6 @@ type CertificatePackValidationRecordsDataSourceModel struct {
 }
 
 type CertificatePackFindOneByDataSourceModel struct {
+	Deploy types.String `tfsdk:"deploy" query:"deploy,optional"`
 	Status types.String `tfsdk:"status" query:"status,optional"`
 }

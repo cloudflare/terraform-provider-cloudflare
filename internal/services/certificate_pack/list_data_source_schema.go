@@ -24,6 +24,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
+			"deploy": schema.StringAttribute{
+				Description: "Specify the deployment environment for the certificate packs.\nAvailable values: \"staging\", \"production\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("staging", "production"),
+				},
+			},
 			"status": schema.StringAttribute{
 				Description: "Include Certificate Packs of all statuses, not just active ones.\nAvailable values: \"all\".",
 				Optional:    true,
