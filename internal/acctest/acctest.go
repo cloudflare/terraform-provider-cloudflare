@@ -1289,3 +1289,49 @@ func MigrationV2TestStepAllowCreate(t *testing.T, v4Config string, tmpDir string
 		},
 	}
 }
+
+// MigrationV2TestStepAllowNonEmptyPlan creates migration test steps that allow a non-empty
+// post-apply refresh plan. Use this when migration produces expected state diffs (e.g.,
+// falsey-to-null changes like name="" -> null) that require a subsequent apply to resolve.
+//
+// Parameters:
+//   - postApplyRefreshPlanChecks: plan checks to assert on the expected refresh plan diff
+//     (e.g., verify the specific attribute change). Pass nil to skip.
+//   - stateChecks: state checks to validate after the correction step.
+//
+// Step 1 runs migration, allows a non-empty refresh plan, and optionally asserts the diff.
+// Step 2 applies the correction and validates the final state is clean.
+func MigrationV2TestStepAllowNonEmptyPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, postApplyRefreshPlanChecks []plancheck.PlanCheck, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	return []resource.TestStep{
+		{
+			// Step 1: Run migration and apply — allow non-empty refresh plan
+			PreConfig: func() {
+				WriteOutConfig(t, v4Config, tmpDir)
+				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			},
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ExpectNonEmptyPlan:       true,
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+				PostApplyPostRefresh: postApplyRefreshPlanChecks,
+			},
+		},
+		{
+			// Step 2: Apply correction and verify final state is clean
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+			},
+			ConfigStateChecks: stateChecks,
+		},
+	}
+}
