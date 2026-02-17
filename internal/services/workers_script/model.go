@@ -112,7 +112,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	ScriptName                  types.String                                `tfsdk:"script_name" json:"script_name,computed_optional"`
 	OldName                     types.String                                `tfsdk:"old_name" json:"old_name,optional"`
 	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,computed_optional"`
-	Json                        types.String                                `tfsdk:"json" json:"json,optional"`
+	Json                        jsontypes.Normalized                        `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
@@ -136,11 +136,16 @@ type WorkersScriptMetadataBindingsModel struct {
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
-	Params *[]types.String                                   `tfsdk:"params" json:"params,optional"`
-	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel `tfsdk:"worker" json:"worker,optional"`
+	Params *[]*WorkersScriptMetadataBindingsOutboundParamsModel `tfsdk:"params" json:"params,optional"`
+	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel    `tfsdk:"worker" json:"worker,optional"`
+}
+
+type WorkersScriptMetadataBindingsOutboundParamsModel struct {
+	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
 type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
+	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Service     types.String `tfsdk:"service" json:"service,optional"`
 }

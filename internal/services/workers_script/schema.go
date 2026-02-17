@@ -167,15 +167,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Outbound worker.",
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
-										"params": schema.ListAttribute{
+										"params": schema.ListNestedAttribute{
 											Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
 											Optional:    true,
-											ElementType: types.StringType,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"name": schema.StringAttribute{
+														Description: "Name of the parameter.",
+														Required:    true,
+													},
+												},
+											},
 										},
 										"worker": schema.SingleNestedAttribute{
 											Description: "Outbound worker.",
 											Optional:    true,
 											Attributes: map[string]schema.Attribute{
+												"entrypoint": schema.StringAttribute{
+													Description: "Entrypoint to invoke on the outbound worker.",
+													Optional:    true,
+												},
 												"environment": schema.StringAttribute{
 													Description: "Environment of the outbound worker.",
 													Optional:    true,
@@ -220,6 +231,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"json": schema.StringAttribute{
 									Description: "JSON data to use.",
 									Optional:    true,
+									CustomType:  jsontypes.NormalizedType{},
 								},
 								"certificate_id": schema.StringAttribute{
 									Description: "Identifier of the certificate to bind to.",

@@ -83,7 +83,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	ScriptName                  types.String                                                            `tfsdk:"script_name" json:"script_name,computed"`
 	OldName                     types.String                                                            `tfsdk:"old_name" json:"old_name,computed"`
 	VersionID                   types.String                                                            `tfsdk:"version_id" json:"version_id,computed"`
-	Json                        types.String                                                            `tfsdk:"json" json:"json,computed"`
+	Json                        jsontypes.Normalized                                                    `tfsdk:"json" json:"json,computed"`
 	CertificateID               types.String                                                            `tfsdk:"certificate_id" json:"certificate_id,computed"`
 	Text                        types.String                                                            `tfsdk:"text" json:"text,computed"`
 	Pipeline                    types.String                                                            `tfsdk:"pipeline" json:"pipeline,computed"`
@@ -107,11 +107,16 @@ type WorkerVersionsBindingsDataSourceModel struct {
 }
 
 type WorkerVersionsBindingsOutboundDataSourceModel struct {
-	Params customfield.List[types.String]                                                `tfsdk:"params" json:"params,computed"`
-	Worker customfield.NestedObject[WorkerVersionsBindingsOutboundWorkerDataSourceModel] `tfsdk:"worker" json:"worker,computed"`
+	Params customfield.NestedObjectList[WorkerVersionsBindingsOutboundParamsDataSourceModel] `tfsdk:"params" json:"params,computed"`
+	Worker customfield.NestedObject[WorkerVersionsBindingsOutboundWorkerDataSourceModel]     `tfsdk:"worker" json:"worker,computed"`
+}
+
+type WorkerVersionsBindingsOutboundParamsDataSourceModel struct {
+	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type WorkerVersionsBindingsOutboundWorkerDataSourceModel struct {
+	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,computed"`
 	Environment types.String `tfsdk:"environment" json:"environment,computed"`
 	Service     types.String `tfsdk:"service" json:"service,computed"`
 }

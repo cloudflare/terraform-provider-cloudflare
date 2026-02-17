@@ -221,17 +221,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[WorkerVersionBindingsOutboundDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"params": schema.ListAttribute{
+								"params": schema.ListNestedAttribute{
 									Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
 									Computed:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
-									ElementType: types.StringType,
+									CustomType:  customfield.NewNestedObjectListType[WorkerVersionBindingsOutboundParamsDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "Name of the parameter.",
+												Computed:    true,
+											},
+										},
+									},
 								},
 								"worker": schema.SingleNestedAttribute{
 									Description: "Outbound worker.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[WorkerVersionBindingsOutboundWorkerDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
+										"entrypoint": schema.StringAttribute{
+											Description: "Entrypoint to invoke on the outbound worker.",
+											Computed:    true,
+										},
 										"environment": schema.StringAttribute{
 											Description: "Environment of the outbound worker.",
 											Computed:    true,
@@ -271,6 +282,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
 							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"certificate_id": schema.StringAttribute{
 							Description: "Identifier of the certificate to bind to.",
