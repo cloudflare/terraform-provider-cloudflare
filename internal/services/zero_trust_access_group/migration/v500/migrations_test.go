@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -212,7 +213,6 @@ func TestMigrateZeroTrustAccessGroup_V4ToV5_ListExplosion(t *testing.T) {
 // TODO: This test is currently skipped because it requires cloudflare_access_identity_provider
 // migration to be implemented first. Once that migration is complete, remove the Skip and enable this test.
 func TestMigrateZeroTrustAccessGroup_V4ToV5_GitHub(t *testing.T) {
-	t.Skip("TODO: Requires cloudflare_access_identity_provider migration to be implemented first")
 	t.Run("from_v4_latest", func(t *testing.T) {
 		// Test setup
 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -256,11 +256,13 @@ func TestMigrateZeroTrustAccessGroup_V4ToV5_GitHub(t *testing.T) {
 							tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("github_organization").AtMapKey("team"),
 							knownvalue.StringExact("team2"),
 						),
-						// Verify identity_provider_id preserved in both blocks
-						statecheck.ExpectKnownValue(
+						// Verify identity_provider_id preserved in both blocks (must match actual IDP resource)
+						statecheck.CompareValuePairs(
 							"cloudflare_zero_trust_access_group."+rnd,
 							tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("github_organization").AtMapKey("identity_provider_id"),
-							knownvalue.StringExact("test-idp-123"),
+							"cloudflare_zero_trust_access_identity_provider."+rnd+"_idp",
+							tfjsonpath.New("id"),
+							compare.ValuesSame(),
 						),
 					},
 				),
