@@ -78,9 +78,11 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 	target.MaxUploadIntervalSeconds = zeroInt64ToNull(source.MaxUploadIntervalSeconds)
 
 	// Step 7: Handle output_options
-	// After tf-migrate, output_options is already in v5 format (pointer to object)
-	if source.OutputOptions != nil {
-		targetOutputOptions, err := transformOutputOptions(ctx, *source.OutputOptions)
+	// v4 SDKv2 TypeList MaxItems:1 is stored as a JSON array [{...}].
+	// TransformState is a no-op for this resource, so we receive the raw v4 array.
+	// Extract the first element (if present) and transform to v5 object format.
+	if len(source.OutputOptions) > 0 {
+		targetOutputOptions, err := transformOutputOptions(ctx, source.OutputOptions[0])
 		if err.HasError() {
 			diags.Append(err...)
 			return nil, diags
@@ -96,8 +98,8 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 	return target, diags
 }
 
-// transformOutputOptions transforms output_options from v4 array format to v5 object format.
-// Also handles field rename (cve20214428 → cve_2021_44228) and preserves v4 defaults.
+// transformOutputOptions transforms a single output_options element from v4 to v5 format.
+// Handles field rename (cve20214428 → cve_2021_44228) and preserves v4 defaults.
 func transformOutputOptions(ctx context.Context, source SourceLogpushJobOutputOptionsModel) (*TargetLogpushJobOutputOptionsModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
