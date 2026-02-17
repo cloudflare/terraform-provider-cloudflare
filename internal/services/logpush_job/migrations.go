@@ -7,9 +7,8 @@ import (
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job/migration/v500"
+	v500 "github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job/migration/v500"
 )
 
 var _ resource.ResourceWithUpgradeState = (*LogpushJobResource)(nil)
@@ -25,7 +24,6 @@ var _ resource.ResourceWithUpgradeState = (*LogpushJobResource)(nil)
 // v4→v5 transformation (which would fail on v5-format state).
 func (r *LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	tfMigTest := os.Getenv("TF_MIG_TEST")
-	tflog.Info(ctx, "[DEBUG] UpgradeState called", map[string]any{"TF_MIG_TEST": tfMigTest})
 
 	targetSchema := ResourceSchema(ctx)
 
