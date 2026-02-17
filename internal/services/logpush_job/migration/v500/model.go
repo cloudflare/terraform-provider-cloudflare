@@ -10,7 +10,7 @@ import (
 // ============================================================================
 
 // SourceCloudflareLogpushJobModel represents the source cloudflare_logpush_job state structure.
-// This corresponds to version 0 state after tf-migrate has transformed it to v5 format.
+// This corresponds to version 0 state in the raw v4 SDKv2 format.
 // Also handles early v5 releases like v5.16.0 that use version 0.
 // Used by UpgradeFromV4 to parse version 0 state.
 type SourceCloudflareLogpushJobModel struct {
@@ -29,7 +29,7 @@ type SourceCloudflareLogpushJobModel struct {
 	MaxUploadRecords         types.Int64                             `tfsdk:"max_upload_records"`
 	Name                     types.String                            `tfsdk:"name"`
 	OwnershipChallenge       types.String                            `tfsdk:"ownership_challenge"`
-	OutputOptions            *SourceLogpushJobOutputOptionsModel     `tfsdk:"output_options"` // v5 format: object/pointer, not array
+	OutputOptions            []SourceLogpushJobOutputOptionsModel    `tfsdk:"output_options"` // v4 format: array (SDKv2 TypeList MaxItems:1)
 }
 
 // SourceLogpushJobOutputOptionsModel represents the source output_options nested structure.

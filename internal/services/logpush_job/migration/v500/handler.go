@@ -10,16 +10,13 @@ import (
 // UpgradeFromV4 handles state upgrades from version 0 to v5 (version=500).
 //
 // This handles state from:
-// - v4 SDKv2 provider after tf-migrate (schema_version=0, already transformed to v5 format)
-// - Early v5 releases like v5.16.0 (version=0, already in v5 format)
+// - v4 SDKv2 provider (schema_version=0, output_options stored as array [{...}])
+// - Early v5 releases like v5.16.0 (version=0)
 //
-// tf-migrate transforms the state to v5 format before the provider sees it, so by the
-// time this function runs, the state is already in v5 format (output_options as object).
-// This function just needs to convert field types (e.g., ID string→int64) and bump the version.
+// so the state arrives in its original v4 format with output_options as a JSON array.
+// This function transforms the array to v5 object format, renames cve20214428 → cve_2021_44228,
+// and converts field types (e.g., ID string→int64).
 func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading logpush_job state from version 0 (post-tf-migrate)")
-	tflog.Info(ctx, "[DEBUG] UpgradeFromV4 called - this should only happen with TF_MIG_TEST=1")
-
 	// Parse state using v5 source model (state is already in v5 format after tf-migrate)
 	var v4State SourceCloudflareLogpushJobModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
