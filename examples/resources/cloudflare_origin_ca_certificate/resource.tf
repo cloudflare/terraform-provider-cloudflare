@@ -18,7 +18,7 @@ resource "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
   dcWYTthM51JIqRBfNqy4QcBnX+GY05yltEEswQI55wdiS3CjTTA67sdbcQ==
   -----END CERTIFICATE REQUEST-----
   EOT
-  hostnames = ["example.com", "*.example.com"]
+  hostnames = ["example.com", "*.example.com", "sub.example.com"]
   request_type = "origin-rsa"
   requested_validity = 5475
 }
