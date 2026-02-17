@@ -48,34 +48,50 @@ var v5InstantLogsConfig string
 // 4. v4 schema defaults preserved in output_options
 func TestMigrateLogpushJobBasic(t *testing.T) {
 	testCases := []struct {
-		name       string
-		version    string
-		tfMigTest  string
-		configFn   func(rnd, accountID, name string) string
+		name           string
+		version        string
+		useDevProvider bool
+		configFn       func(rnd, accountID, name string) string
 	}{
 		{
-			name:      "from_v4_latest",
-			version:   acctest.GetLastV4Version(),
-			tfMigTest: "1",
-			configFn:  func(rnd, accountID, name string) string { return fmt.Sprintf(v4BasicConfig, rnd, accountID, name) },
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, name string) string { return fmt.Sprintf(v4BasicConfig, rnd, accountID, name) },
 		},
 		{
-			name:      "from_v5",
-			version:   currentProviderVersion,
-			tfMigTest: "",
-			configFn:  func(rnd, accountID, name string) string { return fmt.Sprintf(v5BasicConfig, rnd, accountID, name) },
+			name:           "from_v5",
+			version:        currentProviderVersion,
+			useDevProvider: true,
+			configFn:       func(rnd, accountID, name string) string { return fmt.Sprintf(v5BasicConfig, rnd, accountID, name) },
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Setenv("TF_MIG_TEST", tc.tfMigTest)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			name := fmt.Sprintf("tf-test-logpush-%s", rnd)
 			tmpDir := t.TempDir()
 			testConfig := tc.configFn(rnd, accountID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var step1 resource.TestStep
+			if tc.useDevProvider {
+				step1 = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				step1 = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
@@ -84,16 +100,7 @@ func TestMigrateLogpushJobBasic(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					step1,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
 						[]statecheck.StateCheck{
@@ -134,34 +141,50 @@ func TestMigrateLogpushJobBasic(t *testing.T) {
 // 4. sample_rate type conversion works correctly
 func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 	testCases := []struct {
-		name      string
-		version   string
-		tfMigTest string
-		configFn  func(rnd, accountID, name string) string
+		name           string
+		version        string
+		useDevProvider bool
+		configFn       func(rnd, accountID, name string) string
 	}{
 		{
-			name:      "from_v4_latest",
-			version:   acctest.GetLastV4Version(),
-			tfMigTest: "1",
-			configFn:  func(rnd, accountID, name string) string { return fmt.Sprintf(v4OutputOptionsConfig, rnd, accountID, name) },
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, name string) string { return fmt.Sprintf(v4OutputOptionsConfig, rnd, accountID, name) },
 		},
 		{
-			name:      "from_v5",
-			version:   currentProviderVersion,
-			tfMigTest: "",
-			configFn:  func(rnd, accountID, name string) string { return fmt.Sprintf(v5OutputOptionsConfig, rnd, accountID, name) },
+			name:           "from_v5",
+			version:        currentProviderVersion,
+			useDevProvider: true,
+			configFn:       func(rnd, accountID, name string) string { return fmt.Sprintf(v5OutputOptionsConfig, rnd, accountID, name) },
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Setenv("TF_MIG_TEST", tc.tfMigTest)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			name := fmt.Sprintf("tf-test-logpush-options-%s", rnd)
 			tmpDir := t.TempDir()
 			testConfig := tc.configFn(rnd, accountID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var step1 resource.TestStep
+			if tc.useDevProvider {
+				step1 = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				step1 = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
@@ -170,16 +193,7 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					step1,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
 						[]statecheck.StateCheck{
@@ -280,33 +294,49 @@ func TestMigrateLogpushJobOutputOptions(t *testing.T) {
 // 2. State transformation properly handles this field removal
 func TestMigrateLogpushJobInstantLogs(t *testing.T) {
 	testCases := []struct {
-		name      string
-		version   string
-		tfMigTest string
-		configFn  func(rnd, zoneID string) string
+		name           string
+		version        string
+		useDevProvider bool
+		configFn       func(rnd, zoneID string) string
 	}{
 		{
-			name:      "from_v4_latest",
-			version:   acctest.GetLastV4Version(),
-			tfMigTest: "1",
-			configFn:  func(rnd, zoneID string) string { return fmt.Sprintf(v4InstantLogsConfig, rnd, zoneID) },
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, zoneID string) string { return fmt.Sprintf(v4InstantLogsConfig, rnd, zoneID) },
 		},
 		{
-			name:      "from_v5",
-			version:   currentProviderVersion,
-			tfMigTest: "",
-			configFn:  func(rnd, zoneID string) string { return fmt.Sprintf(v5InstantLogsConfig, rnd, zoneID) },
+			name:           "from_v5",
+			version:        currentProviderVersion,
+			useDevProvider: true,
+			configFn:       func(rnd, zoneID string) string { return fmt.Sprintf(v5InstantLogsConfig, rnd, zoneID) },
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Setenv("TF_MIG_TEST", tc.tfMigTest)
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			rnd := utils.GenerateRandomResourceName()
 			tmpDir := t.TempDir()
 			testConfig := tc.configFn(rnd, zoneID)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var step1 resource.TestStep
+			if tc.useDevProvider {
+				step1 = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				step1 = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
@@ -315,16 +345,7 @@ func TestMigrateLogpushJobInstantLogs(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					step1,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
 						[]statecheck.StateCheck{
