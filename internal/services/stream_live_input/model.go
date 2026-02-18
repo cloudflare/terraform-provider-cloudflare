@@ -20,6 +20,7 @@ type StreamLiveInputModel struct {
 	DefaultCreator           types.String                                                 `tfsdk:"default_creator" json:"defaultCreator,optional,no_refresh"`
 	DeleteRecordingAfterDays types.Float64                                                `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,optional"`
 	Meta                     jsontypes.Normalized                                         `tfsdk:"meta" json:"meta,optional"`
+	Enabled                  types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Recording                customfield.NestedObject[StreamLiveInputRecordingModel]      `tfsdk:"recording" json:"recording,computed_optional"`
 	Created                  timetypes.RFC3339                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified                 timetypes.RFC3339                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`

@@ -23,6 +23,7 @@ type StreamLiveInputDataSourceModel struct {
 	LiveInputIdentifier      types.String                                                           `tfsdk:"live_input_identifier" path:"live_input_identifier,required"`
 	Created                  timetypes.RFC3339                                                      `tfsdk:"created" json:"created,computed" format:"date-time"`
 	DeleteRecordingAfterDays types.Float64                                                          `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,computed"`
+	Enabled                  types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
 	Modified                 timetypes.RFC3339                                                      `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Status                   types.String                                                           `tfsdk:"status" json:"status,computed"`
 	UID                      types.String                                                           `tfsdk:"uid" json:"uid,computed"`
