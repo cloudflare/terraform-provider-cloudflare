@@ -59,6 +59,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The certificate authority that issued the certificate.",
 				Computed:    true,
 			},
+			"serial_number": schema.StringAttribute{
+				Description: "The serial number on the uploaded certificate.",
+				Computed:    true,
+			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
 				Computed:    true,
