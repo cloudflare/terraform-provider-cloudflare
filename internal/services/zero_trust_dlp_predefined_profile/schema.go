@@ -38,9 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled_entries": schema.ListAttribute{
-				//Computed:    true,
-				Optional: true,
-				//CustomType:  customfield.NewListType[types.String](ctx),
+				Optional:    true,
 				ElementType: types.StringType,
 			},
 			"ai_context_enabled": schema.BoolAttribute{
@@ -101,3 +99,4 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Schema(ctx context.Context, req 
 func (r *ZeroTrustDLPPredefinedProfileResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{}
 }
+
