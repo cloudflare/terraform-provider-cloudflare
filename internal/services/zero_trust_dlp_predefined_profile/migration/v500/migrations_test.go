@@ -36,8 +36,6 @@ var v516BasicConfig string
 
 func skipIfMissingPredefinedIDs(t *testing.T) (profileID, entryID string) {
 	t.Helper()
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_PROFILE_ID", "c8932cc4-3312-4152-8041-f3f257122dc4")
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID", "d8fcfc9c-773c-405e-8426-21ecbb67ba93")
 	profileID = os.Getenv("CLOUDFLARE_DLP_PREDEFINED_PROFILE_ID")
 	entryID = os.Getenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID")
 	if profileID == "" || entryID == "" {
@@ -48,10 +46,6 @@ func skipIfMissingPredefinedIDs(t *testing.T) (profileID, entryID string) {
 
 func skipIfMissingMultipleEntryIDs(t *testing.T) (profileID, entryID1, entryID2, entryID3 string) {
 	t.Helper()
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_PROFILE_ID", "c8932cc4-3312-4152-8041-f3f257122dc4")
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID", "d8fcfc9c-773c-405e-8426-21ecbb67ba93")
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID_2", "2c0e33e1-71da-40c8-aad3-32e674ad3d96")
-	os.Setenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID_3", "6c6579e4-d832-42d5-905c-8e53340930f2")
 	profileID = os.Getenv("CLOUDFLARE_DLP_PREDEFINED_PROFILE_ID")
 	entryID1 = os.Getenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID")
 	entryID2 = os.Getenv("CLOUDFLARE_DLP_PREDEFINED_ENTRY_ID_2")
