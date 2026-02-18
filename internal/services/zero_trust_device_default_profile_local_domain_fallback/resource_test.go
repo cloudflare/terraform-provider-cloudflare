@@ -11,8 +11,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
@@ -63,10 +63,14 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("description"), knownvalue.StringExact("example domain")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("suffix"), knownvalue.StringExact("example.com")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("dns_server").AtSliceIndex(0), knownvalue.StringExact("1.0.0.1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetPartial([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"description": knownvalue.StringExact("example domain"),
+							"suffix":      knownvalue.StringExact("example.com"),
+							"dns_server":  knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("1.0.0.1")}),
+						}),
+					})),
 				},
 			},
 			{
@@ -108,10 +112,14 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("description"), knownvalue.StringExact("second example domain")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("suffix"), knownvalue.StringExact("example.net")),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains").AtSliceIndex(0).AtMapKey("dns_server").AtSliceIndex(0), knownvalue.StringExact("1.1.1.1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetPartial([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"description": knownvalue.StringExact("second example domain"),
+							"suffix":      knownvalue.StringExact("example.net"),
+							"dns_server":  knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("1.1.1.1")}),
+						}),
+					})),
 				},
 			},
 			{
@@ -153,7 +161,7 @@ func TestAccCloudflareFallbackDomain_MultipleDomains(t *testing.T) {
 				Config: testAccCloudflareDefaultFallbackDomain_MultipleDomains(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(4)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(4)),
 				},
 			},
 			{
@@ -174,7 +182,7 @@ func TestAccCloudflareFallbackDomain_MultipleDomains(t *testing.T) {
 				Config: testAccCloudflareDefaultFallbackDomain_MultipleDomainsUpdated(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.ListSizeExact(3)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(3)),
 				},
 			},
 			{
@@ -228,4 +236,122 @@ func TestAccUpgradeZeroTrustDeviceDefaultProfileLocalDomainFallback_FromPublishe
 			},
 		},
 	})
+}
+
+func TestAccCloudflareFallbackDomain_MultipleDnsServers(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_device_default_profile_local_domain_fallback.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDefaultFallbackDomain_MultipleDnsServers(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetPartial([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"suffix":      knownvalue.StringExact("corp.example.com"),
+							"description": knownvalue.StringExact("Corporate domain with multiple DNS servers"),
+							"dns_server": knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.StringExact("10.0.0.1"),
+								knownvalue.StringExact("10.0.0.2"),
+								knownvalue.StringExact("10.0.0.3"),
+							}),
+						}),
+					})),
+				},
+			},
+			{
+				Config:   testAccCloudflareDefaultFallbackDomain_MultipleDnsServers(rnd, accountID),
+				PlanOnly: true,
+			},
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     accountID,
+			},
+			{
+				Config:   testAccCloudflareDefaultFallbackDomain_MultipleDnsServers(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareFallbackDomain_UpdateDomainAttributes(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_device_default_profile_local_domain_fallback.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDefaultFallbackDomain_UpdateAttrs(rnd, accountID, "Initial description", "192.168.1.1"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetPartial([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"suffix":      knownvalue.StringExact("test.local"),
+							"description": knownvalue.StringExact("Initial description"),
+							"dns_server":  knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("192.168.1.1")}),
+						}),
+					})),
+				},
+			},
+			{
+				Config: testAccCloudflareDefaultFallbackDomain_UpdateAttrs(rnd, accountID, "Updated description", "10.10.10.10"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("domains"), knownvalue.SetPartial([]knownvalue.Check{
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"suffix":      knownvalue.StringExact("test.local"),
+							"description": knownvalue.StringExact("Updated description"),
+							"dns_server":  knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("10.10.10.10")}),
+						}),
+					})),
+				},
+			},
+			{
+				Config:   testAccCloudflareDefaultFallbackDomain_UpdateAttrs(rnd, accountID, "Updated description", "10.10.10.10"),
+				PlanOnly: true,
+			},
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     accountID,
+			},
+			{
+				Config:   testAccCloudflareDefaultFallbackDomain_UpdateAttrs(rnd, accountID, "Updated description", "10.10.10.10"),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func testAccCloudflareDefaultFallbackDomain_MultipleDnsServers(rnd, accountID string) string {
+	return acctest.LoadTestCase("defaultfallbackdomain_multiple-dns-servers.tf", rnd, accountID)
+}
+
+func testAccCloudflareDefaultFallbackDomain_UpdateAttrs(rnd, accountID, description, dnsServer string) string {
+	return acctest.LoadTestCase("defaultfallbackdomain_update-attrs.tf", rnd, accountID, description, dnsServer)
 }
