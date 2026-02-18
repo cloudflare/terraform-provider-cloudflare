@@ -2,8 +2,6 @@ module github.com/cloudflare/terraform-provider-cloudflare
 
 go 1.24.0
 
-toolchain go1.24.12
-
 require (
 	github.com/aws/aws-sdk-go-v2 v1.31.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.36
