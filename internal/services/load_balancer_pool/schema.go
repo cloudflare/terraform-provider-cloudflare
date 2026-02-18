@@ -43,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
 				Required:    true,
 			},
-			"origins": schema.ListNestedAttribute{
+			"origins": schema.SetNestedAttribute{
 				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -55,6 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"disabled_at": schema.StringAttribute{
 							Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
 							Computed:    true,
+							Optional:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"enabled": schema.BoolAttribute{
@@ -141,35 +142,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
-			"description": schema.StringAttribute{
-				Description: "A human-readable description of the pool.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"minimum_origins": schema.Int64Attribute{
-				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
-			},
-			"notification_email": schema.StringAttribute{
-				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolLoadSheddingModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"default_percent": schema.Float64Attribute{
 						Description: "The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.",
@@ -211,21 +186,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolNotificationFilterModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"origin": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolNotificationFilterOriginModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
 								Description: "If set true, disable notifications for this type of resource (pool or origin).",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
@@ -235,15 +204,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"pool": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolNotificationFilterPoolModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
 								Description: "If set true, disable notifications for this type of resource (pool or origin).",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
@@ -255,9 +220,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"origin_steering": schema.SingleNestedAttribute{
 				Description: "Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolOriginSteeringModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"policy": schema.StringAttribute{
 						Description: "The type of origin steering policy to use.\n- `\"random\"`: Select an origin randomly.\n- `\"hash\"`: Select an origin by computing a hash over the CF-Connecting-IP address.\n- `\"least_outstanding_requests\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\nAvailable values: \"random\", \"hash\", \"least_outstanding_requests\", \"least_connections\".",
@@ -274,6 +237,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("random"),
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "A human-readable description of the pool.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"minimum_origins": schema.Int64Attribute{
+				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
+			},
+			"notification_email": schema.StringAttribute{
+				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
