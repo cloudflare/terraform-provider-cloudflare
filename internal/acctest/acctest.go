@@ -912,6 +912,38 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 
 }
 
+// dropTerraformState finds and removes terraform.tfstate from tmpDir or any immediate
+// subdirectory (the test framework creates a "work<random>" subdir inside tmpDir as the
+// actual Terraform working directory when TestCase.WorkingDir is set).
+func dropTerraformState(t *testing.T, tmpDir string) {
+	t.Helper()
+
+	// Try the direct path first.
+	candidates := []string{filepath.Join(tmpDir, "terraform.tfstate")}
+
+	// Also scan one level of subdirectories (framework-managed work dirs).
+	entries, err := os.ReadDir(tmpDir)
+	if err == nil {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				candidates = append(candidates, filepath.Join(tmpDir, entry.Name(), "terraform.tfstate"))
+			}
+		}
+	}
+
+	removed := false
+	for _, candidate := range candidates {
+		if err := os.Remove(candidate); err == nil {
+			debugLogf(t, "Dropped Terraform state file: %s", candidate)
+			removed = true
+		}
+	}
+
+	if !removed {
+		debugLogf(t, "No terraform.tfstate found to drop in %s", tmpDir)
+	}
+}
+
 // RunMigrationV2Command runs the new tf-migrate binary to transform config and state
 // NOTE: assumes config and state are already in tmpDir
 func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceVersion string, targetVersion string) {
@@ -950,6 +982,8 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 	// Run the migration command
 	cmd := exec.Command(migratorPath, args...)
 	cmd.Dir = tmpDir
+	// Explicitly pass environment variables, including TF_MIG_TEST
+	cmd.Env = os.Environ()
 
 	// Capture output for debugging
 	output, err := cmd.CombinedOutput()
@@ -1271,6 +1305,43 @@ func MigrationV2TestStepAllowCreate(t *testing.T, v4Config string, tmpDir string
 				WriteOutConfig(t, v4Config, tmpDir)
 				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
 				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			},
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+		},
+		{
+			// Step 2: Verify final state and expect empty plan
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+			},
+			ConfigStateChecks: stateChecks,
+		},
+	}
+}
+
+// MigrationV2TestStepAllowCreateDropState is like MigrationV2TestStepAllowCreate but also
+// removes the prior state file after running migration. Use this when the v4 resource type
+// is completely absent from the v5 provider (e.g. cloudflare_zone_settings_override), so
+// Terraform cannot load the old state at all. Dropping the state lets Terraform create the
+// new v5 resources fresh without hitting a "no schema available" error.
+func MigrationV2TestStepAllowCreateDropState(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	return []resource.TestStep{
+		{
+			// Step 1: Run migration, drop prior state, apply any creates
+			PreConfig: func() {
+				WriteOutConfig(t, v4Config, tmpDir)
+				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+				// The v4 resource type is gone from v5; remove its state entry so Terraform
+				// does not fail with "no schema available" when loading the working directory.
+				// The framework creates a "work<random>" subdirectory inside tmpDir as the
+				// actual Terraform working directory, so we must search subdirectories too.
+				dropTerraformState(t, tmpDir)
 			},
 			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 			ConfigDirectory:          config.StaticDirectory(tmpDir),

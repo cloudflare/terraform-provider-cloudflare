@@ -1,4 +1,4 @@
-package zone_setting_test
+package v500_test
 
 import (
 	"fmt"
@@ -11,8 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+)
+
+var (
+	currentProviderVersion = internal.PackageVersion // Current v5 release
 )
 
 // TestMigrateZoneSettingMigrationFromV4Basic tests basic migration from v4 zone_settings_override to v5 zone_setting
@@ -30,14 +35,18 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
   }
 }`, rnd, zoneID)
 
-	// Use MigrationV2TestStepAllowCreate to handle one-to-many transformation
-	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
+
+	// Use MigrationV2TestStepAllowCreateDropState to handle one-to-many transformation.
+	// cloudflare_zone_settings_override does not exist in v5; the state file must be
+	// cleared so Terraform does not fail with "no schema available" when loading it.
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
 		// Verify http3 setting
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("value"), knownvalue.StringExact("on")),
 	})
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -48,7 +57,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: acctest.GetLastV4Version(),
 				},
 			},
 			Config: v4Config,
@@ -78,8 +87,9 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
   }
 }`, rnd, zoneID)
 
-	// Use MigrationV2TestStepAllowCreate to handle one-to-many transformation
-	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
+
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
 		// Verify zero_rtt -> 0rtt mapping
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("0rtt")),
@@ -94,7 +104,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_security_header", rnd), tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("preload"), knownvalue.Bool(false)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_security_header", rnd), tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("nosniff"), knownvalue.Bool(false)),
 	})
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -105,7 +115,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: acctest.GetLastV4Version(),
 				},
 			},
 			Config: v4Config,
@@ -145,8 +155,9 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
   }
 }`, rnd, zoneID)
 
-	// Use MigrationV2TestStepAllowCreate to handle one-to-many transformation
-	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
+
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
 		// Verify http3 setting preserves variable reference
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
@@ -175,7 +186,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: acctest.GetLastV4Version(),
 				},
 			},
 			Config: v4Config,
