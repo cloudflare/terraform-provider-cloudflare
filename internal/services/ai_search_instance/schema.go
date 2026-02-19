@@ -266,6 +266,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: int64default.StaticInt64(256),
 			},
+			"fusion_method": schema.StringAttribute{
+				Description: `Available values: "max", "rrf".`,
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("max", "rrf"),
+				},
+				Default: stringdefault.StaticString("max"),
+			},
 			"hybrid_search_enabled": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,

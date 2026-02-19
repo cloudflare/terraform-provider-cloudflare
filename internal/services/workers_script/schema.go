@@ -43,6 +43,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "JSON-encoded metadata about the uploaded parts and Worker configuration.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
+					"annotations": schema.SingleNestedAttribute{
+						Description: "Annotations for the version created by this upload.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"workers_message": schema.StringAttribute{
+								Description: "Human-readable message about the version.",
+								Optional:    true,
+							},
+							"workers_tag": schema.StringAttribute{
+								Description: "User-provided identifier for the version.",
+								Optional:    true,
+							},
+						},
+					},
 					"assets": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,

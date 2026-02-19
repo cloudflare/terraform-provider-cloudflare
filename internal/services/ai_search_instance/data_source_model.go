@@ -30,6 +30,7 @@ type AISearchInstanceDataSourceModel struct {
 	CreatedBy            types.String                                                                  `tfsdk:"created_by" json:"created_by,computed"`
 	EmbeddingModel       types.String                                                                  `tfsdk:"embedding_model" json:"embedding_model,computed"`
 	Enable               types.Bool                                                                    `tfsdk:"enable" json:"enable,computed"`
+	FusionMethod         types.String                                                                  `tfsdk:"fusion_method" json:"fusion_method,computed"`
 	HybridSearchEnabled  types.Bool                                                                    `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	LastActivity         timetypes.RFC3339                                                             `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	MaxNumResults        types.Int64                                                                   `tfsdk:"max_num_results" json:"max_num_results,computed"`
