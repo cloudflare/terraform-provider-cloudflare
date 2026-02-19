@@ -33,6 +33,7 @@ data "cloudflare_workers_script" "example_workers_script" {
 ### Read-Only
 
 - `id` (String) Name of the script, used in URLs and route configuration.
+- `script` (String)
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

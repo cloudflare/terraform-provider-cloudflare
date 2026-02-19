@@ -9,14 +9,16 @@ import (
 	"testing"
 	"time"
 
+	"log"
+
 	cloudflare "github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -24,7 +26,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	"log"
 )
 
 func TestMain(m *testing.M) {
@@ -54,7 +55,7 @@ func testSweepCloudflareRecord(r string) error {
 		ZoneID: cloudflare.F(zoneID),
 	})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s",err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 		return err
 	}
 
@@ -1617,4 +1618,59 @@ func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
 	}
 
 	return strings.TrimSuffix(old, ".") == newTrimmed
+}
+
+// TestAccUpgradeDNSRecord_FromPublishedV5 tests upgrading from a published v5
+// release to the local build. This validates that the schema version bump and
+// state upgrader (with PriorSchema) work correctly for users upgrading their
+// provider version.
+//
+// Step 1: Create resource with published v5 provider (state at schema_version: 0)
+// Step 2: Apply with local build — triggers state upgrader
+func TestAccUpgradeDNSRecord_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	config := fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s" {
+  zone_id = "%[2]s"
+  name    = "upgrade-test-%[1]s"
+  type    = "A"
+  content = "192.0.2.1"
+  ttl     = 300
+}
+`, rnd, zoneID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.0.2.1"),
+				),
+			},
+		},
+	})
 }

@@ -47,5 +47,6 @@ Read-Only:
 - `modified_at` (String)
 - `modified_by` (String)
 - `name` (String)
+- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
 
 

@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -158,4 +159,45 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 
 func testAccCheckCloudflareBYOIPPrefixConfig(accountID string, asn int64, cidr string, loaDocumentID string, description, name string) string {
 	return acctest.LoadTestCase("byoipprefixconfig.tf", accountID, asn, cidr, loaDocumentID, description, name)
+}
+
+func TestAccUpgradeByoIpPrefix_FromPublishedV5(t *testing.T) {
+	var (
+		rnd  = utils.GenerateRandomResourceName()
+	
+		accountID     = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+		loaDocumentID = os.Getenv("CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID")
+		cidr          = os.Getenv("CLOUDFLARE_BYO_IP_CIDR")
+		asn, _        = strconv.ParseInt(os.Getenv("CLOUDFLARE_BYO_IP_ASN"), 10, 64)
+	)
+
+	config := testAccCheckCloudflareBYOIPPrefixConfig(accountID, asn, cidr, loaDocumentID, "This is my BYOIP prefix old", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_BYOIPPrefix(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

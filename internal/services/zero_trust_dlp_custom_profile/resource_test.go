@@ -425,3 +425,33 @@ func testAccCheckCloudflareZeroTrustDlpCustomProfileDestroy(s *terraform.State) 
 
 	return nil
 }
+
+func TestAccUpgradeZeroTrustDlpCustomProfile_FromPublishedV5(t *testing.T) {
+	rnd, accountID := setupDLPCustomProfileTest(t)
+
+	config := acctest.LoadTestCase("basic.tf", rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

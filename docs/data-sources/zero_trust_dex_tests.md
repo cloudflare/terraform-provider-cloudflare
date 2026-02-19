@@ -14,6 +14,8 @@ description: |-
 ```terraform
 data "cloudflare_zero_trust_dex_tests" "example_zero_trust_dex_tests" {
   account_id = "01a7362d577a6c3019a474fd6f485823"
+  kind = "http"
+  test_name = "testName"
 }
 ```
 
@@ -26,7 +28,10 @@ data "cloudflare_zero_trust_dex_tests" "example_zero_trust_dex_tests" {
 
 ### Optional
 
+- `kind` (String) Filter by test type
+Available values: "http", "traceroute".
 - `max_items` (Number) Max items to fetch, default: 1000
+- `test_name` (String) Filter by test name
 
 ### Read-Only
 
@@ -56,7 +61,7 @@ Read-Only:
 Read-Only:
 
 - `default` (Boolean) Whether the DEX rule is the account default
-- `id` (String) The id of the DEX rule
+- `id` (String) API Resource UUID tag.
 - `name` (String) The name of the DEX rule
 
 
@@ -67,6 +72,8 @@ Read-Only:
 
 - `host` (String) The desired endpoint to test.
 - `kind` (String) The type of test.
+Available values: "http", "traceroute".
 - `method` (String) The HTTP request method type.
+Available values: "GET".
 
 

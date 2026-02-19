@@ -64,7 +64,14 @@ func TestAccAuthenticatedOriginPullsSettings_FullLifecycle(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 				},
 			},
-			// Step 2: Drift check - same config, expect empty plan
+			// Step 2: Import test
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
+			},
+			// Step 3: Drift check - same config, expect empty plan
 			{
 				Config: testAccAuthenticatedOriginPullsSettingsEnabled(zoneID, rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -73,7 +80,7 @@ func TestAccAuthenticatedOriginPullsSettings_FullLifecycle(t *testing.T) {
 					},
 				},
 			},
-			// Step 3: Update to enabled = false
+			// Step 4: Update to enabled = false
 			{
 				Config: testAccAuthenticatedOriginPullsSettingsDisabled(zoneID, rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -86,7 +93,7 @@ func TestAccAuthenticatedOriginPullsSettings_FullLifecycle(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
 				},
 			},
-			// Step 4: Drift check after update
+			// Step 5: Drift check after update
 			{
 				Config: testAccAuthenticatedOriginPullsSettingsDisabled(zoneID, rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -95,7 +102,7 @@ func TestAccAuthenticatedOriginPullsSettings_FullLifecycle(t *testing.T) {
 					},
 				},
 			},
-			// Step 5: Update back to enabled = true (confirms toggle works both ways)
+			// Step 6: Update back to enabled = true (confirms toggle works both ways)
 			{
 				Config: testAccAuthenticatedOriginPullsSettingsEnabled(zoneID, rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{

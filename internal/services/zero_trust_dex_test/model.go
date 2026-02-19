@@ -34,8 +34,8 @@ func (m ZeroTrustDEXTestModel) MarshalJSONForUpdate(state ZeroTrustDEXTestModel)
 }
 
 type ZeroTrustDEXTestDataModel struct {
-	Host   types.String `tfsdk:"host" json:"host,required"`
-	Kind   types.String `tfsdk:"kind" json:"kind,required"`
+	Host   types.String `tfsdk:"host" json:"host,optional"`
+	Kind   types.String `tfsdk:"kind" json:"kind,optional"`
 	Method types.String `tfsdk:"method" json:"method,optional"`
 }
 

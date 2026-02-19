@@ -157,7 +157,7 @@ type PagesProjectDeploymentConfigsPreviewR2BucketsModel struct {
 type PagesProjectDeploymentConfigsPreviewServicesModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
-	Environment types.String `tfsdk:"environment" json:"environment,optional"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel struct {
@@ -245,7 +245,7 @@ type PagesProjectDeploymentConfigsProductionR2BucketsModel struct {
 type PagesProjectDeploymentConfigsProductionServicesModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
-	Environment types.String `tfsdk:"environment" json:"environment,optional"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
 }
 
 type PagesProjectDeploymentConfigsProductionVectorizeBindingsModel struct {

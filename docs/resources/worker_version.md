@@ -93,7 +93,7 @@ This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure 
 [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--modules))
-- `placement` (Attributes) Placement settings for the version. (see [below for nested schema](#nestedatt--placement))
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--placement))
 - `usage_model` (String, Deprecated) Usage model for the version.
 Available values: "standard", "bundled", "unbound".
 
@@ -152,7 +152,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 
 Optional:
 
@@ -184,6 +184,7 @@ Available values: "eu", "fedramp".
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
+- `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
@@ -206,6 +207,15 @@ Optional:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
+
+
+<a id="nestedatt--bindings--simple"></a>
+### Nested Schema for `bindings.simple`
+
+Required:
+
+- `limit` (Number) The limit (requests per period).
+- `period` (Number) The period in seconds.
 
 
 
@@ -305,8 +315,21 @@ Read-Only:
 
 Optional:
 
-- `mode` (String) Placement mode for the version.
-Available values: "smart".
+- `host` (String) TCP host and port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "smart", "targeted".
+- `region` (String) Cloud region for targeted placement in format 'provider:region'.
+- `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--placement--target))
+
+<a id="nestedatt--placement--target"></a>
+### Nested Schema for `placement.target`
+
+Optional:
+
+- `host` (String) TCP host:port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `region` (String) Cloud region in format 'provider:region'.
 
 ## Import
 

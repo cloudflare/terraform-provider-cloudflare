@@ -5,7 +5,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	type                      = "disk_encryption"
 	description               = "My description"
 	schedule                  = "24h"
-	expiration                = "24h"
+	expiration                = "25h"
 	match = [{
 		platform = "mac"
 	}]

@@ -21,6 +21,8 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
     forbidden = "699d98642c564d2e855e9661899b7252"
     identity_denied = "699d98642c564d2e855e9661899b7252"
   }
+  deny_unmatched_requests = true
+  deny_unmatched_requests_exempted_zone_names = ["example.com"]
   is_ui_read_only = true
   login_design = {
     background_color = "#c5ed1b"
@@ -47,6 +49,8 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
 - `auth_domain` (String) The unique subdomain assigned to your Zero Trust organization.
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login.
 - `custom_pages` (Attributes) (see [below for nested schema](#nestedatt--custom_pages))
+- `deny_unmatched_requests` (Boolean) Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.
+- `deny_unmatched_requests_exempted_zone_names` (List of String) Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.
 - `is_ui_read_only` (Boolean) Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
 - `name` (String) The name of your Zero Trust organization.

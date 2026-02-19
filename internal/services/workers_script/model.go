@@ -49,6 +49,8 @@ type WorkersScriptModel struct {
 	LastDeployedFrom types.String                                                  `tfsdk:"last_deployed_from" json:"last_deployed_from,computed"`
 	MigrationTag     types.String                                                  `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	ModifiedOn       timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PlacementMode    types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	PlacementStatus  types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed"`
 	StartupTimeMs    types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	Handlers         customfield.List[types.String]                                `tfsdk:"handlers" json:"handlers,computed"`
 	NamedHandlers    customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed"`

@@ -28,6 +28,6 @@ data "cloudflare_zero_trust_tunnel_warp_connector_token" "example_zero_trust_tun
 
 ### Read-Only
 
-- `token` (String) The Warp Connector Token is used as a mechanism to authenticate the operation of a tunnel.
+- `token` (String, Sensitive) The Tunnel Token is used as a mechanism to authenticate the operation of a tunnel.
 
 

@@ -18,6 +18,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -54,11 +55,20 @@ func testSweepCloudflareOriginCACertificates(r string) error {
 	}
 
 	for _, cert := range certs.Result {
-		if !utils.ShouldSweepResource(cert.ID) {
+		// Check if any hostname contains the test prefix
+		isTestCert := false
+		for _, hostname := range cert.Hostnames {
+			if utils.ShouldSweepResource(hostname) {
+				isTestCert = true
+				break
+			}
+		}
+
+		if !isTestCert {
 			continue
 		}
 
-		tflog.Info(ctx, fmt.Sprintf("Deleting Origin CA certificate: %s", cert.ID))
+		tflog.Info(ctx, fmt.Sprintf("Deleting test Origin CA certificate: %s (hostnames: %v)", cert.ID, cert.Hostnames))
 		_, err := client.OriginCACertificates.Delete(ctx, cert.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Origin CA certificate %s: %s", cert.ID, err))
@@ -195,4 +205,39 @@ EOT
   request_type       = "origin-ecc"
   requested_validity = 30
 }`, rnd, csr, domain)
+}
+
+func TestAccUpgradeOriginCaCertificate_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	csr, _ := generateCSR(domain)
+
+	config := testAccOriginCACertificateBasicConfig(rnd, csr, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

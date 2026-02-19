@@ -34,6 +34,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tiered_caching"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_hostname_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/botnet_feed_config_asn"
@@ -102,6 +105,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
@@ -459,6 +463,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		logpush_job.NewResource,
 		logpush_ownership_challenge.NewResource,
 		logpull_retention.NewResource,
+		authenticated_origin_pulls_certificate.NewResource,
+		authenticated_origin_pulls.NewResource,
+		authenticated_origin_pulls_hostname_certificate.NewResource,
 		authenticated_origin_pulls_settings.NewResource,
 		page_rule.NewResource,
 		rate_limit.NewResource,
@@ -505,6 +512,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_connector.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
+		mtls_certificate.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
 		registrar_domain.NewResource,
@@ -710,6 +718,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
 		logpull_retention.NewLogpullRetentionDataSource,
+		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
+		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
+		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
+		authenticated_origin_pulls_hostname_certificate.NewAuthenticatedOriginPullsHostnameCertificateDataSource,
+		authenticated_origin_pulls_hostname_certificate.NewAuthenticatedOriginPullsHostnameCertificatesDataSource,
 		authenticated_origin_pulls_settings.NewAuthenticatedOriginPullsSettingsDataSource,
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
@@ -789,6 +802,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_network_monitoring_configuration.NewMagicNetworkMonitoringConfigurationDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRuleDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
+		mtls_certificate.NewMTLSCertificateDataSource,
+		mtls_certificate.NewMTLSCertificatesDataSource,
 		pages_project.NewPagesProjectDataSource,
 		pages_project.NewPagesProjectsDataSource,
 		pages_domain.NewPagesDomainDataSource,

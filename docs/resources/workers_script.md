@@ -116,7 +116,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `main_module` (String) Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
-- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify either mode for Smart Placement, or one of region/hostname/host for targeted placement. (see [below for nested schema](#nestedatt--placement))
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--placement))
 - `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard", "bundled", "unbound".
@@ -133,6 +133,8 @@ Available values: "standard", "bundled", "unbound".
 - `migration_tag` (String) The tag of the Durable Object migration that was most recently applied for this Worker.
 - `modified_on` (String) When the script was last modified.
 - `named_handlers` (Attributes List) Named exports, such as Durable Object class implementations and named entrypoints. (see [below for nested schema](#nestedatt--named_handlers))
+- `placement_mode` (String, Deprecated) Available values: "smart", "targeted".
+- `placement_status` (String, Deprecated) Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `startup_time_ms` (Number)
 
 <a id="nestedatt--assets"></a>
@@ -203,6 +205,7 @@ Available values: "eu", "fedramp".
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
+- `simple` (Attributes) A simple rate limit. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
@@ -225,6 +228,15 @@ Optional:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
+
+
+<a id="nestedatt--bindings--simple"></a>
+### Nested Schema for `bindings.simple`
+
+Required:
+
+- `limit` (Number) The rate limit value.
+- `period` (Number) The rate limit period in seconds.
 
 
 
@@ -335,7 +347,7 @@ Optional:
 Optional:
 
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "smart".
+Available values: "smart", "targeted".
 
 Read-Only:
 
@@ -345,6 +357,17 @@ Read-Only:
 - `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
+- `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--placement--target))
+
+<a id="nestedatt--placement--target"></a>
+### Nested Schema for `placement.target`
+
+Read-Only:
+
+- `host` (String) TCP host:port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `region` (String) Cloud region in format 'provider:region'.
+
 
 
 <a id="nestedatt--tail_consumers"></a>

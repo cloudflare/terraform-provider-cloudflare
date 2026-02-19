@@ -13,15 +13,31 @@ import (
 var _ resource.ResourceWithUpgradeState = (*PageRuleResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
+//
+// Clear schema version separation:
+// - v4 SDKv2 provider: schema_version=0, actions as array
+// - v5 Plugin Framework provider: version=1 (production) or version=500 (test)
 func (r *PageRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	// v4 schema for version=0 upgrader
+	v4Schema := v500.SourceV4PageRuleSchema()
+
+	// v5 schema for version=1 upgrader (override version to match production state)
+	v5SchemaVersion1 := ResourceSchema(ctx)
+	v5SchemaVersion1.Version = 1
+
 	return map[int64]resource.StateUpgrader{
-		// Handles schema_version=0 from BOTH v4 and early v5:
-		// - v4 SDKv2 (no SchemaVersion set, defaults to 0): actions as array
-		// - Early v5 Plugin Framework (no Version set, defaults to 0): actions as object
-		// PriorSchema is nil to bypass Terraform's validation - handler detects format and parses manually
+		// Handle state from v4 SDKv2 provider (schema_version=0)
+		// Uses v4 PriorSchema to parse, then transforms to v5
 		0: {
-			PriorSchema:   nil,
-			StateUpgrader: v500.UpgradeFromV0,
+			PriorSchema:   &v4Schema,
+			StateUpgrader: v500.UpgradeFromV4,
+		},
+
+		// Handle state from v5 Plugin Framework provider (version=1)
+		// Uses v5 PriorSchema, no-op version bump to 500
+		1: {
+			PriorSchema:   &v5SchemaVersion1,
+			StateUpgrader: v500.UpgradeFromV5,
 		},
 	}
 }

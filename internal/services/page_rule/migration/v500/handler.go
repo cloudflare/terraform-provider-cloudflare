@@ -2,97 +2,47 @@ package v500
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV0 handles state upgrades from schema_version=0 to version=500.
-// Must handle BOTH formats since both v4 and early v5 wrote version=0:
-// - v4 SDKv2 states: actions as array (list) - needs full transformation
-// - Early v5 states: actions as object - just version bump
+// UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
 //
-// PriorSchema is nil to bypass Terraform's schema parsing, allowing us to
-// work directly with raw JSON and detect the format ourselves.
-func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading page_rule state from schema_version=0 to version=500")
+// This performs a full transformation from v4 → v5 format.
+// The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
+func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading page_rule state from v4 SDKv2 provider (schema_version=0)")
 
-	// STEP 1: Get raw JSON state (PriorSchema is nil, so use RawState)
-	if req.RawState == nil || req.RawState.JSON == nil {
-		resp.Diagnostics.AddError(
-			"Missing raw state",
-			"RawState or RawState.JSON is nil",
-		)
+	// Parse v4 state using v4 model
+	var v4State SourceV4PageRuleModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	rawJSON := req.RawState.JSON
-
-	tflog.Debug(ctx, "Raw state JSON", map[string]interface{}{
-		"json_length": len(rawJSON),
-	})
-
-	// Unmarshal into generic map to check actions type
-	var stateMap map[string]interface{}
-	if err := json.Unmarshal(rawJSON, &stateMap); err != nil {
-		resp.Diagnostics.AddError(
-			"Failed to unmarshal state JSON",
-			err.Error(),
-		)
+	// Transform v4 → v5
+	v5State, diags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Check if actions field exists and what type it is
-	actions, hasActions := stateMap["actions"]
-	if !hasActions || actions == nil {
-		tflog.Info(ctx, "No actions field found, performing version bump only")
-		// For states without actions, just return - no migration needed
-		// This shouldn't happen in practice but handle gracefully
-		return
-	}
+	// Write transformed state
+	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
+	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
+}
 
-	// Check if actions is an array (v4) or object (early v5)
-	_, isV4Array := actions.([]interface{})
+// UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
+//
+// This is a no-op upgrade since the schema is compatible - just bumps the version.
+// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
+func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading page_rule state from version=1 to version=500 (no-op)")
 
-	tflog.Info(ctx, "Actions format detected", map[string]interface{}{
-		"is_array": isV4Array,
-	})
+	// CRITICAL: For no-op upgrades, copy raw state directly
+	// This preserves all state data without any transformation
+	resp.State.Raw = req.State.Raw
 
-	// STEP 2: Handle based on detected format
-	if isV4Array {
-		tflog.Info(ctx, "Detected v4 SDKv2 format (actions as array), performing full transformation")
-
-		// Parse JSON into v4 model
-		v4State, diags := parseV4JSONToModel(ctx, rawJSON)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		// Transform v4 → v5
-		targetState, diags := Transform(ctx, v4State)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		// Set the transformed state
-		resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
-		tflog.Info(ctx, "State upgrade from v4 SDKv2 completed successfully")
-	} else {
-		// It's an object - early v5 format
-		tflog.Info(ctx, "Detected early v5 format (actions as object), performing version bump")
-
-		// Parse early v5 JSON into v5 model
-		targetState, diags := parseV5JSONToModel(ctx, rawJSON)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		// Write the state - it's already in the correct format, just need version bump
-		resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
-		tflog.Info(ctx, "State version bump from 0 to 500 completed (early v5)")
-	}
+	tflog.Info(ctx, "State version bump from 1 to 500 completed")
 }

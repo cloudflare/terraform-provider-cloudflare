@@ -58,7 +58,7 @@ This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
 [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--modules))
 - `number` (Number) The integer version number, starting from one.
-- `placement` (Attributes) Placement settings for the version. (see [below for nested schema](#nestedatt--placement))
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--placement))
 - `source` (String) The client used to create the version.
 - `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
 - `usage_model` (String, Deprecated) Usage model for the version.
@@ -129,10 +129,11 @@ Available values: "eu", "fedramp".
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
+- `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 - `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
 - `workflow_name` (String) Name of the Workflow to bind to.
@@ -153,6 +154,15 @@ Read-Only:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
+
+
+<a id="nestedatt--bindings--simple"></a>
+### Nested Schema for `bindings.simple`
+
+Read-Only:
+
+- `limit` (Number) The limit (requests per period).
+- `period` (Number) The period in seconds.
 
 
 
@@ -244,7 +254,20 @@ Read-Only:
 
 Read-Only:
 
-- `mode` (String) Placement mode for the version.
-Available values: "smart".
+- `host` (String) TCP host and port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "smart", "targeted".
+- `region` (String) Cloud region for targeted placement in format 'provider:region'.
+- `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--placement--target))
+
+<a id="nestedatt--placement--target"></a>
+### Nested Schema for `placement.target`
+
+Read-Only:
+
+- `host` (String) TCP host:port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `region` (String) Cloud region in format 'provider:region'.
 
 

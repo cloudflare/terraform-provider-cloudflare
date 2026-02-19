@@ -15,12 +15,13 @@ description: |-
 resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   site_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  physport = 1
+  bond_id = 2
   ha_link = true
   name = "name"
   nat = {
     static_prefix = "192.0.2.0/24"
   }
+  physport = 1
   routed_subnets = [{
     next_hop = "192.0.2.1"
     prefix = "192.0.2.0/24"
@@ -56,14 +57,15 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 ### Required
 
 - `account_id` (String) Identifier
-- `physport` (Number)
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--nat))
+- `physport` (Number)
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--routed_subnets))
 - `static_addressing` (Attributes) If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address. (see [below for nested schema](#nestedatt--static_addressing))
 - `vlan_tag` (Number) VLAN ID. Use zero for untagged.

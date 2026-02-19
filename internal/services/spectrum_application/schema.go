@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -26,7 +27,7 @@ var _ resource.ResourceWithConfigValidators = (*SpectrumApplicationResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "App identifier.",
@@ -184,6 +185,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ips": schema.ListAttribute{
 						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
+						Computed:    true,
 						Optional:    true,
 						ElementType: types.StringType,
 					},

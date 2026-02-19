@@ -43,6 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.RequiresReplace(),
 						},
 					},
 				},
