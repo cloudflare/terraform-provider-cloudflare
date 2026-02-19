@@ -9,16 +9,16 @@ resource "cloudflare_snippet" "%[1]s" {
     export default {
       async fetch(request, env, ctx) {
         const url = new URL(request.url);
-        
+
         // Special characters: $, @, #, &, *, {}
         const specialPath = "/api/v1/$${resource}";
-        
+
         // Multi-line string
         const message = `Request received:
           Method: $${request.method}
           Path: $${url.pathname}
           Time: $${new Date().toISOString()}`;
-        
+
         // Handle different routes
         if (url.pathname === '/') {
           return new Response('Hello World!', {
@@ -29,7 +29,7 @@ resource "cloudflare_snippet" "%[1]s" {
             headers: { 'content-type': 'application/json' },
           });
         }
-        
+
         // Pass through to origin
         return fetch(request);
       }

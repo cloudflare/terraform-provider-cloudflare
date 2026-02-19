@@ -10,7 +10,7 @@ resource "cloudflare_snippet" "%[1]s" {
 export default {
   async fetch(request) {
     const url = new URL(request.url);
-    
+
     // Test various special characters
     const patterns = {
       "test": "value with \"quotes\"",
@@ -23,7 +23,7 @@ export default {
       "html": "<script>alert('xss')</script>",
       "template": "$${variable} and $$$${escaped}",
     };
-    
+
     // Check if path matches any test pattern
     for (const [key, value] of Object.entries(patterns)) {
       if (url.pathname.includes(key)) {
@@ -32,7 +32,7 @@ export default {
         });
       }
     }
-    
+
     return fetch(request);
   }
 };
