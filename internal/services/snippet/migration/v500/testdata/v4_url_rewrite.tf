@@ -11,11 +11,11 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
     const match = url.pathname.match(/^\/old\/(.+)$/);
-    
+
     if (!match) {
       return fetch(request);
     }
-    
+
     url.pathname = '/new/' + match[1];
     return fetch(url, request);
   }
