@@ -1,11 +1,10 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 package workers_script
 
 import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -13,12 +12,52 @@ import (
 )
 
 var _ resource.ResourceWithUpgradeState = (*WorkersScriptResource)(nil)
+var _ resource.ResourceWithMoveState = (*WorkersScriptResource)(nil)
 
+// MoveState handles moves from cloudflare_worker_script (v4 singular) to
+// cloudflare_workers_script (v5 plural).
+// This is triggered when users use the `moved` block (Terraform 1.8+):
+//
+//	moved {
+//	    from = cloudflare_worker_script.example
+//	    to   = cloudflare_workers_script.example
+//	}
+func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateMover {
+	sourceSchema := v500.SourceWorkerScriptSchema()
+	return []resource.StateMover{
+		{
+			SourceSchema: &sourceSchema,
+			StateMover:   v500.MoveState,
+		},
+	}
+}
+
+// UpgradeState registers state upgraders for schema version changes.
+//
+// v5 uses GetSchemaVersion(2, 500). Upgrade paths:
+//
+// Version 0 (AMBIGUOUS — both V4 and V5 used version 0):
+//   - Path B: V4 cloudflare_workers_script (plural) at schema_version=0 → full V4→V5 transform
+//   - Path C: V5 cloudflare_workers_script at version=0 (before run_worker_first) → pass through
+//   - Detection: V4 has "name" field, V5 has "script_name" — mutually exclusive
+//   - PriorSchema uses DynamicAttribute for placement to accept both array (V4) and object (V5)
+//
+// Version 1:
+//   - Path D: V5 state after run_worker_first upgrade or tf-migrate output → no-op
 func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	unionSchema := v500.UnionV0Schema(ResourceSchema, ctx)
+	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
+		// Version 0: V4 state OR V5 state before run_worker_first change
+		// Uses union schema with DynamicAttribute for placement to handle both formats
 		0: {
-			PriorSchema:   resourceSchemaV0(ctx),
-			StateUpgrader: upgradeStateFromV0,
+			PriorSchema:   unionSchema,
+			StateUpgrader: v500.UpgradeFromV0,
+		},
+		// Version 1: V5 state after run_worker_first change or tf-migrate output — no-op
+		1: {
+			PriorSchema:   &targetSchema,
+			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
 }
