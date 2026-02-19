@@ -90,6 +90,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
+					"annotations": schema.SingleNestedAttribute{
+						Description: "Annotations for the version created by this upload.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"workers_message": schema.StringAttribute{
+								Description: "Human-readable message about the version.",
+								Optional:    true,
+							},
+							"workers_tag": schema.StringAttribute{
+								Description: "User-provided identifier for the version.",
+								Optional:    true,
+							},
+						},
+					},
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,

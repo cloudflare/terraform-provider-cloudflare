@@ -123,6 +123,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"enable": schema.BoolAttribute{
 				Computed: true,
 			},
+			"fusion_method": schema.StringAttribute{
+				Description: `Available values: "max", "rrf".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("max", "rrf"),
+				},
+			},
 			"hybrid_search_enabled": schema.BoolAttribute{
 				Computed: true,
 			},

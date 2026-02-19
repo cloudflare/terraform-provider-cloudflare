@@ -13,6 +13,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     field_name = "x"
   }]
   embedding_model = "@cf/qwen/qwen3-embedding-0.6b"
+  fusion_method = "max"
   hybrid_search_enabled = true
   max_num_results = 1
   metadata = {
