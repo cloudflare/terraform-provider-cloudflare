@@ -52,7 +52,7 @@ func TestMigrateTieredCache_Smart(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest",
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, zoneID string) string {
 				return fmt.Sprintf(v4SmartConfig, rnd, zoneID)
 			},
@@ -95,8 +95,17 @@ func TestMigrateTieredCache_Smart(t *testing.T) {
 			}
 
 			// Build steps: Step 1 creates with specified provider version
-			steps := []resource.TestStep{
-				{
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (has GetSchemaVersion, will create version=1 state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
 							Source:            "cloudflare/cloudflare",
@@ -104,8 +113,9 @@ func TestMigrateTieredCache_Smart(t *testing.T) {
 						},
 					},
 					Config: testConfig,
-				},
+				}
 			}
+			steps := []resource.TestStep{firstStep}
 
 			// Steps 2-3: Run migration and verify state (allows creates for split resources)
 			steps = append(steps, acctest.MigrationV2TestStepAllowCreate(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...)
@@ -133,7 +143,7 @@ func TestMigrateTieredCache_Generic(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest",
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, zoneID string) string {
 				return fmt.Sprintf(v4GenericConfig, rnd, zoneID)
 			},
@@ -201,7 +211,7 @@ func TestMigrateTieredCache_Off(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest",
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, zoneID string) string {
 				return fmt.Sprintf(v4OffConfig, rnd, zoneID)
 			},
@@ -244,8 +254,17 @@ func TestMigrateTieredCache_Off(t *testing.T) {
 			}
 
 			// Build steps: Step 1 creates with specified provider version
-			steps := []resource.TestStep{
-				{
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (has GetSchemaVersion, will create version=1 state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
 							Source:            "cloudflare/cloudflare",
@@ -253,8 +272,9 @@ func TestMigrateTieredCache_Off(t *testing.T) {
 						},
 					},
 					Config: testConfig,
-				},
+				}
 			}
+			steps := []resource.TestStep{firstStep}
 
 			// Steps 2-3: Run migration and verify state (allows creates for split resources)
 			steps = append(steps, acctest.MigrationV2TestStepAllowCreate(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...)

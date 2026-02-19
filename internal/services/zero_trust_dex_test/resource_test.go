@@ -253,3 +253,37 @@ func testAccCloudflareDeviceDexTestsHttp(accountID, rnd, host, description strin
 func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd, target, description string) string {
 	return acctest.LoadTestCase("devicedexteststraceroute.tf", rnd, accountID, target, description)
 }
+
+func TestAccUpgradeZeroTrustDexTest_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	config := testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd, "dash.cloudflare.com", "My Test")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

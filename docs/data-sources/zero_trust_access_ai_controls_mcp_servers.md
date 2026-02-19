@@ -46,6 +46,7 @@ Read-Only:
 - `error` (String)
 - `hostname` (String)
 - `id` (String) server id
+- `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)

@@ -160,3 +160,33 @@ func generateCloudflareAddressMapConfig(rnd, accountId string, desc, sni *string
 
 	return acctest.LoadTestCase("generatecloudflareaddressmapconfig.tf", rnd, accountId, enabled, descFragment, sniFragment, ipsFragment, membershipsFragment)
 }
+
+func TestAccUpgradeAddressMap_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	config := generateCloudflareAddressMapConfig(rnd, accountID, nil, nil, false, nil, nil)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ExpectNonEmptyPlan:       true,
+			},
+		},
+	})
+}

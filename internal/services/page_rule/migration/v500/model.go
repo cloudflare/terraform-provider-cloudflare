@@ -20,6 +20,9 @@ type SourceV4PageRuleModel struct {
 	Priority types.Int64  `tfsdk:"priority"`
 	Status   types.String `tfsdk:"status"`
 
+	CreatedOn  timetypes.RFC3339 `tfsdk:"created_on"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on"`
+
 	Actions []SourceV4ActionsModel `tfsdk:"actions"` // TypeList MaxItems:1 = array
 }
 

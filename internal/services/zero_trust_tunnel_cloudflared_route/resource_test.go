@@ -789,3 +789,38 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_route" "%[1]s_2" {
     comment = "Conflicting route with same network"
 }`, ID, accountID, network)
 }
+
+func TestAccUpgradeZeroTrustTunnelCloudflaredRoute_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	subnet1 := fmt.Sprintf("10.%d.%d.10/32", utils.RandIntRange(10, 250), utils.RandIntRange(10, 250))
+
+	config := testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet1)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

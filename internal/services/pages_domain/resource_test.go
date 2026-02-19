@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -209,4 +210,49 @@ func testAccCheckCloudflarePagesDomainExists(resourceName, accountID, projectNam
 
 		return nil
 	}
+}
+
+func TestAccUpgradePagesDomain_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	client := acctest.SharedClient()
+	zonePage, err := client.Zones.List(context.Background(), zones.ZoneListParams{
+		Account: cloudflare.F(zones.ZoneListParamsAccount{
+			ID: cloudflare.F(accountID),
+		}),
+	})
+	if err != nil || zonePage == nil || len(zonePage.Result) == 0 {
+		t.Skip("No zones available in account for testing")
+	}
+	domain := zonePage.Result[0].Name
+	fullDomain := rnd + "." + domain
+
+	config := acctest.LoadTestCase("pagesdomainconfig.tf", rnd, accountID, rnd, fullDomain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

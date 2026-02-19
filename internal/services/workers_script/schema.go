@@ -103,156 +103,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"html_handling": schema.StringAttribute{
 								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
 								Optional:    true,
-							},
-							"renamed_classes": schema.ListNestedAttribute{
-								Description: "A list of classes with Durable Object namespaces that were renamed.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"from": schema.StringAttribute{
-											Optional: true,
-										},
-										"to": schema.StringAttribute{
-											Optional: true,
-										},
-									},
-								},
-							},
-							"transferred_classes": schema.ListNestedAttribute{
-								Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"from": schema.StringAttribute{
-											Optional: true,
-										},
-										"from_script": schema.StringAttribute{
-											Optional: true,
-										},
-										"to": schema.StringAttribute{
-											Optional: true,
-										},
-									},
-								},
-							},
-							"steps": schema.ListNestedAttribute{
-								Description: "Migrations to apply in order.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"deleted_classes": schema.ListAttribute{
-											Description: "A list of classes to delete Durable Object namespaces from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"new_classes": schema.ListAttribute{
-											Description: "A list of classes to create Durable Object namespaces from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"new_sqlite_classes": schema.ListAttribute{
-											Description: "A list of classes to create Durable Object namespaces with SQLite from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"renamed_classes": schema.ListNestedAttribute{
-											Description: "A list of classes with Durable Object namespaces that were renamed.",
-											Optional:    true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"from": schema.StringAttribute{
-														Optional: true,
-													},
-													"to": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-											},
-										},
-										"transferred_classes": schema.ListNestedAttribute{
-											Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-											Optional:    true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"from": schema.StringAttribute{
-														Optional: true,
-													},
-													"from_script": schema.StringAttribute{
-														Optional: true,
-													},
-													"to": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					"observability": schema.SingleNestedAttribute{
-						Description: "Observability settings for the Worker.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Whether observability is enabled for the Worker.",
-								Required:    true,
-							},
-							"head_sampling_rate": schema.Float64Attribute{
-								Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-								Optional:    true,
-							},
-							"logs": schema.SingleNestedAttribute{
-								Description: "Log settings for the Worker.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"enabled": schema.BoolAttribute{
-										Description: "Whether logs are enabled for the Worker.",
-										Required:    true,
-									},
-									"invocation_logs": schema.BoolAttribute{
-										Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
-										Required:    true,
-									},
-									"destinations": schema.ListAttribute{
-										Description: "A list of destinations where logs will be exported to.",
-										Optional:    true,
-										ElementType: types.StringType,
-									},
-									"head_sampling_rate": schema.Float64Attribute{
-										Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-										Optional:    true,
-									},
-									"persist": schema.BoolAttribute{
-										Description: "Whether log persistence is enabled for the Worker.",
-										Computed:    true,
-										Optional:    true,
-										Default:     booldefault.StaticBool(true),
-									},
-								},
-							},
-						},
-					},
-					"placement": schema.SingleNestedAttribute{
-						Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"mode": schema.StringAttribute{
-								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
-								},
-							},
-							"last_analyzed_at": schema.StringAttribute{
-								Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
-								Computed:    true,
-								CustomType:  timetypes.RFC3339Type{},
-							},
-							"status": schema.StringAttribute{
-								Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
-								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"auto-trailing-slash",
@@ -284,26 +134,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
 								Optional:           true,
 								DeprecationMessage: "This attribute is deprecated.",
-							},
-							"target": schema.ListNestedAttribute{
-								Description: "Array of placement targets (currently limited to single target).",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"region": schema.StringAttribute{
-											Description: "Cloud region in format 'provider:region'.",
-											Optional:    true,
-										},
-										"hostname": schema.StringAttribute{
-											Description: "HTTP hostname for targeted placement.",
-											Optional:    true,
-										},
-										"host": schema.StringAttribute{
-											Description: "TCP host:port for targeted placement.",
-											Optional:    true,
-										},
-									},
-								},
 							},
 						},
 					},
@@ -457,6 +287,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"queue_name": schema.StringAttribute{
 							Description: "Name of the Queue to bind to.",
 							Optional:    true,
+						},
+						"simple": schema.SingleNestedAttribute{
+							Description: "A simple rate limit.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"limit": schema.Float64Attribute{
+									Description: "The rate limit value.",
+									Required:    true,
+								},
+								"period": schema.Int64Attribute{
+									Description: "The rate limit period in seconds.",
+									Required:    true,
+								},
+							},
 						},
 						"bucket_name": schema.StringAttribute{
 							Description: "R2 bucket to bind to.",

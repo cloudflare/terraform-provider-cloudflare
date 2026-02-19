@@ -6,7 +6,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,11 +19,47 @@ import (
 
 var _ resource.ResourceWithUpgradeState = (*APITokenResource)(nil)
 
+// UpgradeState registers state upgraders for schema version changes.
+//
+// This handles two modes:
+//
+// Production (no TF_MIG_TEST): Version=1, preserve existing v0→v1 upgrader
+// for early v5 users who still have schema_version=0.
+//
+// Test mode (TF_MIG_TEST=1): Version=500, two upgraders:
+//   - Slot 0: v4 SDKv2 (schema_version=0) → v500: Full transformation
+//   - Slot 1: v5 current (schema_version=1) → v500: No-op version bump
 func (r *APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	targetSchema := ResourceSchema(ctx)
+
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing v0→v1 upgrader
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema:   priorSchemaV0(),
+				StateUpgrader: upgradeAPITokenStateV0toV1,
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
+	v4Schema := v500.SourceCloudflareAPITokenSchema()
+
+	v5SchemaVersion1 := ResourceSchema(ctx)
+	v5SchemaVersion1.Version = 1
+
+	_ = targetSchema // used indirectly via ResourceSchema
+
 	return map[int64]resource.StateUpgrader{
+		// Handle state from v4 SDKv2 provider (schema_version=0)
 		0: {
-			PriorSchema:   priorSchemaV0(),
-			StateUpgrader: upgradeAPITokenStateV0toV1,
+			PriorSchema:   &v4Schema,
+			StateUpgrader: v500.UpgradeFromV4,
+		},
+		// Handle state from v5 Plugin Framework provider (version=1)
+		1: {
+			PriorSchema:   &v5SchemaVersion1,
+			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
 }

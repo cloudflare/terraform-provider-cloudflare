@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestMain(m *testing.M) {
@@ -233,4 +234,37 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 
 func testAccCheckCloudflareIPsecTunnelSimple(ID, description, accountID, psk, cfIP, interfaceAddr string) string {
 	return acctest.LoadTestCase("ipsectunnelsimple.tf", ID, description, accountID, psk, cfIP, interfaceAddr)
+}
+
+func TestAccUpgradeMagicWanIpsecTunnel_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	psk := "asdf1234"
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	interfaceAddr := "10.212.0.10/31"
+	config := testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk, cfIP, interfaceAddr)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck_AccountID(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

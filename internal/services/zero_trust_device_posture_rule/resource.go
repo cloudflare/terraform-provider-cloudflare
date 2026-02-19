@@ -275,6 +275,12 @@ func (r *ZeroTrustDevicePostureRuleResource) normalizeReadData(ctx context.Conte
 		return
 	}
 
+	// Handle name field: API returns "" for unset name even when null was sent.
+	// If state has null name (e.g., after migration) and API returns "", keep it null.
+	if currentState.Name.IsNull() && !data.Name.IsNull() && data.Name.ValueString() == "" {
+		data.Name = types.StringNull()
+	}
+
 	// Handle schedule field: if it was null in current state and API added "5m" default, keep it null
 	if currentState.Schedule.IsNull() && !data.Schedule.IsNull() && data.Schedule.ValueString() == "5m" {
 		// For certain rule types, API sets default schedule="5m" when none was configured

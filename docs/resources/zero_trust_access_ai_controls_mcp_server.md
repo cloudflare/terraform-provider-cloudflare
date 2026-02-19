@@ -44,6 +44,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 - `created_at` (String)
 - `created_by` (String)
 - `error` (String)
+- `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)

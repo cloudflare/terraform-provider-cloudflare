@@ -18,6 +18,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
   hostname = "exmaple.com"
   name = "My MCP Portal"
   description = "This is my custom MCP Portal"
+  secure_web_gateway = false
   servers = [{
     server_id = "my-mcp-server"
     default_disabled = true
@@ -49,6 +50,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 ### Optional
 
 - `description` (String)
+- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
 - `servers` (Attributes List) (see [below for nested schema](#nestedatt--servers))
 
 ### Read-Only

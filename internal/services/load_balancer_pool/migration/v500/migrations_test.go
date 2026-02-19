@@ -49,7 +49,7 @@ func TestMigrateLoadBalancerPool_V4ToV5_Basic(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest", // Tests legacy v4 → current v5
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID, name string) string {
 				return fmt.Sprintf(v4BasicConfig, rnd, accountID, name)
 			},
@@ -75,6 +75,27 @@ func TestMigrateLoadBalancerPool_V4ToV5_Basic(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 			resourceName := fmt.Sprintf("cloudflare_load_balancer_pool.%s", rnd)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (has GetSchemaVersion, will create version=1 state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -82,16 +103,7 @@ func TestMigrateLoadBalancerPool_V4ToV5_Basic(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific provider version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
 						[]statecheck.StateCheck{
@@ -138,7 +150,7 @@ func TestMigrateLoadBalancerPool_V4ToV5_FullConfig(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest",
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID, name, domain string) string {
 				return fmt.Sprintf(v4FullConfig, rnd, accountID, name, domain, domain)
 			},
@@ -277,7 +289,7 @@ func TestMigrateLoadBalancerPool_V4ToV5_CheckRegions(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest",
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID, name string) string {
 				return fmt.Sprintf(v4CheckRegionsConfig, rnd, accountID, name)
 			},
@@ -302,6 +314,27 @@ func TestMigrateLoadBalancerPool_V4ToV5_CheckRegions(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 			resourceName := fmt.Sprintf("cloudflare_load_balancer_pool.%s", rnd)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (has GetSchemaVersion, will create version=1 state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -309,15 +342,7 @@ func TestMigrateLoadBalancerPool_V4ToV5_CheckRegions(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
 						[]statecheck.StateCheck{
 							statecheck.ExpectKnownValue(

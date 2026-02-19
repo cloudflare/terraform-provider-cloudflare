@@ -123,3 +123,37 @@ func testAccCheckCloudflareArgoSmartRoutingDisable(zoneID, name string) string {
 func testAccCheckCloudflareArgoSmartRoutingInvalidValue(zoneID, name string) string {
 	return acctest.LoadTestCase("invalid_value.tf", zoneID, name)
 }
+
+func TestAccUpgradeArgoSmartRouting_FromPublishedV5(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+
+	config := testAccCheckCloudflareArgoSmartRoutingEnable(zoneID, rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

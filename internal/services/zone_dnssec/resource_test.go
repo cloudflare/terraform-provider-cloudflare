@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -96,7 +97,7 @@ func TestAccCloudflareZoneDNSSEC_Basic(t *testing.T) {
 				Config: testAccCloudflareZoneDNSSECBasicConfig(zoneID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-					// Basic test: only status is specified, other optional attributes are null  
+					// Basic test: only status is specified, other optional attributes are null
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("status"), knownvalue.StringRegexp(regexp.MustCompile("active|pending"))),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("dnssec_multi_signer"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("dnssec_presigned"), knownvalue.Null()),
@@ -201,7 +202,6 @@ func TestAccCloudflareZoneDNSSEC_MultiSigner(t *testing.T) {
 	})
 }
 
-
 func TestAccCloudflareZoneDNSSEC_Presigned(t *testing.T) {
 	t.Skip(`Skipping due to auth error:  {"success":false,"errors":[{"code":10000,"message":"Authentication error"}]}`)
 	// Presigned DNSSEC requires a secondary zone
@@ -211,7 +211,7 @@ func TestAccCloudflareZoneDNSSEC_Presigned(t *testing.T) {
 		// Zone: secondary.terraform.cfapi.net (type: secondary)
 		secondaryZoneID = "e3f462b432dd82b7329cc29bbbb4e8a6"
 	}
-	
+
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zone_dnssec.%s", rnd)
 
@@ -254,7 +254,7 @@ func TestAccCloudflareZoneDNSSEC_PresignedWithNsec3(t *testing.T) {
 		// Zone: secondary.terraform.cfapi.net (type: secondary)
 		secondaryZoneID = "e3f462b432dd82b7329cc29bbbb4e8a6"
 	}
-	
+
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
@@ -263,7 +263,7 @@ func TestAccCloudflareZoneDNSSEC_PresignedWithNsec3(t *testing.T) {
 		// No CheckDestroy - test expects error, no resource created
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZoneDNSSECPresignedWithNsec3Config(secondaryZoneID, rnd),
+				Config:      testAccCloudflareZoneDNSSECPresignedWithNsec3Config(secondaryZoneID, rnd),
 				ExpectError: regexp.MustCompile("Invalid zone plan for action|failed to make http request"),
 			},
 		},
@@ -420,7 +420,7 @@ func testAccCheckCloudflareZoneDNSSECDestroy(s *terraform.State) error {
 			// DNSSEC API can return errors when checking status, which is acceptable for destroy check
 			continue
 		}
-		
+
 		// DNSSEC is considered destroyed when status is disabled or null
 		if dnssec.Status != "disabled" && dnssec.Status != "" {
 			return fmt.Errorf("zone dnssec still active, status: %s", dnssec.Status)
@@ -456,4 +456,37 @@ func testAccCloudflareZoneDNSSECComprehensiveConfig(zoneID string, name string) 
 
 func testAccCloudflareZoneDNSSECPresignedWithNsec3Config(zoneID string, name string) string {
 	return acctest.LoadTestCase("zonednssecresourcepresignednsec3.tf", name, zoneID)
+}
+
+func TestAccUpgradeZoneDnssec_FromPublishedV5(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+
+	config := testAccCloudflareZoneDNSSECResourceConfig(zoneID, rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ExpectNonEmptyPlan:       true,
+			},
+		},
+	})
 }

@@ -38,6 +38,7 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_trust_a
 - `description` (String)
 - `error` (String)
 - `hostname` (String)
+- `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)

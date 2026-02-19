@@ -59,6 +59,15 @@ Optional:
 
 - `direction` (String) Direction to order widgets.
 Available values: "asc", "desc".
+- `filter` (String) Filter widgets by field using case-insensitive substring matching.
+Format: `field:value`
+
+Supported fields:
+- `name` - Filter by widget name (e.g., `filter=name:login-form`)
+- `sitekey` - Filter by sitekey (e.g., `filter=sitekey:0x4AAA`)
+
+Returns 400 Bad Request if the field is unsupported or format is invalid.
+An empty filter value returns all results.
 - `order` (String) Field to order widgets by.
 Available values: "id", "sitekey", "name", "created_on", "modified_on".
 

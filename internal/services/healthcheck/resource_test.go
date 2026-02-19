@@ -423,3 +423,34 @@ func TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff(t *testing.T) {
 func testAccCheckCloudflareHealthcheck_HTTPNoExpectedBody(zoneID, name string) string {
 	return acctest.LoadTestCase("http_no_expected_body.tf", zoneID, name)
 }
+
+func TestAccUpgradeHealthcheck_FromPublishedV5(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+
+	config := testAccCloudflareHealthcheckTCP(zoneID, rnd, rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

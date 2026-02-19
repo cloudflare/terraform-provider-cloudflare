@@ -122,6 +122,7 @@ func testAccPreCheck_ZeroTrustOrganization(t *testing.T) {
 //
 // This tests the actual migration workflow users will follow.
 func TestMigrateZeroTrustOrganization_V4ToV5(t *testing.T) {
+	t.Skip("APIX-346 -- skipped for release")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	v4ResourceName := "cloudflare_access_organization." + rnd

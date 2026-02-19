@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustGatewayLoggingResource)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required:      true,

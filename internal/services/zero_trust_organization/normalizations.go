@@ -23,6 +23,27 @@ func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.Bo
 	*data = stateData
 }
 
+func normalizeEmptyAndNullList(data **[]types.String, stateData *[]types.String) {
+	if (data != nil && *data != nil && len(**data) > 0) || (stateData != nil && len(*stateData) > 0) {
+		return
+	}
+	*data = stateData
+}
+
+func normalizeEmptyAndNullString(data *basetypes.StringValue, stateData basetypes.StringValue) {
+	// If data is unknown or null/empty, preserve state value (unless state is also unknown)
+	if data.IsUnknown() || data.IsNull() || data.ValueString() == "" {
+		if !stateData.IsUnknown() {
+			*data = stateData
+		} else {
+			// If both are unknown, set to null to satisfy Terraform's requirement
+			*data = types.StringNull()
+		}
+		return
+	}
+	// If data has a non-empty value, keep it
+}
+
 // Normalizing function to ensure consistency between the state/plan and the meaning of the API response.
 // Alters the API response before applying it to the state by laxing equalities between null & zero-value
 // for some attributes, and nullifies fields that terraform should not be saving in the state.
@@ -32,7 +53,10 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.AutoRedirectToIdentity, sourceData.AutoRedirectToIdentity)
 	normalizeFalseAndNullBool(&data.AllowAuthenticateViaWARP, sourceData.AllowAuthenticateViaWARP)
 	normalizeFalseAndNullBool(&data.IsUIReadOnly, sourceData.IsUIReadOnly)
+	normalizeFalseAndNullBool(&data.DenyUnmatchedRequests, sourceData.DenyUnmatchedRequests)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
+	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
+	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)
 
 	return diags
 }

@@ -82,6 +82,7 @@ func (d *AuthenticatedOriginPullsSettingsDataSource) Read(ctx context.Context, r
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

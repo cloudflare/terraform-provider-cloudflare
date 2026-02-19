@@ -31,8 +31,8 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number)
 - `confidence_threshold` (String)
-- `enabled_entries` (List of String)
-- `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
+- `enabled_entries` (List of String) Entries to enable for this predefined profile. Any entries not provided will be disabled.
+- `entries` (Attributes List, Deprecated) This field has been deprecated for `enabled_entries`. (see [below for nested schema](#nestedatt--entries))
 - `id` (String) The ID of this resource.
 - `name` (String) The name of the predefined profile.
 - `ocr_enabled` (Boolean)

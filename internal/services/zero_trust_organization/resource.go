@@ -99,6 +99,13 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 	}
 	data = &env.Result
 
+	var planData *ZeroTrustOrganizationModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustOrganizationAPIData(ctx, data, planData)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

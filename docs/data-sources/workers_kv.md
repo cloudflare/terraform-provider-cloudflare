@@ -31,5 +31,6 @@ data "cloudflare_workers_kv" "example_workers_kv" {
 ### Read-Only
 
 - `id` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
+- `value` (String)
 
 

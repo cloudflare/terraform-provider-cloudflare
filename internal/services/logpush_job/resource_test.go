@@ -782,3 +782,39 @@ func testCloudflareLogpushJobOmitemptyField(resourceID string, logpushJobConfig 
 	}
 	return acctest.LoadTestCase("omitempty_field.tf", params...)
 }
+
+func TestAccUpgradeLogpushJob_FromPublishedV5(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	logpushJobConfigCreate := &logpushJobConfig{
+		accountID:       accountID,
+		dataset:         "gateway_dns", // cannot be changed
+		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+	}
+
+	config := testCloudflareLogpushJobBasic(rnd, logpushJobConfigCreate)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
