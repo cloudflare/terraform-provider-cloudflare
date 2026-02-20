@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -86,6 +87,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of an re-usable email list.",
 							Optional:    true,
 						},
+					},
+				},
+			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "Lists the MFA methods that users can authenticate with.",
+						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"totp",
+									"biometrics",
+									"security_key",
+								),
+							),
+						},
+						ElementType: types.StringType,
+					},
+					"mfa_bypass": schema.BoolAttribute{
+						Description: "Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.",
+						Optional:    true,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
+						Optional:    true,
 					},
 				},
 			},

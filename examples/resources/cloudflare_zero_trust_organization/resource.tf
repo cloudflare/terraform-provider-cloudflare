@@ -17,6 +17,12 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
     logo_path = "https://example.com/logo.png"
     text_color = "#c5ed1b"
   }
+  mfa_config = {
+    allowed_authenticators = ["totp", "biometrics", "security_key"]
+    session_duration = "24h"
+  }
+  mfa_configuration_allowed = true
+  mfa_required_for_all_apps = false
   name = "Widget Corps Internal Applications"
   session_duration = "24h"
   ui_read_only_toggle_reason = "Temporarily turn off the UI read only lock to make a change via the UI"

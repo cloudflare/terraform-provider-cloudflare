@@ -7,9 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -44,6 +47,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
+				Computed:    true,
+			},
+			"mfa_configuration_allowed": schema.BoolAttribute{
+				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
+				Computed:    true,
+			},
+			"mfa_required_for_all_apps": schema.BoolAttribute{
+				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -108,6 +119,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"text_color": schema.StringAttribute{
 						Description: "The text color on your login page.",
+						Computed:    true,
+					},
+				},
+			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings for an organization.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "Lists the MFA methods that users can authenticate with.",
+						Computed:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"totp",
+									"biometrics",
+									"security_key",
+								),
+							),
+						},
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
 						Computed:    true,
 					},
 				},
