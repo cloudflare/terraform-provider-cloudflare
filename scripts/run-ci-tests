@@ -600,10 +600,11 @@ run_tests() {
         # Check if this service has migration tests by checking if migration directory exists
         local migration_dir="${service%/...}/migration"
         if [ ! -d "$migration_dir" ]; then
-            log "${YELLOW}Skipping $test_name for $service (no migration directory found)${NC}" > "$log_file"
-            log "Skipping $test_name for $service (no migration directory found)"
-            echo "TESTS_SKIPPED" >> "$log_file"  # Marker for process_service to detect skip
-            return 0
+            log "${RED}ERROR: No migration directory found for $service${NC}" > "$log_file"
+            log "ERROR: No migration directory found for $service"
+            log "${RED}✗ Tests failed for $service (no migration directory) - check $log_file${NC}" >> "$log_file"
+            log "✗ Tests failed for $service (no migration directory) - check $log_file"
+            return 1
         fi
     else
         test_pattern="^TestAcc"

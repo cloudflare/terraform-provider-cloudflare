@@ -31,7 +31,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	TunnelProtocol             types.String                                                                    `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeModel]         `tfsdk:"include" json:"include,computed_optional"`
-	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,optional"`
+	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
 	Default                    types.Bool                                                                      `tfsdk:"default" json:"default,computed"`
 	Enabled                    types.Bool                                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	GatewayUniqueID            types.String                                                                    `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`

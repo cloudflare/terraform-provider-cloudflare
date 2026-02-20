@@ -17,7 +17,7 @@ type ZeroTrustDLPCustomProfileModel struct {
 	AccountID           types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	Name                types.String                                    `tfsdk:"name" json:"name,required"`
 	Description         types.String                                    `tfsdk:"description" json:"description,optional"`
-	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional,no_refresh"`
+	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,computed_optional,no_refresh"`
 	Entries             *[]*ZeroTrustDLPCustomProfileEntriesModel       `tfsdk:"entries" json:"entries,optional,no_refresh"`
 	SharedEntries       *[]*ZeroTrustDLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional,no_refresh"`
 	AIContextEnabled    types.Bool                                      `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed_optional"`
@@ -39,12 +39,12 @@ func (m ZeroTrustDLPCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPC
 }
 
 type ZeroTrustDLPCustomProfileContextAwarenessModel struct {
-	Enabled types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
-	Skip    *ZeroTrustDLPCustomProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip,required"`
+	Enabled types.Bool                                          `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Skip    *ZeroTrustDLPCustomProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileContextAwarenessSkipModel struct {
-	Files types.Bool `tfsdk:"files" json:"files,required"`
+	Files types.Bool `tfsdk:"files" json:"files,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileEntriesModel struct {
