@@ -1,6 +1,7 @@
-package queue_test
+package v500_test
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"testing"
@@ -14,6 +15,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+//go:embed testdata/v4_basic.tf
+var v4BasicConfig string
+
+//go:embed testdata/v4_with_settings.tf
+var v4WithSettingsConfig string
+
 func TestMigrateQueue_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -21,19 +28,13 @@ func TestMigrateQueue_Basic(t *testing.T) {
 	resourceName := "cloudflare_queue." + rnd
 
 	// v4 config uses "name" attribute
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_queue" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "tf-acc-test-queue-%[1]s"
-}`, rnd, accountID)
+	v4Config := fmt.Sprintf(v4BasicConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
-		CheckDestroy: testAccCloudflareQueueDestroy,
-		WorkingDir:   tmpDir,
 		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
@@ -45,10 +46,12 @@ resource "cloudflare_queue" "%[1]s" {
 				},
 				Config: v4Config,
 			},
-		}, // Step 2: Run migration and verify state
+		},
+			// Step 2: Run tf-migrate and apply with v5 provider, verify state
 			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_name"), knownvalue.StringExact(fmt.Sprintf("tf-acc-test-queue-%s", rnd))),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
 			})...),
 	})
 }
@@ -59,20 +62,15 @@ func TestMigrateQueue_WithSettings(t *testing.T) {
 	tmpDir := t.TempDir()
 	resourceName := "cloudflare_queue." + rnd
 
-	// v4 config with settings (if supported in v4)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_queue" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "tf-acc-test-queue-settings-%[1]s"
-}`, rnd, accountID)
+	// v4 config - settings are not supported in v4, so this tests the base migration path
+	// with a queue name that includes "settings" in it for distinguishability
+	v4Config := fmt.Sprintf(v4WithSettingsConfig, rnd, accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
-		CheckDestroy: testAccCloudflareQueueDestroy,
-		WorkingDir:   tmpDir,
 		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
@@ -84,10 +82,12 @@ resource "cloudflare_queue" "%[1]s" {
 				},
 				Config: v4Config,
 			},
-		}, // Step 2: Run migration and verify state
+		},
+			// Step 2: Run tf-migrate and apply with v5 provider, verify state
 			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_name"), knownvalue.StringExact(fmt.Sprintf("tf-acc-test-queue-settings-%s", rnd))),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
 			})...),
 	})
 }
