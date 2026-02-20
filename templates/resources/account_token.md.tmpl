@@ -1,3 +1,16 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
 resource "cloudflare_account_token" "example_account_token" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   name = "readonly token"
@@ -29,3 +42,18 @@ resource "cloudflare_account_token" "example_account_token" {
   expires_on = "2020-01-01T00:00:00Z"
   not_before = "2018-07-01T05:20:00Z"
 }
+
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+{{ if .HasImport -}}
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{ else }}
+~> This resource does not currently support `terraform import`.
+
+{{- end }}

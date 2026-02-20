@@ -15,9 +15,9 @@ resource "cloudflare_api_token" "example_api_token" {
         value = "value"
       }
     }]
-    resources = {
+    resources = jsonencode({
       foo = "string"
-    }
+    })
   }]
   condition = {
     request_ip = {
