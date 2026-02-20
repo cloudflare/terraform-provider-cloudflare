@@ -10,8 +10,9 @@ import (
 // UnionV0Schema builds a PriorSchema for version 0 that can parse BOTH V4 and V5 state.
 //
 // The problem: V4 and V5 both use schema_version=0, but have incompatible state formats.
-// V4 stores `placement` as an array, V5 stores it as an object. A regular schema can't
-// handle both. The solution: define `placement` as DynamicAttribute which accepts any JSON type.
+// V4 stores `placement` as an array, V5 stores it as an object. The solution: define
+// `placement` as ListNestedAttribute which handles V4 arrays and V5 null. The handler
+// converts list→object for V5 state before delegating to the run_worker_first upgrade.
 //
 // Detection: V4 state has `name` field, V5 state has `script_name` field.
 // The handler checks which is populated to determine the upgrade path.

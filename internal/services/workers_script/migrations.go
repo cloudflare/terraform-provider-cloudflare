@@ -38,9 +38,9 @@ func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateM
 //
 // Version 0 (AMBIGUOUS — both V4 and V5 used version 0):
 //   - Path B: V4 cloudflare_workers_script (plural) at schema_version=0 → full V4→V5 transform
-//   - Path C: V5 cloudflare_workers_script at version=0 (before run_worker_first) → pass through
+//   - Path C: V5 cloudflare_workers_script at version=0 (before run_worker_first) → run_worker_first upgrade
 //   - Detection: V4 has "name" field, V5 has "script_name" — mutually exclusive
-//   - PriorSchema uses DynamicAttribute for placement to accept both array (V4) and object (V5)
+//   - PriorSchema uses ListNestedAttribute for placement to accept both V4 arrays and V5 null
 //
 // Version 1:
 //   - Path D: V5 state after run_worker_first upgrade or tf-migrate output → no-op
@@ -49,7 +49,8 @@ func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]reso
 	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
 		// Version 0: V4 state OR V5 state before run_worker_first change
-		// Uses union schema with DynamicAttribute for placement to handle both formats
+		// Uses union schema with ListNestedAttribute for placement to handle both formats
+		// For V5 state, delegates to upgradeStateFromV0 (run_worker_first bool→dynamic)
 		0: {
 			PriorSchema:   unionSchema,
 			StateUpgrader: v500.UpgradeFromV0,
@@ -60,6 +61,13 @@ func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]reso
 			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
+}
+
+func init() {
+	// Register functions so the v500 handler can call them for V5 state at version 0
+	// (Path C) without circular imports.
+	v500.UpgradeV5FromV0 = upgradeStateFromV0
+	v500.V5SchemaV0 = resourceSchemaV0
 }
 
 // The schema is identical to the schema in schema.go, except the version is 0

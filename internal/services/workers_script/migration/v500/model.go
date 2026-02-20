@@ -11,8 +11,8 @@ import (
 // Source Models (Legacy Provider - v4.x)
 // ============================================================================
 
-// SourceWorkerScriptModel represents the v4 cloudflare_worker_script state (schema_version=1).
-// Resource type: cloudflare_worker_script (singular)
+// SourceWorkerScriptModel represents the v4 cloudflare_worker_script state (schema_version=0).
+// Resource type: cloudflare_worker_script (singular) or cloudflare_workers_script (plural)
 //
 // Key differences from v5:
 // - "name" field instead of "script_name"
@@ -185,7 +185,6 @@ type TargetBindingsModel struct {
 	AllowedSenderAddresses      *[]types.String           `tfsdk:"allowed_sender_addresses"`
 	DestinationAddress          types.String              `tfsdk:"destination_address"`
 	Service                     types.String              `tfsdk:"service"`
-	Namespace_                  types.String              `tfsdk:"-"` // avoid conflict
 }
 
 type TargetBindingsOutboundModel struct {
