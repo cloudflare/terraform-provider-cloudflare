@@ -459,6 +459,64 @@ func TestAccCloudflareWorkerVersion_AssetsConfigRunWorkerFirst(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerVersion_AssetsConfigNoDirectory(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_worker_version." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	tmpDir := t.TempDir()
+	workerFile := path.Join(tmpDir, "index.js")
+
+	writeWorkerFile := func(t *testing.T) {
+		err := os.WriteFile(workerFile, []byte(`export default { fetch() { return new Response('Hello from worker'); } };`), 0644)
+		if err != nil {
+			t.Fatalf("Error creating worker file at path %s: %s", workerFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(workerFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", workerFile, err.Error())
+		}
+	}
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeWorkerFile(t)
+				},
+				Config: testAccCloudflareWorkerVersionConfigAssetsConfigNoDirectory(rnd, accountID, workerFile),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("main_module"), knownvalue.StringExact("index.js")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("not_found_handling"), knownvalue.StringExact("single-page-application")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/v1/*"),
+					})),
+					// This is the key assertion: asset_manifest_sha256 must be a known value after apply.
+					// The bug causes this to remain unknown, triggering:
+					// "the provider still indicated an unknown value for assets.asset_manifest_sha256"
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("assets").AtMapKey("directory"), knownvalue.Null()),
+				},
+			},
+		},
+	})
+}
+
+func testAccCloudflareWorkerVersionConfigAssetsConfigNoDirectory(rnd, accountID, workerFile string) string {
+	return acctest.LoadTestCase("assets_config_no_directory.tf", rnd, accountID, workerFile)
+}
+
 func testAccCloudflareWorkerVersionConfigContentBase64(rnd, accountID string) string {
 	return acctest.LoadTestCase("content_base64.tf", rnd, accountID)
 }

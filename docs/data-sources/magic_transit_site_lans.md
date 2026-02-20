@@ -39,6 +39,7 @@ data "cloudflare_magic_transit_site_lans" "example_magic_transit_site_lans" {
 
 Read-Only:
 
+- `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
 - `id` (String) Identifier
 - `name` (String)

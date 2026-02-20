@@ -36,7 +36,7 @@ resource "cloudflare_mtls_certificate" "example_mtls_certificate" {
 
 - `account_id` (String) Identifier.
 - `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
-- `certificates` (String) The uploaded root CA certificate.
+- `certificates` (String) The uploaded root CA certificate or certificate chain. Certificates must be provided in PEM format with the certificate matching the private_key first in the chain.
 
 ### Optional
 

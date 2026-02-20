@@ -289,7 +289,12 @@ func (c computeSHA256HashOfAssetManifestModifier) PlanModifyString(ctx context.C
 		return
 	}
 
-	if directory.IsNull() || directory.IsUnknown() {
+	if directory.IsNull() {
+		resp.PlanValue = types.StringNull()
+		return
+	}
+
+	if directory.IsUnknown() {
 		return
 	}
 

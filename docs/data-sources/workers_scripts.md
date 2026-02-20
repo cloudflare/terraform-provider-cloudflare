@@ -53,8 +53,8 @@ Read-Only:
 - `modified_on` (String) When the script was last modified.
 - `named_handlers` (Attributes List) Named exports, such as Durable Object class implementations and named entrypoints. (see [below for nested schema](#nestedatt--result--named_handlers))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--result--observability))
-- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify either mode for Smart Placement, or one of region/hostname/host for targeted placement. (see [below for nested schema](#nestedatt--result--placement))
-- `placement_mode` (String, Deprecated) Available values: "smart".
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--result--placement))
+- `placement_mode` (String, Deprecated) Available values: "smart", "targeted".
 - `placement_status` (String, Deprecated) Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `routes` (Attributes List) Routes associated with the Worker. (see [below for nested schema](#nestedatt--result--routes))
 - `tag` (String) The immutable ID of the script.
@@ -103,10 +103,21 @@ Read-Only:
 - `hostname` (String) HTTP hostname for targeted placement.
 - `last_analyzed_at` (String) The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "smart".
+Available values: "smart", "targeted".
 - `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
+- `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--result--placement--target))
+
+<a id="nestedatt--result--placement--target"></a>
+### Nested Schema for `result.placement.target`
+
+Read-Only:
+
+- `host` (String) TCP host:port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `region` (String) Cloud region in format 'provider:region'.
+
 
 
 <a id="nestedatt--result--routes"></a>

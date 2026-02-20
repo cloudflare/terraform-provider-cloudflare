@@ -23,6 +23,7 @@ import (
 var _ resource.ResourceWithConfigure = (*AuthenticatedOriginPullsHostnameCertificateResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*AuthenticatedOriginPullsHostnameCertificateResource)(nil)
 var _ resource.ResourceWithImportState = (*AuthenticatedOriginPullsHostnameCertificateResource)(nil)
+var _ resource.ResourceWithMoveState = (*AuthenticatedOriginPullsHostnameCertificateResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AuthenticatedOriginPullsHostnameCertificateResource{}

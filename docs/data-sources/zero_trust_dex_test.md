@@ -24,10 +24,11 @@ data "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 ### Required
 
 - `account_id` (String)
-- `dex_test_id` (String) The unique identifier for the test.
 
 ### Optional
 
+- `dex_test_id` (String) The unique identifier for the test.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 
 ### Read-Only
@@ -41,13 +42,23 @@ data "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 - `targeted` (Boolean)
 - `test_id` (String) The unique identifier for the test.
 
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `kind` (String) Filter by test type
+Available values: "http", "traceroute".
+- `test_name` (String) Filter by test name
+
+
 <a id="nestedatt--target_policies"></a>
 ### Nested Schema for `target_policies`
 
 Read-Only:
 
 - `default` (Boolean) Whether the DEX rule is the account default
-- `id` (String) The id of the DEX rule
+- `id` (String) API Resource UUID tag.
 - `name` (String) The name of the DEX rule
 
 
@@ -58,6 +69,8 @@ Read-Only:
 
 - `host` (String) The desired endpoint to test.
 - `kind` (String) The type of test.
+Available values: "http", "traceroute".
 - `method` (String) The HTTP request method type.
+Available values: "GET".
 
 

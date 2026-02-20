@@ -5,6 +5,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -26,7 +27,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessApplicationResour
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
@@ -142,6 +143,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"type": schema.StringAttribute{
 				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\", \"proxy_endpoint\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -468,16 +470,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
 				},
 			},
-			"self_hosted_domains": schema.ListAttribute{
+			"self_hosted_domains": schema.SetAttribute{
 				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
 				Optional:           true,
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-				CustomType:         customfield.NewListType[types.String](ctx),
+				CustomType:         customfield.NewSetType[types.String](ctx),
 				ElementType:        types.StringType,
-				Validators: []validator.List{
+				Validators: []validator.Set{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
-					listvalidator.ConflictsWith(path.Expressions{
+					setvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("destinations"),
 					}...),
 				},

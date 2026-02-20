@@ -33,4 +33,17 @@ The value must be URL-encoded.
 - `scope` (String) Filter by the scope of the permission group.
 The value must be URL-encoded.
 
+### Read-Only
+
+- `permission_groups` (Attributes List) (see [below for nested schema](#nestedatt--permission_groups))
+
+<a id="nestedatt--permission_groups"></a>
+### Nested Schema for `permission_groups`
+
+Read-Only:
+
+- `id` (String) Public ID.
+- `name` (String) Permission Group Name
+- `scopes` (List of String) Resources to which the Permission Group is scoped
+
 

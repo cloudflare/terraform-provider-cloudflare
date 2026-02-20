@@ -10,12 +10,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 )
 
 var _ resource.ResourceWithConfigValidators = (*SnippetResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: migrations.GetSchemaVersion(2, 500),
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
 				Description:   "The identifying name of the snippet.",

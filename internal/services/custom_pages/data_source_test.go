@@ -34,6 +34,7 @@ func TestAccCloudflareCustomPagesDataSource_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareCustomPagesDataSource_Zone(t *testing.T) {
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	dataSourceName := "data.cloudflare_custom_pages." + rnd

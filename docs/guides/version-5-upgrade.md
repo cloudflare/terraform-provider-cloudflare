@@ -585,6 +585,16 @@ resource "cloudflare_authenticated_origin_pulls_hostname_certificate" "my_cert" 
     ignore_changes = [private_key]
   }
 }
+
+# V5: Hostname association resource (RESTRUCTURED schema)
+resource "cloudflare_authenticated_origin_pulls" "my_hostname" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  config = [{
+    hostname = "app.example.com"
+    cert_id  = cloudflare_authenticated_origin_pulls_hostname_certificate.my_cert.id
+    enabled  = true
+  }]
+}
 ```
 
 Key changes:

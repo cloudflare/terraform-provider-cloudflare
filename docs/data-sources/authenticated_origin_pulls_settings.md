@@ -27,5 +27,6 @@ data "cloudflare_authenticated_origin_pulls_settings" "example_authenticated_ori
 ### Read-Only
 
 - `enabled` (Boolean) Indicates whether zone-level authenticated origin pulls is enabled.
+- `id` (String) Identifier.
 
 

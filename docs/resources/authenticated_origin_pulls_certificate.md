@@ -95,5 +95,10 @@ Available values: "initializing", "pending_deployment", "pending_deletion", "act
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.example '<zone_id>/<certificate_id>'
+```
+
+

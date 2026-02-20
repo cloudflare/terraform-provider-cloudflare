@@ -43,6 +43,7 @@ func testSweepCloudflareCustomPages(r string) error {
 
 // Test account-level custom pages with basic configuration
 func TestAccCloudflareCustomPages_AccountBasic(t *testing.T) {
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_custom_pages." + rnd

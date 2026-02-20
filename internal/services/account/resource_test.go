@@ -187,6 +187,7 @@ func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
 }
 
 func TestAccCloudflareAccount_WithMulti(t *testing.T) {
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
 
@@ -240,6 +241,7 @@ func TestAccCloudflareAccount_WithMulti(t *testing.T) {
 }
 
 func TestAccCloudflareAccount_WithUnit(t *testing.T) {
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_account.%s", rnd)
 
@@ -404,6 +406,7 @@ func testAccCheckCloudflareAccountDestroy(s *terraform.State) error {
 }
 
 func TestAccUpgradeAccount_FromPublishedV5(t *testing.T) {
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 
 	config := testAccCheckCloudflareAccountWithType(rnd, fmt.Sprintf("%s_old", rnd), "enterprise")
