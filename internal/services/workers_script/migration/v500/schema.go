@@ -27,14 +27,21 @@ func UnionV0Schema(buildSchema func(context.Context) schema.Schema, ctx context.
 		Attributes["config"].(schema.SingleNestedAttribute).
 		Attributes["run_worker_first"] = schema.BoolAttribute{Optional: true}
 
-	// Remove placement from the union schema entirely.
-	// V4 stores it as array [{"mode":"smart"}], V5 stores it as object {"mode":"smart",...}.
-	// No single schema type can parse both formats, and DynamicAttribute doesn't work for
-	// state upgrades (requires wrapped type metadata that SDKv2 doesn't produce).
-	// Unknown fields in state JSON are silently ignored during parsing.
-	// Placement data is restored on next terraform apply from config (tf-migrate transforms it)
-	// or API (computed fields refresh).
-	delete(s.Attributes, "placement")
+	// Change placement from SingleNestedAttribute to ListNestedAttribute.
+	// V4 (SDKv2) stores placement as array: [] or [{"mode":"smart"}]
+	// V5 stores it as object: null or {"mode":"smart",...}
+	// ListNestedAttribute handles V4 arrays and V5 null.
+	// V5 non-null object placement at version 0 is extremely rare (requires
+	// configuring Smart Placement before the V0→V1 run_worker_first update
+	// and never running apply since).
+	s.Attributes["placement"] = schema.ListNestedAttribute{
+		Optional: true,
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: map[string]schema.Attribute{
+				"mode": schema.StringAttribute{Optional: true},
+			},
+		},
+	}
 
 	// Add V4-specific fields (all Optional — null for V5 state)
 	s.Attributes["name"] = schema.StringAttribute{Optional: true}

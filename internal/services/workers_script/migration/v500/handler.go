@@ -32,9 +32,75 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 		tflog.Info(ctx, "Detected V4 state (name field present), performing full V4→V5 transformation")
 		upgradeFromV4(ctx, req, resp)
 	} else {
-		tflog.Info(ctx, "Detected V5 state (script_name field present), passing through")
-		resp.State.Raw = req.State.Raw
+		tflog.Info(ctx, "Detected V5 state (script_name field present), passing through with V4 fields stripped")
+		upgradeFromV5(ctx, req, resp)
 	}
+}
+
+// upgradeFromV5 handles V5 state at version 0: strips V4-only fields and fixes
+// placement type (list in union schema → object in target schema).
+func upgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	var rawMap map[string]tftypes.Value
+	if err := req.State.Raw.As(&rawMap); err != nil {
+		resp.Diagnostics.AddError("Failed to read V5 state", fmt.Sprintf("Could not read raw state as map: %s", err))
+		return
+	}
+
+	// Remove V4-only fields that aren't in the target schema
+	v4OnlyFields := []string{
+		"name", "module", "tags", "dispatch_namespace",
+		"plain_text_binding", "secret_text_binding", "kv_namespace_binding",
+		"webassembly_binding", "service_binding", "r2_bucket_binding",
+		"analytics_engine_binding", "queue_binding", "d1_database_binding",
+		"hyperdrive_config_binding",
+	}
+	for _, f := range v4OnlyFields {
+		delete(rawMap, f)
+	}
+
+	// Convert placement from List (union schema) to null Object (target schema).
+	// V5 state at version 0 has placement as null (stored as null list in union schema).
+	// The target schema expects SingleNestedAttribute (object type).
+	// We set it to null with the target object type.
+	if placementVal, ok := rawMap["placement"]; ok && placementVal.IsNull() {
+		// Placement is null — replace with null object matching target schema type
+		placementObjType := tftypes.Object{
+			AttributeTypes: map[string]tftypes.Type{
+				"mode":            tftypes.String,
+				"last_analyzed_at": tftypes.String,
+				"status":          tftypes.String,
+				"region":          tftypes.String,
+				"hostname":        tftypes.String,
+				"host":            tftypes.String,
+				"target": tftypes.List{ElementType: tftypes.Object{
+					AttributeTypes: map[string]tftypes.Type{
+						"region":   tftypes.String,
+						"hostname": tftypes.String,
+						"host":     tftypes.String,
+					},
+				}},
+			},
+		}
+		rawMap["placement"] = tftypes.NewValue(placementObjType, nil) // null object
+	}
+
+	// Rebuild the tftypes.Object type from remaining fields
+	origType := req.State.Raw.Type().(tftypes.Object)
+	cleanAttrTypes := make(map[string]tftypes.Type, len(rawMap))
+	for k, v := range rawMap {
+		cleanAttrTypes[k] = v.Type()
+	}
+	// Carry over types from original for fields we didn't modify
+	for k := range rawMap {
+		if _, modified := cleanAttrTypes[k]; !modified {
+			if t, ok := origType.AttributeTypes[k]; ok {
+				cleanAttrTypes[k] = t
+			}
+		}
+	}
+	cleanType := tftypes.Object{AttributeTypes: cleanAttrTypes}
+
+	resp.State.Raw = tftypes.NewValue(cleanType, rawMap)
 }
 
 // detectV4State inspects raw tftypes.Value to check if "name" attribute is present and non-null.
