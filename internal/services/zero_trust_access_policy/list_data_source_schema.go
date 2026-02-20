@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -663,6 +664,36 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"isolation_required": schema.BoolAttribute{
 							Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
 							Computed:    true,
+						},
+						"mfa_config": schema.SingleNestedAttribute{
+							Description: "Configures multi-factor authentication (MFA) settings.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPoliciesMfaConfigDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"allowed_authenticators": schema.ListAttribute{
+									Description: "Lists the MFA methods that users can authenticate with.",
+									Computed:    true,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive(
+												"totp",
+												"biometrics",
+												"security_key",
+											),
+										),
+									},
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+								"mfa_bypass": schema.BoolAttribute{
+									Description: "Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.",
+									Computed:    true,
+								},
+								"session_duration": schema.StringAttribute{
+									Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
+									Computed:    true,
+								},
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the Access policy.",

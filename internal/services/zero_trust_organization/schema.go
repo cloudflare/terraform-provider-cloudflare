@@ -5,11 +5,14 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -96,6 +99,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings for an organization.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "Lists the MFA methods that users can authenticate with.",
+						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"totp",
+									"biometrics",
+									"security_key",
+								),
+							),
+						},
+						ElementType: types.StringType,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
+						Optional:    true,
+					},
+				},
+			},
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
 				Computed:    true,
@@ -110,6 +137,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"mfa_configuration_allowed": schema.BoolAttribute{
+				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"mfa_required_for_all_apps": schema.BoolAttribute{
+				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),

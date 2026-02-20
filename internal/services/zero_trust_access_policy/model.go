@@ -22,6 +22,7 @@ type ZeroTrustAccessPolicyModel struct {
 	PurposeJustificationPrompt   types.String                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
 	PurposeJustificationRequired types.Bool                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
 	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel                   `tfsdk:"approval_groups" json:"approval_groups,optional"`
+	MfaConfig                    *ZeroTrustAccessPolicyMfaConfigModel                           `tfsdk:"mfa_config" json:"mfa_config,optional"`
 	SessionDuration              types.String                                                   `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                      customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
@@ -40,6 +41,12 @@ type ZeroTrustAccessPolicyApprovalGroupsModel struct {
 	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed" json:"approvals_needed,required"`
 	EmailAddresses  *[]types.String `tfsdk:"email_addresses" json:"email_addresses,optional"`
 	EmailListUUID   types.String    `tfsdk:"email_list_uuid" json:"email_list_uuid,optional"`
+}
+
+type ZeroTrustAccessPolicyMfaConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators" json:"allowed_authenticators,optional"`
+	MfaBypass             types.Bool      `tfsdk:"mfa_bypass" json:"mfa_bypass,optional"`
+	SessionDuration       types.String    `tfsdk:"session_duration" json:"session_duration,optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {

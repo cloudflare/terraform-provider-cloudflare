@@ -41,6 +41,7 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
 	Include                      customfield.NestedObjectSet[ZeroTrustAccessPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
 	IsolationRequired            types.Bool                                                                        `tfsdk:"isolation_required" json:"isolation_required,computed"`
+	MfaConfig                    customfield.NestedObject[ZeroTrustAccessPoliciesMfaConfigDataSourceModel]         `tfsdk:"mfa_config" json:"mfa_config,computed"`
 	Name                         types.String                                                                      `tfsdk:"name" json:"name,computed"`
 	PurposeJustificationPrompt   types.String                                                                      `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
 	PurposeJustificationRequired types.Bool                                                                        `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
@@ -318,6 +319,12 @@ type ZeroTrustAccessPoliciesIncludeServiceTokenDataSourceModel struct {
 
 type ZeroTrustAccessPoliciesIncludeLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
+type ZeroTrustAccessPoliciesMfaConfigDataSourceModel struct {
+	AllowedAuthenticators customfield.List[types.String] `tfsdk:"allowed_authenticators" json:"allowed_authenticators,computed"`
+	MfaBypass             types.Bool                     `tfsdk:"mfa_bypass" json:"mfa_bypass,computed"`
+	SessionDuration       types.String                   `tfsdk:"session_duration" json:"session_duration,computed"`
 }
 
 type ZeroTrustAccessPoliciesRequireDataSourceModel struct {
