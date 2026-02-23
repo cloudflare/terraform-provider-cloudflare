@@ -1,3 +1,16 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
 resource "cloudflare_api_token" "example_api_token" {
   name       = "workers read-only token"
 
@@ -5,7 +18,7 @@ resource "cloudflare_api_token" "example_api_token" {
     effect = "allow"
     permission_groups = [{
       id = "1a71c399035b4950a1bd1466bbe4f420"
-    }, {
+      }, {
       id = "8b47d2786a534c08a1f94ee8f9f599ef"
     }]
     resources = jsonencode({
@@ -23,3 +36,17 @@ resource "cloudflare_api_token" "example_api_token" {
   expires_on = "2027-10-01T00:00:00Z"
   not_before = "2025-10-01T00:00:00Z"
 }
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+{{ if .HasImport -}}
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{ else }}
+~> This resource does not currently support `terraform import`.
+
+{{- end }}
