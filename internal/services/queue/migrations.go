@@ -1,23 +1,23 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 package queue
 
 import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue/migration/v500"
 )
 
 var _ resource.ResourceWithUpgradeState = (*QueueResource)(nil)
 
 func (r *QueueResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
+	sourceSchema := v500.SourceCloudflareQueueSchema()
 	return map[int64]resource.StateUpgrader{
+		// Handle state from the legacy SDKv2 cloudflare_queue (schema_version=0).
+		// Transforms: name → queue_name, id → queue_id (copy).
 		0: {
-			PriorSchema: &targetSchema,
-			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-				resp.State.Raw = req.State.Raw
-			},
+			PriorSchema:   &sourceSchema,
+			StateUpgrader: v500.UpgradeFromLegacyV0,
 		},
 	}
 }
