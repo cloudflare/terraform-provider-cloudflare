@@ -44,6 +44,7 @@ type AISearchInstanceModel struct {
 	ScoreThreshold                 types.Float64                                                       `tfsdk:"score_threshold" json:"score_threshold,computed_optional"`
 	Summarization                  types.Bool                                                          `tfsdk:"summarization" json:"summarization,computed_optional,no_refresh"`
 	PublicEndpointParams           customfield.NestedObject[AISearchInstancePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
+	RetrievalOptions               customfield.NestedObject[AISearchInstanceRetrievalOptionsModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed_optional"`
 	SourceParams                   customfield.NestedObject[AISearchInstanceSourceParamsModel]         `tfsdk:"source_params" json:"source_params,computed_optional"`
 	CreatedAt                      timetypes.RFC3339                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
@@ -100,6 +101,10 @@ type AISearchInstancePublicEndpointParamsRateLimitModel struct {
 
 type AISearchInstancePublicEndpointParamsSearchEndpointModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed_optional"`
+}
+
+type AISearchInstanceRetrievalOptionsModel struct {
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed_optional"`
 }
 
 type AISearchInstanceSourceParamsModel struct {

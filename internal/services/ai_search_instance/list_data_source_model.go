@@ -64,6 +64,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	PublicEndpointParams customfield.NestedObject[AISearchInstancesPublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
 	Reranking            types.Bool                                                                     `tfsdk:"reranking" json:"reranking,computed"`
 	RerankingModel       types.String                                                                   `tfsdk:"reranking_model" json:"reranking_model,computed"`
+	RetrievalOptions     customfield.NestedObject[AISearchInstancesRetrievalOptionsDataSourceModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed"`
 	RewriteModel         types.String                                                                   `tfsdk:"rewrite_model" json:"rewrite_model,computed"`
 	RewriteQuery         types.Bool                                                                     `tfsdk:"rewrite_query" json:"rewrite_query,computed"`
 	ScoreThreshold       types.Float64                                                                  `tfsdk:"score_threshold" json:"score_threshold,computed"`
@@ -108,6 +109,10 @@ type AISearchInstancesPublicEndpointParamsRateLimitDataSourceModel struct {
 
 type AISearchInstancesPublicEndpointParamsSearchEndpointDataSourceModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
+}
+
+type AISearchInstancesRetrievalOptionsDataSourceModel struct {
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
 }
 
 type AISearchInstancesSourceParamsDataSourceModel struct {

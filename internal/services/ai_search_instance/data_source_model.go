@@ -51,6 +51,7 @@ type AISearchInstanceDataSourceModel struct {
 	CustomMetadata       customfield.NestedObjectList[AISearchInstanceCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	Metadata             customfield.NestedObject[AISearchInstanceMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchInstancePublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
+	RetrievalOptions     customfield.NestedObject[AISearchInstanceRetrievalOptionsDataSourceModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed"`
 	SourceParams         customfield.NestedObject[AISearchInstanceSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
 	Filter               *AISearchInstanceFindOneByDataSourceModel                                     `tfsdk:"filter"`
 }
@@ -111,6 +112,10 @@ type AISearchInstancePublicEndpointParamsRateLimitDataSourceModel struct {
 
 type AISearchInstancePublicEndpointParamsSearchEndpointDataSourceModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
+}
+
+type AISearchInstanceRetrievalOptionsDataSourceModel struct {
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
 }
 
 type AISearchInstanceSourceParamsDataSourceModel struct {

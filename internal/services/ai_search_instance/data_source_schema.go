@@ -336,6 +336,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"retrieval_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword_match_mode": schema.StringAttribute{
+						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("exact_match", "fuzzy_match"),
+						},
+					},
+				},
+			},
 			"source_params": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsDataSourceModel](ctx),
