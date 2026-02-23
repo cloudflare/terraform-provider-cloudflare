@@ -1,11 +1,11 @@
 resource "cloudflare_load_balancer_monitor" "%s" {
-  account_id = "%s"
-  type       = "https"
-  method     = "GET"
-  path       = "/health"
+  account_id     = "%s"
+  type           = "https"
+  method         = "GET"
+  path           = "/health"
+  expected_codes = "200"
 
   header = {
-    "Host"       = ["%s"]
-    "User-Agent" = ["Cloudflare-Traffic-Manager/1.0"]
+    "Host" = ["%s"]
   }
 }

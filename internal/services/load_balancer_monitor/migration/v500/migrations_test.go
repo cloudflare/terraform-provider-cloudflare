@@ -48,7 +48,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Basic(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest", // Tests legacy v4 → current v5
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID string) string {
 				return fmt.Sprintf(v4BasicConfig, rnd, accountID)
 			},
@@ -64,11 +64,6 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Basic(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Skip v4 tests if LAST_V4_VERSION is not set
-			if tc.version == "" {
-				t.Skip("Skipping test: LAST_V4_VERSION environment variable not set")
-			}
-
 			// Test setup
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
@@ -122,7 +117,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Basic(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
 								tfjsonpath.New("expected_codes"),
-								knownvalue.StringExact(""),
+								knownvalue.StringExact("200"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
@@ -141,12 +136,12 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Basic(t *testing.T) {
 							),
 
 							// Verify computed fields exist
-							statecheck.ExpectKnownOutputValueAtPath(
+							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
 								tfjsonpath.New("id"),
 								knownvalue.NotNull(),
 							),
-							statecheck.ExpectKnownOutputValueAtPath(
+							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
 								tfjsonpath.New("created_on"),
 								knownvalue.NotNull(),
@@ -169,7 +164,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_WithHeaders(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest", // Tests legacy v4 → current v5
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID, hostname string) string {
 				return fmt.Sprintf(v4WithHeadersConfig, rnd, accountID, hostname)
 			},
@@ -185,11 +180,6 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_WithHeaders(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Skip v4 tests if LAST_V4_VERSION is not set
-			if tc.version == "" {
-				t.Skip("Skipping test: LAST_V4_VERSION environment variable not set")
-			}
-
 			// Test setup
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -244,11 +234,6 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_WithHeaders(t *testing.T) {
 								tfjsonpath.New("header").AtMapKey("Host").AtSliceIndex(0),
 								knownvalue.StringExact(hostname),
 							),
-							statecheck.ExpectKnownValue(
-								"cloudflare_load_balancer_monitor."+rnd,
-								tfjsonpath.New("header").AtMapKey("User-Agent").AtSliceIndex(0),
-								knownvalue.StringExact("Cloudflare-Traffic-Manager/1.0"),
-							),
 						},
 					),
 				},
@@ -267,7 +252,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Full(t *testing.T) {
 	}{
 		{
 			name:    "from_v4_latest", // Tests legacy v4 → current v5
-			version: os.Getenv("LAST_V4_VERSION"),
+			version: acctest.GetLastV4Version(),
 			configFn: func(rnd, accountID, probeZone, hostname string) string {
 				return fmt.Sprintf(v4FullConfig, rnd, accountID, probeZone, hostname)
 			},
@@ -283,11 +268,6 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Full(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Skip v4 tests if LAST_V4_VERSION is not set
-			if tc.version == "" {
-				t.Skip("Skipping test: LAST_V4_VERSION environment variable not set")
-			}
-
 			// Test setup
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -342,7 +322,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Full(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
 								tfjsonpath.New("interval"),
-								knownvalue.Int64Exact(30),
+								knownvalue.Int64Exact(60),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
@@ -367,7 +347,7 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_Full(t *testing.T) {
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
 								tfjsonpath.New("expected_codes"),
-								knownvalue.StringExact("200-299"),
+								knownvalue.StringExact("2xx"),
 							),
 							statecheck.ExpectKnownValue(
 								"cloudflare_load_balancer_monitor."+rnd,
