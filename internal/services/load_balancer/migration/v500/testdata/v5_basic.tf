@@ -7,7 +7,6 @@ resource "cloudflare_load_balancer" "%s" {
   ttl                  = 30
   session_affinity     = "cookie"
   session_affinity_ttl = 1800
-  proxied              = true
   enabled              = true
   steering_policy      = "dynamic_latency"
 }

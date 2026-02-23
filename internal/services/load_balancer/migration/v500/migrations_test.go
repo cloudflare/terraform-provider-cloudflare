@@ -62,14 +62,18 @@ func TestMigrateLoadBalancer_V4ToV5_Basic(t *testing.T) {
 			name:    "from_v4_latest", // Tests legacy v4 → current v5
 			version: legacyProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool string) string {
-				return fmt.Sprintf(v4BasicConfig, rnd, zoneID, fmt.Sprintf("tf-lb-%s", rnd), fallbackPool, defaultPool)
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-%s.%s", rnd, domain)
+				return fmt.Sprintf(v4BasicConfig, rnd, zoneID, lbName, fallbackPool, defaultPool)
 			},
 		},
 		{
 			name:    "from_v5", // Tests within v5 (version bump)
 			version: currentProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool string) string {
-				return fmt.Sprintf(v5BasicConfig, rnd, zoneID, fmt.Sprintf("tf-lb-%s", rnd), fallbackPool, defaultPool)
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-%s.%s", rnd, domain)
+				return fmt.Sprintf(v5BasicConfig, rnd, zoneID, lbName, fallbackPool, defaultPool)
 			},
 		},
 	}
@@ -174,14 +178,18 @@ func TestMigrateLoadBalancer_V4ToV5_WithNested(t *testing.T) {
 			name:    "from_v4_latest",
 			version: legacyProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool string) string {
-				return fmt.Sprintf(v4WithNestedConfig, rnd, zoneID, fmt.Sprintf("tf-lb-nested-%s", rnd), fallbackPool, defaultPool)
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-nested-%s.%s", rnd, domain)
+				return fmt.Sprintf(v4WithNestedConfig, rnd, zoneID, lbName, fallbackPool, defaultPool)
 			},
 		},
 		{
 			name:    "from_v5",
 			version: currentProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool string) string {
-				return fmt.Sprintf(v5WithNestedConfig, rnd, zoneID, fmt.Sprintf("tf-lb-nested-%s", rnd), fallbackPool, defaultPool)
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-nested-%s.%s", rnd, domain)
+				return fmt.Sprintf(v5WithNestedConfig, rnd, zoneID, lbName, fallbackPool, defaultPool)
 			},
 		},
 	}
@@ -282,7 +290,9 @@ func TestMigrateLoadBalancer_V4ToV5_WithPools(t *testing.T) {
 			name:    "from_v4_latest",
 			version: legacyProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool, regionPool, popPool, countryPool string) string {
-				return fmt.Sprintf(v4WithPoolsConfig, rnd, zoneID, fmt.Sprintf("tf-lb-pools-%s", rnd),
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-pools-%s.%s", rnd, domain)
+				return fmt.Sprintf(v4WithPoolsConfig, rnd, zoneID, lbName,
 					fallbackPool, defaultPool, regionPool, popPool, countryPool)
 			},
 		},
@@ -290,7 +300,9 @@ func TestMigrateLoadBalancer_V4ToV5_WithPools(t *testing.T) {
 			name:    "from_v5",
 			version: currentProviderVersion,
 			configFn: func(rnd, zoneID, fallbackPool, defaultPool, regionPool, popPool, countryPool string) string {
-				return fmt.Sprintf(v5WithPoolsConfig, rnd, zoneID, fmt.Sprintf("tf-lb-pools-%s", rnd),
+				domain := os.Getenv("CLOUDFLARE_DOMAIN")
+				lbName := fmt.Sprintf("tf-lb-pools-%s.%s", rnd, domain)
+				return fmt.Sprintf(v5WithPoolsConfig, rnd, zoneID, lbName,
 					fallbackPool, defaultPool, regionPool, popPool, countryPool)
 			},
 		},

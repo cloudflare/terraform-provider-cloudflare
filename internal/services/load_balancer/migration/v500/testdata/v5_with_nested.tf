@@ -3,6 +3,8 @@ resource "cloudflare_load_balancer" "%s" {
   name                 = "%s"
   fallback_pool        = "%s"
   default_pools        = ["%s"]
+  steering_policy      = "off"
+  ttl                  = 30
   session_affinity     = "cookie"
   session_affinity_ttl = 1800
 

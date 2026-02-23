@@ -3,6 +3,8 @@ resource "cloudflare_load_balancer" "%s" {
   name              = "%s"
   fallback_pool_id  = "%s"
   default_pool_ids  = ["%s"]
+  steering_policy   = "geo"
+  ttl               = 30
 
   region_pools {
     region   = "WNAM"
