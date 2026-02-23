@@ -60,6 +60,6 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   geo_restrictions = {
     label = "us"
   }
-  policy = "policy"
+  policy = "(country: US) or (region: EU)"
   type = "sni_custom"
 }
