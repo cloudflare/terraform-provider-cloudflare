@@ -37,10 +37,10 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 
 	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
 
-	// Use MigrationV2TestStepAllowCreateDropState to handle one-to-many transformation.
-	// cloudflare_zone_settings_override does not exist in v5; the state file must be
-	// cleared so Terraform does not fail with "no schema available" when loading it.
-	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
+	// Use MigrationV2TestStepAllowCreateRemoveType to handle one-to-many transformation.
+	// cloudflare_zone_settings_override does not exist in v5; its state entries must be
+	// removed so Terraform does not fail with "no schema available" when loading them.
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateRemoveType(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, "cloudflare_zone_settings_override", []statecheck.StateCheck{
 		// Verify http3 setting
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
@@ -89,7 +89,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 
 	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
 
-	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateRemoveType(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, "cloudflare_zone_settings_override", []statecheck.StateCheck{
 		// Verify zero_rtt -> 0rtt mapping
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_zero_rtt", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("0rtt")),
@@ -123,12 +123,6 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 	})
 }
 
-// TestMigrateZoneSettingMigrationFromV4WithNEL is skipped because NEL is a read-only setting
-// that cannot be set via the API. This test would fail even with the v4 provider.
-func TestMigrateZoneSettingMigrationFromV4WithNEL(t *testing.T) {
-	t.Skip("NEL is a read-only setting and cannot be tested via the provider")
-}
-
 // TestMigrateZoneSettingMigrationFromV4Complex tests migration with multiple settings including variables
 func TestMigrateZoneSettingMigrationFromV4Complex(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -157,7 +151,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 
 	sourceVer, targetVer := acctest.InferMigrationVersions(acctest.GetLastV4Version())
 
-	migrationSteps := acctest.MigrationV2TestStepAllowCreateDropState(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepAllowCreateRemoveType(t, v4Config, tmpDir, acctest.GetLastV4Version(), sourceVer, targetVer, "cloudflare_zone_settings_override", []statecheck.StateCheck{
 		// Verify http3 setting preserves variable reference
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
