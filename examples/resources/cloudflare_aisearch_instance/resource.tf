@@ -41,6 +41,9 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   }
   reranking = true
   reranking_model = "@cf/baai/bge-reranker-base"
+  retrieval_options = {
+    keyword_match_mode = "exact_match"
+  }
   rewrite_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
   rewrite_query = true
   score_threshold = 0
