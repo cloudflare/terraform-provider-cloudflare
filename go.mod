@@ -3,7 +3,7 @@ module github.com/cloudflare/terraform-provider-cloudflare
 go 1.24.0
 
 require (
-	github.com/cloudflare/cloudflare-go/v6 v6.7.1-0.20260224155652-0e8f0553fd1b
+	github.com/cloudflare/cloudflare-go/v6 v6.7.1-0.20260224172436-fc9c5252fe22
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
