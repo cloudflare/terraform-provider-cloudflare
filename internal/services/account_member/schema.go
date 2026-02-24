@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
-				Description: `Available values: "accepted", "pending".`,
+				Description: "Status of the member invitation. If not provided during creation, defaults to 'pending'.\nChanging from 'accepted' back to 'pending' will trigger a replacement of the member resource in Terraform.\nAvailable values: \"accepted\", \"pending\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -81,15 +82,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"dead_letter_queue": schema.StringAttribute{
+							Description: "Name of the dead letter queue, or empty string if not configured",
+							Computed:    true,
+						},
+						"queue_name": schema.StringAttribute{
 							Computed: true,
-						},
-						"queue_id": schema.StringAttribute{
-							Description: "A Resource identifier.",
-							Computed:    true,
-						},
-						"script": schema.StringAttribute{
-							Description: "Name of a Worker",
-							Computed:    true,
 						},
 						"script_name": schema.StringAttribute{
 							Description: "Name of a Worker",

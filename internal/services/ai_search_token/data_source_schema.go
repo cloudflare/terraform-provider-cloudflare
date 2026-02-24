@@ -21,13 +21,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_tag": schema.StringAttribute{
-				Computed: true,
-			},
 			"cf_api_id": schema.StringAttribute{
-				Computed: true,
-			},
-			"cf_api_key": schema.StringAttribute{
 				Computed: true,
 			},
 			"created_at": schema.StringAttribute{
@@ -52,10 +46,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Computed: true,
-			},
-			"synced_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

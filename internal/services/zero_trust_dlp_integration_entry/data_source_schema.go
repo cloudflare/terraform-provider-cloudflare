@@ -36,6 +36,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
 			"enabled": schema.BoolAttribute{
 				Computed: true,
 			},

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -30,11 +31,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
-			"script": schema.StringAttribute{
-				Description: "Name of a Worker",
+			"dead_letter_queue": schema.StringAttribute{
+				Description: "Name of the dead letter queue, or empty string if not configured",
 				Computed:    true,
+			},
+			"queue_name": schema.StringAttribute{
+				Computed: true,
 			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of a Worker",

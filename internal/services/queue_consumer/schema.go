@@ -5,6 +5,7 @@ package queue_consumer
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -36,19 +37,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"type": schema.StringAttribute{
+				Description: `Available values: "worker", "http_pull".`,
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
+				},
+			},
 			"dead_letter_queue": schema.StringAttribute{
 				Optional: true,
 			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of a Worker",
 				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: `Available values: "worker", "http_pull".`,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
-				},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Optional: true,
@@ -80,11 +81,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
-			"script": schema.StringAttribute{
-				Description: "Name of a Worker",
-				Computed:    true,
+			"queue_name": schema.StringAttribute{
+				Computed: true,
 			},
 		},
 	}

@@ -26,6 +26,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     }
     enabled = true
     mcp = {
+      description = "description"
       disabled = true
     }
     rate_limit = {

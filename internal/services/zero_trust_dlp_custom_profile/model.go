@@ -48,10 +48,11 @@ type ZeroTrustDLPCustomProfileContextAwarenessSkipModel struct {
 }
 
 type ZeroTrustDLPCustomProfileEntriesModel struct {
-	Enabled types.Bool                                    `tfsdk:"enabled" json:"enabled,required"`
-	EntryID types.String                                  `tfsdk:"entry_id" json:"entry_id,optional,no_refresh"`
-	Name    types.String                                  `tfsdk:"name" json:"name,required"`
-	Pattern *ZeroTrustDLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern,required"`
+	Enabled     types.Bool                                    `tfsdk:"enabled" json:"enabled,required"`
+	EntryID     types.String                                  `tfsdk:"entry_id" json:"entry_id,optional,no_refresh"`
+	Name        types.String                                  `tfsdk:"name" json:"name,required"`
+	Pattern     *ZeroTrustDLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern,required"`
+	Description types.String                                  `tfsdk:"description" json:"description,optional"`
 }
 
 type ZeroTrustDLPCustomProfileEntriesPatternModel struct {

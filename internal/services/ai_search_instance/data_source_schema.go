@@ -31,18 +31,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_tag": schema.StringAttribute{
-				Computed: true,
-			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"aisearch_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
+				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+						"@cf/zai-org/glm-4.7-flash",
 						"@cf/meta/llama-3.1-8b-instruct-fast",
 						"@cf/meta/llama-3.1-8b-instruct-fp8",
 						"@cf/meta/llama-4-scout-17b-16e-instruct",
@@ -86,9 +84,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"chunk": schema.BoolAttribute{
-				Computed: true,
-			},
 			"chunk_overlap": schema.Int64Attribute{
 				Computed: true,
 				Validators: []validator.Int64{
@@ -127,13 +122,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"enable": schema.BoolAttribute{
 				Computed: true,
 			},
-			"engine_version": schema.Float64Attribute{
-				Computed: true,
-			},
 			"hybrid_search_enabled": schema.BoolAttribute{
-				Computed: true,
-			},
-			"internal_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"last_activity": schema.StringAttribute{
@@ -170,11 +159,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"rewrite_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
+				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+						"@cf/zai-org/glm-4.7-flash",
 						"@cf/meta/llama-3.1-8b-instruct-fast",
 						"@cf/meta/llama-3.1-8b-instruct-fp8",
 						"@cf/meta/llama-4-scout-17b-16e-instruct",
@@ -218,52 +208,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"status": schema.StringAttribute{
 				Computed: true,
 			},
-			"summarization": schema.BoolAttribute{
-				Computed: true,
-			},
-			"summarization_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-						"@cf/meta/llama-3.1-8b-instruct-fast",
-						"@cf/meta/llama-3.1-8b-instruct-fp8",
-						"@cf/meta/llama-4-scout-17b-16e-instruct",
-						"@cf/qwen/qwen3-30b-a3b-fp8",
-						"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-						"@cf/moonshotai/kimi-k2-instruct",
-						"anthropic/claude-3-7-sonnet",
-						"anthropic/claude-sonnet-4",
-						"anthropic/claude-opus-4",
-						"anthropic/claude-3-5-haiku",
-						"cerebras/qwen-3-235b-a22b-instruct",
-						"cerebras/qwen-3-235b-a22b-thinking",
-						"cerebras/llama-3.3-70b",
-						"cerebras/llama-4-maverick-17b-128e-instruct",
-						"cerebras/llama-4-scout-17b-16e-instruct",
-						"cerebras/gpt-oss-120b",
-						"google-ai-studio/gemini-2.5-flash",
-						"google-ai-studio/gemini-2.5-pro",
-						"grok/grok-4",
-						"groq/llama-3.3-70b-versatile",
-						"groq/llama-3.1-8b-instant",
-						"openai/gpt-5",
-						"openai/gpt-5-mini",
-						"openai/gpt-5-nano",
-						"",
-					),
-				},
-			},
-			"system_prompt_aisearch": schema.StringAttribute{
-				Computed: true,
-			},
-			"system_prompt_index_summarization": schema.StringAttribute{
-				Computed: true,
-			},
-			"system_prompt_rewrite_query": schema.StringAttribute{
-				Computed: true,
-			},
 			"token_id": schema.StringAttribute{
 				Computed: true,
 			},
@@ -273,9 +217,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
-			},
-			"vectorize_active_namespace": schema.StringAttribute{
-				Computed: true,
 			},
 			"vectorize_name": schema.StringAttribute{
 				Computed: true,
@@ -340,6 +281,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsMcpDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"description": schema.StringAttribute{
+								Computed: true,
+							},
 							"disabled": schema.BoolAttribute{
 								Description: "Disable MCP endpoint for this public endpoint",
 								Computed:    true,

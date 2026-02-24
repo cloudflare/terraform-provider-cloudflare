@@ -24,6 +24,7 @@ type ZeroTrustDLPEntryDataSourceModel struct {
 	AccountID     types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
 	CaseSensitive types.Bool                                                             `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Description   types.String                                                           `tfsdk:"description" json:"description,computed"`
 	Enabled       types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
 	Name          types.String                                                           `tfsdk:"name" json:"name,computed"`
 	ProfileID     types.String                                                           `tfsdk:"profile_id" json:"profile_id,computed"`
