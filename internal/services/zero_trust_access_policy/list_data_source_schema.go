@@ -77,6 +77,42 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Requires the user to request access from an administrator at the start of each session.",
 							Computed:    true,
 						},
+						"connection_rules": schema.SingleNestedAttribute{
+							Description: "The rules that define how users may connect to targets secured by your application.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPoliciesConnectionRulesDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"rdp": schema.SingleNestedAttribute{
+									Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPoliciesConnectionRulesRdpDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
+											Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",
+											Computed:    true,
+											Validators: []validator.List{
+												listvalidator.ValueStringsAre(
+													stringvalidator.OneOfCaseInsensitive("text"),
+												),
+											},
+											CustomType:  customfield.NewListType[types.String](ctx),
+											ElementType: types.StringType,
+										},
+										"allowed_clipboard_remote_to_local_formats": schema.ListAttribute{
+											Description: "Clipboard formats allowed when copying from remote RDP session to local machine.",
+											Computed:    true,
+											Validators: []validator.List{
+												listvalidator.ValueStringsAre(
+													stringvalidator.OneOfCaseInsensitive("text"),
+												),
+											},
+											CustomType:  customfield.NewListType[types.String](ctx),
+											ElementType: types.StringType,
+										},
+									},
+								},
+							},
+						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},

@@ -33,6 +33,7 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	SessionDuration              types.String                                                                    `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ApprovalGroups               customfield.NestedObjectSet[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
+	ConnectionRules              customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesDataSourceModel]   `tfsdk:"connection_rules" json:"connection_rules,computed"`
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
 	Include                      customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
 	MfaConfig                    customfield.NestedObject[ZeroTrustAccessPolicyMfaConfigDataSourceModel]         `tfsdk:"mfa_config" json:"mfa_config,computed"`
@@ -51,6 +52,15 @@ type ZeroTrustAccessPolicyApprovalGroupsDataSourceModel struct {
 	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
 	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed"`
 	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed"`
+}
+
+type ZeroTrustAccessPolicyConnectionRulesDataSourceModel struct {
+	Rdp customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesRdpDataSourceModel] `tfsdk:"rdp" json:"rdp,computed"`
+}
+
+type ZeroTrustAccessPolicyConnectionRulesRdpDataSourceModel struct {
+	AllowedClipboardLocalToRemoteFormats customfield.List[types.String] `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,computed"`
+	AllowedClipboardRemoteToLocalFormats customfield.List[types.String] `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,computed"`
 }
 
 type ZeroTrustAccessPolicyExcludeDataSourceModel struct {

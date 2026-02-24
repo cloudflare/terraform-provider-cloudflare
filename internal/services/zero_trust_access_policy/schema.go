@@ -93,6 +93,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"connection_rules": schema.SingleNestedAttribute{
+				Description: "The rules that define how users may connect to targets secured by your application.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"rdp": schema.SingleNestedAttribute{
+						Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",
+								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								ElementType: types.StringType,
+							},
+							"allowed_clipboard_remote_to_local_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from remote RDP session to local machine.",
+								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								ElementType: types.StringType,
+							},
+						},
+					},
+				},
+			},
 			"mfa_config": schema.SingleNestedAttribute{
 				Description: "Configures multi-factor authentication (MFA) settings.",
 				Optional:    true,
