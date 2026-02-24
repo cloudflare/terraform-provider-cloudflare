@@ -23,6 +23,7 @@ type ZeroTrustAccessPolicyModel struct {
 	PurposeJustificationPrompt   types.String                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
 	PurposeJustificationRequired types.Bool                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
 	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel                   `tfsdk:"approval_groups" json:"approval_groups,optional"`
+	ConnectionRules              *ZeroTrustAccessPolicyConnectionRulesModel                     `tfsdk:"connection_rules" json:"connection_rules,optional"`
 	MfaConfig                    *ZeroTrustAccessPolicyMfaConfigModel                           `tfsdk:"mfa_config" json:"mfa_config,optional"`
 	SessionDuration              types.String                                                   `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
@@ -46,6 +47,15 @@ type ZeroTrustAccessPolicyApprovalGroupsModel struct {
 	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed" json:"approvals_needed,required"`
 	EmailAddresses  *[]types.String `tfsdk:"email_addresses" json:"email_addresses,optional"`
 	EmailListUUID   types.String    `tfsdk:"email_list_uuid" json:"email_list_uuid,optional"`
+}
+
+type ZeroTrustAccessPolicyConnectionRulesModel struct {
+	Rdp *ZeroTrustAccessPolicyConnectionRulesRdpModel `tfsdk:"rdp" json:"rdp,optional"`
+}
+
+type ZeroTrustAccessPolicyConnectionRulesRdpModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,optional"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,optional"`
 }
 
 type ZeroTrustAccessPolicyMfaConfigModel struct {

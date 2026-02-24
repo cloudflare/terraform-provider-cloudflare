@@ -110,6 +110,42 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"connection_rules": schema.SingleNestedAttribute{
+				Description: "The rules that define how users may connect to targets secured by your application.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"rdp": schema.SingleNestedAttribute{
+						Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesRdpDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",
+								Computed:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"allowed_clipboard_remote_to_local_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from remote RDP session to local machine.",
+								Computed:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+						},
+					},
+				},
+			},
 			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Computed:    true,
