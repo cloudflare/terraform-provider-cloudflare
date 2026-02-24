@@ -351,11 +351,17 @@ type ZeroTrustAccessApplicationPoliciesIncludeLinkedAppTokenModel struct {
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesModel struct {
 	SSH *ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel `tfsdk:"ssh" json:"ssh,optional"`
+	RDP *ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel `tfsdk:"rdp" json:"rdp,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel struct {
 	Usernames       *[]types.String `tfsdk:"usernames" json:"usernames,required"`
 	AllowEmailAlias types.Bool      `tfsdk:"allow_email_alias" json:"allow_email_alias,optional"`
+}
+
+type ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,optional"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesExcludeModel struct {
