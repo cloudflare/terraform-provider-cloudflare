@@ -1,6 +1,7 @@
-package zero_trust_tunnel_cloudflared_config_test
+package v500_test
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"testing"
@@ -14,6 +15,15 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+//go:embed testdata/v4_basic.tf
+var v4BasicConfig string
+
+//go:embed testdata/v4_with_origin_request.tf
+var v4WithOriginRequestConfig string
+
+//go:embed testdata/v4_deprecated_name.tf
+var v4DeprecatedNameConfig string
+
 func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -25,27 +35,21 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
 	tmpDir := t.TempDir()
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
-	// v4 config with basic setup
-	// Note: v4 uses block syntax: config { } and ingress_rule { }
-	// Note: Use config_src = "cloudflare" since we're managing config via Cloudflare API
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "tf-acc-test-tunnel-%[1]s"
-  secret     = "%[3]s"
-  config_src = "cloudflare"
-}
+	v4Config := fmt.Sprintf(v4BasicConfig, rnd, accountID, tunnelSecret)
 
-resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
-  account_id = "%[2]s"
-  tunnel_id  = cloudflare_tunnel.%[1]s.id
+	stateChecks := []statecheck.StateCheck{
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+		// Verify config is an object (not array) after migration
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("config").AtMapKey("ingress").AtSliceIndex(0).AtMapKey("service"), knownvalue.StringExact("http_status:404")),
+	}
 
-  config {
-    ingress_rule {
-      service = "http_status:404"
-    }
-  }
-}`, rnd, accountID, tunnelSecret)
+	// Use MigrationV2TestStepWithStateNormalization because:
+	// The v4 PF provider (version=1) stored origin_request as non-null empty ({}) in state when
+	// the API returned it. The v5 Read also stores it as non-null when the API returns origin_request={}.
+	// This causes a plan showing origin_request: {all-nil} → null, which is not a falsey-to-null change.
+	// MigrationV2TestStepWithStateNormalization allows that change to be applied (step 1),
+	// which removes origin_request from the API, and then verifies clean plan in step 3.
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", stateChecks)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -54,7 +58,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
 		},
 		CheckDestroy: nil, // Migration tests don't need destroy checks
 		WorkingDir:   tmpDir,
-		Steps: []resource.TestStep{
+		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
 				ExternalProviders: map[string]resource.ExternalProvider{
@@ -65,13 +69,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
 				},
 				Config: v4Config,
 			},
-			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-				// Verify config is an object (not array) after migration
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("config").AtMapKey("ingress").AtSliceIndex(0).AtMapKey("service"), knownvalue.StringExact("http_status:404")),
-			}),
-		},
+		}, migrationSteps...),
 	})
 }
 
@@ -86,40 +84,8 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_WithOriginRequest(t *testing.T)
 	tmpDir := t.TempDir()
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
-	// v4 config with origin_request settings (without duration fields)
-	// Note: v4 uses block syntax: config { }, origin_request { }, ingress_rule { }
-	// Note: Duration fields are tested separately in unit tests
-	// Note: Use config_src = "cloudflare" since we're managing config via Cloudflare API
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "tf-acc-test-tunnel-or-%[1]s"
-  secret     = "%[3]s"
-  config_src = "cloudflare"
-}
-
-resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
-  account_id = "%[2]s"
-  tunnel_id  = cloudflare_tunnel.%[1]s.id
-
-  config {
-    origin_request {
-      no_happy_eyeballs      = false
-      keep_alive_connections = 1024
-      http_host_header       = "example.internal"
-      http2_origin           = true
-    }
-
-    ingress_rule {
-      hostname = "test.example.com"
-      service  = "http://localhost:8080"
-    }
-
-    ingress_rule {
-      service = "http_status:404"
-    }
-  }
-}`, rnd, accountID, tunnelSecret)
+	// Duration fields are tested separately in unit tests.
+	v4Config := fmt.Sprintf(v4WithOriginRequestConfig, rnd, accountID, tunnelSecret)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -163,27 +129,16 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_DeprecatedName(t *testing.T) {
 	tmpDir := t.TempDir()
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
-	// v4 config using DEPRECATED resource name: cloudflare_tunnel_config
-	// Note: v4 uses block syntax: config { } and ingress_rule { }
-	// Note: Use config_src = "cloudflare" since we're managing config via Cloudflare API
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[1]s" {
-  account_id = "%[2]s"
-  name       = "tf-acc-test-tunnel-dep-%[1]s"
-  secret     = "%[3]s"
-  config_src = "cloudflare"
-}
+	v4Config := fmt.Sprintf(v4DeprecatedNameConfig, rnd, accountID, tunnelSecret)
 
-resource "cloudflare_tunnel_config" "%[1]s" {
-  account_id = "%[2]s"
-  tunnel_id  = cloudflare_tunnel.%[1]s.id
+	stateChecks := []statecheck.StateCheck{
+		// After migration, resource type should be cloudflare_zero_trust_tunnel_cloudflared_config
+		statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+	}
 
-  config {
-    ingress_rule {
-      service = "http_status:404"
-    }
-  }
-}`, rnd, accountID, tunnelSecret)
+	// Use MigrationV2TestStepWithStateNormalization for the same reason as Basic:
+	// the API returns origin_request={} even for minimal configs, causing non-falsey-to-null drift.
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", stateChecks)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -192,7 +147,7 @@ resource "cloudflare_tunnel_config" "%[1]s" {
 		},
 		CheckDestroy: nil, // Migration tests don't need destroy checks
 		WorkingDir:   tmpDir,
-		Steps: []resource.TestStep{
+		Steps: append([]resource.TestStep{
 			{
 				// Step 1: Create with v4 provider
 				ExternalProviders: map[string]resource.ExternalProvider{
@@ -203,11 +158,6 @@ resource "cloudflare_tunnel_config" "%[1]s" {
 				},
 				Config: v4Config,
 			},
-			// Step 2: Run migration and verify state - should rename resource type
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
-				// After migration, resource type should be cloudflare_zero_trust_tunnel_cloudflared_config
-				statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-			}),
-		},
+		}, migrationSteps...),
 	})
 }
