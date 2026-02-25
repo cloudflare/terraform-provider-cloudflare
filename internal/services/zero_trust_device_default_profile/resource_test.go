@@ -6,9 +6,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -27,24 +28,48 @@ func init() {
 	})
 }
 
-// testSweepCloudflareZeroTrustDeviceDefaultProfile is a no-op sweeper for the default device profile.
+// testSweepCloudflareZeroTrustDeviceDefaultProfile resets the include/exclude split tunnel fields
+// on the account's default device profile.
 //
-// The default device profile is a singleton configuration per account - there's only one default
-// profile per account. Tests modify the existing default profile rather than creating new resources.
-// Since nothing accumulates, no sweeping is required.
-//
-// This sweeper is registered to maintain consistency with other resources, but performs no actions.
+// The default device profile is a singleton per account — it cannot be deleted, only patched.
+// Acceptance tests (particularly WithSplitTunnel variants) write include/exclude data to the
+// default profile and may leave it behind if a test fails. This sweeper resets those fields to
+// empty so subsequent test runs start from a clean baseline.
 //
 // API behavior:
-// - Create operation uses Policies.Default.Edit() (modifies existing profile)
-// - Delete operation is a no-op (can't delete the default profile)
-// - Resource represents account-level configuration, not creatable/deletable resources
+// - Create/Update uses Policies.Default.Edit() (PATCH on existing singleton profile)
+// - Delete is a no-op (the default profile cannot be removed)
 //
 // Run with: go test ./internal/services/zero_trust_device_default_profile/ -v -sweep=all
-// (No cleanup will be performed)
 func testSweepCloudflareZeroTrustDeviceDefaultProfile(r string) error {
 	ctx := context.Background()
-	tflog.Info(ctx, "Zero Trust Device Default Profile doesn't require sweeping (singleton account setting)")
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return nil
+	}
+
+	client := acctest.SharedClient()
+
+	// Reset include and exclude to empty slices, clearing any leftover split tunnel state
+	// from previous test runs. Both cannot be set in the same request, so we clear include
+	// first (setting it to []) then clear exclude separately.
+	_, err := client.ZeroTrust.Devices.Policies.Default.Edit(ctx, zero_trust.DevicePolicyDefaultEditParams{
+		AccountID: cloudflare.F(accountID),
+		Include:   cloudflare.F([]zero_trust.SplitTunnelIncludeUnionParam{}),
+	})
+	if err != nil {
+		fmt.Printf("failed to reset include on default device profile: %v\n", err)
+	}
+
+	_, err = client.ZeroTrust.Devices.Policies.Default.Edit(ctx, zero_trust.DevicePolicyDefaultEditParams{
+		AccountID: cloudflare.F(accountID),
+		Exclude:   cloudflare.F([]zero_trust.SplitTunnelExcludeUnionParam{}),
+	})
+	if err != nil {
+		fmt.Printf("failed to reset exclude on default device profile: %v\n", err)
+	}
+
 	return nil
 }
 
