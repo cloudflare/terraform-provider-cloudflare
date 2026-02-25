@@ -37,6 +37,9 @@ var v5WithOptionalConfig string
 //go:embed testdata/v4_removed_fields.tf
 var v4RemovedFieldsConfig string
 
+//go:embed testdata/v4_complete.tf
+var v4CompleteConfig string
+
 // TestMigrateZone_Basic tests migration of the core field transformations:
 //   - zone → name (field rename)
 //   - account_id (flat string) → account.id (nested object)
@@ -106,6 +109,11 @@ func TestMigrateZone_Basic(t *testing.T) {
 						// Sanity: resource was created
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.NotNull()),
+						// Computed list: name_servers exercises types.List → customfield.List conversion
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name_servers"), knownvalue.NotNull()),
+						// Computed nested objects: API repopulates after migration nullifies
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("meta"), knownvalue.NotNull()),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("plan"), knownvalue.NotNull()),
 					}),
 				},
 			})
@@ -188,9 +196,9 @@ func TestMigrateZone_WithOptionalFields(t *testing.T) {
 	}
 }
 
-// TestMigrateZone_RemovedFields tests that v4-only fields (jump_start) are dropped cleanly
+// TestMigrateZone_RemovedFields tests that v4-only fields (jump_start, plan) are dropped cleanly
 // during migration without causing errors. This is a v4-only test since jump_start does not
-// exist in the v5 schema.
+// exist in the v5 schema and plan changes from a configurable string to a computed nested object.
 func TestMigrateZone_RemovedFields(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := fmt.Sprintf("%s.cfapi.net", rnd)
@@ -223,6 +231,57 @@ func TestMigrateZone_RemovedFields(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+				// plan: v4 configurable string dropped, v5 computed nested object repopulated by API
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("plan"), knownvalue.NotNull()),
+			}),
+		},
+	})
+}
+
+// TestMigrateZone_Complete tests migration with all v4 configurable attributes including
+// fields that are removed (jump_start, plan) and pass-through fields with non-default values
+// (paused=true). This is v4-only since plan and jump_start don't exist in v5, and
+// paused=true causes a non-empty refresh plan with the v5 provider (API creates as false,
+// requires a separate update).
+func TestMigrateZone_Complete(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneName := fmt.Sprintf("%s.cfapi.net", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_zone." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(v4CompleteConfig, rnd, zoneName, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				// Core transformations
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(zoneName)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account").AtMapKey("id"), knownvalue.StringExact(accountID)),
+				// pass-through: paused=true (non-default value)
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("paused"), knownvalue.Bool(true)),
+				// pass-through: type preserved
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("full")),
+				// Removed fields don't break migration; computed fields repopulated
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name_servers"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("meta"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("plan"), knownvalue.NotNull()),
 			}),
 		},
 	})
