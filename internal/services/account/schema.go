@@ -42,7 +42,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Tenant unit ID",
 						Computed:    true,
 						Optional:    true,
-						Computed:    true,
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.UseStateForUnknown(),
 							stringplanmodifier.RequiresReplace(),

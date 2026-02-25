@@ -64,16 +64,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Dynamic{
 					customfield.NormalizeDynamicPlanModifier(),
 				},
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"1.0",
-						"1.1",
-						"1.2",
-						"1.3",
-						"on",
-						"off",
-					),
-				},
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the tls setting was originally created for this hostname.",
