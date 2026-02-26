@@ -34,7 +34,7 @@ func TestMigrateZoneSubscription_V5(t *testing.T) {
 		t.Skip("Skipping migration test: TF_MIG_TEST is not set")
 	}
 
-	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
+	zoneID := "5a870ecfe7d96ad6c056fdaf44a72556" //os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
 	testConfig := fmt.Sprintf(v5BasicConfig, rnd, zoneID)
