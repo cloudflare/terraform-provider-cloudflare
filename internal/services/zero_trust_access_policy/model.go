@@ -50,10 +50,10 @@ type ZeroTrustAccessPolicyApprovalGroupsModel struct {
 }
 
 type ZeroTrustAccessPolicyConnectionRulesModel struct {
-	Rdp *ZeroTrustAccessPolicyConnectionRulesRdpModel `tfsdk:"rdp" json:"rdp,optional"`
+	RDP *ZeroTrustAccessPolicyConnectionRulesRDPModel `tfsdk:"rdp" json:"rdp,optional"`
 }
 
-type ZeroTrustAccessPolicyConnectionRulesRdpModel struct {
+type ZeroTrustAccessPolicyConnectionRulesRDPModel struct {
 	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,optional"`
 	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,optional"`
 }
