@@ -49,6 +49,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_origin_trust_store"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
@@ -365,6 +366,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		certificate_pack.NewResource,
 		universal_ssl_setting.NewResource,
 		total_tls.NewResource,
+		custom_origin_trust_store.NewResource,
 		argo_smart_routing.NewResource,
 		argo_tiered_caching.NewResource,
 		client_certificate.NewResource,
@@ -594,6 +596,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		certificate_pack.NewCertificatePacksDataSource,
 		universal_ssl_setting.NewUniversalSSLSettingDataSource,
 		total_tls.NewTotalTLSDataSource,
+		custom_origin_trust_store.NewCustomOriginTrustStoreDataSource,
+		custom_origin_trust_store.NewCustomOriginTrustStoresDataSource,
 		argo_smart_routing.NewArgoSmartRoutingDataSource,
 		argo_tiered_caching.NewArgoTieredCachingDataSource,
 		client_certificate.NewClientCertificateDataSource,
