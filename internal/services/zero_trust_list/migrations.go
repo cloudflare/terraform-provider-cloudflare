@@ -2,6 +2,7 @@ package zero_trust_list
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -31,8 +32,28 @@ func (r *ZeroTrustListResource) MoveState(ctx context.Context) []resource.StateM
 // 0: v4 state (schema_version=0) → merge items + items_with_description
 // 1: v5 state (version=1) → no-op
 func (r *ZeroTrustListResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	sourceSchema := v500.SourceTeamsListSchema()
 	targetSchema := ResourceSchema(ctx)
+
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing upgraders only
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+			1: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
+	sourceSchema := v500.SourceTeamsListSchema()
 	return map[int64]resource.StateUpgrader{
 		// v4 SDKv2 provider (schema_version=0) — merge items
 		0: {

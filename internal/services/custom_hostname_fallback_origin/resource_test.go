@@ -156,3 +156,42 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 		},
 	})
 }
+
+func TestAccUpgradeCustomHostnameFallbackOrigin_FromPublishedV5(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
+	// fallback endpoint does not yet support the API tokens for updates and it
+	// results in state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	config := testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.16.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}

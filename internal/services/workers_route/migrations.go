@@ -2,6 +2,7 @@ package workers_route
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -36,6 +37,26 @@ func (r *WorkersRouteResource) MoveState(ctx context.Context) []resource.StateMo
 // Version 1:
 //   - V5 state after initial release → no-op
 func (r *WorkersRouteResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing pass-through upgraders
+		targetSchema := ResourceSchema(ctx)
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+			1: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	unionSchema := v500.UnionV0Schema()
 	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{

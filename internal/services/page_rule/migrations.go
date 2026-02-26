@@ -4,6 +4,7 @@ package page_rule
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -18,6 +19,21 @@ var _ resource.ResourceWithUpgradeState = (*PageRuleResource)(nil)
 // - v4 SDKv2 provider: schema_version=0, actions as array
 // - v5 Plugin Framework provider: version=1 (production) or version=500 (test)
 func (r *PageRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	targetSchema := ResourceSchema(ctx)
+
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing upgraders only
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	// v4 schema for version=0 upgrader
 	v4Schema := v500.SourceV4PageRuleSchema()
 
