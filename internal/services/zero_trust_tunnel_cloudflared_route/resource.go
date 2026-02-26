@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -153,6 +154,47 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Read(ctx context.Context, req 
 		return
 	}
 
+	// The v4 provider stored the route ID as a network CIDR (e.g. "10.0.0.0/16")
+	// or, when a virtual network was set, as an MD5 checksum of "network/vnet_id"
+	// (32 lowercase hex chars). The v5 provider requires a UUID (36 chars with
+	// hyphens). When we detect a legacy ID format, we look up the route via the
+	// List API (filtering by network + optional virtual_network_id) to obtain the
+	// real UUID, then update the state ID before proceeding with the normal Read.
+	if idStr := data.ID.ValueString(); isLegacyRouteID(idStr) {
+		listParams := zero_trust.NetworkRouteListParams{
+			AccountID:       cloudflare.F(data.AccountID.ValueString()),
+			NetworkSubset:   cloudflare.F(data.Network.ValueString()),
+			NetworkSuperset: cloudflare.F(data.Network.ValueString()),
+			IsDeleted:       cloudflare.F(false),
+		}
+		if vnetID := data.VirtualNetworkID.ValueString(); vnetID != "" {
+			listParams.VirtualNetworkID = cloudflare.F(vnetID)
+		}
+		routes, err := r.client.ZeroTrust.Networks.Routes.List(
+			ctx,
+			listParams,
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to look up route by network during v4 ID migration", err.Error())
+			return
+		}
+		var found *zero_trust.Teamnet
+		for _, route := range routes.Result {
+			route := route
+			if route.Network == data.Network.ValueString() {
+				found = &route
+				break
+			}
+		}
+		if found == nil {
+			resp.Diagnostics.AddWarning("Resource not found", "Could not locate the tunnel route by network during v4 ID migration; removing from state.")
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		data.ID = types.StringValue(found.ID)
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredRouteResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Networks.Routes.Get(
@@ -257,3 +299,31 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) ImportState(ctx context.Contex
 func (r *ZeroTrustTunnelCloudflaredRouteResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
+
+// BEGIN CUSTOM: v4 ID migration helpers
+
+// isLegacyRouteID reports whether id is a v4-format route ID (network CIDR or
+// MD5 checksum) rather than a v5 UUID. A UUID is 36 characters in the form
+// xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx. A CIDR contains "/". A checksum is 32
+// lowercase hex characters with no hyphens.
+func isLegacyRouteID(id string) bool {
+	if id == "" {
+		return false
+	}
+	// CIDR: contains a slash
+	if strings.Contains(id, "/") {
+		return true
+	}
+	// MD5 checksum: exactly 32 hex chars, no hyphens
+	if len(id) == 32 && !strings.Contains(id, "-") {
+		for _, c := range id {
+			if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+// END CUSTOM: v4 ID migration helpers

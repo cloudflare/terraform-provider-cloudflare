@@ -2,8 +2,9 @@ package zero_trust_tunnel_cloudflared
 
 import (
 	"context"
+	"os"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared/migration/v500"
+	v500 "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -34,6 +35,17 @@ func (r *ZeroTrustTunnelCloudflaredResource) MoveState(ctx context.Context) []re
 func (r *ZeroTrustTunnelCloudflaredResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	sourceSchema := v500.SourceTunnelCloudflaredSchema()
 	targetSchema := ResourceSchema(ctx)
+
+	if os.Getenv("TF_MIG_TEST") == "" {
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
