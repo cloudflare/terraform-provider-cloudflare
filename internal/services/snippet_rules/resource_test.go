@@ -109,8 +109,10 @@ func testAccCheckCloudflareSnippetRulesDestroy(s *terraform.State) error {
 		}
 
 		// Check if any rules still exist
-		if rules != nil && len(rules.Result) > 0 {
-			return fmt.Errorf("snippet rules still exist")
+		if rules != nil {
+			if rulesList, ok := (*rules).([]interface{}); ok && len(rulesList) > 0 {
+				return fmt.Errorf("snippet rules still exist")
+			}
 		}
 	}
 
