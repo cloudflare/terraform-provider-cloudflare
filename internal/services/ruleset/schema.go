@@ -91,7 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"phase": schema.StringAttribute{
-				Description: "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
+				Description: "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_cache_settings\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -111,6 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"http_request_sanitize",
 						"http_request_sbfm",
 						"http_request_transform",
+						"http_response_cache_settings",
 						"http_response_compression",
 						"http_response_firewall_managed",
 						"http_response_headers_transform",
@@ -147,7 +148,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"ddos_dynamic\", \"execute\", \"force_connection_close\", \"js_challenge\", \"log\", \"log_custom_field\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_cache_settings\", \"set_config\", \"skip\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"ddos_dynamic\", \"execute\", \"force_connection_close\", \"js_challenge\", \"log\", \"log_custom_field\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_cache_control\", \"set_cache_settings\", \"set_cache_tags\", \"set_config\", \"skip\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -166,7 +167,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"route",
 									"score",
 									"serve_error",
+									"set_cache_control",
 									"set_cache_settings",
+									"set_cache_tags",
 									"set_config",
 									"skip",
 								),
@@ -996,7 +999,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								// 	},
 								// },
 								"phases": schema.ListAttribute{
-									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
+									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_cache_settings\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
 									Optional:    true,
 									Validators: []validator.List{
 										customvalidator.RequiresOtherStringAttributeToBe(
@@ -1022,6 +1025,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												"http_request_sanitize",
 												"http_request_sbfm",
 												"http_request_transform",
+												"http_response_cache_settings",
 												"http_response_compression",
 												"http_response_firewall_managed",
 												"http_response_headers_transform",
@@ -1519,6 +1523,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"strip_etags": schema.BoolAttribute{
+									Description: "Whether to strip the ETag header from the response.",
+									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+								},
+								"strip_last_modified": schema.BoolAttribute{
+									Description: "Whether to strip the Last-Modified header from the response.",
+									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+								},
+								"strip_set_cookie": schema.BoolAttribute{
+									Description: "Whether to strip the Set-Cookie header from the response.",
+									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+								},
 								"cookie_fields": schema.ListNestedAttribute{
 									Description: "The cookie fields to log.",
 									Optional:    true,
@@ -1644,6 +1678,443 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 										},
+									},
+								},
+								"max_age": schema.SingleNestedAttribute{
+									Description: "Set the max-age cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlValueModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"value": schema.Int64Attribute{
+											Description: "The value for the directive in seconds.",
+											Optional:    true,
+											Validators: []validator.Int64{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"s_maxage": schema.SingleNestedAttribute{
+									Description: "Set the s-maxage cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlValueModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"value": schema.Int64Attribute{
+											Description: "The value for the directive in seconds.",
+											Optional:    true,
+											Validators: []validator.Int64{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"stale_while_revalidate": schema.SingleNestedAttribute{
+									Description: "Set the stale-while-revalidate cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlValueModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"value": schema.Int64Attribute{
+											Description: "The value for the directive in seconds.",
+											Optional:    true,
+											Validators: []validator.Int64{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"stale_if_error": schema.SingleNestedAttribute{
+									Description: "Set the stale-if-error cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlValueModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"value": schema.Int64Attribute{
+											Description: "The value for the directive in seconds.",
+											Optional:    true,
+											Validators: []validator.Int64{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"private": schema.SingleNestedAttribute{
+									Description: "Set the private cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlQualifiersModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"qualifiers": schema.ListAttribute{
+											Description: "The qualifiers for the directive.",
+											Optional:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
+											ElementType: types.StringType,
+											Validators: []validator.List{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"no_cache": schema.SingleNestedAttribute{
+									Description: "Set the no-cache cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlQualifiersModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"qualifiers": schema.ListAttribute{
+											Description: "The qualifiers for the directive.",
+											Optional:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
+											ElementType: types.StringType,
+											Validators: []validator.List{
+												customvalidator.RequiresOtherStringAttributeToBe(
+													path.MatchRelative().AtParent().AtName("operation"),
+													"set",
+												),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"must_revalidate": schema.SingleNestedAttribute{
+									Description: "Set the must-revalidate cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"proxy_revalidate": schema.SingleNestedAttribute{
+									Description: "Set the proxy-revalidate cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"must_understand": schema.SingleNestedAttribute{
+									Description: "Set the must-understand cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"no_transform": schema.SingleNestedAttribute{
+									Description: "Set the no-transform cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"immutable": schema.SingleNestedAttribute{
+									Description: "Set the immutable cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"no_store": schema.SingleNestedAttribute{
+									Description: "Set the no-store cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"public": schema.SingleNestedAttribute{
+									Description: "Set the public cache control directive.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_control",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSetCacheControlSimpleModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"operation": schema.StringAttribute{
+											Description: "The operation to perform.\nAvailable values: \"set\", \"remove\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("set", "remove"),
+											},
+										},
+										"cloudflare_only": schema.BoolAttribute{
+											Description: "Whether to apply the directive only to Cloudflare's cache.",
+											Optional:    true,
+											Computed:    true,
+											Default:     booldefault.StaticBool(false),
+										},
+									},
+								},
+								"operation": schema.StringAttribute{
+									Description: "The operation to perform for set_cache_tags action.\nAvailable values: \"set\", \"add\", \"remove\".",
+									Optional:    true,
+									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_tags",
+										),
+										stringvalidator.OneOfCaseInsensitive("set", "add", "remove"),
+									},
+								},
+								"values": schema.ListAttribute{
+									Description: "The cache tag values for set_cache_tags action.",
+									Optional:    true,
+									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_tags",
+										),
+										listvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("expression")),
+									},
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+								"expression": schema.StringAttribute{
+									Description: "An expression to generate cache tags for set_cache_tags action.",
+									Optional:    true,
+									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_tags",
+										),
+										stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("values")),
 									},
 								},
 							},
