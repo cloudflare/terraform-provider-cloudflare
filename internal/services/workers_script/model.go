@@ -98,7 +98,6 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 }
 
 type WorkersScriptMetadataModel struct {
-	Annotations        *WorkersScriptMetadataAnnotationsModel      `tfsdk:"annotations" json:"annotations,optional"`
 	Assets             *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
 	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart           types.String                                                     `tfsdk:"body_part" json:"body_part,optional"`
@@ -115,11 +114,6 @@ type WorkersScriptMetadataModel struct {
 	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
 	TailConsumers customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	UsageModel    types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
-}
-
-type WorkersScriptMetadataAnnotationsModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,optional"`
-	WorkersTag     types.String `tfsdk:"workers_tag" json:"workers/tag,optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
@@ -147,7 +141,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	ClassName                   types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
 	NamespaceID                 types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
 	ScriptName                  types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	Json                        jsontypes.Normalized                        `tfsdk:"json" json:"json,optional"`
+	Json                        types.String                                `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
@@ -176,16 +170,11 @@ type WorkersScriptMetadataBindingsModel struct {
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
-	Params *[]*WorkersScriptMetadataBindingsOutboundParamsModel `tfsdk:"params" json:"params,optional"`
-	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel    `tfsdk:"worker" json:"worker,optional"`
-}
-
-type WorkersScriptMetadataBindingsOutboundParamsModel struct {
-	Name types.String `tfsdk:"name" json:"name,required"`
+	Params *[]types.String                                   `tfsdk:"params" json:"params,optional"`
+	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel `tfsdk:"worker" json:"worker,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
-	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Service     types.String `tfsdk:"service" json:"service,optional"`
 }
