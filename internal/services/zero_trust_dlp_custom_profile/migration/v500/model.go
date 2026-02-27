@@ -87,10 +87,11 @@ type TargetContextAwarenessSkipModel struct {
 
 // TargetEntriesModel represents a single entry in v5.
 type TargetEntriesModel struct {
-	Enabled types.Bool           `tfsdk:"enabled"`
-	EntryID types.String         `tfsdk:"entry_id"`
-	Name    types.String         `tfsdk:"name"`
-	Pattern *TargetPatternModel  `tfsdk:"pattern"`
+	Description types.String         `tfsdk:"description"`
+	Enabled     types.Bool           `tfsdk:"enabled"`
+	EntryID     types.String         `tfsdk:"entry_id"`
+	Name        types.String         `tfsdk:"name"`
+	Pattern     *TargetPatternModel  `tfsdk:"pattern"`
 }
 
 // TargetPatternModel represents a pattern in a v5 entry.

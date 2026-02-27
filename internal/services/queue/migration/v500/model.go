@@ -41,13 +41,13 @@ type TargetQueueSettingsModel struct {
 // TargetQueueConsumersModel represents a consumer in the target consumers list (v500).
 // Must match QueueConsumersModel structure exactly.
 type TargetQueueConsumersModel struct {
-	ConsumerID types.String                                                      `tfsdk:"consumer_id"`
-	CreatedOn  types.String                                                      `tfsdk:"created_on"`
-	QueueID    types.String                                                      `tfsdk:"queue_id"`
-	Script     types.String                                                      `tfsdk:"script"`
-	ScriptName types.String                                                      `tfsdk:"script_name"`
-	Settings   customfield.NestedObject[TargetQueueConsumersSettingsModel]       `tfsdk:"settings"`
-	Type       types.String                                                      `tfsdk:"type"`
+	ConsumerID      types.String                                                 `tfsdk:"consumer_id"`
+	CreatedOn       types.String                                                 `tfsdk:"created_on"`
+	DeadLetterQueue types.String                                                 `tfsdk:"dead_letter_queue"`
+	QueueName       types.String                                                 `tfsdk:"queue_name"`
+	ScriptName      types.String                                                 `tfsdk:"script_name"`
+	Settings        customfield.NestedObject[TargetQueueConsumersSettingsModel]  `tfsdk:"settings"`
+	Type            types.String                                                 `tfsdk:"type"`
 }
 
 // TargetQueueConsumersSettingsModel represents the consumer settings nested object (v500).
