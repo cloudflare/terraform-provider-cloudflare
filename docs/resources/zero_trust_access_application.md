@@ -234,7 +234,17 @@ Available values: "allow", "deny", "non_identity", "bypass".
 
 Optional:
 
+- `rdp` (Attributes) The RDP-specific rules that define clipboard behavior for RDP connections. (see [below for nested schema](#nestedatt--policies--connection_rules--rdp))
 - `ssh` (Attributes) The SSH-specific rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules--ssh))
+
+<a id="nestedatt--policies--connection_rules--rdp"></a>
+### Nested Schema for `policies.connection_rules.rdp`
+
+Optional:
+
+- `allowed_clipboard_local_to_remote_formats` (List of String) Clipboard formats allowed when copying from local machine to remote RDP session.
+- `allowed_clipboard_remote_to_local_formats` (List of String) Clipboard formats allowed when copying from remote RDP session to local machine.
+
 
 <a id="nestedatt--policies--connection_rules--ssh"></a>
 ### Nested Schema for `policies.connection_rules.ssh`

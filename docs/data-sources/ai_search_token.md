@@ -20,9 +20,7 @@ description: |-
 
 ### Read-Only
 
-- `account_tag` (String)
 - `cf_api_id` (String)
-- `cf_api_key` (String)
 - `created_at` (String)
 - `created_by` (String)
 - `enabled` (Boolean)
@@ -31,6 +29,5 @@ description: |-
 - `modified_at` (String)
 - `modified_by` (String)
 - `name` (String)
-- `synced_at` (String)
 
 

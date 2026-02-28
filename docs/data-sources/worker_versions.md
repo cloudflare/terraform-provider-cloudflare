@@ -146,14 +146,23 @@ Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blo
 
 Read-Only:
 
-- `params` (List of String) Pass information from the Dispatch Worker to the Outbound Worker through the parameters.
+- `params` (Attributes List) Pass information from the Dispatch Worker to the Outbound Worker through the parameters. (see [below for nested schema](#nestedatt--result--bindings--outbound--params))
 - `worker` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--result--bindings--outbound--worker))
+
+<a id="nestedatt--result--bindings--outbound--params"></a>
+### Nested Schema for `result.bindings.outbound.params`
+
+Read-Only:
+
+- `name` (String) Name of the parameter.
+
 
 <a id="nestedatt--result--bindings--outbound--worker"></a>
 ### Nested Schema for `result.bindings.outbound.worker`
 
 Read-Only:
 
+- `entrypoint` (String) Entrypoint to invoke on the outbound worker.
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 

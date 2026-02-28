@@ -51,6 +51,7 @@ Available values: 14, 30, 90, 365.
 ### Read-Only
 
 - `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--certificates))
+- `dcv_delegation_records` (Attributes List) DCV Delegation records for domain validation. (see [below for nested schema](#nestedatt--dcv_delegation_records))
 - `id` (String) Identifier.
 - `primary_certificate` (String) Identifier of the primary certificate in a pack.
 - `status` (String) Status of certificate pack.
@@ -85,6 +86,21 @@ Read-Only:
 
 
 
+<a id="nestedatt--dcv_delegation_records"></a>
+### Nested Schema for `dcv_delegation_records`
+
+Read-Only:
+
+- `cname` (String) The CNAME record hostname for DCV delegation.
+- `cname_target` (String) The CNAME record target value for DCV delegation.
+- `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
+- `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.
+- `http_url` (String) The url that will be checked during domain validation.
+- `status` (String) Status of the validation record.
+- `txt_name` (String) The hostname that the certificate authority (CA) will check for a TXT record during domain validation .
+- `txt_value` (String) The TXT record that the certificate authority (CA) will check during domain validation.
+
+
 <a id="nestedatt--validation_errors"></a>
 ### Nested Schema for `validation_errors`
 
@@ -98,9 +114,12 @@ Read-Only:
 
 Read-Only:
 
+- `cname` (String) The CNAME record hostname for DCV delegation.
+- `cname_target` (String) The CNAME record target value for DCV delegation.
 - `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
 - `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.
 - `http_url` (String) The url that will be checked during domain validation.
+- `status` (String) Status of the validation record.
 - `txt_name` (String) The hostname that the certificate authority (CA) will check for a TXT record during domain validation .
 - `txt_value` (String) The TXT record that the certificate authority (CA) will check during domain validation.
 

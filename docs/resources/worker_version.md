@@ -196,14 +196,23 @@ Available values: "eu", "fedramp".
 
 Optional:
 
-- `params` (List of String) Pass information from the Dispatch Worker to the Outbound Worker through the parameters.
+- `params` (Attributes List) Pass information from the Dispatch Worker to the Outbound Worker through the parameters. (see [below for nested schema](#nestedatt--bindings--outbound--params))
 - `worker` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound--worker))
+
+<a id="nestedatt--bindings--outbound--params"></a>
+### Nested Schema for `bindings.outbound.params`
+
+Required:
+
+- `name` (String) Name of the parameter.
+
 
 <a id="nestedatt--bindings--outbound--worker"></a>
 ### Nested Schema for `bindings.outbound.worker`
 
 Optional:
 
+- `entrypoint` (String) Entrypoint to invoke on the outbound worker.
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
