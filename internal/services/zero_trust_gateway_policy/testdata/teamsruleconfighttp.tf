@@ -2,7 +2,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"
-  precedence = 12305
+  precedence = %[3]d
   action = "allow"
   filters = ["http"]
   traffic = "any(http.request.uri.security_category[*] in {22}) or any(http.request.uri.content_category[*] in {34})"
