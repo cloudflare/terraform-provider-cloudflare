@@ -37,6 +37,7 @@ func (r *ZeroTrustTunnelCloudflaredResource) UpgradeState(ctx context.Context) m
 	targetSchema := ResourceSchema(ctx)
 
 	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing upgraders only
 		return map[int64]resource.StateUpgrader{
 			0: {
 				PriorSchema: &targetSchema,
@@ -46,6 +47,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) UpgradeState(ctx context.Context) m
 			},
 		}
 	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
+	sourceSchema = v500.SourceTunnelCloudflaredSchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
