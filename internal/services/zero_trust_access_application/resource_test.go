@@ -2019,9 +2019,9 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{
-						knownvalue.StringExact("ccc"),
-						knownvalue.StringExact("aaa"),
-						knownvalue.StringExact("bbb"),
+						knownvalue.StringExact(fmt.Sprintf("%s-ccc", rnd)),
+						knownvalue.StringExact(fmt.Sprintf("%s-aaa", rnd)),
+						knownvalue.StringExact(fmt.Sprintf("%s-bbb", rnd)),
 					})),
 				},
 			},
