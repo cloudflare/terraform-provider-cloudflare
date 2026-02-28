@@ -42,16 +42,21 @@ func testSweepCloudflareCertificatePack(r string) error {
 		return nil
 	}
 
-	certificates, err := client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
+	iter := client.SSL.CertificatePacks.ListAutoPaging(ctx, ssl.CertificatePackListParams{
 		ZoneID: cloudflare.F(zoneID),
+		Status: cloudflare.F(ssl.CertificatePackListParamsStatusAll),
 	})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch certificate packs: %s", err))
-		return nil
-	}
 
-	for _, certificate := range certificates.Result {
-		if !utils.ShouldSweepResource(certificate.ID) {
+	for iter.Next() {
+		certificate := iter.Current()
+
+		// Certificate pack IDs are UUIDs, not prefixed names, so we can't use
+		// ShouldSweepResource. Instead, sweep all advanced packs (the type tests
+		// create) that are not already being deleted.
+		if certificate.Type != ssl.CertificatePackListResponseTypeAdvanced {
+			continue
+		}
+		if certificate.Status == ssl.StatusDeleted || certificate.Status == ssl.StatusPendingDeletion {
 			continue
 		}
 
@@ -62,6 +67,10 @@ func testSweepCloudflareCertificatePack(r string) error {
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete certificate pack %s: %s", certificate.ID, err))
 		}
+	}
+
+	if err := iter.Err(); err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch certificate packs: %s", err))
 	}
 
 	return nil
