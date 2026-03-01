@@ -55,7 +55,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	NotificationEmail  types.String                                                                 `tfsdk:"notification_email" json:"notification_email,computed"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolsNotificationFilterDataSourceModel] `tfsdk:"notification_filter" json:"notification_filter,computed"`
 	OriginSteering     customfield.NestedObject[LoadBalancerPoolsOriginSteeringDataSourceModel]     `tfsdk:"origin_steering" json:"origin_steering,computed"`
-	Origins            customfield.NestedObjectList[LoadBalancerPoolsOriginsDataSourceModel]        `tfsdk:"origins" json:"origins,computed"`
+	Origins            customfield.NestedObjectSet[LoadBalancerPoolsOriginsDataSourceModel]         `tfsdk:"origins" json:"origins,computed"`
 }
 
 type LoadBalancerPoolsLoadSheddingDataSourceModel struct {

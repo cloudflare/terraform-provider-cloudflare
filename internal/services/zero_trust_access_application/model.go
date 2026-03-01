@@ -33,7 +33,7 @@ type ZeroTrustAccessApplicationModel struct {
 	SameSiteCookieAttribute     types.String                                                               `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,optional"`
 	ServiceAuth401Redirect      types.Bool                                                                 `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect,optional"`
 	SkipInterstitial            types.Bool                                                                 `tfsdk:"skip_interstitial" json:"skip_interstitial,optional"`
-	Type                        types.String                                                               `tfsdk:"type" json:"type,optional"`
+	Type                        types.String                                                               `tfsdk:"type" json:"type,computed_optional"`
 	AllowedIdPs                 *[]types.String                                                            `tfsdk:"allowed_idps" json:"allowed_idps,optional"`
 	CustomPages                 *[]types.String                                                            `tfsdk:"custom_pages" json:"custom_pages,optional"`
 	CORSHeaders                 *ZeroTrustAccessApplicationCORSHeadersModel                                `tfsdk:"cors_headers" json:"cors_headers,optional"`
@@ -47,7 +47,7 @@ type ZeroTrustAccessApplicationModel struct {
 	PathCookieAttribute         types.Bool                                                                 `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,optional"`
 	SessionDuration             types.String                                                               `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	SkipAppLauncherLoginPage    types.Bool                                                                 `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page,computed_optional"`
-	SelfHostedDomains           customfield.List[types.String]                                             `tfsdk:"self_hosted_domains" json:"self_hosted_domains,computed_optional"`
+	SelfHostedDomains           customfield.Set[types.String]                                              `tfsdk:"self_hosted_domains" json:"self_hosted_domains,computed_optional"`
 	Tags                        customfield.Set[types.String]                                              `tfsdk:"tags" json:"tags,optional"`
 	Destinations                customfield.NestedObjectList[ZeroTrustAccessApplicationDestinationsModel]  `tfsdk:"destinations" json:"destinations,computed_optional"`
 	LandingPageDesign           customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel] `tfsdk:"landing_page_design" json:"landing_page_design,optional"`
@@ -351,11 +351,17 @@ type ZeroTrustAccessApplicationPoliciesIncludeLinkedAppTokenModel struct {
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesModel struct {
 	SSH *ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel `tfsdk:"ssh" json:"ssh,optional"`
+	RDP *ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel `tfsdk:"rdp" json:"rdp,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel struct {
 	Usernames       *[]types.String `tfsdk:"usernames" json:"usernames,required"`
 	AllowEmailAlias types.Bool      `tfsdk:"allow_email_alias" json:"allow_email_alias,optional"`
+}
+
+type ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,optional"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesExcludeModel struct {

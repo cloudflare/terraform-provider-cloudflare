@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -105,6 +106,42 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"email_list_uuid": schema.StringAttribute{
 							Description: "The UUID of an re-usable email list.",
 							Computed:    true,
+						},
+					},
+				},
+			},
+			"connection_rules": schema.SingleNestedAttribute{
+				Description: "The rules that define how users may connect to targets secured by your application.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"rdp": schema.SingleNestedAttribute{
+						Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesRDPDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",
+								Computed:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"allowed_clipboard_remote_to_local_formats": schema.ListAttribute{
+								Description: "Clipboard formats allowed when copying from remote RDP session to local machine.",
+								Computed:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("text"),
+									),
+								},
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
 						},
 					},
 				},
@@ -674,6 +711,36 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+					},
+				},
+			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyMfaConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "Lists the MFA methods that users can authenticate with.",
+						Computed:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"totp",
+									"biometrics",
+									"security_key",
+								),
+							),
+						},
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"mfa_bypass": schema.BoolAttribute{
+						Description: "Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.",
+						Computed:    true,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
+						Computed:    true,
 					},
 				},
 			},

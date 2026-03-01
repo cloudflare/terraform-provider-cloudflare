@@ -5,24 +5,28 @@ package zero_trust_dlp_custom_profile
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPCustomProfileResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The id of the profile (uuid).",
@@ -43,19 +47,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
 				Optional:           true,
+				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
+				Default: objectdefault.StaticValue(types.ObjectValueMust(
+					map[string]attr.Type{
+						"enabled": types.BoolType,
+						"skip": types.ObjectType{AttrTypes: map[string]attr.Type{
+							"files": types.BoolType,
+						}},
+					},
+					map[string]attr.Value{
+						"enabled": types.BoolValue(false),
+						"skip": types.ObjectValueMust(
+							map[string]attr.Type{"files": types.BoolType},
+							map[string]attr.Value{"files": types.BoolValue(false)},
+						),
+					},
+				)),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
-						Required:    true,
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"skip": schema.SingleNestedAttribute{
 						Description: "Content types to exclude from context analysis and return all matches.",
-						Required:    true,
+						Optional:    true,
+						Computed:    true,
+						Default: objectdefault.StaticValue(types.ObjectValueMust(
+							map[string]attr.Type{"files": types.BoolType},
+							map[string]attr.Value{"files": types.BoolValue(false)},
+						)),
 						Attributes: map[string]schema.Attribute{
 							"files": schema.BoolAttribute{
 								Description: "If the content type is a file, skip context analysis and return all matches.",
-								Required:    true,
+								Optional:    true,
+								Computed:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -91,6 +120,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
+						},
+						"description": schema.StringAttribute{
+							Optional: true,
 						},
 					},
 				},

@@ -1,11 +1,11 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 package workers_script
 
 import (
 	"context"
+	"os"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -13,14 +13,80 @@ import (
 )
 
 var _ resource.ResourceWithUpgradeState = (*WorkersScriptResource)(nil)
+var _ resource.ResourceWithMoveState = (*WorkersScriptResource)(nil)
 
-func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{
-		0: {
-			PriorSchema:   resourceSchemaV0(ctx),
-			StateUpgrader: upgradeStateFromV0,
+// MoveState handles moves from cloudflare_worker_script (v4 singular) to
+// cloudflare_workers_script (v5 plural).
+// This is triggered when users use the `moved` block (Terraform 1.8+):
+//
+//	moved {
+//	    from = cloudflare_worker_script.example
+//	    to   = cloudflare_workers_script.example
+//	}
+func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateMover {
+	sourceSchema := v500.SourceWorkerScriptSchema()
+	return []resource.StateMover{
+		{
+			SourceSchema: &sourceSchema,
+			StateMover:   v500.MoveState,
 		},
 	}
+}
+
+// UpgradeState registers state upgraders for schema version changes.
+//
+// v5 uses GetSchemaVersion(2, 500). Upgrade paths:
+//
+// Version 0 (AMBIGUOUS — both V4 and V5 used version 0):
+//   - Path B: V4 cloudflare_workers_script (plural) at schema_version=0 → full V4→V5 transform
+//   - Path C: V5 cloudflare_workers_script at version=0 (before run_worker_first) → run_worker_first upgrade
+//   - Detection: V4 has "name" field, V5 has "script_name" — mutually exclusive
+//   - PriorSchema uses ListNestedAttribute for placement to accept both V4 arrays and V5 null
+//
+// Version 1:
+//   - Path D: V5 state after run_worker_first upgrade or tf-migrate output → no-op
+func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	targetSchema := ResourceSchema(ctx)
+
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve pre-existing upgraders only
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema:   resourceSchemaV0(ctx),
+				StateUpgrader: upgradeStateFromV0,
+			},
+			1: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
+	unionSchema := v500.UnionV0Schema(ResourceSchema, ctx)
+	return map[int64]resource.StateUpgrader{
+		// Version 0: V4 state OR V5 state before run_worker_first change
+		// Uses union schema with ListNestedAttribute for placement to handle both formats
+		// For V5 state, delegates to upgradeStateFromV0 (run_worker_first bool→dynamic)
+		0: {
+			PriorSchema:   unionSchema,
+			StateUpgrader: v500.UpgradeFromV0,
+		},
+		// Version 1: V5 state after run_worker_first change or tf-migrate output — no-op
+		1: {
+			PriorSchema:   &targetSchema,
+			StateUpgrader: v500.UpgradeFromV1,
+		},
+	}
+}
+
+func init() {
+	// Register functions so the v500 handler can call them for V5 state at version 0
+	// (Path C) without circular imports.
+	v500.UpgradeV5FromV0 = upgradeStateFromV0
+	v500.V5SchemaV0 = resourceSchemaV0
 }
 
 // The schema is identical to the schema in schema.go, except the version is 0

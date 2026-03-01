@@ -1,16 +1,16 @@
 resource "cloudflare_zero_trust_access_tag" "tag_ccc_%[1]s" {
   account_id = "%[3]s"
-  name       = "ccc"
+  name       = "%[1]s-ccc"
 }
 
 resource "cloudflare_zero_trust_access_tag" "tag_aaa_%[1]s" {
   account_id = "%[3]s"
-  name       = "aaa"
+  name       = "%[1]s-aaa"
 }
 
 resource "cloudflare_zero_trust_access_tag" "tag_bbb_%[1]s" {
   account_id = "%[3]s"
-  name       = "bbb"
+  name       = "%[1]s-bbb"
 }
 
 resource "cloudflare_zero_trust_access_application" "%[1]s" {

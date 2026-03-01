@@ -45,7 +45,7 @@ func setDefaultAccordingToAppType[T attr.Value](wantAppType string, gotAppType s
 func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAccessApplicationModel) {
 	appType := planApp.Type.ValueString()
 
-	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.SelfHostedDomains, customfield.UnknownList[types.String](ctx), customfield.NullList[types.String](ctx))
+	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.SelfHostedDomains, customfield.UnknownSet[types.String](ctx), customfield.NullSet[types.String](ctx))
 	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.Destinations, customfield.UnknownObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx), customfield.NullObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx))
 
 	// A self_hosted_app's 'domain', 'self_hosted_domains', and 'destinations' are all tied together in the API.
@@ -60,7 +60,7 @@ func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAcces
 			planApp.Domain = types.StringUnknown()
 		}
 		if planApp.SelfHostedDomains.IsNull() {
-			planApp.SelfHostedDomains = customfield.UnknownList[types.String](ctx)
+			planApp.SelfHostedDomains = customfield.UnknownSet[types.String](ctx)
 		}
 		if planApp.Destinations.IsNull() {
 			planApp.Destinations = customfield.UnknownObjectList[ZeroTrustAccessApplicationDestinationsModel](ctx)

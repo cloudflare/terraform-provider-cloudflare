@@ -24,6 +24,8 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	AutoRedirectToIdentity                 types.Bool                                                                `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
 	DenyUnmatchedRequests                  types.Bool                                                                `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,computed"`
 	IsUIReadOnly                           types.Bool                                                                `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed"`
+	MfaConfigurationAllowed                types.Bool                                                                `tfsdk:"mfa_configuration_allowed" json:"mfa_configuration_allowed,computed"`
+	MfaRequiredForAllApps                  types.Bool                                                                `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed"`
 	Name                                   types.String                                                              `tfsdk:"name" json:"name,computed"`
 	SessionDuration                        types.String                                                              `tfsdk:"session_duration" json:"session_duration,computed"`
 	UIReadOnlyToggleReason                 types.String                                                              `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed"`
@@ -32,6 +34,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	DenyUnmatchedRequestsExemptedZoneNames customfield.List[types.String]                                            `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,computed"`
 	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel] `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel] `tfsdk:"login_design" json:"login_design,computed"`
+	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]   `tfsdk:"mfa_config" json:"mfa_config,computed"`
 }
 
 func (m *ZeroTrustOrganizationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
@@ -57,4 +60,9 @@ type ZeroTrustOrganizationLoginDesignDataSourceModel struct {
 	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed"`
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed"`
 	TextColor       types.String `tfsdk:"text_color" json:"text_color,computed"`
+}
+
+type ZeroTrustOrganizationMfaConfigDataSourceModel struct {
+	AllowedAuthenticators customfield.List[types.String] `tfsdk:"allowed_authenticators" json:"allowed_authenticators,computed"`
+	SessionDuration       types.String                   `tfsdk:"session_duration" json:"session_duration,computed"`
 }

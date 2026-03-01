@@ -38,7 +38,6 @@ resource "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_
 ### Required
 
 - `account_id` (String)
-- `name` (String) The name of the device posture rule.
 - `type` (String) The type of device posture rule.
 Available values: "file", "application", "tanium", "gateway", "warp", "disk_encryption", "serial_number", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "antivirus", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s", "custom_s2s".
 
@@ -48,6 +47,7 @@ Available values: "file", "application", "tanium", "gateway", "warp", "disk_encr
 - `expiration` (String) Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.
 - `input` (Attributes) The value to be checked against. (see [below for nested schema](#nestedatt--input))
 - `match` (Attributes List) The conditions that the client must match to run the rule. (see [below for nested schema](#nestedatt--match))
+- `name` (String) The name of the device posture rule.
 - `schedule` (String) Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.
 
 ### Read-Only

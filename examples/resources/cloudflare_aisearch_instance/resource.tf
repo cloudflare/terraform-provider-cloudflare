@@ -13,6 +13,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     field_name = "x"
   }]
   embedding_model = "@cf/qwen/qwen3-embedding-0.6b"
+  fusion_method = "max"
   hybrid_search_enabled = true
   max_num_results = 1
   metadata = {
@@ -26,6 +27,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     }
     enabled = true
     mcp = {
+      description = "description"
       disabled = true
     }
     rate_limit = {
@@ -39,6 +41,9 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   }
   reranking = true
   reranking_model = "@cf/baai/bge-reranker-base"
+  retrieval_options = {
+    keyword_match_mode = "exact_match"
+  }
   rewrite_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
   rewrite_query = true
   score_threshold = 0

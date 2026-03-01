@@ -48,6 +48,7 @@ type ZeroTrustDLPPredefinedProfileEntriesDataSourceModel struct {
 	Pattern       customfield.NestedObject[ZeroTrustDLPPredefinedProfileEntriesPatternDataSourceModel]    `tfsdk:"pattern" json:"pattern,computed"`
 	Type          types.String                                                                            `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                                       `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Description   types.String                                                                            `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                            `tfsdk:"profile_id" json:"profile_id,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPPredefinedProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPPredefinedProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`

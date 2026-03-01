@@ -14,19 +14,20 @@ type CertificatePackResultEnvelope struct {
 }
 
 type CertificatePackModel struct {
-	ID                   types.String                                                        `tfsdk:"id" json:"id,computed"`
-	ZoneID               types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
-	CertificateAuthority types.String                                                        `tfsdk:"certificate_authority" json:"certificate_authority,required"`
-	Type                 types.String                                                        `tfsdk:"type" json:"type,required"`
-	ValidationMethod     types.String                                                        `tfsdk:"validation_method" json:"validation_method,required"`
-	ValidityDays         types.Int64                                                         `tfsdk:"validity_days" json:"validity_days,required"`
-	CloudflareBranding   types.Bool                                                          `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
-	Hosts                customfield.Set[types.String]                                       `tfsdk:"hosts" json:"hosts,computed_optional"`
-	PrimaryCertificate   types.String                                                        `tfsdk:"primary_certificate" json:"primary_certificate,computed"`
-	Status               types.String                                                        `tfsdk:"status" json:"status,computed"`
-	Certificates         customfield.NestedObjectList[CertificatePackCertificatesModel]      `tfsdk:"certificates" json:"certificates,computed"`
-	ValidationErrors     customfield.NestedObjectList[CertificatePackValidationErrorsModel]  `tfsdk:"validation_errors" json:"validation_errors,computed"`
-	ValidationRecords    customfield.NestedObjectList[CertificatePackValidationRecordsModel] `tfsdk:"validation_records" json:"validation_records,computed"`
+	ID                   types.String                                                           `tfsdk:"id" json:"id,computed"`
+	ZoneID               types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	CertificateAuthority types.String                                                           `tfsdk:"certificate_authority" json:"certificate_authority,required"`
+	Type                 types.String                                                           `tfsdk:"type" json:"type,required"`
+	ValidationMethod     types.String                                                           `tfsdk:"validation_method" json:"validation_method,required"`
+	ValidityDays         types.Int64                                                            `tfsdk:"validity_days" json:"validity_days,required"`
+	CloudflareBranding   types.Bool                                                             `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
+	Hosts                customfield.Set[types.String]                                          `tfsdk:"hosts" json:"hosts,computed_optional"`
+	PrimaryCertificate   types.String                                                           `tfsdk:"primary_certificate" json:"primary_certificate,computed"`
+	Status               types.String                                                           `tfsdk:"status" json:"status,computed"`
+	Certificates         customfield.NestedObjectList[CertificatePackCertificatesModel]         `tfsdk:"certificates" json:"certificates,computed"`
+	DCVDelegationRecords customfield.NestedObjectList[CertificatePackDCVDelegationRecordsModel] `tfsdk:"dcv_delegation_records" json:"dcv_delegation_records,computed"`
+	ValidationErrors     customfield.NestedObjectList[CertificatePackValidationErrorsModel]     `tfsdk:"validation_errors" json:"validation_errors,computed"`
+	ValidationRecords    customfield.NestedObjectList[CertificatePackValidationRecordsModel]    `tfsdk:"validation_records" json:"validation_records,computed"`
 }
 
 func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {
@@ -56,14 +57,28 @@ type CertificatePackCertificatesGeoRestrictionsModel struct {
 	Label types.String `tfsdk:"label" json:"label,computed"`
 }
 
+type CertificatePackDCVDelegationRecordsModel struct {
+	CNAME       types.String                   `tfsdk:"cname" json:"cname,computed"`
+	CNAMETarget types.String                   `tfsdk:"cname_target" json:"cname_target,computed"`
+	Emails      customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody    types.String                   `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL     types.String                   `tfsdk:"http_url" json:"http_url,computed"`
+	Status      types.String                   `tfsdk:"status" json:"status,computed"`
+	TXTName     types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue    types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
+}
+
 type CertificatePackValidationErrorsModel struct {
 	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type CertificatePackValidationRecordsModel struct {
-	Emails   customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
-	HTTPBody types.String                   `tfsdk:"http_body" json:"http_body,computed"`
-	HTTPURL  types.String                   `tfsdk:"http_url" json:"http_url,computed"`
-	TXTName  types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
-	TXTValue types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
+	CNAME       types.String                   `tfsdk:"cname" json:"cname,computed"`
+	CNAMETarget types.String                   `tfsdk:"cname_target" json:"cname_target,computed"`
+	Emails      customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody    types.String                   `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL     types.String                   `tfsdk:"http_url" json:"http_url,computed"`
+	Status      types.String                   `tfsdk:"status" json:"status,computed"`
+	TXTName     types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue    types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
 }

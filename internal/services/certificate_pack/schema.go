@@ -102,9 +102,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of certificate pack.\nAvailable values: \"initializing\", \"pending_validation\", \"deleted\", \"pending_issuance\", \"pending_deployment\", \"pending_deletion\", \"pending_expiration\", \"expired\", \"active\", \"initializing_timed_out\", \"validation_timed_out\", \"issuance_timed_out\", \"deployment_timed_out\", \"deletion_timed_out\", \"pending_cleanup\", \"staging_deployment\", \"staging_active\", \"deactivating\", \"inactive\", \"backup_issued\", \"holding_deployment\".",
-				Computed:    true,
-			PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Description:   "Status of certificate pack.\nAvailable values: \"initializing\", \"pending_validation\", \"deleted\", \"pending_issuance\", \"pending_deployment\", \"pending_deletion\", \"pending_expiration\", \"expired\", \"active\", \"initializing_timed_out\", \"validation_timed_out\", \"issuance_timed_out\", \"deployment_timed_out\", \"deletion_timed_out\", \"pending_cleanup\", \"staging_deployment\", \"staging_active\", \"deactivating\", \"inactive\", \"backup_issued\", \"holding_deployment\".",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -208,6 +208,52 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"dcv_delegation_records": schema.ListNestedAttribute{
+				Description: "DCV Delegation records for domain validation.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[CertificatePackDCVDelegationRecordsModel](ctx),
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.UseStateForUnknown(),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"cname": schema.StringAttribute{
+							Description: "The CNAME record hostname for DCV delegation.",
+							Computed:    true,
+						},
+						"cname_target": schema.StringAttribute{
+							Description: "The CNAME record target value for DCV delegation.",
+							Computed:    true,
+						},
+						"emails": schema.ListAttribute{
+							Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"http_body": schema.StringAttribute{
+							Description: "The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.",
+							Computed:    true,
+						},
+						"http_url": schema.StringAttribute{
+							Description: "The url that will be checked during domain validation.",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "Status of the validation record.",
+							Computed:    true,
+						},
+						"txt_name": schema.StringAttribute{
+							Description: "The hostname that the certificate authority (CA) will check for a TXT record during domain validation .",
+							Computed:    true,
+						},
+						"txt_value": schema.StringAttribute{
+							Description: "The TXT record that the certificate authority (CA) will check during domain validation.",
+							Computed:    true,
+						},
+					},
+				},
+			},
 			"validation_errors": schema.ListNestedAttribute{
 				Description:   "Domain validation errors that have been received by the certificate authority (CA).",
 				Computed:      true,
@@ -229,6 +275,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"cname": schema.StringAttribute{
+							Description: "The CNAME record hostname for DCV delegation.",
+							Computed:    true,
+						},
+						"cname_target": schema.StringAttribute{
+							Description: "The CNAME record target value for DCV delegation.",
+							Computed:    true,
+						},
 						"emails": schema.ListAttribute{
 							Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
 							Computed:    true,
@@ -241,6 +295,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"http_url": schema.StringAttribute{
 							Description: "The url that will be checked during domain validation.",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "Status of the validation record.",
 							Computed:    true,
 						},
 						"txt_name": schema.StringAttribute{

@@ -28,26 +28,26 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 
 ### Required
 
-- `rules` (Attributes List) A list of snippet rules. (see [below for nested schema](#nestedatt--rules))
-- `zone_id` (String) The unique ID of the zone.
+- `rules` (Attributes List) Lists snippet rules. (see [below for nested schema](#nestedatt--rules))
+- `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 
 Required:
 
-- `expression` (String) The expression defining which traffic will match the rule.
-- `snippet_name` (String) The identifying name of the snippet.
+- `expression` (String) Define the expression that determines which traffic matches the rule.
+- `snippet_name` (String) Identify the snippet.
 
 Optional:
 
-- `description` (String) An informative description of the rule.
-- `enabled` (Boolean) Whether the rule should be executed.
+- `description` (String) Provide an informative description of the rule.
+- `enabled` (Boolean) Indicate whether to execute the rule.
 
 Read-Only:
 
-- `id` (String) The unique ID of the rule.
-- `last_updated` (String) The timestamp of when the rule was last modified.
+- `id` (String) Specify the unique ID of the rule.
+- `last_updated` (String) Specify the timestamp of when the rule was last modified.
 
 ## Import
 

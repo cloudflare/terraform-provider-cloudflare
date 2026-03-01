@@ -5,6 +5,7 @@ package authenticated_origin_pulls_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -19,7 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*AuthenticatedOriginPullsCertific
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -57,6 +58,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"serial_number": schema.StringAttribute{
+				Description: "The serial number on the uploaded certificate.",
 				Computed:    true,
 			},
 			"signature": schema.StringAttribute{

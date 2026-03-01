@@ -17,14 +17,16 @@ type QueueConsumerResultDataSourceEnvelope struct {
 }
 
 type QueueConsumerDataSourceModel struct {
-	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
-	ConsumerID types.String                                                   `tfsdk:"consumer_id" json:"consumer_id,computed"`
-	QueueID    types.String                                                   `tfsdk:"queue_id" path:"queue_id,required"`
-	CreatedOn  types.String                                                   `tfsdk:"created_on" json:"created_on,computed"`
-	Script     types.String                                                   `tfsdk:"script" json:"script,computed"`
-	ScriptName types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
-	Type       types.String                                                   `tfsdk:"type" json:"type,computed"`
-	Settings   customfield.NestedObject[QueueConsumerSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
+	AccountID       types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	ConsumerID      types.String                                                   `tfsdk:"consumer_id" json:"consumer_id,computed"`
+	QueueID         types.String                                                   `tfsdk:"queue_id" path:"queue_id,required"`
+	CreatedOn       types.String                                                   `tfsdk:"created_on" json:"created_on,computed"`
+	DeadLetterQueue types.String                                                   `tfsdk:"dead_letter_queue" json:"dead_letter_queue,computed"`
+	QueueName       types.String                                                   `tfsdk:"queue_name" json:"queue_name,computed"`
+	Script          types.String                                                   `tfsdk:"script" json:"script,computed"`
+	ScriptName      types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
+	Type            types.String                                                   `tfsdk:"type" json:"type,computed"`
+	Settings        customfield.NestedObject[QueueConsumerSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 }
 
 func (m *QueueConsumerDataSourceModel) toReadParams(_ context.Context) (params queues.ConsumerGetParams, diags diag.Diagnostics) {
