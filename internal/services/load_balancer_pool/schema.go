@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -44,13 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
 				Required:    true,
 			},
-			"origins": schema.SetNestedAttribute{
+			"origins": schema.ListNestedAttribute{
 				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
-					PlanModifiers: []planmodifier.Object{
-						objectplanmodifier.UseStateForUnknown(),
-					},
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
