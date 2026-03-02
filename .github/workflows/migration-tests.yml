@@ -4,6 +4,9 @@ concurrency:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "release-please**"
 
 env:
   CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
@@ -12,7 +15,6 @@ env:
   CLOUDFLARE_DOMAIN: terraform.cfapi.net
   CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
   TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-  TF_MIG_TEST: true
   TF_ACC: 1
   LAST_V4_VERSION: "4.52.5"
 jobs:
