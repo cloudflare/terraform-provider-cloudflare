@@ -25,6 +25,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"app_id": schema.StringAttribute{
 				Description:   "A Cloudflare-generated unique identifier for a item.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

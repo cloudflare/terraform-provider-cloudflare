@@ -14,7 +14,7 @@ type CallsSFUAppResultEnvelope struct {
 
 type CallsSFUAppModel struct {
 	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
-	AppID     types.String      `tfsdk:"app_id" path:"app_id,optional"`
+	AppID     types.String      `tfsdk:"app_id" path:"app_id,optional" json:"app_id,computed"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
