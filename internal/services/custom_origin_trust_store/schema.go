@@ -5,6 +5,7 @@ package custom_origin_trust_store
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -32,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"certificate": schema.StringAttribute{
 				Description:   "The zone's SSL certificate or certificate and the intermediate(s).",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{utils.RequiresReplaceIfNotCertificateSemantic()},
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate expires.",
