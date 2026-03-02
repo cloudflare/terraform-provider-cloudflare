@@ -21,7 +21,7 @@ var _ resource.ResourceWithUpgradeState = (*AccessRuleResource)(nil)
 // 2. v5 state (version=1) -> v5 (version=500): No-op upgrade
 //   - Just bumps version number, no transformation
 //
-// The separation of schema versions (v4=1, v5=1/500) with GetSchemaVersion
+// The separation of schema versions (v4=1, v5=1/500) with schema version
 // allows controlled rollout and eliminates dual-format detection issues.
 func (r *AccessRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)

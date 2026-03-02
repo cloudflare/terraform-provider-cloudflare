@@ -18,7 +18,7 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerResource)(nil)
 // 2. v5 state (version=1) -> v5 (version=500): No-op upgrade
 //    - Just bumps the version, no transformation needed
 //
-// The separation of schema versions (v4=1, v5=1/500) with GetSchemaVersion allows
+// The separation of schema versions (v4=1, v5=1/500) with schema version allows
 // controlled rollout: migrations are dormant in production (version=1) until enabled
 func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)

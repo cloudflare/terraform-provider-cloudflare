@@ -96,7 +96,7 @@ func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target 
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered (GetSchemaVersion returns 500).
+// This handler is only triggered.
 //
 // Version 1 is the "dormant" state for v5 resources before migration activation.
 // No transformation is needed because v5 schema hasn't changed, just the version number.

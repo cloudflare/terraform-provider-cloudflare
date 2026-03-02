@@ -11,7 +11,7 @@ var _ resource.ResourceWithUpgradeState = (*SnippetRulesResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// v4 snippet_rules had schema_version=1. v5 uses GetSchemaVersion(2, 500).
+// v4 snippet_rules had schema_version=1. v5 uses 500.
 //
 // Upgrade paths:
 // 1. v5 state (version=0) → current: No-op (existing v5 users before migration was added)

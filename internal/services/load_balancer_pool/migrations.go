@@ -14,7 +14,7 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerPoolResource)(nil)
 //
 // Schema version history:
 // - v4 (SDKv2): schema_version=0 (implicit, no explicit version set)
-// - v5: schema_version=0→500 (controlled rollout via GetSchemaVersion)
+// - v5: schema_version=0→500 (controlled rollout via schema version)
 //
 // This handles migration from:
 // 1. Legacy v4 SDKv2 provider (schema_version=0) → v5 Plugin Framework (schema_version=500)

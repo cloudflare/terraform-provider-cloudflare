@@ -24,7 +24,7 @@ func (r *WorkersRouteResource) MoveState(ctx context.Context) []resource.StateMo
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// v5 uses GetSchemaVersion(2, 500). Upgrade paths:
+// v5 uses 500. Upgrade paths:
 //
 // Version 0 (both V4 and V5 used version 0):
 //   - V4 state: has "script_name" → rename to "script"

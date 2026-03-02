@@ -18,8 +18,8 @@ var _ resource.ResourceWithUpgradeState = (*QueueConsumerResource)(nil)
 //
 // Version history:
 //   - 0: Original v5 state (before schema versioning was applied)
-//   - 1: Dormant production version (GetSchemaVersion returns 1 normally)
-//   - 500: Active migration version (GetSchemaVersion returns 500)
+//   - 1: Dormant production version (schema version returns 1 normally)
+//   - 500: Active migration version
 func (r *QueueConsumerResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 

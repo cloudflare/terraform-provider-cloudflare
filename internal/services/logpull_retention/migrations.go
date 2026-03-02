@@ -24,7 +24,7 @@ func (r *LogpullRetentionResource) UpgradeState(ctx context.Context) map[int64]r
 	v4Schema := v500.SourceCloudflareLogpullRetentionSchema()
 
 	// For version 1 upgrader, use the current v5 schema but override version to 1
-	// This is necessary because GetSchemaVersion returns 500,
+	// This is necessary because schema version returns 500,
 	// but we need PriorSchema to match the state version being upgraded (version 1)
 	v5SchemaVersion1 := ResourceSchema(ctx)
 	v5SchemaVersion1.Version = 1

@@ -24,7 +24,7 @@ func (r *ZeroTrustListResource) MoveState(ctx context.Context) []resource.StateM
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// v4 cloudflare_teams_list had schema_version=0. v5 uses GetSchemaVersion(2, 500).
+// v4 cloudflare_teams_list had schema_version=0. v5 uses 500.
 //
 // Upgrade paths:
 // 0: v4 state (schema_version=0) → merge items + items_with_description

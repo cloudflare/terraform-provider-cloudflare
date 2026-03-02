@@ -33,7 +33,7 @@ func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateM
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// v5 uses GetSchemaVersion(2, 500). Upgrade paths:
+// v5 uses 500. Upgrade paths:
 //
 // Version 0 (AMBIGUOUS — both V4 and V5 used version 0):
 //   - Path B: V4 cloudflare_workers_script (plural) at schema_version=0 → full V4→V5 transform

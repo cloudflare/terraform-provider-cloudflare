@@ -36,7 +36,7 @@ func (r *HealthcheckResource) UpgradeState(ctx context.Context) map[int64]resour
 
 		// Handle state from v5 Plugin Framework provider with version=1
 		// This is a no-op upgrade that just bumps the version to 500
-		// Only triggered (GetSchemaVersion returns 500)
+		// Only triggered
 		1: {
 			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV5,

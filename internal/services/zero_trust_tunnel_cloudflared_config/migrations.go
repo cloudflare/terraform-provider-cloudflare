@@ -35,8 +35,8 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) MoveState(ctx context.Context
 //
 // Version history:
 //   - 0: v4 SDKv2 state (full transformation needed)
-//   - 1: Dormant production v5 state (GetSchemaVersion returns 1 normally)
-//   - 500: Active migration version (GetSchemaVersion returns 500)
+//   - 1: Dormant production v5 state (schema version returns 1 normally)
+//   - 500: Active migration version
 func (r *ZeroTrustTunnelCloudflaredConfigResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 
 	// v4 schema for version=0 upgrader
