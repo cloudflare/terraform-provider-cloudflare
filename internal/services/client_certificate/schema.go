@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -33,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"csr": schema.StringAttribute{
 				Description:   "The Certificate Signing Request (CSR). Must be newline-encoded.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{utils.RequiresReplaceIfNotCSRSemantic()},
 			},
 			"validity_days": schema.Int64Attribute{
 				Description:   "The number of days the Client Certificate will be valid after the issued_on date",

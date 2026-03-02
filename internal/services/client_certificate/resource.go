@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/client_certificates"
@@ -91,6 +92,19 @@ func (r *ClientCertificateResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	data = &env.Result
+
+	// Normalize CSR to prevent drift from \r\n vs \n differences
+	var configData ClientCertificateModel
+	req.Plan.Get(ctx, &configData)
+
+	apiNormalized := strings.ReplaceAll(data.Csr.ValueString(), "\r\n", "\n")
+	apiNormalized = strings.TrimRight(apiNormalized, "\n")
+	configNormalized := strings.ReplaceAll(configData.Csr.ValueString(), "\r\n", "\n")
+	configNormalized = strings.TrimRight(configNormalized, "\n")
+
+	if apiNormalized == configNormalized {
+		data.Csr = configData.Csr
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -180,6 +194,19 @@ func (r *ClientCertificateResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	data = &env.Result
+
+	// Normalize CSR to prevent drift from \r\n vs \n differences
+	var stateData ClientCertificateModel
+	req.State.Get(ctx, &stateData)
+
+	apiNormalized := strings.ReplaceAll(data.Csr.ValueString(), "\r\n", "\n")
+	apiNormalized = strings.TrimRight(apiNormalized, "\n")
+	stateNormalized := strings.ReplaceAll(stateData.Csr.ValueString(), "\r\n", "\n")
+	stateNormalized = strings.TrimRight(stateNormalized, "\n")
+
+	if apiNormalized == stateNormalized {
+		data.Csr = stateData.Csr
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
