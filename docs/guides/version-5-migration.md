@@ -1,0 +1,1090 @@
+---
+layout: "cloudflare"
+page_title: "Migrating to Cloudflare Provider v5"
+description: Terraform Cloudflare Provider v5 Migration Guide
+---
+
+# Terraform Cloudflare Provider v5 Migration Guide
+
+This guide covers the recommended migration path to the latest version of the
+Cloudflare Terraform Provider v5. It applies whether you are coming from v4 or
+upgrading from an earlier v5 release.
+
+Starting with v5.19, the provider includes **automatic state upgraders** that
+handle Terraform state migration transparently. Combined with the
+[tf-migrate] CLI tool for HCL configuration changes, the migration process is
+significantly simpler than previous approaches.
+
+~> This guide supersedes the Grit-based migration instructions in the
+[version 5 upgrade guide]. You do **not** need Grit to migrate. The
+[version 5 upgrade guide] remains a useful reference for per-resource attribute
+change details if you prefer manual HCL changes.
+
+## Quick Reference
+
+| Your Current Version | What To Do |
+|---|---|
+| v4.x (not v4.52.5) | Upgrade to v4.52.5 first, then follow [Path A](#migration-path-a-from-v4-to-v5) |
+| v4.52.5 | Follow [Path A](#migration-path-a-from-v4-to-v5) |
+| v5.0 -- v5.16 | Follow [Path B: Users on v5.16 or earlier](#users-on-v516-or-earlier) |
+| v5.17 -- v5.18 | Follow [Path B: Users on v5.17 or v5.18](#users-on-v517-or-v518) |
+| v5.19+ | Normal minor version upgrade. No migration steps needed. |
+
+## Prerequisites
+
+Before starting the migration:
+
+- **Terraform 1.8+** is required if you use any
+  [renamed resources](#resource-rename-reference). The provider's `MoveState`
+  handlers require the `moved` block support introduced in Terraform 1.8. Using
+  an older version of Terraform with renamed resources will cause a panic.
+- **tf-migrate** -- Install the [tf-migrate] CLI tool for automatic HCL
+  configuration changes:
+
+  ```bash
+  git clone https://github.com/cloudflare/tf-migrate.git
+  cd tf-migrate
+  make
+  # Binary available at ./bin/tf-migrate
+  ```
+
+- **Back up** your Terraform state and configuration files. Use version control.
+- **Lock state** -- Ensure no concurrent Terraform operations are running.
+
+## Understanding the Migration
+
+There are three categories of changes between v4 and v5:
+
+1. **Attribute changes** -- Field renames, nesting changes, type changes
+   (e.g., `enabled` to `value`, flat attributes to nested objects). These
+   affect your HCL configuration files (`.tf`).
+
+2. **State schema changes** -- Internal state representation differences
+   between v4 (SDKv2) and v5 (Plugin Framework). These are handled
+   **automatically** by the provider's built-in state upgraders starting in
+   v5.19. No manual state file editing is required.
+
+3. **Resource renames** -- 40+ resources have new type names (e.g.,
+   `cloudflare_record` to `cloudflare_dns_record`). These require `moved`
+   blocks in HCL (Terraform 1.8+). 23 of these renamed resources include
+   `MoveState` handlers that automatically transform state during the move.
+   The remaining renamed resources require `terraform state rm` +
+   `terraform import`.
+
+### How It Works
+
+```
+ HCL Configuration ──> tf-migrate rewrites .tf files
+ State Migration   ──> Provider state upgraders (automatic on plan/apply)
+ Resource Renames  ──> moved blocks (Terraform 1.8+)
+```
+
+---
+
+## Migration Path A: From v4 to v5
+
+This path is for users currently on any v4 release.
+
+### Step 1: Upgrade to v4.52.5
+
+~> If you are on any v4 version earlier than v4.52.5, you **must** upgrade to
+v4.52.5 first. This ensures transitional state updates are applied before
+the v5 migration.
+
+```hcl
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "4.52.5"
+    }
+  }
+}
+```
+
+```bash
+terraform init -upgrade
+terraform plan   # Verify no unexpected changes
+terraform apply  # Apply any transitional state updates
+```
+
+### Step 2: Migrate HCL Configuration
+
+Use `tf-migrate` to automatically rewrite your `.tf` files for v5 compatibility.
+
+```bash
+# Preview changes without modifying files
+tf-migrate migrate --source-version v4 --target-version v5 --dry-run
+
+# Apply the migration (creates .bak backups by default)
+tf-migrate migrate --source-version v4 --target-version v5
+```
+
+For projects with `.tf` files in a specific directory:
+
+```bash
+tf-migrate migrate \
+  --config-dir ./terraform \
+  --source-version v4 \
+  --target-version v5
+```
+
+To migrate only specific resources:
+
+```bash
+tf-migrate migrate \
+  --resources dns_record,zero_trust_list \
+  --source-version v4 \
+  --target-version v5
+```
+
+~> If you manage `cloudflare_tunnel_route` resources, set your Cloudflare API
+credentials before running `tf-migrate`. The tunnel route migration requires
+an API call to resolve network CIDRs to route UUIDs:
+
+```bash
+export CLOUDFLARE_API_TOKEN="your-api-token"
+```
+
+**Manual alternative:** If you prefer to make HCL changes manually or
+`tf-migrate` does not fully cover your configuration (e.g., complex modules
+or dynamic blocks), refer to the [version 5 upgrade guide] for per-resource
+attribute change documentation.
+
+### Step 3: Update Provider Version
+
+```hcl
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 5.19.0"
+    }
+  }
+}
+```
+
+```bash
+terraform init -upgrade
+```
+
+On the next `terraform plan` or `terraform apply`, the provider's state
+upgraders will automatically migrate your state from v4 format to v5. This is
+transparent and requires no manual intervention.
+
+### Step 4: Handle Resource Renames
+
+`tf-migrate` handles resource renames automatically -- it rewrites resource
+types in your HCL and generates the corresponding `moved` blocks. If you ran
+`tf-migrate` in Step 2, no further action is needed. Proceed to Step 5.
+
+If you are migrating HCL manually (without `tf-migrate`), you need to add
+`moved` blocks so Terraform knows the renamed resource is the same object:
+
+```hcl
+moved {
+  from = cloudflare_record.example
+  to   = cloudflare_dns_record.example
+}
+
+moved {
+  from = cloudflare_tunnel.example
+  to   = cloudflare_zero_trust_tunnel_cloudflared.example
+}
+```
+
+The `moved` blocks can be removed after a successful `terraform apply`.
+
+For a complete list of resource renames, see the
+[resource rename reference](#resource-rename-reference) below.
+
+### Step 5: Verify
+
+```bash
+terraform plan
+```
+
+The first plan after migration will likely show changes. **This is expected.**
+The v5 provider's state upgraders handle the structural migration of your
+state, but some attributes cannot be fully reconciled until the provider reads
+the current values from the API. A single `terraform apply` resolves the
+majority of these.
+
+If you see unexpected resource **replacements** (destroy + create), check:
+
+- All renamed resources have corresponding `moved` blocks.
+- HCL attribute changes are complete (compare against the
+  [version 5 upgrade guide] if needed).
+
+```bash
+terraform apply
+```
+
+After `terraform apply`, run `terraform plan` again. The plan should now show
+**no changes**, or only the
+[perpetual computed field differences](#perpetual-computed-field-differences)
+listed below.
+
+For a detailed breakdown of what to expect on the first plan and what persists
+after apply, see
+[Expected Plan Changes After Migration](#expected-plan-changes-after-migration).
+
+---
+
+## Expected Plan Changes After Migration
+
+After completing the migration steps, the first `terraform plan` will show
+changes across several categories. All of these are expected and benign --
+they reflect differences between the v4 and v5 provider internals, not actual
+infrastructure changes.
+
+### One-Time Changes (Resolve After First Apply)
+
+These changes appear on the first `terraform plan` after migration but
+disappear after a single `terraform apply`.
+
+#### Computed value refreshes
+
+The most common category. Many read-only attributes show
+`(known after apply)` because the v5 provider defines them differently than
+v4. The provider needs to re-read these values from the API.
+
+```
++ warning_status = (known after apply)
++ deleted_at     = (known after apply)
+~ version        = 28 -> (known after apply)
+~ created_at     = "2025-12-16T17:36:32Z" -> (known after apply)
+```
+
+These affect most resources and can account for hundreds of attribute
+changes. They are harmless and resolve completely after apply.
+
+#### State upgrader gaps
+
+The v5 provider's state upgraders cannot carry forward every field from v4
+state. These attributes exist in your HCL or in the API but are missing from
+the migrated state until the provider refreshes them:
+
+| Resource | Attributes | Details |
+|---|---|---|
+| `cloudflare_r2_bucket` | `jurisdiction` | v5 adds `jurisdiction = "default"` to all R2 buckets. Not present in v4 state. |
+| `cloudflare_zero_trust_access_identity_provider` | `support_groups`, `conditional_access_enabled` | Azure/OIDC fields not carried forward by the state upgrader. |
+| `cloudflare_zero_trust_access_identity_provider` | `idp_public_certs` | SAML providers: v4 `idp_public_cert` (string) becomes `idp_public_certs` (list) in v5. The state upgrader does not transform this. |
+
+#### Resource creation from splits
+
+Some v4 resources split into multiple v5 resources. The new resources must be
+created on the first apply:
+
+| v4 Resource | New v5 Resource Created | Why |
+|---|---|---|
+| `cloudflare_argo` | `cloudflare_argo_tiered_caching` | v4 `cloudflare_argo` managed both smart routing and tiered caching. v5 splits them. The `cloudflare_argo_smart_routing` resource inherits the state via `moved`, but `cloudflare_argo_tiered_caching` must be created fresh. |
+| `cloudflare_tiered_cache` (with `cache_type = "generic"`) | `cloudflare_argo_tiered_caching` | Similar split. The `cloudflare_tiered_cache` resource retains its state, but the companion `cloudflare_argo_tiered_caching` resource must be created. |
+
+#### Precedence normalization
+
+`cloudflare_zero_trust_gateway_policy` resources will show precedence values
+changing from large internal values to the user-facing values:
+
+```
+~ precedence = 1400392 -> 1400
+```
+
+This is a one-time normalization applied by the state upgrader.
+
+#### IP CIDR normalization
+
+`cloudflare_list` resources with IP items may show CIDR notation being
+stripped (e.g., `10.0.0.0/8` to `10.0.0.0` with the comment updated) to
+match the v5 schema format.
+
+#### Schema type changes
+
+Some attributes change representation between v4 and v5:
+
+```
+- description   = "" -> null       # Empty string becomes null
+- pool_weights  = {} -> null       # Empty map becomes null
+- enabled_entries = [] -> null     # Empty list becomes null
+```
+
+### Perpetual Computed Field Differences
+
+A small number of changes persist even after `terraform apply`. These are
+ongoing v5 provider behaviors where the plan output does not match the
+applied state. They do **not** represent actual infrastructure changes and
+are safe to ignore.
+
+| Resource | Attribute | Behavior |
+|---|---|---|
+| `cloudflare_healthcheck` | `description` | The API returns `""` but the v5 schema represents it as `null`. Shows `"" -> null` on every plan for healthchecks with no description set. |
+| `cloudflare_healthcheck` | `status`, `failure_reason`, `tcp_config`, `http_config` | Read-only fields that refresh to `(known after apply)` on every plan. `tcp_config` appears on HTTP healthchecks and `http_config` on TCP healthchecks (the "other" config type). |
+| `cloudflare_zero_trust_gateway_policy` | `duration` | The provider normalizes `"24h"` to `"24h0m0s"` on read, causing a perpetual diff. |
+| `cloudflare_zero_trust_gateway_policy` | Various rule settings (`read_only`, `schedule`, `source_account`, `override_host`, `sharable`, `warning_status`, `deleted_at`, `expiration`, and others) | Computed read-only fields that refresh to `(known after apply)` on every plan. Affects a subset of gateway policies (typically 5-6 resources). |
+| `cloudflare_zero_trust_gateway_policy` | `audit_ssh.command_logging` | Computed default (`true`) that re-appears on every plan for resources with `audit_ssh` settings. |
+| `cloudflare_zero_trust_gateway_policy` | `block_page_enabled`, `ip_categories` | Computed defaults (`false`) that appear on every plan for certain rule settings. |
+| `cloudflare_zero_trust_dlp_predefined_profile` | `entries`, `name`, `open_access` | Read-only API fields that the provider recalculates on every plan. |
+| `cloudflare_zero_trust_dlp_predefined_profile` | `enabled_entries` | API returns `[]` but config uses `null`. Shows `[] -> null` on every plan. |
+
+~> These perpetual diffs are provider-level issues being tracked for
+resolution. They do not affect your infrastructure and `terraform apply` will
+succeed without making changes.
+
+---
+
+## Migration Path B: Upgrading Within v5
+
+This path is for users already on a v5 release who want to upgrade to the
+latest version.
+
+### Users on v5.16 or Earlier
+
+~> Users on v5.0 through v5.16 **must** upgrade to v5.17 or v5.18 as a
+stepping stone before upgrading to v5.19+. This applies if you use **any** of
+the [resources requiring stepping-stone upgrades](#resources-requiring-stepping-stone-upgrades).
+
+**Why:** In v5.17, the provider bumped the internal `schema_version` from 0 to
+1 for these resources with a safe no-op state upgrader. In v5.19, the schema
+version jumps to 500, and the upgrader at slot 1 (which handles the 1 to 500
+transition) expects state that has already been through the 0 to 1 bump. Skipping
+the stepping stone means the wrong upgrader runs on your state.
+
+**Step 1:** Upgrade to v5.17 or v5.18:
+
+```hcl
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.18.0"
+    }
+  }
+}
+```
+
+```bash
+terraform init -upgrade
+terraform plan
+terraform apply  # Bumps schema_version from 0 to 1 for affected resources
+```
+
+**Step 2:** Upgrade to the latest:
+
+```hcl
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 5.19.0"
+    }
+  }
+}
+```
+
+```bash
+terraform init -upgrade
+terraform plan   # State upgraders handle version 1 to 500 automatically
+terraform apply
+```
+
+### Users on v5.17 or v5.18
+
+You already have the stepping-stone state version. Upgrade directly to the
+latest:
+
+```hcl
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 5.19.0"
+    }
+  }
+}
+```
+
+```bash
+terraform init -upgrade
+terraform plan
+terraform apply
+```
+
+The state upgraders will handle the version 1 to 500 transition automatically.
+
+### Users on v5.19+
+
+No migration steps are needed. Upgrade normally:
+
+```bash
+terraform init -upgrade
+terraform plan
+terraform apply
+```
+
+---
+
+## Resource Rename Reference
+
+The following resources were renamed between v4 and v5. Resources marked with
+**Auto** have `MoveState` handlers that automatically transform state during
+a `moved` block operation. Resources marked **Manual** require
+`terraform state rm` + `terraform import` because they do not include
+automatic state transformation for the rename.
+
+!> Terraform 1.8+ is required for `moved` blocks. The provider's `MoveState`
+handlers will panic on older Terraform versions.
+
+| v4 Resource | v5 Resource | State |
+|---|---|---|
+| `cloudflare_access_application` | `cloudflare_zero_trust_access_application` | Auto |
+| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Manual |
+| `cloudflare_access_custom_page` | `cloudflare_zero_trust_access_custom_page` | Manual |
+| `cloudflare_access_group` | `cloudflare_zero_trust_access_group` | Auto |
+| `cloudflare_access_identity_provider` | `cloudflare_zero_trust_access_identity_provider` | Auto |
+| `cloudflare_access_keys_configuration` | `cloudflare_zero_trust_access_key_configuration` | Manual |
+| `cloudflare_access_mutual_tls_certificate` | `cloudflare_zero_trust_access_mtls_certificate` | Auto |
+| `cloudflare_access_mutual_tls_hostname_settings` | `cloudflare_zero_trust_access_mtls_hostname_settings` | Manual |
+| `cloudflare_access_organization` | `cloudflare_zero_trust_organization` | Manual |
+| `cloudflare_access_policy` | `cloudflare_zero_trust_access_policy` | Auto |
+| `cloudflare_access_service_token` | `cloudflare_zero_trust_access_service_token` | Auto |
+| `cloudflare_access_tag` | `cloudflare_zero_trust_access_tag` | Manual |
+| `cloudflare_argo` | `cloudflare_argo_smart_routing` | Auto |
+| `cloudflare_argo` / `cloudflare_tiered_cache` | `cloudflare_argo_tiered_caching` | Auto |
+| `cloudflare_authenticated_origin_pulls` | `cloudflare_authenticated_origin_pulls_settings` | Auto |
+| `cloudflare_authenticated_origin_pulls_certificate` (per-hostname) | `cloudflare_authenticated_origin_pulls_hostname_certificate` | Auto |
+| `cloudflare_device_dex_test` | `cloudflare_zero_trust_dex_test` | Auto |
+| `cloudflare_device_managed_networks` | `cloudflare_zero_trust_device_managed_networks` | Auto |
+| `cloudflare_device_policy_certificates` | `cloudflare_zero_trust_device_certificates` | Manual |
+| `cloudflare_device_posture_integration` | `cloudflare_zero_trust_device_posture_integration` | Manual |
+| `cloudflare_device_posture_rule` | `cloudflare_zero_trust_device_posture_rule` | Auto |
+| `cloudflare_device_settings_policy` | `cloudflare_zero_trust_device_custom_profile` or `cloudflare_zero_trust_device_default_profile` | Manual |
+| `cloudflare_dlp_custom_profile` | `cloudflare_zero_trust_dlp_custom_profile` | Auto |
+| `cloudflare_dlp_predefined_profile` | `cloudflare_zero_trust_dlp_predefined_profile` | Auto |
+| `cloudflare_dlp_profile` | `cloudflare_zero_trust_dlp_custom_profile` or `cloudflare_zero_trust_dlp_predefined_profile` | Auto (see [DLP profile migration](#cloudflare_dlp_profile)) |
+| `cloudflare_fallback_domain` / `cloudflare_zero_trust_local_fallback_domain` | `cloudflare_zero_trust_device_default_profile_local_domain_fallback` or `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` | Manual |
+| `cloudflare_gateway_app_types` | `cloudflare_zero_trust_gateway_app_types` | Manual |
+| `cloudflare_gre_tunnel` | `cloudflare_magic_wan_gre_tunnel` | Manual |
+| `cloudflare_ipsec_tunnel` | `cloudflare_magic_wan_ipsec_tunnel` | Manual |
+| `cloudflare_managed_headers` | `cloudflare_managed_transforms` | Auto |
+| `cloudflare_record` | `cloudflare_dns_record` | Auto |
+| `cloudflare_risk_behavior` | `cloudflare_zero_trust_risk_behavior` | Manual |
+| `cloudflare_split_tunnel` | `cloudflare_zero_trust_device_default_profile` or `cloudflare_zero_trust_device_custom_profile` | Manual |
+| `cloudflare_static_route` | `cloudflare_magic_wan_static_route` | Manual |
+| `cloudflare_teams_account` | `cloudflare_zero_trust_gateway_settings` | Manual |
+| `cloudflare_teams_list` | `cloudflare_zero_trust_list` | Auto |
+| `cloudflare_teams_location` | `cloudflare_zero_trust_dns_location` | Manual |
+| `cloudflare_teams_proxy_endpoint` | `cloudflare_zero_trust_gateway_proxy_endpoint` | Manual |
+| `cloudflare_teams_rule` | `cloudflare_zero_trust_gateway_policy` | Auto |
+| `cloudflare_tunnel` | `cloudflare_zero_trust_tunnel_cloudflared` | Auto |
+| `cloudflare_tunnel_config` | `cloudflare_zero_trust_tunnel_cloudflared_config` | Manual |
+| `cloudflare_tunnel_route` | `cloudflare_zero_trust_tunnel_cloudflared_route` | Manual |
+| `cloudflare_tunnel_virtual_network` | `cloudflare_zero_trust_tunnel_cloudflared_virtual_network` | Manual |
+| `cloudflare_worker_cron_trigger` | `cloudflare_workers_cron_trigger` | Manual |
+| `cloudflare_worker_domain` | `cloudflare_workers_custom_domain` | Manual |
+| `cloudflare_worker_route` | `cloudflare_workers_route` | Auto |
+| `cloudflare_worker_script` | `cloudflare_workers_script` | Auto |
+| `cloudflare_workers_for_platforms_namespace` | `cloudflare_workers_for_platforms_dispatch_namespace` | Auto |
+
+### Using `moved` Blocks (Terraform 1.8+)
+
+For resources marked **Auto**, add a `moved` block to your configuration. The
+provider's `MoveState` handler will transform the state automatically:
+
+```hcl
+moved {
+  from = cloudflare_record.example
+  to   = cloudflare_dns_record.example
+}
+```
+
+After a successful `terraform apply`, you can remove the `moved` block.
+
+### Using `terraform state rm` and `import` (Manual Resources)
+
+For resources marked **Manual**, remove the old resource from state and import
+into the new resource type:
+
+```bash
+# Remove the old resource from state
+terraform state rm cloudflare_access_ca_certificate.example
+
+# Import into the new resource type
+terraform import cloudflare_zero_trust_access_short_lived_certificate.example <account_id>/<certificate_id>
+```
+
+Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
+for the correct import string format.
+
+---
+
+## Resources Requiring Manual Migration
+
+Some resources cannot be handled by state upgraders alone and require
+additional manual steps after running `tf-migrate` or updating your HCL.
+
+### `cloudflare_zone_settings_override`
+
+In v4, `cloudflare_zone_settings_override` was a single resource that managed
+all zone settings in one block. In v5, this has been replaced by individual
+`cloudflare_zone_setting` resources -- one per setting. This is a one-to-many
+split that cannot be handled by a state upgrader.
+
+#### With tf-migrate
+
+`tf-migrate` automatically splits the v4 resource into individual v5 resources.
+
+**1.** Run `tf-migrate` (if you have not already done so in Step 2):
+
+```bash
+tf-migrate migrate --source-version v4 --target-version v5
+```
+
+This transforms your configuration from:
+
+```hcl
+resource "cloudflare_zone_settings_override" "example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+
+  settings {
+    always_online     = "on"
+    brotli            = "on"
+    browser_cache_ttl = 14400
+
+    minify {
+      css  = "on"
+      html = "on"
+      js   = "off"
+    }
+
+    security_header {
+      enabled            = true
+      max_age            = 86400
+      include_subdomains = true
+      preload            = true
+      nosniff            = true
+    }
+  }
+}
+```
+
+Into individual resources:
+
+```hcl
+resource "cloudflare_zone_setting" "example_always_online" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "always_online"
+  value      = "on"
+}
+
+resource "cloudflare_zone_setting" "example_brotli" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "brotli"
+  value      = "on"
+}
+
+resource "cloudflare_zone_setting" "example_browser_cache_ttl" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "browser_cache_ttl"
+  value      = 14400
+}
+
+resource "cloudflare_zone_setting" "example_minify" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "minify"
+  value = {
+    css  = "on"
+    html = "on"
+    js   = "off"
+  }
+}
+
+resource "cloudflare_zone_setting" "example_security_header" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "security_header"
+  value = {
+    strict_transport_security = {
+      enabled            = true
+      include_subdomains = true
+      max_age            = 86400
+      nosniff            = true
+      preload            = true
+    }
+  }
+}
+```
+
+~> `tf-migrate` skips the deprecated `universal_ssl` setting and maps
+`zero_rtt` to the v5 setting ID `0rtt`. The resource name remains
+`{name}_zero_rtt` but the `setting_id` is set to `"0rtt"`.
+
+**2.** Remove the old resource from state and import the new resources:
+
+```bash
+# Remove the v4 resource
+terraform state rm cloudflare_zone_settings_override.example
+
+# Import each new v5 resource (format: <zone_id>/<setting_id>)
+terraform import cloudflare_zone_setting.example_always_online 0da42c8d2132a9ddaf714f9e7c920711/always_online
+terraform import cloudflare_zone_setting.example_brotli 0da42c8d2132a9ddaf714f9e7c920711/brotli
+terraform import cloudflare_zone_setting.example_browser_cache_ttl 0da42c8d2132a9ddaf714f9e7c920711/browser_cache_ttl
+terraform import cloudflare_zone_setting.example_minify 0da42c8d2132a9ddaf714f9e7c920711/minify
+terraform import cloudflare_zone_setting.example_security_header 0da42c8d2132a9ddaf714f9e7c920711/security_header
+```
+
+**3.** Verify:
+
+```bash
+terraform plan
+# Should show no changes
+```
+
+#### Without tf-migrate
+
+If you prefer not to use `tf-migrate`, follow these steps manually.
+
+**1.** Remove the v4 resource from state:
+
+```bash
+terraform state rm cloudflare_zone_settings_override.example
+```
+
+**2.** Replace the `cloudflare_zone_settings_override` resource in your HCL
+with individual `cloudflare_zone_setting` resources. Create one resource per
+setting you were managing:
+
+```hcl
+resource "cloudflare_zone_setting" "example_always_online" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "always_online"
+  value      = "on"
+}
+
+resource "cloudflare_zone_setting" "example_brotli" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "brotli"
+  value      = "on"
+}
+```
+
+Key differences from v4:
+
+- Each setting is its own resource with a `setting_id` and `value` attribute.
+- Nested blocks like `minify { css = "on" }` become
+  `value = { css = "on" }`.
+- The `security_header` block must be wrapped:
+  `value = { strict_transport_security = { enabled = true, ... } }`.
+- The `universal_ssl` setting has been removed. Do not create a resource for it.
+- The v4 setting name `zero_rtt` maps to the v5 setting ID `0rtt`.
+
+**3.** Import each new resource into state:
+
+```bash
+terraform import cloudflare_zone_setting.example_always_online <zone_id>/always_online
+terraform import cloudflare_zone_setting.example_brotli <zone_id>/brotli
+# ... repeat for each setting
+```
+
+**4.** Verify:
+
+```bash
+terraform plan
+# Should show no changes
+```
+
+### `cloudflare_dlp_profile`
+
+In v4, `cloudflare_dlp_profile` (or `cloudflare_zero_trust_dlp_profile`) was a
+single resource that handled both custom and predefined DLP profiles via a
+`type` attribute. In v5, these are separate resources:
+
+- `type = "custom"` becomes `cloudflare_zero_trust_dlp_custom_profile`
+- `type = "predefined"` becomes `cloudflare_zero_trust_dlp_predefined_profile`
+
+`tf-migrate` handles the HCL transformation and generates `moved` blocks.
+State migration is handled automatically by the provider's `MoveState`
+handlers.
+
+#### Custom profiles
+
+Custom profiles are fully handled by `tf-migrate`. The key schema changes are:
+
+- `type` attribute removed
+- `entry` blocks converted to an `entries` list attribute
+- `entry.id` removed
+- `pattern` blocks converted to `pattern` attribute objects
+
+No additional user intervention is required unless you use `dynamic "entry"`
+blocks. Dynamic blocks cannot be automatically migrated because v5 uses
+`entries` as a list attribute which does not support dynamic blocks. You must
+manually convert them to a list comprehension:
+
+```hcl
+# Before (v4 - dynamic blocks)
+dynamic "entry" {
+  for_each = var.patterns
+  content {
+    name    = entry.value.name
+    enabled = entry.value.enabled
+    pattern {
+      regex = entry.value.regex
+    }
+  }
+}
+
+# After (v5 - list comprehension)
+entries = [
+  for pattern in var.patterns : {
+    name    = pattern.name
+    enabled = pattern.enabled
+    pattern = {
+      regex = pattern.regex
+    }
+  }
+]
+```
+
+#### Predefined profiles
+
+~> After running `tf-migrate`, you must manually add `profile_id` to each
+predefined profile resource. `tf-migrate` cannot derive this value because it
+was a computed attribute in v4.
+
+The `profile_id` is the UUID of the predefined profile. You can find it in your
+existing Terraform state:
+
+```bash
+terraform state show cloudflare_dlp_profile.example | grep '"id"'
+```
+
+Or via the Cloudflare API:
+
+```bash
+curl -s https://api.cloudflare.com/client/v4/accounts/{account_id}/dlp/profiles \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | jq '.result[] | select(.type == "predefined") | {name, id}'
+```
+
+Add the `profile_id` to each migrated predefined profile resource:
+
+```hcl
+resource "cloudflare_zero_trust_dlp_predefined_profile" "aws_keys" {
+  account_id      = var.cloudflare_account_id
+  profile_id      = "c8932cc4-3312-4152-8041-f3f257122dc4"  # Add this manually
+  allowed_match_count = 3
+  enabled_entries = ["aws-access-key-id", "aws-secret-key-id"]
+}
+```
+
+Other predefined profile changes handled by `tf-migrate`:
+
+- `type` attribute removed
+- `name` attribute removed (read-only in v5)
+- `id` renamed to `profile_id` (if present in v4 config)
+- `entry` blocks replaced with `enabled_entries` list (only IDs of enabled
+  entries)
+
+---
+
+## Resources Requiring Stepping-Stone Upgrades
+
+The following 17 resources require users on v5.16 or earlier to upgrade to
+v5.17 or v5.18 before upgrading to v5.19+. This is because these resources
+have a two-phase state upgrade: version 0 to 1 (applied in v5.17/v5.18), then
+version 1 to 500 (applied in v5.19+).
+
+| Resource |
+|---|
+| `cloudflare_api_token` |
+| `cloudflare_certificate_pack` |
+| `cloudflare_custom_hostname_fallback_origin` |
+| `cloudflare_load_balancer_pool` |
+| `cloudflare_logpull_retention` |
+| `cloudflare_logpush_job` |
+| `cloudflare_managed_transforms` |
+| `cloudflare_notification_policy_webhooks` |
+| `cloudflare_pages_project` |
+| `cloudflare_regional_hostname` |
+| `cloudflare_spectrum_application` |
+| `cloudflare_tiered_cache` |
+| `cloudflare_url_normalization_settings` |
+| `cloudflare_workers_kv` |
+| `cloudflare_zero_trust_device_posture_rule` |
+| `cloudflare_zero_trust_dlp_custom_profile` |
+| `cloudflare_zero_trust_dlp_predefined_profile` |
+
+**If you do not use any of these resources**, you can upgrade directly from any
+v5 version to v5.19+.
+
+### What Happens If You Skip the Stepping Stone
+
+If you upgrade from v5.16 or earlier directly to v5.19+ while using one of
+these resources, Terraform will attempt to run the wrong state upgrader on your
+state data. This may result in an error like:
+
+```
+Error: Failed to upgrade resource state
+```
+
+**Recovery:** Pin back to v5.18, run `terraform apply` to apply the
+intermediate state upgrade, then upgrade to v5.19+.
+
+```hcl
+# Temporary: pin to v5.18 to apply the stepping-stone upgrade
+version = "~> 5.18.0"
+```
+
+```bash
+terraform init -upgrade
+terraform apply
+```
+
+Then update your version constraint to `>= 5.19.0` and run
+`terraform init -upgrade` again.
+
+---
+
+## Migrating Data Sources
+
+Data sources are simpler to migrate than resources because their state is
+refreshed on every `terraform plan` -- there is no persistent state to upgrade.
+You only need to update the HCL configuration.
+
+`tf-migrate` handles the following data source migrations automatically:
+
+### `data.cloudflare_zone`
+
+The `name` and `account_id` attributes are now wrapped in a `filter`
+attribute:
+
+```hcl
+# Before (v4)
+data "cloudflare_zone" "example" {
+  name       = "example.com"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+}
+
+# After (v5)
+data "cloudflare_zone" "example" {
+  filter = {
+    name = "example.com"
+    account = {
+      id = "f037e56e89293a057740de681ac9abbe"
+    }
+  }
+}
+```
+
+Data sources using only `zone_id` require no changes.
+
+### `data.cloudflare_zones`
+
+The `filter` block is removed and its fields are restructured:
+
+- `filter.name` is hoisted to a top-level `name` attribute.
+- `filter.account_id` becomes `account = { id = "..." }`.
+- `filter.status` is hoisted to a top-level `status` attribute.
+- `filter.lookup_type`, `filter.match`, and `filter.paused` are **removed**
+  (no v5 equivalent). If you relied on these, you will need to filter results
+  in your Terraform code.
+- The output attribute `zones` is renamed to `result`. Update any references
+  (e.g., `data.cloudflare_zones.example.zones` becomes
+  `data.cloudflare_zones.example.result`).
+
+```hcl
+# Before (v4)
+data "cloudflare_zones" "example" {
+  filter {
+    name       = "example.com"
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    status     = "active"
+  }
+}
+
+# After (v5)
+data "cloudflare_zones" "example" {
+  name   = "example.com"
+  status = "active"
+  account = {
+    id = "f037e56e89293a057740de681ac9abbe"
+  }
+}
+```
+
+### `data.cloudflare_rulesets`
+
+The `filter` block and `include_rules` attribute are removed (no v5
+equivalent):
+
+```hcl
+# Before (v4)
+data "cloudflare_rulesets" "example" {
+  zone_id       = "0da42c8d2132a9ddaf714f9e7c920711"
+  include_rules = true
+
+  filter {
+    name = "my ruleset"
+  }
+}
+
+# After (v5)
+data "cloudflare_rulesets" "example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+}
+```
+
+### `data.cloudflare_load_balancer_pools`
+
+The `filter` block is removed (v4's regex name filtering has no v5
+equivalent). The output attribute `pools` is renamed to `result`:
+
+```hcl
+# Before (v4)
+data "cloudflare_load_balancer_pools" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+
+  filter {
+    name = ".*prod.*"
+  }
+}
+
+# After (v5)
+data "cloudflare_load_balancer_pools" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+}
+```
+
+Update any references from `.pools` to `.result`.
+
+### Other data sources
+
+Data sources that were renamed to match their resource counterparts (e.g.,
+`data.cloudflare_record` to `data.cloudflare_dns_record`) simply need the
+type updated in your HCL. Since data source state is ephemeral, no state
+migration or `moved` blocks are needed -- Terraform will re-read the data
+source on the next plan.
+
+If a data source reference is used elsewhere in your configuration, update
+those references to the new name:
+
+```hcl
+# Before
+output "zone_id" {
+  value = data.cloudflare_record.example.zone_id
+}
+
+# After
+output "zone_id" {
+  value = data.cloudflare_dns_record.example.zone_id
+}
+```
+
+Data sources removed from state can be cleaned up with:
+
+```bash
+terraform state rm data.cloudflare_record.example
+```
+
+This is optional -- Terraform will handle it on the next plan/apply.
+
+---
+
+## Troubleshooting
+
+### "Error: Failed to upgrade resource state"
+
+One of the 17 stepping-stone resources was upgraded without the intermediate
+step. See [recovery instructions](#what-happens-if-you-skip-the-stepping-stone)
+above.
+
+### "Error: Resource type not found" after rename
+
+You changed the resource type in HCL but did not add a `moved` block.
+Terraform does not know the new resource is the same as the old one. Add the
+appropriate `moved` block. For resources marked **Manual** in the rename
+table, use `terraform state rm` + `terraform import` instead.
+
+### Unexpected plan diff after migration
+
+The first plan after migration will show changes -- this is expected. See
+[Expected Plan Changes After Migration](#expected-plan-changes-after-migration)
+for a detailed breakdown of what to expect and what persists after apply.
+In most cases, a single `terraform apply` resolves the majority of diffs.
+If diffs remain after two consecutive apply cycles, check that your HCL
+changes are complete.
+
+### tf-migrate does not handle my configuration
+
+`tf-migrate` works on static `.tf` files. If you use complex module
+structures, `for_each` with dynamic resource types, or heavy use of
+`templatefile`, you may need to make some HCL changes manually. Refer to the
+[version 5 upgrade guide] for per-resource attribute change details.
+
+### State locked during migration
+
+Ensure no other Terraform processes are running. If using remote state with
+locking (e.g., S3 + DynamoDB, Terraform Cloud), verify the lock is released
+before retrying.
+
+---
+
+## FAQ
+
+**Do I still need Grit?**
+
+No. `tf-migrate` replaces the Grit patterns for HCL migration, and state
+upgraders handle state automatically. Grit patterns remain available but are
+no longer the recommended approach.
+
+**Do I need to manually edit my state file?**
+
+No. State upgraders handle all state transformations automatically when you
+run `terraform plan` or `terraform apply`.
+
+**Can I skip from v4 directly to v5.19?**
+
+Yes, as long as you are on v4.52.5 first. The state upgraders handle the full
+v4 to v5 state transformation in a single step.
+
+**Can I skip from v5.14 directly to v5.19?**
+
+Only if you do not use any of the
+[17 stepping-stone resources](#resources-requiring-stepping-stone-upgrades). If
+you do, upgrade to v5.18 first.
+
+**What if I am on Terraform < 1.8?**
+
+You must upgrade to Terraform 1.8+ if you use any renamed resources. The
+provider's `MoveState` handlers require the `moved` block protocol introduced
+in Terraform 1.8 and will panic on older versions. If none of your resources
+were renamed, older Terraform versions will work for the migration.
+
+**What about `cloudflare_worker_secret`?**
+
+This resource has been removed in v5. Migrate to one of:
+
+- [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the
+  `secrets_store_secret` binding on `cloudflare_workers_script`
+- The `secret_text` binding on `cloudflare_workers_script`
+- The [Workers Secrets API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/secrets/)
+
+**What about `cloudflare_zone_settings_override`?**
+
+This resource has been removed in v5. Each zone setting is now managed by an
+individual `cloudflare_zone_setting` resource. See the
+[`cloudflare_zone_settings_override`](#cloudflare_zone_settings_override)
+section under Resources Requiring Manual Migration.
+
+---
+
+## Additional Resources
+
+- [Version 5 Upgrade Guide][version 5 upgrade guide] -- Per-resource attribute
+  change details and manual migration notes.
+- [Migrating Renamed Resources](migrating-renamed-resources) -- Detailed
+  guide for the import, state file, and two-phase swap approaches.
+- [tf-migrate] -- Source code and documentation for the HCL migration tool.
+- [Terraform moved blocks](https://developer.hashicorp.com/terraform/language/moved) --
+  HashiCorp documentation on the `moved` block syntax.
+
+[version 5 upgrade guide]: version-5-upgrade
+[tf-migrate]: https://github.com/cloudflare/tf-migrate
+[migrating renamed resources]: migrating-renamed-resources
