@@ -20,10 +20,17 @@ import (
 var _ resource.ResourceWithUpgradeState = (*AccountMemberResource)(nil)
 
 func (r *AccountMemberResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
 		0: {
 			PriorSchema:   priorSchemaV0(ctx),
 			StateUpgrader: upgradeAccountMemberStateV0toV1,
+		},
+		1: {
+			PriorSchema: &targetSchema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				resp.State.Raw = req.State.Raw
+			},
 		},
 	}
 }
