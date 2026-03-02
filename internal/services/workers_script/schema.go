@@ -438,6 +438,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"containers": schema.ListNestedAttribute{
+				Description: "List of container-enabled Durable Object class names. Required when using Cloudflare Containers.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"class_name": schema.StringAttribute{
+							Description: "The Durable Object class name to enable as a container.",
+							Required:    true,
+						},
+					},
+				},
+			},
 			"limits": schema.SingleNestedAttribute{
 				Description: "Limits to apply for this Worker.",
 				Optional:    true,

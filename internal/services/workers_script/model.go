@@ -105,6 +105,7 @@ type WorkersScriptMetadataModel struct {
 	CompatibilityFlags customfield.Set[types.String]                                    `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	KeepAssets         types.Bool                                                       `tfsdk:"keep_assets" json:"keep_assets,optional"`
 	KeepBindings       *[]types.String                                                  `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Containers         *[]*WorkersScriptMetadataContainersModel                         `tfsdk:"containers" json:"containers,optional"`
 	Limits             *WorkersScriptMetadataLimitsModel                                `tfsdk:"limits" json:"limits,optional"`
 	Logpush            types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed_optional"`
 	MainModule         types.String                                                     `tfsdk:"main_module" json:"main_module,optional"`
@@ -182,6 +183,10 @@ type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
 type WorkersScriptMetadataBindingsSimpleModel struct {
 	Limit  types.Float64 `tfsdk:"limit" json:"limit,required"`
 	Period types.Int64   `tfsdk:"period" json:"period,required"`
+}
+
+type WorkersScriptMetadataContainersModel struct {
+	ClassName types.String `tfsdk:"class_name" json:"class_name,required"`
 }
 
 type WorkersScriptMetadataLimitsModel struct {

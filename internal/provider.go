@@ -51,6 +51,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/connectivity_directory_service"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/container_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
@@ -615,6 +616,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workflow.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
+		container_application.NewResource,
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		ai_search_instance.NewResource,
