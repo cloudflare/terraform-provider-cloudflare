@@ -141,6 +141,8 @@ type TargetAccessPolicyModel struct {
 	PurposeJustificationPrompt   types.String                    `tfsdk:"purpose_justification_prompt"`
 	PurposeJustificationRequired types.Bool                      `tfsdk:"purpose_justification_required"`
 	ApprovalGroups               *[]*TargetApprovalGroupsModel   `tfsdk:"approval_groups"`
+	ConnectionRules              *TargetConnectionRulesModel     `tfsdk:"connection_rules"`
+	MfaConfig                    *TargetMfaConfigModel           `tfsdk:"mfa_config"`
 	SessionDuration              types.String                    `tfsdk:"session_duration"`
 	Exclude                      []TargetConditionModel          `tfsdk:"exclude"`
 	Include                      []TargetConditionModel          `tfsdk:"include"`
@@ -151,6 +153,21 @@ type TargetApprovalGroupsModel struct {
 	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed"`
 	EmailAddresses  *[]types.String `tfsdk:"email_addresses"`
 	EmailListUUID   types.String    `tfsdk:"email_list_uuid"`
+}
+
+type TargetConnectionRulesModel struct {
+	RDP *TargetConnectionRulesRDPModel `tfsdk:"rdp"`
+}
+
+type TargetConnectionRulesRDPModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats"`
+}
+
+type TargetMfaConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators"`
+	MfaBypass             types.Bool      `tfsdk:"mfa_bypass"`
+	SessionDuration       types.String    `tfsdk:"session_duration"`
 }
 
 // TargetConditionModel represents a single condition in v5 format.
