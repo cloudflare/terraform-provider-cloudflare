@@ -209,6 +209,27 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 		}
 	}
 
+	if data.OAuthConfiguration != nil && stateData.OAuthConfiguration != nil {
+		normalizeTrueAndNullBool(&data.OAuthConfiguration.Enabled, stateData.OAuthConfiguration.Enabled)
+		stateDCR := stateData.OAuthConfiguration.DynamicClientRegistration
+		if stateDCR == nil {
+			stateDCR = &ZeroTrustAccessApplicationOAuthConfigurationDynamicClientRegistrationModel{}
+		}
+		if data.OAuthConfiguration.DynamicClientRegistration != nil {
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.Enabled, stateDCR.Enabled)
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.AllowAnyOnLocalhost, stateDCR.AllowAnyOnLocalhost)
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.AllowAnyOnLoopback, stateDCR.AllowAnyOnLoopback)
+			normalizeEmptyAndNullSlice(&data.OAuthConfiguration.DynamicClientRegistration.AllowedURIs, stateDCR.AllowedURIs)
+			// If the user didn't configure DCR and all fields normalized to null, nil the whole block
+			if stateData.OAuthConfiguration.DynamicClientRegistration == nil {
+				dcr := data.OAuthConfiguration.DynamicClientRegistration
+				if dcr.Enabled.IsNull() && dcr.AllowAnyOnLocalhost.IsNull() && dcr.AllowAnyOnLoopback.IsNull() && dcr.AllowedURIs == nil {
+					data.OAuthConfiguration.DynamicClientRegistration = nil
+				}
+			}
+		}
+	}
+
 	if data.SCIMConfig != nil && stateData.SCIMConfig != nil {
 		if data.SCIMConfig.Authentication != nil && stateData.SCIMConfig.Authentication != nil {
 			data.SCIMConfig.Authentication.Password = stateData.SCIMConfig.Authentication.Password
