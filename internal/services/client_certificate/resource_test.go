@@ -196,3 +196,53 @@ func generateCSR(domain string) (string, error) {
 func testAccCloudflareClientCertificateConfig(rnd, zoneID, csr string, validityDays int) string {
 	return acctest.LoadTestCase("clientcertificatelifecycle.tf", rnd, zoneID, csr, validityDays)
 }
+
+// TestAccCloudflareClientCertificate_CRLFNormalization tests that the provider
+// properly handles CSRs with different line endings (\n vs \r\n) and doesn't
+// detect drift. The API returns CSRs with \r\n line endings, but user configs
+// typically use \n (Unix style). This verifies the normalization logic.
+func TestAccCloudflareClientCertificate_CRLFNormalization(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_client_certificate.%s", rnd)
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	csr, err := generateCSR(domain)
+	if err != nil {
+		t.Fatalf("failed to generate CSR: %v", err)
+	}
+
+	// CSR generated with \n line endings (Unix style)
+	// API will return with \r\n - normalization should prevent drift
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareClientCertificateDestroy,
+		Steps: []resource.TestStep{
+			// Create with LF line endings
+			{
+				Config: testAccCloudflareClientCertificateCRLFConfig(rnd, zoneID, csr, 3650),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("status"), knownvalue.StringExact("active")),
+				},
+			},
+			// Re-apply same config - should detect no drift despite API returning \r\n
+			{
+				Config: testAccCloudflareClientCertificateCRLFConfig(rnd, zoneID, csr, 3650),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccCloudflareClientCertificateCRLFConfig(rnd, zoneID, csr string, validityDays int) string {
+	return acctest.LoadTestCase("clientcertificatecrlfnormalization.tf", rnd, zoneID, csr, validityDays)
+}
