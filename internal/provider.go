@@ -126,6 +126,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_lock"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_sippy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
@@ -474,6 +475,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_event_notification.NewResource,
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
+		r2_data_catalog.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
@@ -772,6 +774,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_event_notification.NewR2BucketEventNotificationDataSource,
 		r2_bucket_lock.NewR2BucketLockDataSource,
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
+		r2_data_catalog.NewR2DataCatalogDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
