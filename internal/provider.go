@@ -121,6 +121,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_sink"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -620,6 +623,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		pipeline.NewResource,
+		pipeline_sink.NewResource,
+		pipeline_stream.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
@@ -986,6 +992,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		pipeline.NewPipelineDataSource,
+		pipeline_sink.NewPipelineSinkDataSource,
+		pipeline_sink.NewPipelineSinksDataSource,
+		pipeline_stream.NewPipelineStreamDataSource,
+		pipeline_stream.NewPipelineStreamsDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasListDataSource,
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,
