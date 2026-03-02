@@ -7,4 +7,7 @@ EOT
 %[4]s
 EOT
   bundle_method = "force"
+  geo_restrictions = {
+    label = "us"
+  }
 }

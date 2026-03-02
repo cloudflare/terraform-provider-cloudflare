@@ -7,4 +7,5 @@ EOT
 %[4]s
 EOT
   bundle_method = "force"
+  policy        = "%[5]s"
 }
