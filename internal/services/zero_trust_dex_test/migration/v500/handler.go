@@ -40,9 +40,10 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered.
+// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
 //
 // The version=1 state is the "dormant" v5 state (before migrations are activated).
+// When TF_MIG_TEST=1, the schema version becomes 500, triggering this upgrade to bump the version.
 func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading zero_trust_dex_test state from version=1 to version=500 (no-op)")
 

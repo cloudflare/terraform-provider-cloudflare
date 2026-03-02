@@ -4,6 +4,8 @@ package queue_consumer
 
 import (
 	"context"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer/migration/v500"
@@ -18,11 +20,24 @@ var _ resource.ResourceWithUpgradeState = (*QueueConsumerResource)(nil)
 //
 // Version history:
 //   - 0: Original v5 state (before schema versioning was applied)
-//   - 1: Dormant production version (schema version returns 1 normally)
-//   - 500: Active migration version
+//   - 1: Dormant production version (GetSchemaVersion returns 1 normally)
+//   - 500: Active migration version (GetSchemaVersion returns 500 when TF_MIG_TEST=1)
 func (r *QueueConsumerResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
+	if os.Getenv("TF_MIG_TEST") == "" {
+		// Production mode: preserve existing upgraders only
+		return map[int64]resource.StateUpgrader{
+			0: {
+				PriorSchema: &targetSchema,
+				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+					resp.State.Raw = req.State.Raw
+				},
+			},
+		}
+	}
+
+	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceCloudflareQueueConsumerSchema()
 
 	return map[int64]resource.StateUpgrader{

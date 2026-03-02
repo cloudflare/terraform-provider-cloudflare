@@ -89,7 +89,7 @@ func TestMigrateZeroTrustDEXTest_BasicHTTP(t *testing.T) {
 			// For v5 tests, use local provider; for v4 tests, use external provider
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
-				// Use local v5 provider (will create state)
+				// Use local v5 provider (has GetSchemaVersion, will create version=1 state)
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 					Config:                   testConfig,

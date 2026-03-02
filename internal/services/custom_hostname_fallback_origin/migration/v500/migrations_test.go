@@ -104,7 +104,7 @@ func TestMigrateCustomHostnameFallbackOriginBasic(t *testing.T) {
 
 // TestMigrateCustomHostnameFallbackOriginFromV5 tests v5→v5 version bump (no-op upgrade).
 //
-// This test verifies that, the resource can upgrade from version=1 to version=500
+// This test verifies that when TF_MIG_TEST=1, the resource can upgrade from version=1 to version=500
 // without any data loss or transformation issues.
 func TestMigrateCustomHostnameFallbackOriginFromV5(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

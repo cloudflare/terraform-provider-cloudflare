@@ -6,7 +6,7 @@ import (
 
 // SourceCloudflareQueueConsumerSchema returns the schema for cloudflare_queue_consumer at schema_version=0.
 // This resource was introduced in v5 with no v4 predecessor. The source schema matches the original
-// v5 schema before explicit versioning was applied (i.e., before Version: 500).
+// v5 schema before explicit versioning was applied (i.e., before Version: GetSchemaVersion(1, 500)).
 //
 // Note: PlanModifiers and Validators are intentionally omitted — they are not stored in state
 // and are not needed for state parsing.

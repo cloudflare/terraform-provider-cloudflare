@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -22,7 +23,7 @@ var _ resource.ResourceWithConfigValidators = (*AccessRuleResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500, // 1 in prod (v5 dormant), 500
+		Version: migrations.GetSchemaVersion(1, 500), // 1 in prod (v5 dormant), 500 when TF_MIG_TEST=1
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the IP Access rule.",

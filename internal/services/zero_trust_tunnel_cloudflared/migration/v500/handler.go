@@ -26,7 +26,7 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 }
 
 // UpgradeFromV5 is a no-op upgrader for state already at schema version 1.
-// It is triggered advances the version from 1 to 500.
+// It is triggered when TF_MIG_TEST=1 advances the version from 1 to 500.
 func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	resp.State.Raw = req.State.Raw
 }

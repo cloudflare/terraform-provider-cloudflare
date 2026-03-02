@@ -13,13 +13,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 )
 
 var _ resource.ResourceWithConfigValidators = (*QueueConsumerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: migrations.GetSchemaVersion(1, 500),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
