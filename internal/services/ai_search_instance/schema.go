@@ -239,7 +239,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"cache": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
-				Default:  booldefault.StaticBool(false),
+				Default:  booldefault.StaticBool(true),
 			},
 			"cache_threshold": schema.StringAttribute{
 				Description:   `Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".`,
@@ -254,6 +254,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"anything_goes",
 					),
 				},
+				Default: stringdefault.StaticString("close_enough"),
 			},
 			"chunk": schema.BoolAttribute{
 				Computed: true,
