@@ -36,7 +36,7 @@ func UpgradeArgoToTieredCaching(ctx context.Context, req resource.UpgradeStateRe
 // UpgradeFromV5TieredCaching handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
+// This handler is only triggered (GetSchemaVersion returns 500).
 func UpgradeFromV5TieredCaching(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading argo_tiered_caching state from version=1 to version=500 (no-op)")
 

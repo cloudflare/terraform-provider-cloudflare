@@ -47,7 +47,6 @@ type SourceV4ConfigurationModel struct {
 // ============================================================================
 
 // TargetAccessRuleModel represents the current resource state from v5.x+ provider.
-// Schema version: 500 (when TF_MIG_TEST=1, otherwise 1)
 // Resource type: cloudflare_access_rule
 //
 // Key differences from v4:

@@ -40,7 +40,6 @@ type SourceAuthIDCharacteristicsModel struct {
 // ============================================================================
 
 // TargetAPIShieldModel represents the current cloudflare_api_shield resource state from v5.x+ provider.
-// Schema version: 500 (when TF_MIG_TEST=1, otherwise version 1)
 // Resource type: cloudflare_api_shield
 //
 // Note: This matches the APIShieldModel in the parent package's model.go file.

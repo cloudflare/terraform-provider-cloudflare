@@ -37,7 +37,6 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV1 handles state upgrades from v5 provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade. Version 1 is the current v5 schema version.
-// When TF_MIG_TEST=1, this bumps from 1 to 500.
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading managed_transforms state from version=1 to version=500 (no-op)")
 

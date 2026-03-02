@@ -2,8 +2,6 @@ package workers_script
 
 import (
 	"context"
-	"os"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -48,23 +46,6 @@ func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateM
 func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve pre-existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema:   resourceSchemaV0(ctx),
-				StateUpgrader: upgradeStateFromV0,
-			},
-			1: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	unionSchema := v500.UnionV0Schema(ResourceSchema, ctx)
 	return map[int64]resource.StateUpgrader{
 		// Version 0: V4 state OR V5 state before run_worker_first change

@@ -33,7 +33,7 @@ type SourceHeaderEntryModel struct {
 // ============================================================================
 
 // TargetManagedTransformsModel represents the current resource state from v5.x+ provider.
-// Schema version: 500 (when TF_MIG_TEST=1)
+// Schema version: 500
 // Resource type: cloudflare_managed_transforms
 type TargetManagedTransformsModel struct {
 	ID                     types.String                                                                  `tfsdk:"id"`

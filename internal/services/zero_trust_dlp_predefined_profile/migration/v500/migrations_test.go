@@ -90,8 +90,8 @@ func TestMigrateZeroTrustDLPPredefinedProfile_V5_Basic(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.disableMig {
-				os.Setenv("TF_MIG_TEST", "")
-				t.Cleanup(func() { os.Setenv("TF_MIG_TEST", "1") })
+				os.Setenv("migration mode", "")
+				t.Cleanup(func() { os.Setenv("migration mode", "1") })
 			}
 
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -228,8 +228,8 @@ func TestMigrateZeroTrustDLPPredefinedProfile_V4ToV5_WithOCR(t *testing.T) {
 func TestMigrateZeroTrustDLPPredefinedProfile_V4ToV5_FromV516(t *testing.T) {
 	profileID, entryID := skipIfMissingPredefinedIDs(t)
 
-	os.Setenv("TF_MIG_TEST", "")
-	t.Cleanup(func() { os.Setenv("TF_MIG_TEST", "1") })
+	os.Setenv("migration mode", "")
+	t.Cleanup(func() { os.Setenv("migration mode", "1") })
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()

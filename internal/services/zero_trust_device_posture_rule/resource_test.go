@@ -758,8 +758,8 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 func TestAccUpgradeZeroTrustDevicePostureRule_FromPublishedV5(t *testing.T) {
 	t.Skip("Failed to marshal state to json: schema version 0 in state does not match version 1 from the provider")
 	// we want to test from v5
-	if os.Getenv("TF_MIG_TEST") != "" {
-		os.Setenv("TF_MIG_TEST", "")
+	if os.Getenv("migration mode") != "" {
+		os.Setenv("migration mode", "")
 	}
 	rnd := utils.GenerateRandomResourceName()
 

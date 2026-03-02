@@ -54,7 +54,7 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
+// This handler is only triggered (GetSchemaVersion returns 500).
 //
 // CRITICAL: For no-op upgrades, we copy raw state directly to preserve all data without transformation.
 func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {

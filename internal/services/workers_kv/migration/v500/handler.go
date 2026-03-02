@@ -63,7 +63,6 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
 }
 
-
 // unmarshalV4State unmarshals raw state into a v4 model using the v4 schema.
 // This is needed when the PriorSchema is v5 but we need to parse v4 state.
 func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target *SourceCloudflareWorkersKVModel) diag.Diagnostics {
@@ -97,7 +96,7 @@ func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target 
 // UpgradeFromV1 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
+// This handler is only triggered (GetSchemaVersion returns 500).
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading workers_kv state from version=1 to version=500 (no-op)")
 

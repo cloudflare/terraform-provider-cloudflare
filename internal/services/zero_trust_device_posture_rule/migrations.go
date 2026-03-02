@@ -2,8 +2,6 @@ package zero_trust_device_posture_rule
 
 import (
 	"context"
-	"os"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule/migration/v500"
@@ -29,12 +27,10 @@ func (r *ZeroTrustDevicePostureRuleResource) MoveState(ctx context.Context) []re
 // UpgradeState registers state upgraders for schema version changes.
 //
 // Both v4 and published v5 used schema_version=0 (neither set an explicit Version).
-// This requires a conditional approach based on TF_MIG_TEST:
 //
-// Production (no TF_MIG_TEST): schema returns version 1
 //   - Slot 0: no-op upgrader (safely bumps existing v5 users from 0→1)
 //
-// Testing (TF_MIG_TEST=1): schema returns version 500
+// Testing: schema returns version 500
 //   - Slot 0: v4→v5 full transformation (v4 state has schema_version=0)
 //   - Slot 1: v5 no-op (v5 users already bumped to version=1 in prod)
 //
@@ -42,17 +38,6 @@ func (r *ZeroTrustDevicePostureRuleResource) MoveState(ctx context.Context) []re
 // which is handled by MoveState, not UpgradeState.
 func (r *ZeroTrustDevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
 
 	sourceSchema := v500.SourceDevicePostureRuleSchema()
 

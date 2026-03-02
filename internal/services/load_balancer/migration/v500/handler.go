@@ -47,7 +47,7 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade since the schema is compatible - just bumps the version.
-// This handler is only triggered when TF_MIG_TEST=1 (GetSchemaVersion returns 500).
+// This handler is only triggered (GetSchemaVersion returns 500).
 //
 // The version bump from 1 → 500 allows Terraform to know the state has been validated
 // and is ready for the new schema version, even though no actual transformation is needed.
