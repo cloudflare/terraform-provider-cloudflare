@@ -2,7 +2,6 @@ package zero_trust_access_application
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -38,21 +37,7 @@ func (r *ZeroTrustAccessApplicationResource) MoveState(ctx context.Context) []re
 //
 // For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
 func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
 
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	v5Schema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
 		// Handle early v5 state with schema_version=0 (v5.12-v5.15)

@@ -37,7 +37,7 @@ type SourceCloudflareCustomPagesModel struct {
 // TargetCustomPagesModel represents the current custom_pages resource state
 // from v5.x+ provider (Plugin Framework).
 //
-// Schema version: 500 (or 1 with migrations.GetSchemaVersion)
+// Schema version: 500 (or 1 with migrations.schema version)
 // Resource type: cloudflare_custom_pages
 //
 // This matches the structure in the parent package's model.go.

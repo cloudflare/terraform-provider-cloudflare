@@ -2,8 +2,6 @@ package bot_management
 
 import (
 	"context"
-	"os"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -18,24 +16,11 @@ var _ resource.ResourceWithUpgradeState = (*BotManagementResource)(nil)
 //   - Sets new v5-only fields to null (bm_cookie_enabled, cf_robots_variant, etc.)
 //   - Sets stale_zone_configuration to null
 //
-// 2. v5 state (version=1) -> v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
+// 2. v5 state (version=1) -> v5 (version=500): No-op upgrade
 //   - Just bumps the version number, no data transformation
 func (r *BotManagementResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceCloudflareBotManagementSchema()
 
 	return map[int64]resource.StateUpgrader{

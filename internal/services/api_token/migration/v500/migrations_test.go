@@ -635,12 +635,11 @@ func TestMigrateAPIToken_V4ToV5_MixedEffects(t *testing.T) {
 
 // ==================== V5 Internal Upgrade Tests ====================
 // These test the production v0→v1 upgrader (early v5 with map resources → current v5 with JSON resources).
-// They must run in production mode (TF_MIG_TEST="") because the v5-early state format (condition as object,
 // policies as attribute) is incompatible with the v4 source schema (condition as array block, policy as block)
 // used by slot 0 in test mode. Both v4 and v5-early share schema_version=0.
 
 func TestMigrateAPITokenFromV5MapToJSON(t *testing.T) {
-	t.Setenv("TF_MIG_TEST", "")
+	t.Setenv("migration mode", "")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_api_token.%s", rnd)
 	tmpDir := t.TempDir()
