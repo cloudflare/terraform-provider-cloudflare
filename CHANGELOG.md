@@ -2,51 +2,102 @@
 
 ## 5.19.0-beta.1 (2026-03-03)
 
-Full Changelog: [v5.18.0...v5.19.0-beta.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.18.0...v5.19.0-beta.1)
+> **Disclaimer:** Please note that v1.0.0-beta.1 is in Beta and we are still testing it for stability.
+
+### Migration Support Release
+
+This release enables **automatic state upgraders** for v4 to v5 migrations, dramatically simplifying the upgrade path. Combined with the [tf-migrate](https://github.com/cloudflare/tf-migrate) CLI tool for HCL configuration changes, migrating to v5 is now significantly easier than before.
+
+#### Key Highlights
+
+- **Automatic State Migration**: 60+ resources now include built-in state upgraders that automatically transform v4 (SDKv2) state to v5 (Plugin Framework) state during `terraform plan` or `terraform apply`. No manual state file editing required.
+
+- **tf-migrate CLI Tool**: A new CLI tool handles HCL configuration rewrites, `moved` block generation, and cross-file reference updates. Download from [tf-migrate releases](https://github.com/cloudflare/tf-migrate/releases).
+
+- **Grit Deprecation**: Grit-based migrations are now deprecated and will be removed in a future release. Use `tf-migrate` instead.
+
+- **New Migration Guide**: See the [version 5 migration guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-migration) for the recommended migration path.
+
+#### Upgrade Path Requirements
+
+| Your Current Version | Action Required |
+|---|---|
+| v4.x (any version) | Upgrade to v4.52.5 first, then follow the migration guide |
+| v5.0 -- v5.16 | **Must upgrade to v5.17 or v5.18 first**, then upgrade to v5.19+ |
+| v5.17 -- v5.18 | Upgrade directly to v5.19+ |
+| v5.19+ | Normal minor version upgrade |
+
+> **Important**: Users on v5.16 or earlier using any of the [17 stepping-stone resources](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-migration#resources-requiring-stepping-stone-upgrades) must upgrade to v5.17/v5.18 before v5.19 to ensure correct state upgrader execution.
+
+---
+
+### Resources with State Upgraders (v4 to v5 transformation)
+
+The following **61 resources** now include state upgraders that automatically transform state from v4 format to v5:
+
+| Category | Resources |
+|----------|-----------|
+| **Zones & DNS** | `zone`, `zone_dnssec`, `zone_subscription`, `dns_record` |
+| **Load Balancing** | `load_balancer`, `load_balancer_monitor`, `load_balancer_pool` |
+| **Cache & Performance** | `tiered_cache`, `argo_smart_routing`, `argo_tiered_caching`, `page_rule`, `ruleset` |
+| **Workers** | `workers_script`, `workers_route`, `workers_kv`, `workers_kv_namespace`, `workers_for_platforms_dispatch_namespace` |
+| **Pages** | `pages_project` |
+| **Logs & Analytics** | `logpush_job`, `logpull_retention` |
+| **Security** | `access_rule`, `api_shield`, `api_shield_operation`, `bot_management`, `custom_pages`, `healthcheck` |
+| **Certificates** | `certificate_pack`, `origin_ca_certificate`, `authenticated_origin_pulls_certificate`, `authenticated_origin_pulls_settings` |
+| **Rules & Lists** | `list`, `list_item`, `managed_transforms`, `regional_hostname`, `snippet`, `snippet_rules`, `url_normalization_settings` |
+| **Spectrum** | `spectrum_application` |
+| **Queues** | `queue`, `queue_consumer` |
+| **R2** | `r2_bucket` |
+| **Notifications** | `notification_policy`, `notification_policy_webhooks` |
+| **API Tokens** | `api_token` |
+| **Custom Hostnames** | `custom_hostname_fallback_origin` |
+| **Zero Trust Access** | `zero_trust_access_application`, `zero_trust_access_group`, `zero_trust_access_identity_provider`, `zero_trust_access_mtls_certificate`, `zero_trust_access_mtls_hostname_settings`, `zero_trust_access_policy`, `zero_trust_access_service_token` |
+| **Zero Trust Devices** | `zero_trust_device_managed_networks`, `zero_trust_device_posture_rule`, `zero_trust_dex_test` |
+| **Zero Trust DLP** | `zero_trust_dlp_custom_profile`, `zero_trust_dlp_predefined_profile` |
+| **Zero Trust Gateway** | `zero_trust_gateway_policy`, `zero_trust_list` |
+| **Zero Trust Tunnels** | `zero_trust_tunnel_cloudflared`, `zero_trust_tunnel_cloudflared_config`, `zero_trust_tunnel_cloudflared_route` |
+
+---
+
+### Resources with Schema Version Bump (no-op upgraders)
+
+The following **31 resources** received schema version bumps to v500 with no-op state upgraders (state format unchanged, version tracking only):
+
+| Category | Resources |
+|----------|-----------|
+| **Account** | `account_member`, `address_map` |
+| **Email Routing** | `email_routing_address`, `email_routing_catch_all`, `email_routing_rule`, `email_routing_settings` |
+| **Firewall (Deprecated)** | `filter`, `firewall_rule`, `rate_limit`, `user_agent_blocking_rule`, `zone_lockdown` |
+| **Magic WAN** | `magic_wan_gre_tunnel`, `magic_wan_ipsec_tunnel`, `magic_wan_static_route` |
+| **SSL/TLS** | `total_tls` |
+| **Waiting Room** | `waiting_room`, `waiting_room_event`, `waiting_room_rules`, `waiting_room_settings` |
+| **Web3** | `web3_hostname` |
+| **Workers** | `worker_version`, `workers_cron_trigger`, `workers_custom_domain` |
+| **Zone Settings** | `zone_cache_variants`, `zone_setting` |
+| **Zero Trust** | `zero_trust_access_key_configuration`, `zero_trust_access_short_lived_certificate`, `zero_trust_device_default_profile_certificates`, `zero_trust_dns_location`, `zero_trust_gateway_logging`, `zero_trust_gateway_proxy_endpoint` |
+
+---
 
 ### Features
 
-* **docs:** grit deprecation ([2f60e2f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2f60e2f6aedf6748fbefdb2423c53c3ab342d8ff))
-* **docs:** version 5 upgrade ([0478f95](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0478f951f0ec34a0df064f55b98ea961786ec38e))
-* **resources:** enable state upgrade ([a9a069b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a9a069bbebfbaa935a79cb54a013146907655f51))
-* **resources:** schema version bump ([7ba7600](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7ba7600a34e74cf44436afb7bdbee7bc42e51051))
-
+- **zero_trust_access_application**: Add OAuth configuration support with `oauth_configuration` attribute, including dynamic client registration and grant settings
 
 ### Bug Fixes
 
-* **api_token:** docs template for examples ([a07a594](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a07a594259a701592faab82657056b5a887a069a))
-* **api_token:** simulate stepping stones in test ([54e9a62](https://github.com/cloudflare/terraform-provider-cloudflare/commit/54e9a622ff62439f8832001efd4ad56c4b8c2c04))
-* **ci:** run migration tests after acceptance ([ecec860](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ecec86063335437380877c01e661c113102c4ee4))
-* **ci:** tf-migrate version ([610d175](https://github.com/cloudflare/terraform-provider-cloudflare/commit/610d175b233fc8c957722a522525b1a55fcd06a0))
-* **client_certificate:** fix csr drift with normalization ([a755419](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a755419efaa6e32983e43c52078ed30da48802b7))
-* **custom_origin_trust_store:** fix certificate drift with normalization ([42de890](https://github.com/cloudflare/terraform-provider-cloudflare/commit/42de890912b6293345902462e09e378dc561e742))
-* **docs:** duplicate import lines ([6f75b0c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6f75b0c1c5206b453bfc63fedbbd12d1e152ddab))
-* **docs:** hcl version syntax ([f3b9121](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f3b912134f319b883f1bd634d963ad434aca1dfc))
-* **docs:** tf-migrate version ([afd854a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/afd854aced3d28d5b891af6e97982a8d159ace13))
-* **tests:** enable migration tests again ([1386a4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1386a4ad6c33584983fe199d5b3ece372025342b))
-* **tests:** have it in 2 jobs ([1386a4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1386a4ad6c33584983fe199d5b3ece372025342b))
-* **tests:** update migration model ([27eaf5a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27eaf5a04de91608f7b10ad773bc6b5413d3cce8))
-* **zone_dnssec:** allowed computed fields which will change ([8c2c664](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8c2c664959eef009e6eaeebd4d9115b58a4489ca))
-
-
-### Chores
-
-* **docs:** run generate-docs ([dd777a7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dd777a7f5cf817bfdb3db11ea05c4110820fba93))
-* **docs:** terraform cli version requirements ([4988ed9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4988ed9888049852ab83863a681db33f67127180))
-* **resources:** clean up comments ([c4a39f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c4a39f8f7b1d3dfe22e66d893fcc3ffb6b7b90e1))
-* **resources:** don't modify phase 2 ([fdbeb43](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fdbeb431bcd690972c2f0b56abc228d6a2453001))
-* **resources:** skip phase 2 tests ([27eaf5a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27eaf5a04de91608f7b10ad773bc6b5413d3cce8))
-
+- **client_certificate**: Fix CSR drift with certificate normalization
+- **custom_origin_trust_store**: Fix certificate drift with normalization
+- **zone_dnssec**: Allow computed fields which will change during refresh
 
 ### Documentation
 
-* fix markdown code block formatting ([646cbbf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/646cbbf4dc095cebde53dac7e6042fa2790a9d2d))
+- Added comprehensive [version 5 migration guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-migration)
+- Deprecated Grit-based migration instructions in the [version 5 upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-upgrade)
+- Updated `tf-migrate` version references to v1.0.0-beta.2
 
+---
 
-### Refactors
-
-* **ci:** use published tf-migrate ([5e37364](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5e3736400a0a3f437780a880495c8985f9e217fa))
-* **docs:** tf-migrate released version ([3b0c5e5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3b0c5e5504b7542cd765d81ad2e71a3c3d81cb5d))
+Full Changelog: [v5.18.0...v5.19.0-beta.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.18.0...v5.19.0-beta.1)
 
 ## 5.18.0 (2026-03-01)
 
