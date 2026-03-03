@@ -835,7 +835,7 @@ Other predefined profile changes handled by `tf-migrate`:
 
 ## Resources Requiring Stepping-Stone Upgrades
 
-The following 17 resources require users on v5.16 or earlier to upgrade to
+The following 21 resources require users on v5.16 or earlier to upgrade to
 v5.17 or v5.18 before upgrading to v5.19+. This is because these resources
 have a two-phase state upgrade: version 0 to 1 (applied in v5.17/v5.18), then
 version 1 to 500 (applied in v5.19+).
@@ -843,6 +843,7 @@ version 1 to 500 (applied in v5.19+).
 | Resource |
 |---|
 | `cloudflare_api_token` |
+| `cloudflare_argo_tiered_caching` |
 | `cloudflare_certificate_pack` |
 | `cloudflare_custom_hostname_fallback_origin` |
 | `cloudflare_load_balancer_pool` |
@@ -850,6 +851,8 @@ version 1 to 500 (applied in v5.19+).
 | `cloudflare_logpush_job` |
 | `cloudflare_managed_transforms` |
 | `cloudflare_notification_policy_webhooks` |
+| `cloudflare_page_rule` |
+| `cloudflare_pages_domain` |
 | `cloudflare_pages_project` |
 | `cloudflare_regional_hostname` |
 | `cloudflare_spectrum_application` |
@@ -859,6 +862,7 @@ version 1 to 500 (applied in v5.19+).
 | `cloudflare_zero_trust_device_posture_rule` |
 | `cloudflare_zero_trust_dlp_custom_profile` |
 | `cloudflare_zero_trust_dlp_predefined_profile` |
+| `cloudflare_zero_trust_gateway_policy` |
 
 **If you do not use any of these resources**, you can upgrade directly from any
 v5 version to v5.19+.
@@ -1102,7 +1106,7 @@ This is optional -- Terraform will handle it on the next plan/apply.
 
 ### "Error: Failed to upgrade resource state"
 
-One of the 17 stepping-stone resources was upgraded without the intermediate
+One of the 21 stepping-stone resources was upgraded without the intermediate
 step. See [recovery instructions](#what-happens-if-you-skip-the-stepping-stone)
 above.
 
@@ -1155,7 +1159,7 @@ v4 to v5 state transformation in a single step.
 **Can I skip from v5.14 directly to v5.19?**
 
 Only if you do not use any of the
-[17 stepping-stone resources](#resources-requiring-stepping-stone-upgrades). If
+[21 stepping-stone resources](#resources-requiring-stepping-stone-upgrades). If
 you do, upgrade to v5.18 first.
 
 **What if I am on Terraform < 1.8?**
