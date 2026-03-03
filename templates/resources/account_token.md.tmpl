@@ -11,6 +11,7 @@ description: |-
 
 ## Example Usage
 
+```terraform
 resource "cloudflare_account_token" "example_account_token" {
   account_id = "b67e14daa5f8dceeb91fe5449ba496eb"
   name       = "workers read-only token"
@@ -37,7 +38,7 @@ resource "cloudflare_account_token" "example_account_token" {
   expires_on = "2027-10-01T00:00:00Z"
   not_before = "2025-10-01T00:00:00Z"
 }
-
+```
 
 {{ .SchemaMarkdown | trimspace }}
 
