@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -51,36 +52,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"algorithm": schema.StringAttribute{
-				Description: "Algorithm key code.",
-				Computed:    true,
+				Description:   "Algorithm key code.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"digest": schema.StringAttribute{
-				Description: "Digest hash.",
-				Computed:    true,
+				Description:   "Digest hash.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"digest_algorithm": schema.StringAttribute{
-				Description: "Type of digest algorithm.",
-				Computed:    true,
+				Description:   "Type of digest algorithm.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"digest_type": schema.StringAttribute{
-				Description: "Coded type for digest algorithm.",
-				Computed:    true,
+				Description:   "Coded type for digest algorithm.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"ds": schema.StringAttribute{
-				Description: "Full DS record.",
-				Computed:    true,
+				Description:   "Full DS record.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"flags": schema.Float64Attribute{
-				Description: "Flag for DNSSEC record.",
-				Computed:    true,
+				Description:   "Flag for DNSSEC record.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseStateForUnknown()},
 			},
 			"key_tag": schema.Float64Attribute{
-				Description: "Code for key tag.",
-				Computed:    true,
+				Description:   "Code for key tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseStateForUnknown()},
 			},
 			"key_type": schema.StringAttribute{
-				Description: "Algorithm key type.",
-				Computed:    true,
+				Description:   "Algorithm key type.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When DNSSEC was last modified.",
@@ -88,8 +97,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"public_key": schema.StringAttribute{
-				Description: "Public key for DS record.",
-				Computed:    true,
+				Description:   "Public key for DS record.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
