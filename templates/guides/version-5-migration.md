@@ -34,10 +34,11 @@ change details if you prefer manual HCL changes.
 
 Before starting the migration:
 
-- **Terraform 1.8+** is required if you use any
-  [renamed resources](#resource-rename-reference). The provider's `MoveState`
-  handlers require the `moved` block support introduced in Terraform 1.8. Using
-  an older version of Terraform with renamed resources will cause a panic.
+- **Terraform 1.8+** is recommended if you use any
+  [renamed resources](#resource-rename-reference). It enables `moved` blocks,
+  which provide the smoothest migration experience. On older Terraform
+  versions, you can use `terraform state mv` instead -- see
+  [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18).
 - **tf-migrate** -- Install the [tf-migrate] CLI tool for automatic HCL
   configuration changes:
 
@@ -62,7 +63,8 @@ There are three categories of changes between v4 and v5:
 2. **State schema changes** -- Internal state representation differences
    between v4 (SDKv2) and v5 (Plugin Framework). These are handled
    **automatically** by the provider's built-in state upgraders starting in
-   v5.19. No manual state file editing is required.
+   v5.19 for [supported resources](#resources-with-state-upgraders). No manual
+   state file editing is required for these resources.
 
 3. **Resource renames** -- 40+ resources have new type names (e.g.,
    `cloudflare_record` to `cloudflare_dns_record`). These require `moved`
@@ -317,8 +319,9 @@ a `moved` block operation. Resources marked **Manual** require
 `terraform state rm` + `terraform import` because they do not include
 automatic state transformation for the rename.
 
-!> Terraform 1.8+ is required for `moved` blocks. The provider's `MoveState`
-handlers will panic on older Terraform versions.
+~> Terraform 1.8+ is recommended for `moved` blocks. On older versions, use
+`terraform state mv` instead -- see
+[below](#using-terraform-state-mv-terraform--18).
 
 | v4 Resource | v5 Resource | State |
 |---|---|---|
@@ -373,8 +376,13 @@ handlers will panic on older Terraform versions.
 
 ### Using `moved` Blocks (Terraform 1.8+)
 
-For resources marked **Auto**, add a `moved` block to your configuration. The
-provider's `MoveState` handler will transform the state automatically:
+~> If you used `tf-migrate` in Step 2, it has already generated the `moved`
+blocks for all renamed resources. No manual action is needed -- skip to
+[Step 5](#step-5-verify).
+
+If you are migrating HCL manually, add a `moved` block for each renamed
+resource. For resources marked **Auto**, the provider's `MoveState` handler
+will transform the state automatically:
 
 ```hcl
 moved {
@@ -400,6 +408,28 @@ terraform import cloudflare_zero_trust_access_short_lived_certificate.example <a
 
 Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
 for the correct import string format.
+
+### Using `terraform state mv` (Terraform < 1.8)
+
+If you are on a Terraform version older than 1.8, you cannot use `moved`
+blocks for cross-resource-type renames. Instead, use `terraform state mv` to
+rename resources directly in the state. The provider's state upgraders will
+automatically transform the state on the next `terraform plan` or
+`terraform apply`.
+
+For resources marked **Auto** in the rename table:
+
+```bash
+# Move the resource in state from the old type to the new type
+terraform state mv cloudflare_record.example cloudflare_dns_record.example
+```
+
+Then update the resource type in your HCL to match the new name. On the next
+`terraform plan`, the provider's state upgrader detects the old
+`schema_version` and transforms the state automatically.
+
+For resources marked **Manual**, use `terraform state rm` + `terraform import`
+as described [above](#using-terraform-state-rm-and-import-manual-resources).
 
 ---
 
@@ -728,6 +758,68 @@ Then update your version constraint to `>= 5.19.0` and run
 
 ---
 
+## Resources with State Upgraders
+
+The following resources have built-in state upgraders that automatically
+transform v4 (SDKv2) state to v5 (Plugin Framework) state when you run
+`terraform plan` or `terraform apply` on v5.19+. Resources **not** listed here
+do not have automatic state migration and may require `terraform state rm` +
+`terraform import` after upgrading.
+
+| Product | Resource |
+|---------|----------|
+| **Zones** | `cloudflare_zone` |
+| | `cloudflare_zone_setting` |
+| | `cloudflare_zone_subscription` |
+| **DNS** | `cloudflare_dns_record` |
+| | `cloudflare_zone_dnssec` |
+| **Load Balancers** | `cloudflare_load_balancer` |
+| | `cloudflare_load_balancer_monitor` |
+| | `cloudflare_load_balancer_pool` |
+| **Rulesets** | `cloudflare_ruleset` |
+| **Page Rules** | `cloudflare_page_rule` |
+| **Managed Transforms** | `cloudflare_managed_transforms` |
+| **URL Normalization** | `cloudflare_url_normalization_settings` |
+| **Snippets** | `cloudflare_snippet` |
+| | `cloudflare_snippet_rules` |
+| **Workers** | `cloudflare_workers_script` |
+| | `cloudflare_workers_route` |
+| **KV** | `cloudflare_workers_kv` |
+| | `cloudflare_workers_kv_namespace` |
+| **Pages** | `cloudflare_pages_project` |
+| **Cache** | `cloudflare_tiered_cache` |
+| **Argo** | `cloudflare_argo_smart_routing` |
+| | `cloudflare_argo_tiered_caching` |
+| **Spectrum** | `cloudflare_spectrum_application` |
+| **Addressing** | `cloudflare_regional_hostname` |
+| **Bot Management** | `cloudflare_bot_management` |
+| **Healthchecks** | `cloudflare_healthcheck` |
+| **Custom Pages** | `cloudflare_custom_pages` |
+| **Rules** | `cloudflare_list` |
+| | `cloudflare_list_item` |
+| **Logpush** | `cloudflare_logpush_job` |
+| **Logs** | `cloudflare_logpull_retention` |
+| **Alerting** | `cloudflare_notification_policy_webhooks` |
+| **R2** | `cloudflare_r2_bucket` |
+| **User** | `cloudflare_api_token` |
+| **Zero Trust** | `cloudflare_zero_trust_access_application` |
+| | `cloudflare_zero_trust_access_group` |
+| | `cloudflare_zero_trust_access_identity_provider` |
+| | `cloudflare_zero_trust_access_mtls_certificate` |
+| | `cloudflare_zero_trust_access_mtls_hostname_settings` |
+| | `cloudflare_zero_trust_access_policy` |
+| | `cloudflare_zero_trust_access_service_token` |
+| | `cloudflare_zero_trust_device_posture_rule` |
+| | `cloudflare_zero_trust_dlp_custom_profile` |
+| | `cloudflare_zero_trust_dlp_custom_entry` |
+| | `cloudflare_zero_trust_dlp_predefined_entry` |
+| | `cloudflare_zero_trust_dlp_integration_entry` |
+| | `cloudflare_zero_trust_gateway_policy` |
+| | `cloudflare_zero_trust_list` |
+| | `cloudflare_zero_trust_tunnel_cloudflared_route` |
+
+---
+
 ## Migrating Data Sources
 
 Data sources are simpler to migrate than resources because their state is
@@ -935,10 +1027,13 @@ you do, upgrade to v5.18 first.
 
 **What if I am on Terraform < 1.8?**
 
-You must upgrade to Terraform 1.8+ if you use any renamed resources. The
-provider's `MoveState` handlers require the `moved` block protocol introduced
-in Terraform 1.8 and will panic on older versions. If none of your resources
-were renamed, older Terraform versions will work for the migration.
+You can still migrate. `moved` blocks require Terraform 1.8+, but the
+provider also supports migration via `terraform state mv`, which works on any
+Terraform version. When you run `terraform state mv cloudflare_record.x
+cloudflare_dns_record.x`, the provider's state upgraders automatically
+transform the state on the next plan/apply. See
+[Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
+for details.
 
 **What about `cloudflare_worker_secret`?**
 
