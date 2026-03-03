@@ -229,13 +229,9 @@ For a complete list of resource renames, see the
 terraform plan
 ```
 
-The first plan after migration will likely show changes. **This is expected.**
-The v5 provider's state upgraders handle the structural migration of your
-state, but some attributes cannot be fully reconciled until the provider reads
-the current values from the API. A single `terraform apply` resolves the
-majority of these.
-
-If you see unexpected resource **replacements** (destroy + create), check:
+The plan should show no changes, or only expected computed attribute updates
+that will resolve on the next apply. If you see unexpected resource
+replacements, check:
 
 - All renamed resources have corresponding `moved` blocks.
 - HCL attribute changes are complete (compare against the
@@ -1119,12 +1115,9 @@ table, use `terraform state rm` + `terraform import` instead.
 
 ### Unexpected plan diff after migration
 
-The first plan after migration will show changes -- this is expected. See
-[Expected Plan Changes After Migration](#expected-plan-changes-after-migration)
-for a detailed breakdown of what to expect and what persists after apply.
-In most cases, a single `terraform apply` resolves the majority of diffs.
-If diffs remain after two consecutive apply cycles, check that your HCL
-changes are complete.
+Some computed attributes may show a diff on the first plan after migration.
+This is expected as Terraform reconciles the state with the API. Run
+`terraform apply` to resolve.
 
 ### tf-migrate does not handle my configuration
 

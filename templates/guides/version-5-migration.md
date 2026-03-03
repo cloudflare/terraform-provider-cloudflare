@@ -241,6 +241,116 @@ replacements, check:
 terraform apply
 ```
 
+After `terraform apply`, run `terraform plan` again. The plan should now show
+**no changes**, or only the
+[perpetual computed field differences](#perpetual-computed-field-differences)
+listed below.
+
+For a detailed breakdown of what to expect on the first plan and what persists
+after apply, see
+[Expected Plan Changes After Migration](#expected-plan-changes-after-migration).
+
+---
+
+## Expected Plan Changes After Migration
+
+After completing the migration steps, the first `terraform plan` will show
+changes across several categories. All of these are expected and benign --
+they reflect differences between the v4 and v5 provider internals, not actual
+infrastructure changes.
+
+### One-Time Changes (Resolve After First Apply)
+
+These changes appear on the first `terraform plan` after migration but
+disappear after a single `terraform apply`.
+
+#### Computed value refreshes
+
+The most common category. Many read-only attributes show
+`(known after apply)` because the v5 provider defines them differently than
+v4. The provider needs to re-read these values from the API.
+
+```
++ warning_status = (known after apply)
++ deleted_at     = (known after apply)
+~ version        = 28 -> (known after apply)
+~ created_at     = "2025-12-16T17:36:32Z" -> (known after apply)
+```
+
+These affect most resources and can account for hundreds of attribute
+changes. They are harmless and resolve completely after apply.
+
+#### State upgrader gaps
+
+The v5 provider's state upgraders cannot carry forward every field from v4
+state. These attributes exist in your HCL or in the API but are missing from
+the migrated state until the provider refreshes them:
+
+| Resource | Attributes | Details |
+|---|---|---|
+| `cloudflare_r2_bucket` | `jurisdiction` | v5 adds `jurisdiction = "default"` to all R2 buckets. Not present in v4 state. |
+| `cloudflare_zero_trust_access_identity_provider` | `support_groups`, `conditional_access_enabled` | Azure/OIDC fields not carried forward by the state upgrader. |
+| `cloudflare_zero_trust_access_identity_provider` | `idp_public_certs` | SAML providers: v4 `idp_public_cert` (string) becomes `idp_public_certs` (list) in v5. The state upgrader does not transform this. |
+
+#### Resource creation from splits
+
+Some v4 resources split into multiple v5 resources. The new resources must be
+created on the first apply:
+
+| v4 Resource | New v5 Resource Created | Why |
+|---|---|---|
+| `cloudflare_argo` | `cloudflare_argo_tiered_caching` | v4 `cloudflare_argo` managed both smart routing and tiered caching. v5 splits them. The `cloudflare_argo_smart_routing` resource inherits the state via `moved`, but `cloudflare_argo_tiered_caching` must be created fresh. |
+| `cloudflare_tiered_cache` (with `cache_type = "generic"`) | `cloudflare_argo_tiered_caching` | Similar split. The `cloudflare_tiered_cache` resource retains its state, but the companion `cloudflare_argo_tiered_caching` resource must be created. |
+
+#### Precedence normalization
+
+`cloudflare_zero_trust_gateway_policy` resources will show precedence values
+changing from large internal values to the user-facing values:
+
+```
+~ precedence = 1400392 -> 1400
+```
+
+This is a one-time normalization applied by the state upgrader.
+
+#### IP CIDR normalization
+
+`cloudflare_list` resources with IP items may show CIDR notation being
+stripped (e.g., `10.0.0.0/8` to `10.0.0.0` with the comment updated) to
+match the v5 schema format.
+
+#### Schema type changes
+
+Some attributes change representation between v4 and v5:
+
+```
+- description   = "" -> null       # Empty string becomes null
+- pool_weights  = {} -> null       # Empty map becomes null
+- enabled_entries = [] -> null     # Empty list becomes null
+```
+
+### Perpetual Computed Field Differences
+
+A small number of changes persist even after `terraform apply`. These are
+ongoing v5 provider behaviors where the plan output does not match the
+applied state. They do **not** represent actual infrastructure changes and
+are safe to ignore.
+
+| Resource | Attribute | Behavior |
+|---|---|---|
+| `cloudflare_healthcheck` | `description` | The API returns `""` but the v5 schema represents it as `null`. Shows `"" -> null` on every plan for healthchecks with no description set. |
+| `cloudflare_healthcheck` | `status`, `failure_reason`, `tcp_config`, `http_config` | Read-only fields that refresh to `(known after apply)` on every plan. `tcp_config` appears on HTTP healthchecks and `http_config` on TCP healthchecks (the "other" config type). |
+| `cloudflare_zero_trust_gateway_policy` | `duration` | The provider normalizes `"24h"` to `"24h0m0s"` on read, causing a perpetual diff. |
+| `cloudflare_zero_trust_gateway_policy` | Various rule settings (`read_only`, `schedule`, `source_account`, `override_host`, `sharable`, `warning_status`, `deleted_at`, `expiration`, and others) | Computed read-only fields that refresh to `(known after apply)` on every plan. Affects a subset of gateway policies (typically 5-6 resources). |
+| `cloudflare_zero_trust_gateway_policy` | `audit_ssh.command_logging` | Computed default (`true`) that re-appears on every plan for resources with `audit_ssh` settings. |
+| `cloudflare_zero_trust_gateway_policy` | `block_page_enabled`, `ip_categories` | Computed defaults (`false`) that appear on every plan for certain rule settings. |
+| `cloudflare_zero_trust_dlp_predefined_profile` | `entries`, `name`, `open_access` | Read-only API fields that the provider recalculates on every plan. |
+| `cloudflare_zero_trust_dlp_predefined_profile` | `enabled_entries` | API returns `[]` but config uses `null`. Shows `[] -> null` on every plan. |
+
+~> These perpetual diffs are provider-level issues being tracked for
+resolution. They do not affect your infrastructure and `terraform apply` will
+succeed without making changes.
+
 ---
 
 ## Migration Path B: Upgrading Within v5
