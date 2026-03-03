@@ -15,10 +15,11 @@ handle Terraform state migration transparently. Combined with the
 [tf-migrate] CLI tool for HCL configuration changes, the migration process is
 significantly simpler than previous approaches.
 
-~> This guide supersedes the Grit-based migration instructions in the
-[version 5 upgrade guide]. You do **not** need Grit to migrate. The
-[version 5 upgrade guide] remains a useful reference for per-resource attribute
-change details if you prefer manual HCL changes.
+~> **Grit-based migration is deprecated.** This guide supersedes the Grit-based
+migration instructions in the [version 5 upgrade guide]. You do **not** need
+Grit to migrate. Grit patterns are no longer supported and will be removed in
+a future release. The [version 5 upgrade guide] remains a useful reference for
+per-resource attribute change details if you prefer manual HCL changes.
 
 ## Quick Reference
 
@@ -1027,9 +1028,9 @@ before retrying.
 
 **Do I still need Grit?**
 
-No. `tf-migrate` replaces the Grit patterns for HCL migration, and state
-upgraders handle state automatically. Grit patterns remain available but are
-no longer the recommended approach.
+No. **Grit-based migration is deprecated and will be removed in a future
+release.** `tf-migrate` replaces the Grit patterns for HCL migration, and
+state upgraders handle state automatically. Do not use Grit for new migrations.
 
 **Do I need to manually edit my state file?**
 
@@ -1072,6 +1073,40 @@ This resource has been removed in v5. Each zone setting is now managed by an
 individual `cloudflare_zone_setting` resource. See the
 [`cloudflare_zone_settings_override`](#cloudflare_zone_settings_override)
 section under Resources Requiring Manual Migration.
+
+**What if I use Terraform Cloud or remote state?**
+
+The migration works the same way. The state upgraders run when the provider
+executes `terraform plan` or `terraform apply`, regardless of where state is
+stored (local, S3, Terraform Cloud, etc.). Just ensure you have exclusive
+access to the state during migration.
+
+**What if I have a mixed environment (some resources still on v4)?**
+
+You cannot use mixed provider versions in the same Terraform workspace. You
+must migrate all resources in a workspace at once. If you need gradual
+migration, separate resources into different workspaces and migrate them
+independently.
+
+**What if migration fails midway?**
+
+1. Restore from your backup (version control or `.bak` files from tf-migrate)
+2. Identify the failing resource from the error message
+3. Check if it requires manual migration (see resource-specific sections above)
+4. If you believe it's a bug, open an issue at
+   https://github.com/cloudflare/tf-migrate/issues with the error details
+
+**What if I see "No changes" but plan still shows diffs?**
+
+Some resources may show cosmetic differences after migration that persist
+across multiple applies. Common causes:
+
+- HTML entity encoding differences (`&#39;` vs `'`)
+- Timestamp formatting changes
+- Computed fields that refresh on every plan
+
+See [Expected Plan Changes After Migration](#expected-plan-changes-after-migration)
+for details. If the diff is truly just cosmetic, you can safely ignore it.
 
 ---
 
