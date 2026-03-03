@@ -4,7 +4,10 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ["Acceptance Tests"]
+    types:
+      - completed
     branches:
       - "release-please**"
 
