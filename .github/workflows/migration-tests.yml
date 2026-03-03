@@ -4,6 +4,12 @@ concurrency:
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Acceptance Tests"]
+    types:
+      - completed
+    branches:
+      - "release-please**"
 
 env:
   CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
@@ -12,7 +18,6 @@ env:
   CLOUDFLARE_DOMAIN: terraform.cfapi.net
   CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
   TF_MIGRATE_BINARY_PATH: ${{ github.workspace }}/tf-migrate
-  TF_MIG_TEST: true
   TF_ACC: 1
   LAST_V4_VERSION: "4.52.5"
 jobs:
@@ -203,16 +208,13 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Checkout tf-migrate
-        uses: actions/checkout@v4
-        with:
-          repository: cloudflare/tf-migrate
-          path: tf-migrate-src
-
-      - name: Build tf-migrate
+      - name: Download tf-migrate
         run: |
-          cd tf-migrate-src
-          go build -o ../tf-migrate ./cmd/tf-migrate
+          gh release download v1.0.0-beta.1 --repo cloudflare/tf-migrate --pattern 'tf-migrate_*_linux_amd64.tar.gz' --output tf-migrate.tar.gz
+          tar -xzf tf-migrate.tar.gz tf-migrate
+          chmod +x tf-migrate
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Run ${{ matrix.test.display_name }} Tests
         run: ./scripts/run-ci-tests ${{ matrix.test.name }} migration

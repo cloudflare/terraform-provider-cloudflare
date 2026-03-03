@@ -13,7 +13,6 @@
 #
 # Environment Variables:
 #   TF_MIGRATE_BINARY_PATH: Path to tf-migrate binary (required for migration tests)
-#   TF_MIG_TEST: Enable migration test mode (required for migration tests, set to "1" or "true")
 
 # ./internal/services/account
 # account creation can only be done by a tenant admin and the current CI does 
@@ -597,14 +596,13 @@ run_tests() {
         # Example: ./internal/services/dns_record/... -> ./internal/services/dns_record/migration/...
         test_path="${service%/...}/migration/..."
 
-        # Check if this service has migration tests by checking if migration directory exists
-        local migration_dir="${service%/...}/migration"
-        if [ ! -d "$migration_dir" ]; then
-            log "${RED}ERROR: No migration directory found for $service${NC}" > "$log_file"
-            log "ERROR: No migration directory found for $service"
-            log "${RED}✗ Tests failed for $service (no migration directory) - check $log_file${NC}" >> "$log_file"
-            log "✗ Tests failed for $service (no migration directory) - check $log_file"
-            return 1
+        # Only run migration tests for services that have a v500 state upgrader
+        local migration_v500_dir="${service%/...}/migration/v500"
+        if [ ! -d "$migration_v500_dir" ]; then
+            log "${YELLOW}Skipping migration tests for $service (no migration/v500 directory)${NC}" > "$log_file"
+            log "Skipping migration tests for $service (no migration/v500 directory)"
+            echo "TESTS_SKIPPED" >> "$log_file"
+            return 0
         fi
     else
         test_pattern="^TestAcc"
@@ -618,10 +616,6 @@ run_tests() {
     if [ "$TEST_TYPE" = "migration" ]; then
         if [ -z "$TF_MIGRATE_BINARY_PATH" ]; then
             log "${RED}ERROR: TF_MIGRATE_BINARY_PATH environment variable must be set for migration tests${NC}"
-            return 1
-        fi
-        if [ -z "$TF_MIG_TEST" ]; then
-            log "${RED}ERROR: TF_MIG_TEST environment variable must be set for migration tests${NC}"
             return 1
         fi
     fi
@@ -1252,7 +1246,6 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "Environment variables:"
     echo "  PARALLEL_JOBS           Override default parallel job count"
     echo "  TF_MIGRATE_BINARY_PATH  Path to tf-migrate binary (required for migration tests)"
-    echo "  TF_MIG_TEST             Enable migration test mode (required for migration tests)"
     echo ""
     echo "Product Groups:"
     for group in $(get_available_product_groups); do

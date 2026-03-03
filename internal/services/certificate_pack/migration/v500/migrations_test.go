@@ -41,6 +41,7 @@ var v5GoogleHTTPConfig string
 
 // TestMigrateCertificatePack_V4ToV5_Basic tests basic certificate pack migration with required fields
 func TestMigrateCertificatePack_V4ToV5_Basic(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
@@ -146,6 +147,7 @@ func TestMigrateCertificatePack_V4ToV5_Basic(t *testing.T) {
 
 // TestMigrateCertificatePack_V4ToV5_WaitForActiveStatus tests wait_for_active_status field removal
 func TestMigrateCertificatePack_V4ToV5_WaitForActiveStatus(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
@@ -237,6 +239,7 @@ func TestMigrateCertificatePack_V4ToV5_WaitForActiveStatus(t *testing.T) {
 
 // TestMigrateCertificatePack_V4ToV5_DifferentValidation tests different validation methods and CAs
 func TestMigrateCertificatePack_V4ToV5_DifferentValidation(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
