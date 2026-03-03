@@ -13,12 +13,15 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	cfv2 "github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	cfv6 "github.com/cloudflare/cloudflare-go/v6"
+	cfv6option "github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_shield_operation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/cloud_connector_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
@@ -364,9 +367,27 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	v2Client := cfv2.NewClient(cfv2Options...)
 
+	cfv6Options := make([]cfv6option.RequestOption, 0)
+	cfv6Options = append(cfv6Options, cfv6option.WithBaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePathV2)))
+	cfv6Options = append(cfv6Options, cfv6option.WithHeader("user-agent", userAgentParams.String()))
+	if apiToken != "" {
+		cfv6Options = append(cfv6Options, cfv6option.WithAPIToken(apiToken))
+	}
+	if apiKey != "" {
+		cfv6Options = append(cfv6Options, cfv6option.WithAPIKey(apiKey))
+		if email != "" {
+			cfv6Options = append(cfv6Options, cfv6option.WithAPIEmail(email))
+		}
+	}
+	if apiUserServiceKey != "" {
+		cfv6Options = append(cfv6Options, cfv6option.WithUserServiceKey(apiUserServiceKey))
+	}
+	v6Client := cfv6.NewClient(cfv6Options...)
+
 	client := &muxclient.Client{
 		V1: v1Client,
 		V2: v2Client,
+		V6: v6Client,
 	}
 
 	resp.DataSourceData = client
@@ -401,6 +422,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		apishieldoperation.NewResource,
+		connectivity_directory_service.NewResource,
 	}
 }
 
