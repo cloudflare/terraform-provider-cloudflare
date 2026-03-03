@@ -939,7 +939,8 @@ func (e expectEmptyPlanExceptZoneDNSSECStatusChange) CheckPlan(ctx context.Conte
 			// Allow computed field refreshes to (known after apply)
 			// These fields refresh when status changes trigger resource updates
 			computedFields := []string{"algorithm", "digest", "digest_algorithm", "digest_type",
-				"ds", "flags", "key_tag", "key_type", "modified_on", "public_key"}
+				"ds", "flags", "key_tag", "key_type", "modified_on", "public_key",
+				"dnssec_multi_signer", "dnssec_presigned", "dnssec_use_nsec3"}
 			isComputedField := false
 			for _, computedField := range computedFields {
 				if key == computedField {
