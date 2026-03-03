@@ -46,8 +46,8 @@ Before starting the migration:
 
   ```bash
   # Example for macOS (ARM64)
-  curl -LO https://github.com/cloudflare/tf-migrate/releases/latest/download/tf-migrate_1.0.0-beta.1_darwin_arm64.tar.gz
-  tar -xzf tf-migrate_1.0.0-beta.1_darwin_arm64.tar.gz
+  curl -LO https://github.com/cloudflare/tf-migrate/releases/download/v1.0.0-beta.2/tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
+  tar -xzf tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
   chmod +x tf-migrate
   sudo mv tf-migrate /usr/local/bin/
   
