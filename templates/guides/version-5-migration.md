@@ -40,14 +40,25 @@ Before starting the migration:
   versions, you can use `terraform state mv` instead -- see
   [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18).
 - **tf-migrate** -- Install the [tf-migrate] CLI tool for automatic HCL
-  configuration changes:
+  configuration changes. Download the latest release for your platform from
+  the [tf-migrate releases page](https://github.com/cloudflare/tf-migrate/releases):
 
   ```bash
+  # Example for macOS (ARM64)
+  curl -LO https://github.com/cloudflare/tf-migrate/releases/latest/download/tf-migrate_1.0.0-beta.1_darwin_arm64.tar.gz
+  tar -xzf tf-migrate_1.0.0-beta.1_darwin_arm64.tar.gz
+  chmod +x tf-migrate
+  sudo mv tf-migrate /usr/local/bin/
+  
+  # Or build from source:
   git clone https://github.com/cloudflare/tf-migrate.git
   cd tf-migrate
   make
   # Binary available at ./bin/tf-migrate
   ```
+
+  For a complete list of supported resources and data sources, see the
+  [tf-migrate README][tf-migrate].
 
 - **Back up** your Terraform state and configuration files. Use version control.
 - **Lock state** -- Ensure no concurrent Terraform operations are running.
@@ -80,6 +91,25 @@ There are three categories of changes between v4 and v5:
  State Migration   ──> Provider state upgraders (automatic on plan/apply)
  Resource Renames  ──> moved blocks (Terraform 1.8+)
 ```
+
+### What tf-migrate Handles
+
+`tf-migrate` automatically handles:
+
+- **Resource type renames** -- Updates resource types in your HCL (e.g.,
+  `cloudflare_record` to `cloudflare_dns_record`)
+- **Attribute transformations** -- Renames, restructures, and removes deprecated
+  attributes
+- **`moved` block generation** -- Creates `moved` blocks for renamed resources
+  so Terraform knows to preserve state
+- **Cross-file reference updates** -- Updates references to renamed resources
+  across all `.tf` files (e.g., `cloudflare_record.example.id` becomes
+  `cloudflare_dns_record.example.id`)
+- **Data source migrations** -- Transforms data source configurations and
+  updates output attribute references (e.g., `data.cloudflare_zones.example.zones`
+  becomes `data.cloudflare_zones.example.result`)
+
+For a complete list of supported resources, see the [tf-migrate README][tf-migrate].
 
 ---
 
@@ -138,14 +168,6 @@ tf-migrate migrate \
   --resources dns_record,zero_trust_list \
   --source-version v4 \
   --target-version v5
-```
-
-~> If you manage `cloudflare_tunnel_route` resources, set your Cloudflare API
-credentials before running `tf-migrate`. The tunnel route migration requires
-an API call to resolve network CIDRs to route UUIDs:
-
-```bash
-export CLOUDFLARE_API_TOKEN="your-api-token"
 ```
 
 **Manual alternative:** If you prefer to make HCL changes manually or
