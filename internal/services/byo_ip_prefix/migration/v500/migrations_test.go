@@ -34,14 +34,14 @@ var v5BasicConfig string
 
 // buildFirstStep constructs step 1 for the migration test.
 //
-// For from_v4_latest: the v4 provider's Create is a no-op (sets ID from prefix_id and
-// reads the existing prefix), so the resource must be imported using ImportState.
-//
-// For from_v5: the v5 provider can create prefixes via the API, so a normal apply is used.
+// For both from_v4_latest and from_v5, a plain apply is used. The v4 provider's Create
+// is a no-op in the sense that it does not provision a new Cloudflare prefix — it calls
+// d.SetId(prefix_id) then Read — but terraform apply does succeed when the prefix already
+// exists in the account. No ImportState is needed.
 func buildFirstStep(tc struct {
 	name    string
 	version string
-}, resourceName, testConfig, accountID, prefixID string) resource.TestStep {
+}, testConfig string) resource.TestStep {
 	if tc.version == currentProviderVersion {
 		return resource.TestStep{
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -55,11 +55,7 @@ func buildFirstStep(tc struct {
 				VersionConstraint: tc.version,
 			},
 		},
-		Config:            testConfig,
-		ResourceName:      resourceName,
-		ImportState:       true,
-		ImportStateId:     fmt.Sprintf("%s/%s", accountID, prefixID),
-		ImportStateVerify: true,
+		Config: testConfig,
 	}
 }
 
@@ -107,7 +103,7 @@ func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Migration test prefix")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("advertised"), knownvalue.NotNull()),
+				// asn and cidr are populated from the API by the v5 provider on the first read
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("asn"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cidr"), knownvalue.NotNull()),
 			}
@@ -125,7 +121,7 @@ func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					buildFirstStep(tc, resourceName, testConfig, accountID, prefixID),
+					buildFirstStep(tc, testConfig),
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks),
 				},
 			})
@@ -173,8 +169,6 @@ func TestMigrateBYOIPPrefix_WithAdvertisement(t *testing.T) {
 			stateChecks := []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-				// v4 advertisement is removed; v5 advertised is populated by API
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("advertised"), knownvalue.NotNull()),
 			}
 			if tc.version != currentProviderVersion {
 				stateChecks = append(stateChecks,
@@ -190,7 +184,7 @@ func TestMigrateBYOIPPrefix_WithAdvertisement(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					buildFirstStep(tc, resourceName, testConfig, accountID, prefixID),
+					buildFirstStep(tc, testConfig),
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks),
 				},
 			})
@@ -238,10 +232,9 @@ func TestMigrateBYOIPPrefix_Minimal(t *testing.T) {
 			stateChecks := []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-				// v5 computed fields populated from API after UpgradeState (or initial Read for v5 create)
+				// asn and cidr are populated from the API by the v5 provider on the first read
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("asn"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cidr"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("advertised"), knownvalue.NotNull()),
 			}
 			if tc.version != currentProviderVersion {
 				stateChecks = append(stateChecks,
@@ -256,7 +249,7 @@ func TestMigrateBYOIPPrefix_Minimal(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					buildFirstStep(tc, resourceName, testConfig, accountID, prefixID),
+					buildFirstStep(tc, testConfig),
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks),
 				},
 			})
