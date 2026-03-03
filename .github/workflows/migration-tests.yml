@@ -205,16 +205,13 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Checkout tf-migrate
-        uses: actions/checkout@v4
-        with:
-          repository: cloudflare/tf-migrate
-          path: tf-migrate-src
-
-      - name: Build tf-migrate
+      - name: Download tf-migrate
         run: |
-          cd tf-migrate-src
-          go build -o ../tf-migrate ./cmd/tf-migrate
+          gh release download v1.0.0-beta.1 --repo cloudflare/tf-migrate --pattern 'tf-migrate_*_linux_amd64.tar.gz' --output tf-migrate.tar.gz
+          tar -xzf tf-migrate.tar.gz tf-migrate
+          chmod +x tf-migrate
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Run ${{ matrix.test.display_name }} Tests
         run: ./scripts/run-ci-tests ${{ matrix.test.name }} migration
