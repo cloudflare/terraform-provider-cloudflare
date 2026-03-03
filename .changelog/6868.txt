@@ -1,0 +1,11 @@
+```release-note:new-resource
+cloudflare_connectivity_directory_service
+```
+
+```release-note:new-datasource
+cloudflare_connectivity_directory_service
+```
+
+```release-note:new-datasource
+cloudflare_connectivity_directory_services
+```
