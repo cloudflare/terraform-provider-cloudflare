@@ -2,7 +2,7 @@
 
 ## 5.19.0-beta.1 (2026-03-03)
 
-> **Disclaimer:** Please note that v1.0.0-beta.1 is in Beta and we are still testing it for stability.
+> **Disclaimer:** Please note that v5.19.0-beta.1 is in Beta and we are still testing it for stability.
 
 ### Migration Support Release
 
