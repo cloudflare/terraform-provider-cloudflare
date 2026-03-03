@@ -437,6 +437,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dcv_delegation.NewDataSource,
 		infrastructure_access_target_deprecated.NewDataSource,
 		zero_trust_infrastructure_access_target.NewDataSource,
+		connectivity_directory_service.NewDataSource,
+		connectivity_directory_service.NewListDataSource,
 	}
 }
 
