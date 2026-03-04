@@ -7,52 +7,38 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV1 handles state upgrades from v5 production version (schema_version=1) to v500.
+// UpgradeFromV1 handles state upgrades from v5 with explicit version=1 to version 500.
 // This is a no-op upgrade since the schema is compatible - just copy state through.
-// This upgrader is only active when TF_MIG_TEST=1 sets schema version to 500.
+//
+// Note: This upgrader may not be used in practice since published v5 releases used
+// version 0 (no Version field), not version 1. Kept for completeness.
 func UpgradeFromV1(
 	ctx context.Context,
 	req resource.UpgradeStateRequest,
 	resp *resource.UpgradeStateResponse,
 ) {
-	tflog.Info(ctx, "Upgrading zero_trust_organization state from schema_version=1 to v500 (no-op)")
+	tflog.Info(ctx, "Upgrading zero_trust_organization state from version 1 to version 500 (no-op)")
 	// No-op upgrade: schema is compatible, just copy raw state through
 	resp.State.Raw = req.State.Raw
 }
 
-// UpgradeFromLegacyV0 handles state upgrades from the legacy v4 resources to v5.
-// This is triggered when users manually run state mv (Terraform < 1.8), which preserves
-// the source schema_version=0 from the legacy provider.
+// UpgradeFromV0 handles state upgrades from published v5 releases (schema_version=0)
+// to current v5 (version=500).
 //
-// Handles BOTH v4 resource names (they share identical schemas):
-//   - cloudflare_access_organization
-//   - cloudflare_zero_trust_access_organization
+// Published v5 releases (before Version field was added) defaulted to version 0.
+// These states already use v5 schema format (login_design as object, etc.) and
+// just need a version bump to 500.
 //
-// Note: schema_version=0 was the schema version in the v4 (SDKv2) provider.
-// The state structure matches SourceCloudflareAccessOrganizationModel.
-func UpgradeFromLegacyV0(
+// Note: v4→v5 migration is NOT handled here. It's handled by MoveState which
+// transforms the state during resource rename (cloudflare_access_organization →
+// cloudflare_zero_trust_organization) and outputs state at version 500.
+func UpgradeFromV0(
 	ctx context.Context,
 	req resource.UpgradeStateRequest,
 	resp *resource.UpgradeStateResponse,
 ) {
-	tflog.Info(ctx, "Upgrading zero_trust_organization state from legacy v4 (schema_version=0)")
-
-	// Parse the v4 state (schema_version=0)
-	var sourceState SourceCloudflareAccessOrganizationModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Transform to v5 target
-	targetState, diags := Transform(ctx, sourceState)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Set the upgraded state
-	resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
-
-	tflog.Info(ctx, "State upgrade from legacy v4 completed successfully")
+	tflog.Info(ctx, "Upgrading zero_trust_organization from published v5 (version 0) to version 500")
+	// Published v5 already uses v5 schema format
+	// Just copy state through for version bump
+	resp.State.Raw = req.State.Raw
 }

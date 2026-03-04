@@ -37,28 +37,36 @@ func (r *ZeroTrustOrganizationResource) MoveState(ctx context.Context) []resourc
 // UpgradeState handles schema version upgrades for cloudflare_zero_trust_organization.
 //
 // This handles two upgrade paths:
-// 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
+// 1. Published v5 (schema_version=0) → Current v5 (version=500): No-op upgrade
+//   - Published v5 releases had no Version field, defaulted to 0
+//   - State already uses v5 schema format (objects)
+//   - Just needs version bump
 //
-// The separation of schema versions (v4=0, v5=1/500) eliminates the need for
-// dual-format detection that was required in earlier implementations.
+// 2. v5 with explicit version=1 (if any exist) → v5 (version=500): No-op upgrade
+//
+// Note: v4→v5 migration is NOT handled by UpgradeState.
+// It's handled by MoveState, which transforms the state during resource rename
+// (cloudflare_access_organization → cloudflare_zero_trust_organization).
 func (r *ZeroTrustOrganizationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-	sourceSchema := v500.SourceCloudflareAccessOrganizationSchema()
 
 	return map[int64]resource.StateUpgrader{
-		// Handle state from v4 SDKv2 provider (schema_version=0)
-		// This is used when users manually run terraform state mv (Terraform < 1.8)
-		// Handles BOTH v4 resource names:
-		//   - cloudflare_access_organization
-		//   - cloudflare_zero_trust_access_organization
+		// Handle published v5 (schema_version=0) → current v5 (version=500)
+		//
+		// Published v5 releases (before Version field was added) defaulted to version 0.
+		// These states already use v5 schema format (login_design as object, etc.)
+		// and just need a version bump to 500.
+		//
+		// Note: v4→v5 migration is NOT handled here. It's handled by MoveState which
+		// transforms the state during resource rename.
 		0: {
-			PriorSchema:   &sourceSchema,
-			StateUpgrader: v500.UpgradeFromLegacyV0,
+			PriorSchema:   &targetSchema,
+			StateUpgrader: v500.UpgradeFromV0,
 		},
 
-		// Handle state from v5 Plugin Framework provider with version=1
-		// This is a no-op upgrade that just bumps the version to 500
+		// Handle state from v5 Plugin Framework provider with version=1 (if any)
+		// This is a no-op upgrade that just bumps the version to 500.
+		// Note: This may not be used in practice since published v5 used version 0.
 		1: {
 			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV1,
