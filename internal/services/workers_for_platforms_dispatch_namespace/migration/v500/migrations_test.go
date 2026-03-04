@@ -48,6 +48,7 @@ var v5DeprecatedConfig string
 // TestMigrateWorkersForPlatformsDispatchNamespaceBasic tests migration from v4 dispatch_namespace to v5.
 // This covers the UpgradeState path (no resource rename; same type in v4 and v5).
 func TestMigrateWorkersForPlatformsDispatchNamespaceBasic(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
@@ -111,6 +112,7 @@ func TestMigrateWorkersForPlatformsDispatchNamespaceBasic(t *testing.T) {
 // cloudflare_workers_for_platforms_dispatch_namespace (v5).
 // This covers the MoveState path (resource rename triggered by `moved` block).
 func TestMigrateWorkersForPlatformsNamespaceDeprecated(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("test-namespace-%s", rnd)

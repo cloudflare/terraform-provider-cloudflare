@@ -4,7 +4,6 @@ package workers_kv
 
 import (
 	"context"
-	"os"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -17,29 +16,23 @@ var _ resource.ResourceWithUpgradeState = (*WorkersKVResource)(nil)
 // This handles two upgrade paths:
 // 1. v4 state (schema_version=0) → v5 (version=1 or 500): Full transformation (key → key_name)
 // 2. Early v5 state (schema_version=0) → v5 (version=1 or 500): No-op version bump
-// 3. v5 state (version=1) → v5 (version=500): No-op upgrade (only when TF_MIG_TEST=1)
+// 3. v5 state (version=1) → v5 (version=500): No-op upgrade
 //
 // The v0 upgrader uses the target schema as PriorSchema and detects whether the state
 // is v4 or v5 format by checking if key_name is populated after parsing.
 func (r *WorkersKVResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
-	upgraders := map[int64]resource.StateUpgrader{
+	return map[int64]resource.StateUpgrader{
 		0: {
 			// Use target schema as PriorSchema so v5 state (with key_name) can be parsed.
 			// v4 state (with key) will fail to parse, which we detect and handle via RawState.
 			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV0,
 		},
-	}
-
-	// Only register the v1→v500 upgrader when TF_MIG_TEST is enabled
-	if os.Getenv("TF_MIG_TEST") != "" {
-		upgraders[1] = resource.StateUpgrader{
+		1: {
 			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV1,
-		}
+		},
 	}
-
-	return upgraders
 }

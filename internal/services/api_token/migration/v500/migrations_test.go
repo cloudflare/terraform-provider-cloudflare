@@ -635,19 +635,21 @@ func TestMigrateAPIToken_V4ToV5_MixedEffects(t *testing.T) {
 
 // ==================== V5 Internal Upgrade Tests ====================
 // These test the production v0→v1 upgrader (early v5 with map resources → current v5 with JSON resources).
-// They must run in production mode (TF_MIG_TEST="") because the v5-early state format (condition as object,
 // policies as attribute) is incompatible with the v4 source schema (condition as array block, policy as block)
 // used by slot 0 in test mode. Both v4 and v5-early share schema_version=0.
 
 func TestMigrateAPITokenFromV5MapToJSON(t *testing.T) {
-	t.Setenv("TF_MIG_TEST", "")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_api_token.%s", rnd)
 	tmpDir := t.TempDir()
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() { acctest.TestAccPreCheck(t) }, WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
+			// Step 1: Create with early v5 (schema_version=0, resources as map)
 			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.0.0"}}, Config: fmt.Sprintf(v5EarlyBasicWithConditionConfig, rnd)},
+			// Step 2: Stepping stone through v5.18 (applies 0→1 upgrade)
+			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.18.0"}}, Config: fmt.Sprintf(v5LatestBasicWithConditionConfig, rnd)},
+			// Step 3: Upgrade to current (applies 1→500 upgrade)
 			{ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories, Config: fmt.Sprintf(v5LatestBasicWithConditionConfig, rnd), ConfigStateChecks: []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("effect"), knownvalue.StringExact("allow")),
@@ -667,7 +669,11 @@ func TestMigrateAPITokenFromV5ComplexResources(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() { acctest.TestAccPreCheck(t) }, WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
+			// Step 1: Create with early v5 (schema_version=0, resources as map)
 			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.0.0"}}, Config: fmt.Sprintf(v5EarlyComplexResourcesConfig, rnd, accountID)},
+			// Step 2: Stepping stone through v5.18 (applies 0→1 upgrade)
+			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.18.0"}}, Config: fmt.Sprintf(v5LatestComplexResourcesConfig, rnd, accountID)},
+			// Step 3: Upgrade to current (applies 1→500 upgrade)
 			{ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories, Config: fmt.Sprintf(v5LatestComplexResourcesConfig, rnd, accountID), ConfigStateChecks: []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resources"), knownvalue.StringExact(fmt.Sprintf(`{"com.cloudflare.api.account.%s":"*"}`, accountID))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("resources"), knownvalue.StringExact(`{"com.cloudflare.api.account.zone.*":"*"}`)),
@@ -683,7 +689,11 @@ func TestMigrateAPITokenFromV5WithTTL(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() { acctest.TestAccPreCheck(t) }, WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
+			// Step 1: Create with early v5 (schema_version=0)
 			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.0.0"}}, Config: fmt.Sprintf(v5EarlyWithTTLConfig, rnd)},
+			// Step 2: Stepping stone through v5.18 (applies 0→1 upgrade)
+			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.18.0"}}, Config: fmt.Sprintf(v5LatestWithTTLConfig, rnd)},
+			// Step 3: Upgrade to current (applies 1→500 upgrade)
 			{ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories, Config: fmt.Sprintf(v5LatestWithTTLConfig, rnd), ConfigStateChecks: []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("not_before"), knownvalue.StringExact("2027-01-01T00:00:00Z")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact("2027-12-31T23:59:59Z")),

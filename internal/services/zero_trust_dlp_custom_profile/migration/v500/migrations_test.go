@@ -60,7 +60,7 @@ func TestMigrateZeroTrustDLPCustomProfile_V4ToV5_BasicProfile(t *testing.T) {
 	testCases := []struct {
 		name       string
 		version    string
-		disableMig bool // set TF_MIG_TEST="" so production upgrader runs (for older v5 releases)
+		disableMig bool // set migration mode="" so production upgrader runs (for older v5 releases)
 		configFn   func(rnd, accountID string) string
 	}{
 		{
@@ -140,9 +140,8 @@ func TestMigrateZeroTrustDLPCustomProfile_V4ToV5_BasicProfile(t *testing.T) {
 // v5.16.0 had schema_version=0 and no context_awareness Computed default.
 // Upgrading to current adds a Computed default for context_awareness, producing a one-time plan diff.
 func TestMigrateZeroTrustDLPCustomProfile_V4ToV5_FromV516(t *testing.T) {
-	// Disable TF_MIG_TEST so production upgrader runs (GetSchemaVersion returns 1, handles 0→1 no-op)
-	os.Setenv("TF_MIG_TEST", "")
-	t.Cleanup(func() { os.Setenv("TF_MIG_TEST", "1") })
+	os.Setenv("migration mode", "")
+	t.Cleanup(func() { os.Setenv("migration mode", "1") })
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()

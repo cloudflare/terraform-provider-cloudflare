@@ -5,7 +5,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -27,7 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessApplicationResour
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(1, 500),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
@@ -262,6 +261,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"url": schema.StringAttribute{
 							Description: "the hyperlink in the footer link.",
 							Required:    true,
+						},
+					},
+				},
+			},
+			"oauth_configuration": schema.SingleNestedAttribute{
+				Description: "Optional configuration for managing an OAuth authorization flow controlled by Access. When set, Access will act as the OAuth authorization server for this application. This feature is currently in beta.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether the OAuth configuration is enabled for this application. When set to `false`, Access will not handle OAuth for this application. Defaults to `true` if omitted.",
+						Optional:    true,
+					},
+					"dynamic_client_registration": schema.SingleNestedAttribute{
+						Description: "Settings for OAuth dynamic client registration.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether dynamic client registration is enabled.",
+								Optional:    true,
+							},
+							"allow_any_on_localhost": schema.BoolAttribute{
+								Description: "Allows any client with redirect URIs on localhost.",
+								Optional:    true,
+							},
+							"allow_any_on_loopback": schema.BoolAttribute{
+								Description: "Allows any client with redirect URIs on 127.0.0.1.",
+								Optional:    true,
+							},
+							"allowed_uris": schema.ListAttribute{
+								Description: "The URIs that are allowed as redirect URIs for dynamically registered clients. Must use the `https` protocol. Paths may end in `/*` to match all sub-paths.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+						},
+					},
+					"grant": schema.SingleNestedAttribute{
+						Description: "Settings for OAuth grant behavior.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"access_token_lifetime": schema.StringAttribute{
+								Description: "The lifetime of the access token. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
+								Optional:    true,
+							},
+							"session_duration": schema.StringAttribute{
+								Description: "The duration of the OAuth session. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
+								Optional:    true,
+							},
 						},
 					},
 				},

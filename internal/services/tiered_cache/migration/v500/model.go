@@ -27,7 +27,7 @@ type SourceTieredCacheModel struct {
 // ============================================================================
 
 // TargetTieredCacheModel represents the current resource state from v5.x+ provider.
-// Schema version: 500 (when TF_MIG_TEST=1)
+// Schema version: 500
 // Resource type: cloudflare_tiered_cache
 //
 // In v5, the tiered_cache resource uses value with values: "on", "off"

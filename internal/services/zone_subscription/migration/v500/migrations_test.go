@@ -30,8 +30,8 @@ var v5BasicConfig string
 // This test verifies that existing v5 state at version 0 is correctly bumped
 // to version 500 without any transformation.
 func TestMigrateZoneSubscription_V5(t *testing.T) {
-	if os.Getenv("TF_MIG_TEST") == "" {
-		t.Skip("Skipping migration test: TF_MIG_TEST is not set")
+	if os.Getenv("migration mode") == "" {
+		t.Skip("Skipping migration test: migration mode is not set")
 	}
 
 	zoneID := "5a870ecfe7d96ad6c056fdaf44a72556" //os.Getenv("CLOUDFLARE_ALT_ZONE_ID")

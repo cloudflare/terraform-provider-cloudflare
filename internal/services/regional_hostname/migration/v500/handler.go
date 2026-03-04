@@ -9,7 +9,6 @@ import (
 
 // UpgradeFromV0 handles state upgrades from v4 provider (schema_version=0) to v5 (version=500).
 //
-// Both v4 and v5 used schema_version=0. When TF_MIG_TEST=1, this handler is registered
 // at slot 0. Since the schema is identical between v4 and v5, this is a no-op.
 func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading regional_hostname state from v4 provider (schema_version=0)")
