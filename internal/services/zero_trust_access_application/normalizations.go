@@ -88,6 +88,10 @@ func normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(_ context.Context
 	if data.SSH != nil && stateData.SSH != nil {
 		normalizeFalseAndNullBool(&data.SSH.AllowEmailAlias, stateData.SSH.AllowEmailAlias)
 	}
+	if data.RDP != nil && stateData.RDP != nil {
+		normalizeEmptyAndNullSlice(&data.RDP.AllowedClipboardLocalToRemoteFormats, stateData.RDP.AllowedClipboardLocalToRemoteFormats)
+		normalizeEmptyAndNullSlice(&data.RDP.AllowedClipboardRemoteToLocalFormats, stateData.RDP.AllowedClipboardRemoteToLocalFormats)
+	}
 }
 
 func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, stateData *ZeroTrustAccessApplicationPoliciesModel) {
@@ -107,7 +111,14 @@ func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, state
 	persistNullFromState(&data.Require, stateData.Require)
 	persistNullFromState(&data.Exclude, stateData.Exclude)
 
-	if data.ConnectionRules != nil && stateData.ConnectionRules != nil {
+	// connection_rules is a pointer, so we can't use persistNullFromState (which requires the IsNull interface).
+	// If the user didn't configure connection_rules (nil in state), preserve nil even if the API
+	// expands the reusable policy and returns connection_rules in the response.
+	// Otherwise, for legacy/inline policies where the user explicitly configured connection_rules,
+	// normalize the inner fields (e.g. null-vs-empty clipboard arrays).
+	if stateData.ConnectionRules == nil {
+		data.ConnectionRules = nil
+	} else if data.ConnectionRules != nil {
 		normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(ctx, data.ConnectionRules, stateData.ConnectionRules)
 	}
 }
@@ -198,6 +209,27 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 		}
 	}
 
+	if data.OAuthConfiguration != nil && stateData.OAuthConfiguration != nil {
+		normalizeTrueAndNullBool(&data.OAuthConfiguration.Enabled, stateData.OAuthConfiguration.Enabled)
+		stateDCR := stateData.OAuthConfiguration.DynamicClientRegistration
+		if stateDCR == nil {
+			stateDCR = &ZeroTrustAccessApplicationOAuthConfigurationDynamicClientRegistrationModel{}
+		}
+		if data.OAuthConfiguration.DynamicClientRegistration != nil {
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.Enabled, stateDCR.Enabled)
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.AllowAnyOnLocalhost, stateDCR.AllowAnyOnLocalhost)
+			normalizeTrueAndNullBool(&data.OAuthConfiguration.DynamicClientRegistration.AllowAnyOnLoopback, stateDCR.AllowAnyOnLoopback)
+			normalizeEmptyAndNullSlice(&data.OAuthConfiguration.DynamicClientRegistration.AllowedURIs, stateDCR.AllowedURIs)
+			// If the user didn't configure DCR and all fields normalized to null, nil the whole block
+			if stateData.OAuthConfiguration.DynamicClientRegistration == nil {
+				dcr := data.OAuthConfiguration.DynamicClientRegistration
+				if dcr.Enabled.IsNull() && dcr.AllowAnyOnLocalhost.IsNull() && dcr.AllowAnyOnLoopback.IsNull() && dcr.AllowedURIs == nil {
+					data.OAuthConfiguration.DynamicClientRegistration = nil
+				}
+			}
+		}
+	}
+
 	if data.SCIMConfig != nil && stateData.SCIMConfig != nil {
 		if data.SCIMConfig.Authentication != nil && stateData.SCIMConfig.Authentication != nil {
 			data.SCIMConfig.Authentication.Password = stateData.SCIMConfig.Authentication.Password
@@ -253,6 +285,11 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 				policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
 				policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
 				policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+				// connection_rules is a pointer (not a TF SDK type with IsNull), so nil is the equivalent of null.
+				// On import, the API expands the reusable policy and may include connection_rules in the response.
+				// We strip it here so the imported state only contains the policy ID, matching what a user would
+				// write in their config when referencing a reusable policy.
+				policy.ConnectionRules = nil
 			} else {
 				if !policy.Include.IsNull() && len(policy.Include.Elements()) == 0 {
 					policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)

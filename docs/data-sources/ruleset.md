@@ -36,7 +36,7 @@ Available values: "managed", "custom", "root", "zone".
 - `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
-Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_cache_settings", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
 - `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 - `version` (String) The version of the ruleset.
 
@@ -46,7 +46,7 @@ Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_err
 Read-Only:
 
 - `action` (String) The action to perform when the rule matches.
-Available values: "block", "challenge", "compress_response", "ddos_dynamic", "execute", "force_connection_close", "js_challenge", "log", "log_custom_field", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_cache_settings", "set_config", "skip".
+Available values: "block", "challenge", "compress_response", "ddos_dynamic", "execute", "force_connection_close", "js_challenge", "log", "log_custom_field", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_cache_control", "set_cache_settings", "set_cache_tags", "set_config", "skip".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
@@ -82,6 +82,7 @@ Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `disable_zaraz` (Boolean) Whether to disable Zaraz.
 - `edge_ttl` (Attributes) How long the Cloudflare edge network should cache the response. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl))
 - `email_obfuscation` (Boolean) Whether to enable Email Obfuscation.
+- `expression` (String) An expression to generate cache tags for set_cache_tags action.
 - `fonts` (Boolean) Whether to enable Cloudflare Fonts.
 - `from_list` (Attributes) A redirect based on a bulk list lookup. (see [below for nested schema](#nestedatt--rules--action_parameters--from_list))
 - `from_value` (Attributes) A redirect based on the request properties. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value))
@@ -89,20 +90,32 @@ Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `host_header` (String) A value to rewrite the HTTP host header to.
 - `hotlink_protection` (Boolean) Whether to enable Hotlink Protection.
 - `id` (String) The ID of the ruleset to execute.
+- `immutable` (Attributes) Set the immutable cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--immutable))
 - `increment` (Number) A delta to change the score by, which can be either positive or negative.
 - `matched_data` (Attributes) The configuration to use for matched data logging. (see [below for nested schema](#nestedatt--rules--action_parameters--matched_data))
+- `max_age` (Attributes) Set the max-age cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--max_age))
 - `mirage` (Boolean) Whether to enable Mirage.
+- `must_revalidate` (Attributes) Set the must-revalidate cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--must_revalidate))
+- `must_understand` (Attributes) Set the must-understand cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--must_understand))
+- `no_cache` (Attributes) Set the no-cache cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--no_cache))
+- `no_store` (Attributes) Set the no-store cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--no_store))
+- `no_transform` (Attributes) Set the no-transform cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--no_transform))
+- `operation` (String) The operation to perform for set_cache_tags action.
+Available values: "set", "add", "remove".
 - `opportunistic_encryption` (Boolean) Whether to enable Opportunistic Encryption.
 - `origin` (Attributes) An origin to route to. (see [below for nested schema](#nestedatt--rules--action_parameters--origin))
 - `origin_cache_control` (Boolean) Whether Cloudflare will aim to strictly adhere to RFC 7234.
 - `origin_error_page_passthru` (Boolean) Whether to generate Cloudflare error pages for issues from the origin server.
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
-Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_cache_settings", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
 - `polish` (String) The Polish level to configure.
 Available values: "off", "lossless", "lossy", "webp".
+- `private` (Attributes) Set the private cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--private))
 - `products` (List of String) A list of legacy security products to skip the execution of.
 Available values: "bic", "hot", "rateLimit", "securityLevel", "uaBlock", "waf", "zoneLockdown".
+- `proxy_revalidate` (Attributes) Set the proxy-revalidate cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--proxy_revalidate))
+- `public` (Attributes) Set the public cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--public))
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
 - `request_body_buffering` (String) The request body buffering mode to configure.
@@ -118,6 +131,7 @@ Available values: "none", "standard".
 - `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets option.
 Available values: "current".
 - `rulesets` (List of String) A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.
+- `s_maxage` (Attributes) Set the s-maxage cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--s_maxage))
 - `security_level` (String) The Security Level to configure.
 Available values: "off", "essentially_off", "low", "medium", "high", "under_attack".
 - `serve_stale` (Attributes) When to serve stale content from cache. (see [below for nested schema](#nestedatt--rules--action_parameters--serve_stale))
@@ -125,10 +139,16 @@ Available values: "off", "essentially_off", "low", "medium", "high", "under_atta
 - `sni` (Attributes) A Server Name Indication (SNI) override. (see [below for nested schema](#nestedatt--rules--action_parameters--sni))
 - `ssl` (String) The SSL level to configure.
 Available values: "off", "flexible", "full", "strict", "origin_pull".
+- `stale_if_error` (Attributes) Set the stale-if-error cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--stale_if_error))
+- `stale_while_revalidate` (Attributes) Set the stale-while-revalidate cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--stale_while_revalidate))
 - `status_code` (Number) The status code to use for the error.
+- `strip_etags` (Boolean) Whether to strip the ETag header from the response.
+- `strip_last_modified` (Boolean) Whether to strip the Last-Modified header from the response.
+- `strip_set_cookie` (Boolean) Whether to strip the Set-Cookie header from the response.
 - `sxg` (Boolean) Whether to enable Signed Exchanges (SXG).
 - `transformed_request_fields` (Attributes List) The transformed request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--transformed_request_fields))
 - `uri` (Attributes) A URI rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
+- `values` (List of String) The cache tag values for set_cache_tags action.
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
@@ -333,12 +353,84 @@ Available values: "add", "set", "remove".
 - `value` (String) A static value for the header.
 
 
+<a id="nestedatt--rules--action_parameters--immutable"></a>
+### Nested Schema for `rules.action_parameters.immutable`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
 <a id="nestedatt--rules--action_parameters--matched_data"></a>
 ### Nested Schema for `rules.action_parameters.matched_data`
 
 Read-Only:
 
 - `public_key` (String) The public key to encrypt matched data logs with.
+
+
+<a id="nestedatt--rules--action_parameters--max_age"></a>
+### Nested Schema for `rules.action_parameters.max_age`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `value` (Number) The value for the directive in seconds.
+
+
+<a id="nestedatt--rules--action_parameters--must_revalidate"></a>
+### Nested Schema for `rules.action_parameters.must_revalidate`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
+<a id="nestedatt--rules--action_parameters--must_understand"></a>
+### Nested Schema for `rules.action_parameters.must_understand`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
+<a id="nestedatt--rules--action_parameters--no_cache"></a>
+### Nested Schema for `rules.action_parameters.no_cache`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `qualifiers` (List of String) The qualifiers for the directive.
+
+
+<a id="nestedatt--rules--action_parameters--no_store"></a>
+### Nested Schema for `rules.action_parameters.no_store`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
+<a id="nestedatt--rules--action_parameters--no_transform"></a>
+### Nested Schema for `rules.action_parameters.no_transform`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
 
 
 <a id="nestedatt--rules--action_parameters--origin"></a>
@@ -388,6 +480,37 @@ Available values: "default", "medium", "low", "eoff".
 
 
 
+<a id="nestedatt--rules--action_parameters--private"></a>
+### Nested Schema for `rules.action_parameters.private`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `qualifiers` (List of String) The qualifiers for the directive.
+
+
+<a id="nestedatt--rules--action_parameters--proxy_revalidate"></a>
+### Nested Schema for `rules.action_parameters.proxy_revalidate`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
+<a id="nestedatt--rules--action_parameters--public"></a>
+### Nested Schema for `rules.action_parameters.public`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+
+
 <a id="nestedatt--rules--action_parameters--raw_response_fields"></a>
 ### Nested Schema for `rules.action_parameters.raw_response_fields`
 
@@ -424,6 +547,17 @@ Read-Only:
 - `preserve_duplicates` (Boolean) Whether to log duplicate values of the same header.
 
 
+<a id="nestedatt--rules--action_parameters--s_maxage"></a>
+### Nested Schema for `rules.action_parameters.s_maxage`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `value` (Number) The value for the directive in seconds.
+
+
 <a id="nestedatt--rules--action_parameters--serve_stale"></a>
 ### Nested Schema for `rules.action_parameters.serve_stale`
 
@@ -438,6 +572,28 @@ Read-Only:
 Read-Only:
 
 - `value` (String) A value to override the SNI to.
+
+
+<a id="nestedatt--rules--action_parameters--stale_if_error"></a>
+### Nested Schema for `rules.action_parameters.stale_if_error`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `value` (Number) The value for the directive in seconds.
+
+
+<a id="nestedatt--rules--action_parameters--stale_while_revalidate"></a>
+### Nested Schema for `rules.action_parameters.stale_while_revalidate`
+
+Read-Only:
+
+- `cloudflare_only` (Boolean) Whether to apply the directive only to Cloudflare's cache.
+- `operation` (String) The operation to perform.
+Available values: "set", "remove".
+- `value` (Number) The value for the directive in seconds.
 
 
 <a id="nestedatt--rules--action_parameters--transformed_request_fields"></a>

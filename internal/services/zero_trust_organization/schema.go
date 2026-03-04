@@ -145,13 +145,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
 				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"ui_read_only_toggle_reason": schema.StringAttribute{
 				Description: "A description of the reason why the UI read only field is being toggled.",

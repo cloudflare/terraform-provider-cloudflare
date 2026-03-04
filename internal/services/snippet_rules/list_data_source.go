@@ -1,0 +1,122 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package snippet_rules
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/snippets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+)
+
+type SnippetRulesListDataSource struct {
+	client *cloudflare.Client
+}
+
+var _ datasource.DataSourceWithConfigure = (*SnippetRulesListDataSource)(nil)
+
+func NewSnippetRulesListDataSource() datasource.DataSource {
+	return &SnippetRulesListDataSource{}
+}
+
+func (d *SnippetRulesListDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippet_rules_list"
+}
+
+func (d *SnippetRulesListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*cloudflare.Client)
+
+	if !ok {
+		resp.Diagnostics.AddError(
+			"unexpected resource configure type",
+			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	d.client = client
+}
+
+func (d *SnippetRulesListDataSource) Delete(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SnippetRulesListDataSourceModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := d.client.Snippets.Rules.Delete(
+		ctx,
+		snippets.RuleDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (d *SnippetRulesListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SnippetRulesListDataSourceModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	params, diags := data.toListParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	env := SnippetRulesListResultListDataSourceEnvelope{}
+	maxItems := int(data.MaxItems.ValueInt64())
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
+	res := new(http.Response)
+	_, err := d.client.Snippets.Rules.List(
+		ctx,
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+		return
+	}
+
+	acc := env.Result.Elements()
+	acc = acc[:min(len(acc), maxItems)]
+	result, diags := customfield.NewObjectListFromAttributes[SnippetRulesListResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}

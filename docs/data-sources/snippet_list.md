@@ -16,7 +16,7 @@ description: |-
 
 ### Required
 
-- `zone_id` (String) The unique ID of the zone.
+- `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Optional
 
@@ -31,8 +31,8 @@ description: |-
 
 Read-Only:
 
-- `created_on` (String) The timestamp of when the snippet was created.
-- `modified_on` (String) The timestamp of when the snippet was last modified.
-- `snippet_name` (String) The identifying name of the snippet.
+- `created_on` (String) Indicates when the snippet was created.
+- `modified_on` (String) Indicates when the snippet was last modified.
+- `snippet_name` (String) Identify the snippet.
 
 

@@ -4,7 +4,6 @@ package list_item
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item/migration/v500"
@@ -13,6 +12,7 @@ import (
 var _ resource.ResourceWithUpgradeState = (*ListItemResource)(nil)
 
 func (r *ListItemResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+
 	sourceSchema := v500.SourceListItemSchema()
 	v1Schema := v500.SourceListItemV1Schema()
 	return map[int64]resource.StateUpgrader{

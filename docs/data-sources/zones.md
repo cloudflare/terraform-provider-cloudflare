@@ -87,7 +87,7 @@ domain. If development mode has never been enabled, this value is 0.
 - `id` (String) Identifier
 - `meta` (Attributes) Metadata about the zone. (see [below for nested schema](#nestedatt--result--meta))
 - `modified_on` (String) When the zone was last modified.
-- `name` (String) The domain name.
+- `name` (String) The domain name. Per [RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4) the overall zone name can be up to 253 characters, with each segment ("label") not exceeding 63 characters.
 - `name_servers` (List of String) The name servers Cloudflare assigns to a zone.
 - `original_dnshost` (String) DNS host at the time of switching to Cloudflare.
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare.

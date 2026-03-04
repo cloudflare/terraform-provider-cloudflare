@@ -2,7 +2,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   account_id  = "%[2]s"
   name        = "%[1]s"
   description = "HTTP redirect policy"
-  precedence  = 12401
+  precedence  = %[3]d
   action      = "redirect"
   filters     = ["http"]
   traffic     = "any(http.request.uri.security_category[*] in {25})"

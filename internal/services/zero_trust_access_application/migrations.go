@@ -37,6 +37,7 @@ func (r *ZeroTrustAccessApplicationResource) MoveState(ctx context.Context) []re
 //
 // For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
 func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+
 	v5Schema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
 		// Handle early v5 state with schema_version=0 (v5.12-v5.15)

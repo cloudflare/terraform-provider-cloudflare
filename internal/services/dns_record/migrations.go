@@ -2,7 +2,6 @@ package dns_record
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record/migration/v500"

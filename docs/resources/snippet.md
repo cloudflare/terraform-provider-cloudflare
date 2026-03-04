@@ -39,14 +39,14 @@ resource "cloudflare_snippet" "example_snippet" {
 ### Required
 
 - `files` (List of Object) The list of files belonging to the snippet. (see [below for nested schema](#nestedatt--files))
-- `metadata` (Attributes) Metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
-- `snippet_name` (String) The identifying name of the snippet.
-- `zone_id` (String) The unique ID of the zone.
+- `metadata` (Attributes) Provide metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
+- `snippet_name` (String) Identify the snippet.
+- `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Read-Only
 
-- `created_on` (String) The timestamp of when the snippet was created.
-- `modified_on` (String) The timestamp of when the snippet was last modified.
+- `created_on` (String) Indicates when the snippet was created.
+- `modified_on` (String) Indicates when the snippet was last modified.
 
 <a id="nestedatt--files"></a>
 ### Nested Schema for `files`
@@ -62,7 +62,7 @@ Required:
 
 Required:
 
-- `main_module` (String) Name of the file that contains the main module of the snippet.
+- `main_module` (String) Specify the name of the file that contains the main module of the snippet.
 
 ## Import
 

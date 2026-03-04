@@ -56,7 +56,7 @@ Available values: "first_seen_at", "last_seen_at".
 - `page` (String) The current page number of the paginated results.
 
 We additionally support a special value "all". When "all" is used, the API will return all the scripts
-with the applied filters in a single page. This feature is best-effort and it may only work for zones with 
+with the applied filters in a single page. This feature is best-effort and it may only work for zones with
 a low number of scripts
 - `page_url` (String) Includes scripts that match one or more page URLs (separated by commas) where they were last seen
 

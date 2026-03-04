@@ -2,7 +2,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"
-  precedence = 12304
+  precedence = %[3]d
   action = "resolve"
   filters = ["dns_resolver"]
   traffic = "any(dns.domains[*] == \"example.com\")"

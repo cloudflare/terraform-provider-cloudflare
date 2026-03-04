@@ -19,7 +19,7 @@ type SourceRegionalHostnameModel struct {
 }
 
 // TargetRegionalHostnameModel represents the current resource state from v5.x+ provider.
-// Schema version: 500 (when TF_MIG_TEST=1)
+// Schema version: 500
 // Resource type: cloudflare_regional_hostname
 type TargetRegionalHostnameModel struct {
 	ID        types.String `tfsdk:"id"`

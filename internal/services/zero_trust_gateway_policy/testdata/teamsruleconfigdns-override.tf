@@ -2,7 +2,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   account_id  = "%[2]s"
   name        = "%[1]s"
   description = "DNS override policy"
-  precedence  = 12400
+  precedence  = %[3]d
   action      = "override"
   filters     = ["dns"]
   traffic     = "any(dns.domains[*] == \"example.com\")"

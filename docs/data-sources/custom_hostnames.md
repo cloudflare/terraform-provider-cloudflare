@@ -94,6 +94,7 @@ Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
 - `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
+- `dcv_delegation_records` (Attributes List) DCV Delegation records for domain validation. (see [below for nested schema](#nestedatt--result--ssl--dcv_delegation_records))
 - `expires_on` (String) The time the custom certificate expires on.
 - `hosts` (List of String) A list of Hostnames on a custom uploaded certificate.
 - `id` (String) Custom hostname SSL identifier tag.
@@ -111,6 +112,21 @@ Available values: "dv".
 - `validation_errors` (Attributes List) Domain validation errors that have been received by the certificate authority (CA). (see [below for nested schema](#nestedatt--result--ssl--validation_errors))
 - `validation_records` (Attributes List) (see [below for nested schema](#nestedatt--result--ssl--validation_records))
 - `wildcard` (Boolean) Indicates whether the certificate covers a wildcard.
+
+<a id="nestedatt--result--ssl--dcv_delegation_records"></a>
+### Nested Schema for `result.ssl.dcv_delegation_records`
+
+Read-Only:
+
+- `cname` (String) The CNAME record hostname for DCV delegation.
+- `cname_target` (String) The CNAME record target value for DCV delegation.
+- `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
+- `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.
+- `http_url` (String) The url that will be checked during domain validation.
+- `status` (String) Status of the validation record.
+- `txt_name` (String) The hostname that the certificate authority (CA) will check for a TXT record during domain validation .
+- `txt_value` (String) The TXT record that the certificate authority (CA) will check during domain validation.
+
 
 <a id="nestedatt--result--ssl--settings"></a>
 ### Nested Schema for `result.ssl.settings`
@@ -141,9 +157,12 @@ Read-Only:
 
 Read-Only:
 
+- `cname` (String) The CNAME record hostname for DCV delegation.
+- `cname_target` (String) The CNAME record target value for DCV delegation.
 - `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
 - `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.
 - `http_url` (String) The url that will be checked during domain validation.
+- `status` (String) Status of the validation record.
 - `txt_name` (String) The hostname that the certificate authority (CA) will check for a TXT record during domain validation .
 - `txt_value` (String) The TXT record that the certificate authority (CA) will check during domain validation.
 

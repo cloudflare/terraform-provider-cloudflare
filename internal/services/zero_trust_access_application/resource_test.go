@@ -10,8 +10,8 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -2019,9 +2019,9 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{
-						knownvalue.StringExact("ccc"),
-						knownvalue.StringExact("aaa"),
-						knownvalue.StringExact("bbb"),
+						knownvalue.StringExact(fmt.Sprintf("%s-ccc", rnd)),
+						knownvalue.StringExact(fmt.Sprintf("%s-aaa", rnd)),
+						knownvalue.StringExact(fmt.Sprintf("%s-bbb", rnd)),
 					})),
 				},
 			},
@@ -2176,4 +2176,125 @@ func TestAccUpgradeZeroTrustAccessApplication_FromPublishedV5(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareAccessApplication_WithOAuthConfiguration(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithOAuthConfiguration(rnd, accountID, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_localhost"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_loopback"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allowed_uris"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("access_token_lifetime"), knownvalue.StringExact("1h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("session_duration"), knownvalue.StringExact("24h")),
+				},
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "auto_redirect_to_identity"},
+			},
+			{
+				Config:   testAccCloudflareAccessApplicationWithOAuthConfiguration(rnd, accountID, domain),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithOAuthConfigurationMinimal(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithOAuthConfigurationMinimal(rnd, accountID, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("enabled"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				Config:   testAccCloudflareAccessApplicationWithOAuthConfigurationMinimal(rnd, accountID, domain),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_UpdateOAuthConfiguration(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithOAuthConfiguration(rnd, accountID, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_localhost"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_loopback"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allowed_uris"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("access_token_lifetime"), knownvalue.StringExact("1h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("session_duration"), knownvalue.StringExact("24h")),
+				},
+			},
+			{
+				Config: testAccCloudflareAccessApplicationWithOAuthConfigurationUpdated(rnd, accountID, domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_localhost"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allow_any_on_loopback"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("dynamic_client_registration").AtMapKey("allowed_uris"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("access_token_lifetime"), knownvalue.StringExact("30m")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("oauth_configuration").AtMapKey("grant").AtMapKey("session_duration"), knownvalue.StringExact("12h")),
+				},
+			},
+			{
+				Config:   testAccCloudflareAccessApplicationWithOAuthConfigurationUpdated(rnd, accountID, domain),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func testAccCloudflareAccessApplicationWithOAuthConfiguration(rnd, accountID, domain string) string {
+	return acctest.LoadTestCase("accessapplicationwithoauthconfiguration.tf", rnd, accountID, domain)
+}
+
+func testAccCloudflareAccessApplicationWithOAuthConfigurationUpdated(rnd, accountID, domain string) string {
+	return acctest.LoadTestCase("accessapplicationwithoauthconfigurationupdated.tf", rnd, accountID, domain)
+}
+
+func testAccCloudflareAccessApplicationWithOAuthConfigurationMinimal(rnd, accountID, domain string) string {
+	return acctest.LoadTestCase("accessapplicationwithoauthconfigurationminimal.tf", rnd, accountID, domain)
 }

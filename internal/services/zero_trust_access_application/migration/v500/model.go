@@ -243,6 +243,7 @@ type TargetAccessApplicationModel struct {
 	CustomPages                 *[]types.String                                                            `tfsdk:"custom_pages"`
 	CORSHeaders                 *TargetCORSHeadersModel                                                    `tfsdk:"cors_headers"`
 	FooterLinks                 *[]*TargetFooterLinksModel                                                 `tfsdk:"footer_links"`
+	OAuthConfiguration          *TargetOAuthConfigurationModel                                             `tfsdk:"oauth_configuration"`
 	SCIMConfig                  *TargetSCIMConfigModel                                                     `tfsdk:"scim_config"`
 	TargetCriteria              *[]*TargetTargetCriteriaModel                                              `tfsdk:"target_criteria"`
 	AppLauncherVisible          types.Bool                                                                 `tfsdk:"app_launcher_visible"`
@@ -275,6 +276,24 @@ type TargetCORSHeadersModel struct {
 type TargetFooterLinksModel struct {
 	Name types.String `tfsdk:"name"`
 	URL  types.String `tfsdk:"url"`
+}
+
+type TargetOAuthConfigurationModel struct {
+	Enabled                   types.Bool                                      `tfsdk:"enabled"`
+	DynamicClientRegistration *TargetOAuthConfigurationDynamicClientRegModel  `tfsdk:"dynamic_client_registration"`
+	Grant                     *TargetOAuthConfigurationGrantModel             `tfsdk:"grant"`
+}
+
+type TargetOAuthConfigurationDynamicClientRegModel struct {
+	Enabled             types.Bool      `tfsdk:"enabled"`
+	AllowAnyOnLocalhost types.Bool      `tfsdk:"allow_any_on_localhost"`
+	AllowAnyOnLoopback  types.Bool      `tfsdk:"allow_any_on_loopback"`
+	AllowedURIs         *[]types.String `tfsdk:"allowed_uris"`
+}
+
+type TargetOAuthConfigurationGrantModel struct {
+	AccessTokenLifetime types.String `tfsdk:"access_token_lifetime"`
+	SessionDuration     types.String `tfsdk:"session_duration"`
 }
 
 type TargetSaaSAppModel struct {

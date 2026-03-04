@@ -52,7 +52,7 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 
 // UpgradeFromV1 handles state upgrades from v5 provider (schema_version=1) to v500.
 // This is a no-op upgrade that just bumps the version.
-// Some published v5 versions set Version: 1 before GetSchemaVersion was introduced.
+// Some published v5 versions set Version: 1 before schema version was introduced.
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading cloudflare_list state from version=1 to version=500 (no-op)")
 	resp.State.Raw = req.State.Raw

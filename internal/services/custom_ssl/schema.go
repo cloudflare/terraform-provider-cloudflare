@@ -87,13 +87,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("ubiquitous"),
 			},
 			"deploy": schema.StringAttribute{
-				Description: "The environment to deploy the certificate to, defaults to production\nAvailable values: \"staging\", \"production\".",
-				Computed:    true,
+				Description: "The environment to deploy the certificate to.\nAvailable values: \"staging\", \"production\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("staging", "production"),
 				},
-				Default: stringdefault.StaticString("production"),
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
