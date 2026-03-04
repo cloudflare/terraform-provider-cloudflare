@@ -210,6 +210,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_subnet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
@@ -598,6 +599,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_pacfile.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
+		zero_trust_device_subnet.NewResource,
 		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
@@ -948,6 +950,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
+		zero_trust_device_subnet.NewZeroTrustDeviceSubnetDataSource,
 		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRouteDataSource,
 		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRoutesDataSource,
 		zero_trust_risk_behavior.NewZeroTrustRiskBehaviorDataSource,
