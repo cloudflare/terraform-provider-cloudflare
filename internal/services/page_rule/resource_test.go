@@ -12,16 +12,15 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-
 
 var (
 	domain = os.Getenv("CLOUDFLARE_DOMAIN")
@@ -38,7 +37,7 @@ func testSweepCloudflarePageRules(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s",clientErr))
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 		return clientErr
 	}
 
@@ -64,7 +63,7 @@ func testSweepCloudflarePageRules(r string) error {
 			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, zoneID))
 			err := client.DeletePageRule(ctx, zoneID, pageRule.ID)
 			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID,err))
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID, err))
 				continue
 			}
 			tflog.Info(ctx, fmt.Sprintf("Deleted page rule: %s", pageRule.ID))
@@ -84,7 +83,7 @@ func testSweepCloudflarePageRules(r string) error {
 			tflog.Info(ctx, fmt.Sprintf("Deleting page rule: %s (zone: %s)", pageRule.ID, altZoneID))
 			err := client.DeletePageRule(ctx, altZoneID, pageRule.ID)
 			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID,err))
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete page rule %s: %s", pageRule.ID, err))
 				continue
 			}
 			tflog.Info(ctx, fmt.Sprintf("Deleted page rule: %s", pageRule.ID))
@@ -3739,7 +3738,7 @@ func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	for _, rs := range s.RootModule().Resources {
@@ -3831,7 +3830,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 
 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
 		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
@@ -3857,7 +3856,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 
 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s",clientErr))
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
 		*initialID = rs.Primary.ID
 		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
@@ -3990,6 +3989,7 @@ func TestAccUpgradePageRule_FromPublishedV5(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
+				// Step 1: Create with v5.16.0 (schema version 0)
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
@@ -3999,6 +3999,19 @@ func TestAccUpgradePageRule_FromPublishedV5(t *testing.T) {
 				Config: config,
 			},
 			{
+				// Step 2: Upgrade to v5.17.0 (stepping stone - schema version 1)
+				// This is required because schema version 0 -> 1 state upgrader
+				// expects v4 SDKv2 format, but v5.16.0 state is v5 Plugin Framework format
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.17.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 3: Upgrade to current provider version
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

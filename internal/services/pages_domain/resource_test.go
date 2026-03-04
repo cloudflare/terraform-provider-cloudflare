@@ -13,8 +13,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -236,6 +236,7 @@ func TestAccUpgradePagesDomain_FromPublishedV5(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
+				// Step 1: Create with v5.16.0 (schema version 0)
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
@@ -245,6 +246,19 @@ func TestAccUpgradePagesDomain_FromPublishedV5(t *testing.T) {
 				Config: config,
 			},
 			{
+				// Step 2: Upgrade to v5.17.0 (stepping stone - schema version 1)
+				// This is required because schema version 0 -> 1 state upgrader
+				// expects v4 SDKv2 format, but v5.16.0 state is v5 Plugin Framework format
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.17.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 3: Upgrade to current provider version
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

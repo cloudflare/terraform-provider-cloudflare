@@ -1,5 +1,55 @@
 # Changelog
 
+## 5.19.0-beta.1 (2026-03-03)
+
+Full Changelog: [v5.18.0...v5.19.0-beta.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.18.0...v5.19.0-beta.1)
+
+### Features
+
+* **docs:** grit deprecation ([2f60e2f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2f60e2f6aedf6748fbefdb2423c53c3ab342d8ff))
+* **docs:** version 5 upgrade ([0478f95](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0478f951f0ec34a0df064f55b98ea961786ec38e))
+* **resources:** enable state upgrade ([a9a069b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a9a069bbebfbaa935a79cb54a013146907655f51))
+* **resources:** schema version bump ([7ba7600](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7ba7600a34e74cf44436afb7bdbee7bc42e51051))
+
+
+### Bug Fixes
+
+* **api_token:** docs template for examples ([a07a594](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a07a594259a701592faab82657056b5a887a069a))
+* **api_token:** simulate stepping stones in test ([54e9a62](https://github.com/cloudflare/terraform-provider-cloudflare/commit/54e9a622ff62439f8832001efd4ad56c4b8c2c04))
+* **ci:** run migration tests after acceptance ([ecec860](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ecec86063335437380877c01e661c113102c4ee4))
+* **ci:** tests and upgrade doc ([c0aadc3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c0aadc3025ca9d21cbd95fd05833bacb81db47bb))
+* **ci:** tf-migrate version ([610d175](https://github.com/cloudflare/terraform-provider-cloudflare/commit/610d175b233fc8c957722a522525b1a55fcd06a0))
+* **client_certificate:** fix csr drift with normalization ([a755419](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a755419efaa6e32983e43c52078ed30da48802b7))
+* **custom_origin_trust_store:** fix certificate drift with normalization ([42de890](https://github.com/cloudflare/terraform-provider-cloudflare/commit/42de890912b6293345902462e09e378dc561e742))
+* **docs:** duplicate import lines ([6f75b0c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6f75b0c1c5206b453bfc63fedbbd12d1e152ddab))
+* **docs:** hcl version syntax ([f3b9121](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f3b912134f319b883f1bd634d963ad434aca1dfc))
+* **docs:** tf-migrate version ([afd854a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/afd854aced3d28d5b891af6e97982a8d159ace13))
+* **tests:** enable migration tests again ([1386a4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1386a4ad6c33584983fe199d5b3ece372025342b))
+* **tests:** have it in 2 jobs ([1386a4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1386a4ad6c33584983fe199d5b3ece372025342b))
+* **tests:** update migration model ([27eaf5a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27eaf5a04de91608f7b10ad773bc6b5413d3cce8))
+* **zone_dnssec:** allowed computed fields which will change ([8c2c664](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8c2c664959eef009e6eaeebd4d9115b58a4489ca))
+
+
+### Chores
+
+* **docs:** generation ([a67fef5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a67fef513f06b6075249b22c18d1ffd1e93c07a4))
+* **docs:** run generate-docs ([dd777a7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dd777a7f5cf817bfdb3db11ea05c4110820fba93))
+* **docs:** terraform cli version requirements ([4988ed9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4988ed9888049852ab83863a681db33f67127180))
+* **resources:** clean up comments ([c4a39f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c4a39f8f7b1d3dfe22e66d893fcc3ffb6b7b90e1))
+* **resources:** don't modify phase 2 ([fdbeb43](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fdbeb431bcd690972c2f0b56abc228d6a2453001))
+* **resources:** skip phase 2 tests ([27eaf5a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27eaf5a04de91608f7b10ad773bc6b5413d3cce8))
+
+
+### Documentation
+
+* fix markdown code block formatting ([646cbbf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/646cbbf4dc095cebde53dac7e6042fa2790a9d2d))
+
+
+### Refactors
+
+* **ci:** use published tf-migrate ([5e37364](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5e3736400a0a3f437780a880495c8985f9e217fa))
+* **docs:** tf-migrate released version ([3b0c5e5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3b0c5e5504b7542cd765d81ad2e71a3c3d81cb5d))
+
 ## 5.18.0 (2026-03-01)
 
 Full Changelog: [v5.17.0...v5.18.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.17.0...v5.18.0)

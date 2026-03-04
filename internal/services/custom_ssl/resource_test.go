@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -94,6 +95,9 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 // the entire certificate (including cert and key) to change any properties like bundle_method.
 // Reference: https://developers.cloudflare.com/api/resources/custom_certificates/methods/edit/
 func TestAccCustomSSL_Basic(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
+		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
+	}
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_custom_ssl." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -145,8 +149,9 @@ func TestAccCustomSSL_Basic(t *testing.T) {
 // This validates that optional nested attributes are handled correctly.
 // Note: This test may fail with quota errors on zones with limited custom certificate slots.
 func TestAccCustomSSL_WithGeoRestrictions(t *testing.T) {
-	t.Skip("Skipping due to custom certificate IP quota limits on test zone")
-
+	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
+		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
+	}
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_custom_ssl." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -181,32 +186,132 @@ func TestAccCustomSSL_WithGeoRestrictions(t *testing.T) {
 }
 
 func testAccCustomSSLBasicConfig(zoneID, rnd, cert, key string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_ssl" "%[2]s" {
-  zone_id       = "%[1]s"
-  certificate   = <<EOT
-%[3]s
-EOT
-  private_key   = <<EOT
-%[4]s
-EOT
-  bundle_method = "force"
-}`, zoneID, rnd, cert, key)
+	return acctest.LoadTestCase("customsslcertbasic.tf", zoneID, rnd, cert, key)
 }
 
 func testAccCustomSSLWithGeoRestrictionsConfig(zoneID, rnd, cert, key string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_ssl" "%[2]s" {
-  zone_id       = "%[1]s"
-  certificate   = <<EOT
-%[3]s
-EOT
-  private_key   = <<EOT
-%[4]s
-EOT
-  bundle_method = "force"
-  geo_restrictions = {
-    label = "us"
-  }
-}`, zoneID, rnd, cert, key)
+	return acctest.LoadTestCase("customsslwithgeorestrictions.tf", zoneID, rnd, cert, key)
+}
+
+// TestAccCustomSSL_NoPolicyDrift verifies that a custom SSL certificate created with a
+// policy field does not produce plan drift on a second apply. This is a regression test
+// for SECENG-12729 where the API returns "policy_restrictions" but Terraform sends "policy",
+// causing phantom drift on every subsequent plan/apply cycle.
+func TestAccCustomSSL_NoPolicyDrift(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
+		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
+	}
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_custom_ssl." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+
+	config := testAccCustomSSLWithPolicyConfig(zoneID, rnd, cert, key, "(country: US)")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with policy, verify no drift after apply+refresh
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionCreate),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("force")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+			// Step 2: Re-apply same config — must produce empty plan (no drift)
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+// TestAccCustomSSL_NoBundleMethodDrift verifies that bundle_method is persisted correctly
+// through the create → read → plan cycle. This is a regression test for SECENG-12729
+// where the PATCH request omitted bundle_method, causing API error 2100 or drift.
+func TestAccCustomSSL_NoBundleMethodDrift(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
+		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
+	}
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_custom_ssl." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+
+	config := testAccCustomSSLBasicConfig(zoneID, rnd, cert, key)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with bundle_method="force", verify it persists with no drift
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionCreate),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("force")),
+				},
+			},
+			// Step 2: Re-apply identical config — bundle_method must not drift
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccCustomSSLWithPolicyConfig(zoneID, rnd, cert, key, policy string) string {
+	return acctest.LoadTestCase("customsslwithpolicy.tf", zoneID, rnd, cert, key, policy)
 }
