@@ -9,8 +9,7 @@ import (
 
 // UpgradeFromV0 handles state upgrades from v4 provider (schema_version=0) to v5 (version=500).
 //
-// Both v4 and v5 used schema_version=0 (default). When TF_MIG_TEST=1, this handler
-// performs the full v4→v5 transformation. In production (no TF_MIG_TEST), a simple
+// performs the full v4→v5 transformation. In production (no migration mode), a simple
 // no-op is registered at slot 0 instead (see migrations.go).
 //
 // Transforms:
@@ -43,7 +42,6 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV1 handles state upgrades from v5 provider (version=1) to v5 (version=500).
 //
 // This is a no-op upgrade. Version 1 is the "dormant" v5 state set in production
-// (via GetSchemaVersion(1, 500) when TF_MIG_TEST is not set). When TF_MIG_TEST=1,
 // this bumps from 1 to 500.
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading spectrum_application state from version=1 to version=500 (no-op)")

@@ -29,7 +29,7 @@ data "cloudflare_page_shield_policy" "example_page_shield_policy" {
 ### Read-Only
 
 - `action` (String) The action to take if the expression matches
-Available values: "allow", "log".
+Available values: "allow", "log", "add_reporting_directives".
 - `description` (String) A description for the policy
 - `enabled` (Boolean) Whether the policy is enabled
 - `expression` (String) The expression which must match for the policy to be applied, using the Cloudflare Firewall rule expression syntax

@@ -80,9 +80,8 @@ func TestMigrateLoadBalancer_V4ToV5_Basic(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Test requires TF_MIG_TEST=1 to enable migrations
-			if os.Getenv("TF_MIG_TEST") != "1" {
-				t.Skip("TF_MIG_TEST must be set to 1 to run migration tests")
+			if os.Getenv("migration mode") != "1" {
+				t.Skip("migration mode must be set to 1 to run migration tests")
 			}
 
 			// Setup
@@ -196,8 +195,8 @@ func TestMigrateLoadBalancer_V4ToV5_WithNested(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			if os.Getenv("TF_MIG_TEST") != "1" {
-				t.Skip("TF_MIG_TEST must be set to 1 to run migration tests")
+			if os.Getenv("migration mode") != "1" {
+				t.Skip("migration mode must be set to 1 to run migration tests")
 			}
 
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -310,8 +309,8 @@ func TestMigrateLoadBalancer_V4ToV5_WithPools(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			if os.Getenv("TF_MIG_TEST") != "1" {
-				t.Skip("TF_MIG_TEST must be set to 1 to run migration tests")
+			if os.Getenv("migration mode") != "1" {
+				t.Skip("migration mode must be set to 1 to run migration tests")
 			}
 
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

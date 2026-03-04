@@ -21,14 +21,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 )
 
 var _ resource.ResourceWithConfigValidators = (*LoadBalancerPoolResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(1, 500),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -43,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
 				Required:    true,
 			},
-			"origins": schema.SetNestedAttribute{
+			"origins": schema.ListNestedAttribute{
 				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{

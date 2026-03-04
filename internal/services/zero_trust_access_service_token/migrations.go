@@ -4,7 +4,6 @@ package zero_trust_access_service_token
 
 import (
 	"context"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -29,13 +28,14 @@ func (r *ZeroTrustAccessServiceTokenResource) MoveState(ctx context.Context) []r
 //
 // This handles two upgrade paths:
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 //
 // The separation of schema versions (v4=0, v5=1/500) eliminates the need for
 // dual-format detection that was required in earlier implementations.
 func (r *ZeroTrustAccessServiceTokenResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	sourceSchema := v500.SourceAccessServiceTokenSchema()
 	targetSchema := ResourceSchema(ctx)
+
+	sourceSchema := v500.SourceAccessServiceTokenSchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)

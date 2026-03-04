@@ -20,15 +20,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 )
 
 var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(2, 500),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
@@ -90,20 +88,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
-					"annotations": schema.SingleNestedAttribute{
-						Description: "Annotations for the version created by this upload.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"workers_message": schema.StringAttribute{
-								Description: "Human-readable message about the version.",
-								Optional:    true,
-							},
-							"workers_tag": schema.StringAttribute{
-								Description: "User-provided identifier for the version.",
-								Optional:    true,
-							},
-						},
-					},
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
@@ -286,6 +270,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"certificate_id": schema.StringAttribute{
 							Description: "Identifier of the certificate to bind to.",

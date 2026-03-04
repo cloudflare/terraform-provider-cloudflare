@@ -22,6 +22,7 @@ var v4BasicConfig string
 var v4WithSettingsConfig string
 
 func TestMigrateQueue_Basic(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tmpDir := t.TempDir()
@@ -57,6 +58,7 @@ func TestMigrateQueue_Basic(t *testing.T) {
 }
 
 func TestMigrateQueue_WithSettings(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tmpDir := t.TempDir()

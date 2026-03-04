@@ -50,6 +50,10 @@ sections, there is the need to migrate attributes and potentially the resource r
 
 ### Automatic
 
+~> **DEPRECATED:** Grit-based migrations are deprecated and will be removed in a
+future release. See the [version 5 migration guide](version-5-migration) for the
+recommended migration approach.
+
 For assisting with automatic migrations, we have provided [GritQL] patterns.
 
 This will allow you to rewrite the parts of your Terraform configuration and state

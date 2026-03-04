@@ -2,7 +2,6 @@ package zero_trust_access_mtls_certificate
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_mtls_certificate/migration/v500"
@@ -31,6 +30,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) MoveState(ctx context.Context) 
 // - v4 SDKv2 provider: schema_version=0
 // - v5 Plugin Framework provider: version=1 (production) or version=500 (test)
 func (r *ZeroTrustAccessMTLSCertificateResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+
 	v4Schema := v500.SourceAccessMutualTLSCertificateSchema()
 
 	v5SchemaVersion1 := ResourceSchema(ctx)

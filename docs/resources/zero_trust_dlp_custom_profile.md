@@ -95,6 +95,7 @@ Required:
 
 Optional:
 
+- `description` (String)
 - `entry_id` (String)
 
 <a id="nestedatt--entries--pattern"></a>

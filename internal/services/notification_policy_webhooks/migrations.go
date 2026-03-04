@@ -4,7 +4,6 @@ package notification_policy_webhooks
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -17,27 +16,9 @@ var _ resource.ResourceWithUpgradeState = (*NotificationPolicyWebhooksResource)(
 //
 // This handles two upgrade paths:
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
-//
-// In production (no TF_MIG_TEST), only a no-op upgrader is registered at slot 0
-// to safely bump existing v5 users from version 0 to 1 without triggering the
-// v4→v5 transformation (which would fail on v5-format state).
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	tfMigTest := os.Getenv("TF_MIG_TEST")
-
 	targetSchema := ResourceSchema(ctx)
-
-	if tfMigTest == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
 	sourceSchema := v500.SourceCloudflareNotificationPolicyWebhooksSchema()
 
 	return map[int64]resource.StateUpgrader{
