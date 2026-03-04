@@ -36,92 +36,6 @@ import (
 // - Last stable v4 release: default 4.52.5
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 
-// createV4State creates a v4 state file (schema_version=0) with the given attribute values.
-// This simulates what users would have in their state after importing with v4 provider.
-//
-// v4 state characteristics:
-// - schema_version: 0
-// - resource type: cloudflare_access_organization (v4 name)
-// - login_design: list with MaxItems=1 (SDKv2 pattern)
-// - custom_pages: list with MaxItems=1 (SDKv2 pattern)
-//
-// Parameters:
-//   - accountID: The account ID for the organization
-//   - name: Organization name (from real org)
-//   - authDomain: Auth domain (from real org)
-//   - loginDesign: Optional login design values (pass nil to omit)
-//   - customPages: Optional custom pages values (pass nil to omit)
-func createV4State(accountID, name, authDomain string, loginDesign map[string]string, customPages map[string]string) string {
-	// Build login_design JSON array (v4 uses list, not object)
-	loginDesignJSON := ""
-	if loginDesign != nil {
-		loginDesignJSON = fmt.Sprintf(`
-    "login_design": [
-      {
-        "background_color": %q,
-        "text_color": %q,
-        "header_text": %q,
-        "footer_text": %q,
-        "logo_path": %q
-      }
-    ],`,
-			loginDesign["background_color"],
-			loginDesign["text_color"],
-			loginDesign["header_text"],
-			loginDesign["footer_text"],
-			loginDesign["logo_path"],
-		)
-	}
-
-	// Build custom_pages JSON array (v4 uses list, not object)
-	customPagesJSON := ""
-	if customPages != nil {
-		customPagesJSON = fmt.Sprintf(`
-    "custom_pages": [
-      {
-        "forbidden": %q,
-        "identity_denied": %q
-      }
-    ],`,
-			customPages["forbidden"],
-			customPages["identity_denied"],
-		)
-	}
-
-	return fmt.Sprintf(`{
-  "version": 4,
-  "terraform_version": "1.5.0",
-  "serial": 1,
-  "lineage": "test-lineage",
-  "outputs": {},
-  "resources": [
-    {
-      "mode": "managed",
-      "type": "cloudflare_access_organization",
-      "name": "test",
-      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
-      "instances": [
-        {
-          "schema_version": 0,
-          "attributes": {
-            "id": %q,
-            "account_id": %q,
-            "name": %q,
-            "auth_domain": %q,
-            "allow_authenticate_via_warp": false,
-            "auto_redirect_to_identity": false,
-            "is_ui_read_only": false,
-            "session_duration": "24h",
-            "warp_auth_session_duration": "12h",%s%s
-            "zone_id": null
-          }
-        }
-      ]
-    }
-  ]
-}`, accountID, accountID, name, authDomain, loginDesignJSON, customPagesJSON)
-}
-
 // createV4StateWithResourceType creates a v4 state file with a configurable resource type.
 // This allows testing both v4 resource names:
 // - cloudflare_access_organization (older v4 name)
@@ -129,7 +43,7 @@ func createV4State(accountID, name, authDomain string, loginDesign map[string]st
 func createV4StateWithResourceType(accountID, name, authDomain string, loginDesign, customPages map[string]string, resourceType string) string {
 	// Build login_design JSON array (v4 uses list, not object)
 	loginDesignJSON := ""
-	if loginDesign != nil && len(loginDesign) > 0 {
+	if len(loginDesign) > 0 {
 		loginDesignJSON = fmt.Sprintf(`
     "login_design": [
       {
@@ -150,7 +64,7 @@ func createV4StateWithResourceType(accountID, name, authDomain string, loginDesi
 
 	// Build custom_pages JSON array (v4 uses list, not object)
 	customPagesJSON := ""
-	if customPages != nil && len(customPages) > 0 {
+	if len(customPages) > 0 {
 		customPagesJSON = fmt.Sprintf(`
     "custom_pages": [
       {
@@ -278,7 +192,7 @@ func generateV4ConfigWithResourceType(accountID, name, authDomain string, loginD
 	}
 
 	// Add login_design block if present (v4 block syntax)
-	if loginDesign != nil && len(loginDesign) > 0 {
+	if len(loginDesign) > 0 {
 		config += "\n  login_design {\n"
 		if bg := loginDesign["background_color"]; bg != "" {
 			config += fmt.Sprintf("    background_color = %q\n", bg)
@@ -299,7 +213,7 @@ func generateV4ConfigWithResourceType(accountID, name, authDomain string, loginD
 	}
 
 	// Add custom_pages block if present (v4 block syntax)
-	if customPages != nil && len(customPages) > 0 {
+	if len(customPages) > 0 {
 		config += "\n  custom_pages {\n"
 		if forbidden := customPages["forbidden"]; forbidden != "" {
 			config += fmt.Sprintf("    forbidden       = %q\n", forbidden)
