@@ -18,12 +18,11 @@ description: |-
 
 - `account_id` (String)
 - `cf_api_id` (String)
-- `cf_api_key` (String)
+- `cf_api_key` (String, Sensitive)
 - `name` (String)
 
 ### Read-Only
 
-- `account_tag` (String)
 - `created_at` (String)
 - `created_by` (String)
 - `enabled` (Boolean)
@@ -31,7 +30,6 @@ description: |-
 - `legacy` (Boolean)
 - `modified_at` (String)
 - `modified_by` (String)
-- `synced_at` (String)
 
 ## Import
 

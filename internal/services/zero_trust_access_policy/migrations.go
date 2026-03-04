@@ -2,7 +2,6 @@ package zero_trust_access_policy
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_policy/migration/v500"
@@ -37,6 +36,7 @@ func (r *ZeroTrustAccessPolicyResource) MoveState(ctx context.Context) []resourc
 //
 // For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
 func (r *ZeroTrustAccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+
 	v5Schema := ResourceSchema(ctx)
 
 	return map[int64]resource.StateUpgrader{

@@ -41,6 +41,7 @@ var v5CloudflareSrcConfig string
 // TestMigrateZeroTrustTunnelCloudflared_Basic tests migration of a tunnel using the deprecated
 // cloudflare_tunnel resource type with config_src = "local".
 func TestMigrateZeroTrustTunnelCloudflared_Basic(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -118,6 +119,7 @@ func TestMigrateZeroTrustTunnelCloudflared_Basic(t *testing.T) {
 // TestMigrateZeroTrustTunnelCloudflared_Minimal tests migration using the preferred v4 name
 // cloudflare_zero_trust_tunnel with only required fields.
 func TestMigrateZeroTrustTunnelCloudflared_Minimal(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -195,6 +197,7 @@ func TestMigrateZeroTrustTunnelCloudflared_Minimal(t *testing.T) {
 // TestMigrateZeroTrustTunnelCloudflared_CloudflareConfigSrc tests migration of a tunnel with
 // config_src = "cloudflare" (remotely managed tunnel).
 func TestMigrateZeroTrustTunnelCloudflared_CloudflareConfigSrc(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")

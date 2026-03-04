@@ -137,6 +137,7 @@ func TestAccAuthenticatedOriginPullsHostnameCertificate_FullLifecycle(t *testing
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("uploaded_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("serial_number"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("signature"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("serial_number"), knownvalue.NotNull()),
 				},
 			},
 			// Step 2: Import

@@ -381,6 +381,31 @@ type TargetV5ActionParametersModel struct {
 	RequestBodyBuffering  types.String `tfsdk:"request_body_buffering"`
 	ResponseBodyBuffering types.String `tfsdk:"response_body_buffering"`
 
+	// Cache control fields (set_cache_settings action)
+	StripETags       types.Bool `tfsdk:"strip_etags"`
+	StripLastModified types.Bool `tfsdk:"strip_last_modified"`
+	StripSetCookie   types.Bool `tfsdk:"strip_set_cookie"`
+
+	// Cache directives
+	MaxAge               *TargetV5CacheControlValueModel  `tfsdk:"max_age"`
+	SMaxage              *TargetV5CacheControlValueModel  `tfsdk:"s_maxage"`
+	StaleWhileRevalidate *TargetV5CacheControlValueModel  `tfsdk:"stale_while_revalidate"`
+	StaleIfError         *TargetV5CacheControlValueModel  `tfsdk:"stale_if_error"`
+	Private              *TargetV5CacheControlQualifiersModel `tfsdk:"private"`
+	NoCache              *TargetV5CacheControlQualifiersModel `tfsdk:"no_cache"`
+	MustRevalidate       *TargetV5CacheControlSimpleModel `tfsdk:"must_revalidate"`
+	ProxyRevalidate      *TargetV5CacheControlSimpleModel `tfsdk:"proxy_revalidate"`
+	MustUnderstand       *TargetV5CacheControlSimpleModel `tfsdk:"must_understand"`
+	NoTransform          *TargetV5CacheControlSimpleModel `tfsdk:"no_transform"`
+	Immutable            *TargetV5CacheControlSimpleModel `tfsdk:"immutable"`
+	NoStore              *TargetV5CacheControlSimpleModel `tfsdk:"no_store"`
+	Public               *TargetV5CacheControlSimpleModel `tfsdk:"public"`
+
+	// set_cache_tags fields
+	Operation  types.String   `tfsdk:"operation"`
+	Values     []types.String `tfsdk:"values"`
+	Expression types.String   `tfsdk:"expression"`
+
 	// List attributes (Set → List)
 	Products                 []types.String `tfsdk:"products"`
 	Phases                   []types.String `tfsdk:"phases"`
@@ -557,6 +582,24 @@ type TargetV5TargetURLModel struct {
 
 type TargetV5ServeStaleModel struct {
 	DisableStaleWhileUpdating types.Bool `tfsdk:"disable_stale_while_updating"`
+}
+
+// Cache control directive models for set_cache_settings action
+type TargetV5CacheControlValueModel struct {
+	Operation      types.String `tfsdk:"operation"`
+	Value          types.Int64  `tfsdk:"value"`
+	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only"`
+}
+
+type TargetV5CacheControlSimpleModel struct {
+	Operation      types.String `tfsdk:"operation"`
+	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only"`
+}
+
+type TargetV5CacheControlQualifiersModel struct {
+	Operation      types.String   `tfsdk:"operation"`
+	Qualifiers     []types.String `tfsdk:"qualifiers"`
+	CloudflareOnly types.Bool     `tfsdk:"cloudflare_only"`
 }
 
 // TargetV5FieldNameModel is used for cookie_fields, request_fields, transformed_request_fields.

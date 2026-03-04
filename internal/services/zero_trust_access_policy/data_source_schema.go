@@ -118,7 +118,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"rdp": schema.SingleNestedAttribute{
 						Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
 						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesRdpDataSourceModel](ctx),
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesRDPDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
 								Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",

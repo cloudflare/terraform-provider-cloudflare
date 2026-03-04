@@ -101,11 +101,30 @@ type RulesetRulesActionParametersModel struct {
 	ReadTimeout              types.Int64                                                                             `tfsdk:"read_timeout" json:"read_timeout,optional"`
 	RespectStrongEtags       types.Bool                                                                              `tfsdk:"respect_strong_etags" json:"respect_strong_etags,optional"`
 	ServeStale               customfield.NestedObject[RulesetRulesActionParametersServeStaleModel]                   `tfsdk:"serve_stale" json:"serve_stale,optional"`
+	StripETags               types.Bool                                                                              `tfsdk:"strip_etags" json:"strip_etags,optional"`
+	StripLastModified        types.Bool                                                                              `tfsdk:"strip_last_modified" json:"strip_last_modified,optional"`
+	StripSetCookie           types.Bool                                                                              `tfsdk:"strip_set_cookie" json:"strip_set_cookie,optional"`
 	CookieFields             customfield.NestedObjectList[RulesetRulesActionParametersCookieFieldsModel]             `tfsdk:"cookie_fields" json:"cookie_fields,optional"`
 	RawResponseFields        customfield.NestedObjectList[RulesetRulesActionParametersRawResponseFieldsModel]        `tfsdk:"raw_response_fields" json:"raw_response_fields,optional"`
 	RequestFields            customfield.NestedObjectList[RulesetRulesActionParametersRequestFieldsModel]            `tfsdk:"request_fields" json:"request_fields,optional"`
 	ResponseFields           customfield.NestedObjectList[RulesetRulesActionParametersResponseFieldsModel]           `tfsdk:"response_fields" json:"response_fields,optional"`
 	TransformedRequestFields customfield.NestedObjectList[RulesetRulesActionParametersTransformedRequestFieldsModel] `tfsdk:"transformed_request_fields" json:"transformed_request_fields,optional"`
+	MaxAge                   customfield.NestedObject[RulesetRulesActionParametersSetCacheControlValueModel]         `tfsdk:"max_age" json:"max-age,optional"`
+	SMaxage                  customfield.NestedObject[RulesetRulesActionParametersSetCacheControlValueModel]         `tfsdk:"s_maxage" json:"s-maxage,optional"`
+	StaleWhileRevalidate     customfield.NestedObject[RulesetRulesActionParametersSetCacheControlValueModel]         `tfsdk:"stale_while_revalidate" json:"stale-while-revalidate,optional"`
+	StaleIfError             customfield.NestedObject[RulesetRulesActionParametersSetCacheControlValueModel]         `tfsdk:"stale_if_error" json:"stale-if-error,optional"`
+	Private                  customfield.NestedObject[RulesetRulesActionParametersSetCacheControlQualifiersModel]    `tfsdk:"private" json:"private,optional"`
+	NoCache                  customfield.NestedObject[RulesetRulesActionParametersSetCacheControlQualifiersModel]    `tfsdk:"no_cache" json:"no-cache,optional"`
+	MustRevalidate           customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"must_revalidate" json:"must-revalidate,optional"`
+	ProxyRevalidate          customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"proxy_revalidate" json:"proxy-revalidate,optional"`
+	MustUnderstand           customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"must_understand" json:"must-understand,optional"`
+	NoTransform              customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"no_transform" json:"no-transform,optional"`
+	Immutable                customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"immutable" json:"immutable,optional"`
+	NoStore                  customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"no_store" json:"no-store,optional"`
+	Public                   customfield.NestedObject[RulesetRulesActionParametersSetCacheControlSimpleModel]        `tfsdk:"public" json:"public,optional"`
+	Operation                types.String                                                                            `tfsdk:"operation" json:"operation,optional"`
+	Values                   customfield.List[types.String]                                                          `tfsdk:"values" json:"values,optional"`
+	Expression               types.String                                                                            `tfsdk:"expression" json:"expression,optional"`
 }
 
 type RulesetRulesActionParametersResponseModel struct {
@@ -320,4 +339,21 @@ type RulesetRulesRatelimitModel struct {
 	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,computed_optional,decode_null_to_zero"`
 	ScorePerPeriod          types.Int64                    `tfsdk:"score_per_period" json:"score_per_period,optional"`
 	ScoreResponseHeaderName types.String                   `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
+}
+
+type RulesetRulesActionParametersSetCacheControlValueModel struct {
+	Operation      types.String `tfsdk:"operation" json:"operation,required"`
+	Value          types.Int64  `tfsdk:"value" json:"value,optional"`
+	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only" json:"cloudflare_only,computed_optional,decode_null_to_zero"`
+}
+
+type RulesetRulesActionParametersSetCacheControlQualifiersModel struct {
+	Operation      types.String                   `tfsdk:"operation" json:"operation,required"`
+	Qualifiers     customfield.List[types.String] `tfsdk:"qualifiers" json:"qualifiers,optional"`
+	CloudflareOnly types.Bool                     `tfsdk:"cloudflare_only" json:"cloudflare_only,computed_optional,decode_null_to_zero"`
+}
+
+type RulesetRulesActionParametersSetCacheControlSimpleModel struct {
+	Operation      types.String `tfsdk:"operation" json:"operation,required"`
+	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only" json:"cloudflare_only,computed_optional,decode_null_to_zero"`
 }

@@ -59,10 +59,10 @@ type ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel struct {
 }
 
 type ZeroTrustAccessPoliciesConnectionRulesDataSourceModel struct {
-	Rdp customfield.NestedObject[ZeroTrustAccessPoliciesConnectionRulesRdpDataSourceModel] `tfsdk:"rdp" json:"rdp,computed"`
+	RDP customfield.NestedObject[ZeroTrustAccessPoliciesConnectionRulesRDPDataSourceModel] `tfsdk:"rdp" json:"rdp,computed"`
 }
 
-type ZeroTrustAccessPoliciesConnectionRulesRdpDataSourceModel struct {
+type ZeroTrustAccessPoliciesConnectionRulesRDPDataSourceModel struct {
 	AllowedClipboardLocalToRemoteFormats customfield.List[types.String] `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,computed"`
 	AllowedClipboardRemoteToLocalFormats customfield.List[types.String] `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,computed"`
 }

@@ -21,6 +21,7 @@ type AuthenticatedOriginPullsCertificateModel struct {
 	ExpiresOn     timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	ID            types.String      `tfsdk:"id" json:"id,computed"`
 	Issuer        types.String      `tfsdk:"issuer" json:"issuer,computed"`
+	SerialNumber  types.String      `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature     types.String      `tfsdk:"signature" json:"signature,computed"`
 	Status        types.String      `tfsdk:"status" json:"status,computed"`
 	UploadedOn    timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`

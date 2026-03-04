@@ -4,7 +4,6 @@ package authenticated_origin_pulls_settings
 
 import (
 	"context"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -28,6 +27,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) MoveState(ctx context.Context
 
 // UpgradeState registers state upgraders for schema version changes.
 func (r *AuthenticatedOriginPullsSettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+
 	sourceSchema := v500.SourceCloudflareAuthenticatedOriginPullsSchema()
 
 	return map[int64]resource.StateUpgrader{
@@ -37,7 +37,6 @@ func (r *AuthenticatedOriginPullsSettingsResource) UpgradeState(ctx context.Cont
 			StateUpgrader: v500.UpgradeFromLegacyV0,
 		},
 		// Upgrade from v5 (schema version 1) to v5 (schema version 500)
-		// This is a no-op upgrade to support TF_MIG_TEST rollout mechanism
 		1: {
 			StateUpgrader: v500.UpgradeFromV1,
 		},

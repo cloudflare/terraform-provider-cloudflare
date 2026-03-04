@@ -21,7 +21,6 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
 	resource.AddTestSweepers("cloudflare_spectrum_applications", &resource.Sweeper{
 		Name: "cloudflare_spectrum_applications",
@@ -696,6 +695,7 @@ func TestAccUpgradeSpectrumApplication_FromPublishedV5(t *testing.T) {
 		PreCheck: func() { acctest.TestAccPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
+				// Step 1: Create with v5.16.0 (schema version 0)
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
@@ -705,6 +705,17 @@ func TestAccUpgradeSpectrumApplication_FromPublishedV5(t *testing.T) {
 				Config: config,
 			},
 			{
+				// Step 2: Upgrade to v5.17.0 (stepping stone - schema version 1)
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.17.0",
+					},
+				},
+				Config: config,
+			},
+			{
+				// Step 3: Upgrade to current provider (schema version 500)
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
