@@ -4,8 +4,6 @@ package load_balancer_pool
 
 import (
 	"context"
-	"os"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -16,7 +14,7 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerPoolResource)(nil)
 //
 // Schema version history:
 // - v4 (SDKv2): schema_version=0 (implicit, no explicit version set)
-// - v5: schema_version=0→500 (controlled rollout via GetSchemaVersion)
+// - v5: schema_version=0→500 (controlled rollout via schema version)
 //
 // This handles migration from:
 // 1. Legacy v4 SDKv2 provider (schema_version=0) → v5 Plugin Framework (schema_version=500)
@@ -28,22 +26,9 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerPoolResource)(nil)
 // - check_regions: Set → List
 // - origins: Set → List
 //
-// In production (no TF_MIG_TEST), only a no-op upgrader is registered at slot 0
 // to safely bump existing v5 users from version 0 to 1 without triggering the
 // v4→v5 transformation (which would fail on v5-format state).
 func (r *LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
 
 	sourceSchema := v500.SourceCloudflareLoadBalancerPoolSchema()
 

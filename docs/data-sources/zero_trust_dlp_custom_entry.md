@@ -33,6 +33,7 @@ Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
+- `description` (String)
 - `enabled` (Boolean)
 - `id` (String) The ID of this resource.
 - `name` (String)

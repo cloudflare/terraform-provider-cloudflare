@@ -31,6 +31,12 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
     logo_path = "https://example.com/logo.png"
     text_color = "#c5ed1b"
   }
+  mfa_config = {
+    allowed_authenticators = ["totp", "biometrics", "security_key"]
+    session_duration = "24h"
+  }
+  mfa_configuration_allowed = true
+  mfa_required_for_all_apps = false
   name = "Widget Corps Internal Applications"
   session_duration = "24h"
   ui_read_only_toggle_reason = "Temporarily turn off the UI read only lock to make a change via the UI"
@@ -53,6 +59,9 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
 - `deny_unmatched_requests_exempted_zone_names` (List of String) Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.
 - `is_ui_read_only` (Boolean) Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
+- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))
+- `mfa_configuration_allowed` (Boolean) Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.
+- `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.
 - `name` (String) The name of your Zero Trust organization.
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `ui_read_only_toggle_reason` (String) A description of the reason why the UI read only field is being toggled.
@@ -79,6 +88,15 @@ Optional:
 - `header_text` (String) The text at the top of your login page.
 - `logo_path` (String) The URL of the logo on your login page.
 - `text_color` (String) The text color on your login page.
+
+
+<a id="nestedatt--mfa_config"></a>
+### Nested Schema for `mfa_config`
+
+Optional:
+
+- `allowed_authenticators` (List of String) Lists the MFA methods that users can authenticate with.
+- `session_duration` (String) Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.
 
 ## Import
 

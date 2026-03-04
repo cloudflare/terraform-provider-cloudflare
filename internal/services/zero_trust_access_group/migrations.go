@@ -35,8 +35,13 @@ func (r *ZeroTrustAccessGroupResource) MoveState(ctx context.Context) []resource
 func (r *ZeroTrustAccessGroupResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
-		// Handle upgrades from v0 (current v5 provider schema version 0 -> 500)
 		0: {
+			PriorSchema: &targetSchema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				resp.State.Raw = req.State.Raw
+			},
+		},
+		1: {
 			PriorSchema: &targetSchema,
 			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 				resp.State.Raw = req.State.Raw

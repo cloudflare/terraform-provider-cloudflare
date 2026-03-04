@@ -41,8 +41,7 @@ func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, 
 // UpgradeFromV1 handles state upgrade from v5 (schema version 1) to v5 (schema version 500).
 //
 // This is a no-op upgrader that exists solely to support the schema version rollout mechanism:
-// - When TF_MIG_TEST is unset (production): schema version = 1
-// - When TF_MIG_TEST is set (testing): schema version = 500
+// - When migration mode is set (testing): schema version = 500
 //
 // This upgrader ensures users with schema version 1 can seamlessly upgrade to version 500
 // when the version is increased during testing, without any actual state transformation.

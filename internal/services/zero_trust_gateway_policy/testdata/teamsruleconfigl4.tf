@@ -3,7 +3,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   account_id = "%[2]s"
   description = "desc"
   enabled = true
-  precedence = 12308
+  precedence = %[3]d
   action = "l4_override"
   filters = ["l4"]
   traffic = "net.dst.ip in {10.0.0.0/8} and net.dst.port in {80 443 8080 53} and not(net.dst.ip in {10.217.0.0/16})"

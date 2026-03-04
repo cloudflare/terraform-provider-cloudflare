@@ -41,6 +41,7 @@ var v5PathParamsConfig string
 
 // TestMigrateAPIShieldOperation_V4ToV5_Basic tests basic migration with GET method
 func TestMigrateAPIShieldOperation_V4ToV5_Basic(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
@@ -118,6 +119,7 @@ func TestMigrateAPIShieldOperation_V4ToV5_Basic(t *testing.T) {
 
 // TestMigrateAPIShieldOperation_V4ToV5_PostMethod tests migration with POST method
 func TestMigrateAPIShieldOperation_V4ToV5_PostMethod(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string
@@ -189,6 +191,7 @@ func TestMigrateAPIShieldOperation_V4ToV5_PostMethod(t *testing.T) {
 
 // TestMigrateAPIShieldOperation_V4ToV5_PathParams tests migration with path parameters
 func TestMigrateAPIShieldOperation_V4ToV5_PathParams(t *testing.T) {
+	t.Skip("Migration not enabled yet")
 	testCases := []struct {
 		name     string
 		version  string

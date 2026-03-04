@@ -38,6 +38,7 @@ type ZeroTrustAccessApplicationModel struct {
 	CustomPages                 *[]types.String                                                            `tfsdk:"custom_pages" json:"custom_pages,optional"`
 	CORSHeaders                 *ZeroTrustAccessApplicationCORSHeadersModel                                `tfsdk:"cors_headers" json:"cors_headers,optional"`
 	FooterLinks                 *[]*ZeroTrustAccessApplicationFooterLinksModel                             `tfsdk:"footer_links" json:"footer_links,optional"`
+	OAuthConfiguration          *ZeroTrustAccessApplicationOAuthConfigurationModel                         `tfsdk:"oauth_configuration" json:"oauth_configuration,optional"`
 	SCIMConfig                  *ZeroTrustAccessApplicationSCIMConfigModel                                 `tfsdk:"scim_config" json:"scim_config,optional"`
 	TargetCriteria              *[]*ZeroTrustAccessApplicationTargetCriteriaModel                          `tfsdk:"target_criteria" json:"target_criteria,optional"`
 	AppLauncherVisible          types.Bool                                                                 `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed_optional"`
@@ -73,6 +74,24 @@ type ZeroTrustAccessApplicationCORSHeadersModel struct {
 	AllowedMethods   *[]types.String `tfsdk:"allowed_methods" json:"allowed_methods,optional"`
 	AllowedOrigins   *[]types.String `tfsdk:"allowed_origins" json:"allowed_origins,optional"`
 	MaxAge           types.Float64   `tfsdk:"max_age" json:"max_age,optional"`
+}
+
+type ZeroTrustAccessApplicationOAuthConfigurationModel struct {
+	Enabled                   types.Bool                                                                  `tfsdk:"enabled" json:"enabled,optional"`
+	DynamicClientRegistration *ZeroTrustAccessApplicationOAuthConfigurationDynamicClientRegistrationModel `tfsdk:"dynamic_client_registration" json:"dynamic_client_registration,optional"`
+	Grant                     *ZeroTrustAccessApplicationOAuthConfigurationGrantModel                     `tfsdk:"grant" json:"grant,optional"`
+}
+
+type ZeroTrustAccessApplicationOAuthConfigurationDynamicClientRegistrationModel struct {
+	Enabled             types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
+	AllowAnyOnLocalhost types.Bool      `tfsdk:"allow_any_on_localhost" json:"allow_any_on_localhost,optional"`
+	AllowAnyOnLoopback  types.Bool      `tfsdk:"allow_any_on_loopback" json:"allow_any_on_loopback,optional"`
+	AllowedURIs         *[]types.String `tfsdk:"allowed_uris" json:"allowed_uris,optional"`
+}
+
+type ZeroTrustAccessApplicationOAuthConfigurationGrantModel struct {
+	AccessTokenLifetime types.String `tfsdk:"access_token_lifetime" json:"access_token_lifetime,optional"`
+	SessionDuration     types.String `tfsdk:"session_duration" json:"session_duration,optional"`
 }
 
 type ZeroTrustAccessApplicationFooterLinksModel struct {
@@ -351,11 +370,17 @@ type ZeroTrustAccessApplicationPoliciesIncludeLinkedAppTokenModel struct {
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesModel struct {
 	SSH *ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel `tfsdk:"ssh" json:"ssh,optional"`
+	RDP *ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel `tfsdk:"rdp" json:"rdp,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel struct {
 	Usernames       *[]types.String `tfsdk:"usernames" json:"usernames,required"`
 	AllowEmailAlias types.Bool      `tfsdk:"allow_email_alias" json:"allow_email_alias,optional"`
+}
+
+type ZeroTrustAccessApplicationPoliciesConnectionRulesRDPModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats" json:"allowed_clipboard_local_to_remote_formats,optional"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats" json:"allowed_clipboard_remote_to_local_formats,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesExcludeModel struct {

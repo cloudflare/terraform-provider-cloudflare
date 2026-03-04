@@ -16,6 +16,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   default_creator = "defaultCreator"
   delete_recording_after_days = 45
+  enabled = true
   meta = {
     name = "test stream 1"
   }
@@ -40,6 +41,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
 
 - `default_creator` (String) Sets the creator ID asssociated with this live input.
 - `delete_recording_after_days` (Number) Indicates the number of days after which the live inputs recordings will be deleted. When a stream completes and the recording is ready, the value is used to calculate a scheduled deletion date for that recording. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion.
+- `enabled` (Boolean) Indicates whether the live input is enabled and can accept streams.
 - `live_input_identifier` (String) A unique identifier for a live input.
 - `meta` (String) A user modifiable key-value store used to reference other systems of record for managing live inputs.
 - `recording` (Attributes) Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied. (see [below for nested schema](#nestedatt--recording))

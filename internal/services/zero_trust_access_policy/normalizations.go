@@ -59,7 +59,7 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	if sourceData.Exclude.IsNull() && !data.Exclude.IsNull() && len(data.Exclude.Elements()) == 0 {
 		data.Exclude = customfield.NullObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx)
 	}
-	
+
 	// For non-empty rule fields, use standard normalization
 	if !sourceData.Include.IsNull() || (!data.Include.IsNull() && len(data.Include.Elements()) > 0) {
 		normalizeEmptyAndNullNestedObjectSet(&data.Include, sourceData.Include)
@@ -70,12 +70,21 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	if !sourceData.Exclude.IsNull() || (!data.Exclude.IsNull() && len(data.Exclude.Elements()) > 0) {
 		normalizeEmptyAndNullNestedObjectSet(&data.Exclude, sourceData.Exclude)
 	}
-	
+
 	// For other fields, use the original normalization logic
 	normalizeEmptyAndNullSlice(&data.ApprovalGroups, sourceData.ApprovalGroups)
 	normalizeFalseAndNullBool(&data.PurposeJustificationRequired, sourceData.PurposeJustificationRequired)
 	normalizeFalseAndNullBool(&data.ApprovalRequired, sourceData.ApprovalRequired)
 	normalizeFalseAndNullBool(&data.IsolationRequired, sourceData.IsolationRequired)
+
+	// Normalize clipboard arrays inside connection_rules.rdp — the API omits empty arrays
+	// due to omitempty, so [] in state vs null from API should not cause drift.
+	if data.ConnectionRules != nil && sourceData.ConnectionRules != nil {
+		if data.ConnectionRules.RDP != nil && sourceData.ConnectionRules.RDP != nil {
+			normalizeEmptyAndNullSlice(&data.ConnectionRules.RDP.AllowedClipboardLocalToRemoteFormats, sourceData.ConnectionRules.RDP.AllowedClipboardLocalToRemoteFormats)
+			normalizeEmptyAndNullSlice(&data.ConnectionRules.RDP.AllowedClipboardRemoteToLocalFormats, sourceData.ConnectionRules.RDP.AllowedClipboardRemoteToLocalFormats)
+		}
+	}
 
 	return diags
 }

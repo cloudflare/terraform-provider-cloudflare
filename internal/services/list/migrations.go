@@ -4,7 +4,6 @@ package list
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list/migration/v500"
@@ -13,8 +12,9 @@ import (
 var _ resource.ResourceWithUpgradeState = (*ListResource)(nil)
 
 func (r *ListResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	sourceSchema := v500.SourceListSchema()
 	targetSchema := ResourceSchema(ctx)
+
+	sourceSchema := v500.SourceListSchema()
 	return map[int64]resource.StateUpgrader{
 		// Handle upgrades from v4 state (schema_version=0).
 		// v4 SDKv2 provider used schema_version=0 (default).

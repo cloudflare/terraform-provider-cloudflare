@@ -75,7 +75,7 @@ type SourceHeaderItem struct {
 // ============================================================================
 
 // TargetLoadBalancerMonitorModel represents the current resource state from v5.x+ provider.
-// Schema version: 500 (controlled by migrations.GetSchemaVersion)
+// Schema version: 500 (controlled by migrations.schema version)
 // Resource type: cloudflare_load_balancer_monitor
 //
 // This model matches the model in the parent package's model.go file.
