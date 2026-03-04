@@ -33,6 +33,10 @@ jobs:
   test:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v6
 
@@ -45,11 +49,11 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Build all packages
+      - name: Run tests (shard ${{ matrix.shard }}/4)
         run: |
-          # Build all packages first to populate the build cache.
-          # This compiles code in parallel more efficiently than go test.
-          go build ./...
-
-      - name: Run tests
-        run: ./scripts/test
+          # Get all packages with tests and select this shard
+          packages=$(go list ./... | awk "NR % 4 == ${{ matrix.shard }}")
+          if [ -n "$packages" ]; then
+            echo "Running tests for shard ${{ matrix.shard }}..."
+            echo "$packages" | xargs go test -v
+          fi
