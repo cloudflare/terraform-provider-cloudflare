@@ -45,13 +45,11 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Pre-compile test binaries
+      - name: Build all packages
         run: |
-          # Pre-compile all test binaries in parallel to warm the build cache.
-          # This is much faster than letting `go test` compile each package
-          # sequentially, as shared dependencies are compiled once and reused.
-          go test -c ./... 2>/dev/null || true
-          find . -name '*.test' -delete 2>/dev/null || true
+          # Build all packages first to populate the build cache.
+          # This compiles code in parallel more efficiently than go test.
+          go build ./...
 
       - name: Run tests
         run: ./scripts/test
