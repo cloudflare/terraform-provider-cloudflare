@@ -49,11 +49,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ai_gateway_id": schema.StringAttribute{
-				Optional: true,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"aisearch_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Optional:    true,
+				Description:   `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
@@ -88,8 +92,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"embedding_model": schema.StringAttribute{
-				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
-				Optional:    true,
+				Description:   `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/qwen/qwen3-embedding-0.6b",
@@ -104,15 +110,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"reranking_model": schema.StringAttribute{
-				Description: `Available values: "@cf/baai/bge-reranker-base", "".`,
-				Optional:    true,
+				Description:   `Available values: "@cf/baai/bge-reranker-base", "".`,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("@cf/baai/bge-reranker-base", ""),
 				},
 			},
 			"rewrite_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Optional:    true,
+				Description:   `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
@@ -232,9 +242,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(true),
 			},
 			"cache_threshold": schema.StringAttribute{
-				Description: `Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".`,
-				Computed:    true,
-				Optional:    true,
+				Description:   `Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".`,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"super_strict_match",
@@ -317,9 +328,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(false),
 			},
 			"public_endpoint_params": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsModel](ctx),
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsModel](ctx),
+				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
 					"authorized_hosts": schema.ListAttribute{
 						Optional:    true,
@@ -401,9 +413,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"retrieval_options": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
+				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
 					"keyword_match_mode": schema.StringAttribute{
 						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
@@ -417,9 +430,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"source_params": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsModel](ctx),
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewNestedObjectType[AISearchInstanceSourceParamsModel](ctx),
+				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
 					"exclude_items": schema.ListAttribute{
 						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)",
@@ -502,36 +516,43 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"enable": schema.BoolAttribute{
 				Computed: true,
 				Default:  booldefault.StaticBool(true),
 			},
 			"last_activity": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 			},
 			"modified_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"modified_by": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"public_endpoint_id": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
 				Default:  stringdefault.StaticString("waiting"),
 			},
 			"vectorize_name": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
