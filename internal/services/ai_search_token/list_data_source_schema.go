@@ -37,16 +37,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Computed: true,
 						},
-						"account_id": schema.StringAttribute{
-							Computed: true,
-						},
-						"account_tag": schema.StringAttribute{
-							Computed: true,
-						},
 						"cf_api_id": schema.StringAttribute{
-							Computed: true,
-						},
-						"cf_api_key": schema.StringAttribute{
 							Computed: true,
 						},
 						"created_at": schema.StringAttribute{
@@ -71,10 +62,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"modified_by": schema.StringAttribute{
 							Computed: true,
-						},
-						"synced_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

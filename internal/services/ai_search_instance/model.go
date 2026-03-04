@@ -23,39 +23,37 @@ type AISearchInstanceModel struct {
 	EmbeddingModel                 types.String                                                        `tfsdk:"embedding_model" json:"embedding_model,optional"`
 	RerankingModel                 types.String                                                        `tfsdk:"reranking_model" json:"reranking_model,optional"`
 	RewriteModel                   types.String                                                        `tfsdk:"rewrite_model" json:"rewrite_model,optional"`
-	SummarizationModel             types.String                                                        `tfsdk:"summarization_model" json:"summarization_model,optional"`
-	SystemPromptAISearch           types.String                                                        `tfsdk:"system_prompt_aisearch" json:"system_prompt_ai_search,optional"`
-	SystemPromptIndexSummarization types.String                                                        `tfsdk:"system_prompt_index_summarization" json:"system_prompt_index_summarization,optional"`
-	SystemPromptRewriteQuery       types.String                                                        `tfsdk:"system_prompt_rewrite_query" json:"system_prompt_rewrite_query,optional"`
+	SummarizationModel             types.String                                                        `tfsdk:"summarization_model" json:"summarization_model,optional,no_refresh"`
+	SystemPromptAISearch           types.String                                                        `tfsdk:"system_prompt_aisearch" json:"system_prompt_ai_search,optional,no_refresh"`
+	SystemPromptIndexSummarization types.String                                                        `tfsdk:"system_prompt_index_summarization" json:"system_prompt_index_summarization,optional,no_refresh"`
+	SystemPromptRewriteQuery       types.String                                                        `tfsdk:"system_prompt_rewrite_query" json:"system_prompt_rewrite_query,optional,no_refresh"`
 	TokenID                        types.String                                                        `tfsdk:"token_id" json:"token_id,optional"`
 	CustomMetadata                 *[]*AISearchInstanceCustomMetadataModel                             `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
 	Metadata                       *AISearchInstanceMetadataModel                                      `tfsdk:"metadata" json:"metadata,optional"`
 	Cache                          types.Bool                                                          `tfsdk:"cache" json:"cache,computed_optional"`
 	CacheThreshold                 types.String                                                        `tfsdk:"cache_threshold" json:"cache_threshold,computed_optional"`
-	Chunk                          types.Bool                                                          `tfsdk:"chunk" json:"chunk,computed_optional"`
+	Chunk                          types.Bool                                                          `tfsdk:"chunk" json:"chunk,computed_optional,no_refresh"`
 	ChunkOverlap                   types.Int64                                                         `tfsdk:"chunk_overlap" json:"chunk_overlap,computed_optional"`
 	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,computed_optional"`
+	FusionMethod                   types.String                                                        `tfsdk:"fusion_method" json:"fusion_method,computed_optional"`
 	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed_optional"`
 	MaxNumResults                  types.Int64                                                         `tfsdk:"max_num_results" json:"max_num_results,computed_optional"`
 	Paused                         types.Bool                                                          `tfsdk:"paused" json:"paused,computed_optional"`
 	Reranking                      types.Bool                                                          `tfsdk:"reranking" json:"reranking,computed_optional"`
 	RewriteQuery                   types.Bool                                                          `tfsdk:"rewrite_query" json:"rewrite_query,computed_optional"`
 	ScoreThreshold                 types.Float64                                                       `tfsdk:"score_threshold" json:"score_threshold,computed_optional"`
-	Summarization                  types.Bool                                                          `tfsdk:"summarization" json:"summarization,computed_optional"`
+	Summarization                  types.Bool                                                          `tfsdk:"summarization" json:"summarization,computed_optional,no_refresh"`
 	PublicEndpointParams           customfield.NestedObject[AISearchInstancePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
+	RetrievalOptions               customfield.NestedObject[AISearchInstanceRetrievalOptionsModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed_optional"`
 	SourceParams                   customfield.NestedObject[AISearchInstanceSourceParamsModel]         `tfsdk:"source_params" json:"source_params,computed_optional"`
-	AccountTag                     types.String                                                        `tfsdk:"account_tag" json:"account_tag,computed"`
 	CreatedAt                      timetypes.RFC3339                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
 	Enable                         types.Bool                                                          `tfsdk:"enable" json:"enable,computed"`
-	EngineVersion                  types.Float64                                                       `tfsdk:"engine_version" json:"engine_version,computed"`
-	InternalID                     types.String                                                        `tfsdk:"internal_id" json:"internal_id,computed"`
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
 	PublicEndpointID               types.String                                                        `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	Status                         types.String                                                        `tfsdk:"status" json:"status,computed"`
-	VectorizeActiveNamespace       types.String                                                        `tfsdk:"vectorize_active_namespace" json:"vectorize_active_namespace,computed"`
 	VectorizeName                  types.String                                                        `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 }
 
@@ -91,7 +89,8 @@ type AISearchInstancePublicEndpointParamsChatCompletionsEndpointModel struct {
 }
 
 type AISearchInstancePublicEndpointParamsMcpModel struct {
-	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Disabled    types.Bool   `tfsdk:"disabled" json:"disabled,computed_optional"`
 }
 
 type AISearchInstancePublicEndpointParamsRateLimitModel struct {
@@ -102,6 +101,10 @@ type AISearchInstancePublicEndpointParamsRateLimitModel struct {
 
 type AISearchInstancePublicEndpointParamsSearchEndpointModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed_optional"`
+}
+
+type AISearchInstanceRetrievalOptionsModel struct {
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed_optional"`
 }
 
 type AISearchInstanceSourceParamsModel struct {

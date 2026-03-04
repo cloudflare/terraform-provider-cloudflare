@@ -55,11 +55,20 @@ func testSweepCloudflareOriginCACertificates(r string) error {
 	}
 
 	for _, cert := range certs.Result {
-		if !utils.ShouldSweepResource(cert.ID) {
+		// Check if any hostname contains the test prefix
+		isTestCert := false
+		for _, hostname := range cert.Hostnames {
+			if utils.ShouldSweepResource(hostname) {
+				isTestCert = true
+				break
+			}
+		}
+
+		if !isTestCert {
 			continue
 		}
 
-		tflog.Info(ctx, fmt.Sprintf("Deleting Origin CA certificate: %s", cert.ID))
+		tflog.Info(ctx, fmt.Sprintf("Deleting test Origin CA certificate: %s (hostnames: %v)", cert.ID, cert.Hostnames))
 		_, err := client.OriginCACertificates.Delete(ctx, cert.ID)
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Origin CA certificate %s: %s", cert.ID, err))

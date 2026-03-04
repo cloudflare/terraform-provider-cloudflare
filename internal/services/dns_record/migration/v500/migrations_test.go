@@ -137,6 +137,27 @@ func TestMigrateDNSRecordBasicA(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -144,16 +165,7 @@ func TestMigrateDNSRecordBasicA(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						// Resource should be renamed to cloudflare_dns_record
@@ -201,6 +213,27 @@ func TestMigrateDNSRecordCAARecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -208,16 +241,7 @@ func TestMigrateDNSRecordCAARecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						// Step 1: Create with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					// Step 2: Run migration and verify state
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
@@ -266,6 +290,27 @@ func TestMigrateDNSRecordMXRecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -273,15 +318,7 @@ func TestMigrateDNSRecordMXRecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -324,6 +361,27 @@ func TestMigrateDNSRecordSRVRecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -331,15 +389,7 @@ func TestMigrateDNSRecordSRVRecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -385,6 +435,27 @@ func TestMigrateDNSRecordTXTRecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -392,15 +463,7 @@ func TestMigrateDNSRecordTXTRecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -444,6 +507,27 @@ func TestMigrateDNSRecordCNAMERecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -451,15 +535,7 @@ func TestMigrateDNSRecordCNAMERecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -593,6 +669,27 @@ func TestMigrateDNSRecordAAAARecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -600,15 +697,7 @@ func TestMigrateDNSRecordAAAARecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -650,6 +739,27 @@ func TestMigrateDNSRecordNSRecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -657,15 +767,7 @@ func TestMigrateDNSRecordNSRecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -707,6 +809,27 @@ func TestMigrateDNSRecordWithTags(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -714,15 +837,7 @@ func TestMigrateDNSRecordWithTags(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),
@@ -768,6 +883,27 @@ func TestMigrateDNSRecordPTRRecord(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID, name)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config: testConfig,
+				}
+			}
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -775,15 +911,7 @@ func TestMigrateDNSRecordPTRRecord(t *testing.T) {
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
-						},
-						Config: testConfig,
-					},
+					firstStep,
 					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s.%s", name, domain))),

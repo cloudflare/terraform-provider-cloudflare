@@ -32,7 +32,9 @@ resource "cloudflare_account_member" "example_account_member" {
 
 - `policies` (Attributes Set) Array of policies associated with this member. (see [below for nested schema](#nestedatt--policies))
 - `roles` (Set of String) Set of roles associated with this member.
-- `status` (String) Available values: "accepted", "pending".
+- `status` (String) Status of the member invitation. If not provided during creation, defaults to 'pending'.
+Changing from 'accepted' back to 'pending' will trigger a replacement of the member resource in Terraform.
+Available values: "accepted", "pending".
 
 ### Read-Only
 

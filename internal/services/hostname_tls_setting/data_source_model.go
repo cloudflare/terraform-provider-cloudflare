@@ -24,7 +24,7 @@ type HostnameTLSSettingDataSourceModel struct {
 	Hostname  types.String      `tfsdk:"hostname" json:"hostname,computed"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Value     types.Float64     `tfsdk:"value" json:"value,computed"`
+	Value     types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *HostnameTLSSettingDataSourceModel) toReadParams(_ context.Context) (params hostnames.SettingTLSGetParams, diags diag.Diagnostics) {

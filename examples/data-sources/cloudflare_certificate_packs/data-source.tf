@@ -1,4 +1,5 @@
 data "cloudflare_certificate_packs" "example_certificate_packs" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  deploy = "staging"
   status = "all"
 }

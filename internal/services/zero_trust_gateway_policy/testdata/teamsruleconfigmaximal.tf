@@ -4,7 +4,7 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   description   = "Maximal policy with all options"
   action        = "block"
   enabled       = true
-  precedence    = 12500
+  precedence    = %[3]d
   filters       = ["dns"]
   traffic       = "any(dns.domains[*] == \"blocked.example.com\")"
   identity      = "any(identity.groups.name[*] in {\"finance\"})"

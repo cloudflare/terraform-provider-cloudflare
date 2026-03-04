@@ -94,6 +94,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 Optional:
 
 - `address` (String) The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.
+- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
 - `enabled` (Boolean) Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
 - `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--origins--header))
 - `name` (String) A human-identifiable name for the origin.
@@ -102,10 +103,6 @@ Optional:
 - `weight` (Number) The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.
 - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin's outstanding requests.
 - `origin_steering.policy="least_connections"`: Use weight to scale the origin's open connections.
-
-Read-Only:
-
-- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
 
 <a id="nestedatt--origins--header"></a>
 ### Nested Schema for `origins.header`

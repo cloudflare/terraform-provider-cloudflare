@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "The unique ID of the zone.",
+				Description: "Use this field to specify the unique ID of the zone.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -36,16 +36,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_on": schema.StringAttribute{
-							Description: "The timestamp of when the snippet was created.",
+							Description: "Indicates when the snippet was created.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"snippet_name": schema.StringAttribute{
-							Description: "The identifying name of the snippet.",
+							Description: "Identify the snippet.",
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Description: "The timestamp of when the snippet was last modified.",
+							Description: "Indicates when the snippet was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},

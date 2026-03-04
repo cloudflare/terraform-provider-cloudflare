@@ -50,6 +50,10 @@ sections, there is the need to migrate attributes and potentially the resource r
 
 ### Automatic
 
+~> **DEPRECATED:** Grit-based migrations are deprecated and will be removed in a
+future release. See the [version 5 migration guide](version-5-migration) for the
+recommended migration approach.
+
 For assisting with automatic migrations, we have provided [GritQL] patterns.
 
 This will allow you to rewrite the parts of your Terraform configuration and state
@@ -436,6 +440,326 @@ resource "cloudflare_api_token" "example" {
     }
   }
 }
+```
+
+## cloudflare_authenticated_origin_pulls
+
+In version 4, `cloudflare_authenticated_origin_pulls` was a single polymorphic resource that handled three different modes of Authenticated Origin Pulls (AOP) based on which optional attributes were set. In version 5, this has been split into separate resources that map to distinct API endpoints.
+
+**Migration Note:** After importing resources, you may see computed fields (like `id`, `status`, `expires_on`) refresh on the first `terraform plan`. This is expected behavior as Terraform populates these values from the API. Additionally, certificate resources require a temporary `lifecycle { ignore_changes = [private_key] }` block after import, since the API doesn't return private keys for security reasons.
+
+**Migration paths by mode:**
+
+### Global AOP (zone-level toggle only)
+
+If your v4 resource only had `zone_id` and `enabled` (no certificate or hostname), migrate to `cloudflare_authenticated_origin_pulls_settings`.
+
+Before
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls" "example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  enabled = true
+}
+```
+
+After
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls_settings" "example" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  enabled = true
+}
+```
+
+State migration:
+
+```sh
+terraform state rm cloudflare_authenticated_origin_pulls.example
+terraform import cloudflare_authenticated_origin_pulls_settings.example 0da42c8d2132a9ddaf714f9e7c920711
+```
+
+### Per-Zone AOP (zone-level with custom certificate)
+
+If your v4 resource had `zone_id`, `enabled`, and `authenticated_origin_pulls_certificate` (but no `hostname`), the association resource changes name in v5. **Important:** Per-zone AOP requires TWO resources in both v4 and v5 - one for the certificate and one for the settings.
+
+Before
+
+```hcl
+# V4: Certificate resource
+resource "cloudflare_authenticated_origin_pulls_certificate" "my_cert" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  type        = "per-zone"
+  certificate = file("cert.pem")
+  private_key = file("key.pem")
+}
+
+# V4: Association/settings resource
+resource "cloudflare_authenticated_origin_pulls" "my_zone" {
+  zone_id                               = "0da42c8d2132a9ddaf714f9e7c920711"
+  authenticated_origin_pulls_certificate = cloudflare_authenticated_origin_pulls_certificate.my_cert.id
+  enabled                               = true
+}
+```
+
+After
+
+```hcl
+# V5: Certificate resource (same name, drop 'type' attribute)
+resource "cloudflare_authenticated_origin_pulls_certificate" "my_cert" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  certificate = file("cert.pem")
+  private_key = file("key.pem")
+
+  # Temporary: required during migration to prevent unnecessary replacement
+  # due to private_key not being returned by the API after import.
+  # Remove this block after migration is complete and run terraform apply.
+  lifecycle {
+    ignore_changes = [private_key]
+  }
+}
+
+# V5: Settings resource (RENAMED from cloudflare_authenticated_origin_pulls)
+resource "cloudflare_authenticated_origin_pulls_settings" "my_zone" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  enabled = true
+}
+```
+
+Key changes:
+- Certificate resource: Remove the `type` attribute (see `cloudflare_authenticated_origin_pulls_certificate` section below for details)
+- Association resource: Rename to `cloudflare_authenticated_origin_pulls_settings` and remove the `authenticated_origin_pulls_certificate` reference (the certificate is now implicitly used when uploaded)
+
+State migration:
+
+```sh
+# Remove the v4 association resource
+terraform state rm cloudflare_authenticated_origin_pulls.my_zone
+
+# Import into v5 settings resource
+terraform import cloudflare_authenticated_origin_pulls_settings.my_zone 0da42c8d2132a9ddaf714f9e7c920711
+
+# Certificate resource state migration is covered in the cloudflare_authenticated_origin_pulls_certificate section below
+
+# Verify no drift remains
+terraform plan
+
+# Once the plan is clean, remove the lifecycle block from the certificate resource and run terraform apply to store the private_key in state
+terraform apply
+# Expected: "No changes. Your infrastructure matches the configuration."
+```
+
+### Per-Hostname AOP (hostname-specific configuration)
+
+If your v4 resource had all four attributes (`zone_id`, `enabled`, `authenticated_origin_pulls_certificate`, and `hostname`), **both the certificate and association resources change** in v5. Per-hostname AOP requires TWO resources in both v4 and v5.
+
+Before
+
+```hcl
+# V4: Certificate resource with type="per-hostname"
+resource "cloudflare_authenticated_origin_pulls_certificate" "my_cert" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  type        = "per-hostname"
+  certificate = file("cert.pem")
+  private_key = file("key.pem")
+}
+
+# V4: Hostname association resource
+resource "cloudflare_authenticated_origin_pulls" "my_hostname" {
+  zone_id                               = "0da42c8d2132a9ddaf714f9e7c920711"
+  authenticated_origin_pulls_certificate = cloudflare_authenticated_origin_pulls_certificate.my_cert.id
+  hostname                              = "app.example.com"
+  enabled                               = true
+}
+```
+
+After
+
+```hcl
+# V5: Certificate resource (RENAMED and type removed)
+resource "cloudflare_authenticated_origin_pulls_hostname_certificate" "my_cert" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  certificate = file("cert.pem")
+  private_key = file("key.pem")
+
+  # Temporary: Add this lifecycle block during migration to prevent unnecessary
+  # diff on private_key after import (the API does not return the private key).
+  # You can safely remove this block after migration is complete.
+  lifecycle {
+    ignore_changes = [private_key]
+  }
+}
+
+# V5: Hostname association resource (RESTRUCTURED schema)
+resource "cloudflare_authenticated_origin_pulls" "my_hostname" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  config = [{
+    hostname = "app.example.com"
+    cert_id  = cloudflare_authenticated_origin_pulls_hostname_certificate.my_cert.id
+    enabled  = true
+  }]
+}
+```
+
+Key changes:
+- Certificate resource: Rename to `cloudflare_authenticated_origin_pulls_hostname_certificate` and remove `type` attribute (see certificate section below)
+- Association resource: Restructure flat attributes into a nested `config` list; rename `authenticated_origin_pulls_certificate` to `cert_id`
+- The `config` list must contain exactly one item per resource instance
+
+State migration:
+
+```sh
+# Certificate resource - see cloudflare_authenticated_origin_pulls_certificate section below for detailed steps
+terraform state rm cloudflare_authenticated_origin_pulls_certificate.my_cert
+terraform import cloudflare_authenticated_origin_pulls_hostname_certificate.my_cert 0da42c8d2132a9ddaf714f9e7c920711/<certificate_id>
+
+# Association resource
+terraform state rm cloudflare_authenticated_origin_pulls.my_hostname
+terraform import cloudflare_authenticated_origin_pulls.my_hostname 0da42c8d2132a9ddaf714f9e7c920711/app.example.com
+
+# Verify no drift remains
+terraform plan
+# Expected: "No changes. Your infrastructure matches the configuration."
+
+# After verifying a clean plan, remove the lifecycle { ignore_changes = [private_key] }
+# block from your configuration and run terraform apply to store private_key in state.
+# This ensures future key rotations are detected by Terraform.
+```
+
+**Troubleshooting Import Issues**
+
+If you encounter `Error: Attempt to index null value` during import:
+
+**Cause:** Outputs or other resource references try to access nested attributes (`config[0].enabled`) before the resource is fully populated from the API.
+
+**Solution A - Use defensive output syntax (Recommended):**
+```hcl
+output "hostname_aop_enabled" {
+  value       = try(cloudflare_authenticated_origin_pulls.my_hostname.config[0].enabled, null)
+  description = "Whether hostname-level AOP is enabled (null during import, populated after plan/apply)"
+}
+```
+The `try()` function returns `null` if `config` is null during import, then populates with the actual value after `terraform plan` or `terraform apply`.
+
+**Solution B - Comment out outputs temporarily:**
+Comment out nested attribute references during import, then uncomment after running `terraform plan`.
+
+**Solution C - Remove outputs during migration:**
+Delete outputs entirely during migration, add them back after verification is complete.
+
+## cloudflare_authenticated_origin_pulls_certificate
+
+In version 4, this resource had a `type` attribute with values `"per-zone"` or `"per-hostname"` to differentiate between zone-level and hostname-level certificates. In version 5, these are now separate resources.
+
+### Per-Zone Certificate
+
+If your v4 certificate had `type = "per-zone"`, the resource name stays the same but the `type` attribute is removed. **Note:** You must also use `cloudflare_authenticated_origin_pulls_settings` to enable zone-level AOP (see the `cloudflare_authenticated_origin_pulls` section above).
+
+Before
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls_certificate" "example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  type        = "per-zone"
+  certificate = <<EOT
+-----BEGIN CERTIFICATE-----
+MIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...
+-----END CERTIFICATE-----
+EOT
+  private_key = <<EOT
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASC...
+-----END PRIVATE KEY-----
+EOT
+}
+```
+
+After
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls_certificate" "example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  certificate = <<EOT
+-----BEGIN CERTIFICATE-----
+MIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...
+-----END CERTIFICATE-----
+EOT
+  private_key = <<EOT
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASC...
+-----END PRIVATE KEY-----
+EOT
+
+  # Temporary: required during migration to prevent unnecessary replacement
+  # due to private_key not being returned by the API after import.
+  # Remove this block after migration is complete and run terraform apply.
+  lifecycle {
+    ignore_changes = [private_key]
+  }
+}
+```
+
+State migration is not required for per-zone certificates; simply remove the `type` attribute from your configuration. If you are re-importing the certificate, add the temporary `lifecycle` block shown above, verify with `terraform plan`, then remove it and run `terraform apply`.
+
+### Per-Hostname Certificate
+
+If your v4 certificate had `type = "per-hostname"`, migrate to the new `cloudflare_authenticated_origin_pulls_hostname_certificate` resource and remove the `type` attribute. **Note:** You must also update your hostname association resources (see the per-hostname section in `cloudflare_authenticated_origin_pulls` above).
+
+Before
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls_certificate" "example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  type        = "per-hostname"
+  certificate = <<EOT
+-----BEGIN CERTIFICATE-----
+MIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...
+-----END CERTIFICATE-----
+EOT
+  private_key = <<EOT
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASC...
+-----END PRIVATE KEY-----
+EOT
+}
+```
+
+After
+
+```hcl
+resource "cloudflare_authenticated_origin_pulls_hostname_certificate" "example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  certificate = <<EOT
+-----BEGIN CERTIFICATE-----
+MIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...
+-----END CERTIFICATE-----
+EOT
+  private_key = <<EOT
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASC...
+-----END PRIVATE KEY-----
+EOT
+
+  # Temporary: required during migration to prevent unnecessary replacement
+  # due to private_key not being returned by the API after import.
+  # Remove this block after migration is complete and run terraform apply.
+  lifecycle {
+    ignore_changes = [private_key]
+  }
+}
+```
+
+State migration:
+
+```sh
+terraform state rm cloudflare_authenticated_origin_pulls_certificate.example
+terraform import cloudflare_authenticated_origin_pulls_hostname_certificate.example 0da42c8d2132a9ddaf714f9e7c920711/<certificate_id>
+
+# Verify no drift
+terraform plan
+# Expected: "No changes. Your infrastructure matches the configuration."
+
+# After verifying a clean plan, remove the lifecycle block and run terraform apply
 ```
 
 ## cloudflare_hostname_tls_setting

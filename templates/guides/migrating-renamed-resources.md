@@ -6,6 +6,10 @@ description: Guide for handling renamed resources in the Cloudflare Provider
 
 ## Before you start
 
+~> **DEPRECATED:** Grit-based migrations are deprecated and will be removed in a
+future release. See the [version 5 migration guide](version-5-migration) for the
+recommended migration approach.
+
 - You will need to follow the [Grit CLI install] steps.
 - Locate the Grit patterns you'll need to perform the upgrade. They will be in
   `.grit/patterns` directory of the [GitHub repository]. The filename convention

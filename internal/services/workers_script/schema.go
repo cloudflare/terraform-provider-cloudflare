@@ -26,7 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
@@ -270,6 +270,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"certificate_id": schema.StringAttribute{
 							Description: "Identifier of the certificate to bind to.",

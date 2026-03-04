@@ -56,6 +56,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"description": schema.StringAttribute{
+				Optional: true,
+			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "custom", "predefined", "integration".`,
 				Optional:    true,

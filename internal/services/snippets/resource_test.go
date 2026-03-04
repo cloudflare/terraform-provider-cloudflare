@@ -10,11 +10,9 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
@@ -94,32 +92,6 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareSnippetsDestroy(s *terraform.State) error {
-	client := acctest.SharedClient()
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_snippets" {
-			continue
-		}
-
-		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
-		snippetName := rs.Primary.Attributes["snippet_name"]
-
-		_, err := client.Snippets.Get(context.Background(), snippetName, snippets.SnippetGetParams{
-			ZoneID: cloudflare.F(zoneID),
-		})
-		if err == nil {
-			return fmt.Errorf("snippet still exists")
-		}
-	}
-
-	return nil
-}
-
 func testAccCloudflareSnippetsConfig(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, zoneID)
-}
-
-func testAccCloudflareSnippetsConfigUpdate(rnd, zoneID string) string {
-	return acctest.LoadTestCase("basic_update.tf", rnd, zoneID)
 }

@@ -25,7 +25,7 @@ type CustomSSLDataSourceModel struct {
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer              types.String                                                      `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn          timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Policy              types.String                                                      `tfsdk:"policy" json:"policy,computed"`
+	PolicyRestrictions  types.String                                                      `tfsdk:"policy_restrictions" json:"policy_restrictions,computed"`
 	Priority            types.Float64                                                     `tfsdk:"priority" json:"priority,computed"`
 	Signature           types.String                                                      `tfsdk:"signature" json:"signature,computed"`
 	Status              types.String                                                      `tfsdk:"status" json:"status,computed"`

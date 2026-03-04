@@ -95,8 +95,17 @@ func TestMigrateTieredCache_Smart(t *testing.T) {
 			}
 
 			// Build steps: Step 1 creates with specified provider version
-			steps := []resource.TestStep{
-				{
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
 							Source:            "cloudflare/cloudflare",
@@ -104,8 +113,9 @@ func TestMigrateTieredCache_Smart(t *testing.T) {
 						},
 					},
 					Config: testConfig,
-				},
+				}
 			}
+			steps := []resource.TestStep{firstStep}
 
 			// Steps 2-3: Run migration and verify state (allows creates for split resources)
 			steps = append(steps, acctest.MigrationV2TestStepAllowCreate(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...)
@@ -244,8 +254,17 @@ func TestMigrateTieredCache_Off(t *testing.T) {
 			}
 
 			// Build steps: Step 1 creates with specified provider version
-			steps := []resource.TestStep{
-				{
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				// Use local v5 provider (will create state)
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				// Use external v4 provider (will create version=0 state)
+				firstStep = resource.TestStep{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
 							Source:            "cloudflare/cloudflare",
@@ -253,8 +272,9 @@ func TestMigrateTieredCache_Off(t *testing.T) {
 						},
 					},
 					Config: testConfig,
-				},
+				}
 			}
+			steps := []resource.TestStep{firstStep}
 
 			// Steps 2-3: Run migration and verify state (allows creates for split resources)
 			steps = append(steps, acctest.MigrationV2TestStepAllowCreate(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...)

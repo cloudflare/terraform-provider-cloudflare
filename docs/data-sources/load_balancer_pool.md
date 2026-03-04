@@ -50,7 +50,7 @@ data "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
 - `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--notification_filter))
 - `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--origin_steering))
-- `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
+- `origins` (Attributes Set) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

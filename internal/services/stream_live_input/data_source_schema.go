@@ -41,6 +41,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					float64validator.AtLeast(30),
 				},
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Indicates whether the live input is enabled and can accept streams.",
+				Computed:    true,
+			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the live input was last modified.",
 				Computed:    true,

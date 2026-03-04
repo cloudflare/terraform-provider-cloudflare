@@ -883,6 +883,87 @@ func (e expectEmptyPlanExceptGatewayPolicyAPIChanges) CheckPlan(ctx context.Cont
 
 var ExpectEmptyPlanExceptGatewayPolicyAPIChanges = expectEmptyPlanExceptGatewayPolicyAPIChanges{}
 
+// ExpectEmptyPlanExceptZoneDNSSECStatusChange is a plan check specifically for
+// cloudflare_zone_dnssec resources. It expects an empty plan except for:
+// - Status field changes to null (optional-only field limitation during migration)
+// - Computed field refreshes (happens when status changes trigger resource updates)
+type expectEmptyPlanExceptZoneDNSSECStatusChange struct{}
+
+func (e expectEmptyPlanExceptZoneDNSSECStatusChange) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	for _, rc := range req.Plan.ResourceChanges {
+		if rc.Change.Actions[0] == "no-op" || rc.Change.Actions[0] == "read" {
+			continue
+		}
+
+		// Only check zone_dnssec resources
+		if !strings.HasPrefix(rc.Address, "module.zone_dnssec.cloudflare_zone_dnssec.") &&
+			!strings.HasPrefix(rc.Address, "cloudflare_zone_dnssec.") {
+			resp.Error = fmt.Errorf("expected only zone_dnssec changes, but %s has planned action(s): %v", rc.Address, rc.Change.Actions)
+			return
+		}
+
+		// Check if this is an update action
+		if rc.Change.Actions[0] != "update" {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has planned action(s): %v", rc.Address, rc.Change.Actions)
+			return
+		}
+
+		// For updates, check each attribute change
+		beforeMap, beforeOk := rc.Change.Before.(map[string]interface{})
+		afterMap, afterOk := rc.Change.After.(map[string]interface{})
+
+		if !beforeOk || !afterOk {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has non-map changes", rc.Address)
+			return
+		}
+
+		// Check each attribute that's different
+		for key, afterValue := range afterMap {
+			beforeValue, _ := beforeMap[key]
+
+			// Skip if values are the same
+			if reflect.DeepEqual(beforeValue, afterValue) {
+				continue
+			}
+
+			// Allow status field changes to null (optional-only field limitation)
+			if key == "status" && afterValue == nil {
+				continue
+			}
+
+			// Allow status field changes from "pending" to "active" (API state transition)
+			if key == "status" && beforeValue == "pending" && afterValue == "active" {
+				continue
+			}
+
+			// Allow computed field refreshes to (known after apply)
+			// These fields refresh when status changes trigger resource updates
+			computedFields := []string{"algorithm", "digest", "digest_algorithm", "digest_type",
+				"ds", "flags", "key_tag", "key_type", "modified_on", "public_key",
+				"dnssec_multi_signer", "dnssec_presigned", "dnssec_use_nsec3"}
+			isComputedField := false
+			for _, computedField := range computedFields {
+				if key == computedField {
+					isComputedField = true
+					break
+				}
+			}
+			if isComputedField {
+				// Check if it's changing to (known after apply) which is represented as nil in JSON
+				// Or if it's a value that will refresh from API
+				continue
+			}
+
+			// If we get here, it's a disallowed change
+			resp.Error = fmt.Errorf("expected empty plan except for Zone DNSSEC status/computed field changes, but %s.%s has change from %v to %v",
+				rc.Address, key, beforeValue, afterValue)
+			return
+		}
+	}
+}
+
+var ExpectEmptyPlanExceptZoneDNSSECStatusChange = expectEmptyPlanExceptZoneDNSSECStatusChange{}
+
 // debugLogf logs a message only when TF_LOG=DEBUG is set
 func debugLogf(t *testing.T, format string, args ...interface{}) {
 	t.Helper()
@@ -982,37 +1063,27 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
 
 	// Find state file in tmpDir
-	// First check if state file exists directly in tmpDir (from v4 import)
-	var stateFilePath string
-	directStateFile := filepath.Join(tmpDir, "terraform.tfstate")
-	if _, err := os.Stat(directStateFile); err == nil {
-		stateFilePath = directStateFile
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
 	} else {
-		// Look for state file in subdirectories (from test framework)
-		entries, err := os.ReadDir(tmpDir)
-		if err != nil {
-			t.Logf("Failed to read test directory: %v", err)
-		} else {
-			for _, entry := range entries {
-				if entry.IsDir() {
-					inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
-					for _, inner_entry := range inner_entries {
-						if inner_entry.Name() == "terraform.tfstate" {
-							stateFilePath = filepath.Join(tmpDir, entry.Name(), "terraform.tfstate")
-							break
-						}
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
 					}
 				}
-				if stateFilePath != "" {
-					break
-				}
 			}
+
 		}
 	}
 
 	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
-	debugLogf(t, "State file path: %s", stateFilePath)
-	state, err := os.ReadFile(stateFilePath)
+	debugLogf(t, "StateDir: %s", stateDir)
+	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
@@ -1024,7 +1095,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Running migration with YAML transformations")
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
-		"-state", stateFilePath,
+		"-state", filepath.Join(stateDir, "terraform.tfstate"),
 		"-grit=false",                      // Disable Grit transformations
 		"-transformer=true",                // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
@@ -1037,7 +1108,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Migration command failed: %v\nMigration output:\n%s", err, string(output))
 	}
-	newState, err := os.ReadFile(stateFilePath)
+	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
@@ -1220,6 +1291,30 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 	}
 }
 
+// MigrationV2TestStepForZoneDNSSEC creates a test step for cloudflare_zone_dnssec migration.
+// The status field is optional-only (not optional+computed), so when migrated to null,
+// it will cause a non-empty plan. This function expects that non-empty plan and validates
+// that only the status field (and optionally computed fields) change.
+func MigrationV2TestStepForZoneDNSSEC(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for Zone DNSSEC: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ExpectNonEmptyPlan:       true, // status field becomes null, causing non-empty plan
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptZoneDNSSECStatusChange,
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+}
+
 // MigrationV2TestStepWithStateNormalization creates test steps for migrations where the v5 provider's
 // schema causes state normalization issues. This is needed when:
 // - The v5 provider returns all fields from the API (including nil/empty ones)
@@ -1287,6 +1382,52 @@ func MigrationV2TestStepAllowCreate(t *testing.T, v4Config string, tmpDir string
 		},
 		{
 			// Step 2: Verify final state and expect empty plan
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+			},
+			ConfigStateChecks: stateChecks,
+		},
+	}
+}
+
+// MigrationV2TestStepAllowNonEmptyPlan creates migration test steps that allow a non-empty
+// post-apply refresh plan. Use this when migration produces expected state diffs (e.g.,
+// falsey-to-null changes like name="" -> null) that require a subsequent apply to resolve.
+//
+// Parameters:
+//   - postApplyRefreshPlanChecks: plan checks to assert on the expected refresh plan diff
+//     (e.g., verify the specific attribute change). Pass nil to skip.
+//   - stateChecks: state checks to validate after the correction step.
+//
+// Step 1 runs migration, allows a non-empty refresh plan, and optionally asserts the diff.
+// Step 2 applies the correction and validates the final state is clean.
+func MigrationV2TestStepAllowNonEmptyPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, postApplyRefreshPlanChecks []plancheck.PlanCheck, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	return []resource.TestStep{
+		{
+			// Step 1: Run migration and apply — allow non-empty refresh plan
+			PreConfig: func() {
+				WriteOutConfig(t, v4Config, tmpDir)
+				debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			},
+			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+			ConfigDirectory:          config.StaticDirectory(tmpDir),
+			ExpectNonEmptyPlan:       true,
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					DebugNonEmptyPlan,
+					ExpectEmptyPlanExceptFalseyToNull,
+				},
+				PostApplyPostRefresh: postApplyRefreshPlanChecks,
+			},
+		},
+		{
+			// Step 2: Apply correction and verify final state is clean
 			ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 			ConfigDirectory:          config.StaticDirectory(tmpDir),
 			ConfigPlanChecks: resource.ConfigPlanChecks{

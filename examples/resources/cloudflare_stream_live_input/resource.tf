@@ -2,6 +2,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   default_creator = "defaultCreator"
   delete_recording_after_days = 45
+  enabled = true
   meta = {
     name = "test stream 1"
   }

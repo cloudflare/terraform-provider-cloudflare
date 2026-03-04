@@ -5,6 +5,8 @@ package snippet_rules
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -12,7 +14,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -90,34 +91,28 @@ func (d *SnippetRulesListDataSource) Read(ctx context.Context, req datasource.Re
 
 	env := SnippetRulesListResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Snippets.Rules.List(ctx, params)
+	res := new(http.Response)
+	_, err := d.client.Snippets.Rules.List(
+		ctx,
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	for page != nil && len(page.Result) > 0 {
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
-		acc = append(acc, env.Result.Elements()...)
-		if len(acc) >= maxItems {
-			break
-		}
-		page, err = page.GetNextPage()
-		if err != nil {
-			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
-			return
-		}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+		return
 	}
 
+	acc := env.Result.Elements()
 	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[SnippetRulesListResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)

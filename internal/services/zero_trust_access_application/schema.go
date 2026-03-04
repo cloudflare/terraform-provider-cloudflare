@@ -26,7 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessApplicationResour
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
@@ -142,6 +142,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"type": schema.StringAttribute{
 				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\", \"mcp\", \"mcp_portal\", \"proxy_endpoint\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -260,6 +261,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"url": schema.StringAttribute{
 							Description: "the hyperlink in the footer link.",
 							Required:    true,
+						},
+					},
+				},
+			},
+			"oauth_configuration": schema.SingleNestedAttribute{
+				Description: "Optional configuration for managing an OAuth authorization flow controlled by Access. When set, Access will act as the OAuth authorization server for this application. This feature is currently in beta.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether the OAuth configuration is enabled for this application. When set to `false`, Access will not handle OAuth for this application. Defaults to `true` if omitted.",
+						Optional:    true,
+					},
+					"dynamic_client_registration": schema.SingleNestedAttribute{
+						Description: "Settings for OAuth dynamic client registration.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether dynamic client registration is enabled.",
+								Optional:    true,
+							},
+							"allow_any_on_localhost": schema.BoolAttribute{
+								Description: "Allows any client with redirect URIs on localhost.",
+								Optional:    true,
+							},
+							"allow_any_on_loopback": schema.BoolAttribute{
+								Description: "Allows any client with redirect URIs on 127.0.0.1.",
+								Optional:    true,
+							},
+							"allowed_uris": schema.ListAttribute{
+								Description: "The URIs that are allowed as redirect URIs for dynamically registered clients. Must use the `https` protocol. Paths may end in `/*` to match all sub-paths.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+						},
+					},
+					"grant": schema.SingleNestedAttribute{
+						Description: "Settings for OAuth grant behavior.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"access_token_lifetime": schema.StringAttribute{
+								Description: "The lifetime of the access token. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
+								Optional:    true,
+							},
+							"session_duration": schema.StringAttribute{
+								Description: "The duration of the OAuth session. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
+								Optional:    true,
+							},
 						},
 					},
 				},
@@ -468,16 +516,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
 				},
 			},
-			"self_hosted_domains": schema.ListAttribute{
+			"self_hosted_domains": schema.SetAttribute{
 				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
 				Optional:           true,
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-				CustomType:         customfield.NewListType[types.String](ctx),
+				CustomType:         customfield.NewSetType[types.String](ctx),
 				ElementType:        types.StringType,
-				Validators: []validator.List{
+				Validators: []validator.Set{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
-					listvalidator.ConflictsWith(path.Expressions{
+					setvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("destinations"),
 					}...),
 				},
@@ -923,6 +971,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"allow_email_alias": schema.BoolAttribute{
 											Description: "Enables using Identity Provider email alias as SSH username.",
 											Optional:    true,
+										},
+									},
+								},
+								"rdp": schema.SingleNestedAttribute{
+									Description: "The RDP-specific rules that define clipboard behavior for RDP connections.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"allowed_clipboard_local_to_remote_formats": schema.ListAttribute{
+											Description: "Clipboard formats allowed when copying from local machine to remote RDP session.",
+											Optional:    true,
+											Validators: []validator.List{
+												listvalidator.ValueStringsAre(
+													stringvalidator.OneOfCaseInsensitive("text"),
+												),
+											},
+											ElementType: types.StringType,
+										},
+										"allowed_clipboard_remote_to_local_formats": schema.ListAttribute{
+											Description: "Clipboard formats allowed when copying from remote RDP session to local machine.",
+											Optional:    true,
+											Validators: []validator.List{
+												listvalidator.ValueStringsAre(
+													stringvalidator.OneOfCaseInsensitive("text"),
+												),
+											},
+											ElementType: types.StringType,
 										},
 									},
 								},

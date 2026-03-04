@@ -133,6 +133,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
 - `landing_page_design` (Attributes) The design of the App Launcher landing page shown to users when they log in. (see [below for nested schema](#nestedatt--landing_page_design))
 - `logo_url` (String) The image URL for the logo shown in the App Launcher dashboard.
 - `name` (String) The name of the application.
+- `oauth_configuration` (Attributes) Optional configuration for managing an OAuth authorization flow controlled by Access. When set, Access will act as the OAuth authorization server for this application. This feature is currently in beta. (see [below for nested schema](#nestedatt--oauth_configuration))
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
 - `policies` (Attributes List) The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application. (see [below for nested schema](#nestedatt--policies))
@@ -146,7 +147,7 @@ The header value will be interpreted as a json object similar to:
 - `saas_app` (Attributes) (see [below for nested schema](#nestedatt--saas_app))
 - `same_site_cookie_attribute` (String) Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
-- `self_hosted_domains` (List of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
+- `self_hosted_domains` (Set of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
@@ -214,6 +215,36 @@ Optional:
 - `title` (String) The title shown on the landing page.
 
 
+<a id="nestedatt--oauth_configuration"></a>
+### Nested Schema for `oauth_configuration`
+
+Optional:
+
+- `dynamic_client_registration` (Attributes) Settings for OAuth dynamic client registration. (see [below for nested schema](#nestedatt--oauth_configuration--dynamic_client_registration))
+- `enabled` (Boolean) Whether the OAuth configuration is enabled for this application. When set to `false`, Access will not handle OAuth for this application. Defaults to `true` if omitted.
+- `grant` (Attributes) Settings for OAuth grant behavior. (see [below for nested schema](#nestedatt--oauth_configuration--grant))
+
+<a id="nestedatt--oauth_configuration--dynamic_client_registration"></a>
+### Nested Schema for `oauth_configuration.dynamic_client_registration`
+
+Optional:
+
+- `allow_any_on_localhost` (Boolean) Allows any client with redirect URIs on localhost.
+- `allow_any_on_loopback` (Boolean) Allows any client with redirect URIs on 127.0.0.1.
+- `allowed_uris` (List of String) The URIs that are allowed as redirect URIs for dynamically registered clients. Must use the `https` protocol. Paths may end in `/*` to match all sub-paths.
+- `enabled` (Boolean) Whether dynamic client registration is enabled.
+
+
+<a id="nestedatt--oauth_configuration--grant"></a>
+### Nested Schema for `oauth_configuration.grant`
+
+Optional:
+
+- `access_token_lifetime` (String) The lifetime of the access token. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.
+- `session_duration` (String) The duration of the OAuth session. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.
+
+
+
 <a id="nestedatt--policies"></a>
 ### Nested Schema for `policies`
 
@@ -234,7 +265,17 @@ Available values: "allow", "deny", "non_identity", "bypass".
 
 Optional:
 
+- `rdp` (Attributes) The RDP-specific rules that define clipboard behavior for RDP connections. (see [below for nested schema](#nestedatt--policies--connection_rules--rdp))
 - `ssh` (Attributes) The SSH-specific rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules--ssh))
+
+<a id="nestedatt--policies--connection_rules--rdp"></a>
+### Nested Schema for `policies.connection_rules.rdp`
+
+Optional:
+
+- `allowed_clipboard_local_to_remote_formats` (List of String) Clipboard formats allowed when copying from local machine to remote RDP session.
+- `allowed_clipboard_remote_to_local_formats` (List of String) Clipboard formats allowed when copying from remote RDP session to local machine.
+
 
 <a id="nestedatt--policies--connection_rules--ssh"></a>
 ### Nested Schema for `policies.connection_rules.ssh`

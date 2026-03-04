@@ -70,7 +70,7 @@ If this field is omitted, entries owned by this profile will not be changed. (se
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
 
-Required:
+Optional:
 
 - `enabled` (Boolean) If true, scan the context of predefined entries to only return matches surrounded by keywords.
 - `skip` (Attributes) Content types to exclude from context analysis and return all matches. (see [below for nested schema](#nestedatt--context_awareness--skip))
@@ -78,7 +78,7 @@ Required:
 <a id="nestedatt--context_awareness--skip"></a>
 ### Nested Schema for `context_awareness.skip`
 
-Required:
+Optional:
 
 - `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
 
@@ -95,6 +95,7 @@ Required:
 
 Optional:
 
+- `description` (String)
 - `entry_id` (String)
 
 <a id="nestedatt--entries--pattern"></a>

@@ -31,7 +31,8 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 
 - `consumer_id` (String) A Resource identifier.
 - `created_on` (String)
-- `script` (String) Name of a Worker
+- `dead_letter_queue` (String) Name of the dead letter queue, or empty string if not configured
+- `queue_name` (String)
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 - `type` (String) Available values: "worker", "http_pull".

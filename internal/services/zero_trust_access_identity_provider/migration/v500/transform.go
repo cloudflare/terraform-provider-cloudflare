@@ -1,0 +1,171 @@
+package v500
+
+import (
+	"context"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+// Transform converts v4 cloudflare_access_identity_provider state to v5 cloudflare_zero_trust_access_identity_provider.
+func Transform(ctx context.Context, source SourceAccessIdentityProviderModel) (*TargetAccessIdentityProviderModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	if source.Name.IsNull() || source.Name.IsUnknown() {
+		diags.AddError("Missing required field", "name is required for access identity provider migration")
+		return nil, diags
+	}
+	if source.Type.IsNull() || source.Type.IsUnknown() {
+		diags.AddError("Missing required field", "type is required for access identity provider migration")
+		return nil, diags
+	}
+
+	target := &TargetAccessIdentityProviderModel{
+		ID:        source.ID,
+		AccountID: source.AccountID,
+		ZoneID:    source.ZoneID,
+		Name:      source.Name,
+		Type:      source.Type,
+	}
+
+	if len(source.Config) > 0 {
+		targetConfig, configDiags := transformConfig(ctx, source.Config[0])
+		diags.Append(configDiags...)
+		if !diags.HasError() {
+			target.Config = targetConfig
+		}
+	} else {
+		target.Config = &TargetConfigModel{}
+	}
+
+	if len(source.ScimConfig) > 0 {
+		targetScim := transformScimConfig(source.ScimConfig[0])
+		scimObj, scimDiags := customfield.NewObject(ctx, &targetScim)
+		diags.Append(scimDiags...)
+		if !diags.HasError() {
+			target.SCIMConfig = scimObj
+		}
+	} else {
+		target.SCIMConfig = customfield.NullObject[TargetScimConfigModel](ctx)
+	}
+
+	return target, diags
+}
+
+func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConfigModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	target := &TargetConfigModel{
+		ClientID:              falseyStringToNull(source.ClientID),
+		ClientSecret:          falseyStringToNull(source.ClientSecret),
+		DirectoryID:           falseyStringToNull(source.DirectoryID),
+		EmailClaimName:        falseyStringToNull(source.EmailClaimName),
+		Prompt:                falseyStringToNull(source.Prompt),
+		CentrifyAccount:       falseyStringToNull(source.CentrifyAccount),
+		CentrifyAppID:         falseyStringToNull(source.CentrifyAppID),
+		AppsDomain:            falseyStringToNull(source.AppsDomain),
+		AuthURL:               falseyStringToNull(source.AuthURL),
+		CERTsURL:              falseyStringToNull(source.CERTsURL),
+		TokenURL:              falseyStringToNull(source.TokenURL),
+		AuthorizationServerID: falseyStringToNull(source.AuthorizationServerID),
+		OktaAccount:           falseyStringToNull(source.OktaAccount),
+		OneloginAccount:       falseyStringToNull(source.OneloginAccount),
+		PingEnvID:             falseyStringToNull(source.PingEnvID),
+		EmailAttributeName:    falseyStringToNull(source.EmailAttributeName),
+		IssuerURL:             falseyStringToNull(source.IssuerURL),
+		SSOTargetURL:          falseyStringToNull(source.SSOTargetURL),
+		RedirectURL:           source.RedirectURL,
+
+		ConditionalAccessEnabled: falseyBoolToNull(source.ConditionalAccessEnabled),
+		SupportGroups:            falseyBoolToNull(source.SupportGroups),
+		PKCEEnabled:              falseyBoolToNull(source.PKCEEnabled),
+		SignRequest:              falseyBoolToNull(source.SignRequest),
+	}
+
+	// api_token: deprecated, not copied
+
+	if !source.Claims.IsNull() && !source.Claims.IsUnknown() {
+		var v []types.String
+		diags.Append(source.Claims.ElementsAs(ctx, &v, false)...)
+		if !diags.HasError() {
+			target.Claims = &v
+		}
+	}
+
+	if !source.Scopes.IsNull() && !source.Scopes.IsUnknown() {
+		var v []types.String
+		diags.Append(source.Scopes.ElementsAs(ctx, &v, false)...)
+		if !diags.HasError() {
+			target.Scopes = &v
+		}
+	}
+
+	if !source.Attributes.IsNull() && !source.Attributes.IsUnknown() {
+		var v []types.String
+		diags.Append(source.Attributes.ElementsAs(ctx, &v, false)...)
+		if !diags.HasError() {
+			target.Attributes = &v
+		}
+	}
+
+	if !source.HeaderAttributes.IsNull() && !source.HeaderAttributes.IsUnknown() {
+		var src []SourceHeaderAttributesModel
+		diags.Append(source.HeaderAttributes.ElementsAs(ctx, &src, false)...)
+		if !diags.HasError() && len(src) > 0 {
+			dst := make([]*TargetHeaderAttributesModel, len(src))
+			for i, h := range src {
+				dst[i] = &TargetHeaderAttributesModel{
+					AttributeName: h.AttributeName,
+					HeaderName:    h.HeaderName,
+				}
+			}
+			target.HeaderAttributes = &dst
+		}
+	}
+
+	// idp_public_cert (string) → idp_public_certs (list)
+	if !source.IdpPublicCert.IsNull() && !source.IdpPublicCert.IsUnknown() && source.IdpPublicCert.ValueString() != "" {
+		certs := []types.String{source.IdpPublicCert}
+		target.IdPPublicCERTs = &certs
+	}
+
+	return target, diags
+}
+
+func transformScimConfig(source SourceScimConfigModel) TargetScimConfigModel {
+	return TargetScimConfigModel{
+		Enabled:                source.Enabled,
+		IdentityUpdateBehavior: source.IdentityUpdateBehavior,
+		SCIMBaseURL:            source.SCIMBaseURL,
+		SeatDeprovision:        source.SeatDeprovision,
+		Secret:                 source.Secret,
+		UserDeprovision:        source.UserDeprovision,
+		// group_member_deprovision: deprecated, not copied
+	}
+}
+
+type SourceHeaderAttributesModel struct {
+	AttributeName types.String `tfsdk:"attribute_name"`
+	HeaderName    types.String `tfsdk:"header_name"`
+}
+
+func falseyStringToNull(v types.String) types.String {
+	if v.IsNull() || v.IsUnknown() {
+		return v
+	}
+	if v.ValueString() == "" {
+		return types.StringNull()
+	}
+	return v
+}
+
+func falseyBoolToNull(v types.Bool) types.Bool {
+	if v.IsNull() || v.IsUnknown() {
+		return v
+	}
+	if !v.ValueBool() {
+		return types.BoolNull()
+	}
+	return v
+}

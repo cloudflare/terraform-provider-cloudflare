@@ -203,10 +203,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"origins": schema.ListNestedAttribute{
+			"origins": schema.SetNestedAttribute{
 				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[LoadBalancerPoolOriginsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[LoadBalancerPoolOriginsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{

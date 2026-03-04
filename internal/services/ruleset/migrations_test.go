@@ -261,6 +261,7 @@ func TestMigrateCloudflareRulesetCacheKeyQueryString(t *testing.T) {
 		}}, migrationSteps...),
 	})
 }
+
 // TestMigrateCloudflareRulesetLogCustomFields tests migration of log custom fields (cookie_fields, request_fields, response_fields)
 func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -273,7 +274,7 @@ func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
 	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_log_custom_fields")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
-		
+
 		// Rule 0: cookie_fields transformation
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("log_custom_field")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("cookie_fields"), knownvalue.ListSizeExact(3)),
@@ -323,7 +324,7 @@ func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
 	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
-		
+
 		// Rule 0: Single status codes with numeric values
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("set_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl"), knownvalue.ListSizeExact(2)),
@@ -331,14 +332,14 @@ func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(0).AtMapKey("value"), knownvalue.Int64Exact(86400)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(1).AtMapKey("status_code"), knownvalue.Int64Exact(404)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(1).AtMapKey("value"), knownvalue.Int64Exact(300)),
-		
+
 		// Rule 1: Status code range with numeric from/to
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("action"), knownvalue.StringExact("set_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl"), knownvalue.ListSizeExact(1)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(0).AtMapKey("status_code_range").AtMapKey("from"), knownvalue.Int64Exact(200)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(0).AtMapKey("status_code_range").AtMapKey("to"), knownvalue.Int64Exact(299)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl").AtSliceIndex(0).AtMapKey("value"), knownvalue.Int64Exact(3600)),
-		
+
 		// Rule 2: Multiple status_code_ttl entries with mixed types
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(2).AtMapKey("action"), knownvalue.StringExact("set_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(2).AtMapKey("action_parameters").AtMapKey("edge_ttl").AtMapKey("status_code_ttl"), knownvalue.ListSizeExact(3)),

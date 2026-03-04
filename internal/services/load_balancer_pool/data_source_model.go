@@ -38,7 +38,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolLoadSheddingDataSourceModel]       `tfsdk:"load_shedding" json:"load_shedding,computed"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolNotificationFilterDataSourceModel] `tfsdk:"notification_filter" json:"notification_filter,computed"`
 	OriginSteering     customfield.NestedObject[LoadBalancerPoolOriginSteeringDataSourceModel]     `tfsdk:"origin_steering" json:"origin_steering,computed"`
-	Origins            customfield.NestedObjectList[LoadBalancerPoolOriginsDataSourceModel]        `tfsdk:"origins" json:"origins,computed"`
+	Origins            customfield.NestedObjectSet[LoadBalancerPoolOriginsDataSourceModel]         `tfsdk:"origins" json:"origins,computed"`
 	Filter             *LoadBalancerPoolFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
