@@ -63,7 +63,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 
 - `account_id` (String) Identifier.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
-- `origins` (Attributes Set) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
+- `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
 
 ### Optional
 

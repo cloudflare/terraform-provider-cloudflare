@@ -19,5 +19,11 @@ func (r *MagicWANGRETunnelResource) UpgradeState(ctx context.Context) map[int64]
 				resp.State.Raw = req.State.Raw
 			},
 		},
+		1: {
+			PriorSchema: &targetSchema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				resp.State.Raw = req.State.Raw
+			},
+		},
 	}
 }

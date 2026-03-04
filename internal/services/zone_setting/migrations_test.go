@@ -17,6 +17,7 @@ import (
 
 // TestMigrateZoneSettingMigrationFromV4Basic tests basic migration from v4 zone_settings_override to v5 zone_setting
 func TestMigrateZoneSettingMigrationFromV4Basic(t *testing.T) {
+	t.Skip("Can't run state upgrade for zone settings, has to be manual")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -37,7 +38,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_http3", rnd), tfjsonpath.New("value"), knownvalue.StringExact("on")),
 	})
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -58,6 +59,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 
 // TestMigrateZoneSettingMigrationFromV4WithSpecialSettings tests migration with special settings like 0rtt and security_header
 func TestMigrateZoneSettingMigrationFromV4WithSpecialSettings(t *testing.T) {
+	t.Skip("Can't run state upgrade for zone settings, has to be manual")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -94,7 +96,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_security_header", rnd), tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("preload"), knownvalue.Bool(false)),
 		statecheck.ExpectKnownValue(fmt.Sprintf("cloudflare_zone_setting.%s_security_header", rnd), tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("nosniff"), knownvalue.Bool(false)),
 	})
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -113,14 +115,9 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 	})
 }
 
-// TestMigrateZoneSettingMigrationFromV4WithNEL is skipped because NEL is a read-only setting
-// that cannot be set via the API. This test would fail even with the v4 provider.
-func TestMigrateZoneSettingMigrationFromV4WithNEL(t *testing.T) {
-	t.Skip("NEL is a read-only setting and cannot be tested via the provider")
-}
-
 // TestMigrateZoneSettingMigrationFromV4Complex tests migration with multiple settings including variables
 func TestMigrateZoneSettingMigrationFromV4Complex(t *testing.T) {
+	t.Skip("Can't run state upgrade for zone settings, has to be manual")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()

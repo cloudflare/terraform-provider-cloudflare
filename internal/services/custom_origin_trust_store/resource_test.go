@@ -205,12 +205,10 @@ func testAccCloudflareCustomOriginTrustStoreConfig(rnd, zoneID, cert string) str
 	return acctest.LoadTestCase("customorigintruststorelifecycle.tf", rnd, zoneID, cert)
 }
 
-// Known drift issue:
-// API returns certificate with trailing newline. If config cert does not end with /n, drift occurs causing perpetual replacement.
-// Skipping until normalization is added.
+// TestAccCloudflareCustomOriginTrustStore_NoTrailingNewline tests that
+// the provider properly handles certificates without trailing newlines and doesn't
+// detect drift. This verifies the normalization logic for the certificate field.
 func TestAccCloudflareCustomOriginTrustStore_NoTrailingNewline(t *testing.T) {
-	t.Skip("Skipping acceptance test")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_custom_origin_trust_store.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

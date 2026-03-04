@@ -2,8 +2,6 @@ package dns_record
 
 import (
 	"context"
-	"os"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record/migration/v500"
@@ -32,12 +30,6 @@ func (r *DNSRecordResource) MoveState(ctx context.Context) []resource.StateMover
 // UpgradeState handles schema version upgrades for cloudflare_dns_record.
 // This is triggered when users manually run `terraform state mv` (Terraform < 1.8).
 func (r *DNSRecordResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceCloudflareRecordSchema()
 	targetSchema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{

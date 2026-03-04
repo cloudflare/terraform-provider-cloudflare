@@ -121,6 +121,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_sink"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -130,6 +133,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_lock"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_sippy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
@@ -543,6 +547,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_event_notification.NewResource,
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
+		r2_data_catalog.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
@@ -620,6 +625,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		pipeline.NewResource,
+		pipeline_sink.NewResource,
+		pipeline_stream.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
@@ -849,6 +857,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_event_notification.NewR2BucketEventNotificationDataSource,
 		r2_bucket_lock.NewR2BucketLockDataSource,
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
+		r2_data_catalog.NewR2DataCatalogDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
@@ -986,6 +995,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		pipeline.NewPipelineDataSource,
+		pipeline_sink.NewPipelineSinkDataSource,
+		pipeline_sink.NewPipelineSinksDataSource,
+		pipeline_stream.NewPipelineStreamDataSource,
+		pipeline_stream.NewPipelineStreamsDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasListDataSource,
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,

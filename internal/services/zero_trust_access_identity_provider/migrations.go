@@ -2,8 +2,6 @@ package zero_trust_access_identity_provider
 
 import (
 	"context"
-	"os"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider/migration/v500"
@@ -33,23 +31,10 @@ func (r *ZeroTrustAccessIdentityProviderResource) MoveState(ctx context.Context)
 //
 // This handles two upgrade paths:
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustAccessIdentityProviderResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceAccessIdentityProviderSchema()
 
 	return map[int64]resource.StateUpgrader{
