@@ -140,12 +140,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"mfa_configuration_allowed": schema.BoolAttribute{
-				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
 				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.",
 				Computed:    true,

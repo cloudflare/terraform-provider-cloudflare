@@ -140,8 +140,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						ElementType: types.StringType,
 					},
-					"mfa_bypass": schema.BoolAttribute{
-						Description: "Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.",
+					"mfa_disabled": schema.BoolAttribute{
+						Description: "Indicates whether to disable MFA for this resource. This option is available at the application and policy level.",
 						Optional:    true,
 					},
 					"session_duration": schema.StringAttribute{
@@ -414,6 +414,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"user_risk_score": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"user_risk_score": schema.ListAttribute{
+									Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+									Required:    true,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"medium",
+												"high",
+												"unscored",
+											),
+										),
+									},
+									ElementType: types.StringType,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -675,6 +695,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"user_risk_score": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"user_risk_score": schema.ListAttribute{
+									Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+									Required:    true,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"medium",
+												"high",
+												"unscored",
+											),
+										),
+									},
+									ElementType: types.StringType,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -933,6 +973,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"app_uid": schema.StringAttribute{
 									Description: "The ID of an Access OIDC SaaS application",
 									Required:    true,
+								},
+							},
+						},
+						"user_risk_score": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"user_risk_score": schema.ListAttribute{
+									Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+									Required:    true,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"medium",
+												"high",
+												"unscored",
+											),
+										),
+									},
+									ElementType: types.StringType,
 								},
 							},
 						},

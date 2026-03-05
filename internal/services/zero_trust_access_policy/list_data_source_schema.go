@@ -410,6 +410,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"user_risk_score": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesExcludeUserRiskScoreDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"user_risk_score": schema.ListAttribute{
+												Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+												Computed:    true,
+												Validators: []validator.List{
+													listvalidator.ValueStringsAre(
+														stringvalidator.OneOfCaseInsensitive(
+															"low",
+															"medium",
+															"high",
+															"unscored",
+														),
+													),
+												},
+												CustomType:  customfield.NewListType[types.String](ctx),
+												ElementType: types.StringType,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -694,6 +716,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"user_risk_score": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesIncludeUserRiskScoreDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"user_risk_score": schema.ListAttribute{
+												Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+												Computed:    true,
+												Validators: []validator.List{
+													listvalidator.ValueStringsAre(
+														stringvalidator.OneOfCaseInsensitive(
+															"low",
+															"medium",
+															"high",
+															"unscored",
+														),
+													),
+												},
+												CustomType:  customfield.NewListType[types.String](ctx),
+												ElementType: types.StringType,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -721,8 +765,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
-								"mfa_bypass": schema.BoolAttribute{
-									Description: "Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.",
+								"mfa_disabled": schema.BoolAttribute{
+									Description: "Indicates whether to disable MFA for this resource. This option is available at the application and policy level.",
 									Computed:    true,
 								},
 								"session_duration": schema.StringAttribute{
@@ -1021,6 +1065,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"app_uid": schema.StringAttribute{
 												Description: "The ID of an Access OIDC SaaS application",
 												Computed:    true,
+											},
+										},
+									},
+									"user_risk_score": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesRequireUserRiskScoreDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"user_risk_score": schema.ListAttribute{
+												Description: "A list of risk score levels to match. Values can be low, medium, high, or unscored.",
+												Computed:    true,
+												Validators: []validator.List{
+													listvalidator.ValueStringsAre(
+														stringvalidator.OneOfCaseInsensitive(
+															"low",
+															"medium",
+															"high",
+															"unscored",
+														),
+													),
+												},
+												CustomType:  customfield.NewListType[types.String](ctx),
+												ElementType: types.StringType,
 											},
 										},
 									},
