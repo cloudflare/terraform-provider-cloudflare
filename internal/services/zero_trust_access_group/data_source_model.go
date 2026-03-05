@@ -85,6 +85,7 @@ type ZeroTrustAccessGroupExcludeDataSourceModel struct {
 	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupExcludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupExcludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
+	UserRiskScore        customfield.NestedObject[ZeroTrustAccessGroupExcludeUserRiskScoreDataSourceModel]        `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeGroupDataSourceModel struct {
@@ -192,6 +193,10 @@ type ZeroTrustAccessGroupExcludeLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
+type ZeroTrustAccessGroupExcludeUserRiskScoreDataSourceModel struct {
+	UserRiskScore customfield.List[types.String] `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
+}
+
 type ZeroTrustAccessGroupIncludeDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessGroupIncludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessGroupIncludeAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -217,6 +222,7 @@ type ZeroTrustAccessGroupIncludeDataSourceModel struct {
 	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupIncludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupIncludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
+	UserRiskScore        customfield.NestedObject[ZeroTrustAccessGroupIncludeUserRiskScoreDataSourceModel]        `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeGroupDataSourceModel struct {
@@ -324,6 +330,10 @@ type ZeroTrustAccessGroupIncludeLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
+type ZeroTrustAccessGroupIncludeUserRiskScoreDataSourceModel struct {
+	UserRiskScore customfield.List[types.String] `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
+}
+
 type ZeroTrustAccessGroupIsDefaultDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessGroupIsDefaultGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessGroupIsDefaultAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -349,6 +359,7 @@ type ZeroTrustAccessGroupIsDefaultDataSourceModel struct {
 	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupIsDefaultOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupIsDefaultServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupIsDefaultLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
+	UserRiskScore        customfield.NestedObject[ZeroTrustAccessGroupIsDefaultUserRiskScoreDataSourceModel]        `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultGroupDataSourceModel struct {
@@ -456,6 +467,10 @@ type ZeroTrustAccessGroupIsDefaultLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
+type ZeroTrustAccessGroupIsDefaultUserRiskScoreDataSourceModel struct {
+	UserRiskScore customfield.List[types.String] `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
+}
+
 type ZeroTrustAccessGroupRequireDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessGroupRequireGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessGroupRequireAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -481,6 +496,7 @@ type ZeroTrustAccessGroupRequireDataSourceModel struct {
 	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupRequireOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupRequireLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
+	UserRiskScore        customfield.NestedObject[ZeroTrustAccessGroupRequireUserRiskScoreDataSourceModel]        `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 }
 
 type ZeroTrustAccessGroupRequireGroupDataSourceModel struct {
@@ -586,6 +602,10 @@ type ZeroTrustAccessGroupRequireServiceTokenDataSourceModel struct {
 
 type ZeroTrustAccessGroupRequireLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
+type ZeroTrustAccessGroupRequireUserRiskScoreDataSourceModel struct {
+	UserRiskScore customfield.List[types.String] `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 }
 
 type ZeroTrustAccessGroupFindOneByDataSourceModel struct {
