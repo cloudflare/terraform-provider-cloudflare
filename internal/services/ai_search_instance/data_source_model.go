@@ -69,6 +69,12 @@ func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (param
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+	}
+	if !m.Filter.OrderByDirection.IsNull() {
+		params.OrderByDirection = cloudflare.F(ai_search.InstanceListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
+	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
@@ -115,7 +121,13 @@ type AISearchInstancePublicEndpointParamsSearchEndpointDataSourceModel struct {
 }
 
 type AISearchInstanceRetrievalOptionsDataSourceModel struct {
-	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
+	BoostBy          customfield.NestedObjectList[AISearchInstanceRetrievalOptionsBoostByDataSourceModel] `tfsdk:"boost_by" json:"boost_by,computed"`
+	KeywordMatchMode types.String                                                                         `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
+}
+
+type AISearchInstanceRetrievalOptionsBoostByDataSourceModel struct {
+	Field     types.String `tfsdk:"field" json:"field,computed"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed"`
 }
 
 type AISearchInstanceSourceParamsDataSourceModel struct {
@@ -133,10 +145,16 @@ type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
 }
 
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
-	IncludeHeaders      customfield.Map[types.String]  `tfsdk:"include_headers" json:"include_headers,computed"`
-	IncludeImages       types.Bool                     `tfsdk:"include_images" json:"include_images,computed"`
-	SpecificSitemaps    customfield.List[types.String] `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
-	UseBrowserRendering types.Bool                     `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
+	ContentSelector     customfield.NestedObjectList[AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel] `tfsdk:"content_selector" json:"content_selector,computed"`
+	IncludeHeaders      customfield.Map[types.String]                                                                                  `tfsdk:"include_headers" json:"include_headers,computed"`
+	IncludeImages       types.Bool                                                                                                     `tfsdk:"include_images" json:"include_images,computed"`
+	SpecificSitemaps    customfield.List[types.String]                                                                                 `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
+	UseBrowserRendering types.Bool                                                                                                     `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
+}
+
+type AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel struct {
+	Path     types.String `tfsdk:"path" json:"path,computed"`
+	Selector types.String `tfsdk:"selector" json:"selector,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
@@ -146,5 +164,7 @@ type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceFindOneByDataSourceModel struct {
-	Search types.String `tfsdk:"search" query:"search,optional"`
+	OrderBy          types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
+	OrderByDirection types.String `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
+	Search           types.String `tfsdk:"search" query:"search,optional"`
 }

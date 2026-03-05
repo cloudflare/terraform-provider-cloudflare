@@ -33,7 +33,9 @@ func (m *MagicTransitConnectorsDataSourceModel) toListParams(_ context.Context) 
 type MagicTransitConnectorsResultDataSourceModel struct {
 	ID                           types.String                                                          `tfsdk:"id" json:"id,computed"`
 	Activated                    types.Bool                                                            `tfsdk:"activated" json:"activated,computed"`
+	InterruptWindowDaysOfWeek    customfield.List[types.String]                                        `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed"`
 	InterruptWindowDurationHours types.Float64                                                         `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed"`
+	InterruptWindowEmbargoDates  customfield.List[types.String]                                        `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed"`
 	InterruptWindowHourOfDay     types.Float64                                                         `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed"`
 	LastUpdated                  types.String                                                          `tfsdk:"last_updated" json:"last_updated,computed"`
 	Notes                        types.String                                                          `tfsdk:"notes" json:"notes,computed"`

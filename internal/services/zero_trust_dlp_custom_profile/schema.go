@@ -43,6 +43,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the profile.",
 				Optional:    true,
 			},
+			"data_classes": schema.ListAttribute{
+				Description: "Data class IDs to associate with the profile.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"data_tags": schema.ListAttribute{
+				Description: "Data tag IDs to associate with the profile.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"sensitivity_levels": schema.ListAttribute{
+				Description: "Sensitivity levels to associate with the profile as (group_id, level_id) tuples.",
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
 				Optional:           true,

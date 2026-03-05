@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -39,11 +41,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comment": schema.StringAttribute{
 				Description: "An optional description of the subnet.",
+				Computed:    true,
 				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this is the default subnet for the account. There can only be one default subnet per account.",
+				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was created.",

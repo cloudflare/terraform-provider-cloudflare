@@ -37,12 +37,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"source": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "r2", "web-crawler".`,
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
@@ -284,7 +284,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("max", "rrf"),
 				},
-				Default: stringdefault.StaticString("max"),
+				Default: stringdefault.StaticString("rrf"),
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
 				Computed: true,
@@ -418,6 +418,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
 				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
+					"boost_by": schema.ListNestedAttribute{
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"field": schema.StringAttribute{
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric fields support asc/desc directions; text/boolean fields support exists/not_exists.",
+									Required:    true,
+								},
+								"direction": schema.StringAttribute{
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional ��� defaults to 'asc' for numeric fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"asc",
+											"desc",
+											"exists",
+											"not_exists",
+										),
+									},
+								},
+							},
+						},
+					},
 					"keyword_match_mode": schema.StringAttribute{
 						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
 						Computed:    true,
@@ -461,6 +485,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"parse_options": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
+									"content_selector": schema.ListNestedAttribute{
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Optional:    true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"path": schema.StringAttribute{
+													Description: "Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.",
+													Required:    true,
+												},
+												"selector": schema.StringAttribute{
+													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Required:    true,
+												},
+											},
+										},
+									},
 									"include_headers": schema.MapAttribute{
 										Optional:    true,
 										ElementType: types.StringType,

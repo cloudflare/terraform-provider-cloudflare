@@ -4,6 +4,7 @@ package magic_transit_connector
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +22,8 @@ type MagicTransitConnectorModel struct {
 	InterruptWindowHourOfDay     types.Float64                     `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed_optional"`
 	Notes                        types.String                      `tfsdk:"notes" json:"notes,computed_optional"`
 	Timezone                     types.String                      `tfsdk:"timezone" json:"timezone,computed_optional"`
+	InterruptWindowDaysOfWeek    customfield.List[types.String]    `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed_optional"`
+	InterruptWindowEmbargoDates  customfield.List[types.String]    `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed_optional"`
 	LastHeartbeat                types.String                      `tfsdk:"last_heartbeat" json:"last_heartbeat,computed"`
 	LastSeenVersion              types.String                      `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LastUpdated                  types.String                      `tfsdk:"last_updated" json:"last_updated,computed"`
