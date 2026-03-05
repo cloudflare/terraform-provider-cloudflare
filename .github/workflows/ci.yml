@@ -22,7 +22,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version: '1.24'
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -31,18 +31,29 @@ jobs:
         run: ./scripts/lint
 
   test:
+    name: Unit Tests (shard ${{ matrix.shard }})
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version: '1.24'
+          cache-dependency-path: go.sum
 
       - name: Bootstrap
         run: ./scripts/bootstrap
 
       - name: Run tests
-        run: ./scripts/test
+        run: |
+          # Get all packages and select this shard (1-indexed)
+          packages=$(go list ./... | awk "NR % 4 == (${{ matrix.shard }} - 1)")
+          if [ -n "$packages" ]; then
+            echo "$packages" | xargs go test -v
+          fi
