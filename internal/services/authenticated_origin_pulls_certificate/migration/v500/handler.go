@@ -60,9 +60,7 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 // UpgradeFromV1 handles the no-op upgrade from v1 to v500
 // This is called when the resource is already in v5 format but needs to move to schema version 500
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Debug(ctx, "No-op state upgrade from v1 to v500 for authenticated_origin_pulls_certificate")
-
-	// This is a no-op upgrade - just pass through the state unchanged
-	// The schema version will be updated automatically to 500
-	resp.Diagnostics.Append(req.State.Get(ctx, &resp.State)...)
+	tflog.Info(ctx, "Upgrading authenticated_origin_pulls_certificate state from version=1 to version=500 (no-op)")
+	resp.State.Raw = req.State.Raw
+	tflog.Info(ctx, "State version bump from 1 to 500 completed")
 }

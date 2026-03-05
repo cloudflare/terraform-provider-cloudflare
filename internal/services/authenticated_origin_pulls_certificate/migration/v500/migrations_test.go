@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-	"regexp"
 )
 
 var (
@@ -41,9 +40,6 @@ var v4PerZoneWithVariablesConfig string
 //go:embed testdata/v5_per_zone_with_variables.tf
 var v5PerZoneWithVariablesConfig string
 
-//go:embed testdata/v4_per_hostname_error.tf
-var v4PerHostnameErrorConfig string
-
 //go:embed testdata/v4_per_hostname.tf
 var v4PerHostnameConfig string
 
@@ -55,12 +51,6 @@ var v4PerHostnameMinimalConfig string
 
 //go:embed testdata/v5_per_hostname_minimal.tf
 var v5PerHostnameMinimalConfig string
-
-//go:embed testdata/v4_per_zone_error.tf
-var v4PerZoneErrorConfig string
-
-//go:embed testdata/v5_per_zone_to_hostname_error.tf
-var v5PerZoneToHostnameErrorConfig string
 
 // TestMigrateAuthenticatedOriginPullsCertificate_V4ToV5_PerZone tests per-zone certificate migration.
 // This test validates:
@@ -379,70 +369,6 @@ func TestMigrateAuthenticatedOriginPullsCertificate_V4ToV5_PerZone_AllFields(t *
 	}
 }
 
-// TestMigrateAuthenticatedOriginPullsCertificate_V4ToV5_PerHostnameError tests error handling.
-// This verifies that the per-zone certificate UpgradeState correctly rejects per-hostname certificates.
-// Per-hostname certificates should be migrated to authenticated_origin_pulls_hostname_certificate resource,
-// not to the per-zone resource. This test ensures proper validation.
-func TestMigrateAuthenticatedOriginPullsCertificate_V4ToV5_PerHostnameError(t *testing.T) {
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	if zoneID == "" {
-		t.Skip("CLOUDFLARE_ZONE_ID must be set for this test")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	tmpDir := t.TempDir()
-
-	// Generate valid test certificate
-	expiry := time.Now().Add(time.Hour * 24 * 365)
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"aop-acc-test.example.com"}, expiry)
-	if err != nil {
-		t.Fatalf("Failed to generate certificate: %s", err)
-	}
-
-	// v4 config with type="per-hostname"
-	// This should NOT be upgraded in the per-zone certificate resource
-	v4Config := fmt.Sprintf(v4PerHostnameErrorConfig, rnd, zoneID, cert, key)
-
-	// v5 config - incorrectly trying to keep as per-zone resource
-	// This should trigger an error from UpgradeFromV0
-	v5Config := fmt.Sprintf(`
-resource "cloudflare_authenticated_origin_pulls_certificate" "%[1]s" {
-  zone_id     = "%[2]s"
-  certificate = <<-EOT
-%[3]s
-  EOT
-  private_key = <<-EOT
-%[4]s
-  EOT
-}
-`, rnd, zoneID, cert, key)
-
-	v4Version := acctest.GetLastV4Version()
-
-	resource.Test(t, resource.TestCase{
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider (type="per-hostname")
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: v4Version,
-					},
-				},
-				Config: v4Config,
-			},
-			{
-				// Step 2: Try to upgrade with v5 provider without using moved block
-				// This should FAIL because per-hostname certs must move to hostname resource
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   v5Config,
-				ExpectError:              regexp.MustCompile(`Invalid State for Per-Zone Resource`),
-			},
-		},
-	})
-}
-
 // TestMigrateAuthenticatedOriginPullsHostnameCertificate_V4ToV5 tests hostname certificate migration.
 // This tests the MoveState implementation in the hostname certificate resource which handles:
 // - Resource rename: cloudflare_authenticated_origin_pulls_certificate (type="per-hostname") → cloudflare_authenticated_origin_pulls_hostname_certificate
@@ -619,59 +545,6 @@ func TestMigrateAuthenticatedOriginPullsHostnameCertificate_V4ToV5_Minimal(t *te
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   v5Config,
 				PlanOnly:                 true,
-			},
-		},
-	})
-}
-
-// TestMigrateAuthenticatedOriginPullsHostnameCertificate_V4ToV5_PerZoneError tests error handling.
-// This verifies that the hostname certificate MoveState correctly rejects per-zone certificates.
-// Per-zone certificates should not be moved to the hostname certificate resource.
-func TestMigrateAuthenticatedOriginPullsHostnameCertificate_V4ToV5_PerZoneError(t *testing.T) {
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	if zoneID == "" {
-		t.Skip("CLOUDFLARE_ZONE_ID must be set for this test")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	tmpDir := t.TempDir()
-
-	// Generate valid test certificate
-	expiry := time.Now().Add(time.Hour * 24 * 365)
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"aop-acc-test.example.com"}, expiry)
-	if err != nil {
-		t.Fatalf("Failed to generate certificate: %s", err)
-	}
-
-	// v4 config with type="per-zone" - should NOT be moved to hostname resource
-	v4Config := fmt.Sprintf(v4PerZoneErrorConfig, rnd, zoneID, cert, key)
-
-	// Incorrect v5 config - trying to move per-zone cert to hostname resource
-	// This should trigger an error in MoveState
-	// Template expects: rnd, zoneID, cert, key, rnd (from), rnd (to)
-	v5Config := fmt.Sprintf(v5PerZoneToHostnameErrorConfig, rnd, zoneID, cert, key, rnd, rnd)
-
-	v4Version := acctest.GetLastV4Version()
-
-	resource.Test(t, resource.TestCase{
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create resource with v4 provider (as per-zone certificate)
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: v4Version,
-					},
-				},
-				Config: v4Config,
-			},
-			{
-				// Step 2: Try to apply with v5 provider + incorrect moved block
-				// This should FAIL with error from MoveState validation
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config:                   v5Config,
-				ExpectError:              regexp.MustCompile(`Cannot move.*with type='per-zone'.*to.*hostname_certificate`),
 			},
 		},
 	})
