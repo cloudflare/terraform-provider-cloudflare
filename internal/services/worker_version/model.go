@@ -33,6 +33,7 @@ type WorkerVersionModel struct {
 	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
 	Source             types.String                                             `tfsdk:"source" json:"source,computed"`
 	StartupTimeMs      types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	URLs               customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
 }
 
 func (m WorkerVersionModel) MarshalJSON() (data []byte, err error) {

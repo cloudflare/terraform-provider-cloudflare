@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPCustomProfileResource)(nil)
@@ -38,6 +39,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Description: "The description of the profile.",
 				Optional:    true,
+			},
+			"data_classes": schema.ListAttribute{
+				Description: "Data class IDs to associate with the profile.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"data_tags": schema.ListAttribute{
+				Description: "Data tag IDs to associate with the profile.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"sensitivity_levels": schema.ListAttribute{
+				Description: "Sensitivity levels to associate with the profile as (group_id, level_id) tuples.",
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",

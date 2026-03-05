@@ -20,6 +20,7 @@ type WorkflowModel struct {
 	WorkflowName      types.String                                     `tfsdk:"workflow_name" path:"workflow_name,required"`
 	ClassName         types.String                                     `tfsdk:"class_name" json:"class_name,required"`
 	ScriptName        types.String                                     `tfsdk:"script_name" json:"script_name,required"`
+	Limits            *WorkflowLimitsModel                             `tfsdk:"limits" json:"limits,optional,no_refresh"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	IsDeleted         types.Float64                                    `tfsdk:"is_deleted" json:"is_deleted,computed,no_refresh"`
 	ModifiedOn        timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -35,6 +36,10 @@ func (m WorkflowModel) MarshalJSON() (data []byte, err error) {
 
 func (m WorkflowModel) MarshalJSONForUpdate(state WorkflowModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type WorkflowLimitsModel struct {
+	Steps types.Int64 `tfsdk:"steps" json:"steps,optional"`
 }
 
 type WorkflowInstancesModel struct {

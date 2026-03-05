@@ -10,8 +10,11 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
       files = true
     }
   }
+  data_classes = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
+  data_tags = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
   description = "description"
   ocr_enabled = true
+  sensitivity_levels = [["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]]
   shared_entries = [{
     enabled = true
     entry_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"

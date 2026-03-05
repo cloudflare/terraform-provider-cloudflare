@@ -35,13 +35,13 @@ func (m PipelineSinkModel) MarshalJSONForUpdate(state PipelineSinkModel) (data [
 type PipelineSinkConfigModel struct {
 	AccountID     types.String                          `tfsdk:"account_id" json:"account_id,required"`
 	Bucket        types.String                          `tfsdk:"bucket" json:"bucket,required"`
-	Credentials   *PipelineSinkConfigCredentialsModel   `tfsdk:"credentials" json:"credentials,optional"`
+	Credentials   *PipelineSinkConfigCredentialsModel   `tfsdk:"credentials" json:"credentials,optional,no_refresh"`
 	FileNaming    *PipelineSinkConfigFileNamingModel    `tfsdk:"file_naming" json:"file_naming,optional"`
 	Jurisdiction  types.String                          `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
 	Partitioning  *PipelineSinkConfigPartitioningModel  `tfsdk:"partitioning" json:"partitioning,optional"`
 	Path          types.String                          `tfsdk:"path" json:"path,optional"`
 	RollingPolicy *PipelineSinkConfigRollingPolicyModel `tfsdk:"rolling_policy" json:"rolling_policy,optional"`
-	Token         types.String                          `tfsdk:"token" json:"token,optional"`
+	Token         types.String                          `tfsdk:"token" json:"token,optional,no_refresh"`
 	TableName     types.String                          `tfsdk:"table_name" json:"table_name,optional"`
 	Namespace     types.String                          `tfsdk:"namespace" json:"namespace,optional"`
 }

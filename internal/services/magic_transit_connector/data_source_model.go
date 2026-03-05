@@ -29,6 +29,8 @@ type MagicTransitConnectorDataSourceModel struct {
 	LicenseKey                   types.String                                                         `tfsdk:"license_key" json:"license_key,computed"`
 	Notes                        types.String                                                         `tfsdk:"notes" json:"notes,computed"`
 	Timezone                     types.String                                                         `tfsdk:"timezone" json:"timezone,computed"`
+	InterruptWindowDaysOfWeek    customfield.List[types.String]                                       `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed"`
+	InterruptWindowEmbargoDates  customfield.List[types.String]                                       `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed"`
 	Device                       customfield.NestedObject[MagicTransitConnectorDeviceDataSourceModel] `tfsdk:"device" json:"device,computed"`
 }
 

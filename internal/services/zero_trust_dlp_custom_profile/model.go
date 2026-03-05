@@ -17,6 +17,9 @@ type ZeroTrustDLPCustomProfileModel struct {
 	AccountID           types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	Name                types.String                                    `tfsdk:"name" json:"name,required"`
 	Description         types.String                                    `tfsdk:"description" json:"description,optional"`
+	DataClasses         *[]types.String                                 `tfsdk:"data_classes" json:"data_classes,optional"`
+	DataTags            *[]types.String                                 `tfsdk:"data_tags" json:"data_tags,optional"`
+	SensitivityLevels   *[]*[]types.String                              `tfsdk:"sensitivity_levels" json:"sensitivity_levels,optional"`
 	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
 	Entries             *[]*ZeroTrustDLPCustomProfileEntriesModel       `tfsdk:"entries" json:"entries,optional"`
 	SharedEntries       *[]*ZeroTrustDLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional"`
