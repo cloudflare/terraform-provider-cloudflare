@@ -81,8 +81,8 @@ func TestMigrateAccountMember_V4ToV5_Basic(t *testing.T) {
 			rnd := utils.GenerateRandomResourceName()
 			tmpDir := t.TempDir()
 
-			// Use real test user email that exists in Cloudflare system
-			testEmail := "terraform-test-user-a@cfapi.net"
+			// Use random email with cfapi.net domain
+			testEmail := fmt.Sprintf("tf-test-%s@cfapi.net", rnd)
 			resourceName := "cloudflare_account_member." + rnd
 
 			// Get a role ID to use
@@ -213,6 +213,7 @@ func TestMigrateAccountMember_V4ToV5_WithStatus(t *testing.T) {
 			tmpDir := t.TempDir()
 
 			// Use real test user email that exists in Cloudflare system
+			// (required because status="accepted" needs an existing user)
 			testEmail := "terraform-test-user-b@cfapi.net"
 			resourceName := "cloudflare_account_member." + rnd
 
