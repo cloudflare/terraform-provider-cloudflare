@@ -142,12 +142,52 @@ func TestAccCloudflareZoneCacheVariants_AllExt(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZoneCacheVariants_RemoveSingleVariantKey(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareZoneCacheVariants_AllExt(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "value.gif.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "value.gif.*", "image/gif"),
+					resource.TestCheckTypeSetElemAttr(name, "value.gif.*", "image/webp"),
+				),
+			},
+			{
+				Config: testAccCloudflareZoneCacheVariants_AllExtWithoutGIF(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckNoResourceAttr(name, "value.gif.#"),
+					resource.TestCheckResourceAttr(name, "value.avif.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "value.avif.*", "image/avif"),
+					resource.TestCheckTypeSetElemAttr(name, "value.avif.*", "image/webp"),
+					resource.TestCheckResourceAttr(name, "value.webp.#", "1"),
+					resource.TestCheckTypeSetElemAttr(name, "value.webp.*", "image/webp"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareZoneCacheVariants_OneExt(zoneID, name string) string {
 	return acctest.LoadTestCase("oneext.tf", zoneID, name)
 }
 
 func testAccCloudflareZoneCacheVariants_AllExt(zoneID, name string) string {
 	return acctest.LoadTestCase("allext.tf", zoneID, name)
+}
+
+func testAccCloudflareZoneCacheVariants_AllExtWithoutGIF(zoneID, name string) string {
+	return acctest.LoadTestCase("allext_without_gif.tf", zoneID, name)
 }
 
 func TestAccUpgradeZoneCacheVariants_FromPublishedV5(t *testing.T) {
