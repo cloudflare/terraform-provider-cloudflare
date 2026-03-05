@@ -71,6 +71,10 @@ func TestMigrateAccountMember_V4ToV5_Basic(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if os.Getenv("TF_ACC") == "" {
+				t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+			}
+
 			// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 			// permission to manage account members.
 			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -202,6 +206,10 @@ func TestMigrateAccountMember_V4ToV5_WithStatus(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if os.Getenv("TF_ACC") == "" {
+				t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+			}
+
 			// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 			// permission to manage account members.
 			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
