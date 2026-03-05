@@ -90,6 +90,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"urls": schema.ListAttribute{
+				Description: "All routable URLs that always point to this version. Does not include alias URLs, since aliases can be updated to point to a different version.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
 			"annotations": schema.SingleNestedAttribute{
 				Description: "Metadata about the version.",
 				Computed:    true,

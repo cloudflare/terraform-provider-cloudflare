@@ -1,10 +1,10 @@
 resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   account_id = "c3dc5f0b34a14ff8e1b3ec04895e1b22"
   id = "my-ai-search"
-  source = "source"
-  type = "r2"
   ai_gateway_id = "ai_gateway_id"
   aisearch_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  cache = true
+  cache_threshold = "super_strict_match"
   chunk = true
   chunk_overlap = 0
   chunk_size = 64
@@ -42,11 +42,16 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   reranking = true
   reranking_model = "@cf/baai/bge-reranker-base"
   retrieval_options = {
+    boost_by = [{
+      field = "timestamp"
+      direction = "desc"
+    }]
     keyword_match_mode = "exact_match"
   }
   rewrite_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
   rewrite_query = true
   score_threshold = 0
+  source = "source"
   source_params = {
     exclude_items = ["/admin/**", "/private/**", "**\\temp\\**"]
     include_items = ["/blog/**", "/docs/**/*.html", "**\\blog\\**.html"]
@@ -54,6 +59,10 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     r2_jurisdiction = "r2_jurisdiction"
     web_crawler = {
       parse_options = {
+        content_selector = [{
+          path = "**/blog/**"
+          selector = "article .post-body"
+        }]
         include_headers = {
           foo = "string"
         }
@@ -70,4 +79,5 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     }
   }
   token_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+  type = "r2"
 }

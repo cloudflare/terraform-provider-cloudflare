@@ -33,6 +33,7 @@ type WorkerVersionDataSourceModel struct {
 	StartupTimeMs      types.Int64                                                        `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	UsageModel         types.String                                                       `tfsdk:"usage_model" json:"usage_model,computed"`
 	CompatibilityFlags customfield.Set[types.String]                                      `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
+	URLs               customfield.List[types.String]                                     `tfsdk:"urls" json:"urls,computed"`
 	Annotations        customfield.NestedObject[WorkerVersionAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
 	Assets             customfield.NestedObject[WorkerVersionAssetsDataSourceModel]       `tfsdk:"assets" json:"assets,computed"`
 	Bindings           customfield.NestedObjectList[WorkerVersionBindingsDataSourceModel] `tfsdk:"bindings" json:"bindings,computed"`

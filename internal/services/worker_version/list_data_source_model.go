@@ -37,6 +37,7 @@ type WorkerVersionsResultDataSourceModel struct {
 	ID                 types.String                                                        `tfsdk:"id" json:"id,computed"`
 	CreatedOn          timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Number             types.Int64                                                         `tfsdk:"number" json:"number,computed"`
+	URLs               customfield.List[types.String]                                      `tfsdk:"urls" json:"urls,computed"`
 	Annotations        customfield.NestedObject[WorkerVersionsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
 	Assets             customfield.NestedObject[WorkerVersionsAssetsDataSourceModel]       `tfsdk:"assets" json:"assets,computed"`
 	Bindings           customfield.NestedObjectList[WorkerVersionsBindingsDataSourceModel] `tfsdk:"bindings" json:"bindings,computed"`
