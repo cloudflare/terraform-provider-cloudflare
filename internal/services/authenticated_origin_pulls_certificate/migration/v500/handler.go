@@ -36,18 +36,18 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 
 	// Transform v4 model to v5 model
 	v5Model := V5Model{
-		ID:          v4Model.ID,          // Preserve ID from v4
-		ZoneID:      v4Model.ZoneID,
-		Certificate: v4Model.Certificate,
-		PrivateKey:  v4Model.PrivateKey,
-		Issuer:      v4Model.Issuer,
-		Signature:   v4Model.Signature,
-		ExpiresOn:   v4Model.ExpiresOn,
-		Status:      v4Model.Status,
-		UploadedOn:  v4Model.UploadedOn,
+		ID:           v4Model.ID, // Preserve ID from v4
+		ZoneID:       v4Model.ZoneID,
+		Certificate:  v4Model.Certificate,
+		PrivateKey:   v4Model.PrivateKey,
+		Issuer:       v4Model.Issuer,
+		SerialNumber: v4Model.SerialNumber, // Preserve serial_number from v4
+		Signature:    v4Model.Signature,
+		ExpiresOn:    v4Model.ExpiresOn,
+		Status:       v4Model.Status,
+		UploadedOn:   v4Model.UploadedOn,
 		// Note: certificate_id will be set from ID by the resource Read
 		// Note: enabled is computed and will be populated by Read
-		// Note: serial_number is removed (not in v5 per-zone schema)
 		// Note: type is removed (not in v5 schema)
 	}
 
