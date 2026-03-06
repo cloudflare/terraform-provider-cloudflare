@@ -483,6 +483,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"crawl_options": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"depth": schema.Float64Attribute{
+										Optional: true,
+										Validators: []validator.Float64{
+											float64validator.Between(1, 100000),
+										},
+									},
+									"include_external_links": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+										Default:  booldefault.StaticBool(false),
+									},
+									"include_subdomains": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+										Default:  booldefault.StaticBool(false),
+									},
+									"max_age": schema.Float64Attribute{
+										Optional: true,
+										Validators: []validator.Float64{
+											float64validator.Between(0, 604800),
+										},
+									},
+									"source": schema.StringAttribute{
+										Description: `Available values: "all", "sitemaps", "links".`,
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"sitemaps",
+												"links",
+											),
+										},
+										Default: stringdefault.StaticString("all"),
+									},
+								},
+							},
 							"parse_options": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
@@ -524,11 +564,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: `Available values: "sitemap", "feed-rss".`,
+								Description: `Available values: "sitemap", "feed-rss", "crawl".`,
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("sitemap", "feed-rss"),
+									stringvalidator.OneOfCaseInsensitive(
+										"sitemap",
+										"feed-rss",
+										"crawl",
+									),
 								},
 								Default: stringdefault.StaticString("sitemap"),
 							},

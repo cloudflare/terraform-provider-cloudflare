@@ -58,6 +58,13 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     prefix = "prefix"
     r2_jurisdiction = "r2_jurisdiction"
     web_crawler = {
+      crawl_options = {
+        depth = 1
+        include_external_links = true
+        include_subdomains = true
+        max_age = 0
+        source = "all"
+      }
       parse_options = {
         content_selector = [{
           path = "**/blog/**"
