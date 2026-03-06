@@ -21,7 +21,6 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
     allowed_authenticators = ["totp", "biometrics", "security_key"]
     session_duration = "24h"
   }
-  mfa_configuration_allowed = true
   mfa_required_for_all_apps = false
   name = "Widget Corps Internal Applications"
   session_duration = "24h"

@@ -32,6 +32,9 @@ type ZeroTrustDLPCustomProfileDataSourceModel struct {
 	OpenAccess          types.Bool                                                                          `tfsdk:"open_access" json:"open_access,computed"`
 	Type                types.String                                                                        `tfsdk:"type" json:"type,computed"`
 	UpdatedAt           timetypes.RFC3339                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	DataClasses         customfield.List[types.String]                                                      `tfsdk:"data_classes" json:"data_classes,computed"`
+	DataTags            customfield.List[types.String]                                                      `tfsdk:"data_tags" json:"data_tags,computed"`
+	SensitivityLevels   customfield.List[customfield.List[types.String]]                                    `tfsdk:"sensitivity_levels" json:"sensitivity_levels,computed"`
 	ContextAwareness    customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel]  `tfsdk:"context_awareness" json:"context_awareness,computed"`
 	Entries             customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesDataSourceModel]       `tfsdk:"entries" json:"entries,computed"`
 	SharedEntries       customfield.NestedObjectList[ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel] `tfsdk:"shared_entries" json:"shared_entries,computed"`

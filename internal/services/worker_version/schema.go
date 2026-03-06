@@ -378,7 +378,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -411,6 +411,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"secret_key",
 									"workflow",
 									"wasm_module",
+									"vpc_service",
 								),
 							},
 						},
@@ -473,6 +474,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							PlanModifiers: []planmodifier.String{
 								UnknownOnlyIf("type", "durable_object_namespace"),
 							},
+						},
+						"dispatch_namespace": schema.StringAttribute{
+							Description: "The dispatch namespace the Durable Object script belongs to.",
+							Optional:    true,
 						},
 						"environment": schema.StringAttribute{
 							Description: "The environment of the script_name to bind to.",
@@ -543,10 +548,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"jurisdiction": schema.StringAttribute{
-							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+								stringvalidator.OneOfCaseInsensitive(
+									"eu",
+									"fedramp",
+									"fedramp-high",
+								),
 							},
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
@@ -565,6 +574,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"service": schema.StringAttribute{
 							Description: "Name of Worker to bind to.",
+							Optional:    true,
+						},
+						"entrypoint": schema.StringAttribute{
+							Description: "Entrypoint to invoke on the target Worker.",
 							Optional:    true,
 						},
 						"index_name": schema.StringAttribute{
@@ -617,6 +630,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Name of the Workflow to bind to.",
 							Optional:    true,
 						},
+						"service_id": schema.StringAttribute{
+							Description: "Identifier of the VPC service to bind to.",
+							Optional:    true,
+						},
 					},
 				},
 				PlanModifiers: []planmodifier.List{RequiresReplaceIfConfiguredIgnoringSensitiveTextDiff()},
@@ -654,6 +671,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"startup_time_ms": schema.Int64Attribute{
 				Description: "Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).",
 				Computed:    true,
+			},
+			"urls": schema.ListAttribute{
+				Description: "All routable URLs that always point to this version. Does not include alias URLs, since aliases can be updated to point to a different version.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}

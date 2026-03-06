@@ -19,6 +19,8 @@ type WorkersResultListDataSourceEnvelope struct {
 
 type WorkersDataSourceModel struct {
 	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	Order     types.String                                               `tfsdk:"order" query:"order,computed_optional"`
+	OrderBy   types.String                                               `tfsdk:"order_by" query:"order_by,computed_optional"`
 	MaxItems  types.Int64                                                `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersResultDataSourceModel] `tfsdk:"result"`
 }
@@ -26,6 +28,13 @@ type WorkersDataSourceModel struct {
 func (m *WorkersDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerListParams, diags diag.Diagnostics) {
 	params = workers.BetaWorkerListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(workers.BetaWorkerListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(workers.BetaWorkerListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 
 	return
@@ -42,6 +51,7 @@ type WorkersResultDataSourceModel struct {
 	Tags          customfield.Set[types.String]                                    `tfsdk:"tags" json:"tags,computed"`
 	TailConsumers customfield.NestedObjectSet[WorkersTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UpdatedOn     timetypes.RFC3339                                                `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	DeployedOn    timetypes.RFC3339                                                `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 }
 
 type WorkersObservabilityDataSourceModel struct {

@@ -167,6 +167,9 @@ type WorkersScriptMetadataBindingsModel struct {
 	AllowedSenderAddresses      *[]types.String                             `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,optional"`
 	DestinationAddress          types.String                                `tfsdk:"destination_address" json:"destination_address,optional"`
 	Service                     types.String                                `tfsdk:"service" json:"service,optional"`
+	DispatchNamespace           types.String                                `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
+	Entrypoint                  types.String                                `tfsdk:"entrypoint" json:"entrypoint,optional"`
+	ServiceID                   types.String                                `tfsdk:"service_id" json:"service_id,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {

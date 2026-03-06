@@ -16,8 +16,8 @@ type AISearchInstanceResultEnvelope struct {
 type AISearchInstanceModel struct {
 	ID                             types.String                                                        `tfsdk:"id" json:"id,required"`
 	AccountID                      types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
-	Source                         types.String                                                        `tfsdk:"source" json:"source,required"`
-	Type                           types.String                                                        `tfsdk:"type" json:"type,required"`
+	Source                         types.String                                                        `tfsdk:"source" json:"source,optional"`
+	Type                           types.String                                                        `tfsdk:"type" json:"type,optional"`
 	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed_optional"`
 	AISearchModel                  types.String                                                        `tfsdk:"aisearch_model" json:"ai_search_model,computed_optional"`
 	EmbeddingModel                 types.String                                                        `tfsdk:"embedding_model" json:"embedding_model,computed_optional"`
@@ -104,7 +104,13 @@ type AISearchInstancePublicEndpointParamsSearchEndpointModel struct {
 }
 
 type AISearchInstanceRetrievalOptionsModel struct {
-	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed_optional"`
+	BoostBy          *[]*AISearchInstanceRetrievalOptionsBoostByModel `tfsdk:"boost_by" json:"boost_by,optional"`
+	KeywordMatchMode types.String                                     `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed_optional"`
+}
+
+type AISearchInstanceRetrievalOptionsBoostByModel struct {
+	Field     types.String `tfsdk:"field" json:"field,required"`
+	Direction types.String `tfsdk:"direction" json:"direction,optional"`
 }
 
 type AISearchInstanceSourceParamsModel struct {
@@ -116,16 +122,31 @@ type AISearchInstanceSourceParamsModel struct {
 }
 
 type AISearchInstanceSourceParamsWebCrawlerModel struct {
+	CrawlOptions *AISearchInstanceSourceParamsWebCrawlerCrawlOptionsModel `tfsdk:"crawl_options" json:"crawl_options,optional"`
 	ParseOptions *AISearchInstanceSourceParamsWebCrawlerParseOptionsModel `tfsdk:"parse_options" json:"parse_options,optional"`
 	ParseType    types.String                                             `tfsdk:"parse_type" json:"parse_type,computed_optional"`
 	StoreOptions *AISearchInstanceSourceParamsWebCrawlerStoreOptionsModel `tfsdk:"store_options" json:"store_options,optional"`
 }
 
+type AISearchInstanceSourceParamsWebCrawlerCrawlOptionsModel struct {
+	Depth                types.Float64 `tfsdk:"depth" json:"depth,optional"`
+	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed_optional"`
+	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
+	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,optional"`
+	Source               types.String  `tfsdk:"source" json:"source,computed_optional"`
+}
+
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsModel struct {
-	IncludeHeaders      *map[string]types.String `tfsdk:"include_headers" json:"include_headers,optional"`
-	IncludeImages       types.Bool               `tfsdk:"include_images" json:"include_images,computed_optional"`
-	SpecificSitemaps    *[]types.String          `tfsdk:"specific_sitemaps" json:"specific_sitemaps,optional"`
-	UseBrowserRendering types.Bool               `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed_optional"`
+	ContentSelector     *[]*AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorModel `tfsdk:"content_selector" json:"content_selector,optional"`
+	IncludeHeaders      *map[string]types.String                                                   `tfsdk:"include_headers" json:"include_headers,optional"`
+	IncludeImages       types.Bool                                                                 `tfsdk:"include_images" json:"include_images,computed_optional"`
+	SpecificSitemaps    *[]types.String                                                            `tfsdk:"specific_sitemaps" json:"specific_sitemaps,optional"`
+	UseBrowserRendering types.Bool                                                                 `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed_optional"`
+}
+
+type AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorModel struct {
+	Path     types.String `tfsdk:"path" json:"path,required"`
+	Selector types.String `tfsdk:"selector" json:"selector,required"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerStoreOptionsModel struct {
