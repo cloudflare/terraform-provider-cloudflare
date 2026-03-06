@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,6 +23,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
+			},
+			"order": schema.StringAttribute{
+				Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"order_by": schema.StringAttribute{
+				Description: "Property to sort results by.\nAvailable values: \"deployed_on\", \"updated_on\", \"created_on\", \"name\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"deployed_on",
+						"updated_on",
+						"created_on",
+						"name",
+					),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -247,6 +269,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"updated_on": schema.StringAttribute{
 							Description: "When the Worker was most recently updated.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"deployed_on": schema.StringAttribute{
+							Description: "When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
