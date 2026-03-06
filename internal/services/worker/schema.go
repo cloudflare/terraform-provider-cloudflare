@@ -170,6 +170,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"deployed_on": schema.StringAttribute{
+				Description: "When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"updated_on": schema.StringAttribute{
 				Description: "When the Worker was most recently updated.",
 				Computed:    true,

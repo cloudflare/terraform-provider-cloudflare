@@ -136,6 +136,7 @@ type WorkerVersionBindingsModel struct {
 	Namespace                   types.String                        `tfsdk:"namespace" json:"namespace,optional"`
 	Outbound                    *WorkerVersionBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
 	ClassName                   types.String                        `tfsdk:"class_name" json:"class_name,computed_optional"`
+	DispatchNamespace           types.String                        `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
 	Environment                 types.String                        `tfsdk:"environment" json:"environment,optional"`
 	NamespaceID                 types.String                        `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
 	ScriptName                  types.String                        `tfsdk:"script_name" json:"script_name,computed_optional"`
@@ -153,6 +154,7 @@ type WorkerVersionBindingsModel struct {
 	AllowedSenderAddresses      *[]types.String                     `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,optional"`
 	DestinationAddress          types.String                        `tfsdk:"destination_address" json:"destination_address,optional"`
 	Service                     types.String                        `tfsdk:"service" json:"service,optional"`
+	Entrypoint                  types.String                        `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	IndexName                   types.String                        `tfsdk:"index_name" json:"index_name,optional"`
 	SecretName                  types.String                        `tfsdk:"secret_name" json:"secret_name,optional"`
 	StoreID                     types.String                        `tfsdk:"store_id" json:"store_id,optional"`
@@ -162,6 +164,7 @@ type WorkerVersionBindingsModel struct {
 	KeyBase64                   types.String                        `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk                      jsontypes.Normalized                `tfsdk:"key_jwk" json:"key_jwk,optional"`
 	WorkflowName                types.String                        `tfsdk:"workflow_name" json:"workflow_name,optional"`
+	ServiceID                   types.String                        `tfsdk:"service_id" json:"service_id,optional"`
 }
 
 type WorkerVersionBindingsOutboundModel struct {

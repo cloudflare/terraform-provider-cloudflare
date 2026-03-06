@@ -19,9 +19,10 @@ type WorkerResultDataSourceEnvelope struct {
 
 type WorkerDataSourceModel struct {
 	ID            types.String                                                    `tfsdk:"id" path:"worker_id,computed"`
-	WorkerID      types.String                                                    `tfsdk:"worker_id" path:"worker_id,required"`
+	WorkerID      types.String                                                    `tfsdk:"worker_id" path:"worker_id,optional"`
 	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DeployedOn    timetypes.RFC3339                                               `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 	Logpush       types.Bool                                                      `tfsdk:"logpush" json:"logpush,computed"`
 	Name          types.String                                                    `tfsdk:"name" json:"name,computed"`
 	UpdatedOn     timetypes.RFC3339                                               `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
@@ -30,11 +31,27 @@ type WorkerDataSourceModel struct {
 	References    customfield.NestedObject[WorkerReferencesDataSourceModel]       `tfsdk:"references" json:"references,computed"`
 	Subdomain     customfield.NestedObject[WorkerSubdomainDataSourceModel]        `tfsdk:"subdomain" json:"subdomain,computed"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	Filter        *WorkerFindOneByDataSourceModel                                 `tfsdk:"filter"`
 }
 
 func (m *WorkerDataSourceModel) toReadParams(_ context.Context) (params workers.BetaWorkerGetParams, diags diag.Diagnostics) {
 	params = workers.BetaWorkerGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WorkerDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerListParams, diags diag.Diagnostics) {
+	params = workers.BetaWorkerListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(workers.BetaWorkerListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(workers.BetaWorkerListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}
 
 	return
@@ -100,4 +117,9 @@ type WorkerSubdomainDataSourceModel struct {
 
 type WorkerTailConsumersDataSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name,computed"`
+}
+
+type WorkerFindOneByDataSourceModel struct {
+	Order   types.String `tfsdk:"order" query:"order,computed_optional"`
+	OrderBy types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
 }

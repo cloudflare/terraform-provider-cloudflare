@@ -23,6 +23,7 @@ type WorkerModel struct {
 	Subdomain     customfield.NestedObject[WorkerSubdomainModel]        `tfsdk:"subdomain" json:"subdomain,computed_optional"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	CreatedOn     timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DeployedOn    timetypes.RFC3339                                     `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 	UpdatedOn     timetypes.RFC3339                                     `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
 	References    customfield.NestedObject[WorkerReferencesModel]       `tfsdk:"references" json:"references,computed"`
 }
