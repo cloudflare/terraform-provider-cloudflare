@@ -79,6 +79,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	Namespace                   types.String                                                            `tfsdk:"namespace" json:"namespace,computed"`
 	Outbound                    customfield.NestedObject[WorkerVersionsBindingsOutboundDataSourceModel] `tfsdk:"outbound" json:"outbound,computed"`
 	ClassName                   types.String                                                            `tfsdk:"class_name" json:"class_name,computed"`
+	DispatchNamespace           types.String                                                            `tfsdk:"dispatch_namespace" json:"dispatch_namespace,computed"`
 	Environment                 types.String                                                            `tfsdk:"environment" json:"environment,computed"`
 	NamespaceID                 types.String                                                            `tfsdk:"namespace_id" json:"namespace_id,computed"`
 	ScriptName                  types.String                                                            `tfsdk:"script_name" json:"script_name,computed"`
@@ -96,6 +97,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	AllowedSenderAddresses      customfield.List[types.String]                                          `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,computed"`
 	DestinationAddress          types.String                                                            `tfsdk:"destination_address" json:"destination_address,computed"`
 	Service                     types.String                                                            `tfsdk:"service" json:"service,computed"`
+	Entrypoint                  types.String                                                            `tfsdk:"entrypoint" json:"entrypoint,computed"`
 	IndexName                   types.String                                                            `tfsdk:"index_name" json:"index_name,computed"`
 	SecretName                  types.String                                                            `tfsdk:"secret_name" json:"secret_name,computed"`
 	StoreID                     types.String                                                            `tfsdk:"store_id" json:"store_id,computed"`
@@ -105,6 +107,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	KeyBase64                   types.String                                                            `tfsdk:"key_base64" json:"key_base64,computed"`
 	KeyJwk                      jsontypes.Normalized                                                    `tfsdk:"key_jwk" json:"key_jwk,computed"`
 	WorkflowName                types.String                                                            `tfsdk:"workflow_name" json:"workflow_name,computed"`
+	ServiceID                   types.String                                                            `tfsdk:"service_id" json:"service_id,computed"`
 }
 
 type WorkerVersionsBindingsOutboundDataSourceModel struct {

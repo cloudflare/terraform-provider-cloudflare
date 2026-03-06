@@ -7,8 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
@@ -31,6 +35,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Worker was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"deployed_on": schema.StringAttribute{
+				Description: "When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -239,6 +248,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"order": schema.StringAttribute{
+						Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Property to sort results by.\nAvailable values: \"deployed_on\", \"updated_on\", \"created_on\", \"name\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"deployed_on",
+								"updated_on",
+								"created_on",
+								"name",
+							),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -248,5 +283,7 @@ func (d *WorkerDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 }
 
 func (d *WorkerDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("worker_id"), path.MatchRoot("filter")),
+	}
 }
