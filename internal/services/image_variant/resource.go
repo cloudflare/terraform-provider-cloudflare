@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -251,9 +252,53 @@ func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.Imp
 	}
 	data = &env.Result
 
+	copyVariantToRootAttributes(ctx, data, &resp.Diagnostics)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ImageVariantResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+// copyVariantToRootAttributes copies values from nested variant attributes to root-level attributes.
+// This is needed because the API returns data in the variant object, but root-level fields
+// (marked with no_refresh) are not populated by UnmarshalComputed.
+func copyVariantToRootAttributes(ctx context.Context, data *ImageVariantModel, diagnostics *diag.Diagnostics) {
+	if data.Variant.IsNull() || data.Variant.IsUnknown() {
+		return
+	}
+
+	// Extract the variant struct from the NestedObject
+	variantPtr, diags := data.Variant.ValueAny(ctx)
+	diagnostics.Append(diags...)
+	if diagnostics.HasError() {
+		return
+	}
+
+	variant, ok := variantPtr.(*ImageVariantVariantModel)
+	if !ok || variant == nil {
+		return
+	}
+
+	// Copy options from variant to root level
+	if !variant.Options.IsNull() && !variant.Options.IsUnknown() {
+		optionsPtr, diags := variant.Options.ValueAny(ctx)
+		diagnostics.Append(diags...)
+		if diagnostics.HasError() {
+			return
+		}
+
+		if variantOptions, ok := optionsPtr.(*ImageVariantVariantOptionsModel); ok && variantOptions != nil {
+			data.Options = &ImageVariantOptionsModel{
+				Fit:      variantOptions.Fit,
+				Height:   variantOptions.Height,
+				Metadata: variantOptions.Metadata,
+				Width:    variantOptions.Width,
+			}
+		}
+	}
+
+	// Copy never_require_signed_urls from variant to root level
+	data.NeverRequireSignedURLs = variant.NeverRequireSignedURLs
 }
