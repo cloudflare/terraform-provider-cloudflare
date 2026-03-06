@@ -13,6 +13,7 @@ resource "cloudflare_ruleset" "my_ruleset" {
         automatic_https_rewrites = true
         autominify               = {}
         bic                      = false
+        content_converter        = true
         disable_apps             = true
         disable_rum              = true
         disable_zaraz            = true

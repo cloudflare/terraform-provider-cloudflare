@@ -18,11 +18,11 @@ type AISearchInstanceModel struct {
 	AccountID                      types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Source                         types.String                                                        `tfsdk:"source" json:"source,required"`
 	Type                           types.String                                                        `tfsdk:"type" json:"type,required"`
-	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,optional"`
-	AISearchModel                  types.String                                                        `tfsdk:"aisearch_model" json:"ai_search_model,optional"`
-	EmbeddingModel                 types.String                                                        `tfsdk:"embedding_model" json:"embedding_model,optional"`
-	RerankingModel                 types.String                                                        `tfsdk:"reranking_model" json:"reranking_model,optional"`
-	RewriteModel                   types.String                                                        `tfsdk:"rewrite_model" json:"rewrite_model,optional"`
+	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed_optional"`
+	AISearchModel                  types.String                                                        `tfsdk:"aisearch_model" json:"ai_search_model,computed_optional"`
+	EmbeddingModel                 types.String                                                        `tfsdk:"embedding_model" json:"embedding_model,computed_optional"`
+	RerankingModel                 types.String                                                        `tfsdk:"reranking_model" json:"reranking_model,computed_optional"`
+	RewriteModel                   types.String                                                        `tfsdk:"rewrite_model" json:"rewrite_model,computed_optional"`
 	SummarizationModel             types.String                                                        `tfsdk:"summarization_model" json:"summarization_model,optional,no_refresh"`
 	SystemPromptAISearch           types.String                                                        `tfsdk:"system_prompt_aisearch" json:"system_prompt_ai_search,optional,no_refresh"`
 	SystemPromptIndexSummarization types.String                                                        `tfsdk:"system_prompt_index_summarization" json:"system_prompt_index_summarization,optional,no_refresh"`

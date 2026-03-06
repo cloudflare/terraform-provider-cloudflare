@@ -16,6 +16,7 @@ resource "cloudflare_ruleset" "my_ruleset" {
           js   = false
         }
         bic                      = true
+        content_converter        = true
         email_obfuscation        = true
         fonts                    = true
         hotlink_protection       = true

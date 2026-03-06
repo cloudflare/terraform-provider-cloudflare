@@ -68,6 +68,7 @@ type RulesetRulesActionParametersModel struct {
 	AutomaticHTTPSRewrites  types.Bool                                                                `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
 	Autominify              customfield.NestedObject[RulesetRulesActionParametersAutominifyModel]     `tfsdk:"autominify" json:"autominify,optional"`
 	BIC                     types.Bool                                                                `tfsdk:"bic" json:"bic,optional"`
+	ContentConverter        types.Bool                                                                `tfsdk:"content_converter" json:"content_converter,optional"`
 	DisableApps             types.Bool                                                                `tfsdk:"disable_apps" json:"disable_apps,optional"`
 	DisableRUM              types.Bool                                                                `tfsdk:"disable_rum" json:"disable_rum,optional"`
 	DisableZaraz            types.Bool                                                                `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
