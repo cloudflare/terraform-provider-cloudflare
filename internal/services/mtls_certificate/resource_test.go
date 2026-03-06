@@ -312,7 +312,6 @@ func TestAccUpgradeMtlsCertificate_FromPublishedV5(t *testing.T) {
 			{
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,
-				ExpectNonEmptyPlan:       true,
 			},
 		},
 	})

@@ -13,8 +13,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -180,6 +180,53 @@ func TestAccCustomHostname_WithSSLSettings(t *testing.T) {
 	})
 }
 
+// TestAccCustomHostname_WithoutSSL tests creating a custom hostname without an SSL block.
+// This validates that the ssl attribute is truly optional and that the API accepts
+// a request with no ssl object (ssl: null).
+func TestAccCustomHostname_WithoutSSL(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_custom_hostname." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCustomHostnameWithoutSSLConfig(zoneID, domain, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("hostname"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("ssl"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", zoneID, s.RootModule().Resources[name].Primary.ID), nil
+				},
+				ImportStateVerifyIgnore: []string{
+					"ownership_verification",
+					"ownership_verification_http",
+					"created_at",
+					"status",
+					"verification_errors",
+					"wait_for_ssl_pending_validation",
+				},
+			},
+		},
+	})
+}
+
 func testAccCustomHostnameBasicConfig(zoneID, domain, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_custom_hostname" "%[3]s" {
@@ -253,6 +300,10 @@ resource "cloudflare_custom_hostname" "%[3]s" {
     ]
   }
 }`, zoneID, domain, rnd)
+}
+
+func testAccCustomHostnameWithoutSSLConfig(zoneID, domain, rnd string) string {
+	return acctest.LoadTestCase("customhostnamewithnossl.tf", zoneID, rnd, domain)
 }
 
 func TestAccUpgradeCustomHostname_FromPublishedV5(t *testing.T) {

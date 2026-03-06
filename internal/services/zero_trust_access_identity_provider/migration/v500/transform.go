@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -57,30 +58,30 @@ func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConf
 	var diags diag.Diagnostics
 
 	target := &TargetConfigModel{
-		ClientID:              falseyStringToNull(source.ClientID),
-		ClientSecret:          falseyStringToNull(source.ClientSecret),
-		DirectoryID:           falseyStringToNull(source.DirectoryID),
-		EmailClaimName:        falseyStringToNull(source.EmailClaimName),
-		Prompt:                falseyStringToNull(source.Prompt),
-		CentrifyAccount:       falseyStringToNull(source.CentrifyAccount),
-		CentrifyAppID:         falseyStringToNull(source.CentrifyAppID),
-		AppsDomain:            falseyStringToNull(source.AppsDomain),
-		AuthURL:               falseyStringToNull(source.AuthURL),
-		CERTsURL:              falseyStringToNull(source.CERTsURL),
-		TokenURL:              falseyStringToNull(source.TokenURL),
-		AuthorizationServerID: falseyStringToNull(source.AuthorizationServerID),
-		OktaAccount:           falseyStringToNull(source.OktaAccount),
-		OneloginAccount:       falseyStringToNull(source.OneloginAccount),
-		PingEnvID:             falseyStringToNull(source.PingEnvID),
-		EmailAttributeName:    falseyStringToNull(source.EmailAttributeName),
-		IssuerURL:             falseyStringToNull(source.IssuerURL),
-		SSOTargetURL:          falseyStringToNull(source.SSOTargetURL),
+		ClientID:              migrations.FalseyStringToNull(source.ClientID),
+		ClientSecret:          migrations.FalseyStringToNull(source.ClientSecret),
+		DirectoryID:           migrations.FalseyStringToNull(source.DirectoryID),
+		EmailClaimName:        migrations.FalseyStringToNull(source.EmailClaimName),
+		Prompt:                migrations.FalseyStringToNull(source.Prompt),
+		CentrifyAccount:       migrations.FalseyStringToNull(source.CentrifyAccount),
+		CentrifyAppID:         migrations.FalseyStringToNull(source.CentrifyAppID),
+		AppsDomain:            migrations.FalseyStringToNull(source.AppsDomain),
+		AuthURL:               migrations.FalseyStringToNull(source.AuthURL),
+		CERTsURL:              migrations.FalseyStringToNull(source.CERTsURL),
+		TokenURL:              migrations.FalseyStringToNull(source.TokenURL),
+		AuthorizationServerID: migrations.FalseyStringToNull(source.AuthorizationServerID),
+		OktaAccount:           migrations.FalseyStringToNull(source.OktaAccount),
+		OneloginAccount:       migrations.FalseyStringToNull(source.OneloginAccount),
+		PingEnvID:             migrations.FalseyStringToNull(source.PingEnvID),
+		EmailAttributeName:    migrations.FalseyStringToNull(source.EmailAttributeName),
+		IssuerURL:             migrations.FalseyStringToNull(source.IssuerURL),
+		SSOTargetURL:          migrations.FalseyStringToNull(source.SSOTargetURL),
 		RedirectURL:           source.RedirectURL,
 
-		ConditionalAccessEnabled: falseyBoolToNull(source.ConditionalAccessEnabled),
-		SupportGroups:            falseyBoolToNull(source.SupportGroups),
-		PKCEEnabled:              falseyBoolToNull(source.PKCEEnabled),
-		SignRequest:              falseyBoolToNull(source.SignRequest),
+		ConditionalAccessEnabled: migrations.FalseyBoolToNull(source.ConditionalAccessEnabled),
+		SupportGroups:            migrations.FalseyBoolToNull(source.SupportGroups),
+		PKCEEnabled:              migrations.FalseyBoolToNull(source.PKCEEnabled),
+		SignRequest:              migrations.FalseyBoolToNull(source.SignRequest),
 	}
 
 	// api_token: deprecated, not copied
@@ -148,24 +149,4 @@ func transformScimConfig(source SourceScimConfigModel) TargetScimConfigModel {
 type SourceHeaderAttributesModel struct {
 	AttributeName types.String `tfsdk:"attribute_name"`
 	HeaderName    types.String `tfsdk:"header_name"`
-}
-
-func falseyStringToNull(v types.String) types.String {
-	if v.IsNull() || v.IsUnknown() {
-		return v
-	}
-	if v.ValueString() == "" {
-		return types.StringNull()
-	}
-	return v
-}
-
-func falseyBoolToNull(v types.Bool) types.Bool {
-	if v.IsNull() || v.IsUnknown() {
-		return v
-	}
-	if !v.ValueBool() {
-		return types.BoolNull()
-	}
-	return v
 }
