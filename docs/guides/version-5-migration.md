@@ -740,6 +740,168 @@ terraform plan
 # Should show no changes
 ```
 
+### `cloudflare_split_tunnel`
+
+In v4, `cloudflare_split_tunnel` was a standalone resource that defined which
+traffic to exclude or include from the Cloudflare WARP tunnel for a given device
+profile. In v5, this resource has been removed. Split tunnel settings are now
+managed directly on the device profile resources as `exclude` and `include`
+attributes:
+
+- Split tunnels scoped to a **custom profile** (via `policy_id`) are absorbed
+  into `cloudflare_zero_trust_device_custom_profile`.
+- Split tunnels scoped to the **default profile** (no `policy_id`) are absorbed
+  into `cloudflare_zero_trust_device_default_profile`.
+
+#### With tf-migrate
+
+`tf-migrate` automatically merges split tunnel entries into their associated
+device profile resources in the HCL and removes the `cloudflare_split_tunnel` blocks.
+
+**1.** Run `tf-migrate` (if you have not already done so in Step 2):
+
+```bash
+tf-migrate migrate --source-version v4 --target-version v5
+```
+
+This merges your split tunnel configuration into the associated profile. For
+example:
+
+```hcl
+# Before (v4)
+resource "cloudflare_zero_trust_device_custom_profile" "contractors" {
+  account_id = var.cloudflare_account_id
+  name       = "Contractors"
+  match      = "identity.email endsWith \"@contractor.com\""
+  precedence = 100
+}
+
+resource "cloudflare_split_tunnel" "contractors_exclude" {
+  account_id = var.cloudflare_account_id
+  policy_id  = cloudflare_zero_trust_device_custom_profile.contractors.id
+  mode       = "exclude"
+
+  tunnels {
+    address     = "192.168.0.0/16"
+    description = "Private network"
+  }
+}
+```
+
+```hcl
+# After (v5)
+resource "cloudflare_zero_trust_device_custom_profile" "contractors" {
+  account_id = var.cloudflare_account_id
+  name       = "Contractors"
+  match      = "identity.email endsWith \"@contractor.com\""
+  precedence = 100
+  exclude = [{
+    address     = "192.168.0.0/16"
+    description = "Private network"
+  }]
+}
+```
+
+~> If a `cloudflare_split_tunnel` resource references a profile that is not
+declared in the same file, or uses a `policy_id` that cannot be statically
+resolved (e.g. a variable or complex expression), `tf-migrate` will emit a
+`MIGRATION_WARNING` comment in the output file. Review these warnings and
+complete the merge manually.
+
+**2.** Remove each `cloudflare_split_tunnel` resource from state:
+
+```bash
+terraform state rm cloudflare_split_tunnel.contractors_exclude
+# Repeat for each cloudflare_split_tunnel resource
+```
+
+~> `tf-migrate` does not remove split tunnel state entries automatically.
+You must run `terraform state rm` for each one. 
+
+**3. (Optional, recommended)** Import the default device profile if you had
+split tunnels assigned to the implicit default profile.
+
+In v4, split tunnel resources without a `policy_id` applied to the implicit
+default profile, which is always present on your Cloudflare account but does
+not need to be declared explicitly in Terraform. In v5, split tunnel settings
+are attributes on `cloudflare_zero_trust_device_default_profile`. If you had
+default-profile split tunnels and want to continue managing the default profile
+in Terraform, declare the resource and import it:
+
+```hcl
+resource "cloudflare_zero_trust_device_default_profile" "default" {
+  account_id = var.cloudflare_account_id
+  exclude = [{
+    address     = "192.168.0.0/16"
+    description = "Private network"
+  }]
+}
+```
+
+```bash
+terraform import cloudflare_zero_trust_device_default_profile.default <account_id>
+```
+
+If you skip this step, the default profile continues to exist on the Cloudflare
+API with whatever settings were last applied — it is simply unmanaged by
+Terraform until you choose to import it.
+
+**4.** Verify:
+
+```bash
+terraform plan
+```
+
+~> On the first `terraform apply` after migration, the plan will show `exclude`
+and/or `include` as being added to device profile resources. This is expected —
+the attributes are being written into state for the first time even though the
+underlying API settings are unchanged. After the apply completes, subsequent
+plans should show no changes.
+
+#### Without tf-migrate
+
+**1.** Remove each `cloudflare_split_tunnel` resource from state:
+
+```bash
+terraform state rm cloudflare_split_tunnel.contractors_exclude
+# Repeat for each cloudflare_split_tunnel resource
+```
+
+**2.** Delete all `cloudflare_split_tunnel` resource blocks from your HCL.
+
+**3.** Add `exclude` or `include` attributes directly to the corresponding
+`cloudflare_zero_trust_device_custom_profile` or
+`cloudflare_zero_trust_device_default_profile` resource:
+
+```hcl
+resource "cloudflare_zero_trust_device_custom_profile" "contractors" {
+  account_id = var.cloudflare_account_id
+  name       = "Contractors"
+  match      = "identity.email endsWith \"@contractor.com\""
+  precedence = 100
+  exclude = [{
+    address     = "192.168.0.0/16"
+    description = "Private network"
+  }]
+}
+```
+
+**4. (Optional, recommended)** If you had split tunnels on the implicit default
+profile, declare and import `cloudflare_zero_trust_device_default_profile` as
+described in Step 3 of the [With tf-migrate](#with-tf-migrate-1) section above.
+
+**5.** Verify:
+
+```bash
+terraform plan
+```
+
+~> On the first `terraform apply` after migration, the plan will show `exclude`
+and/or `include` as being added to device profile resources. This is expected —
+the attributes are being written into state for the first time even though the
+underlying API settings are unchanged. After the apply completes, subsequent
+plans should show no changes.
+
 ### `cloudflare_dlp_profile`
 
 In v4, `cloudflare_dlp_profile` (or `cloudflare_zero_trust_dlp_profile`) was a
