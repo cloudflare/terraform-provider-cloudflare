@@ -19,6 +19,7 @@ type CustomSSLModel struct {
 	Type               types.String                                          `tfsdk:"type" json:"type,computed_optional,no_refresh"`
 	Certificate        types.String                                          `tfsdk:"certificate" json:"certificate,required,no_refresh"`
 	PrivateKey         types.String                                          `tfsdk:"private_key" json:"private_key,required,no_refresh"`
+	CustomCsrID        types.String                                          `tfsdk:"custom_csr_id" json:"custom_csr_id,optional"`
 	Policy             types.String                                          `tfsdk:"policy" json:"policy,optional,no_refresh"`
 	GeoRestrictions    *CustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions" json:"geo_restrictions,optional"`
 	BundleMethod       types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
