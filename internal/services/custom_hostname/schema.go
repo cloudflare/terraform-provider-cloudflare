@@ -93,6 +93,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "If a custom uploaded certificate is used.",
 						Optional:    true,
 					},
+					"custom_csr_id": schema.StringAttribute{
+						Description: "The identifier for the Custom CSR that was used.",
+						Optional:    true,
+					},
 					"custom_key": schema.StringAttribute{
 						Description: "The key for a custom uploaded certificate.",
 						Optional:    true,
