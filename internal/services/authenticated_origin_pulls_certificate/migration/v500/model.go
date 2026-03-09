@@ -21,7 +21,7 @@ type V4Model struct {
 }
 
 // V5Model represents the v5 schema structure for per-zone certificates
-// Note: Does NOT include 'type' or 'serial_number' fields
+// Note: Does NOT include 'type' field (removed in v5)
 type V5Model struct {
 	ZoneID        types.String `tfsdk:"zone_id"`
 	CertificateID types.String `tfsdk:"certificate_id"`
@@ -31,6 +31,7 @@ type V5Model struct {
 	ExpiresOn     types.String `tfsdk:"expires_on"`
 	ID            types.String `tfsdk:"id"`
 	Issuer        types.String `tfsdk:"issuer"`
+	SerialNumber  types.String `tfsdk:"serial_number"`
 	Signature     types.String `tfsdk:"signature"`
 	Status        types.String `tfsdk:"status"`
 	UploadedOn    types.String `tfsdk:"uploaded_on"`
