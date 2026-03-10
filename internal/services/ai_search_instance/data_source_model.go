@@ -47,7 +47,6 @@ type AISearchInstanceDataSourceModel struct {
 	Status               types.String                                                                  `tfsdk:"status" json:"status,computed"`
 	TokenID              types.String                                                                  `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                  `tfsdk:"type" json:"type,computed"`
-	VectorizeName        types.String                                                                  `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 	CustomMetadata       customfield.NestedObjectList[AISearchInstanceCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	Metadata             customfield.NestedObject[AISearchInstanceMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchInstancePublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
