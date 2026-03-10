@@ -48,7 +48,6 @@ type AISearchInstancesResultDataSourceModel struct {
 	ID                   types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	CreatedAt            timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt           timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	VectorizeName        types.String                                                                   `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 	AIGatewayID          types.String                                                                   `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                   `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                     `tfsdk:"cache" json:"cache,computed"`
