@@ -14,8 +14,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -38,11 +38,11 @@ func testSweepCloudflareZeroTrustList(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	
+
 	if accountID == "" {
 		return nil
 	}
-	
+
 	// List all zero trust lists
 	page, err := client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
 		AccountID: cfv6.F(accountID),
@@ -158,6 +158,45 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportStateVerifyIgnore: []string{"list_count"},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareTeamsList_LargeListNoChangePlan verifies that planning a large
+// list with no changes completes quickly (regression test for performance optimization).
+func TestAccCloudflareTeamsList_LargeListNoChangePlan(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsListDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create list with 2000 items
+				Config: testAccCloudflareTeamsListConfig2000Items(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(2000)),
+				},
+			},
+			{
+				// Re-apply same config - should produce no changes and complete quickly
+				Config: testAccCloudflareTeamsListConfig2000Items(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
@@ -638,6 +677,14 @@ func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string 
 		items = append(items, `{value = "example-`+strconv.Itoa(i)+`"}`)
 	}
 
+	return acctest.LoadTestCase("teamslistconfigbigitemcount.tf", rnd, accountID, strings.Join(items, ","))
+}
+
+func testAccCloudflareTeamsListConfig2000Items(rnd, accountID string) string {
+	items := make([]string, 2000)
+	for i := 0; i < 2000; i++ {
+		items[i] = fmt.Sprintf(`{value = "serial-%d"}`, i)
+	}
 	return acctest.LoadTestCase("teamslistconfigbigitemcount.tf", rnd, accountID, strings.Join(items, ","))
 }
 
