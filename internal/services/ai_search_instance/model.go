@@ -54,7 +54,6 @@ type AISearchInstanceModel struct {
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
 	PublicEndpointID               types.String                                                        `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	Status                         types.String                                                        `tfsdk:"status" json:"status,computed"`
-	VectorizeName                  types.String                                                        `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 }
 
 func (m AISearchInstanceModel) MarshalJSON() (data []byte, err error) {
