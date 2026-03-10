@@ -125,6 +125,9 @@ get_product_group_services() {
         r2-storage)
             echo "r2_bucket"
             ;;
+        data-platform)
+            echo "r2_data_catalog pipeline pipeline_stream pipeline_sink"
+            ;;
         pages)
             echo "pages_project pages_domain"
             ;;
@@ -150,7 +153,7 @@ get_product_group_services() {
 }
 
 get_available_product_groups() {
-    echo "magic organization zone-core zone-settings dns load-balancing workers-core workers-extended email-routing email-security security-core security-advanced rules-and-policies snippets tls-and-certificates ssl-config web-features web-monitoring waiting-room performance cdn-advanced gateway-and-policies dlp-config access-core access-identity access-mtls access-applications account-core account-settings zero-trust-org tunnel-cloudflared tunnel-devices workers-platform r2-storage pages queue-and-messaging general-api misc-account-tools platform-and-advanced zero-trust-list"
+    echo "magic organization zone-core zone-settings dns load-balancing workers-core workers-extended email-routing email-security security-core security-advanced rules-and-policies snippets tls-and-certificates ssl-config web-features web-monitoring waiting-room performance cdn-advanced gateway-and-policies dlp-config access-core access-identity access-mtls access-applications account-core account-settings zero-trust-org tunnel-cloudflared tunnel-devices workers-platform r2-storage data-platform pages queue-and-messaging general-api misc-account-tools platform-and-advanced zero-trust-list"
 }
 
 # List of services with their parallel test configuration
@@ -216,8 +219,12 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/page_rule parallel=1"
     "resource=./internal/services/pages_domain"
     "resource=./internal/services/pages_project"
+    "resource=./internal/services/pipeline"
+    "resource=./internal/services/pipeline_sink"
+    "resource=./internal/services/pipeline_stream"
     "resource=./internal/services/queue"
     "resource=./internal/services/r2_bucket"
+    "resource=./internal/services/r2_data_catalog"
     "resource=./internal/services/regional_hostname"
     "resource=./internal/services/regional_tiered_cache"
     "resource=./internal/services/ruleset"
