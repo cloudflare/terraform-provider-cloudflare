@@ -4,7 +4,6 @@ package logpush_ownership_challenge
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -20,26 +19,12 @@ var _ resource.ResourceWithUpgradeState = (*LogpushOwnershipChallengeResource)(n
 //   - Removes ownership_challenge_filename (v4 computed field)
 //   - Sets filename, message, valid to Null (new v5 computed fields)
 //
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade (when TF_MIG_TEST=1)
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 //
 // The separation of schema versions (v4=0, v5=1/500) eliminates the need for
 // dual-format detection that was required in earlier implementations.
 func (r *LogpushOwnershipChallengeResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceCloudflareLogpushOwnershipChallengeSchema()
 
 	return map[int64]resource.StateUpgrader{
