@@ -13,8 +13,8 @@ import (
 // The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
 //
 // Key transformations:
-//   - ownership_challenge_filename (computed): removed
-//   - filename, message, valid: set to Null (new computed fields, populated by API)
+//   - ownership_challenge_filename (computed): renamed to filename
+//   - message, valid: set to Null (new computed fields, populated by API)
 func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading logpush_ownership_challenge state from v4 SDKv2 provider (schema_version=0)")
 

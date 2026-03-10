@@ -11,8 +11,8 @@ import (
 //
 // This is one of the simplest transformations:
 //   - account_id, zone_id, destination_conf: direct copies (no changes)
-//   - ownership_challenge_filename: dropped (removed in v5)
-//   - filename, message, valid: set to Null (new computed fields, API will populate)
+//   - ownership_challenge_filename: renamed to filename in v5
+//   - message, valid: set to Null (new computed fields, API will populate)
 //
 // This function is used by UpgradeFromV4 handler.
 func Transform(ctx context.Context, source SourceCloudflareLogpushOwnershipChallengeModel) (*TargetLogpushOwnershipChallengeModel, diag.Diagnostics) {
@@ -35,11 +35,10 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushOwnershipChall
 	target.ZoneID = source.ZoneID
 	target.DestinationConf = source.DestinationConf
 
-	// Step 2: Drop ownership_challenge_filename (removed in v5)
-	// source.OwnershipChallengeFilename is intentionally not copied
+	// Step 2: Rename ownership_challenge_filename → filename
+	target.Filename = source.OwnershipChallengeFilename
 
 	// Step 3: Set new v5 computed fields to Null (API will populate on next read/create)
-	target.Filename = types.StringNull()
 	target.Message = types.StringNull()
 	target.Valid = types.BoolNull()
 
