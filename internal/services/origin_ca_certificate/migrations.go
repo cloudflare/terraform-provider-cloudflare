@@ -33,5 +33,13 @@ func (r *OriginCACertificateResource) UpgradeState(ctx context.Context) map[int6
 				resp.State.Raw = req.State.Raw
 			},
 		},
+		// Handle state from published v5 releases (version=1)
+		// No-op upgrade - just bumps version to 500
+		1: {
+			PriorSchema: &targetSchema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				resp.State.Raw = req.State.Raw
+			},
+		},
 	}
 }
