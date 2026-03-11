@@ -279,6 +279,7 @@ func TestMigrateAccountMember_V4ToV5_WithStatus(t *testing.T) {
 // TestMigrateAccountMember_FromV5_13 tests migration from v5.13.0 (internal v5 state upgrade).
 // This tests the stepping stone pattern where early v5 state needs to be upgraded to v500.
 func TestMigrateAccountMember_FromV5_13(t *testing.T) {
+	t.Skip("API returning id:00000000000000000000000000000000 for the test user.")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	email := fmt.Sprintf("%s@example.com", rnd)

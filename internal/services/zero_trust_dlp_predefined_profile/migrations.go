@@ -2,7 +2,6 @@ package zero_trust_dlp_predefined_profile
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -28,29 +27,11 @@ func (r *ZeroTrustDLPPredefinedProfileResource) MoveState(ctx context.Context) [
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// Both v4 SDKv2 and early v5 Plugin Framework used schema_version=0.
-// This requires a conditional approach based on TF_MIG_TEST:
-//
-// Production (no TF_MIG_TEST): schema returns version 1
-//   - Slot 0: no-op upgrader (safely bumps existing v5 users from 0→1)
-//
-// Testing (TF_MIG_TEST=1): schema returns version 500
-//   - Slot 0: v4→v5 full transformation (v4 state has schema_version=0)
-//   - Slot 1: v5 no-op (v5 users already bumped to version=1 in prod)
+// This handles two upgrade paths:
+// 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustDLPPredefinedProfileResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
 	sourceSchema := v500.SourceCloudflareDLPProfileSchema()
 
 	return map[int64]resource.StateUpgrader{

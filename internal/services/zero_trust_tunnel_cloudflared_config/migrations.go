@@ -4,7 +4,6 @@ package zero_trust_tunnel_cloudflared_config
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -35,24 +34,10 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) MoveState(ctx context.Context
 
 // UpgradeState handles schema version upgrades for cloudflare_zero_trust_tunnel_cloudflared_config.
 //
-// Version history:
-//   - 0: v4 SDKv2 state (full transformation needed)
-//   - 1: Dormant production v5 state (GetSchemaVersion returns 1 normally)
-//   - 500: Active migration version (GetSchemaVersion returns 500 when TF_MIG_TEST=1)
+// This handles two upgrade paths:
+// 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustTunnelCloudflaredConfigResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
 	// v4 schema for version=0 upgrader
 	v4Schema := v500.SourceV4TunnelConfigSchema()
 

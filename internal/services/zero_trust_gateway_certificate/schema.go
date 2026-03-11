@@ -5,7 +5,6 @@ package zero_trust_gateway_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,7 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustGatewayCertificateResou
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version:    migrations.GetSchemaVersion(1, 500),
+		Version:    500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identify the certificate with a UUID.",

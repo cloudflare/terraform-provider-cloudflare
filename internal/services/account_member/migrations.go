@@ -19,15 +19,16 @@ var _ resource.ResourceWithUpgradeState = (*AccountMemberResource)(nil)
 //     Users upgrading from v4 provider have state with email_address, role_ids fields.
 //     This performs a full transformation to v5 format.
 //
-//   - Slot 1: v5 stepping stone state (schema_version=1) → v500
-//     Users who went through v5.17/v5.18 stepping stone already have v5 field names.
-//     This is a no-op version bump.
+//   - Slot 1: v5.13 stepping stone state (schema_version=1) → v500
+//     Users who went through v5.13+ stepping stone have v5 field names but different
+//     schema structure (List vs Set, policies had 'id' field).
+//     This performs List→Set conversion and removes the policy 'id' field.
 //
-// Note: Users on v5.0-v5.16 must upgrade to v5.17/v5.18 first (stepping stone)
+// Note: Users on v5.0-v5.12 must upgrade to v5.13+ first (stepping stone)
 // before upgrading to v5.19+. See migration guide for details.
 func (r *AccountMemberResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	v4Schema := v500.SourceV4Schema()
-	targetSchema := ResourceSchema(ctx)
+	v513Schema := v500.SourceV513Schema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
@@ -36,10 +37,11 @@ func (r *AccountMemberResource) UpgradeState(ctx context.Context) map[int64]reso
 			PriorSchema:   &v4Schema,
 			StateUpgrader: v500.UpgradeFromV4,
 		},
-		// Handle state from v5 stepping stone (schema_version=1)
-		// State already has: email, roles, policies, user
+		// Handle state from v5.13 stepping stone (schema_version=1)
+		// State has: email, roles (List), policies (List with 'id' field), user
+		// This transforms: List→Set, removes policy 'id' field
 		1: {
-			PriorSchema:   &targetSchema,
+			PriorSchema:   &v513Schema,
 			StateUpgrader: v500.UpgradeFromV1,
 		},
 	}
