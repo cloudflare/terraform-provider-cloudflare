@@ -145,6 +145,7 @@ func transformActionParameters(ctx context.Context, src *SourceV4ActionParameter
 
 		// New v5 fields absent in v4 — set to null
 		AssetName:             types.StringNull(),
+		ContentConverter:      types.BoolNull(),
 		RequestBodyBuffering:  types.StringNull(),
 		ResponseBodyBuffering: types.StringNull(),
 
