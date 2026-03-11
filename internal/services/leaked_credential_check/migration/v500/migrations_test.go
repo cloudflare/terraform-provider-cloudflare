@@ -33,6 +33,7 @@ var v4DisabledConfig string
 var v5DisabledConfig string
 
 func TestMigrateLeakedCredentialCheckEnabled(t *testing.T) {
+	t.Skip("Product has not been enabled in CI account")
 	testCases := []struct {
 		name     string
 		version  string
@@ -96,6 +97,7 @@ func TestMigrateLeakedCredentialCheckEnabled(t *testing.T) {
 }
 
 func TestMigrateLeakedCredentialCheckDisabled(t *testing.T) {
+	t.Skip("Product has not been enabled in CI account")
 	testCases := []struct {
 		name     string
 		version  string

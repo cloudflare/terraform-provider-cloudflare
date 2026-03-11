@@ -4,7 +4,6 @@ package zero_trust_gateway_settings
 
 import (
 	"context"
-	"os"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -31,24 +30,10 @@ func (r *ZeroTrustGatewaySettingsResource) MoveState(ctx context.Context) []reso
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// Version history:
-//   - 0: v4 SDKv2 state (full transformation needed)
-//   - 1: Dormant production v5 state (GetSchemaVersion returns 1 normally)
-//   - 500: Active migration version (GetSchemaVersion returns 500 when TF_MIG_TEST=1)
+// This handles two upgrade paths:
+// 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
+// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustGatewaySettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
 	// v4 source schema for parsing old SDKv2 state (schema_version=0)
 	v4Schema := v500.SourceV4ZeroTrustGatewaySettingsSchema()
 
@@ -65,7 +50,7 @@ func (r *ZeroTrustGatewaySettingsResource) UpgradeState(ctx context.Context) map
 		},
 
 		// Handle state from v5 Plugin Framework provider (version=1)
-		// No-op version bump to 500; only triggered when TF_MIG_TEST=1
+		// No-op version bump to 500
 		1: {
 			PriorSchema:   &v5SchemaVersion1,
 			StateUpgrader: v500.UpgradeFromV5,

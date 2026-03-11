@@ -39,7 +39,7 @@ var v5BasicAccountConfig string
 //
 // This verifies:
 // 1. zone_id and destination_conf are preserved (direct copies)
-// 2. ownership_challenge_filename is removed from v5 state
+// 2. ownership_challenge_filename is renamed to filename in v5 state (non-null)
 // 3. filename, message, valid are available as computed fields after API call
 func TestMigrateLogpushOwnershipChallenge_V4ToV5_BasicZone(t *testing.T) {
 	testCases := []struct {
@@ -113,6 +113,12 @@ func TestMigrateLogpushOwnershipChallenge_V4ToV5_BasicZone(t *testing.T) {
 								tfjsonpath.New("destination_conf"),
 								knownvalue.StringExact("gs://cf-terraform-provider-acct-test/ownership_challenges"),
 							),
+							// Validate filename is preserved from v4 ownership_challenge_filename (renamed, not dropped)
+							statecheck.ExpectKnownValue(
+								"cloudflare_logpush_ownership_challenge."+rnd,
+								tfjsonpath.New("filename"),
+								knownvalue.NotNull(),
+							),
 						},
 					),
 				},
@@ -126,7 +132,7 @@ func TestMigrateLogpushOwnershipChallenge_V4ToV5_BasicZone(t *testing.T) {
 //
 // This verifies:
 // 1. account_id and destination_conf are preserved (direct copies)
-// 2. ownership_challenge_filename is removed from v5 state
+// 2. ownership_challenge_filename is renamed to filename in v5 state (non-null)
 // 3. filename, message, valid are available as computed fields after API call
 func TestMigrateLogpushOwnershipChallenge_V4ToV5_BasicAccount(t *testing.T) {
 	testCases := []struct {
@@ -199,6 +205,12 @@ func TestMigrateLogpushOwnershipChallenge_V4ToV5_BasicAccount(t *testing.T) {
 								"cloudflare_logpush_ownership_challenge."+rnd,
 								tfjsonpath.New("destination_conf"),
 								knownvalue.StringExact("gs://cf-terraform-provider-acct-test/ownership_challenges"),
+							),
+							// Validate filename is preserved from v4 ownership_challenge_filename (renamed, not dropped)
+							statecheck.ExpectKnownValue(
+								"cloudflare_logpush_ownership_challenge."+rnd,
+								tfjsonpath.New("filename"),
+								knownvalue.NotNull(),
 							),
 						},
 					),
