@@ -611,11 +611,17 @@ run_tests() {
         # Example: ./internal/services/dns_record/... -> ./internal/services/dns_record/migration/...
         test_path="${service%/...}/migration/..."
 
-        # Only run migration tests for services that have a v500 state upgrader
-        local migration_v500_dir="${service%/...}/migration/v500"
-        if [ ! -d "$migration_v500_dir" ]; then
-            log "${YELLOW}Skipping migration tests for $service (no migration/v500 directory)${NC}" > "$log_file"
-            log "Skipping migration tests for $service (no migration/v500 directory)"
+        # Skip services that define no migrations at all
+        local migration_dir="${service%/...}/migration"
+        local migration_test_file="${service%/...}/migration_test.go"
+        if [ -f "$migration_test_file" ]; then
+            log "${RED}FAIL: $service has migration_test.go which must be removed (migration tests belong in migration/ directory)${NC}" > "$log_file"
+            log "FAIL: $service has migration_test.go which must be removed (migration tests belong in migration/ directory)"
+            return 1
+        fi
+        if [ ! -d "$migration_dir" ]; then
+            log "${YELLOW}Skipping migration tests for $service (no migration/ directory)${NC}" > "$log_file"
+            log "Skipping migration tests for $service (no migration/ directory)"
             echo "TESTS_SKIPPED" >> "$log_file"
             return 0
         fi
