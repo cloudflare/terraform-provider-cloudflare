@@ -2,6 +2,8 @@ package zero_trust_access_policy
 
 import (
 	"context"
+	"reflect"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -47,6 +49,7 @@ func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.Bo
 // for some attributes, and nullifies fields that terraform should not be saving in the state.
 func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, sourceData *ZeroTrustAccessPolicyModel) diag.Diagnostics {
 	diags := make(diag.Diagnostics, 0)
+	diags.Append(pruneEmptyConditionSelectors(ctx, data)...)
 
 	// For rule fields, if they were null in the source (plan/state) and the API returned empty sets,
 	// convert them back to null to prevent "inconsistent result after apply" errors
@@ -87,6 +90,147 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	}
 
 	return diags
+}
+
+func pruneEmptyConditionSelectors(ctx context.Context, data *ZeroTrustAccessPolicyModel) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	diags.Append(pruneEmptyIncludeSelectors(ctx, &data.Include)...)
+	diags.Append(pruneEmptyExcludeSelectors(ctx, &data.Exclude)...)
+	diags.Append(pruneEmptyRequireSelectors(ctx, &data.Require)...)
+	return diags
+}
+
+func pruneEmptyIncludeSelectors(ctx context.Context, set *customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeModel]) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	if set.IsNull() || set.IsUnknown() {
+		return diags
+	}
+
+	conditions, d := set.AsStructSliceT(ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+
+	filtered := make([]ZeroTrustAccessPolicyIncludeModel, 0, len(conditions))
+	for _, c := range conditions {
+		if c.Email != nil && isNullUnknownOrEmptyString(c.Email.Email) {
+			c.Email = nil
+		}
+		if c.EmailDomain != nil && isNullUnknownOrEmptyString(c.EmailDomain.Domain) {
+			c.EmailDomain = nil
+		}
+		if c.IP != nil && isNullUnknownOrEmptyString(c.IP.IP) {
+			c.IP = nil
+		}
+		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
+			c.Geo = nil
+		}
+
+		if reflect.DeepEqual(c, ZeroTrustAccessPolicyIncludeModel{}) {
+			continue
+		}
+		filtered = append(filtered, c)
+	}
+
+	next, d := customfield.NewObjectSet(ctx, filtered)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+	*set = next
+	return diags
+}
+
+func pruneEmptyExcludeSelectors(ctx context.Context, set *customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel]) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	if set.IsNull() || set.IsUnknown() {
+		return diags
+	}
+
+	conditions, d := set.AsStructSliceT(ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+
+	filtered := make([]ZeroTrustAccessPolicyExcludeModel, 0, len(conditions))
+	for _, c := range conditions {
+		if c.Email != nil && isNullUnknownOrEmptyString(c.Email.Email) {
+			c.Email = nil
+		}
+		if c.EmailDomain != nil && isNullUnknownOrEmptyString(c.EmailDomain.Domain) {
+			c.EmailDomain = nil
+		}
+		if c.IP != nil && isNullUnknownOrEmptyString(c.IP.IP) {
+			c.IP = nil
+		}
+		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
+			c.Geo = nil
+		}
+
+		if reflect.DeepEqual(c, ZeroTrustAccessPolicyExcludeModel{}) {
+			continue
+		}
+		filtered = append(filtered, c)
+	}
+
+	next, d := customfield.NewObjectSet(ctx, filtered)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+	*set = next
+	return diags
+}
+
+func pruneEmptyRequireSelectors(ctx context.Context, set *customfield.NestedObjectSet[ZeroTrustAccessPolicyRequireModel]) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	if set.IsNull() || set.IsUnknown() {
+		return diags
+	}
+
+	conditions, d := set.AsStructSliceT(ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+
+	filtered := make([]ZeroTrustAccessPolicyRequireModel, 0, len(conditions))
+	for _, c := range conditions {
+		if c.Email != nil && isNullUnknownOrEmptyString(c.Email.Email) {
+			c.Email = nil
+		}
+		if c.EmailDomain != nil && isNullUnknownOrEmptyString(c.EmailDomain.Domain) {
+			c.EmailDomain = nil
+		}
+		if c.IP != nil && isNullUnknownOrEmptyString(c.IP.IP) {
+			c.IP = nil
+		}
+		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
+			c.Geo = nil
+		}
+
+		if reflect.DeepEqual(c, ZeroTrustAccessPolicyRequireModel{}) {
+			continue
+		}
+		filtered = append(filtered, c)
+	}
+
+	next, d := customfield.NewObjectSet(ctx, filtered)
+	diags.Append(d...)
+	if diags.HasError() {
+		return diags
+	}
+	*set = next
+	return diags
+}
+
+func isNullUnknownOrEmptyString(v basetypes.StringValue) bool {
+	if v.IsNull() || v.IsUnknown() {
+		return true
+	}
+	return strings.TrimSpace(v.ValueString()) == ""
 }
 
 // Specialized normalization for import operations where API omits false boolean values

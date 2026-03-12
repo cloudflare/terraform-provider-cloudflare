@@ -2,6 +2,7 @@ package v500
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -188,20 +189,26 @@ func transformConditions(ctx context.Context, v4Conditions []SourceConditionGrou
 
 		// Common name (single value)
 		if !condGroup.CommonName.IsNull() && !condGroup.CommonName.IsUnknown() {
-			v5Conditions = append(v5Conditions, TargetConditionModel{
-				CommonName: &TargetCommonNameModel{
-					CommonName: condGroup.CommonName,
-				},
-			})
+			commonName := strings.TrimSpace(condGroup.CommonName.ValueString())
+			if commonName != "" {
+				v5Conditions = append(v5Conditions, TargetConditionModel{
+					CommonName: &TargetCommonNameModel{
+						CommonName: types.StringValue(commonName),
+					},
+				})
+			}
 		}
 
 		// Auth method (single value)
 		if !condGroup.AuthMethod.IsNull() && !condGroup.AuthMethod.IsUnknown() {
-			v5Conditions = append(v5Conditions, TargetConditionModel{
-				AuthMethod: &TargetAuthMethodModel{
-					AuthMethod: condGroup.AuthMethod,
-				},
-			})
+			authMethod := strings.TrimSpace(condGroup.AuthMethod.ValueString())
+			if authMethod != "" {
+				v5Conditions = append(v5Conditions, TargetConditionModel{
+					AuthMethod: &TargetAuthMethodModel{
+						AuthMethod: types.StringValue(authMethod),
+					},
+				})
+			}
 		}
 
 		// Device posture (simple string list in v4)
