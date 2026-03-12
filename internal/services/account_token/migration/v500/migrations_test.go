@@ -1,4 +1,4 @@
-package account_token_test
+package v500_test
 
 import (
 	"fmt"
@@ -214,7 +214,7 @@ resource "cloudflare_account_token" "%[1]s" {
 						VersionConstraint: "5.10.0", // Use a later v5 version where account_token is stable
 					},
 				},
-				Config: v5Config,
+				Config:      v5Config,
 				ExpectError: regexp.MustCompile(`string\s+required`),
 			},
 			{
@@ -761,6 +761,7 @@ func TestMigrateAccountTokenFromV5_11(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tmpDir := t.TempDir()
+	expiresOn := time.Now().Add(365 * 24 * time.Hour).UTC().Format("2006-01-02T15:04:05Z")
 
 	// V5.11 config
 	v5Config := fmt.Sprintf(`
@@ -778,8 +779,8 @@ resource "cloudflare_account_token" "%[1]s" {
     }
   }]
 
-  expires_on = "2025-12-31T23:59:59Z"
-}`, rnd, accountID)
+  expires_on = "%[3]s"
+}`, rnd, accountID, expiresOn)
 
 	// Latest config
 	latestConfig := fmt.Sprintf(`
@@ -797,8 +798,8 @@ resource "cloudflare_account_token" "%[1]s" {
     })
   }]
 
-  expires_on = "2025-12-31T23:59:59Z"
-}`, rnd, accountID)
+  expires_on = "%[3]s"
+}`, rnd, accountID, expiresOn)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -830,7 +831,7 @@ resource "cloudflare_account_token" "%[1]s" {
 					statecheck.ExpectKnownValue(
 						fmt.Sprintf("cloudflare_account_token.%s", rnd),
 						tfjsonpath.New("expires_on"),
-						knownvalue.StringExact("2025-12-31T23:59:59Z"),
+						knownvalue.StringExact(expiresOn),
 					),
 				},
 			},
