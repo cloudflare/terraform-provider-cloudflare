@@ -865,6 +865,48 @@ func testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, a
 	return acctest.LoadTestCase("module_with_assets_with_run_worker_first.tf", rnd, accountID, contentFile, assetsDir, runWorkerFirst)
 }
 
+// TestAccCloudflareWorkerScript_RatelimitBinding verifies that a ratelimit binding type
+// is accepted and applied correctly on cloudflare_workers_script.
+// This is a regression test for the missing "ratelimit" type in the schema validator.
+func TestAccCloudflareWorkerScript_RatelimitBinding(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptWithRatelimitBinding(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_RATE_LIMITER")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("ratelimit")),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"main_module", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareWorkerScriptWithRatelimitBinding(rnd, accountID string) string {
+	return acctest.LoadTestCase("module_with_ratelimit.tf", rnd, accountID)
+}
+
 func TestAccUpgradeWorkersScript_FromPublishedV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd
