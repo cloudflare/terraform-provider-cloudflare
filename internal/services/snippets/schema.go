@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*SnippetsResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		DeprecationMessage: "The `snippets` resource has been deprecated. Use `snippet` instead.",
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
