@@ -406,8 +406,7 @@ func testAccCheckCloudflareAccountDestroy(s *terraform.State) error {
 }
 
 func TestAccUpgradeAccount_FromPublishedV5(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Requires account creation permissions not available on default test account.")
-
+	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 
 	// Use a config without "type" to avoid API normalization issues.

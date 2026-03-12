@@ -9,6 +9,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// normalizeBoolFalseToNull converts false boolean values to null.
+// The v5 provider's API treats false and null as equivalent for these optional boolean fields.
+// By normalizing false to null during migration, we prevent drift after the v5 provider refreshes state.
+func normalizeBoolFalseToNull(b types.Bool) types.Bool {
+	if b.IsNull() || b.IsUnknown() {
+		return b
+	}
+	if !b.ValueBool() {
+		// false -> null (they are semantically equivalent)
+		return types.BoolNull()
+	}
+	return b
+}
+
 // Transform converts a v4 cloudflare_access_application state to v5 cloudflare_zero_trust_access_application state.
 func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAccessApplicationModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -20,19 +34,19 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 		Name:                     v4.Name,
 		Domain:                   v4.Domain,
 		SessionDuration:          v4.SessionDuration,
-		AutoRedirectToIdentity:   v4.AutoRedirectToIdentity,
-		EnableBindingCookie:      v4.EnableBindingCookie,
-		HTTPOnlyCookieAttribute:  v4.HTTPOnlyCookieAttribute,
+		AutoRedirectToIdentity:   normalizeBoolFalseToNull(v4.AutoRedirectToIdentity),
+		EnableBindingCookie:      normalizeBoolFalseToNull(v4.EnableBindingCookie),
+		HTTPOnlyCookieAttribute:  normalizeBoolFalseToNull(v4.HTTPOnlyCookieAttribute),
 		SameSiteCookieAttribute:  v4.SameSiteCookieAttribute,
 		LogoURL:                  v4.LogoURL,
-		SkipInterstitial:         v4.SkipInterstitial,
+		SkipInterstitial:         normalizeBoolFalseToNull(v4.SkipInterstitial),
 		AppLauncherVisible:       v4.AppLauncherVisible,
-		ServiceAuth401Redirect:   v4.ServiceAuth401Redirect,
+		ServiceAuth401Redirect:   normalizeBoolFalseToNull(v4.ServiceAuth401Redirect),
 		CustomDenyMessage:        v4.CustomDenyMessage,
 		CustomDenyURL:            v4.CustomDenyURL,
 		CustomNonIdentityDenyURL: v4.CustomNonIdentityDenyURL,
-		OptionsPreflightBypass:   v4.OptionsPreflightBypass,
-		PathCookieAttribute:      v4.PathCookieAttribute,
+		OptionsPreflightBypass:   normalizeBoolFalseToNull(v4.OptionsPreflightBypass),
+		PathCookieAttribute:      normalizeBoolFalseToNull(v4.PathCookieAttribute),
 		AUD:                      v4.AUD,
 		AppLauncherLogoURL:       v4.AppLauncherLogoURL,
 		HeaderBgColor:            v4.HeaderBgColor,
@@ -49,7 +63,8 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 	}
 
 	// AllowedIdPs: v4 Set -> v5 *[]types.String
-	if !v4.AllowedIdPs.IsNull() && !v4.AllowedIdPs.IsUnknown() {
+	// Only set if non-empty; empty arrays should remain null to prevent drift
+	if !v4.AllowedIdPs.IsNull() && !v4.AllowedIdPs.IsUnknown() && len(v4.AllowedIdPs.Elements()) > 0 {
 		allowedIdPs, d := setToStringSlice(ctx, v4.AllowedIdPs)
 		diags.Append(d...)
 		if !diags.HasError() {
@@ -58,7 +73,8 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 	}
 
 	// Tags: v4 Set -> v5 customfield.Set
-	if !v4.Tags.IsNull() && !v4.Tags.IsUnknown() {
+	// Only set if non-empty; empty sets should remain null to prevent drift
+	if !v4.Tags.IsNull() && !v4.Tags.IsUnknown() && len(v4.Tags.Elements()) > 0 {
 		tags, d := setToCustomfieldSet(ctx, v4.Tags)
 		diags.Append(d...)
 		if !diags.HasError() {
@@ -266,7 +282,7 @@ func transformSaaSApp(ctx context.Context, v4 SourceSaaSAppModel) (*TargetSaaSAp
 		ClientID:                      v4.ClientID,
 		ClientSecret:                  v4.ClientSecret,
 		AccessTokenLifetime:           v4.AccessTokenLifetime,
-		AllowPKCEWithoutClientSecret:  v4.AllowPKCEWithoutSecret,
+		AllowPKCEWithoutClientSecret:  normalizeBoolFalseToNull(v4.AllowPKCEWithoutSecret),
 		GroupFilterRegex:              v4.GroupFilterRegex,
 	}
 

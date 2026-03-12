@@ -7,6 +7,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// normalizeBoolFalseToNull converts false boolean values to null.
+// The v5 provider's API treats false and null as equivalent for these optional boolean fields.
+// By normalizing false to null during migration, we prevent drift after the v5 provider refreshes state.
+func normalizeBoolFalseToNull(b types.Bool) types.Bool {
+	if b.IsNull() || b.IsUnknown() {
+		return b
+	}
+	if !b.ValueBool() {
+		// false -> null (they are semantically equivalent)
+		return types.BoolNull()
+	}
+	return b
+}
+
 // Transform converts a v4 cloudflare_access_policy state to v5 cloudflare_zero_trust_access_policy state.
 func Transform(ctx context.Context, v4 SourceAccessPolicyModel) (*TargetAccessPolicyModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -17,10 +31,10 @@ func Transform(ctx context.Context, v4 SourceAccessPolicyModel) (*TargetAccessPo
 		Name:                         v4.Name,
 		Decision:                     v4.Decision,
 		SessionDuration:              v4.SessionDuration,
-		IsolationRequired:            v4.IsolationRequired,
-		PurposeJustificationRequired: v4.PurposeJustificationRequired,
+		IsolationRequired:            normalizeBoolFalseToNull(v4.IsolationRequired),
+		PurposeJustificationRequired: normalizeBoolFalseToNull(v4.PurposeJustificationRequired),
 		PurposeJustificationPrompt:   v4.PurposeJustificationPrompt,
-		ApprovalRequired:             v4.ApprovalRequired,
+		ApprovalRequired:             normalizeBoolFalseToNull(v4.ApprovalRequired),
 	}
 
 	// Transform approval_group -> approval_groups

@@ -9,21 +9,39 @@ import (
 )
 
 // UpgradeFromV0 handles state upgrades from schema_version=0 to current version.
-// This is a no-op upgrade for early v5 state (v5.12-v5.15) which had schema_version=0.
 //
-// IMPORTANT: Both v4 cloudflare_access_application and early v5 cloudflare_zero_trust_access_application
-// have schema_version=0, but this upgrader only handles v5 format because we use v5Schema
-// as PriorSchema in migrations.go.
+// This handles v4-format state that was produced by tf-migrate, which renames the resource type
+// from cloudflare_access_application to cloudflare_zero_trust_access_application but does NOT
+// transform the state attributes.
 //
-// For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through
-// MoveState instead of UpgradeState. `terraform state mv` from v4 is NOT supported.
+// The state has:
+// - Resource type: cloudflare_zero_trust_access_application (renamed by tf-migrate)
+// - State format: v4 (cors_headers as list [], etc.)
+// - Schema version: 0
+//
+// This upgrader parses the v4-format state (using v4 schema from migrations.go PriorSchema)
+// and performs the full v4→v5 transformation.
 func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading zero_trust_access_application state from schema_version=0 (no-op)")
+	tflog.Info(ctx, "Upgrading zero_trust_access_application state from schema_version=0 (v4 format)")
 
-	// No-op: v5 state is already in the correct format, just copy raw state through
-	resp.State.Raw = req.State.Raw
+	// Parse the v4-format state using the v4 schema (set as PriorSchema in migrations.go)
+	var v4State SourceAccessApplicationModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	tflog.Info(ctx, "State upgrade from schema_version=0 completed")
+	// Transform v4 state to v5 state
+	v5State, diags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Set the v5 state
+	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
+
+	tflog.Info(ctx, "State upgrade from schema_version=0 completed successfully")
 }
 
 // UpgradeFromV1 handles state upgrades from schema_version=1 to current version.

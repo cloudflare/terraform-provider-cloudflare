@@ -1,8 +1,15 @@
 package v500
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
+
+// V4Schema returns the v4 schema for use in UpgradeState PriorSchema.
+func V4Schema(ctx context.Context) schema.Schema {
+	return SourceR2BucketSchema()
+}
 
 // SourceR2BucketSchema returns the source schema for legacy cloudflare_r2_bucket resource.
 // Schema version: 0 (Framework resource without explicit versioning in v4)
