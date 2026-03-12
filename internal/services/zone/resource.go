@@ -90,6 +90,19 @@ func (r *ZoneResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	data = &env.Result
 
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Zone API returned empty or null zone ID",
+			"The Cloudflare API returned a zone response with an empty or null zone ID. "+
+				"This is unexpected and may indicate a transient API error.\n\n"+
+				"The provider is halting to prevent writing invalid state that could cause "+
+				"dependent zone-scoped resources to be incorrectly replaced or destroyed.\n\n"+
+				"Please try running the operation again. If the problem persists, "+
+				"contact Cloudflare support.",
+		)
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -107,6 +120,19 @@ func (r *ZoneResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if state.ID.IsNull() || state.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Invalid zone state: empty or null zone ID",
+			"The cloudflare_zone resource has an empty or null ID in its Terraform state. "+
+				"This can occur when state becomes corrupted or a zone is removed from state manually.\n\n"+
+				"The provider is halting intentionally to avoid unsafe changes to dependent resources.\n\n"+
+				"To recover, re-import the zone:\n"+
+				"  terraform import cloudflare_zone.<name> <zone_id>\n"+
+				"then run terraform plan again.",
+		)
 		return
 	}
 
@@ -138,6 +164,19 @@ func (r *ZoneResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	data = &env.Result
 
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Zone API returned empty or null zone ID",
+			"The Cloudflare API returned a zone response with an empty or null zone ID. "+
+				"This is unexpected and may indicate a transient API error.\n\n"+
+				"The provider is halting to prevent writing invalid state that could cause "+
+				"dependent zone-scoped resources to be incorrectly replaced or destroyed.\n\n"+
+				"Please try running the operation again. If the problem persists, "+
+				"contact Cloudflare support.",
+		)
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -147,6 +186,19 @@ func (r *ZoneResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Invalid zone state: empty or null zone ID",
+			"The cloudflare_zone resource has an empty or null ID in its Terraform state. "+
+				"This can occur when state becomes corrupted or a zone is removed from state manually.\n\n"+
+				"The provider is halting intentionally to avoid unsafe changes to dependent resources.\n\n"+
+				"To recover, re-import the zone:\n"+
+				"  terraform import cloudflare_zone.<name> <zone_id>\n"+
+				"then run terraform plan again.",
+		)
 		return
 	}
 
@@ -177,6 +229,19 @@ func (r *ZoneResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	}
 	data = &env.Result
 
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Zone API returned empty or null zone ID",
+			"The Cloudflare API returned a zone response with an empty or null zone ID. "+
+				"This is unexpected and may indicate a transient API error.\n\n"+
+				"The provider is halting to prevent writing invalid state that could cause "+
+				"dependent zone-scoped resources to be incorrectly replaced or destroyed.\n\n"+
+				"Please try running the operation again. If the problem persists, "+
+				"contact Cloudflare support.",
+		)
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -186,6 +251,19 @@ func (r *ZoneResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Invalid zone state: empty or null zone ID",
+			"The cloudflare_zone resource has an empty or null ID in its Terraform state. "+
+				"This can occur when state becomes corrupted or a zone is removed from state manually.\n\n"+
+				"The provider is halting intentionally to avoid unsafe changes to dependent resources.\n\n"+
+				"To recover, re-import the zone:\n"+
+				"  terraform import cloudflare_zone.<name> <zone_id>\n"+
+				"then run terraform plan again.",
+		)
 		return
 	}
 
@@ -242,9 +320,45 @@ func (r *ZoneResource) ImportState(ctx context.Context, req resource.ImportState
 	}
 	data = &env.Result
 
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Zone API returned empty or null zone ID",
+			"The Cloudflare API returned a zone response with an empty or null zone ID. "+
+				"This is unexpected and may indicate a transient API error.\n\n"+
+				"The provider is halting to prevent writing invalid state that could cause "+
+				"dependent zone-scoped resources to be incorrectly replaced or destroyed.\n\n"+
+				"Please try running the operation again. If the problem persists, "+
+				"contact Cloudflare support.",
+		)
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZoneResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZoneResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Skip during resource creation — prior state is null.
+	if req.State.Raw.IsNull() {
+		return
+	}
 
+	var state ZoneModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if state.ID.IsNull() || state.ID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Invalid zone state: empty or null zone ID",
+			"The cloudflare_zone resource has an empty or null ID in its Terraform state. "+
+				"This can occur when state becomes corrupted or a zone is removed from state manually.\n\n"+
+				"Proceeding with an empty or null zone ID could allow dependent zone-scoped resources "+
+				"to be incorrectly replaced or destroyed.\n\n"+
+				"The provider is halting intentionally to avoid unsafe changes to dependent resources.\n\n"+
+				"To recover, re-import the zone:\n"+
+				"  terraform import cloudflare_zone.<name> <zone_id>\n"+
+				"then run terraform plan again.",
+		)
+	}
 }
