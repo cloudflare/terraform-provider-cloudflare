@@ -1053,7 +1053,9 @@ var updateTests = map[string]struct {
 			},
 		},
 		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
-		``,
+		// MarshalForPatch returns {} (not nil) at the root when nothing changed,
+		// so the caller always has a valid JSON body to send.
+		`{}`,
 	},
 
 	"nested value changed in nested struct": {
@@ -1286,8 +1288,10 @@ var updateTests = map[string]struct {
 		},
 		// Expected result: only values with "encode_state_for_unknown" are encoded
 		`{"computed_optional_state_encode":"computed optional from state","computed_state_encode":"computed value 2"}`,
+		// MarshalForPatch returns {} (not nil) at the root when all fields are unknown,
+		// so the caller always has a valid JSON body to send.
 		// NOTE: force_encode should probably override patch behavior, but we don't support that for now
-		``,
+		`{}`,
 	},
 
 	"encode_state_for_unknown with known plan": {
@@ -1332,7 +1336,9 @@ var updateTests = map[string]struct {
 		},
 		// Don't copy null fields from state
 		`{}`,
-		``,
+		// MarshalForPatch returns {} (not nil) at the root when all fields are unknown,
+		// so the caller always has a valid JSON body to send.
+		`{}`,
 	},
 }
 
@@ -1358,6 +1364,46 @@ func TestUpdateEncoding(t *testing.T) {
 				}
 			})
 		})
+	}
+}
+
+// TestMarshalForPatch_AllFieldsUnknown tests that MarshalForPatch returns an
+// empty JSON object (not nil) when every serialisable field in the plan is
+// unknown. This situation arises during Terraform applies where the only
+// pending diff is a computed_optional field that is "known after apply" — no
+// real user change has been made, but Terraform still calls Update. Returning
+// nil bytes would produce an empty HTTP request body and cause a 400 from the
+// API. Returning "{}" lets the server treat it as a no-op PATCH.
+func TestMarshalForPatch_AllFieldsUnknown(t *testing.T) {
+	// EncodeStateForUnknownStruct has computed_optional fields (ComputedOptionalRegular,
+	// ComputedOptionalWithStateEncode) alongside a normal field and computed fields.
+	// Set every field to unknown in the plan, leaving the state with real values.
+	plan := EncodeStateForUnknownStruct{
+		NormalField:                     types.StringUnknown(),
+		ComputedWithForceEncode:         types.StringUnknown(),
+		ComputedWithStateEncode:         types.StringUnknown(),
+		ComputedOptionalWithStateEncode: types.StringUnknown(),
+		ComputedOptionalRegular:         types.StringUnknown(),
+		ComputedRegular:                 types.StringUnknown(),
+	}
+	state := EncodeStateForUnknownStruct{
+		NormalField:                     types.StringValue("old normal"),
+		ComputedWithForceEncode:         types.StringValue("old force"),
+		ComputedWithStateEncode:         types.StringValue("old state encode"),
+		ComputedOptionalWithStateEncode: types.StringValue("old opt state encode"),
+		ComputedOptionalRegular:         types.StringValue("old opt regular"),
+		ComputedRegular:                 types.StringValue("old computed"),
+	}
+
+	raw, err := MarshalForPatch(plan, state)
+	if err != nil {
+		t.Fatalf("MarshalForPatch failed: %v", err)
+	}
+	if raw == nil {
+		t.Fatal("MarshalForPatch returned nil; expected '{}' so the caller has a valid request body")
+	}
+	if string(raw) != "{}" {
+		t.Fatalf("expected '{}' but got %s", string(raw))
 	}
 }
 
