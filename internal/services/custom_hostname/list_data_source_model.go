@@ -18,14 +18,18 @@ type CustomHostnamesResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnamesDataSourceModel struct {
-	ZoneID    types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
-	Direction types.String                                                       `tfsdk:"direction" query:"direction,optional"`
-	Hostname  types.String                                                       `tfsdk:"hostname" query:"hostname,optional"`
-	ID        types.String                                                       `tfsdk:"id" query:"id,optional"`
-	SSL       types.Float64                                                      `tfsdk:"ssl" query:"ssl,optional"`
-	Order     types.String                                                       `tfsdk:"order" query:"order,computed_optional"`
-	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`
+	ZoneID               types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	CertificateAuthority types.String                                                       `tfsdk:"certificate_authority" query:"certificate_authority,optional"`
+	Direction            types.String                                                       `tfsdk:"direction" query:"direction,optional"`
+	HostnameStatus       types.String                                                       `tfsdk:"hostname_status" query:"hostname_status,optional"`
+	ID                   types.String                                                       `tfsdk:"id" query:"id,optional"`
+	SSL                  types.Float64                                                      `tfsdk:"ssl" query:"ssl,optional"`
+	SSLStatus            types.String                                                       `tfsdk:"ssl_status" query:"ssl_status,optional"`
+	Wildcard             types.Bool                                                         `tfsdk:"wildcard" query:"wildcard,optional"`
+	Hostname             *CustomHostnamesHostnameDataSourceModel                            `tfsdk:"hostname" query:"hostname,optional"`
+	Order                types.String                                                       `tfsdk:"order" query:"order,computed_optional"`
+	MaxItems             types.Int64                                                        `tfsdk:"max_items"`
+	Result               customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
@@ -36,11 +40,21 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}
+	if !m.CertificateAuthority.IsNull() {
+		params.CertificateAuthority = cloudflare.F(custom_hostnames.CustomHostnameListParamsCertificateAuthority(m.CertificateAuthority.ValueString()))
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Direction.ValueString()))
 	}
-	if !m.Hostname.IsNull() {
-		params.Hostname = cloudflare.F(m.Hostname.ValueString())
+	if m.Hostname != nil {
+		paramsHostname := custom_hostnames.CustomHostnameListParamsHostname{}
+		if !m.Hostname.Contain.IsNull() {
+			paramsHostname.Contain = cloudflare.F(m.Hostname.Contain.ValueString())
+		}
+		params.Hostname = cloudflare.F(paramsHostname)
+	}
+	if !m.HostnameStatus.IsNull() {
+		params.HostnameStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsHostnameStatus(m.HostnameStatus.ValueString()))
 	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Order.ValueString()))
@@ -48,8 +62,18 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 	if !m.SSL.IsNull() {
 		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.SSL.ValueFloat64()))
 	}
+	if !m.SSLStatus.IsNull() {
+		params.SSLStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSLStatus(m.SSLStatus.ValueString()))
+	}
+	if !m.Wildcard.IsNull() {
+		params.Wildcard = cloudflare.F(m.Wildcard.ValueBool())
+	}
 
 	return
+}
+
+type CustomHostnamesHostnameDataSourceModel struct {
+	Contain types.String `tfsdk:"contain" json:"contain,optional"`
 }
 
 type CustomHostnamesResultDataSourceModel struct {
