@@ -27,12 +27,37 @@ var v4MinimalConfig string
 // This test verifies tf-migrate correctly transforms the config from v4 to v5:
 // - Removes prefix_id field (v4 only)
 // - Removes advertisement field (v4 only)
-// - Adds MIGRATION WARNING comment with instructions for asn/cidr
+// - Adds MIGRATION WARNING comment with instructions for asn/cidr/loa_document_id
 // - Preserves account_id and description fields
 //
-// Note: This test does NOT apply/plan resources (which would require real BYO IP
-// infrastructure with active bindings that cannot be deleted). It only verifies
-// that tf-migrate correctly transforms the configuration files.
+// IMPORTANT: This test only validates config transformation, NOT state migration.
+//
+// Why Config-Only Testing?
+// ------------------------
+// BYO IP Prefix resources have unique constraints that make E2E migration testing
+// impractical:
+//
+// 1. Resources represent real IP addresses owned by users
+// 2. Cloudflare API prevents deletion/recreation (returns: prefix_exists_for_cidr)
+// 3. Critical fields (asn, cidr, loa_document_id) are immutable after creation
+// 4. State upgrade approach fails (sets new required fields to null → plans replacement)
+//
+// Migration Path for Users:
+// -------------------------
+// Users must follow an IMPORT-BASED migration path (not state upgrade):
+//
+// 1. Query Cloudflare API for actual values (asn, cidr, loa_document_id)
+// 2. Update config to v5 format with exact API values
+// 3. Remove from v4 state: terraform state rm cloudflare_byo_ip_prefix.X
+// 4. Import with v5: terraform import cloudflare_byo_ip_prefix.X account/prefix
+// 5. Verify: terraform plan (should show no replacement if values match)
+//
+// See MIGRATION_GUIDE.md for detailed step-by-step instructions.
+//
+// Test Validation:
+// ----------------
+// Manual testing (test_import_with_actual_values.sh) has validated that the
+// import-based migration path works when users provide correct values from the API.
 //
 // State upgrade logic is tested separately in the provider's state upgrader tests.
 func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
