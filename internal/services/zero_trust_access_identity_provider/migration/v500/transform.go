@@ -89,7 +89,7 @@ func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConf
 	if !source.Claims.IsNull() && !source.Claims.IsUnknown() {
 		var v []types.String
 		diags.Append(source.Claims.ElementsAs(ctx, &v, false)...)
-		if !diags.HasError() {
+		if !diags.HasError() && len(v) > 0 {
 			target.Claims = &v
 		}
 	}
@@ -97,7 +97,7 @@ func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConf
 	if !source.Scopes.IsNull() && !source.Scopes.IsUnknown() {
 		var v []types.String
 		diags.Append(source.Scopes.ElementsAs(ctx, &v, false)...)
-		if !diags.HasError() {
+		if !diags.HasError() && len(v) > 0 {
 			target.Scopes = &v
 		}
 	}
@@ -105,7 +105,7 @@ func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConf
 	if !source.Attributes.IsNull() && !source.Attributes.IsUnknown() {
 		var v []types.String
 		diags.Append(source.Attributes.ElementsAs(ctx, &v, false)...)
-		if !diags.HasError() {
+		if !diags.HasError() && len(v) > 0 {
 			target.Attributes = &v
 		}
 	}

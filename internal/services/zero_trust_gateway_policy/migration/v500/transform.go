@@ -47,8 +47,8 @@ func Transform(ctx context.Context, source *SourceCloudflareTeamsRuleModel) (*Ta
 		Traffic:       source.Traffic,
 		Identity:      source.Identity,
 		DevicePosture: source.DevicePosture,
-		Precedence:    source.Precedence,  // Direct copy - both are types.Int64
-		Version:       source.Version,     // Direct copy - both are types.Int64
+		Precedence:    normalizeGatewayPolicyPrecedence(source.Precedence),
+		Version:       source.Version, // Direct copy - both are types.Int64
 	}
 
 	// Step 3: Handle description (Required in v4, Optional in v5)
@@ -100,20 +100,36 @@ func Transform(ctx context.Context, source *SourceCloudflareTeamsRuleModel) (*Ta
 	return target, diags
 }
 
+func normalizeGatewayPolicyPrecedence(v types.Int64) types.Int64 {
+	if v.IsNull() || v.IsUnknown() {
+		return v
+	}
+
+	value := v.ValueInt64()
+	// v4 API-backed state may persist precedence with a three-digit suffix
+	// (e.g. 400412 for configured 400). During migration we normalize to
+	// user-configured precedence when this suffix encoding is detected.
+	if value >= 10000 {
+		return types.Int64Value(value / 1000)
+	}
+
+	return v
+}
+
 // transformRuleSettings converts v4 rule_settings (nested block) to v5 rule_settings (nested object).
 func transformRuleSettings(ctx context.Context, source *SourceRuleSettingsModel) (*TargetRuleSettingsModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	target := &TargetRuleSettingsModel{
 		// Direct scalar field copies
-		BlockPageEnabled:              source.BlockPageEnabled,
-		OverrideHost:                  source.OverrideHost,
-		IPCategories:                  source.IPCategories,
-		IgnoreCNAMECategoryMatches:    source.IgnoreCNAMECategoryMatches,
-		AllowChildBypass:              source.AllowChildBypass,
-		BypassParentRule:              source.BypassParentRule,
+		BlockPageEnabled:                source.BlockPageEnabled,
+		OverrideHost:                    source.OverrideHost,
+		IPCategories:                    source.IPCategories,
+		IgnoreCNAMECategoryMatches:      source.IgnoreCNAMECategoryMatches,
+		AllowChildBypass:                source.AllowChildBypass,
+		BypassParentRule:                normalizeGatewayPolicyFalseBoolToNull(source.BypassParentRule),
 		InsecureDisableDNSSECValidation: source.InsecureDisableDNSSECValidation,
-		ResolveDNSThroughCloudflare:   source.ResolveDNSThroughCloudflare,
+		ResolveDNSThroughCloudflare:     source.ResolveDNSThroughCloudflare,
 	}
 
 	// Field rename: block_page_reason → block_reason
@@ -200,6 +216,16 @@ func transformRuleSettings(ctx context.Context, source *SourceRuleSettingsModel)
 	return target, diags
 }
 
+func normalizeGatewayPolicyFalseBoolToNull(v types.Bool) types.Bool {
+	if v.IsNull() || v.IsUnknown() {
+		return v
+	}
+	if !v.ValueBool() {
+		return types.BoolNull()
+	}
+	return v
+}
+
 // Helper transformation functions for nested structures
 
 func transformAuditSSH(source *SourceAuditSSHModel) *TargetAuditSSHModel {
@@ -237,10 +263,10 @@ func transformBISOAdminControls(source *SourceBISOAdminControlsModel) (*TargetBI
 
 		// v1 fields: Rename from disable_* to shortened versions
 		DP:  source.DisablePrinting,  // disable_printing → dp
-		DCP: source.DisableCopyPaste,  // disable_copy_paste → dcp
-		DD:  source.DisableDownload,   // disable_download → dd
-		DK:  source.DisableKeyboard,   // disable_keyboard → dk
-		DU:  source.DisableUpload,     // disable_upload → du
+		DCP: source.DisableCopyPaste, // disable_copy_paste → dcp
+		DD:  source.DisableDownload,  // disable_download → dd
+		DK:  source.DisableKeyboard,  // disable_keyboard → dk
+		DU:  source.DisableUpload,    // disable_upload → du
 		// disable_clipboard_redirection intentionally dropped (no v5 equivalent)
 
 		// v2 fields: Copy unchanged
@@ -302,7 +328,7 @@ func transformNotificationSettings(source *SourceNotificationSettingsModel) *Tar
 	// Field rename: message → msg
 	return &TargetNotificationSettingsModel{
 		Enabled:    source.Enabled,
-		Msg:        source.Message,  // RENAMED: message → msg
+		Msg:        source.Message, // RENAMED: message → msg
 		SupportURL: source.SupportURL,
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -34,7 +35,7 @@ func Transform(ctx context.Context, v4 SourceAccessPolicyModel) (*TargetAccessPo
 		SessionDuration:              v4.SessionDuration,
 		IsolationRequired:            normalizeBoolFalseToNull(v4.IsolationRequired),
 		PurposeJustificationRequired: normalizeBoolFalseToNull(v4.PurposeJustificationRequired),
-		PurposeJustificationPrompt:   v4.PurposeJustificationPrompt,
+		PurposeJustificationPrompt:   migrations.FalseyStringToNull(v4.PurposeJustificationPrompt),
 		ApprovalRequired:             normalizeBoolFalseToNull(v4.ApprovalRequired),
 	}
 

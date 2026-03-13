@@ -110,7 +110,9 @@ func transformInput(ctx context.Context, source SourceInputModel) (*TargetInputM
 		if diags.HasError() {
 			return nil, diags
 		}
-		target.CheckDisks = &elements
+		if len(elements) > 0 {
+			target.CheckDisks = &elements
+		}
 	}
 
 	// Convert extended_key_usage: types.List → *[]types.String
@@ -120,7 +122,9 @@ func transformInput(ctx context.Context, source SourceInputModel) (*TargetInputM
 		if diags.HasError() {
 			return nil, diags
 		}
-		target.ExtendedKeyUsage = &elements
+		if len(elements) > 0 {
+			target.ExtendedKeyUsage = &elements
+		}
 	}
 
 	// Convert subject_alternative_names: types.List → *[]types.String
