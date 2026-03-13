@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -50,7 +51,7 @@ func Transform(ctx context.Context, source SourceHealthcheckModel) (*TargetHealt
 		ID:                   source.ID,
 		ZoneID:               source.ZoneID,
 		Name:                 source.Name,
-		Description:          source.Description,
+		Description:          migrations.FalseyStringToNull(source.Description),
 		Address:              source.Address,
 		Type:                 source.Type,
 		Suspended:            source.Suspended,
@@ -122,10 +123,10 @@ func Transform(ctx context.Context, source SourceHealthcheckModel) (*TargetHealt
 		target.HTTPConfig = httpConfig
 
 		tflog.Debug(ctx, "Created http_config", map[string]interface{}{
-			"has_method":   !source.Method.IsNull(),
-			"has_port":     !source.Port.IsNull(),
-			"has_path":     !source.Path.IsNull(),
-			"has_headers":  !source.Header.IsNull(),
+			"has_method":  !source.Method.IsNull(),
+			"has_port":    !source.Port.IsNull(),
+			"has_path":    !source.Path.IsNull(),
+			"has_headers": !source.Header.IsNull(),
 		})
 	}
 
@@ -205,10 +206,12 @@ func transformTCPConfig(ctx context.Context, source SourceHealthcheckModel) (cus
 // transformHeaderSetToMap converts v4 header Set structure to v5 Map structure.
 //
 // v4 format (Set of objects):
-//   [{header: "Host", values: ["example.com"]}, {header: "User-Agent", values: ["Bot"]}]
+//
+//	[{header: "Host", values: ["example.com"]}, {header: "User-Agent", values: ["Bot"]}]
 //
 // v5 format (Map):
-//   {"Host": ["example.com"], "User-Agent": ["Bot"]}
+//
+//	{"Host": ["example.com"], "User-Agent": ["Bot"]}
 //
 // Returns nil if source header Set is null/empty.
 func transformHeaderSetToMap(ctx context.Context, headerSet types.Set) (*map[string]*[]types.String, diag.Diagnostics) {

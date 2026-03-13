@@ -29,25 +29,32 @@ func (r *ZeroTrustAccessApplicationResource) MoveState(ctx context.Context) []re
 }
 
 // UpgradeState handles schema version upgrades.
-// Both v4 cloudflare_access_application and early v5 cloudflare_zero_trust_access_application have schema_version=0.
 //
-// We use v5Schema at version 0, which means:
-// - Early v5 state (v5.12-v5.15): works correctly, passes through as no-op
-// - v4 state via `terraform state mv`: will FAIL (schema mismatch)
+// State upgrade paths:
+// 1. v4 state with schema_version=0 (from tf-migrate renaming type but not transforming attributes)
+//   - Uses v4Schema to parse the state
+//   - Performs full v4→v5 transformation (same as MoveFromAccessApplication)
 //
-// For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
+// 2. Early v5 state with schema_version=1 (v5.12-v5.18)
+//   - Uses v5Schema since state is already in v5 format
+//   - No-op upgrade, just passes through
+//
+// Note: Early v5 (v5.12-v5.15) also had schema_version=0, but the resource type was
+// cloudflare_zero_trust_access_application with v5-format attributes. However, tf-migrate
+// produces state with the v5 type but v4-format attributes, so we use v4Schema for version 0.
 func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 
+	v4Schema := v500.SourceAccessApplicationSchema()
 	v5Schema := ResourceSchema(ctx)
 	return map[int64]resource.StateUpgrader{
-		// Handle early v5 state with schema_version=0 (v5.12-v5.15)
-		// Uses v5Schema - only works for v5 format, NOT v4
-		// v4 migration must use `moved` blocks which go through MoveState
+		// Handle v4-format state with schema_version=0
+		// This occurs when tf-migrate renames the resource type but doesn't transform attributes
+		// Uses v4Schema to parse state, then performs full v4→v5 transformation
 		0: {
-			PriorSchema:   &v5Schema,
+			PriorSchema:   &v4Schema,
 			StateUpgrader: v500.UpgradeFromV0,
 		},
-		// Handle upgrades from v5 with schema_version=1
+		// Handle upgrades from v5 with schema_version=1 (v5.12-v5.18)
 		// This is a no-op since the schema is compatible.
 		1: {
 			PriorSchema:   &v5Schema,

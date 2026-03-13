@@ -4,10 +4,25 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+// normalizeBoolFalseToNull converts false boolean values to null.
+// The v5 provider's API treats false and null as equivalent for these optional boolean fields.
+// By normalizing false to null during migration, we prevent drift after the v5 provider refreshes state.
+func normalizeBoolFalseToNull(b types.Bool) types.Bool {
+	if b.IsNull() || b.IsUnknown() {
+		return b
+	}
+	if !b.ValueBool() {
+		// false -> null (they are semantically equivalent)
+		return types.BoolNull()
+	}
+	return b
+}
 
 // Transform converts a v4 cloudflare_access_application state to v5 cloudflare_zero_trust_access_application state.
 func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAccessApplicationModel, diag.Diagnostics) {
@@ -20,25 +35,25 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 		Name:                     v4.Name,
 		Domain:                   v4.Domain,
 		SessionDuration:          v4.SessionDuration,
-		AutoRedirectToIdentity:   v4.AutoRedirectToIdentity,
-		EnableBindingCookie:      v4.EnableBindingCookie,
-		HTTPOnlyCookieAttribute:  v4.HTTPOnlyCookieAttribute,
-		SameSiteCookieAttribute:  v4.SameSiteCookieAttribute,
-		LogoURL:                  v4.LogoURL,
-		SkipInterstitial:         v4.SkipInterstitial,
+		AutoRedirectToIdentity:   normalizeBoolFalseToNull(v4.AutoRedirectToIdentity),
+		EnableBindingCookie:      normalizeBoolFalseToNull(v4.EnableBindingCookie),
+		HTTPOnlyCookieAttribute:  normalizeBoolFalseToNull(v4.HTTPOnlyCookieAttribute),
+		SameSiteCookieAttribute:  migrations.FalseyStringToNull(v4.SameSiteCookieAttribute),
+		LogoURL:                  migrations.FalseyStringToNull(v4.LogoURL),
+		SkipInterstitial:         normalizeBoolFalseToNull(v4.SkipInterstitial),
 		AppLauncherVisible:       v4.AppLauncherVisible,
-		ServiceAuth401Redirect:   v4.ServiceAuth401Redirect,
-		CustomDenyMessage:        v4.CustomDenyMessage,
-		CustomDenyURL:            v4.CustomDenyURL,
-		CustomNonIdentityDenyURL: v4.CustomNonIdentityDenyURL,
-		OptionsPreflightBypass:   v4.OptionsPreflightBypass,
-		PathCookieAttribute:      v4.PathCookieAttribute,
+		ServiceAuth401Redirect:   normalizeBoolFalseToNull(v4.ServiceAuth401Redirect),
+		CustomDenyMessage:        migrations.FalseyStringToNull(v4.CustomDenyMessage),
+		CustomDenyURL:            migrations.FalseyStringToNull(v4.CustomDenyURL),
+		CustomNonIdentityDenyURL: migrations.FalseyStringToNull(v4.CustomNonIdentityDenyURL),
+		OptionsPreflightBypass:   normalizeBoolFalseToNull(v4.OptionsPreflightBypass),
+		PathCookieAttribute:      normalizeBoolFalseToNull(v4.PathCookieAttribute),
 		AUD:                      v4.AUD,
-		AppLauncherLogoURL:       v4.AppLauncherLogoURL,
-		HeaderBgColor:            v4.HeaderBgColor,
-		BgColor:                  v4.BgColor,
-		SkipAppLauncherLoginPage: v4.SkipAppLauncherLoginPage,
-		AllowAuthenticateViaWARP: v4.AllowAuthenticateViaWARP,
+		AppLauncherLogoURL:       migrations.FalseyStringToNull(v4.AppLauncherLogoURL),
+		HeaderBgColor:            migrations.FalseyStringToNull(v4.HeaderBgColor),
+		BgColor:                  migrations.FalseyStringToNull(v4.BgColor),
+		SkipAppLauncherLoginPage: normalizeBoolFalseToNull(v4.SkipAppLauncherLoginPage),
+		AllowAuthenticateViaWARP: migrations.FalseyBoolToNull(v4.AllowAuthenticateViaWARP),
 	}
 
 	// Type: v4 may not have this, v5 defaults to "self_hosted"
@@ -49,7 +64,8 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 	}
 
 	// AllowedIdPs: v4 Set -> v5 *[]types.String
-	if !v4.AllowedIdPs.IsNull() && !v4.AllowedIdPs.IsUnknown() {
+	// Only set if non-empty; empty arrays should remain null to prevent drift
+	if !v4.AllowedIdPs.IsNull() && !v4.AllowedIdPs.IsUnknown() && len(v4.AllowedIdPs.Elements()) > 0 {
 		allowedIdPs, d := setToStringSlice(ctx, v4.AllowedIdPs)
 		diags.Append(d...)
 		if !diags.HasError() {
@@ -58,7 +74,8 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 	}
 
 	// Tags: v4 Set -> v5 customfield.Set
-	if !v4.Tags.IsNull() && !v4.Tags.IsUnknown() {
+	// Only set if non-empty; empty sets should remain null to prevent drift
+	if !v4.Tags.IsNull() && !v4.Tags.IsUnknown() && len(v4.Tags.Elements()) > 0 {
 		tags, d := setToCustomfieldSet(ctx, v4.Tags)
 		diags.Append(d...)
 		if !diags.HasError() {
@@ -79,7 +96,7 @@ func Transform(ctx context.Context, v4 SourceAccessApplicationModel) (*TargetAcc
 	if !v4.CustomPages.IsNull() && !v4.CustomPages.IsUnknown() {
 		customPages, d := setToStringSlice(ctx, v4.CustomPages)
 		diags.Append(d...)
-		if !diags.HasError() {
+		if !diags.HasError() && customPages != nil {
 			v5.CustomPages = customPages
 		}
 	}
@@ -180,6 +197,9 @@ func setToStringSlice(ctx context.Context, set types.Set) (*[]types.String, diag
 	if diags.HasError() {
 		return nil, diags
 	}
+	if len(values) == 0 {
+		return nil, diags
+	}
 	result := make([]types.String, len(values))
 	for i, v := range values {
 		result[i] = types.StringValue(v)
@@ -206,9 +226,9 @@ func transformCORSHeaders(ctx context.Context, v4 SourceCORSHeadersModel) (*Targ
 	var diags diag.Diagnostics
 
 	v5 := &TargetCORSHeadersModel{
-		AllowAllHeaders:  v4.AllowAllHeaders,
-		AllowAllMethods:  v4.AllowAllMethods,
-		AllowAllOrigins:  v4.AllowAllOrigins,
+		AllowAllHeaders:  normalizeBoolFalseToNull(v4.AllowAllHeaders),
+		AllowAllMethods:  normalizeBoolFalseToNull(v4.AllowAllMethods),
+		AllowAllOrigins:  normalizeBoolFalseToNull(v4.AllowAllOrigins),
 		AllowCredentials: v4.AllowCredentials,
 	}
 
@@ -221,7 +241,7 @@ func transformCORSHeaders(ctx context.Context, v4 SourceCORSHeadersModel) (*Targ
 	if !v4.AllowedHeaders.IsNull() && !v4.AllowedHeaders.IsUnknown() {
 		headers, d := setToStringSlice(ctx, v4.AllowedHeaders)
 		diags.Append(d...)
-		if !diags.HasError() {
+		if !diags.HasError() && headers != nil {
 			v5.AllowedHeaders = headers
 		}
 	}
@@ -230,7 +250,7 @@ func transformCORSHeaders(ctx context.Context, v4 SourceCORSHeadersModel) (*Targ
 	if !v4.AllowedMethods.IsNull() && !v4.AllowedMethods.IsUnknown() {
 		methods, d := setToStringSlice(ctx, v4.AllowedMethods)
 		diags.Append(d...)
-		if !diags.HasError() {
+		if !diags.HasError() && methods != nil {
 			v5.AllowedMethods = methods
 		}
 	}
@@ -239,7 +259,7 @@ func transformCORSHeaders(ctx context.Context, v4 SourceCORSHeadersModel) (*Targ
 	if !v4.AllowedOrigins.IsNull() && !v4.AllowedOrigins.IsUnknown() {
 		origins, d := setToStringSlice(ctx, v4.AllowedOrigins)
 		diags.Append(d...)
-		if !diags.HasError() {
+		if !diags.HasError() && origins != nil {
 			v5.AllowedOrigins = origins
 		}
 	}
@@ -266,7 +286,7 @@ func transformSaaSApp(ctx context.Context, v4 SourceSaaSAppModel) (*TargetSaaSAp
 		ClientID:                      v4.ClientID,
 		ClientSecret:                  v4.ClientSecret,
 		AccessTokenLifetime:           v4.AccessTokenLifetime,
-		AllowPKCEWithoutClientSecret:  v4.AllowPKCEWithoutSecret,
+		AllowPKCEWithoutClientSecret:  normalizeBoolFalseToNull(v4.AllowPKCEWithoutSecret),
 		GroupFilterRegex:              v4.GroupFilterRegex,
 	}
 

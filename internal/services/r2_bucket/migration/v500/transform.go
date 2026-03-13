@@ -11,9 +11,10 @@ import (
 //
 // For r2_bucket, this transformation:
 // 1. Copies all 4 existing fields unchanged (id, name, account_id, location)
-// 2. Sets new Optional+Computed fields to null (jurisdiction, storage_class)
-//    - Schema defaults will apply these on next refresh from API
-//    - This avoids drift when migrating v4 buckets that don't have these values set
+// 2. Sets new Optional+Computed fields to their defaults (jurisdiction="default", storage_class="Standard")
+//   - This matches what the API returns for existing buckets
+//   - Prevents drift on first plan after migration
+//
 // 3. Sets computed field to null (creation_date - will be populated by API)
 func Transform(ctx context.Context, source SourceR2BucketModel) (*TargetR2BucketModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -42,11 +43,11 @@ func Transform(ctx context.Context, source SourceR2BucketModel) (*TargetR2Bucket
 		Location:  source.Location,
 	}
 
-	// Set new v5 Optional+Computed fields to null
-	// The schema defaults will handle these values on the next refresh from the API
-	// This prevents drift when migrating v4 buckets that don't have these fields in the API
-	target.Jurisdiction = types.StringNull()
-	target.StorageClass = types.StringNull()
+	// Set new v5 Optional+Computed fields to their API defaults
+	// This matches what the Cloudflare API returns for existing buckets
+	// and prevents drift on first plan after migration
+	target.Jurisdiction = types.StringValue("default")
+	target.StorageClass = types.StringValue("Standard")
 
 	// creation_date: computed field, leave null - API will populate on first refresh
 	target.CreationDate = types.StringNull()
