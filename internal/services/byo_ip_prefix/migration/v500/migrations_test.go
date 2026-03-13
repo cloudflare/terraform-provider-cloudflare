@@ -63,10 +63,15 @@ var v4MinimalConfig string
 func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	// Test data (hardcoded - no need for env vars in config-only test)
-	accountID := "f037e56e89293a057740de681ac9abbe"
-	prefixID := "a64cba4d4b764793ad6208410a652e74"
+	// Test data from environment variables
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	prefixID := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID")
 	rnd := "test"
+
+	// Skip if required environment variables are not set
+	if accountID == "" || prefixID == "" {
+		t.Skip("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BYO_IP_PREFIX_ID must be set for this test")
+	}
 
 	// Prepare v4 config
 	testConfig := fmt.Sprintf(v4BasicConfig, rnd, accountID, prefixID)
@@ -90,9 +95,14 @@ func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
 func TestMigrateBYOIPPrefix_WithAdvertisement(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	accountID := "f037e56e89293a057740de681ac9abbe"
-	prefixID := "a64cba4d4b764793ad6208410a652e74"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	prefixID := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID")
 	rnd := "test"
+
+	// Skip if required environment variables are not set
+	if accountID == "" || prefixID == "" {
+		t.Skip("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BYO_IP_PREFIX_ID must be set for this test")
+	}
 
 	testConfig := fmt.Sprintf(v4WithAdvertisementConfig, rnd, accountID, prefixID, "on")
 
@@ -112,9 +122,14 @@ func TestMigrateBYOIPPrefix_WithAdvertisement(t *testing.T) {
 func TestMigrateBYOIPPrefix_Minimal(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	accountID := "f037e56e89293a057740de681ac9abbe"
-	prefixID := "a64cba4d4b764793ad6208410a652e74"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	prefixID := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID")
 	rnd := "test"
+
+	// Skip if required environment variables are not set
+	if accountID == "" || prefixID == "" {
+		t.Skip("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BYO_IP_PREFIX_ID must be set for this test")
+	}
 
 	testConfig := fmt.Sprintf(v4MinimalConfig, rnd, accountID, prefixID)
 
