@@ -4,20 +4,22 @@ package image_variant
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ImageVariantResultEnvelope struct {
-	Result ImageVariantModel `json:"result"`
+type ImageVariantWriteResultEnvelope struct {
+	Result ImageVariantWriteResult `json:"result"`
+}
+
+type ImageVariantWriteResult struct {
+	Variant ImageVariantModel `json:"variant"`
 }
 
 type ImageVariantModel struct {
-	ID                     types.String                                       `tfsdk:"id" json:"id,required"`
-	AccountID              types.String                                       `tfsdk:"account_id" path:"account_id,required"`
-	Options                *ImageVariantOptionsModel                          `tfsdk:"options" json:"options,required,no_refresh"`
-	NeverRequireSignedURLs types.Bool                                         `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed_optional,no_refresh"`
-	Variant                customfield.NestedObject[ImageVariantVariantModel] `tfsdk:"variant" json:"variant,computed"`
+	ID                     types.String              `tfsdk:"id" json:"id,required"`
+	AccountID              types.String              `tfsdk:"account_id" path:"account_id,required"`
+	Options                *ImageVariantOptionsModel `tfsdk:"options" json:"options,required"`
+	NeverRequireSignedURLs types.Bool                `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed_optional"`
 }
 
 func (m ImageVariantModel) MarshalJSON() (data []byte, err error) {
@@ -33,17 +35,4 @@ type ImageVariantOptionsModel struct {
 	Height   types.Float64 `tfsdk:"height" json:"height,required"`
 	Metadata types.String  `tfsdk:"metadata" json:"metadata,required"`
 	Width    types.Float64 `tfsdk:"width" json:"width,required"`
-}
-
-type ImageVariantVariantModel struct {
-	ID                     types.String                                              `tfsdk:"id" json:"id,computed"`
-	Options                customfield.NestedObject[ImageVariantVariantOptionsModel] `tfsdk:"options" json:"options,computed"`
-	NeverRequireSignedURLs types.Bool                                                `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed"`
-}
-
-type ImageVariantVariantOptionsModel struct {
-	Fit      types.String  `tfsdk:"fit" json:"fit,computed"`
-	Height   types.Float64 `tfsdk:"height" json:"height,computed"`
-	Metadata types.String  `tfsdk:"metadata" json:"metadata,computed"`
-	Width    types.Float64 `tfsdk:"width" json:"width,computed"`
 }
