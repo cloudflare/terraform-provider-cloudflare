@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_access_mtls_certificate: changing `certificate` now correctly forces recreation of the resource instead of a silent no-op update
+```

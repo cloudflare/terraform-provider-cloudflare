@@ -5,8 +5,8 @@ description: |-
   Provides a Cloudflare Access Mutual TLS Certificate resource.
   Mutual TLS authentication ensures that the traffic is secure and
   trusted in both directions between a client and server and can be
-   used with Access to only allows requests from devices with a
-   corresponding client certificate.
+  used with Access to only allows requests from devices with a
+  corresponding client certificate.
 ---
 
 # cloudflare_access_mutual_tls_certificate (Resource)
@@ -44,7 +44,7 @@ resource "cloudflare_access_mutual_tls_certificate" "my_cert" {
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
 - `associated_hostnames` (Set of String) The hostnames that will be prompted for this certificate.
-- `certificate` (String) The Root CA for your certificates.
+- `certificate` (String) The Root CA for your certificates. **Modifying this attribute will force creation of a new resource.**
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only

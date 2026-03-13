@@ -29,6 +29,7 @@ func resourceCloudflareAccessMutualTLSCertificateSchema() map[string]*schema.Sch
 		"certificate": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "The Root CA for your certificates.",
 		},
 		"associated_hostnames": {
