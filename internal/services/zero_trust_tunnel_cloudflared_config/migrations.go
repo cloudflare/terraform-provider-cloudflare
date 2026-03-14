@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_config/migration/v500"
 )
@@ -39,10 +38,6 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) MoveState(ctx context.Context
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
 // 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustTunnelCloudflaredConfigResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	// version=0 schema used by published v5 releases.
-	v5SchemaVersion0 := ResourceSchema(ctx)
-	v5SchemaVersion0.Version = 0
-
 	// v5 schema for version=1 upgrader (override version to match production state)
 	v5SchemaVersion1 := ResourceSchema(ctx)
 	v5SchemaVersion1.Version = 1
@@ -52,11 +47,11 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) UpgradeState(ctx context.Cont
 		// - v4 SDKv2 state (config as list) -> full transform
 		// - early v5 published state (config as object) -> no-op version bump (+ normalization)
 		//
-		// PriorSchema must be nil because v4 and v5 shapes are incompatible for `config`.
-		// Handler inspects req.RawState to detect and decode the right format.
+		// PriorSchema is nil to avoid brittle dual-shape schema decoding at framework boundary.
+		// Dispatcher handles v5 decode locally and delegates v4 transform to migration package.
 		0: {
 			PriorSchema:   nil,
-			StateUpgrader: v500.UpgradeFromV0,
+			StateUpgrader: upgradeFromV0,
 		},
 
 		// Handle state from v5 Plugin Framework provider (version=1)
@@ -68,10 +63,23 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) UpgradeState(ctx context.Cont
 	}
 }
 
-func init() {
-	v500.V5SchemaV0 = func(ctx context.Context) *schema.Schema {
-		s := ResourceSchema(ctx)
-		s.Version = 0
-		return &s
+func upgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	if req.RawState == nil {
+		resp.Diagnostics.AddError("Missing raw state", "RawState was nil for schema version 0 migration")
+		return
 	}
+
+	// Try decoding as early v5 (version=0) first.
+	// If this succeeds, state is already v5-shaped and can be passed through.
+	v5SchemaVersion0 := ResourceSchema(ctx)
+	v5SchemaVersion0.Version = 0
+	v5Type := v5SchemaVersion0.Type().TerraformType(ctx)
+	v5RawValue, err := req.RawState.Unmarshal(v5Type)
+	if err == nil {
+		resp.State.Raw = v5RawValue
+		return
+	}
+
+	// Not decodable as v5 version=0; treat as v4 SDKv2 and transform.
+	v500.UpgradeFromV0(ctx, req, resp)
 }

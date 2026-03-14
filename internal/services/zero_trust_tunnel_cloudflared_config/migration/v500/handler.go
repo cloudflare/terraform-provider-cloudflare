@@ -2,66 +2,41 @@ package v500
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// V5SchemaV0 is set by parent package init() to avoid circular imports.
-// It returns the v5 schema with Version=0 for decoding early published v5 state.
-var V5SchemaV0 func(context.Context) *schema.Schema
-
-// UpgradeFromV0 handles schema version 0 states, which may be either:
-// - v4 SDKv2 format (list-based nested blocks)
-// - early v5 format (object-based nested blocks)
+// UpgradeFromV0 handles v4 SDKv2 schema version 0 states.
+//
+// NOTE: early v5 version=0 state is handled by the parent package dispatcher
+// (internal/services/zero_trust_tunnel_cloudflared_config/migrations.go) to avoid
+// init()-based callback wiring and keep migration flow explicit.
 func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	if req.RawState == nil {
 		resp.Diagnostics.AddError("Missing raw state", "RawState was nil for schema version 0 migration")
 		return
 	}
 
-	isV4, detectErr := detectV4State(req)
-	if detectErr != nil {
-		resp.Diagnostics.AddError("Failed to detect state format", fmt.Sprintf("Could not determine v4 vs v5 state: %s", detectErr))
-		return
-	}
-
-	if isV4 {
-		tflog.Info(ctx, "Detected v4 SDKv2 state at version=0, performing v4->v5 transform")
-		var v4State SourceV4TunnelConfigModel
-		v4Diags := unmarshalV4State(ctx, req.RawState, &v4State)
-		resp.Diagnostics.Append(v4Diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		v5State, diags := Transform(ctx, v4State)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
-		tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
-		return
-	}
-
-	tflog.Info(ctx, "Detected early v5 state at version=0, performing version bump")
-	state, v5Diags := unmarshalV5StateV0(ctx, req.RawState)
-	resp.Diagnostics.Append(v5Diags...)
+	tflog.Info(ctx, "Upgrading zero_trust_tunnel_cloudflared_config state from v4 SDKv2 provider (schema_version=0)")
+	var v4State SourceV4TunnelConfigModel
+	v4Diags := unmarshalV4State(ctx, req.RawState, &v4State)
+	resp.Diagnostics.Append(v4Diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	normalizeV5State(state)
-	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-	tflog.Info(ctx, "State version bump from 0 to 500 completed")
+	v5State, diags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
+	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
 }
 
 // UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
@@ -138,24 +113,6 @@ func normalizeV5State(state *TargetV5TunnelConfigModel) {
 	}
 }
 
-func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
-	if req.RawState != nil && len(req.RawState.JSON) > 0 {
-		var rawJSON map[string]interface{}
-		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
-			if configRaw, ok := rawJSON["config"]; ok {
-				switch configRaw.(type) {
-				case []interface{}:
-					return true, nil
-				case map[string]interface{}:
-					return false, nil
-				}
-			}
-		}
-	}
-
-	return false, fmt.Errorf("unable to determine state format from raw state")
-}
-
 func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target *SourceV4TunnelConfigModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -171,32 +128,6 @@ func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target 
 	state := tfsdk.State{Raw: rawValue, Schema: sourceSchema}
 	diags.Append(state.Get(ctx, target)...)
 	return diags
-}
-
-func unmarshalV5StateV0(ctx context.Context, rawState *tfprotov6.RawState) (*TargetV5TunnelConfigModel, diag.Diagnostics) {
-	var diags diag.Diagnostics
-	if V5SchemaV0 == nil {
-		diags.AddError("V5 schema initializer missing", "V5SchemaV0 was not configured")
-		return nil, diags
-	}
-
-	v5Schema := V5SchemaV0(ctx)
-	v5Type := v5Schema.Type().TerraformType(ctx)
-
-	rawValue, err := rawState.Unmarshal(v5Type)
-	if err != nil {
-		diags.AddError("Failed to unmarshal v5 state", "Could not parse raw state as v5 format: "+err.Error())
-		return nil, diags
-	}
-
-	state := tfsdk.State{Raw: rawValue, Schema: *v5Schema}
-	var out TargetV5TunnelConfigModel
-	diags.Append(state.Get(ctx, &out)...)
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	return &out, diags
 }
 
 // isV5OriginRequestAllNull reports whether a v5 config-level origin_request object has all-null fields.
