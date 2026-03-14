@@ -397,9 +397,6 @@ func TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
-				// Note: ExpectNonEmptyPlan is needed due to other known drift issues
-				// (created_on, modified_on, status, failure_reason, tcp_config)
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				// Re-apply same config - verifies expected_body specifically doesn't cause additional drift
@@ -407,7 +404,6 @@ func TestAccCloudflareHealthcheck_ExpectedBodyDefaultNoDiff(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("http_config").AtMapKey("expected_body"), knownvalue.StringExact("")),
 				},
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:            name,
