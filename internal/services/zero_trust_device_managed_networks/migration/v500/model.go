@@ -25,12 +25,12 @@ type SourceConfigModel struct {
 // TargetZeroTrustDeviceManagedNetworksModel represents the target cloudflare_zero_trust_device_managed_networks state structure (v500).
 // Must match zero_trust_device_managed_networks.ZeroTrustDeviceManagedNetworksModel structure exactly.
 type TargetZeroTrustDeviceManagedNetworksModel struct {
-	ID        types.String         `tfsdk:"id"`
-	NetworkID types.String         `tfsdk:"network_id"` // New computed field in v5
-	AccountID types.String         `tfsdk:"account_id"`
-	Name      types.String         `tfsdk:"name"`
-	Type      types.String         `tfsdk:"type"`
-	Config    *TargetConfigModel   `tfsdk:"config"` // SingleNestedAttribute in v5 (stored as object pointer)
+	ID        types.String       `tfsdk:"id"`
+	NetworkID types.String       `tfsdk:"network_id"` // New computed field in v5
+	AccountID types.String       `tfsdk:"account_id"`
+	Name      types.String       `tfsdk:"name"`
+	Type      types.String       `tfsdk:"type"`
+	Config    *TargetConfigModel `tfsdk:"config"` // SingleNestedAttribute in v5 (stored as object pointer)
 }
 
 // TargetConfigModel represents the target config nested object (v500).

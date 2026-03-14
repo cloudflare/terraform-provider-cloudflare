@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -19,31 +20,27 @@ func UpgradeFromV1(
 	resp.State.Raw = req.State.Raw
 }
 
-// UpgradeFromLegacyV0 handles state upgrades from the legacy cloudflare_device_managed_networks resource to cloudflare_zero_trust_device_managed_networks.
-// This is triggered when users manually run `terraform state mv cloudflare_device_managed_networks.x cloudflare_zero_trust_device_managed_networks.x`
-// (Terraform < 1.8), which preserves the source schema_version=0 from the legacy provider.
+// UpgradeFromLegacyV0 handles state upgrades for schema_version=0.
 //
-// Note: schema_version=0 (implicit) was the schema version of cloudflare_device_managed_networks in the legacy (SDKv2) provider
-// before it was renamed. The state structure matches SourceCloudflareDeviceManagedNetworksModel.
+// For this resource we normalize published v5-shaped state that may have been
+// persisted at schema_version=0 by older provider releases.
 func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading state from legacy cloudflare_device_managed_networks (schema_version=0)")
+	tflog.Info(ctx, "Upgrading zero trust device managed networks state from schema_version=0")
 
-	// Parse the state (schema_version=0, source resource type)
-	var sourceState SourceCloudflareDeviceManagedNetworksModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
+	// Parse using v5-shaped model (config object), with schema version pinned to 0 by caller.
+	var state TargetZeroTrustDeviceManagedNetworksModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Transform to target
-	targetState, diags := Transform(ctx, sourceState)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	// Backfill computed network_id from id when absent.
+	if (state.NetworkID.IsNull() || state.NetworkID.IsUnknown()) && !state.ID.IsNull() && !state.ID.IsUnknown() {
+		state.NetworkID = types.StringValue(state.ID.ValueString())
 	}
 
 	// Set the upgraded state
-	resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 
-	tflog.Info(ctx, "State upgrade from legacy cloudflare_device_managed_networks completed successfully")
+	tflog.Info(ctx, "State upgrade from schema_version=0 completed successfully")
 }
