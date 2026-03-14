@@ -202,7 +202,6 @@ func TestMigrateHealthcheck_V4ToV5_HTTPBasic(t *testing.T) {
 						},
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
-						ExpectNonEmptyPlan:       true, // Allow drift, validated by custom checks below
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
 								acctest.DebugNonEmptyPlan,
@@ -346,7 +345,6 @@ func TestMigrateHealthcheck_V4ToV5_HTTPHeaders(t *testing.T) {
 						},
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
-						ExpectNonEmptyPlan:       true, // Allow drift, validated by custom checks below
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
 								acctest.DebugNonEmptyPlan,
@@ -457,7 +455,6 @@ func TestMigrateHealthcheck_V4ToV5_TCP(t *testing.T) {
 						},
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
-						ExpectNonEmptyPlan:       true, // Allow drift, validated by custom checks below
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
 								acctest.DebugNonEmptyPlan,
