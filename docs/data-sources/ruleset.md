@@ -69,12 +69,12 @@ Read-Only:
 - `automatic_https_rewrites` (Boolean) Whether to enable Automatic HTTPS Rewrites.
 - `autominify` (Attributes) Which file extensions to minify automatically. (see [below for nested schema](#nestedatt--rules--action_parameters--autominify))
 - `bic` (Boolean) Whether to enable Browser Integrity Check (BIC).
-- `content_converter` (Boolean) Whether to enable content conversion (e.g., HTML to Markdown).
 - `browser_ttl` (Attributes) How long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content. (see [below for nested schema](#nestedatt--rules--action_parameters--browser_ttl))
 - `cache` (Boolean) Whether the request's response from the origin is eligible for caching. Caching itself will still depend on the cache control header and your other caching configurations.
 - `cache_key` (Attributes) Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
 - `cache_reserve` (Attributes) Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
 - `content` (String) The response content.
+- `content_converter` (Boolean) Whether to enable content conversion (e.g., HTML to Markdown).
 - `content_type` (String) The content type header to set with the error response.
 Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))
