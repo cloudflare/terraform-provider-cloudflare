@@ -24,6 +24,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"enforce_dns_only": schema.BoolAttribute{
+				Description: "Whether to enforce DNS-only records for the entire account.",
+				Optional:    true,
+			},
 			"zone_defaults": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
