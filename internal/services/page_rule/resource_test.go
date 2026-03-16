@@ -818,6 +818,8 @@ func TestAccCloudflarePageRule_BrowserCheckOnOff(t *testing.T) {
 }
 
 func TestAccCloudflarePageRule_AutomaticHTTPSRewritesOnOff(t *testing.T) {
+	t.Skip("API Error: Invalid setting automatic_https_rewrites")
+
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

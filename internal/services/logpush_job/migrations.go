@@ -5,33 +5,54 @@ package logpush_job
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-
 	v500 "github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job/migration/v500"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
+
+func init() {
+	// Provide target schema to migration package (avoids circular import)
+	v500.V5TargetSchema = func(ctx context.Context) schema.Schema {
+		return ResourceSchema(ctx)
+	}
+}
 
 var _ resource.ResourceWithUpgradeState = (*LogpushJobResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// This handles two upgrade paths:
+// This handles three upgrade paths:
 // 1. v4 state (schema_version=0) → v5 (version=500): Full transformation
-// 2. v5 state (version=1) → v5 (version=500): No-op upgrade
+//   - output_options stored as ARRAY (ListNestedAttribute) → OBJECT (SingleNestedAttribute)
+//
+// 2. v5.16.0 state (schema_version=0) → v5 (version=500): No-op upgrade
+//   - v5.16.0 was released with dormant state upgrader (no GetSchemaVersion)
+//   - State already has output_options as object, no transformation needed
+//
+// 3. v5 state (version=1) → v5 (version=500): No-op upgrade
+//
+// IMPORTANT: Both v4 and v5.16.0 have schema_version=0, so the version 0
+// upgrader must detect the format at runtime by inspecting the raw state.
 func (r *LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
-	sourceSchema := v500.SourceCloudflareLogpushJobSchema()
+	// v5 schema at version=1 for no-op pass-through upgrader
+	v5SchemaVersion1 := ResourceSchema(ctx)
+	v5SchemaVersion1.Version = 1
 
 	return map[int64]resource.StateUpgrader{
-		// Handle state from v4 SDKv2 provider (schema_version=0)
+		// Handle BOTH v4 (schema_version=0) AND v5.16.0 (version=0) states
+		// PriorSchema is nil because v4 and v5 have incompatible schemas:
+		// - v4: output_options as ListNestedAttribute (array)
+		// - v5: output_options as SingleNestedAttribute (object)
+		// Handler uses RawState to detect format and process accordingly.
 		0: {
-			PriorSchema:   &sourceSchema,
-			StateUpgrader: v500.UpgradeFromV4,
+			PriorSchema:   nil, // Use RawState - schemas are incompatible
+			StateUpgrader: v500.UpgradeFromVersion0,
 		},
 
 		// Handle state from v5 Plugin Framework provider with version=1
 		// This is a no-op upgrade that just bumps the version to 500
 		1: {
-			PriorSchema:   &targetSchema,
+			PriorSchema:   &v5SchemaVersion1,
 			StateUpgrader: v500.UpgradeFromV5,
 		},
 	}
