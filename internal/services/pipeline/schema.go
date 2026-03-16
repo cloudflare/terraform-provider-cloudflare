@@ -43,6 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed: true,
 			},
+			"failure_reason": schema.StringAttribute{
+				Description: "Indicates the reason for the failure of the Pipeline.",
+				Computed:    true,
+			},
 			"modified_at": schema.StringAttribute{
 				Computed: true,
 			},
