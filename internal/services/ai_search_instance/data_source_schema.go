@@ -105,7 +105,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"embedding_model": schema.StringAttribute{
-				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -114,6 +114,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"@cf/baai/bge-large-en-v1.5",
 						"@cf/google/embeddinggemma-300m",
 						"google-ai-studio/gemini-embedding-001",
+						"google-ai-studio/gemini-embedding-2-preview",
 						"openai/text-embedding-3-small",
 						"openai/text-embedding-3-large",
 						"",
