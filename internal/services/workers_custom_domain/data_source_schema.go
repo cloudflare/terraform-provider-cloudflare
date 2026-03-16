@@ -17,59 +17,63 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifer of the Worker Domain.",
+				Description: "ID of the domain.",
 				Computed:    true,
 			},
 			"domain_id": schema.StringAttribute{
-				Description: "Identifer of the Worker Domain.",
+				Description: "ID of the domain.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifer of the account.",
+				Description: "Identifier.",
 				Required:    true,
 			},
+			"cert_id": schema.StringAttribute{
+				Description: "ID of the TLS certificate issued for the domain.",
+				Computed:    true,
+			},
 			"environment": schema.StringAttribute{
-				Description:        "Worker environment associated with the zone and hostname.",
+				Description:        "Worker environment associated with the domain.",
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"hostname": schema.StringAttribute{
-				Description: "Hostname of the Worker Domain.",
+				Description: "Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.",
 				Computed:    true,
 			},
 			"service": schema.StringAttribute{
-				Description: "Worker service associated with the zone and hostname.",
+				Description: "Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.",
 				Computed:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier of the zone.",
+				Description: "ID of the zone containing the domain hostname.",
 				Computed:    true,
 			},
 			"zone_name": schema.StringAttribute{
-				Description: "Name of the zone.",
+				Description: "Name of the zone containing the domain hostname.",
 				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"environment": schema.StringAttribute{
-						Description: "Worker environment associated with the zone and hostname.",
+						Description: "Worker environment associated with the domain.",
 						Optional:    true,
 					},
 					"hostname": schema.StringAttribute{
-						Description: "Hostname of the Worker Domain.",
+						Description: "Hostname of the domain.",
 						Optional:    true,
 					},
 					"service": schema.StringAttribute{
-						Description: "Worker service associated with the zone and hostname.",
+						Description: "Name of the Worker associated with the domain.",
 						Optional:    true,
 					},
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier of the zone.",
+						Description: "ID of the zone containing the domain hostname.",
 						Optional:    true,
 					},
 					"zone_name": schema.StringAttribute{
-						Description: "Name of the zone.",
+						Description: "Name of the zone containing the domain hostname.",
 						Optional:    true,
 					},
 				},
