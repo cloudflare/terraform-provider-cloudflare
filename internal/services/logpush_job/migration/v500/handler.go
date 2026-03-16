@@ -46,12 +46,25 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has output_options as array []
-// v5: has output_options as object {}
+// v4: output_options is array [], no "last_complete" field
+// v5: output_options is object {}, has "last_complete" (computed, always present)
+//
+// Detection is deterministic: v5 always has "last_complete" key in state.
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
+			// Check for v5-only computed fields (key exists even if value is null)
+			if _, ok := rawJSON["last_complete"]; ok {
+				return false, nil // v5 format - has v5-only "last_complete" field
+			}
+			if _, ok := rawJSON["last_error"]; ok {
+				return false, nil // v5 format - has v5-only "last_error" field
+			}
+			if _, ok := rawJSON["error_message"]; ok {
+				return false, nil // v5 format - has v5-only "error_message" field
+			}
+
 			// Check if output_options is an array (v4) or object (v5)
 			if outputOptions, ok := rawJSON["output_options"]; ok && outputOptions != nil {
 				if _, isArray := outputOptions.([]interface{}); isArray {
@@ -61,11 +74,13 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - output_options is object
 				}
 			}
-			// Default to v4 if we can't determine
+
+			// If no output_options and no v5 computed fields, it's v4
+			// (v5 would always have last_complete)
 			return true, nil
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

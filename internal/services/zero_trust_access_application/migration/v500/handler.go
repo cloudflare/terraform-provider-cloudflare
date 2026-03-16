@@ -47,12 +47,51 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has cors_headers or saas_app as array []
-// v5: has cors_headers or saas_app as object {}
+// v4: has cors_headers or saas_app as array [], OR has v4-only fields like domain_type
+// v5: has cors_headers or saas_app as object {}, OR has v5-only fields like allow_iframe
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
+			// First, check for v4-only fields that don't exist in v5 schema.
+			// If any of these exist, it's definitely v4 format.
+			v4OnlyFields := []string{
+				"domain_type", // Removed in v5
+			}
+			for _, field := range v4OnlyFields {
+				if _, ok := rawJSON[field]; ok {
+					return true, nil // v4 format - has v4-only field
+				}
+			}
+
+			// Check for v5-only fields that don't exist in v4 schema.
+			// If any of these exist, it's definitely v5 format.
+			v5OnlyFields := []string{
+				"allow_iframe",               // Added in v5.14
+				"read_service_tokens",        // v5-only
+				"app_launcher_customization", // v5-only structure
+				"policies",                   // In v5, this became a list of objects, not strings
+			}
+			for _, field := range v5OnlyFields {
+				if val, ok := rawJSON[field]; ok && val != nil {
+					// For policies, check if it's a list of objects (v5) vs list of strings (v4)
+					if field == "policies" {
+						if arr, isArray := val.([]interface{}); isArray && len(arr) > 0 {
+							// If first element is a map, it's v5 format
+							if _, isMap := arr[0].(map[string]interface{}); isMap {
+								return false, nil // v5 format - policies is list of objects
+							}
+							// If first element is a string, it's v4 format
+							if _, isString := arr[0].(string); isString {
+								return true, nil // v4 format - policies is list of strings
+							}
+						}
+						continue
+					}
+					return false, nil // v5 format - has v5-only field
+				}
+			}
+
 			// Check if cors_headers is an array (v4) or object (v5)
 			if corsHeaders, ok := rawJSON["cors_headers"]; ok && corsHeaders != nil {
 				if _, isArray := corsHeaders.([]interface{}); isArray {
@@ -71,11 +110,30 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - saas_app is object
 				}
 			}
-			// Default to v4 if we can't determine
-			return true, nil
+			// Check scim_config as another indicator
+			if scimConfig, ok := rawJSON["scim_config"]; ok && scimConfig != nil {
+				if _, isArray := scimConfig.([]interface{}); isArray {
+					return true, nil // v4 format - scim_config is array
+				}
+				if _, isMap := scimConfig.(map[string]interface{}); isMap {
+					return false, nil // v5 format - scim_config is object
+				}
+			}
+			// Check landing_page_design as another indicator
+			if landingPageDesign, ok := rawJSON["landing_page_design"]; ok && landingPageDesign != nil {
+				if _, isArray := landingPageDesign.([]interface{}); isArray {
+					return true, nil // v4 format - landing_page_design is array
+				}
+				if _, isMap := landingPageDesign.(map[string]interface{}); isMap {
+					return false, nil // v5 format - landing_page_design is object
+				}
+			}
+			// Default to v5 if we can't determine - v5.16.0 state with minimal config
+			// is more likely than v4 state with minimal config in practice
+			return false, nil
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return true, nil // Default to v4 if no raw state (fallback)
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

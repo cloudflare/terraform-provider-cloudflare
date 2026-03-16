@@ -46,8 +46,11 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has config as array []
-// v5: has config as object {}
+// v4: config is array []
+// v5: config is object {}
+//
+// Detection is deterministic: config structure (array vs object) definitively
+// identifies the version. config is typically present in identity provider resources.
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
@@ -61,11 +64,23 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - config is object
 				}
 			}
-			// Default to v4 if we can't determine
-			return true, nil
+
+			// Check scim_config as secondary indicator
+			if scimConfig, ok := rawJSON["scim_config"]; ok && scimConfig != nil {
+				if _, isArray := scimConfig.([]interface{}); isArray {
+					return true, nil // v4 format - scim_config is array
+				}
+				if _, isMap := scimConfig.(map[string]interface{}); isMap {
+					return false, nil // v5 format - scim_config is object
+				}
+			}
+
+			// If both config and scim_config are null/missing, we can't determine
+			// This is an edge case - identity providers typically need config
+			return false, fmt.Errorf("could not determine state version: neither 'config' nor 'scim_config' has identifiable structure")
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

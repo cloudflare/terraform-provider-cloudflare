@@ -54,12 +54,28 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has build_config or source as array []
-// v5: has build_config or source as object {}
+// v4: has build_config or source as array [], has "secrets" field (v4-only)
+// v5: has build_config or source as object {}, has "uses_functions" (computed, v5-only)
+//
+// Detection is deterministic: v5 always has "uses_functions" key in state (computed field).
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
+			// Check for v5-only computed fields (key exists even if value is null)
+			// "uses_functions", "framework", "latest_deployment" are v5-only
+			v5OnlyFields := []string{"uses_functions", "framework", "latest_deployment", "canonical_deployment"}
+			for _, field := range v5OnlyFields {
+				if _, ok := rawJSON[field]; ok {
+					return false, nil // v5 format - has v5-only field key
+				}
+			}
+
+			// Check for v4-only field: "secrets" (removed in v5)
+			if _, ok := rawJSON["secrets"]; ok {
+				return true, nil // v4 format - has v4-only "secrets" field
+			}
+
 			// Check if build_config is an array (v4) or object (v5)
 			if buildConfig, ok := rawJSON["build_config"]; ok && buildConfig != nil {
 				if _, isArray := buildConfig.([]interface{}); isArray {
@@ -78,11 +94,11 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - source is object
 				}
 			}
-			// Default to v4 if we can't determine
-			return true, nil
+			// Should not reach here - one of the above checks should match
+			return false, fmt.Errorf("could not determine state version: no distinguishing fields found")
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

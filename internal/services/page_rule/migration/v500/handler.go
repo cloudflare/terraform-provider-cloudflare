@@ -46,13 +46,17 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has actions as array []
-// v5: has actions as object {}
+// v4: actions is array []
+// v5: actions is object {}
+//
+// Detection is deterministic: actions is always present (required) and its
+// structure (array vs object) definitively identifies the version.
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
 			// Check if actions is an array (v4) or object (v5)
+			// actions is required in page_rule, so it should always be present
 			if actions, ok := rawJSON["actions"]; ok && actions != nil {
 				if _, isArray := actions.([]interface{}); isArray {
 					return true, nil // v4 format - actions is array
@@ -61,11 +65,12 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - actions is object
 				}
 			}
-			// Default to v4 if we can't determine
-			return true, nil
+
+			// actions should always be present - if missing, return error
+			return false, fmt.Errorf("could not determine state version: 'actions' field not found")
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

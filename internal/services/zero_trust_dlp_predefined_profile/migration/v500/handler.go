@@ -46,13 +46,28 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has context_awareness as array []
-// v5: has context_awareness as object {}
+// v4: has "type" field (required in v4, removed in v5)
+// v5: has "profile_id" field (required in v5, not in v4)
+//
+// Detection is deterministic: v4 always has "type", v5 always has "profile_id".
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
-			// Check if context_awareness is an array (v4) or object (v5)
+			// Check for v4-only field: "type" (required in v4, removed in v5)
+			if _, ok := rawJSON["type"]; ok {
+				return true, nil // v4 format - has v4-only "type" field
+			}
+
+			// Check for v5-only fields: "profile_id" (required), "entries" (computed)
+			if _, ok := rawJSON["profile_id"]; ok {
+				return false, nil // v5 format - has v5-only "profile_id" field
+			}
+			if _, ok := rawJSON["entries"]; ok {
+				return false, nil // v5 format - has v5-only "entries" field
+			}
+
+			// Fallback: Check if context_awareness is an array (v4) or object (v5)
 			if contextAwareness, ok := rawJSON["context_awareness"]; ok && contextAwareness != nil {
 				if _, isArray := contextAwareness.([]interface{}); isArray {
 					return true, nil // v4 format - context_awareness is array
@@ -61,11 +76,11 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - context_awareness is object
 				}
 			}
-			// Default to v4 if we can't determine
-			return true, nil
+			// Should not reach here - "type" (v4) or "profile_id" (v5) should always exist
+			return false, fmt.Errorf("could not determine state version: neither 'type' (v4) nor 'profile_id' (v5) found")
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.

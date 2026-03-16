@@ -46,12 +46,22 @@ func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, 
 }
 
 // detectV4State checks if the state is v4 format.
-// v4: has rule_settings as array []
-// v5: has rule_settings as object {}
+// v4: rule_settings is array [], no "created_at" field
+// v5: rule_settings is object {}, has "created_at" (computed, always present)
+//
+// Detection is deterministic: v5 always has "created_at" key in state.
 func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState != nil && len(req.RawState.JSON) > 0 {
 		var rawJSON map[string]interface{}
 		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
+			// Check for v5-only computed fields (key exists even if value is null)
+			if _, ok := rawJSON["created_at"]; ok {
+				return false, nil // v5 format - has v5-only "created_at" field
+			}
+			if _, ok := rawJSON["updated_at"]; ok {
+				return false, nil // v5 format - has v5-only "updated_at" field
+			}
+
 			// Check if rule_settings is an array (v4) or object (v5)
 			if ruleSettings, ok := rawJSON["rule_settings"]; ok && ruleSettings != nil {
 				if _, isArray := ruleSettings.([]interface{}); isArray {
@@ -61,11 +71,13 @@ func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
 					return false, nil // v5 format - rule_settings is object
 				}
 			}
-			// Default to v4 if we can't determine
+
+			// If no rule_settings and no v5 computed fields, it's v4
+			// (v5 would always have created_at)
 			return true, nil
 		}
 	}
-	return true, nil // Default to v4 if no raw state
+	return false, fmt.Errorf("no raw state JSON available")
 }
 
 // upgradeFromV4Internal performs the actual v4 → v5 transformation.
