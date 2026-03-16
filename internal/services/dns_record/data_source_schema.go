@@ -71,6 +71,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					float64validator.Between(0, 65535),
 				},
 			},
+			"private_routing": schema.BoolAttribute{
+				Description: "Enables private network routing to the origin.",
+				Computed:    true,
+			},
 			"proxiable": schema.BoolAttribute{
 				Description: "Whether the record can be proxied by Cloudflare or not.",
 				Computed:    true,
