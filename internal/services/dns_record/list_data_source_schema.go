@@ -262,6 +262,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A valid IPv4 address.",
 							Computed:    true,
 						},
+						"private_routing": schema.BoolAttribute{
+							Description: "Enables private network routing to the origin.",
+							Computed:    true,
+						},
 						"proxied": schema.BoolAttribute{
 							Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 							Computed:    true,

@@ -314,6 +314,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"private_routing": schema.BoolAttribute{
+				Description: "Enables private network routing to the origin.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 				Computed:    true,
