@@ -321,6 +321,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Total results available without any search parameters.",
 						Computed:    true,
 					},
+					"total_pages": schema.Float64Attribute{
+						Description: "The number of total pages in the entire result set.",
+						Computed:    true,
+					},
 				},
 			},
 		},
