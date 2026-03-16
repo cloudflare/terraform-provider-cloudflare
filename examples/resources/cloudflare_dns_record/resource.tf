@@ -5,6 +5,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
   type = "A"
   comment = "Domain verification record"
   content = "198.51.100.4"
+  private_routing = true
   proxied = true
   settings = {
     ipv4_only = true

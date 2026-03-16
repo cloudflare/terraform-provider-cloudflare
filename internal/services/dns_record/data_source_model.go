@@ -30,6 +30,7 @@ type DNSRecordDataSourceModel struct {
 	ModifiedOn        timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name              types.String                                               `tfsdk:"name" json:"name,computed"`
 	Priority          types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
+	PrivateRouting    types.Bool                                                 `tfsdk:"private_routing" json:"private_routing,computed"`
 	Proxiable         types.Bool                                                 `tfsdk:"proxiable" json:"proxiable,computed"`
 	Proxied           types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
 	TagsModifiedOn    timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
