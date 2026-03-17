@@ -2,20 +2,79 @@ package v500
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV0 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
+// V5TargetSchema is set by parent package init() to provide the target schema.
+// This avoids circular imports between the migration package and parent package.
+var V5TargetSchema func(context.Context) schema.Schema
+
+// UpgradeFromVersion0 handles state upgrades from schema_version=0 to version=500.
 //
-// This performs a full transformation from v4 → v5 format.
-// The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
-func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+// IMPORTANT: Both v4 SDKv2 provider AND v5.16.0 (dormant) have schema_version=0.
+// PriorSchema is nil because v4 and v5 have incompatible schemas for context_awareness:
+// - v4 state: context_awareness is an ARRAY (ListNestedAttribute, needs transformation)
+// - v5.16.0 state: context_awareness is an OBJECT (SingleNestedAttribute, no-op)
+//
+// Detection strategy: Parse raw JSON and check if context_awareness is array or object.
+func UpgradeFromVersion0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading zero_trust_dlp_custom_profile state from version=0 (detecting v4 vs v5.16.0 format)")
+
+	// Detect v4 vs v5 format by inspecting raw JSON
+	isV4, err := detectV4State(req)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to detect state format",
+			fmt.Sprintf("Could not determine v4 vs v5.16.0 state format: %s", err))
+		return
+	}
+
+	if isV4 {
+		tflog.Info(ctx, "Detected v4 state format (context_awareness is array), performing transformation")
+		upgradeFromV4Internal(ctx, req, resp)
+	} else {
+		tflog.Info(ctx, "Detected v5.16.0+ state format (context_awareness is object), no-op upgrade")
+		unmarshalV5StateToResponse(ctx, req.RawState, resp)
+	}
+}
+
+// detectV4State checks if the state is v4 format by inspecting context_awareness field.
+// v4: context_awareness is an array ([]interface{})
+// v5: context_awareness is an object (map[string]interface{}) or null
+func detectV4State(req resource.UpgradeStateRequest) (bool, error) {
+	if req.RawState != nil && len(req.RawState.JSON) > 0 {
+		var rawJSON map[string]interface{}
+		if err := json.Unmarshal(req.RawState.JSON, &rawJSON); err == nil {
+			if caRaw, ok := rawJSON["context_awareness"]; ok && caRaw != nil {
+				switch caRaw.(type) {
+				case []interface{}:
+					return true, nil // v4 format: context_awareness is an array
+				case map[string]interface{}:
+					return false, nil // v5 format: context_awareness is an object
+				}
+			}
+			// No context_awareness field or null - treat as v5
+			return false, nil
+		}
+	}
+	// Fallback: assume v5 if we can't detect
+	return false, nil
+}
+
+// upgradeFromV4Internal performs the actual v4 → v5 transformation.
+func upgradeFromV4Internal(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading zero_trust_dlp_custom_profile state from v4 SDKv2 provider (schema_version=0)")
 
 	var v4State SourceCloudflareDLPProfileModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
+	diags := unmarshalV4State(ctx, req.RawState, &v4State)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Error(ctx, "Failed to parse v4 state for zero_trust_dlp_custom_profile",
 			map[string]interface{}{
@@ -24,14 +83,60 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 		return
 	}
 
-	v5State, diags := Transform(ctx, v4State)
-	resp.Diagnostics.Append(diags...)
+	v5State, transformDiags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(transformDiags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
 	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully for zero_trust_dlp_custom_profile")
+}
+
+// unmarshalV4State parses raw state using v4 schema.
+func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target *SourceCloudflareDLPProfileModel) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	sourceSchema := SourceCloudflareDLPProfileSchema()
+	sourceType := sourceSchema.Type().TerraformType(ctx)
+
+	rawValue, err := rawState.Unmarshal(sourceType)
+	if err != nil {
+		diags.AddError("Failed to unmarshal v4 state",
+			fmt.Sprintf("Could not parse raw state as v4 format: %s", err))
+		return diags
+	}
+
+	state := tfsdk.State{Raw: rawValue, Schema: sourceSchema}
+	diags.Append(state.Get(ctx, target)...)
+	return diags
+}
+
+// unmarshalV5StateToResponse unmarshals v5 raw state and sets it on the response.
+func unmarshalV5StateToResponse(ctx context.Context, rawState *tfprotov6.RawState, resp *resource.UpgradeStateResponse) {
+	if V5TargetSchema == nil {
+		resp.Diagnostics.AddError("Migration configuration error",
+			"V5TargetSchema not set. Ensure parent package init() sets v500.V5TargetSchema.")
+		return
+	}
+
+	targetSchema := V5TargetSchema(ctx)
+	targetType := targetSchema.Type().TerraformType(ctx)
+
+	rawValue, err := rawState.Unmarshal(targetType)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to unmarshal v5 state",
+			fmt.Sprintf("Could not parse raw state as v5 format: %s", err))
+		return
+	}
+
+	resp.State.Raw = rawValue
+}
+
+// UpgradeFromV0 is an alias for UpgradeFromVersion0 for backward compatibility.
+// Deprecated: Use UpgradeFromVersion0 instead.
+func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	UpgradeFromVersion0(ctx, req, resp)
 }
 
 // UpgradeFromV1 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).

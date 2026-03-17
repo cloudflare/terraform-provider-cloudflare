@@ -35,7 +35,7 @@ type SourceValidationRecordsModel struct {
 	TXTName  types.String `tfsdk:"txt_name"`
 	TXTValue types.String `tfsdk:"txt_value"`
 
-	// Fields REMOVED in v5 (only in v4)
+	// CNAME fields (renamed in v5: cname_name -> cname, cname_target preserved)
 	CNAMETarget types.String `tfsdk:"cname_target"`
 	CNAMEName   types.String `tfsdk:"cname_name"`
 }
@@ -52,28 +52,32 @@ type SourceValidationErrorsModel struct {
 // TargetCertificatePackModel represents the current cloudflare_certificate_pack resource state from v5.x+ provider.
 // Schema version: 500
 type TargetCertificatePackModel struct {
-	ID                   types.String                                               `tfsdk:"id"`
-	ZoneID               types.String                                               `tfsdk:"zone_id"`
-	CertificateAuthority types.String                                               `tfsdk:"certificate_authority"`
-	Type                 types.String                                               `tfsdk:"type"`
-	ValidationMethod     types.String                                               `tfsdk:"validation_method"`
-	ValidityDays         types.Int64                                                `tfsdk:"validity_days"`
-	CloudflareBranding   types.Bool                                                 `tfsdk:"cloudflare_branding"`
-	Hosts                customfield.Set[types.String]                              `tfsdk:"hosts"`
-	PrimaryCertificate   types.String                                               `tfsdk:"primary_certificate"`
-	Status               types.String                                               `tfsdk:"status"`
-	Certificates         customfield.NestedObjectList[TargetCertificatesModel]      `tfsdk:"certificates"`
-	ValidationErrors     customfield.NestedObjectList[TargetValidationErrorsModel]  `tfsdk:"validation_errors"`
-	ValidationRecords    customfield.NestedObjectList[TargetValidationRecordsModel] `tfsdk:"validation_records"`
+	ID                   types.String                                                  `tfsdk:"id"`
+	ZoneID               types.String                                                  `tfsdk:"zone_id"`
+	CertificateAuthority types.String                                                  `tfsdk:"certificate_authority"`
+	Type                 types.String                                                  `tfsdk:"type"`
+	ValidationMethod     types.String                                                  `tfsdk:"validation_method"`
+	ValidityDays         types.Int64                                                   `tfsdk:"validity_days"`
+	CloudflareBranding   types.Bool                                                    `tfsdk:"cloudflare_branding"`
+	Hosts                customfield.Set[types.String]                                 `tfsdk:"hosts"`
+	PrimaryCertificate   types.String                                                  `tfsdk:"primary_certificate"`
+	Status               types.String                                                  `tfsdk:"status"`
+	Certificates         customfield.NestedObjectList[TargetCertificatesModel]         `tfsdk:"certificates"`
+	DCVDelegationRecords customfield.NestedObjectList[TargetDCVDelegationRecordsModel] `tfsdk:"dcv_delegation_records"`
+	ValidationErrors     customfield.NestedObjectList[TargetValidationErrorsModel]     `tfsdk:"validation_errors"`
+	ValidationRecords    customfield.NestedObjectList[TargetValidationRecordsModel]    `tfsdk:"validation_records"`
 }
 
 // TargetValidationRecordsModel represents validation_records item structure from v5.x+ provider.
 type TargetValidationRecordsModel struct {
-	Emails   customfield.List[types.String] `tfsdk:"emails"`
-	HTTPBody types.String                   `tfsdk:"http_body"`
-	HTTPURL  types.String                   `tfsdk:"http_url"`
-	TXTName  types.String                   `tfsdk:"txt_name"`
-	TXTValue types.String                   `tfsdk:"txt_value"`
+	CNAME       types.String                   `tfsdk:"cname"`
+	CNAMETarget types.String                   `tfsdk:"cname_target"`
+	Emails      customfield.List[types.String] `tfsdk:"emails"`
+	HTTPBody    types.String                   `tfsdk:"http_body"`
+	HTTPURL     types.String                   `tfsdk:"http_url"`
+	Status      types.String                   `tfsdk:"status"`
+	TXTName     types.String                   `tfsdk:"txt_name"`
+	TXTValue    types.String                   `tfsdk:"txt_value"`
 }
 
 // TargetValidationErrorsModel represents validation_errors item structure from v5.x+ provider.
@@ -100,4 +104,16 @@ type TargetCertificatesModel struct {
 // TargetCertificatesGeoRestrictionsModel represents geo_restrictions nested structure.
 type TargetCertificatesGeoRestrictionsModel struct {
 	Label types.String `tfsdk:"label"`
+}
+
+// TargetDCVDelegationRecordsModel represents dcv_delegation_records item structure from v5.x+ provider.
+type TargetDCVDelegationRecordsModel struct {
+	CNAME       types.String                   `tfsdk:"cname"`
+	CNAMETarget types.String                   `tfsdk:"cname_target"`
+	Emails      customfield.List[types.String] `tfsdk:"emails"`
+	HTTPBody    types.String                   `tfsdk:"http_body"`
+	HTTPURL     types.String                   `tfsdk:"http_url"`
+	Status      types.String                   `tfsdk:"status"`
+	TXTName     types.String                   `tfsdk:"txt_name"`
+	TXTValue    types.String                   `tfsdk:"txt_value"`
 }

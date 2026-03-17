@@ -409,7 +409,10 @@ func TestAccUpgradeAccount_FromPublishedV5(t *testing.T) {
 	t.Skip(`Skipped: 403 Forbidden {"success":false,"errors":[{"code":1002,"message":"Forbidden. Account creation is not allowed"}],"messages":[],"result":null}`)
 	rnd := utils.GenerateRandomResourceName()
 
-	config := testAccCheckCloudflareAccountWithType(rnd, fmt.Sprintf("%s_old", rnd), "enterprise")
+	// Use a config without "type" to avoid API normalization issues.
+	// The API may return type="standard" regardless of what was configured,
+	// causing "inconsistent result after apply" errors when type is explicitly set.
+	config := testAccCheckCloudflareAccountName(rnd, fmt.Sprintf("%s_old", rnd))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() { acctest.TestAccPreCheck(t) },

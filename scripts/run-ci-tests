@@ -169,6 +169,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/account_role"
     "resource=./internal/services/account_subscription"
     "resource=./internal/services/account_token"
+    "resource=./internal/services/access_rule"
     "resource=./internal/services/address_map"
     "resource=./internal/services/api_shield"
     "resource=./internal/services/api_shield_operation parallel=1"
@@ -177,11 +178,14 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/argo_tiered_caching"
     "resource=./internal/services/authenticated_origin_pulls"
     "resource=./internal/services/authenticated_origin_pulls_certificate"
+    "resource=./internal/services/authenticated_origin_pulls_hostname_certificate"
+    "resource=./internal/services/authenticated_origin_pulls_settings"
     "resource=./internal/services/bot_management"
     "resource=./internal/services/byo_ip_prefix"
     "resource=./internal/services/certificate_pack"
     "resource=./internal/services/cloud_connector_rules"
     "resource=./internal/services/custom_hostname"
+    "resource=./internal/services/custom_hostname_fallback_origin"
     "resource=./internal/services/custom_pages"
     "resource=./internal/services/custom_ssl"
     "resource=./internal/services/dns_record"
@@ -195,6 +199,8 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/email_security_trusted_domains"
     "resource=./internal/services/healthcheck"
     "resource=./internal/services/ip_ranges"
+    "resource=./internal/services/leaked_credential_check"
+    "resource=./internal/services/leaked_credential_check_rule"
     "resource=./internal/services/list parallel=1"
     "resource=./internal/services/list_item parallel=1"
     "resource=./internal/services/load_balancer"
@@ -208,6 +214,8 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/magic_wan_static_route parallel=1 depends_on=magic_wan_gre_tunnel"
     "resource=./internal/services/magic_transit_connector parallel=1 depends_on=magic_wan_static_route"
     "resource=./internal/services/managed_transforms parallel=1"
+    "resource=./internal/services/mtls_certificate"
+    "resource=./internal/services/notification_policy"
     "resource=./internal/services/notification_policy_webhooks"
     "resource=./internal/services/observatory_scheduled_test"
     "resource=./internal/services/organization"
@@ -217,6 +225,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/pages_domain"
     "resource=./internal/services/pages_project"
     "resource=./internal/services/queue"
+    "resource=./internal/services/queue_consumer"
     "resource=./internal/services/r2_bucket"
     "resource=./internal/services/regional_hostname"
     "resource=./internal/services/regional_tiered_cache"
@@ -258,11 +267,17 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/zero_trust_access_tag"
     "resource=./internal/services/zero_trust_device_custom_profile"
     "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback"
+    "resource=./internal/services/zero_trust_device_default_profile parallel=1"
     "resource=./internal/services/zero_trust_device_default_profile_certificates"
+    "resource=./internal/services/zero_trust_device_default_profile_local_domain_fallback parallel=1"
     "resource=./internal/services/zero_trust_device_managed_networks"
+    "resource=./internal/services/zero_trust_device_posture_integration"
     "resource=./internal/services/zero_trust_device_posture_rule"
+    "resource=./internal/services/zero_trust_dex_test"
     "resource=./internal/services/zero_trust_dlp_custom_profile"
     "resource=./internal/services/zero_trust_dlp_entry"
+    "resource=./internal/services/zero_trust_dlp_predefined_profile"
+    "resource=./internal/services/zero_trust_gateway_certificate"
     "resource=./internal/services/zero_trust_gateway_proxy_endpoint"
     "resource=./internal/services/zero_trust_gateway_policy"
     "resource=./internal/services/zero_trust_gateway_settings"
@@ -596,11 +611,17 @@ run_tests() {
         # Example: ./internal/services/dns_record/... -> ./internal/services/dns_record/migration/...
         test_path="${service%/...}/migration/..."
 
-        # Only run migration tests for services that have a v500 state upgrader
-        local migration_v500_dir="${service%/...}/migration/v500"
-        if [ ! -d "$migration_v500_dir" ]; then
-            log "${YELLOW}Skipping migration tests for $service (no migration/v500 directory)${NC}" > "$log_file"
-            log "Skipping migration tests for $service (no migration/v500 directory)"
+        # Skip services that define no migrations at all
+        local migration_dir="${service%/...}/migration"
+        local migration_test_file="${service%/...}/migration_test.go"
+        if [ -f "$migration_test_file" ]; then
+            log "${RED}FAIL: $service has migration_test.go which must be removed (migration tests belong in migration/ directory)${NC}" > "$log_file"
+            log "FAIL: $service has migration_test.go which must be removed (migration tests belong in migration/ directory)"
+            return 1
+        fi
+        if [ ! -d "$migration_dir" ]; then
+            log "${YELLOW}Skipping migration tests for $service (no migration/ directory)${NC}" > "$log_file"
+            log "Skipping migration tests for $service (no migration/ directory)"
             echo "TESTS_SKIPPED" >> "$log_file"
             return 0
         fi

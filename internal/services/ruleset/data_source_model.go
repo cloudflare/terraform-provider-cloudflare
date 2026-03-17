@@ -78,6 +78,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	AutomaticHTTPSRewrites  types.Bool                                                                          `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,computed"`
 	Autominify              customfield.NestedObject[RulesetRulesActionParametersAutominifyDataSourceModel]     `tfsdk:"autominify" json:"autominify,computed"`
 	BIC                     types.Bool                                                                          `tfsdk:"bic" json:"bic,computed"`
+	ContentConverter        types.Bool                                                                          `tfsdk:"content_converter" json:"content_converter,computed"`
 	DisableApps             types.Bool                                                                          `tfsdk:"disable_apps" json:"disable_apps,computed"`
 	DisableRUM              types.Bool                                                                          `tfsdk:"disable_rum" json:"disable_rum,computed"`
 	DisableZaraz            types.Bool                                                                          `tfsdk:"disable_zaraz" json:"disable_zaraz,computed"`

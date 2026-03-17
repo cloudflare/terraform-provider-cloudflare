@@ -25,7 +25,6 @@ var v4WithOriginRequestConfig string
 var v4DeprecatedNameConfig string
 
 func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
-	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -75,7 +74,6 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
 }
 
 func TestMigrateZeroTrustTunnelCloudflaredConfig_WithOriginRequest(t *testing.T) {
-	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -121,7 +119,6 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_WithOriginRequest(t *testing.T)
 }
 
 func TestMigrateZeroTrustTunnelCloudflaredConfig_DeprecatedName(t *testing.T) {
-	t.Skip("Migration not enabled yet")
 	// Zero Trust resources don't support API tokens
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")

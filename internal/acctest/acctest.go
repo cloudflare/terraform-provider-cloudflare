@@ -168,6 +168,7 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 		"CLOUDFLARE_BYO_IP_CIDR",
 		"CLOUDFLARE_BYO_IP_ASN",
 		"CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID",
+		"CLOUDFLARE_BYO_IP_PREFIX_ID",
 	}
 
 	for _, k := range requiredKeys {

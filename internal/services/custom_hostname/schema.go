@@ -21,7 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*CustomHostnameResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ssl": schema.SingleNestedAttribute{
 				Description: "SSL properties used when creating the custom hostname.",
-				Required:    true,
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"bundle_method": schema.StringAttribute{
 						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",

@@ -43,6 +43,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/byo_ip_prefix"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_sfu_app"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/certificate_authorities_hostname_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/certificate_pack"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/client_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloud_connector_rules"
@@ -108,6 +109,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
@@ -121,6 +123,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_sink"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -130,6 +135,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_lock"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_sippy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
@@ -200,10 +206,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_local_domain_fallback"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_ip_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_subnet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
@@ -436,6 +444,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_origin_trust_store.NewResource,
 		argo_smart_routing.NewResource,
 		argo_tiered_caching.NewResource,
+		certificate_authorities_hostname_associations.NewResource,
 		client_certificate.NewResource,
 		custom_ssl.NewResource,
 		custom_hostname.NewResource,
@@ -543,8 +552,10 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_event_notification.NewResource,
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
+		r2_data_catalog.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		zero_trust_dex_test.NewResource,
+		zero_trust_device_ip_profile.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
@@ -590,6 +601,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_pacfile.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
+		zero_trust_device_subnet.NewResource,
 		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
@@ -620,6 +632,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		pipeline.NewResource,
+		pipeline_sink.NewResource,
+		pipeline_stream.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
@@ -674,6 +689,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_origin_trust_store.NewCustomOriginTrustStoresDataSource,
 		argo_smart_routing.NewArgoSmartRoutingDataSource,
 		argo_tiered_caching.NewArgoTieredCachingDataSource,
+		certificate_authorities_hostname_associations.NewCertificateAuthoritiesHostnameAssociationsDataSource,
 		client_certificate.NewClientCertificateDataSource,
 		client_certificate.NewClientCertificatesDataSource,
 		custom_ssl.NewCustomSSLDataSource,
@@ -816,6 +832,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
 		mtls_certificate.NewMTLSCertificateDataSource,
 		mtls_certificate.NewMTLSCertificatesDataSource,
+		mtls_certificate_associations.NewMTLSCertificateAssociationsDataSource,
 		pages_project.NewPagesProjectDataSource,
 		pages_project.NewPagesProjectsDataSource,
 		pages_domain.NewPagesDomainDataSource,
@@ -849,10 +866,13 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_event_notification.NewR2BucketEventNotificationDataSource,
 		r2_bucket_lock.NewR2BucketLockDataSource,
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
+		r2_data_catalog.NewR2DataCatalogDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
+		zero_trust_device_ip_profile.NewZeroTrustDeviceIPProfileDataSource,
+		zero_trust_device_ip_profile.NewZeroTrustDeviceIPProfilesDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
@@ -934,6 +954,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
+		zero_trust_device_subnet.NewZeroTrustDeviceSubnetDataSource,
 		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRouteDataSource,
 		zero_trust_network_hostname_route.NewZeroTrustNetworkHostnameRoutesDataSource,
 		zero_trust_risk_behavior.NewZeroTrustRiskBehaviorDataSource,
@@ -986,6 +1007,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		pipeline.NewPipelineDataSource,
+		pipeline_sink.NewPipelineSinkDataSource,
+		pipeline_sink.NewPipelineSinksDataSource,
+		pipeline_stream.NewPipelineStreamDataSource,
+		pipeline_stream.NewPipelineStreamsDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasListDataSource,
 		schema_validation_settings.NewSchemaValidationSettingsDataSource,

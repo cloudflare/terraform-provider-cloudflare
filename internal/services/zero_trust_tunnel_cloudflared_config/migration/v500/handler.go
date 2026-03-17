@@ -3,9 +3,41 @@ package v500
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
+
+// UpgradeFromV0 handles v4 SDKv2 schema version 0 states.
+//
+// NOTE: early v5 version=0 state is handled by the parent package dispatcher
+// (internal/services/zero_trust_tunnel_cloudflared_config/migrations.go) to avoid
+// init()-based callback wiring and keep migration flow explicit.
+func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	if req.RawState == nil {
+		resp.Diagnostics.AddError("Missing raw state", "RawState was nil for schema version 0 migration")
+		return
+	}
+
+	tflog.Info(ctx, "Upgrading zero_trust_tunnel_cloudflared_config state from v4 SDKv2 provider (schema_version=0)")
+	var v4State SourceV4TunnelConfigModel
+	v4Diags := unmarshalV4State(ctx, req.RawState, &v4State)
+	resp.Diagnostics.Append(v4Diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	v5State, diags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
+	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
+}
 
 // UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
 //
@@ -58,23 +90,44 @@ func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *
 		return
 	}
 
-	// Normalize origin_request: if config-level origin_request is non-nil but all-null, set to nil.
-	// Also normalize ingress-level origin_request for the same reason.
-	if state.Config != nil {
-		if state.Config.OriginRequest != nil && isV5OriginRequestAllNull(state.Config.OriginRequest) {
-			state.Config.OriginRequest = nil
-		}
-		if state.Config.Ingress != nil {
-			for _, ingress := range *state.Config.Ingress {
-				if ingress != nil && ingress.OriginRequest != nil && isV5IngressOriginRequestAllNull(ingress.OriginRequest) {
-					ingress.OriginRequest = nil
-				}
-			}
-		}
-	}
+	normalizeV5State(&state)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	tflog.Info(ctx, "State version bump from 1 to 500 completed")
+}
+
+func normalizeV5State(state *TargetV5TunnelConfigModel) {
+	if state.Config == nil {
+		return
+	}
+
+	if state.Config.OriginRequest != nil && isV5OriginRequestAllNull(state.Config.OriginRequest) {
+		state.Config.OriginRequest = nil
+	}
+	if state.Config.Ingress != nil {
+		for _, ingress := range *state.Config.Ingress {
+			if ingress != nil && ingress.OriginRequest != nil && isV5IngressOriginRequestAllNull(ingress.OriginRequest) {
+				ingress.OriginRequest = nil
+			}
+		}
+	}
+}
+
+func unmarshalV4State(ctx context.Context, rawState *tfprotov6.RawState, target *SourceV4TunnelConfigModel) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	sourceSchema := SourceV4TunnelConfigSchema()
+	sourceType := sourceSchema.Type().TerraformType(ctx)
+
+	rawValue, err := rawState.Unmarshal(sourceType)
+	if err != nil {
+		diags.AddError("Failed to unmarshal v4 state", "Could not parse raw state as v4 format: "+err.Error())
+		return diags
+	}
+
+	state := tfsdk.State{Raw: rawValue, Schema: sourceSchema}
+	diags.Append(state.Get(ctx, target)...)
+	return diags
 }
 
 // isV5OriginRequestAllNull reports whether a v5 config-level origin_request object has all-null fields.

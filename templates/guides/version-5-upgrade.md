@@ -48,17 +48,45 @@ At a high level, there are two parts to the migration. The first is the migratio
 configuration (HCL) and the second is the migration of the state. Within each of those
 sections, there is the need to migrate attributes and potentially the resource rename.
 
-### Automatic
+### Automatic (tf-migrate)
 
-~> **DEPRECATED:** Grit-based migrations are deprecated and will be removed in a
-future release. See the [version 5 migration guide](version-5-migration) for the
-recommended migration approach.
+-> For the recommended migration approach using built-in state upgraders, see the
+[version 5 migration guide](version-5-migration).
 
-For assisting with automatic migrations, we have provided [GritQL] patterns.
+For automatic configuration (HCL) migrations, use [tf-migrate], the official
+Cloudflare Terraform Provider migration tool.
 
-This will allow you to rewrite the parts of your Terraform configuration and state
-that have changed automatically. Once you [install Grit], you can run the commands
-in the directory where your Terraform configuration is located.
+**Installation:**
+
+Download the latest release from the [tf-migrate releases] page, or build from source:
+
+```bash
+go install github.com/cloudflare/tf-migrate/cmd/tf-migrate@latest
+```
+
+**Migrate your configuration:**
+
+```bash
+# Preview changes (dry run)
+tf-migrate migrate --dry-run --source-version v4 --target-version v5
+
+# Apply the migration
+tf-migrate migrate --source-version v4 --target-version v5
+```
+
+**Migrate specific resources only:**
+
+```bash
+tf-migrate migrate \
+  --resources dns_record,zero_trust_list \
+  --source-version v4 \
+  --target-version v5
+```
+
+~> `tf-migrate` handles configuration (HCL) transformations only. State migration
+is handled automatically by the v5 provider's built-in state upgraders when you
+run `terraform plan` or `terraform apply`. See the
+[version 5 migration guide](version-5-migration) for details.
 
 ~> While all efforts have been made to ease the transition, some of the more complex
 resources that may contain difficult to reconcile resources have been intentionally
@@ -66,33 +94,6 @@ skipped for the automatic migration and are only manually documented. If you are
 using modules or other dynamic features of HCL, the provided codemods may not be
 as effective. We recommend reviewing the manual migration notes to verify all the
 changes.
-
-We recommend ensuring you are using version control for these changes or make a
-backup prior to initiating the change to enable reverting if needed.
-
-1. Update the resource attributes in your configuration. _Note: this will not update
-   your state file. The next step will determine how your state file is updated._
-
-```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
-```
-
-2. Choose the appropriate method from [migrating renamed resources] that best suits
-   your situation and use case to migrate the attribute changes. If you are choosing to
-   use the provided GritQL patterns, the pattern name is
-   `cloudflare_terraform_v5_attribute_renames_state`. Otherwise, you can reimport the
-   resources without manually managing the state file.
-3. Perform the resource renames. _Note: this will not update your state file.
-   The next step will determine how your state file is updated._
-
-```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5_resource_renames_configuration
-```
-
-4. Choose the appropriate method from [migrating renamed resources] that best suits
-   your situation and use case to migrate the resource renames. If you are choosing to
-   use the provided GritQL patterns, the pattern name is
-   `cloudflare_terraform_v5_resource_renames_state`.
 
 ### Manual
 
@@ -103,15 +104,7 @@ $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terr
 4. Choose the appropriate method from [migrating renamed resources] that best suits
    your situation and use case to migrate the resource renames.
 
-<!-- This code block is only used for confirming grit patterns -->
-
 ## Changelog
-
-```grit
-language hcl
-
-cloudflare_terraform_v5()
-```
 
 ## cloudflare_access_application
 
@@ -1659,6 +1652,5 @@ resource "cloudflare_page_rule" "example" {
 }
 ```
 
-[GritQL]: https://www.grit.io/
-[install Grit]: https://docs.grit.io/cli/quickstart
-[migrating renamed resources]: https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources
+[tf-migrate]: https://github.com/cloudflare/tf-migrate
+[tf-migrate releases]: https://github.com/cloudflare/tf-migrate/releases

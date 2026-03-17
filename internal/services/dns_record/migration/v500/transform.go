@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -34,7 +35,7 @@ func Transform(ctx context.Context, source SourceCloudflareRecordModel) (*Target
 		ZoneID:  source.ZoneID,
 		Name:    source.Name,
 		Type:    source.Type,
-		Comment: source.Comment,
+		Comment: migrations.FalseyStringToNull(source.Comment),
 		Proxied: source.Proxied,
 	}
 
@@ -133,23 +134,23 @@ func transformData(sourceData SourceDataModel, recordType string) (*TargetDNSRec
 	targetData.Target = sourceData.Target
 
 	// Numeric fields: source is Int64, target is Float64
-	targetData.Priority = int64ToFloat64(sourceData.Priority)
-	targetData.Weight = int64ToFloat64(sourceData.Weight)
-	targetData.Port = int64ToFloat64(sourceData.Port)
-	targetData.Algorithm = int64ToFloat64(sourceData.Algorithm)
-	targetData.KeyTag = int64ToFloat64(sourceData.KeyTag)
-	targetData.Type = int64ToFloat64(sourceData.Type)
-	targetData.Protocol = int64ToFloat64(sourceData.Protocol)
-	targetData.DigestType = int64ToFloat64(sourceData.DigestType)
-	targetData.Usage = int64ToFloat64(sourceData.Usage)
-	targetData.Selector = int64ToFloat64(sourceData.Selector)
-	targetData.MatchingType = int64ToFloat64(sourceData.MatchingType)
-	targetData.LatDegrees = int64ToFloat64(sourceData.LatDegrees)
-	targetData.LatMinutes = int64ToFloat64(sourceData.LatMinutes)
-	targetData.LongDegrees = int64ToFloat64(sourceData.LongDegrees)
-	targetData.LongMinutes = int64ToFloat64(sourceData.LongMinutes)
-	targetData.Order = int64ToFloat64(sourceData.Order)
-	targetData.Preference = int64ToFloat64(sourceData.Preference)
+	targetData.Priority = int64ToFloat64ZeroToNull(sourceData.Priority)
+	targetData.Weight = int64ToFloat64ZeroToNull(sourceData.Weight)
+	targetData.Port = int64ToFloat64ZeroToNull(sourceData.Port)
+	targetData.Algorithm = int64ToFloat64ZeroToNull(sourceData.Algorithm)
+	targetData.KeyTag = int64ToFloat64ZeroToNull(sourceData.KeyTag)
+	targetData.Type = int64ToFloat64ZeroToNull(sourceData.Type)
+	targetData.Protocol = int64ToFloat64ZeroToNull(sourceData.Protocol)
+	targetData.DigestType = int64ToFloat64ZeroToNull(sourceData.DigestType)
+	targetData.Usage = int64ToFloat64ZeroToNull(sourceData.Usage)
+	targetData.Selector = int64ToFloat64ZeroToNull(sourceData.Selector)
+	targetData.MatchingType = int64ToFloat64ZeroToNull(sourceData.MatchingType)
+	targetData.LatDegrees = int64ToFloat64ZeroToNull(sourceData.LatDegrees)
+	targetData.LatMinutes = int64ToFloat64ZeroToNull(sourceData.LatMinutes)
+	targetData.LongDegrees = int64ToFloat64ZeroToNull(sourceData.LongDegrees)
+	targetData.LongMinutes = int64ToFloat64ZeroToNull(sourceData.LongMinutes)
+	targetData.Order = int64ToFloat64ZeroToNull(sourceData.Order)
+	targetData.Preference = int64ToFloat64ZeroToNull(sourceData.Preference)
 
 	// Float64 fields (same type in v0 and target)
 	targetData.Altitude = sourceData.Altitude
@@ -185,6 +186,19 @@ func int64ToFloat64(v types.Int64) types.Float64 {
 	}
 	if v.IsUnknown() {
 		return types.Float64Unknown()
+	}
+	return types.Float64Value(float64(v.ValueInt64()))
+}
+
+func int64ToFloat64ZeroToNull(v types.Int64) types.Float64 {
+	if v.IsNull() {
+		return types.Float64Null()
+	}
+	if v.IsUnknown() {
+		return types.Float64Unknown()
+	}
+	if v.ValueInt64() == 0 {
+		return types.Float64Null()
 	}
 	return types.Float64Value(float64(v.ValueInt64()))
 }

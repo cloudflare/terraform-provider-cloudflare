@@ -94,7 +94,6 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 ### Required
 
 - `hostname` (String) The custom hostname that will point to your hostname via CNAME.
-- `ssl` (Attributes) SSL properties used when creating the custom hostname. (see [below for nested schema](#nestedatt--ssl))
 - `zone_id` (String) Identifier.
 
 ### Optional
@@ -102,6 +101,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 - `custom_metadata` (Map of String) Unique key/value metadata for this hostname. These are per-hostname (customer) settings.
 - `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
 - `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
+- `ssl` (Attributes) SSL properties used when creating the custom hostname. (see [below for nested schema](#nestedatt--ssl))
 
 ### Read-Only
 

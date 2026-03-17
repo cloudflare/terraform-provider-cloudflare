@@ -5,13 +5,11 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDevicePostureRuleResour
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: migrations.GetSchemaVersion(1, 500),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",
@@ -71,7 +69,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the device posture rule.",
 				Optional:    true,
 				Computed:    true,
-				Default:     stringdefault.StaticString(""),
 			},
 			"expiration": schema.StringAttribute{
 				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",

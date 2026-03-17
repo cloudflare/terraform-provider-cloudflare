@@ -74,6 +74,7 @@ Read-Only:
 - `cache_key` (Attributes) Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
 - `cache_reserve` (Attributes) Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
 - `content` (String) The response content.
+- `content_converter` (Boolean) Whether to enable content conversion (e.g., HTML to Markdown).
 - `content_type` (String) The content type header to set with the error response.
 Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))

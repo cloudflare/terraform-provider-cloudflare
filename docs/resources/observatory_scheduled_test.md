@@ -26,13 +26,15 @@ resource "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_
 - `url` (String) A URL.
 - `zone_id` (String) Identifier.
 
-### Read-Only
+### Optional
 
-- `frequency` (String) The frequency of the test.
-Available values: "DAILY", "WEEKLY".
-- `id` (String) A URL.
+- `frequency` (String) The frequency of the scheduled test. Defaults to WEEKLY for free plans, DAILY for paid plans.
 - `region` (String) A test region.
 Available values: "asia-east1", "asia-northeast1", "asia-northeast2", "asia-south1", "asia-southeast1", "australia-southeast1", "europe-north1", "europe-southwest1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west8", "europe-west9", "me-west1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-south1", "us-west1".
+
+### Read-Only
+
+- `id` (String) A URL.
 - `schedule` (Attributes) The test schedule. (see [below for nested schema](#nestedatt--schedule))
 - `test` (Attributes) (see [below for nested schema](#nestedatt--test))
 

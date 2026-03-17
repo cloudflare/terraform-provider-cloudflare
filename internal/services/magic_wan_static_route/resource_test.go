@@ -72,7 +72,7 @@ func testSweepCloudflareMagicWanStaticRoute(r string) error {
 			failedCount++
 			continue
 		}
-		
+
 		deletedCount++
 		tflog.Info(ctx, fmt.Sprintf("Successfully deleted static route: %s", route.ID))
 	}
@@ -188,6 +188,13 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareStaticRouteNoDescription(rnd, accountID, 100, cfIP, interfaceAddr, nexthop),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
+					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
+				),
+			},
 		},
 	})
 }
@@ -239,6 +246,10 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 
 func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP, interfaceAddr, nexthop string) string {
 	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP, interfaceAddr, nexthop)
+}
+
+func testAccCheckCloudflareStaticRouteNoDescription(ID, accountID string, weight int, cfIP, interfaceAddr, nexthop string) string {
+	return acctest.LoadTestCase("staticroutenodescription.tf", ID, accountID, weight, cfIP, interfaceAddr, nexthop)
 }
 
 func TestAccUpgradeMagicWanStaticRoute_FromPublishedV5(t *testing.T) {

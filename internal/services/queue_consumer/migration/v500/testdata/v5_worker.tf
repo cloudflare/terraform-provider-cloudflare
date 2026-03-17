@@ -27,6 +27,8 @@ resource "cloudflare_queue_consumer" "%[2]s" {
   depends_on  = [cloudflare_workers_script.worker_script]
 
   lifecycle {
-    ignore_changes = [settings]
+    # API returns "script" in Read but we send "script_name" on Create
+    # settings is also returned differently for worker vs http_pull consumers
+    ignore_changes = [script_name, settings]
   }
 }

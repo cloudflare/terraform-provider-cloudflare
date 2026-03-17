@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*ContentScanningResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Defines an identifier.",

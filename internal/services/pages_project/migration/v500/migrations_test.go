@@ -14,121 +14,245 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project/migration/v500"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+var (
+	currentProviderVersion = internal.PackageVersion // Current v5 release
+)
+
 //go:embed testdata/v4_minimal.tf
 var v4MinimalTF string
+
+//go:embed testdata/v5_minimal.tf
+var v5MinimalTF string
 
 //go:embed testdata/v4_build_config.tf
 var v4BuildConfigTF string
 
+//go:embed testdata/v5_build_config.tf
+var v5BuildConfigTF string
+
 //go:embed testdata/v4_build_config_complete.tf
 var v4BuildConfigCompleteTF string
+
+//go:embed testdata/v5_build_config_complete.tf
+var v5BuildConfigCompleteTF string
 
 //go:embed testdata/v4_deployment_configs.tf
 var v4DeploymentConfigsTF string
 
+//go:embed testdata/v5_deployment_configs.tf
+var v5DeploymentConfigsTF string
+
 //go:embed testdata/v4_compatibility_flags.tf
 var v4CompatibilityFlagsTF string
+
+//go:embed testdata/v5_compatibility_flags.tf
+var v5CompatibilityFlagsTF string
 
 //go:embed testdata/v4_full.tf
 var v4FullTF string
 
+//go:embed testdata/v5_full.tf
+var v5FullTF string
+
 //go:embed testdata/v4_always_use_latest.tf
 var v4AlwaysUseLatestTF string
+
+//go:embed testdata/v5_always_use_latest.tf
+var v5AlwaysUseLatestTF string
 
 //go:embed testdata/v4_service_bindings.tf
 var v4ServiceBindingsTF string
 
+//go:embed testdata/v5_service_bindings.tf
+var v5ServiceBindingsTF string
+
+//go:embed testdata/v4_durable_object_namespaces.tf
+var v4DurableObjectNamespacesTF string
+
+//go:embed testdata/v5_durable_object_namespaces.tf
+var v5DurableObjectNamespacesTF string
+
+//go:embed testdata/v4_default_changes.tf
+var v4DefaultChangesTF string
+
+//go:embed testdata/v5_default_changes.tf
+var v5DefaultChangesTF string
+
+//go:embed testdata/v4_usage_model_explicit.tf
+var v4UsageModelExplicitTF string
+
+//go:embed testdata/v5_usage_model_explicit.tf
+var v5UsageModelExplicitTF string
+
+//go:embed testdata/v4_source_and_config.tf
+var v4SourceAndConfigTF string
+
+//go:embed testdata/v4_environment_variables.tf
+var v4EnvironmentVariablesTF string
+
+//go:embed testdata/v4_bindings.tf
+var v4BindingsTF string
+
+//go:embed testdata/v4_multiple_bindings.tf
+var v4MultipleBindingsTF string
+
 // TestMigratePagesProject_V4ToV5_Minimal tests basic migration with minimal config
 func TestMigratePagesProject_V4ToV5_Minimal(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-minimal-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4MinimalTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4MinimalTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
-				// Verify resource exists (type unchanged)
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
-				// Verify computed fields
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
-			}),
 		},
-	})
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5MinimalTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-minimal-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			// For v5 tests, use local provider; for v4 tests, use external provider
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+						// Verify resource exists (type unchanged)
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("production_branch"), knownvalue.StringExact("main")),
+						// Verify computed fields
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.NotNull()),
+					}),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithBuildConfig tests build_config block to attribute conversion
 func TestMigratePagesProject_V4ToV5_WithBuildConfig(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-build-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4BuildConfigTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4BuildConfigTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
-				// Verify build_config converted from block to object
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("npm run build")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("destination_dir"), knownvalue.StringExact("public")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("root_dir"), knownvalue.StringExact("/")),
-			}),
 		},
-	})
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5BuildConfigTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-build-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
+						// Verify build_config converted from block to object
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config"), knownvalue.NotNull()),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("npm run build")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("destination_dir"), knownvalue.StringExact("public")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("root_dir"), knownvalue.StringExact("/")),
+					}),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithSourceAndConfig tests source/config blocks and field rename
@@ -145,23 +269,7 @@ func TestMigratePagesProject_V4ToV5_WithSourceAndConfig(t *testing.T) {
 	repoName := fmt.Sprintf("test-repo-%s", rnd)
 
 	// V4 config with source and config blocks
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  source {
-    type = "github"
-    config {
-      owner                         = "cloudflare"
-      repo_name                     = "%[4]s"
-      production_branch             = "main"
-      production_deployment_enabled = true
-      pr_comments_enabled           = true
-    }
-  }
-}`, rnd, accountID, projectName, repoName)
+	v4Config := fmt.Sprintf(v4SourceAndConfigTF, rnd, accountID, projectName, repoName)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -203,59 +311,108 @@ resource "cloudflare_pages_project" "%[1]s" {
 
 // TestMigratePagesProject_V4ToV5_WithDeploymentConfigsBasic tests deployment_configs with placement
 func TestMigratePagesProject_V4ToV5_WithDeploymentConfigsBasic(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-deploy-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4DeploymentConfigsTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4DeploymentConfigsTF, rnd, accountID, projectName)
 			},
-			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+		},
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5DeploymentConfigsTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-deploy-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			// Build state checks based on version being tested
+			var stateChecks []statecheck.StateCheck
+
+			// Common checks for both v4 and v5
+			stateChecks = append(stateChecks,
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
-				// Verify deployment_configs converted to object
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
-				// Verify preview converted with v5 defaults (migration sets v5 defaults when not specified)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_date"), knownvalue.StringExact("2024-01-01")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(false)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("placement"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
-				// Verify production converted with v5 defaults
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_date"), knownvalue.StringExact("2024-01-01")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
-				// Verify placement converted to object
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
-			}),
-		},
-	})
+			)
+
+			// Version-specific checks for usage_model and fail_open
+			if tc.version == currentProviderVersion {
+				// v5 uses v5 defaults
+				stateChecks = append(stateChecks,
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(true)),
+				)
+			} else {
+				// v4 migration preserves v4 defaults
+				stateChecks = append(stateChecks,
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
+				)
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					// Step 2: Run migration and verify state
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithEnvironmentVariables tests env vars + secrets merge
@@ -273,31 +430,7 @@ func TestMigratePagesProject_V4ToV5_WithEnvironmentVariables(t *testing.T) {
 
 	// V4 config with environment_variables and secrets
 	// Note: Including preview config to match API behavior (API creates both preview and production)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  deployment_configs {
-    preview {
-      compatibility_date = "2024-01-01"
-    }
-    production {
-      environment_variables = {
-        NODE_ENV = "production"
-        API_URL  = "https://api.example.com"
-      }
-      secrets = {
-        API_KEY     = "secret123"
-        DB_PASSWORD = "dbpass456"
-      }
-      placement {
-        mode = "smart"
-      }
-    }
-  }
-}`, rnd, accountID, projectName)
+	v4Config := fmt.Sprintf(v4EnvironmentVariablesTF, rnd, accountID, projectName)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -365,38 +498,7 @@ func TestMigratePagesProject_V4ToV5_WithBindings(t *testing.T) {
 	bucketName := fmt.Sprintf("test-bucket-%s", rnd)
 
 	// V4 config with bindings (kv_namespaces, d1_databases, r2_buckets, service_binding)
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  build_config {
-    build_command = ""
-  }
-
-  deployment_configs {
-    preview {
-      compatibility_date = "2026-01-14"
-    }
-    production {
-      kv_namespaces = {
-        MY_KV = "%[4]s"
-      }
-      d1_databases = {
-        MY_DB = "%[5]s"
-      }
-      r2_buckets = {
-        MY_BUCKET = "%[6]s"
-      }
-      service_binding {
-        name        = "MY_SERVICE"
-        service     = "%[7]s"
-        environment = "production"
-      }
-    }
-  }
-}`, rnd, accountID, projectName, kvNamespaceID, d1DatabaseID, bucketName, workerName)
+	v4Config := fmt.Sprintf(v4BindingsTF, rnd, accountID, projectName, kvNamespaceID, d1DatabaseID, bucketName, workerName)
 
 	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
@@ -448,36 +550,61 @@ resource "cloudflare_pages_project" "%[1]s" {
 
 // TestMigratePagesProject_V4ToV5_FullResource tests complete resource with all features
 func TestMigratePagesProject_V4ToV5_FullResource(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-full-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4FullTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4FullTF, rnd, accountID, projectName)
 			},
-			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+		},
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5FullTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-full-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			// Build state checks based on version being tested
+			var stateChecks []statecheck.StateCheck
+
+			// Common checks for both v4 and v5
+			stateChecks = append(stateChecks,
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(projectName)),
@@ -485,62 +612,121 @@ func TestMigratePagesProject_V4ToV5_FullResource(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("npm run build")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("destination_dir"), knownvalue.StringExact("dist")),
-				// Verify deployment_configs with v5 defaults
+				// Verify deployment_configs structure
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs"), knownvalue.NotNull()),
-				// Verify preview with v5 defaults
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(false)),
-				// Verify production with v5 defaults
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("compatibility_date"), knownvalue.StringExact("2024-01-01")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
-			}),
-		},
-	})
+			)
+
+			// Version-specific checks for usage_model and fail_open
+			if tc.version == currentProviderVersion {
+				// v5 uses v5 defaults
+				stateChecks = append(stateChecks,
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(true)),
+				)
+			} else {
+				// v4 migration preserves v4 defaults
+				stateChecks = append(stateChecks,
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("fail_open"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
+				)
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					// Step 2: Run migration and verify state
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithBuildConfigComplete tests all build_config attributes
 func TestMigratePagesProject_V4ToV5_WithBuildConfigComplete(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-build-complete-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4BuildConfigCompleteTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4BuildConfigCompleteTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+		},
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5BuildConfigCompleteTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-build-complete-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("build_caching"), knownvalue.Bool(true)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("build_command"), knownvalue.StringExact("npm run build")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("destination_dir"), knownvalue.StringExact("dist")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("root_dir"), knownvalue.StringExact("/frontend")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("build_config").AtMapKey("web_analytics_tag"), knownvalue.StringExact("my-tag")),
 			}),
-		},
-	})
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithDurableObjectNamespaces tests durable_object_namespaces binding migration
@@ -552,93 +738,133 @@ func TestMigratePagesProject_V4ToV5_WithDurableObjectNamespaces(t *testing.T) {
 		t.Skip("Skipping - requires TEST_CLOUDFLARE_DO_NAMESPACE_ID")
 	}
 
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-do-%s", rnd)
-
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  build_config {
-    build_caching   = false
-    build_command   = ""
-    destination_dir = ""
-    root_dir        = ""
-  }
-
-  deployment_configs {
-    preview {
-      compatibility_date = "2024-01-01"
-    }
-    production {
-      compatibility_date = "2024-01-01"
-      durable_object_namespaces = {
-        MY_DO = "%[4]s"
-      }
-    }
-  }
-}`, rnd, accountID, projectName, doNamespaceID)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName, doNamespaceID string) string
+	}{
+		{
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName, doNamespaceID string) string {
+				return fmt.Sprintf(v4DurableObjectNamespacesTF, rnd, accountID, projectName, doNamespaceID)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("MY_DO").AtMapKey("namespace_id"), knownvalue.StringExact(doNamespaceID)),
-			}),
 		},
-	})
+		{
+			name:     "from_v5",
+			version:  currentProviderVersion,
+			configFn: func(rnd, accountID, projectName, doNamespaceID string) string {
+				return fmt.Sprintf(v5DurableObjectNamespacesTF, rnd, accountID, projectName, doNamespaceID)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-do-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName, doNamespaceID)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("durable_object_namespaces").AtMapKey("MY_DO").AtMapKey("namespace_id"), knownvalue.StringExact(doNamespaceID)),
+					}),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithCompatibilityFlags tests compatibility_flags list migration
 func TestMigratePagesProject_V4ToV5_WithCompatibilityFlags(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-compat-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4CompatibilityFlagsTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4CompatibilityFlagsTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+		},
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5CompatibilityFlagsTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-compat-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("compatibility_flags"), knownvalue.ListExact([]knownvalue.Check{
 					knownvalue.StringExact("nodejs_compat"),
 					knownvalue.StringExact("streams_enable_constructors"),
@@ -649,116 +875,162 @@ func TestMigratePagesProject_V4ToV5_WithCompatibilityFlags(t *testing.T) {
 					knownvalue.StringExact("transformstream_enable_standard_constructor"),
 				})),
 			}),
-		},
-	})
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithDefaultChanges tests that v4 defaults are preserved in v5
 func TestMigratePagesProject_V4ToV5_WithDefaultChanges(t *testing.T) {
-
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-defaults-%s", rnd)
-
-	// V4 defaults: usage_model="bundled", fail_open=false
-	// V5 defaults: usage_model="standard", fail_open=true
-	// Migration should preserve v4 defaults
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  deployment_configs {
-    preview {
-      compatibility_date = "2024-01-01"
-    }
-    production {
-      compatibility_date = "2024-01-01"
-    }
-  }
-}`, rnd, accountID, projectName)
-
-	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
-		// V4 defaults should be preserved in migration
-		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
-		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
-	})
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: append([]resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4DefaultChangesTF, rnd, accountID, projectName)
 			},
-		}, migrationSteps...),
-	})
+		},
+		{
+			name:     "from_v5",
+			version:  currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5DefaultChangesTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-defaults-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			// Build state checks based on version
+			var stateChecks []statecheck.StateCheck
+			if tc.version == currentProviderVersion {
+				// V5 uses v5 defaults
+				stateChecks = []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(true)),
+				}
+			} else {
+				// V4 migration preserves v4 defaults
+				stateChecks = []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("bundled")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("fail_open"), knownvalue.Bool(false)),
+				}
+			}
+
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps:      append([]resource.TestStep{firstStep}, migrationSteps...),
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithUsageModelExplicit tests explicit usage_model migration
 func TestMigratePagesProject_V4ToV5_WithUsageModelExplicit(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-usage-%s", rnd)
-
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  deployment_configs {
-    preview {
-      usage_model = "unbound"
-    }
-    production {
-      usage_model = "standard"
-    }
-  }
-}`, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:     "from_v4_latest",
+			version:  acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4UsageModelExplicitTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("unbound")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
-			}),
 		},
-	})
+		{
+			name:     "from_v5",
+			version:  currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5UsageModelExplicitTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-usage-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("usage_model"), knownvalue.StringExact("unbound")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("usage_model"), knownvalue.StringExact("standard")),
+					}),
+				},
+			})
+		})
+	}
 }
 
 // TestMigratePagesProject_V4ToV5_WithMultipleBindings tests multiple bindings of different types
@@ -779,44 +1051,7 @@ func TestMigratePagesProject_V4ToV5_WithMultipleBindings(t *testing.T) {
 	sourceVer, targetVer := acctest.InferMigrationVersions(version)
 	projectName := fmt.Sprintf("tf-test-multi-%s", rnd)
 
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_pages_project" "%[1]s" {
-  account_id        = "%[2]s"
-  name              = "%[3]s"
-  production_branch = "main"
-
-  build_config {
-    build_caching   = false
-    build_command   = ""
-    destination_dir = ""
-    root_dir        = ""
-  }
-
-  deployment_configs {
-    preview {
-      compatibility_date = "2024-01-01"
-    }
-    production {
-      compatibility_date = "2024-01-01"
-      kv_namespaces = {
-        KV_BINDING_1 = "%[4]s"
-        KV_BINDING_2 = "%[4]s"
-      }
-      d1_databases = {
-        DB_BINDING_1 = "%[5]s"
-        DB_BINDING_2 = "%[5]s"
-      }
-      r2_buckets = {
-        BUCKET_1 = "my-bucket-1"
-        BUCKET_2 = "my-bucket-2"
-      }
-      durable_object_namespaces = {
-        DO_BINDING_1 = "%[6]s"
-        DO_BINDING_2 = "%[6]s"
-      }
-    }
-  }
-}`, rnd, accountID, projectName, kvNamespaceID, d1DatabaseID, doNamespaceID)
+	v4Config := fmt.Sprintf(v4MultipleBindingsTF, rnd, accountID, projectName, kvNamespaceID, kvNamespaceID, d1DatabaseID, d1DatabaseID, doNamespaceID, doNamespaceID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -897,39 +1132,72 @@ func TestMigratePagesProject_V4ToV5_WithMultipleServiceBindings(t *testing.T) {
 
 // TestMigratePagesProject_V4ToV5_WithAlwaysUseLatestCompatibilityDate tests always_use_latest_compatibility_date migration
 func TestMigratePagesProject_V4ToV5_WithAlwaysUseLatestCompatibilityDate(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_pages_project." + rnd
-	tmpDir := t.TempDir()
-	version := acctest.GetLastV4Version()
-	sourceVer, targetVer := acctest.InferMigrationVersions(version)
-	projectName := fmt.Sprintf("tf-test-latest-compat-%s", rnd)
-
-	v4Config := fmt.Sprintf(v4AlwaysUseLatestTF, rnd, accountID, projectName)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: version,
-					},
-				},
-				Config:             v4Config,
-				ExpectNonEmptyPlan: false,
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, projectName string) string
+	}{
+		{
+			name:    "from_v4_latest",
+			version: acctest.GetLastV4Version(),
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v4AlwaysUseLatestTF, rnd, accountID, projectName)
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+		},
+		{
+			name:    "from_v5",
+			version: currentProviderVersion,
+			configFn: func(rnd, accountID, projectName string) string {
+				return fmt.Sprintf(v5AlwaysUseLatestTF, rnd, accountID, projectName)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_pages_project." + rnd
+			tmpDir := t.TempDir()
+			projectName := fmt.Sprintf("tf-test-latest-compat-%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, projectName)
+			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
+
+			var firstStep resource.TestStep
+			if tc.version == currentProviderVersion {
+				firstStep = resource.TestStep{
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					Config:                   testConfig,
+				}
+			} else {
+				firstStep = resource.TestStep{
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
+						},
+					},
+					Config:             testConfig,
+					ExpectNonEmptyPlan: false,
+				}
+			}
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					firstStep,
+					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("preview").AtMapKey("always_use_latest_compatibility_date"), knownvalue.Bool(true)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("deployment_configs").AtMapKey("production").AtMapKey("always_use_latest_compatibility_date"), knownvalue.Bool(false)),
 			}),
-		},
-	})
+				},
+			})
+		})
+	}
 }
 
 // =============================================================================
