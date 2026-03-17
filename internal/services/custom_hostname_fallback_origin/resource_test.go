@@ -129,6 +129,9 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.Stat
 }
 
 func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
@@ -220,6 +223,9 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 }
 
 func TestAccUpgradeCustomHostnameFallbackOrigin_FromPublishedV5(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
