@@ -23,8 +23,13 @@ var (
 // Embed migration test configuration files.
 //
 // v4 configs use cloudflare_zone_settings_override (the v4 resource).
-// v5 configs use cloudflare_zone_setting resources with import + removed blocks
-// (the output tf-migrate produces).
+//
+// v5 configs come in two variants:
+//   - plain (e.g. v5_on_off_plain.tf): just the cloudflare_zone_setting resource,
+//     used as the first step in from_v5 tests to create the resource fresh.
+//   - with import+removed blocks (e.g. v5_on_off.tf): the full tf-migrate output,
+//     used as the v4Config argument to MigrationV2TestStep so tf-migrate can
+//     transform it and verify the result.
 
 //go:embed testdata/v4_on_off.tf
 var v4OnOffConfig string
@@ -32,11 +37,17 @@ var v4OnOffConfig string
 //go:embed testdata/v5_on_off.tf
 var v5OnOffConfig string
 
+//go:embed testdata/v5_on_off_plain.tf
+var v5OnOffPlainConfig string
+
 //go:embed testdata/v4_number.tf
 var v4NumberConfig string
 
 //go:embed testdata/v5_number.tf
 var v5NumberConfig string
+
+//go:embed testdata/v5_number_plain.tf
+var v5NumberPlainConfig string
 
 //go:embed testdata/v4_security_header.tf
 var v4SecurityHeaderConfig string
@@ -44,11 +55,17 @@ var v4SecurityHeaderConfig string
 //go:embed testdata/v5_security_header.tf
 var v5SecurityHeaderConfig string
 
+//go:embed testdata/v5_security_header_plain.tf
+var v5SecurityHeaderPlainConfig string
+
 //go:embed testdata/v4_multiple.tf
 var v4MultipleConfig string
 
 //go:embed testdata/v5_multiple.tf
 var v5MultipleConfig string
+
+//go:embed testdata/v5_multiple_plain.tf
+var v5MultiplePlainConfig string
 
 // TestMigrateZoneSetting_OnOff tests migration of a simple on/off string setting (http3).
 //
@@ -59,23 +76,22 @@ var v5MultipleConfig string
 // existing API resource rather than creating a new one.
 func TestMigrateZoneSetting_OnOff(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, zoneID string) string
+		name       string
+		version    string
+		configFn   func(rnd, zoneID string) string // config for step 1 (create)
+		v4ConfigFn func(rnd, zoneID string) string // config passed to MigrationV2TestStep (what tf-migrate transforms)
 	}{
 		{
-			name:    "from_v4_latest",
-			version: acctest.GetLastV4Version(),
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v4OnOffConfig, rnd, zoneID)
-			},
+			name:       "from_v4_latest",
+			version:    acctest.GetLastV4Version(),
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v4OnOffConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v4OnOffConfig, rnd, zoneID) },
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v5OnOffConfig, rnd, zoneID)
-			},
+			name:       "from_v5",
+			version:    currentProviderVersion,
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v5OnOffPlainConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v5OnOffConfig, rnd, zoneID) },
 		},
 	}
 
@@ -84,14 +100,15 @@ func TestMigrateZoneSetting_OnOff(t *testing.T) {
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			rnd := utils.GenerateRandomResourceName()
 			tmpDir := t.TempDir()
-			testConfig := tc.configFn(rnd, zoneID)
+			firstConfig := tc.configFn(rnd, zoneID)
+			migrateConfig := tc.v4ConfigFn(rnd, zoneID)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-					Config:                   testConfig,
+					Config:                   firstConfig,
 				}
 			} else {
 				firstStep = resource.TestStep{
@@ -101,7 +118,7 @@ func TestMigrateZoneSetting_OnOff(t *testing.T) {
 							VersionConstraint: tc.version,
 						},
 					},
-					Config: testConfig,
+					Config: firstConfig,
 				}
 			}
 
@@ -113,7 +130,7 @@ func TestMigrateZoneSetting_OnOff(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_http3",
 							tfjsonpath.New("zone_id"),
@@ -142,23 +159,22 @@ func TestMigrateZoneSetting_OnOff(t *testing.T) {
 // v5: cloudflare_zone_setting with setting_id = "browser_cache_ttl", value = 14400
 func TestMigrateZoneSetting_Number(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, zoneID string) string
+		name       string
+		version    string
+		configFn   func(rnd, zoneID string) string
+		v4ConfigFn func(rnd, zoneID string) string
 	}{
 		{
-			name:    "from_v4_latest",
-			version: acctest.GetLastV4Version(),
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v4NumberConfig, rnd, zoneID)
-			},
+			name:       "from_v4_latest",
+			version:    acctest.GetLastV4Version(),
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v4NumberConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v4NumberConfig, rnd, zoneID) },
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v5NumberConfig, rnd, zoneID)
-			},
+			name:       "from_v5",
+			version:    currentProviderVersion,
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v5NumberPlainConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v5NumberConfig, rnd, zoneID) },
 		},
 	}
 
@@ -167,14 +183,15 @@ func TestMigrateZoneSetting_Number(t *testing.T) {
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			rnd := utils.GenerateRandomResourceName()
 			tmpDir := t.TempDir()
-			testConfig := tc.configFn(rnd, zoneID)
+			firstConfig := tc.configFn(rnd, zoneID)
+			migrateConfig := tc.v4ConfigFn(rnd, zoneID)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-					Config:                   testConfig,
+					Config:                   firstConfig,
 				}
 			} else {
 				firstStep = resource.TestStep{
@@ -184,7 +201,7 @@ func TestMigrateZoneSetting_Number(t *testing.T) {
 							VersionConstraint: tc.version,
 						},
 					},
-					Config: testConfig,
+					Config: firstConfig,
 				}
 			}
 
@@ -196,7 +213,7 @@ func TestMigrateZoneSetting_Number(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_browser_cache_ttl",
 							tfjsonpath.New("zone_id"),
@@ -227,23 +244,22 @@ func TestMigrateZoneSetting_Number(t *testing.T) {
 //	value.strict_transport_security object (tf-migrate wraps the attributes)
 func TestMigrateZoneSetting_SecurityHeader(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, zoneID string) string
+		name       string
+		version    string
+		configFn   func(rnd, zoneID string) string
+		v4ConfigFn func(rnd, zoneID string) string
 	}{
 		{
-			name:    "from_v4_latest",
-			version: acctest.GetLastV4Version(),
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v4SecurityHeaderConfig, rnd, zoneID)
-			},
+			name:       "from_v4_latest",
+			version:    acctest.GetLastV4Version(),
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v4SecurityHeaderConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v4SecurityHeaderConfig, rnd, zoneID) },
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
-			configFn: func(rnd, zoneID string) string {
-				return fmt.Sprintf(v5SecurityHeaderConfig, rnd, zoneID)
-			},
+			name:       "from_v5",
+			version:    currentProviderVersion,
+			configFn:   func(rnd, zoneID string) string { return fmt.Sprintf(v5SecurityHeaderPlainConfig, rnd, zoneID) },
+			v4ConfigFn: func(rnd, zoneID string) string { return fmt.Sprintf(v5SecurityHeaderConfig, rnd, zoneID) },
 		},
 	}
 
@@ -252,14 +268,15 @@ func TestMigrateZoneSetting_SecurityHeader(t *testing.T) {
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			rnd := utils.GenerateRandomResourceName()
 			tmpDir := t.TempDir()
-			testConfig := tc.configFn(rnd, zoneID)
+			firstConfig := tc.configFn(rnd, zoneID)
+			migrateConfig := tc.v4ConfigFn(rnd, zoneID)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-					Config:                   testConfig,
+					Config:                   firstConfig,
 				}
 			} else {
 				firstStep = resource.TestStep{
@@ -269,7 +286,7 @@ func TestMigrateZoneSetting_SecurityHeader(t *testing.T) {
 							VersionConstraint: tc.version,
 						},
 					},
-					Config: testConfig,
+					Config: firstConfig,
 				}
 			}
 
@@ -281,7 +298,7 @@ func TestMigrateZoneSetting_SecurityHeader(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_security_header",
 							tfjsonpath.New("zone_id"),
