@@ -81,7 +81,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"origin_connection_limit": schema.Int64Attribute{
-				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.",
+				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.\n\nMaximum allowed: 20 for free tier accounts, 100 for paid tier accounts.\nIf not specified, defaults to 20 for free tier and 60 for paid tier.\nContact Cloudflare if you need a higher limit.",
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(5, 100),
