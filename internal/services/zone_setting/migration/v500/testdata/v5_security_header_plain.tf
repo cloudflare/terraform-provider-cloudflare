@@ -1,4 +1,4 @@
-resource "cloudflare_zone_setting" {
+resource "cloudflare_zone_setting" "%[1]s_security_header" {
   zone_id    = "%[2]s"
   setting_id = "security_header"
   value = {
