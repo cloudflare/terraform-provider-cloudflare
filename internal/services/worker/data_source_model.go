@@ -58,15 +58,25 @@ func (m *WorkerDataSourceModel) toListParams(_ context.Context) (params workers.
 }
 
 type WorkerObservabilityDataSourceModel struct {
-	Enabled          types.Bool                                                       `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                    `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkerObservabilityLogsDataSourceModel] `tfsdk:"logs" json:"logs,computed"`
+	Enabled          types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                      `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs             customfield.NestedObject[WorkerObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces           customfield.NestedObject[WorkerObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkerObservabilityLogsDataSourceModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkerObservabilityTracesDataSourceModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
 }
 
 type WorkerReferencesDataSourceModel struct {
