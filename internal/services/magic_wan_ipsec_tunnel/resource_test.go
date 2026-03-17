@@ -73,7 +73,7 @@ func testSweepCloudflareMagicWanIPsecTunnel(r string) error {
 			failedCount++
 			continue
 		}
-		
+
 		deletedCount++
 		tflog.Info(ctx, fmt.Sprintf("Successfully deleted IPsec tunnel: %s", tunnel.ID))
 	}
@@ -194,6 +194,13 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareIPsecTunnelNoDescription(rnd, accountID, cfIP, interfaceAddr, psk),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareIPsecTunnelExists(name, &Tunnel),
+					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
+				),
+			},
 		},
 	})
 }
@@ -234,6 +241,10 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 
 func testAccCheckCloudflareIPsecTunnelSimple(ID, description, accountID, psk, cfIP, interfaceAddr string) string {
 	return acctest.LoadTestCase("ipsectunnelsimple.tf", ID, description, accountID, psk, cfIP, interfaceAddr)
+}
+
+func testAccCheckCloudflareIPsecTunnelNoDescription(ID, accountID, cfIP, interfaceAddr, psk string) string {
+	return acctest.LoadTestCase("ipsectunnelnodescription.tf", ID, accountID, cfIP, interfaceAddr, psk)
 }
 
 func TestAccUpgradeMagicWanIpsecTunnel_FromPublishedV5(t *testing.T) {

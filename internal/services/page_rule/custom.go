@@ -155,7 +155,7 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDAlwaysUseHTTPS})
 	}
 	if !m.AutomaticHTTPSRewrites.IsNull() {
-		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.String()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.ValueString()})
 	}
 	if !m.BrowserCacheTTL.IsNull() {
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDBrowserCacheTTL, "value": m.BrowserCacheTTL.ValueInt64()})

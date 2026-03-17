@@ -4,7 +4,6 @@ package workers_for_platforms_dispatch_namespace
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
@@ -37,27 +36,8 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) MoveState(ctx context.Con
 // Version 1 handles v5 state that needs a version bump (no-op).
 func (r *WorkersForPlatformsDispatchNamespaceResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-
-	if os.Getenv("TF_MIG_TEST") == "" {
-		// Production mode: preserve existing upgraders only
-		return map[int64]resource.StateUpgrader{
-			0: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-			1: {
-				PriorSchema: &targetSchema,
-				StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-					resp.State.Raw = req.State.Raw
-				},
-			},
-		}
-	}
-
-	// Test mode (TF_MIG_TEST=1): full StateUpgrader migration
 	sourceSchema := v500.SourceWorkersForPlatformsNamespaceSchema()
+
 	return map[int64]resource.StateUpgrader{
 		// Handle upgrades from v4 state (both cloudflare_workers_for_platforms_dispatch_namespace
 		// and cloudflare_workers_for_platforms_namespace had schema version 0)

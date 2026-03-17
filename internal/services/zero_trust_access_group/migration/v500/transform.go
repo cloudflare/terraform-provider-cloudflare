@@ -2,6 +2,7 @@ package v500
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -68,19 +69,23 @@ func transformRuleBlocks(ctx context.Context, sourceBlocks []SourceV4AccessGroup
 
 		// String scalar selectors: Wrap in object
 		if !sourceBlock.CommonName.IsNull() && !sourceBlock.CommonName.IsUnknown() {
-			result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
-				CommonName: &TargetV5CommonNameModel{
-					CommonName: sourceBlock.CommonName,
-				},
-			})
+			if strings.TrimSpace(sourceBlock.CommonName.ValueString()) != "" {
+				result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
+					CommonName: &TargetV5CommonNameModel{
+						CommonName: sourceBlock.CommonName,
+					},
+				})
+			}
 		}
 
 		if !sourceBlock.AuthMethod.IsNull() && !sourceBlock.AuthMethod.IsUnknown() {
-			result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
-				AuthMethod: &TargetV5AuthMethodModel{
-					AuthMethod: sourceBlock.AuthMethod,
-				},
-			})
+			if strings.TrimSpace(sourceBlock.AuthMethod.ValueString()) != "" {
+				result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
+					AuthMethod: &TargetV5AuthMethodModel{
+						AuthMethod: sourceBlock.AuthMethod,
+					},
+				})
+			}
 		}
 
 		// Boolean selectors: Convert to empty objects
@@ -186,6 +191,9 @@ func transformEmailList(ctx context.Context, sourceList types.List, diags *diag.
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, email := range emails {
+		if strings.TrimSpace(email) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			Email: &TargetV5EmailModel{
 				Email: types.StringValue(email),
@@ -209,6 +217,9 @@ func transformEmailDomainList(ctx context.Context, sourceList types.List, diags 
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, domain := range domains {
+		if strings.TrimSpace(domain) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			EmailDomain: &TargetV5EmailDomainModel{
 				Domain: types.StringValue(domain),
@@ -232,6 +243,9 @@ func transformEmailListList(ctx context.Context, sourceList types.List, diags *d
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, id := range ids {
+		if strings.TrimSpace(id) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			EmailList: &TargetV5EmailListModel{
 				ID: types.StringValue(id),
@@ -255,6 +269,9 @@ func transformIPList(ctx context.Context, sourceList types.List, diags *diag.Dia
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, ip := range ips {
+		if strings.TrimSpace(ip) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			IP: &TargetV5IPModel{
 				IP: types.StringValue(ip),
@@ -278,6 +295,9 @@ func transformIPListList(ctx context.Context, sourceList types.List, diags *diag
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, id := range ids {
+		if strings.TrimSpace(id) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			IPList: &TargetV5IPListModel{
 				ID: types.StringValue(id),
@@ -301,6 +321,9 @@ func transformServiceTokenList(ctx context.Context, sourceList types.List, diags
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, tokenID := range tokenIDs {
+		if strings.TrimSpace(tokenID) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			ServiceToken: &TargetV5ServiceTokenModel{
 				TokenID: types.StringValue(tokenID),
@@ -324,6 +347,9 @@ func transformGroupList(ctx context.Context, sourceList types.List, diags *diag.
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, id := range ids {
+		if strings.TrimSpace(id) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			Group: &TargetV5GroupModel{
 				ID: types.StringValue(id),
@@ -347,6 +373,9 @@ func transformDevicePostureList(ctx context.Context, sourceList types.List, diag
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, uid := range uids {
+		if strings.TrimSpace(uid) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			DevicePosture: &TargetV5DevicePostureModel{
 				IntegrationUID: types.StringValue(uid),
@@ -370,6 +399,9 @@ func transformLoginMethodList(ctx context.Context, sourceList types.List, diags 
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, id := range ids {
+		if strings.TrimSpace(id) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			LoginMethod: &TargetV5LoginMethodModel{
 				ID: types.StringValue(id),
@@ -393,6 +425,9 @@ func transformGeoList(ctx context.Context, sourceList types.List, diags *diag.Di
 
 	var result []*TargetV5ZeroTrustAccessGroupIncludeModel
 	for _, countryCode := range countryCodes {
+		if strings.TrimSpace(countryCode) == "" {
+			continue
+		}
 		result = append(result, &TargetV5ZeroTrustAccessGroupIncludeModel{
 			Geo: &TargetV5GeoModel{
 				CountryCode: types.StringValue(countryCode),
@@ -579,40 +614,40 @@ func isSelectorEmpty(selector *TargetV5ZeroTrustAccessGroupIncludeModel) bool {
 	}
 
 	// Check selectors with string fields - these are only valid if the field has a non-null value
-	if selector.CommonName != nil && !selector.CommonName.CommonName.IsNull() && !selector.CommonName.CommonName.IsUnknown() {
+	if selector.CommonName != nil && hasNonEmptyString(selector.CommonName.CommonName) {
 		hasNonNilField = true
 	}
-	if selector.AuthMethod != nil && !selector.AuthMethod.AuthMethod.IsNull() && !selector.AuthMethod.AuthMethod.IsUnknown() {
+	if selector.AuthMethod != nil && hasNonEmptyString(selector.AuthMethod.AuthMethod) {
 		hasNonNilField = true
 	}
-	if selector.Email != nil && !selector.Email.Email.IsNull() && !selector.Email.Email.IsUnknown() {
+	if selector.Email != nil && hasNonEmptyString(selector.Email.Email) {
 		hasNonNilField = true
 	}
-	if selector.EmailDomain != nil && !selector.EmailDomain.Domain.IsNull() && !selector.EmailDomain.Domain.IsUnknown() {
+	if selector.EmailDomain != nil && hasNonEmptyString(selector.EmailDomain.Domain) {
 		hasNonNilField = true
 	}
-	if selector.EmailList != nil && !selector.EmailList.ID.IsNull() && !selector.EmailList.ID.IsUnknown() {
+	if selector.EmailList != nil && hasNonEmptyString(selector.EmailList.ID) {
 		hasNonNilField = true
 	}
-	if selector.IP != nil && !selector.IP.IP.IsNull() && !selector.IP.IP.IsUnknown() {
+	if selector.IP != nil && hasNonEmptyString(selector.IP.IP) {
 		hasNonNilField = true
 	}
-	if selector.IPList != nil && !selector.IPList.ID.IsNull() && !selector.IPList.ID.IsUnknown() {
+	if selector.IPList != nil && hasNonEmptyString(selector.IPList.ID) {
 		hasNonNilField = true
 	}
-	if selector.Geo != nil && !selector.Geo.CountryCode.IsNull() && !selector.Geo.CountryCode.IsUnknown() {
+	if selector.Geo != nil && hasNonEmptyString(selector.Geo.CountryCode) {
 		hasNonNilField = true
 	}
-	if selector.Group != nil && !selector.Group.ID.IsNull() && !selector.Group.ID.IsUnknown() {
+	if selector.Group != nil && hasNonEmptyString(selector.Group.ID) {
 		hasNonNilField = true
 	}
-	if selector.DevicePosture != nil && !selector.DevicePosture.IntegrationUID.IsNull() && !selector.DevicePosture.IntegrationUID.IsUnknown() {
+	if selector.DevicePosture != nil && hasNonEmptyString(selector.DevicePosture.IntegrationUID) {
 		hasNonNilField = true
 	}
-	if selector.LoginMethod != nil && !selector.LoginMethod.ID.IsNull() && !selector.LoginMethod.ID.IsUnknown() {
+	if selector.LoginMethod != nil && hasNonEmptyString(selector.LoginMethod.ID) {
 		hasNonNilField = true
 	}
-	if selector.ServiceToken != nil && !selector.ServiceToken.TokenID.IsNull() && !selector.ServiceToken.TokenID.IsUnknown() {
+	if selector.ServiceToken != nil && hasNonEmptyString(selector.ServiceToken.TokenID) {
 		hasNonNilField = true
 	}
 
@@ -624,4 +659,11 @@ func isSelectorEmpty(selector *TargetV5ZeroTrustAccessGroupIncludeModel) bool {
 	}
 
 	return !hasNonNilField
+}
+
+func hasNonEmptyString(v types.String) bool {
+	if v.IsNull() || v.IsUnknown() {
+		return false
+	}
+	return strings.TrimSpace(v.ValueString()) != ""
 }

@@ -73,7 +73,7 @@ func testSweepCloudflareMagicWanGRETunnel(r string) error {
 			failedCount++
 			continue
 		}
-		
+
 		deletedCount++
 		tflog.Info(ctx, fmt.Sprintf("Successfully deleted GRE tunnel: %s", tunnel.ID))
 	}
@@ -188,6 +188,13 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareGRETunnelNoDescription(rnd, rnd, accountID, customerEndpoint, cfIP, interfaceAddr),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
+					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
+				),
+			},
 		},
 	})
 }
@@ -243,6 +250,10 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 
 func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr string) string {
 	return acctest.LoadTestCase("gretunnelsimple.tf", ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr)
+}
+
+func testAccCheckCloudflareGRETunnelNoDescription(ID, name, accountID, customerEndpoint, cfIP, interfaceAddr string) string {
+	return acctest.LoadTestCase("gretunnelnodescription.tf", ID, name, accountID, customerEndpoint, cfIP, interfaceAddr)
 }
 
 func testAccCheckCloudflareGRETunnelMultiUpdate(ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr string) string {

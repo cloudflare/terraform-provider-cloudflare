@@ -118,14 +118,48 @@ func (r *ZeroTrustDeviceDefaultProfileResource) Update(ctx context.Context, req 
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
+	// MarshalJSONForUpdate (MarshalForPatch) returns nil when every serialisable
+	// field is either unchanged or computed_optional unknown. Sending a nil body
+	// produces an empty PATCH request which the API rejects with 400. In that
+	// case skip the PATCH and fall through to a GET to refresh computed fields.
+	if dataBytes != nil {
+		res := new(http.Response)
+		env := ZeroTrustDeviceDefaultProfileResultEnvelope{*data}
+		_, err = r.client.ZeroTrust.Devices.Policies.Default.Edit(
+			ctx,
+			zero_trust.DevicePolicyDefaultEditParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithRequestBody("application/json", dataBytes),
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.UnmarshalComputed(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
+		data.ID = data.AccountID
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		return
+	}
+
+	// No-op update: MarshalForPatch produced nil (no serialisable changes).
+	// Do a GET to populate computed fields into state.
 	res := new(http.Response)
 	env := ZeroTrustDeviceDefaultProfileResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Devices.Policies.Default.Edit(
+	_, err = r.client.ZeroTrust.Devices.Policies.Default.Get(
 		ctx,
-		zero_trust.DevicePolicyDefaultEditParams{
+		zero_trust.DevicePolicyDefaultGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

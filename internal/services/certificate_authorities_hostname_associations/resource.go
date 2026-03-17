@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/certificate_authorities"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -156,11 +156,15 @@ func (r *CertificateAuthoritiesHostnameAssociationsResource) Read(ctx context.Co
 
 	res := new(http.Response)
 	env := CertificateAuthoritiesHostnameAssociationsResultEnvelope{*data}
+	getParams := certificate_authorities.HostnameAssociationGetParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+	if !data.MTLSCertificateID.IsNull() && !data.MTLSCertificateID.IsUnknown() {
+		getParams.MTLSCertificateID = cloudflare.F(data.MTLSCertificateID.ValueString())
+	}
 	_, err := r.client.CertificateAuthorities.HostnameAssociations.Get(
 		ctx,
-		certificate_authorities.HostnameAssociationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		getParams,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -192,26 +196,32 @@ func (r *CertificateAuthoritiesHostnameAssociationsResource) Delete(ctx context.
 func (r *CertificateAuthoritiesHostnameAssociationsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data = new(CertificateAuthoritiesHostnameAssociationsModel)
 
-	path := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<zone_id>",
-		&path,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	// Support import formats:
+	//   <zone_id>                        - for managed CA associations
+	//   <zone_id>/<mtls_certificate_id>  - for mTLS certificate associations
+	parts := strings.Split(req.ID, "/")
+	if len(parts) < 1 || len(parts) > 2 {
+		resp.Diagnostics.AddError(
+			"invalid import ID",
+			fmt.Sprintf("expected format \"<zone_id>\" or \"<zone_id>/<mtls_certificate_id>\", got %q", req.ID),
+		)
 		return
 	}
 
-	data.ZoneID = types.StringValue(path)
+	data.ZoneID = types.StringValue(parts[0])
+	getParams := certificate_authorities.HostnameAssociationGetParams{
+		ZoneID: cloudflare.F(parts[0]),
+	}
+	if len(parts) == 2 && parts[1] != "" {
+		data.MTLSCertificateID = types.StringValue(parts[1])
+		getParams.MTLSCertificateID = cloudflare.F(parts[1])
+	}
 
 	res := new(http.Response)
 	env := CertificateAuthoritiesHostnameAssociationsResultEnvelope{*data}
 	_, err := r.client.CertificateAuthorities.HostnameAssociations.Get(
 		ctx,
-		certificate_authorities.HostnameAssociationGetParams{
-			ZoneID: cloudflare.F(path),
-		},
+		getParams,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
