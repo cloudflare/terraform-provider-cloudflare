@@ -80,6 +80,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityLogsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where logs will be exported to.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
 							"enabled": schema.BoolAttribute{
 								Description: "Whether logs are enabled for the Worker.",
 								Computed:    true,
@@ -90,6 +96,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"invocation_logs": schema.BoolAttribute{
 								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+								Computed:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether log persistence is enabled for the Worker.",
+								Computed:    true,
+							},
+						},
+					},
+					"traces": schema.SingleNestedAttribute{
+						Description: "Trace settings for the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityTracesDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where traces will be exported to.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Whether traces are enabled for the Worker.",
+								Computed:    true,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).",
+								Computed:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether trace persistence is enabled for the Worker.",
 								Computed:    true,
 							},
 						},

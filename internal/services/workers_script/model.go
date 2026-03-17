@@ -233,15 +233,23 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
-	Enabled          types.Bool                                   `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate types.Float64                                `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Logs             *WorkersScriptMetadataObservabilityLogsModel `tfsdk:"logs" json:"logs,optional"`
+	Enabled          types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
+	HeadSamplingRate types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Logs             *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
+	Traces           *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
 }
 
 type WorkersScriptMetadataObservabilityLogsModel struct {
 	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,required"`
 	InvocationLogs   types.Bool      `tfsdk:"invocation_logs" json:"invocation_logs,required"`
 	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+}
+
+type WorkersScriptMetadataObservabilityTracesModel struct {
+	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
 	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
 }
@@ -274,15 +282,23 @@ type WorkersScriptNamedHandlersModel struct {
 }
 
 type WorkersScriptObservabilityModel struct {
-	Enabled          types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed"`
+	Enabled          types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces           customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkersScriptObservabilityLogsModel struct {
 	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
 	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkersScriptObservabilityTracesModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
 }
