@@ -148,7 +148,7 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	err := r.client.Workers.Domains.Delete(
+	_, err := r.client.Workers.Domains.Delete(
 		ctx,
 		data.ID.ValueString(),
 		workers.DomainDeleteParams{
