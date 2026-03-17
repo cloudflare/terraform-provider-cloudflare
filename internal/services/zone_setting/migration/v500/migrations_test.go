@@ -130,7 +130,7 @@ func TestMigrateZoneSetting_OnOff(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepForZoneSetting(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_http3",
 							tfjsonpath.New("zone_id"),
@@ -213,7 +213,7 @@ func TestMigrateZoneSetting_Number(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepForZoneSetting(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_browser_cache_ttl",
 							tfjsonpath.New("zone_id"),
@@ -298,7 +298,7 @@ func TestMigrateZoneSetting_SecurityHeader(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepForZoneSetting(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(
 							"cloudflare_zone_setting."+rnd+"_security_header",
 							tfjsonpath.New("zone_id"),
@@ -363,7 +363,7 @@ func TestMigrateZoneSetting_Multiple(t *testing.T) {
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForZoneSetting(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
 				// http3 setting
 				statecheck.ExpectKnownValue(
 					"cloudflare_zone_setting."+rnd+"_http3",
