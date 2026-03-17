@@ -18,12 +18,10 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 }
 
 type AISearchInstancesDataSourceModel struct {
-	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
-	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
-	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`
-	OrderByDirection types.String                                                         `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
-	MaxItems         types.Int64                                                          `tfsdk:"max_items"`
-	Result           customfield.NestedObjectList[AISearchInstancesResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	Search    types.String                                                         `tfsdk:"search" query:"search,optional"`
+	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[AISearchInstancesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
@@ -31,12 +29,6 @@ func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (para
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
-	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.OrderBy.ValueString()))
-	}
-	if !m.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.InstanceListParamsOrderByDirection(m.OrderByDirection.ValueString()))
-	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}
@@ -48,6 +40,9 @@ type AISearchInstancesResultDataSourceModel struct {
 	ID                   types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	CreatedAt            timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt           timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	Source               types.String                                                                   `tfsdk:"source" json:"source,computed"`
+	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
+	VectorizeName        types.String                                                                   `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 	AIGatewayID          types.String                                                                   `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                   `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                     `tfsdk:"cache" json:"cache,computed"`
@@ -73,11 +68,9 @@ type AISearchInstancesResultDataSourceModel struct {
 	RewriteModel         types.String                                                                   `tfsdk:"rewrite_model" json:"rewrite_model,computed"`
 	RewriteQuery         types.Bool                                                                     `tfsdk:"rewrite_query" json:"rewrite_query,computed"`
 	ScoreThreshold       types.Float64                                                                  `tfsdk:"score_threshold" json:"score_threshold,computed"`
-	Source               types.String                                                                   `tfsdk:"source" json:"source,computed"`
 	SourceParams         customfield.NestedObject[AISearchInstancesSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
 	Status               types.String                                                                   `tfsdk:"status" json:"status,computed"`
 	TokenID              types.String                                                                   `tfsdk:"token_id" json:"token_id,computed"`
-	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
 }
 
 type AISearchInstancesCustomMetadataDataSourceModel struct {
@@ -119,13 +112,7 @@ type AISearchInstancesPublicEndpointParamsSearchEndpointDataSourceModel struct {
 }
 
 type AISearchInstancesRetrievalOptionsDataSourceModel struct {
-	BoostBy          customfield.NestedObjectList[AISearchInstancesRetrievalOptionsBoostByDataSourceModel] `tfsdk:"boost_by" json:"boost_by,computed"`
-	KeywordMatchMode types.String                                                                          `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
-}
-
-type AISearchInstancesRetrievalOptionsBoostByDataSourceModel struct {
-	Field     types.String `tfsdk:"field" json:"field,computed"`
-	Direction types.String `tfsdk:"direction" json:"direction,computed"`
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
 }
 
 type AISearchInstancesSourceParamsDataSourceModel struct {
@@ -137,31 +124,16 @@ type AISearchInstancesSourceParamsDataSourceModel struct {
 }
 
 type AISearchInstancesSourceParamsWebCrawlerDataSourceModel struct {
-	CrawlOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerCrawlOptionsDataSourceModel] `tfsdk:"crawl_options" json:"crawl_options,computed"`
 	ParseOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel] `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType    types.String                                                                                 `tfsdk:"parse_type" json:"parse_type,computed"`
 	StoreOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel] `tfsdk:"store_options" json:"store_options,computed"`
 }
 
-type AISearchInstancesSourceParamsWebCrawlerCrawlOptionsDataSourceModel struct {
-	Depth                types.Float64 `tfsdk:"depth" json:"depth,computed"`
-	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed"`
-	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
-	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,computed"`
-	Source               types.String  `tfsdk:"source" json:"source,computed"`
-}
-
 type AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
-	ContentSelector     customfield.NestedObjectList[AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel] `tfsdk:"content_selector" json:"content_selector,computed"`
-	IncludeHeaders      customfield.Map[types.String]                                                                                   `tfsdk:"include_headers" json:"include_headers,computed"`
-	IncludeImages       types.Bool                                                                                                      `tfsdk:"include_images" json:"include_images,computed"`
-	SpecificSitemaps    customfield.List[types.String]                                                                                  `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
-	UseBrowserRendering types.Bool                                                                                                      `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
-}
-
-type AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel struct {
-	Path     types.String `tfsdk:"path" json:"path,computed"`
-	Selector types.String `tfsdk:"selector" json:"selector,computed"`
+	IncludeHeaders      customfield.Map[types.String]  `tfsdk:"include_headers" json:"include_headers,computed"`
+	IncludeImages       types.Bool                     `tfsdk:"include_images" json:"include_images,computed"`
+	SpecificSitemaps    customfield.List[types.String] `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
+	UseBrowserRendering types.Bool                     `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
 }
 
 type AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {

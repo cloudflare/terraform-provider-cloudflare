@@ -47,6 +47,7 @@ type AISearchInstanceDataSourceModel struct {
 	Status               types.String                                                                  `tfsdk:"status" json:"status,computed"`
 	TokenID              types.String                                                                  `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                  `tfsdk:"type" json:"type,computed"`
+	VectorizeName        types.String                                                                  `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 	CustomMetadata       customfield.NestedObjectList[AISearchInstanceCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	Metadata             customfield.NestedObject[AISearchInstanceMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchInstancePublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
@@ -68,12 +69,6 @@ func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (param
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
-	if !m.Filter.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.Filter.OrderBy.ValueString()))
-	}
-	if !m.Filter.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.InstanceListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
-	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
@@ -120,13 +115,7 @@ type AISearchInstancePublicEndpointParamsSearchEndpointDataSourceModel struct {
 }
 
 type AISearchInstanceRetrievalOptionsDataSourceModel struct {
-	BoostBy          customfield.NestedObjectList[AISearchInstanceRetrievalOptionsBoostByDataSourceModel] `tfsdk:"boost_by" json:"boost_by,computed"`
-	KeywordMatchMode types.String                                                                         `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
-}
-
-type AISearchInstanceRetrievalOptionsBoostByDataSourceModel struct {
-	Field     types.String `tfsdk:"field" json:"field,computed"`
-	Direction types.String `tfsdk:"direction" json:"direction,computed"`
+	KeywordMatchMode types.String `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed"`
 }
 
 type AISearchInstanceSourceParamsDataSourceModel struct {
@@ -138,31 +127,16 @@ type AISearchInstanceSourceParamsDataSourceModel struct {
 }
 
 type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
-	CrawlOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerCrawlOptionsDataSourceModel] `tfsdk:"crawl_options" json:"crawl_options,computed"`
 	ParseOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel] `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType    types.String                                                                                `tfsdk:"parse_type" json:"parse_type,computed"`
 	StoreOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel] `tfsdk:"store_options" json:"store_options,computed"`
 }
 
-type AISearchInstanceSourceParamsWebCrawlerCrawlOptionsDataSourceModel struct {
-	Depth                types.Float64 `tfsdk:"depth" json:"depth,computed"`
-	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed"`
-	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
-	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,computed"`
-	Source               types.String  `tfsdk:"source" json:"source,computed"`
-}
-
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
-	ContentSelector     customfield.NestedObjectList[AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel] `tfsdk:"content_selector" json:"content_selector,computed"`
-	IncludeHeaders      customfield.Map[types.String]                                                                                  `tfsdk:"include_headers" json:"include_headers,computed"`
-	IncludeImages       types.Bool                                                                                                     `tfsdk:"include_images" json:"include_images,computed"`
-	SpecificSitemaps    customfield.List[types.String]                                                                                 `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
-	UseBrowserRendering types.Bool                                                                                                     `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
-}
-
-type AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel struct {
-	Path     types.String `tfsdk:"path" json:"path,computed"`
-	Selector types.String `tfsdk:"selector" json:"selector,computed"`
+	IncludeHeaders      customfield.Map[types.String]  `tfsdk:"include_headers" json:"include_headers,computed"`
+	IncludeImages       types.Bool                     `tfsdk:"include_images" json:"include_images,computed"`
+	SpecificSitemaps    customfield.List[types.String] `tfsdk:"specific_sitemaps" json:"specific_sitemaps,computed"`
+	UseBrowserRendering types.Bool                     `tfsdk:"use_browser_rendering" json:"use_browser_rendering,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
@@ -172,7 +146,5 @@ type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceFindOneByDataSourceModel struct {
-	OrderBy          types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
-	OrderByDirection types.String `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
-	Search           types.String `tfsdk:"search" query:"search,optional"`
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }
