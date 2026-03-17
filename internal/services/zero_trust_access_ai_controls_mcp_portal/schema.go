@@ -37,9 +37,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Optional: true,
 			},
+			"allow_code_mode": schema.BoolAttribute{
+				Description: "Allow remote code execution in Dynamic Workers (beta)",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
 			"secure_web_gateway": schema.BoolAttribute{
 				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway",
+				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"servers": schema.ListNestedAttribute{
 				Computed:   true,
@@ -68,6 +76,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"name": schema.StringAttribute{
 										Required: true,
 									},
+									"alias": schema.StringAttribute{
+										Optional: true,
+									},
 									"description": schema.StringAttribute{
 										Optional: true,
 									},
@@ -83,6 +94,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Required: true,
+									},
+									"alias": schema.StringAttribute{
+										Optional: true,
 									},
 									"description": schema.StringAttribute{
 										Optional: true,
