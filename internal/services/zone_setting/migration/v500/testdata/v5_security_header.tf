@@ -1,21 +1,12 @@
-resource "cloudflare_zone_setting" "%[1]s_security_header" {
-  zone_id    = "%[2]s"
-  setting_id = "security_header"
-  value = {
-    strict_transport_security = {
+resource "cloudflare_zone_settings_override" {
+  zone_id = "%[2]s"
+  settings {
+    security_header {
       enabled            = true
-      include_subdomains = true
       max_age            = 86400
-      nosniff            = false
+      include_subdomains = true
       preload            = false
+      nosniff            = false
     }
-  }
-}
-
-
-removed {
-  from = cloudflare_zone_settings_override.%[1]s
-  lifecycle {
-    destroy = false
   }
 }
