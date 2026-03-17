@@ -31,15 +31,15 @@ type SourceWorkerScriptModel struct {
 	DispatchNamespace types.String `tfsdk:"dispatch_namespace"`
 
 	// V4 binding blocks stored as arrays in SDKv2 state
-	PlainTextBinding       []SourcePlainTextBindingModel       `tfsdk:"plain_text_binding"`
-	SecretTextBinding      []SourceSecretTextBindingModel      `tfsdk:"secret_text_binding"`
-	KVNamespaceBinding     []SourceKVNamespaceBindingModel     `tfsdk:"kv_namespace_binding"`
-	WebassemblyBinding     []SourceWebassemblyBindingModel     `tfsdk:"webassembly_binding"`
-	ServiceBinding         []SourceServiceBindingModel         `tfsdk:"service_binding"`
-	R2BucketBinding        []SourceR2BucketBindingModel        `tfsdk:"r2_bucket_binding"`
-	AnalyticsEngineBinding []SourceAnalyticsEngineBindingModel `tfsdk:"analytics_engine_binding"`
-	QueueBinding           []SourceQueueBindingModel           `tfsdk:"queue_binding"`
-	D1DatabaseBinding      []SourceD1DatabaseBindingModel      `tfsdk:"d1_database_binding"`
+	PlainTextBinding        []SourcePlainTextBindingModel        `tfsdk:"plain_text_binding"`
+	SecretTextBinding       []SourceSecretTextBindingModel       `tfsdk:"secret_text_binding"`
+	KVNamespaceBinding      []SourceKVNamespaceBindingModel      `tfsdk:"kv_namespace_binding"`
+	WebassemblyBinding      []SourceWebassemblyBindingModel      `tfsdk:"webassembly_binding"`
+	ServiceBinding          []SourceServiceBindingModel          `tfsdk:"service_binding"`
+	R2BucketBinding         []SourceR2BucketBindingModel         `tfsdk:"r2_bucket_binding"`
+	AnalyticsEngineBinding  []SourceAnalyticsEngineBindingModel  `tfsdk:"analytics_engine_binding"`
+	QueueBinding            []SourceQueueBindingModel            `tfsdk:"queue_binding"`
+	D1DatabaseBinding       []SourceD1DatabaseBindingModel       `tfsdk:"d1_database_binding"`
 	HyperdriveConfigBinding []SourceHyperdriveConfigBindingModel `tfsdk:"hyperdrive_config_binding"`
 
 	// V4 placement is a single-element array
@@ -110,85 +110,88 @@ type SourcePlacementModel struct {
 // TargetWorkersScriptModel represents the v5 cloudflare_workers_script state.
 // Must match the current schema exactly for resp.TargetState.Set() to work.
 type TargetWorkersScriptModel struct {
-	ID               types.String                                     `tfsdk:"id"`
-	ScriptName       types.String                                     `tfsdk:"script_name"`
-	AccountID        types.String                                     `tfsdk:"account_id"`
-	Content          types.String                                     `tfsdk:"content"`
-	ContentFile      types.String                                     `tfsdk:"content_file"`
-	ContentSHA256    types.String                                     `tfsdk:"content_sha256"`
-	ContentType      types.String                                     `tfsdk:"content_type"`
-	CreatedOn        timetypes.RFC3339                                `tfsdk:"created_on"`
-	Etag             types.String                                     `tfsdk:"etag"`
-	HasAssets        types.Bool                                       `tfsdk:"has_assets"`
-	HasModules       types.Bool                                       `tfsdk:"has_modules"`
-	LastDeployedFrom types.String                                     `tfsdk:"last_deployed_from"`
-	MigrationTag     types.String                                     `tfsdk:"migration_tag"`
-	ModifiedOn       timetypes.RFC3339                                `tfsdk:"modified_on"`
-	PlacementMode    types.String                                     `tfsdk:"placement_mode"`
-	PlacementStatus  types.String                                     `tfsdk:"placement_status"`
-	StartupTimeMs    types.Int64                                      `tfsdk:"startup_time_ms"`
-	Handlers         customfield.List[types.String]                   `tfsdk:"handlers"`
+	ID               types.String                                           `tfsdk:"id"`
+	ScriptName       types.String                                           `tfsdk:"script_name"`
+	AccountID        types.String                                           `tfsdk:"account_id"`
+	Content          types.String                                           `tfsdk:"content"`
+	ContentFile      types.String                                           `tfsdk:"content_file"`
+	ContentSHA256    types.String                                           `tfsdk:"content_sha256"`
+	ContentType      types.String                                           `tfsdk:"content_type"`
+	CreatedOn        timetypes.RFC3339                                      `tfsdk:"created_on"`
+	Etag             types.String                                           `tfsdk:"etag"`
+	HasAssets        types.Bool                                             `tfsdk:"has_assets"`
+	HasModules       types.Bool                                             `tfsdk:"has_modules"`
+	LastDeployedFrom types.String                                           `tfsdk:"last_deployed_from"`
+	MigrationTag     types.String                                           `tfsdk:"migration_tag"`
+	ModifiedOn       timetypes.RFC3339                                      `tfsdk:"modified_on"`
+	PlacementMode    types.String                                           `tfsdk:"placement_mode"`
+	PlacementStatus  types.String                                           `tfsdk:"placement_status"`
+	StartupTimeMs    types.Int64                                            `tfsdk:"startup_time_ms"`
+	Handlers         customfield.List[types.String]                         `tfsdk:"handlers"`
 	NamedHandlers    customfield.NestedObjectList[TargetNamedHandlersModel] `tfsdk:"named_handlers"`
 
 	// Metadata fields (embedded in WorkersScriptModel)
-	Assets             *TargetAssetsModel                                   `tfsdk:"assets"`
-	Bindings           customfield.NestedObjectList[TargetBindingsModel]    `tfsdk:"bindings"`
-	BodyPart           types.String                                         `tfsdk:"body_part"`
-	CompatibilityDate  types.String                                         `tfsdk:"compatibility_date"`
-	CompatibilityFlags customfield.Set[types.String]                        `tfsdk:"compatibility_flags"`
-	KeepAssets         types.Bool                                           `tfsdk:"keep_assets"`
-	KeepBindings       *[]types.String                                      `tfsdk:"keep_bindings"`
-	Limits             *TargetLimitsModel                                   `tfsdk:"limits"`
-	Logpush            types.Bool                                           `tfsdk:"logpush"`
-	MainModule         types.String                                         `tfsdk:"main_module"`
-	Migrations         customfield.NestedObject[TargetMigrationsModel]      `tfsdk:"migrations"`
-	Observability      *TargetObservabilityModel                            `tfsdk:"observability"`
-	Placement          customfield.NestedObject[TargetPlacementModel]       `tfsdk:"placement"`
+	Assets             *TargetAssetsModel                                    `tfsdk:"assets"`
+	Bindings           customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
+	BodyPart           types.String                                          `tfsdk:"body_part"`
+	CompatibilityDate  types.String                                          `tfsdk:"compatibility_date"`
+	CompatibilityFlags customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
+	KeepAssets         types.Bool                                            `tfsdk:"keep_assets"`
+	KeepBindings       *[]types.String                                       `tfsdk:"keep_bindings"`
+	Limits             *TargetLimitsModel                                    `tfsdk:"limits"`
+	Logpush            types.Bool                                            `tfsdk:"logpush"`
+	MainModule         types.String                                          `tfsdk:"main_module"`
+	Migrations         customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
+	Observability      *TargetObservabilityModel                             `tfsdk:"observability"`
+	Placement          customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
 	TailConsumers      customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
-	UsageModel         types.String                                         `tfsdk:"usage_model"`
+	UsageModel         types.String                                          `tfsdk:"usage_model"`
 }
 
 // TargetBindingsModel mirrors WorkersScriptMetadataBindingsModel.
 // All fields except name and type are Optional — most will be null for any given binding.
 type TargetBindingsModel struct {
-	Name                        types.String              `tfsdk:"name"`
-	Type                        types.String              `tfsdk:"type"`
-	Dataset                     types.String              `tfsdk:"dataset"`
-	ID                          types.String              `tfsdk:"id"`
-	Outbound                    *TargetBindingsOutboundModel `tfsdk:"outbound"`
-	ClassName                   types.String              `tfsdk:"class_name"`
-	NamespaceID                 types.String              `tfsdk:"namespace_id"`
-	ScriptName                  types.String              `tfsdk:"script_name"`
-	Json                        types.String              `tfsdk:"json"`
-	CertificateID               types.String              `tfsdk:"certificate_id"`
-	Text                        types.String              `tfsdk:"text"`
-	Pipeline                    types.String              `tfsdk:"pipeline"`
-	QueueName                   types.String              `tfsdk:"queue_name"`
-	Simple                      *TargetBindingsSimpleModel `tfsdk:"simple"`
-	BucketName                  types.String              `tfsdk:"bucket_name"`
-	Jurisdiction                types.String              `tfsdk:"jurisdiction"`
-	IndexName                   types.String              `tfsdk:"index_name"`
-	SecretName                  types.String              `tfsdk:"secret_name"`
-	StoreID                     types.String              `tfsdk:"store_id"`
-	Algorithm                   jsontypes.Normalized      `tfsdk:"algorithm"`
-	Format                      types.String              `tfsdk:"format"`
+	Name                        types.String                  `tfsdk:"name"`
+	Type                        types.String                  `tfsdk:"type"`
+	Dataset                     types.String                  `tfsdk:"dataset"`
+	ID                          types.String                  `tfsdk:"id"`
+	Outbound                    *TargetBindingsOutboundModel  `tfsdk:"outbound"`
+	ClassName                   types.String                  `tfsdk:"class_name"`
+	NamespaceID                 types.String                  `tfsdk:"namespace_id"`
+	ScriptName                  types.String                  `tfsdk:"script_name"`
+	Json                        types.String                  `tfsdk:"json"`
+	CertificateID               types.String                  `tfsdk:"certificate_id"`
+	Text                        types.String                  `tfsdk:"text"`
+	Pipeline                    types.String                  `tfsdk:"pipeline"`
+	QueueName                   types.String                  `tfsdk:"queue_name"`
+	Simple                      *TargetBindingsSimpleModel    `tfsdk:"simple"`
+	BucketName                  types.String                  `tfsdk:"bucket_name"`
+	Jurisdiction                types.String                  `tfsdk:"jurisdiction"`
+	IndexName                   types.String                  `tfsdk:"index_name"`
+	SecretName                  types.String                  `tfsdk:"secret_name"`
+	StoreID                     types.String                  `tfsdk:"store_id"`
+	Algorithm                   jsontypes.Normalized          `tfsdk:"algorithm"`
+	Format                      types.String                  `tfsdk:"format"`
 	Usages                      customfield.Set[types.String] `tfsdk:"usages"`
-	KeyBase64                   types.String              `tfsdk:"key_base64"`
-	KeyJwk                      jsontypes.Normalized      `tfsdk:"key_jwk"`
-	WorkflowName                types.String              `tfsdk:"workflow_name"`
-	VersionID                   types.String              `tfsdk:"version_id"`
-	Part                        types.String              `tfsdk:"part"`
-	Namespace                   types.String              `tfsdk:"namespace"`
-	Environment                 types.String              `tfsdk:"environment"`
-	OldName                     types.String              `tfsdk:"old_name"`
-	AllowedDestinationAddresses *[]types.String           `tfsdk:"allowed_destination_addresses"`
-	AllowedSenderAddresses      *[]types.String           `tfsdk:"allowed_sender_addresses"`
-	DestinationAddress          types.String              `tfsdk:"destination_address"`
-	Service                     types.String              `tfsdk:"service"`
+	KeyBase64                   types.String                  `tfsdk:"key_base64"`
+	KeyJwk                      jsontypes.Normalized          `tfsdk:"key_jwk"`
+	WorkflowName                types.String                  `tfsdk:"workflow_name"`
+	VersionID                   types.String                  `tfsdk:"version_id"`
+	Part                        types.String                  `tfsdk:"part"`
+	Namespace                   types.String                  `tfsdk:"namespace"`
+	Environment                 types.String                  `tfsdk:"environment"`
+	OldName                     types.String                  `tfsdk:"old_name"`
+	AllowedDestinationAddresses *[]types.String               `tfsdk:"allowed_destination_addresses"`
+	AllowedSenderAddresses      *[]types.String               `tfsdk:"allowed_sender_addresses"`
+	DestinationAddress          types.String                  `tfsdk:"destination_address"`
+	Service                     types.String                  `tfsdk:"service"`
+	DispatchNamespace           types.String                  `tfsdk:"dispatch_namespace"`
+	Entrypoint                  types.String                  `tfsdk:"entrypoint"`
+	ServiceID                   types.String                  `tfsdk:"service_id"`
 }
 
 type TargetBindingsOutboundModel struct {
-	Params *[]types.String                `tfsdk:"params"`
+	Params *[]types.String                    `tfsdk:"params"`
 	Worker *TargetBindingsOutboundWorkerModel `tfsdk:"worker"`
 }
 
@@ -223,14 +226,14 @@ type TargetLimitsModel struct {
 }
 
 type TargetMigrationsModel struct {
-	DeletedClasses     *[]types.String                    `tfsdk:"deleted_classes"`
-	NewClasses         *[]types.String                    `tfsdk:"new_classes"`
-	NewSqliteClasses   *[]types.String                    `tfsdk:"new_sqlite_classes"`
-	NewTag             types.String                       `tfsdk:"new_tag"`
-	OldTag             types.String                       `tfsdk:"old_tag"`
-	RenamedClasses     *[]*TargetMigrationsRenamedModel   `tfsdk:"renamed_classes"`
+	DeletedClasses     *[]types.String                      `tfsdk:"deleted_classes"`
+	NewClasses         *[]types.String                      `tfsdk:"new_classes"`
+	NewSqliteClasses   *[]types.String                      `tfsdk:"new_sqlite_classes"`
+	NewTag             types.String                         `tfsdk:"new_tag"`
+	OldTag             types.String                         `tfsdk:"old_tag"`
+	RenamedClasses     *[]*TargetMigrationsRenamedModel     `tfsdk:"renamed_classes"`
 	TransferredClasses *[]*TargetMigrationsTransferredModel `tfsdk:"transferred_classes"`
-	Steps              *[]*TargetMigrationsStepsModel     `tfsdk:"steps"`
+	Steps              *[]*TargetMigrationsStepsModel       `tfsdk:"steps"`
 }
 
 type TargetMigrationsRenamedModel struct {
@@ -245,11 +248,11 @@ type TargetMigrationsTransferredModel struct {
 }
 
 type TargetMigrationsStepsModel struct {
-	DeletedClasses     *[]types.String                         `tfsdk:"deleted_classes"`
-	NewClasses         *[]types.String                         `tfsdk:"new_classes"`
-	NewSqliteClasses   *[]types.String                         `tfsdk:"new_sqlite_classes"`
-	RenamedClasses     *[]*TargetMigrationsRenamedModel        `tfsdk:"renamed_classes"`
-	TransferredClasses *[]*TargetMigrationsTransferredModel    `tfsdk:"transferred_classes"`
+	DeletedClasses     *[]types.String                      `tfsdk:"deleted_classes"`
+	NewClasses         *[]types.String                      `tfsdk:"new_classes"`
+	NewSqliteClasses   *[]types.String                      `tfsdk:"new_sqlite_classes"`
+	RenamedClasses     *[]*TargetMigrationsRenamedModel     `tfsdk:"renamed_classes"`
+	TransferredClasses *[]*TargetMigrationsTransferredModel `tfsdk:"transferred_classes"`
 }
 
 type TargetObservabilityModel struct {
@@ -267,13 +270,13 @@ type TargetObservabilityLogsModel struct {
 }
 
 type TargetPlacementModel struct {
-	Mode           types.String                    `tfsdk:"mode"`
-	LastAnalyzedAt timetypes.RFC3339               `tfsdk:"last_analyzed_at"`
-	Status         types.String                    `tfsdk:"status"`
-	Region         types.String                    `tfsdk:"region"`
-	Hostname       types.String                    `tfsdk:"hostname"`
-	Host           types.String                    `tfsdk:"host"`
-	Target         *[]*TargetPlacementTargetModel  `tfsdk:"target"`
+	Mode           types.String                   `tfsdk:"mode"`
+	LastAnalyzedAt timetypes.RFC3339              `tfsdk:"last_analyzed_at"`
+	Status         types.String                   `tfsdk:"status"`
+	Region         types.String                   `tfsdk:"region"`
+	Hostname       types.String                   `tfsdk:"hostname"`
+	Host           types.String                   `tfsdk:"host"`
+	Target         *[]*TargetPlacementTargetModel `tfsdk:"target"`
 }
 
 type TargetPlacementTargetModel struct {
