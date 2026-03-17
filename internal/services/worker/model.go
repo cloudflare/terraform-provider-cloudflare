@@ -37,15 +37,25 @@ func (m WorkerModel) MarshalJSONForUpdate(state WorkerModel) (data []byte, err e
 }
 
 type WorkerObservabilityModel struct {
-	Enabled          types.Bool                                             `tfsdk:"enabled" json:"enabled,computed_optional"`
-	HeadSamplingRate types.Float64                                          `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
-	Logs             customfield.NestedObject[WorkerObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed_optional"`
+	Enabled          types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                                            `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Logs             customfield.NestedObject[WorkerObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed_optional"`
+	Traces           customfield.NestedObject[WorkerObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed_optional"`
 }
 
 type WorkerObservabilityLogsModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed_optional"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
-	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,computed_optional"`
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed_optional"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
+}
+
+type WorkerObservabilityTracesModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
 }
 
 type WorkerSubdomainModel struct {
