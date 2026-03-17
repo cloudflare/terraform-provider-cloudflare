@@ -141,6 +141,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Default:     float64default.StaticFloat64(1),
 							},
+							"invocation_logs": schema.BoolAttribute{
+								Description: "Whether invocation logs are enabled for the Worker traces.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+							},
 							"persist": schema.BoolAttribute{
 								Description: "Whether trace persistence is enabled for the Worker.",
 								Computed:    true,
@@ -148,7 +154,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 						},
-						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityLogsModel{
+						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityTracesModel{
 							Enabled:          types.BoolValue(false),
 							HeadSamplingRate: types.Float64Value(1),
 							InvocationLogs:   types.BoolValue(true),

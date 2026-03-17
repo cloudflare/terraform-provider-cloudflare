@@ -27,6 +27,7 @@ type ZeroTrustOrganizationModel struct {
 	AllowAuthenticateViaWARP               types.Bool                             `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
 	AutoRedirectToIdentity                 types.Bool                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	IsUIReadOnly                           types.Bool                             `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`
+	MfaConfigurationAllowed                types.Bool                             `tfsdk:"mfa_configuration_allowed" json:"mfa_configuration_allowed,computed_optional"`
 	MfaRequiredForAllApps                  types.Bool                             `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed_optional"`
 	UIReadOnlyToggleReason                 types.String                           `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed_optional"`
 }
