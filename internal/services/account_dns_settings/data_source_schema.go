@@ -22,10 +22,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"enforce_dns_only": schema.BoolAttribute{
-				Description: "Whether to enforce DNS-only records for the entire account. Omitted when account settings are unavailable.",
-				Computed:    true,
-			},
 			"zone_defaults": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsDataSourceModel](ctx),
