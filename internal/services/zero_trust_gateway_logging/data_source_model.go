@@ -17,6 +17,7 @@ type ZeroTrustGatewayLoggingResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayLoggingDataSourceModel struct {
+	ID                 types.String                                                                       `tfsdk:"id" path:"account_id,computed"`
 	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	RedactPii          types.Bool                                                                         `tfsdk:"redact_pii" json:"redact_pii,computed"`
 	SettingsByRuleType customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeDataSourceModel] `tfsdk:"settings_by_rule_type" json:"settings_by_rule_type,computed"`
