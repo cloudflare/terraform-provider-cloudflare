@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustGatewayLoggingResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustGatewayLoggingResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustGatewayLoggingResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustGatewayLoggingResource{}
@@ -88,6 +91,7 @@ func (r *ZeroTrustGatewayLoggingResource) Create(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -136,6 +140,7 @@ func (r *ZeroTrustGatewayLoggingResource) Update(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -175,12 +180,55 @@ func (r *ZeroTrustGatewayLoggingResource) Read(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustGatewayLoggingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *ZeroTrustGatewayLoggingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(ZeroTrustGatewayLoggingModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := ZeroTrustGatewayLoggingResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Gateway.Logging.Get(
+		ctx,
+		zero_trust.GatewayLoggingGetParams{
+			AccountID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.AccountID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustGatewayLoggingResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

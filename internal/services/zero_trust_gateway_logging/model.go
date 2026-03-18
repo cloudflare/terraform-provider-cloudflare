@@ -13,6 +13,7 @@ type ZeroTrustGatewayLoggingResultEnvelope struct {
 }
 
 type ZeroTrustGatewayLoggingModel struct {
+	ID                 types.String                                                             `tfsdk:"id" json:"-,computed"`
 	AccountID          types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
 	RedactPii          types.Bool                                                               `tfsdk:"redact_pii" json:"redact_pii,computed_optional"`
 	SettingsByRuleType customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeModel] `tfsdk:"settings_by_rule_type" json:"settings_by_rule_type,computed_optional"`
