@@ -231,14 +231,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"timestamp_format": schema.StringAttribute{
-						Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, `rfc3339` or `rfc3339nano`.\nAvailable values: \"unixnano\", \"unix\", \"rfc3339\", \"rfc3339nano\".",
+						Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, `rfc3339`, `rfc3339ms` or `rfc3339ns`.\nAvailable values: \"unixnano\", \"unix\", \"rfc3339\", \"rfc3339ms\", \"rfc3339ns\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"unixnano",
 								"unix",
 								"rfc3339",
-								"rfc3339nano",
+								"rfc3339ms",
+								"rfc3339ns",
 							),
 						},
 					},
