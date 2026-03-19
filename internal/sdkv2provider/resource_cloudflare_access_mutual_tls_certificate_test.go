@@ -178,6 +178,102 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 	return nil
 }
 
+func TestAccCloudflareAccessMutualTLSCertificateForceNew(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
+	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
+	// Adding a newline is technically changing the cert string, to it should be marked for recreation
+	cert2 := cert + "\\n"
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	if cert == "" {
+		t.Fatal("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE must be set for this acceptance test")
+	}
+
+	var beforeCert, afterCert cloudflare.AccessMutualTLSCertificate
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.AccountIdentifier(accountID), cert, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessMutualTLSCertificateExists(name, &beforeCert),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
+				),
+			},
+			{
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.AccountIdentifier(accountID), cert2, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessMutualTLSCertificateExists(name, &afterCert),
+					testAccCheckCloudflareAccessMutualTLSCertificateRecreated(&beforeCert, &afterCert),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareAccessMutualTLSCertificateExists(n string, cert *cloudflare.AccessMutualTLSCertificate) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No AccessMutualTLSCertificate ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+
+		var identifier *cloudflare.ResourceContainer
+		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
+			identifier = cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey])
+		} else {
+			identifier = cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey])
+		}
+
+		foundCert, err := client.GetAccessMutualTLSCertificate(context.Background(), identifier, rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if foundCert.ID != rs.Primary.ID {
+			return fmt.Errorf("AccessMutualTLSCertificate not found")
+		}
+
+		*cert = foundCert
+
+		return nil
+	}
+}
+
+func testAccCheckCloudflareAccessMutualTLSCertificateRecreated(before, after *cloudflare.AccessMutualTLSCertificate) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if before.ID == after.ID {
+			return fmt.Errorf("expected AccessMutualTLSCertificate to be recreated, but both had ID %s", before.ID)
+		}
+		return nil
+	}
+}
+
 func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier *cloudflare.ResourceContainer, cert, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_access_mtls_certificate" "%[1]s" {
