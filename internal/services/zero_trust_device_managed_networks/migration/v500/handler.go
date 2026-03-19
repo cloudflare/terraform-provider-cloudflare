@@ -22,25 +22,41 @@ func UpgradeFromV1(
 
 // UpgradeFromLegacyV0 handles state upgrades for schema_version=0.
 //
-// For this resource we normalize published v5-shaped state that may have been
-// persisted at schema_version=0 by older provider releases.
+// This handles v4 state where config is a list block (array in JSON).
+// We parse using the source model, transform to target model, and set the upgraded state.
 func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading zero trust device managed networks state from schema_version=0")
 
-	// Parse using v5-shaped model (config object), with schema version pinned to 0 by caller.
-	var state TargetZeroTrustDeviceManagedNetworksModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	// Parse using v4-shaped source model (config as list block / array)
+	var sourceState SourceCloudflareDeviceManagedNetworksModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Backfill computed network_id from id when absent.
-	if (state.NetworkID.IsNull() || state.NetworkID.IsUnknown()) && !state.ID.IsNull() && !state.ID.IsUnknown() {
-		state.NetworkID = types.StringValue(state.ID.ValueString())
+	// Transform to v5 target model (config as SingleNestedAttribute / object)
+	targetState := TargetZeroTrustDeviceManagedNetworksModel{
+		ID:        sourceState.ID,
+		AccountID: sourceState.AccountID,
+		Name:      sourceState.Name,
+		Type:      sourceState.Type,
+	}
+
+	// Backfill computed network_id from id
+	if !sourceState.ID.IsNull() && !sourceState.ID.IsUnknown() {
+		targetState.NetworkID = types.StringValue(sourceState.ID.ValueString())
+	}
+
+	// Transform config from list (array) to object
+	if len(sourceState.Config) > 0 {
+		targetState.Config = &TargetConfigModel{
+			TLSSockaddr: sourceState.Config[0].TLSSockaddr,
+			Sha256:      sourceState.Config[0].Sha256,
+		}
 	}
 
 	// Set the upgraded state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &targetState)...)
 
 	tflog.Info(ctx, "State upgrade from schema_version=0 completed successfully")
 }
