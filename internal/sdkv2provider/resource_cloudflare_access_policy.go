@@ -98,16 +98,18 @@ func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.AccessIn
 	}
 
 	var connectionRulesSchema []interface{}
-	var sshArgList []map[string]interface{}
 
-	sshArgMap := map[string]interface{}{
-		"usernames":         connectionRules.SSH.Usernames,
-		"allow_email_alias": connectionRules.SSH.AllowEmailAlias,
+	if connectionRules.SSH != nil {
+		var sshArgList []map[string]interface{}
+		sshArgMap := map[string]interface{}{
+			"usernames":         connectionRules.SSH.Usernames,
+			"allow_email_alias": connectionRules.SSH.AllowEmailAlias,
+		}
+		sshArgList = append(sshArgList, sshArgMap)
+		connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
+			"ssh": sshArgList,
+		})
 	}
-	sshArgList = append(sshArgList, sshArgMap)
-	connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
-		"ssh": sshArgList,
-	})
 
 	return connectionRulesSchema
 }
