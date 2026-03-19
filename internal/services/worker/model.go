@@ -22,7 +22,7 @@ type WorkerModel struct {
 	Observability customfield.NestedObject[WorkerObservabilityModel]    `tfsdk:"observability" json:"observability,computed_optional"`
 	Subdomain     customfield.NestedObject[WorkerSubdomainModel]        `tfsdk:"subdomain" json:"subdomain,computed_optional"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
-	Source        *WorkerSourceModel                                   `tfsdk:"source" json:"source,optional"`
+	Source        *WorkerSourceModel                                    `tfsdk:"source" json:"source,optional"`
 	CreatedOn     timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	UpdatedOn     timetypes.RFC3339                                     `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
 	References    customfield.NestedObject[WorkerReferencesModel]       `tfsdk:"references" json:"references,computed"`
@@ -100,20 +100,20 @@ type WorkerReferencesWorkersModel struct {
 
 type WorkerSourceModel struct {
 	Config *WorkerSourceConfigModel `tfsdk:"config" json:"config,required"`
-	Type   types.String            `tfsdk:"type" json:"type,required"`
+	Type   types.String             `tfsdk:"type" json:"type,required"`
 }
 
 type WorkerSourceConfigModel struct {
-	Branch                     types.String                   `tfsdk:"branch" json:"branch,computed_optional"`
-	BuildCommand               types.String                   `tfsdk:"build_command" json:"build_command,computed_optional"`
-	DeployCommand              types.String                   `tfsdk:"deploy_command" json:"deploy_command,computed_optional"`
-	Owner                      types.String                   `tfsdk:"owner" json:"owner,computed_optional"`
-	OwnerID                    types.String                   `tfsdk:"owner_id" json:"owner_id,computed_optional"`
-	PathIncludes               customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed_optional"`
-	PathExcludes               customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed_optional"`
-	PreviewBranchIncludes      customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed_optional"`
-	PreviewBranchExcludes      customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed_optional"`
-	ProductionDeploymentsEnabled types.Bool                   `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed_optional"`
-	RepoID                     types.String                   `tfsdk:"repo_id" json:"repo_id,computed_optional"`
-	RepoName                   types.String                   `tfsdk:"repo_name" json:"repo_name,computed_optional"`
+	Branch                       types.String                   `tfsdk:"branch" json:"branch,computed_optional"`
+	BuildCommand                 types.String                   `tfsdk:"build_command" json:"build_command,computed_optional"`
+	DeployCommand                types.String                   `tfsdk:"deploy_command" json:"deploy_command,computed_optional"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed_optional"`
+	OwnerID                      types.String                   `tfsdk:"owner_id" json:"owner_id,computed_optional"`
+	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed_optional"`
+	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed_optional"`
+	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed_optional"`
+	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed_optional"`
+	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed_optional"`
+	RepoID                       types.String                   `tfsdk:"repo_id" json:"repo_id,computed_optional"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed_optional"`
 }

@@ -169,7 +169,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WorkerSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
-						Required: true,
+						Required:   true,
 						CustomType: customfield.NewNestedObjectType[WorkerSourceConfigModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"branch": schema.StringAttribute{
