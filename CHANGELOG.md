@@ -1,3 +1,9 @@
+## 4.52.6 (March 19th, 2026)
+
+BUG FIXES:
+
+* resource/cloudflare_zero_trust_access_mtls_certificate: changing `certificate` now correctly forces recreation of the resource instead of a silent no-op update
+
 ## 4.52.5 (September 15th, 2025)
 
 BUG FIXES:
