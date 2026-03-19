@@ -270,7 +270,8 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
 		(!plan.Observability.IsUnknown() && !plan.Observability.Equal(state.Observability)) ||
 		(!plan.Subdomain.IsUnknown() && !plan.Subdomain.Equal(state.Subdomain)) ||
-		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {
+		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) ||
+		(!plan.Source.IsUnknown() && !plan.Source.Equal(state.Source)) {
 		return
 	}
 

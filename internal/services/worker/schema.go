@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -16,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -160,6 +162,94 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				Default: setdefault.StaticValue(customfield.NewSetMust[customfield.NestedObject[WorkerTailConsumersModel]](ctx, nil).SetValue),
+			},
+			"source": schema.SingleNestedAttribute{
+				Description: "Configs for the Worker source control and CI/CD integration.",
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Required: true,
+						CustomType: customfield.NewNestedObjectType[WorkerSourceConfigModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"branch": schema.StringAttribute{
+								Description: "The production branch of the repository.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"build_command": schema.StringAttribute{
+								Description: "The command to run when building the Worker.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"deploy_command": schema.StringAttribute{
+								Description: "The command to run when deploying the Worker.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"owner": schema.StringAttribute{
+								Description: "The owner of the repository.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"owner_id": schema.StringAttribute{
+								Description: "The owner ID of the repository.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"path_includes": schema.ListAttribute{
+								Description: "A list of paths that should be watched to trigger a build. Wildcard syntax (`*`) is supported.",
+								Optional:    true,
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"path_excludes": schema.ListAttribute{
+								Description: "A list of paths that should be excluded from triggering a build. Wildcard syntax (`*`) is supported.",
+								Optional:    true,
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"preview_branch_includes": schema.ListAttribute{
+								Description: "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+								Optional:    true,
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"preview_branch_excludes": schema.ListAttribute{
+								Description: "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+								Optional:    true,
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"production_deployments_enabled": schema.BoolAttribute{
+								Description: "Whether to trigger a production deployment on commits to the production branch.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"repo_id": schema.StringAttribute{
+								Description: "The ID of the repository.",
+								Optional:    true,
+								Computed:    true,
+							},
+							"repo_name": schema.StringAttribute{
+								Description: "The name of the repository.",
+								Optional:    true,
+								Computed:    true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: "The source control management provider.\nAvailable values: \"github\", \"gitlab\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
+						},
+					},
+				},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Worker was created.",

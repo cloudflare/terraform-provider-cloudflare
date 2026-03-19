@@ -223,3 +223,45 @@ func testAccCloudflareWorkerConfigSubdomainEnabled(rnd, accountID string) string
 func testAccCloudflareWorkerConfigSubdomainExplicitPreviews(rnd, accountID string) string {
 	return acctest.LoadTestCase("subdomain_explicit_previews.tf", rnd, accountID)
 }
+
+func testAccCloudflareWorkerConfigSourceEnabled(rnd, accountID string) string {
+	return acctest.LoadTestCase("source_enabled.tf", rnd, accountID)
+}
+
+func TestAccCloudflareWorker_Source(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_worker." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkerConfigSourceEnabled(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("source"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"type": knownvalue.StringExact("github"),
+						"config": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"branch":                        knownvalue.StringExact("main"),
+							"build_command":                knownvalue.StringExact("npm run build"),
+							"deploy_command":               knownvalue.StringExact("npm run deploy"),
+							"owner":                        knownvalue.StringExact("my-org"),
+							"owner_id":                     knownvalue.StringExact("123456"),
+							"production_deployments_enabled": knownvalue.Bool(true),
+							"repo_id":                      knownvalue.StringExact("789012"),
+							"repo_name":                    knownvalue.StringExact("my-worker-repo"),
+							"path_includes":                knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("src/**")}),
+							"path_excludes":                knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("test/**")}),
+							"preview_branch_includes":      knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("feature/**")}),
+							"preview_branch_excludes":      knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("experimental/**")}),
+						}),
+					})),
+				},
+			},
+		},
+	})
+}
