@@ -156,6 +156,9 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 		return
 	}
 
+	// Preserve enabled_entries from prior state to avoid drift when API returns null
+	priorEnabledEntries := data.EnabledEntries
+
 	res := new(http.Response)
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Get(
@@ -184,6 +187,11 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 	}
 	data = &env.Result
 	data.ID = data.ProfileID
+
+	// Restore enabled_entries if API returned null but prior state had a value
+	if data.EnabledEntries == nil && priorEnabledEntries != nil {
+		data.EnabledEntries = priorEnabledEntries
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

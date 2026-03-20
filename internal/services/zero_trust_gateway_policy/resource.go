@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -153,6 +155,9 @@ func (r *ZeroTrustGatewayPolicyResource) Read(ctx context.Context, req resource.
 		return
 	}
 
+	// Store prior state for preserving config values not returned by API
+	priorFilters := data.Filters
+
 	res := new(http.Response)
 	env := ZeroTrustGatewayPolicyResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Rules.Get(
@@ -180,6 +185,15 @@ func (r *ZeroTrustGatewayPolicyResource) Read(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+
+	// Preserve filters from prior state if API returns null
+	// The API doesn't return filters in the response, causing drift
+	if data.Filters == nil && priorFilters != nil {
+		data.Filters = priorFilters
+	}
+
+	// Normalize duration strings to prevent drift from API returning verbose formats
+	normalizeRuleSettingsDurations(ctx, data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -256,4 +270,41 @@ func (r *ZeroTrustGatewayPolicyResource) ImportState(ctx context.Context, req re
 
 func (r *ZeroTrustGatewayPolicyResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+// normalizeDuration converts duration strings to their verbose canonical form
+// to match the API response format. For example: "24h" -> "24h0m0s"
+// This ensures state matches the API response format.
+func normalizeDuration(s string) string {
+	if s == "" {
+		return s
+	}
+	d, err := time.ParseDuration(s)
+	if err != nil {
+		return s // Return original if parsing fails
+	}
+	return d.String()
+}
+
+// normalizeRuleSettingsDurations normalizes duration fields in rule_settings
+// to prevent drift from API returning verbose formats like "24h0m0s" vs config "24h"
+func normalizeRuleSettingsDurations(ctx context.Context, data *ZeroTrustGatewayPolicyModel) {
+	if data.RuleSettings.IsNull() || data.RuleSettings.IsUnknown() {
+		return
+	}
+
+	rs, diags := data.RuleSettings.Value(ctx)
+	if diags.HasError() || rs == nil {
+		return
+	}
+
+	// Normalize check_session.duration
+	if rs.CheckSession != nil && !rs.CheckSession.Duration.IsNull() && !rs.CheckSession.Duration.IsUnknown() {
+		normalized := normalizeDuration(rs.CheckSession.Duration.ValueString())
+		rs.CheckSession.Duration = types.StringValue(normalized)
+	}
+
+	// Update the rule settings back - create a new NestedObject with the modified value
+	newRuleSettings, _ := customfield.NewObject(ctx, rs)
+	data.RuleSettings = newRuleSettings
 }
