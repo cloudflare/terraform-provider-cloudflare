@@ -150,6 +150,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/sso_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
@@ -623,6 +625,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		secrets_store.NewResource,
+		secrets_store_secret.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
