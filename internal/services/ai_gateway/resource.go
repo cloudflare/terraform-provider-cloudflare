@@ -5,6 +5,7 @@ package ai_gateway
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
@@ -83,6 +84,12 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 
 	data.ID = types.StringValue(result.ID)
 	data.AccountID = types.StringValue(result.AccountID)
+	if !result.CreatedAt.IsZero() {
+		data.CreatedAt = types.StringValue(result.CreatedAt.Format(time.RFC3339))
+	}
+	if !result.ModifiedAt.IsZero() {
+		data.ModifiedAt = types.StringValue(result.ModifiedAt.Format(time.RFC3339))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,6 +164,12 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	data.ID = types.StringValue(result.ID)
 	data.AccountID = types.StringValue(result.AccountID)
+	if !result.CreatedAt.IsZero() {
+		data.CreatedAt = types.StringValue(result.CreatedAt.Format(time.RFC3339))
+	}
+	if !result.ModifiedAt.IsZero() {
+		data.ModifiedAt = types.StringValue(result.ModifiedAt.Format(time.RFC3339))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -218,6 +231,12 @@ func (r *AIGatewayResource) ImportState(ctx context.Context, req resource.Import
 
 	data.ID = types.StringValue(result.ID)
 	data.AccountID = types.StringValue(result.AccountID)
+	if !result.CreatedAt.IsZero() {
+		data.CreatedAt = types.StringValue(result.CreatedAt.Format(time.RFC3339))
+	}
+	if !result.ModifiedAt.IsZero() {
+		data.ModifiedAt = types.StringValue(result.ModifiedAt.Format(time.RFC3339))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
