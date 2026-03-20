@@ -146,6 +146,22 @@ changes.
 
 - Renamed to `cloudflare_zero_trust_access_policy`
 
+~> **Application-scoped policies cannot be automatically migrated.** If your
+`cloudflare_access_policy` resource has an `application_id` attribute, it
+cannot be migrated using `tf-migrate` or state upgraders. These policies use a
+different API endpoint (`/access/apps/{app_id}/policies/`) than account-level
+policies (`/access/policies/`).
+
+In v5, application-scoped policies are managed as inline `policies` attributes
+within the `cloudflare_zero_trust_access_application` resource. To migrate:
+
+1. Remove the policy from state: `terraform state rm cloudflare_access_policy.example`
+2. Add the policy configuration inline in your `cloudflare_zero_trust_access_application` resource's `policies` attribute
+3. Run `terraform apply`
+
+See the [migration guide](version-5-migration#application-scoped-access-policies)
+for detailed instructions.
+
 ## cloudflare_access_service_token
 
 - Renamed to `cloudflare_zero_trust_access_service_token`

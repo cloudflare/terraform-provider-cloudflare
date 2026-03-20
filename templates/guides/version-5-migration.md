@@ -685,6 +685,82 @@ as described [above](#using-terraform-state-rm-and-import-manual-resources).
 Some resources cannot be handled by state upgraders alone and require
 additional manual steps after running `tf-migrate` or updating your HCL.
 
+### Application-Scoped Access Policies
+
+~> **`cloudflare_access_policy` resources with `application_id` cannot be
+automatically migrated.** `tf-migrate` will skip these resources and print a
+warning.
+
+In v4, `cloudflare_access_policy` could be used for both account-level policies
+and application-scoped policies (when `application_id` was set). These two types
+use different API endpoints:
+
+- **Account-level policies**: `POST /access/policies/`
+- **Application-scoped policies**: `POST /access/apps/{app_id}/policies/`
+
+In v5, application-scoped policies are no longer standalone resources. Instead,
+they are defined inline within the `cloudflare_zero_trust_access_application`
+resource using the `policies` attribute.
+
+#### Migration Steps
+
+**1.** Identify application-scoped policies in your configuration:
+
+```hcl
+# This is an application-scoped policy (has application_id)
+resource "cloudflare_access_policy" "app_policy" {
+  account_id     = "f037e56e89293a057740de681ac9abbe"
+  application_id = "abc123"  # <-- This makes it application-scoped
+  name           = "Allow employees"
+  decision       = "allow"
+  precedence     = 1
+
+  include {
+    email_domain = ["example.com"]
+  }
+}
+```
+
+**2.** Remove the policy from Terraform state:
+
+```bash
+terraform state rm cloudflare_access_policy.app_policy
+```
+
+**3.** Add the policy inline in your application resource:
+
+```hcl
+resource "cloudflare_zero_trust_access_application" "my_app" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "My Application"
+  domain     = "app.example.com"
+  type       = "self_hosted"
+
+  # Policies are now inline
+  policies = [
+    {
+      name       = "Allow employees"
+      decision   = "allow"
+      precedence = 1
+      include    = [{ email_domain = { domain = "example.com" } }]
+    }
+  ]
+}
+```
+
+**4.** Run `terraform apply` to update the application with the inline policy.
+
+#### Key Differences
+
+| v4 | v5 |
+|---|---|
+| Separate `cloudflare_access_policy` resource with `application_id` | Inline `policies` attribute in `cloudflare_zero_trust_access_application` |
+| `include { email_domain = ["example.com"] }` (block with array) | `include = [{ email_domain = { domain = "example.com" } }]` (attribute with objects) |
+| `precedence` as top-level attribute | `precedence` inside each policy object |
+
+~> **Account-level policies** (without `application_id`) migrate normally using
+`tf-migrate` and are renamed to `cloudflare_zero_trust_access_policy`.
+
 ### `cloudflare_zone_settings_override`
 
 In v4, `cloudflare_zone_settings_override` was a single resource that managed
