@@ -1288,6 +1288,26 @@ structures, `for_each` with dynamic resource types, or heavy use of
 `templatefile`, you may need to make some HCL changes manually. Refer to the
 [version 5 upgrade guide] for per-resource attribute change details.
 
+#### tf-migrate resource rename limitations
+
+`tf-migrate` supports resource rename post-processing, but a small set of resources use conditional routing where one v4 type can map to multiple v5 types. In these cases, automatic global reference rewriting may require manual verification.
+ `cloudflare_authenticated_origin_pulls`
+- `cloudflare_authenticated_origin_pulls` may migrate to:
+  - `cloudflare_authenticated_origin_pulls_settings` (when `hostname` is not set)
+  - `cloudflare_authenticated_origin_pulls` (when `hostname` is set)
+- The target type depends on resource shape, not just the v4 type name.
+ `cloudflare_authenticated_origin_pulls_certificate`
+- `cloudflare_authenticated_origin_pulls_certificate` may migrate to:
+  - `cloudflare_authenticated_origin_pulls_certificate` (when `type = "per-zone"`)
+  - `cloudflare_authenticated_origin_pulls_hostname_certificate` (when `type = "per-hostname"`)
+- The target type depends on certificate mode, not just the v4 type name.
+ `cloudflare_dlp_profile` / `cloudflare_zero_trust_dlp_profile`
+- Both v4 resource names share the same migration logic and may migrate to:
+  - `cloudflare_zero_trust_dlp_custom_profile` (when `type = "custom"`)
+  - `cloudflare_zero_trust_dlp_predefined_profile` (when `type = "predefined"`)
+- The target type depends on the profile `type` value.
+~> For the resources above, review generated `moved` blocks and cross-resource references before apply.
+
 ### State locked during migration
 
 Ensure no other Terraform processes are running. If using remote state with
