@@ -1263,6 +1263,106 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 	}
 }
 
+// RunStateRmForObsoleteTypes removes state entries whose resource type is no longer
+// known to the v5 provider. The working directory is found by globbing for "work*"
+// subdirectories inside tmpDir (created by the terraform-plugin-testing framework).
+// This is the test equivalent of the e2e runner's removeObsoleteStateEntries step.
+func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []string) {
+	t.Helper()
+
+	// Find the terraform working directory (work* subdirectory of tmpDir)
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		debugLogf(t, "RunStateRmForObsoleteTypes: no work* directory found in %s", tmpDir)
+		return
+	}
+	workDir := matches[0]
+
+	// Find the terraform binary
+	tfBin, err := exec.LookPath("terraform")
+	if err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: terraform binary not found: %v", err)
+		return
+	}
+
+	// Run terraform state list to find all resources
+	listCmd := exec.Command(tfBin, "state", "list")
+	listCmd.Dir = workDir
+	out, err := listCmd.Output()
+	if err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: terraform state list failed: %v", err)
+		return
+	}
+
+	// Build set of obsolete types
+	obsoleteSet := make(map[string]bool, len(obsoleteTypes))
+	for _, t := range obsoleteTypes {
+		obsoleteSet[t] = true
+	}
+
+	// Remove matching entries
+	for _, addr := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+		if addr == "" {
+			continue
+		}
+		// Extract resource type from address (skip "module." and module name pairs)
+		parts := strings.Split(addr, ".")
+		resourceType := ""
+		for i := 0; i < len(parts); i++ {
+			if parts[i] == "module" {
+				i++
+				continue
+			}
+			resourceType = parts[i]
+			break
+		}
+		if !obsoleteSet[resourceType] {
+			continue
+		}
+		rmCmd := exec.Command(tfBin, "state", "rm", addr)
+		rmCmd.Dir = workDir
+		if out, err := rmCmd.CombinedOutput(); err != nil {
+			debugLogf(t, "RunStateRmForObsoleteTypes: failed to remove %s: %v\n%s", addr, err, out)
+		} else {
+			debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
+		}
+	}
+}
+
+// MigrationV2TestStepForZoneSetting creates a test step for cloudflare_zone_settings_override
+// migration. After tf-migrate runs, removes cloudflare_zone_settings_override state entries
+// before terraform plan — the v5 provider has no schema for this type and cannot read the
+// old state entry to process the removed block.
+func MigrationV2TestStepForZoneSetting(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	var planChecks []plancheck.PlanCheck
+	if sourceVersion == "v4" {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for zone_setting: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			RunStateRmForObsoleteTypes(t, tmpDir, []string{"cloudflare_zone_settings_override"})
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
+	}
+}
+
 // MigrationV2TestStepForGatewayPolicy creates a test step for cloudflare_zero_trust_gateway_policy migration
 // that uses a custom plan checker to handle Gateway Policy API normalization behaviors:
 // - Precedence changes (API auto-calculates with random offset 1-100)

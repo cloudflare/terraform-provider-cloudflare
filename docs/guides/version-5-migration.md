@@ -765,20 +765,22 @@ resource "cloudflare_zero_trust_access_application" "my_app" {
 
 In v4, `cloudflare_zone_settings_override` was a single resource that managed
 all zone settings in one block. In v5, this has been replaced by individual
-`cloudflare_zone_setting` resources -- one per setting. This is a one-to-many
-split that cannot be handled by a state upgrader.
+`cloudflare_zone_setting` resources — one per setting.
 
-#### With tf-migrate
+#### With tf-migrate (recommended)
 
-`tf-migrate` automatically splits the v4 resource into individual v5 resources.
+`tf-migrate` automatically handles the full transformation. Run it as part of
+Step 2 if you have not already done so.
 
-**1.** Run `tf-migrate` (if you have not already done so in Step 2):
+**What tf-migrate generates** for each `cloudflare_zone_settings_override` resource:
 
-```bash
-tf-migrate migrate --source-version v4 --target-version v5
-```
+- One `cloudflare_zone_setting` resource per setting
+- One `import` block per setting so Terraform adopts the existing API state
+  rather than creating new resources (requires Terraform 1.7+)
+- One `removed` block so Terraform drops the old state entry without destroying
+  anything (requires Terraform 1.7+)
 
-This transforms your configuration from:
+For example, this v4 configuration:
 
 ```hcl
 resource "cloudflare_zone_settings_override" "example" {
@@ -806,7 +808,7 @@ resource "cloudflare_zone_settings_override" "example" {
 }
 ```
 
-Into individual resources:
+Becomes:
 
 ```hcl
 resource "cloudflare_zone_setting" "example_always_online" {
@@ -814,17 +816,29 @@ resource "cloudflare_zone_setting" "example_always_online" {
   setting_id = "always_online"
   value      = "on"
 }
+import {
+  to = cloudflare_zone_setting.example_always_online
+  id = "0da42c8d2132a9ddaf714f9e7c920711/always_online"
+}
 
 resource "cloudflare_zone_setting" "example_brotli" {
   zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
   setting_id = "brotli"
   value      = "on"
 }
+import {
+  to = cloudflare_zone_setting.example_brotli
+  id = "0da42c8d2132a9ddaf714f9e7c920711/brotli"
+}
 
 resource "cloudflare_zone_setting" "example_browser_cache_ttl" {
   zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
   setting_id = "browser_cache_ttl"
   value      = 14400
+}
+import {
+  to = cloudflare_zone_setting.example_browser_cache_ttl
+  id = "0da42c8d2132a9ddaf714f9e7c920711/browser_cache_ttl"
 }
 
 resource "cloudflare_zone_setting" "example_minify" {
@@ -835,6 +849,10 @@ resource "cloudflare_zone_setting" "example_minify" {
     html = "on"
     js   = "off"
   }
+}
+import {
+  to = cloudflare_zone_setting.example_minify
+  id = "0da42c8d2132a9ddaf714f9e7c920711/minify"
 }
 
 resource "cloudflare_zone_setting" "example_security_header" {
@@ -850,36 +868,71 @@ resource "cloudflare_zone_setting" "example_security_header" {
     }
   }
 }
+import {
+  to = cloudflare_zone_setting.example_security_header
+  id = "0da42c8d2132a9ddaf714f9e7c920711/security_header"
+}
+
+removed {
+  from = cloudflare_zone_settings_override.example
+  lifecycle {
+    destroy = false
+  }
+}
 ```
 
 ~> `tf-migrate` skips the deprecated `universal_ssl` setting and maps
 `zero_rtt` to the v5 setting ID `0rtt`. The resource name remains
 `{name}_zero_rtt` but the `setting_id` is set to `"0rtt"`.
 
-**2.** Remove the old resource from state and import the new resources:
+**After running tf-migrate, two manual steps are required:**
+
+**Step 1: Remove the old state entry.**
+
+The v5 provider has no schema for `cloudflare_zone_settings_override`, so
+Terraform cannot read the old state entry to process the `removed` block.
+Remove it before running `terraform plan`:
 
 ```bash
-# Remove the v4 resource
 terraform state rm cloudflare_zone_settings_override.example
-
-# Import each new v5 resource (format: <zone_id>/<setting_id>)
-terraform import cloudflare_zone_setting.example_always_online 0da42c8d2132a9ddaf714f9e7c920711/always_online
-terraform import cloudflare_zone_setting.example_brotli 0da42c8d2132a9ddaf714f9e7c920711/brotli
-terraform import cloudflare_zone_setting.example_browser_cache_ttl 0da42c8d2132a9ddaf714f9e7c920711/browser_cache_ttl
-terraform import cloudflare_zone_setting.example_minify 0da42c8d2132a9ddaf714f9e7c920711/minify
-terraform import cloudflare_zone_setting.example_security_header 0da42c8d2132a9ddaf714f9e7c920711/security_header
 ```
 
-**3.** Verify:
+If the resource is inside a Terraform module:
 
 ```bash
-terraform plan
-# Should show no changes
+terraform state rm module.<module_name>.cloudflare_zone_settings_override.example
+```
+
+~> `tf-migrate` prints the exact `terraform state rm` command for each
+resource in its output. Look for the `⚠️ Action required` warnings.
+
+**Step 2: Move import blocks to the root module (if using modules).**
+
+`import` blocks are only valid in the root Terraform module. If the migrated
+file is used as a child module, move the `import` blocks to your root module
+and prefix the `to` address with the module path:
+
+```hcl
+# In your root module (e.g. main.tf), not inside the child module:
+import {
+  to = module.<module_name>.cloudflare_zone_setting.example_always_online
+  id = "<zone_id>/always_online"
+}
+# ... repeat for each setting
+```
+
+If the migrated file is your root module (no module wrapping), the import
+blocks work as-is and no action is needed.
+
+**Step 3: Apply.**
+
+```bash
+terraform plan   # Shows imports and no creates/destroys
+terraform apply  # Imports existing settings into state
+terraform plan   # Should show no changes
 ```
 
 #### Without tf-migrate
-
-If you prefer not to use `tf-migrate`, follow these steps manually.
 
 **1.** Remove the v4 resource from state:
 
@@ -893,29 +946,29 @@ setting you were managing:
 
 ```hcl
 resource "cloudflare_zone_setting" "example_always_online" {
-  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  zone_id    = "<zone_id>"
   setting_id = "always_online"
   value      = "on"
 }
 
 resource "cloudflare_zone_setting" "example_brotli" {
-  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  zone_id    = "<zone_id>"
   setting_id = "brotli"
   value      = "on"
 }
+# ... one resource per setting
 ```
 
 Key differences from v4:
 
 - Each setting is its own resource with a `setting_id` and `value` attribute.
-- Nested blocks like `minify { css = "on" }` become
-  `value = { css = "on" }`.
+- Nested blocks like `minify { css = "on" }` become `value = { css = "on" }`.
 - The `security_header` block must be wrapped:
   `value = { strict_transport_security = { enabled = true, ... } }`.
 - The `universal_ssl` setting has been removed. Do not create a resource for it.
 - The v4 setting name `zero_rtt` maps to the v5 setting ID `0rtt`.
 
-**3.** Import each new resource into state:
+**3.** Import each new resource into state (format: `<zone_id>/<setting_id>`):
 
 ```bash
 terraform import cloudflare_zone_setting.example_always_online <zone_id>/always_online
