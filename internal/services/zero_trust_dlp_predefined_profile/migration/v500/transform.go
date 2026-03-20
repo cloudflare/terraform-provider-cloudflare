@@ -52,6 +52,16 @@ func Transform(ctx context.Context, source SourceCloudflareDLPProfileModel) (*Ta
 }
 
 // extractEnabledEntryIDs collects the IDs of all enabled entries from v4 state.
+//
+// When the v4 state has entry blocks but none are enabled, this returns a pointer to
+// an empty slice (not nil). This is important for state upgrade correctness: the v5
+// config produced by tf-migrate writes `enabled_entries = []` for the all-disabled case,
+// and the upgraded state must match that exactly — a nil pointer would cause a one-time
+// plan diff of `+ enabled_entries = []` on the first plan after the moved block fires.
+//
+// When the v4 state has no entry blocks at all (len == 0), nil is returned because the
+// resource was never configured with entries and the user's config will not have
+// enabled_entries set.
 func extractEnabledEntryIDs(entries []SourceEntryModel) *[]types.String {
 	if len(entries) == 0 {
 		return nil
@@ -66,9 +76,11 @@ func extractEnabledEntryIDs(entries []SourceEntryModel) *[]types.String {
 		}
 	}
 
-	if len(enabledIDs) == 0 {
-		return nil
+	// Always return a non-nil pointer when v4 entry blocks existed. If none were
+	// enabled, return a pointer to an empty slice so the state matches `enabled_entries = []`
+	// in the migrated config, avoiding a spurious plan diff after state upgrade.
+	if enabledIDs == nil {
+		enabledIDs = []types.String{}
 	}
-
 	return &enabledIDs
 }
