@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +33,7 @@ func testSweepCloudflareAIGateway(r string) error {
 		return nil
 	}
 
-	list, err := client.AIGateway.Gateways.List(ctx, cloudflare.AIGatewayGatewayListParams{
+	list, err := client.AIGateway.List(ctx, ai_gateway.AIGatewayListParams{
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
@@ -51,7 +52,7 @@ func testSweepCloudflareAIGateway(r string) error {
 		}
 
 		tflog.Info(ctx, fmt.Sprintf("Deleting AI Gateway: %s (account: %s)", gw.ID, accountID))
-		_, err := client.AIGateway.Gateways.Delete(ctx, gw.ID, cloudflare.AIGatewayGatewayDeleteParams{
+		_, err := client.AIGateway.Delete(ctx, gw.ID, ai_gateway.AIGatewayDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {

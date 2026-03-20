@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/secrets_store"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -33,7 +34,7 @@ func testSweepCloudflareSecretsStore(r string) error {
 		return nil
 	}
 
-	list, err := client.SecretsStore.Stores.List(ctx, cloudflare.SecretsStoreStoreListParams{
+	list, err := client.SecretsStore.Stores.List(ctx, secrets_store.StoreListParams{
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
@@ -52,7 +53,7 @@ func testSweepCloudflareSecretsStore(r string) error {
 		}
 
 		tflog.Info(ctx, fmt.Sprintf("Deleting secrets store: %s (account: %s)", store.ID, accountID))
-		_, err := client.SecretsStore.Stores.Delete(ctx, store.ID, cloudflare.SecretsStoreStoreDeleteParams{
+		_, err := client.SecretsStore.Stores.Delete(ctx, store.ID, secrets_store.StoreDeleteParams{
 			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
