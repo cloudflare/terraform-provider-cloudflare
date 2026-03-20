@@ -5,15 +5,10 @@ package ai_gateway
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -61,35 +56,33 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-
-	res := new(http.Response)
-	env := AIGatewayResultEnvelope{*data}
-
-	_, err = r.client.AIGateway.Gateways.New(
+	result, err := r.client.AIGateway.New(
 		ctx,
-		ai_gateway.GatewayNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		ai_gateway.AIGatewayNewParams{
+			AccountID:               cloudflare.F(data.AccountID.ValueString()),
+			ID:                      cloudflare.F(data.ID.ValueString()),
+			CacheInvalidateOnUpdate: cloudflare.F(data.CacheInvalidateOnUpdate.ValueBool()),
+			CacheTTL:                cloudflare.F(data.CacheTTL.ValueInt64()),
+			CollectLogs:             cloudflare.F(data.CollectLogs.ValueBool()),
+			RateLimitingInterval:    cloudflare.F(data.RateLimitingInterval.ValueInt64()),
+			RateLimitingLimit:       cloudflare.F(data.RateLimitingLimit.ValueInt64()),
+			RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayNewParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
+			Authentication:          cloudflare.F(data.Authentication.ValueBool()),
+			IsDefault:               cloudflare.F(data.IsDefault.ValueBool()),
+			LogManagement:           cloudflare.F(data.LogManagement.ValueInt64()),
+			LogManagementStrategy:   cloudflare.F(ai_gateway.AIGatewayNewParamsLogManagementStrategy(data.LogManagementStrategy.ValueString())),
+			Logpush:                 cloudflare.F(data.Logpush.ValueBool()),
+			LogpushPublicKey:        cloudflare.F(data.LogpushPublicKey.ValueString()),
+			Zdr:                     cloudflare.F(data.ZDR.ValueBool()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to create AI Gateway", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.ID)
+	data.AccountID = types.StringValue(result.AccountID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -111,36 +104,32 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-
-	res := new(http.Response)
-	env := AIGatewayResultEnvelope{*data}
-
-	_, err = r.client.AIGateway.Gateways.Update(
+	result, err := r.client.AIGateway.Update(
 		ctx,
-		data.ID.ValueString(),
-		ai_gateway.GatewayUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		state.ID.ValueString(),
+		ai_gateway.AIGatewayUpdateParams{
+			AccountID:               cloudflare.F(data.AccountID.ValueString()),
+			CacheInvalidateOnUpdate: cloudflare.F(data.CacheInvalidateOnUpdate.ValueBool()),
+			CacheTTL:                cloudflare.F(data.CacheTTL.ValueInt64()),
+			CollectLogs:             cloudflare.F(data.CollectLogs.ValueBool()),
+			RateLimitingInterval:    cloudflare.F(data.RateLimitingInterval.ValueInt64()),
+			RateLimitingLimit:       cloudflare.F(data.RateLimitingLimit.ValueInt64()),
+			RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayUpdateParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
+			Authentication:          cloudflare.F(data.Authentication.ValueBool()),
+			IsDefault:               cloudflare.F(data.IsDefault.ValueBool()),
+			LogManagement:           cloudflare.F(data.LogManagement.ValueInt64()),
+			LogManagementStrategy:   cloudflare.F(ai_gateway.AIGatewayUpdateParamsLogManagementStrategy(data.LogManagementStrategy.ValueString())),
+			Logpush:                 cloudflare.F(data.Logpush.ValueBool()),
+			LogpushPublicKey:        cloudflare.F(data.LogpushPublicKey.ValueString()),
+			Zdr:                     cloudflare.F(data.ZDR.ValueBool()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to update AI Gateway", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.ID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,34 +143,20 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	res := new(http.Response)
-	env := AIGatewayResultEnvelope{*data}
-
-	_, err := r.client.AIGateway.Gateways.Read(
+	result, err := r.client.AIGateway.Get(
 		ctx,
 		data.ID.ValueString(),
-		ai_gateway.GatewayReadParams{
+		ai_gateway.AIGatewayGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to get AI Gateway", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.ID)
+	data.AccountID = types.StringValue(result.AccountID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -195,16 +170,15 @@ func (r *AIGatewayResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	_, err := r.client.AIGateway.Gateways.Delete(
+	_, err := r.client.AIGateway.Delete(
 		ctx,
 		data.ID.ValueString(),
-		ai_gateway.GatewayDeleteParams{
+		ai_gateway.AIGatewayDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to delete AI Gateway", err.Error())
 		return
 	}
 
@@ -230,29 +204,20 @@ func (r *AIGatewayResource) ImportState(ctx context.Context, req resource.Import
 	data.AccountID = types.StringValue(path_account_id)
 	data.ID = types.StringValue(path_id)
 
-	res := new(http.Response)
-	env := AIGatewayResultEnvelope{*data}
-
-	_, err := r.client.AIGateway.Gateways.Read(
+	result, err := r.client.AIGateway.Get(
 		ctx,
 		path_id,
-		ai_gateway.GatewayReadParams{
+		ai_gateway.AIGatewayGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to get AI Gateway", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.ID)
+	data.AccountID = types.StringValue(result.AccountID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

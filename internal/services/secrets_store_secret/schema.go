@@ -3,12 +3,10 @@ package secrets_store_secret
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -37,23 +35,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"secret_text": schema.StringAttribute{
-				Description:   "The secret value.",
-				Required:      true,
-				Sensitive:     true,
+				Description: "The secret value.",
+				Required:    true,
+				Sensitive:   true,
 			},
-			"scopes": schema.SetAttribute{
-				Description: "List of scopes for the secret.",
+			"scopes": schema.ListAttribute{
+				Description: "List of scopes for the secret. Valid values are: workers, ai_gateway, dex, access.",
 				Optional:    true,
 				ElementType: types.StringType,
-				Validators: []validator.Set{
-					stringvalidator.ValueStringsAre(
-						stringvalidator.OneOfCaseInsensitive("workers", "ai_gateway", "dex", "access"),
-					),
-				},
 			},
 			"comment": schema.StringAttribute{
-				Description:   "Comment describing the secret.",
-				Optional:      true,
+				Description: "Comment describing the secret.",
+				Optional:    true,
 			},
 			"status": schema.StringAttribute{
 				Description:   "Status of the secret.",
