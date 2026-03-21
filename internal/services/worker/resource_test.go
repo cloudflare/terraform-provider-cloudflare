@@ -223,3 +223,42 @@ func testAccCloudflareWorkerConfigSubdomainEnabled(rnd, accountID string) string
 func testAccCloudflareWorkerConfigSubdomainExplicitPreviews(rnd, accountID string) string {
 	return acctest.LoadTestCase("subdomain_explicit_previews.tf", rnd, accountID)
 }
+
+func testAccCloudflareWorkerConfigBuildsEnabled(rnd, accountID string) string {
+	return acctest.LoadTestCase("builds.tf", rnd, accountID)
+}
+
+func TestAccCloudflareWorker_Builds(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_worker." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkerConfigBuildsEnabled(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("builds"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"enabled":                            knownvalue.Bool(true),
+						"build_command":                      knownvalue.StringExact("npm run build"),
+						"deploy_command":                     knownvalue.StringExact("npm run deploy"),
+						"non_production_deployments_enabled": knownvalue.Bool(false),
+						"branch":                             knownvalue.StringExact("main"),
+						"provider_type":                      knownvalue.StringExact("github"),
+						"provider_account_name":              knownvalue.StringExact("my-org"),
+						"provider_account_id":                knownvalue.StringExact("123456"),
+						"repo_id":                            knownvalue.StringExact("789012"),
+						"repo_name":                          knownvalue.StringExact("my-worker-repo"),
+						"branch_includes":                    knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("feature/**")}),
+						"branch_excludes":                    knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("experimental/**")}),
+					})),
+				},
+			},
+		},
+	})
+}
