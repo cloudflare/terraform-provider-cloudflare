@@ -2,6 +2,7 @@ package secrets_store
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -54,26 +55,63 @@ func (r *SecretsStoreResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	result, err := r.client.SecretsStore.Stores.New(
-		ctx,
-		secrets_store.StoreNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			Body: []secrets_store.StoreNewParamsBody{{
-				Name: cloudflare.F(data.Name.ValueString()),
-			}},
-		},
-	)
+	// Workaround for SDK bug: StoreNewParams.MarshalJSON() sends array instead of object
+	// See: https://github.com/cloudflare/cloudflare-go/issues/4244
+	result, err := r.createStoreWithCorrectJSON(ctx, data.AccountID.ValueString(), data.Name.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create secrets store", err.Error())
 		return
 	}
 
-	if len(result.Result) > 0 {
-		data.ID = types.StringValue(result.Result[0].ID)
-		data.Name = types.StringValue(result.Result[0].Name)
-	}
+	data.ID = types.StringValue(result.ID)
+	data.Name = types.StringValue(result.Name)
+	data.CreatedAt = types.StringValue(result.Created)
+	data.ModifiedAt = types.StringValue(result.Modified)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// storeCreateResponse is the API response for creating a store
+type storeCreateResponse struct {
+	ID        string `json:"id"`
+	AccountID string `json:"account_id"`
+	Name      string `json:"name"`
+	Created   string `json:"created"`
+	Modified  string `json:"modified"`
+}
+
+type storeCreateResponseEnvelope struct {
+	Result   storeCreateResponse `json:"result"`
+	Success  bool                `json:"success"`
+	Errors   []interface{}       `json:"errors"`
+	Messages []interface{}       `json:"messages"`
+}
+
+// createStoreWithCorrectJSON makes a direct API call with correctly formatted JSON
+// to work around the SDK's StoreNewParams.MarshalJSON() bug
+//
+// We use client.Post with a []byte body to bypass the broken MarshalJSON on StoreNewParams
+func (r *SecretsStoreResource) createStoreWithCorrectJSON(ctx context.Context, accountID, name string) (*storeCreateResponse, error) {
+	path := fmt.Sprintf("accounts/%s/secrets_store/stores", accountID)
+
+	// Create body with correct JSON structure (not wrapped in array)
+	body := map[string]string{"name": name}
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request body: %w", err)
+	}
+
+	var result storeCreateResponseEnvelope
+	// Use client.Post which internally uses Execute -> requestconfig.ExecuteNewRequest
+	// But since we pass []byte, it will be used as-is without MarshalJSON
+	err = r.client.Post(ctx, path, bodyBytes, &result)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create secrets store: %w", err)
+	}
+	if !result.Success {
+		return nil, fmt.Errorf("API error: %v", result.Errors)
+	}
+	return &result.Result, nil
 }
 
 func (r *SecretsStoreResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
