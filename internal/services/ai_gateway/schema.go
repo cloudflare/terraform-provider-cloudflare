@@ -35,19 +35,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Invalidate the cache on update.",
 				Optional:    true,
 				Computed:    true,
-				Default:    booldefault.StaticBool(false),
+				Default:     booldefault.StaticBool(false),
 			},
 			"cache_ttl": schema.Int64Attribute{
 				Description: "Cache TTL in seconds.",
 				Optional:    true,
 				Computed:    true,
-				Default:    int64default.StaticInt64(0),
+				Default:     int64default.StaticInt64(0),
 			},
 			"collect_logs": schema.BoolAttribute{
 				Description: "Collect logs from the gateway.",
 				Optional:    true,
 				Computed:    true,
-				Default:    booldefault.StaticBool(true),
+				Default:     booldefault.StaticBool(true),
 			},
 			"created_at": schema.StringAttribute{
 				Description:   "The timestamp when the AI Gateway was created.",
@@ -63,29 +63,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Rate limiting interval in seconds.",
 				Optional:    true,
 				Computed:    true,
-				Default:    int64default.StaticInt64(0),
+				Default:     int64default.StaticInt64(0),
 			},
 			"rate_limiting_limit": schema.Int64Attribute{
 				Description: "Rate limiting limit.",
 				Optional:    true,
 				Computed:    true,
-				Default:    int64default.StaticInt64(0),
+				Default:     int64default.StaticInt64(0),
 			},
 			"authentication": schema.BoolAttribute{
 				Description: "Enable authentication on the gateway.",
 				Optional:    true,
 				Computed:    true,
-				Default:    booldefault.StaticBool(true),
+				Default:     booldefault.StaticBool(true),
 			},
 			"dlp": schema.SingleNestedAttribute{
 				Description: "Data Loss Prevention configuration.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"action": schema.StringAttribute{
-						Description:   `Available values: "BLOCK", "WARN".`,
-						Optional:      true,
-						Computed:      true,
-						Default:      stringdefault.StaticString("WARN"),
+						Description: `Available values: "BLOCK", "WARN".`,
+						Optional:    true,
+						Computed:    true,
+						Default:     stringdefault.StaticString("WARN"),
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("BLOCK", "WARN"),
 						},
@@ -94,7 +94,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Enable DLP.",
 						Optional:    true,
 						Computed:    true,
-						Default:    booldefault.StaticBool(false),
+						Default:     booldefault.StaticBool(false),
 					},
 					"profiles": schema.ListAttribute{
 						Description: "List of DLP profile IDs.",
@@ -109,23 +109,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"log_management": schema.Int64Attribute{
-				Description: "Log management setting.",
+				Description: "Log management setting. Must be >= 10000.",
 				Optional:    true,
 				Computed:    true,
 			},
 			"log_management_strategy": schema.StringAttribute{
-				Description:   `Available values: "STOP_INSERTING", "DROP_WHEN_FULL", "NO_SQL".`,
-				Optional:      true,
-				Computed:      true,
+				Description: `Available values: "STOP_INSERTING", "DELETE_OLDEST".`,
+				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("STOP_INSERTING", "DROP_WHEN_FULL", "NO_SQL"),
+					stringvalidator.OneOfCaseInsensitive("STOP_INSERTING", "DELETE_OLDEST"),
 				},
 			},
 			"logpush": schema.BoolAttribute{
 				Description: "Enable logpush.",
 				Optional:    true,
 				Computed:    true,
-				Default:    booldefault.StaticBool(false),
+				Default:     booldefault.StaticBool(false),
 			},
 			"logpush_public_key": schema.StringAttribute{
 				Description: "Logpush public key.",
@@ -151,10 +151,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"content_type": schema.StringAttribute{
-							Description:   `Available values: "json", "proto".`,
-							Optional:      true,
-							Computed:      true,
-							Default:      stringdefault.StaticString("json"),
+							Description: `Available values: "json", "proto".`,
+							Optional:    true,
+							Computed:    true,
+							Default:     stringdefault.StaticString("json"),
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("json", "proto"),
 							},
@@ -163,10 +163,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"rate_limiting_technique": schema.StringAttribute{
-				Description:   `Available values: "fixed", "sliding".`,
-				Optional:      true,
-				Computed:      true,
-				Default:      stringdefault.StaticString("fixed"),
+				Description: `Available values: "fixed", "sliding".`,
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("fixed"),
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("fixed", "sliding"),
 				},
@@ -200,10 +200,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"workers_ai_billing_mode": schema.StringAttribute{
-				Description:   `Available values: "postpaid", "prepaid".`,
-				Optional:      true,
-				Computed:      true,
-				Default:      stringdefault.StaticString("postpaid"),
+				Description: `Available values: "postpaid", "prepaid".`,
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("postpaid"),
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("postpaid", "prepaid"),
 				},
@@ -212,7 +212,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Enable Zero Downtime Requirements.",
 				Optional:    true,
 				Computed:    true,
-				Default:    booldefault.StaticBool(false),
+				Default:     booldefault.StaticBool(false),
 			},
 		},
 	}

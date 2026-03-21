@@ -57,39 +57,71 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	result, err := r.client.AIGateway.New(
-		ctx,
-		ai_gateway.AIGatewayNewParams{
-			AccountID:               cloudflare.F(data.AccountID.ValueString()),
-			ID:                      cloudflare.F(data.ID.ValueString()),
-			CacheInvalidateOnUpdate: cloudflare.F(data.CacheInvalidateOnUpdate.ValueBool()),
-			CacheTTL:                cloudflare.F(data.CacheTTL.ValueInt64()),
-			CollectLogs:             cloudflare.F(data.CollectLogs.ValueBool()),
-			RateLimitingInterval:    cloudflare.F(data.RateLimitingInterval.ValueInt64()),
-			RateLimitingLimit:       cloudflare.F(data.RateLimitingLimit.ValueInt64()),
-			RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayNewParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
-			Authentication:          cloudflare.F(data.Authentication.ValueBool()),
-			IsDefault:               cloudflare.F(data.IsDefault.ValueBool()),
-			LogManagement:           cloudflare.F(data.LogManagement.ValueInt64()),
-			LogManagementStrategy:   cloudflare.F(ai_gateway.AIGatewayNewParamsLogManagementStrategy(data.LogManagementStrategy.ValueString())),
-			Logpush:                 cloudflare.F(data.Logpush.ValueBool()),
-			LogpushPublicKey:        cloudflare.F(data.LogpushPublicKey.ValueString()),
-			Zdr:                     cloudflare.F(data.ZDR.ValueBool()),
-		},
-	)
+	// Build params with all fields explicitly set
+	// Use Null for fields that should be omitted (not sent to API)
+	params := ai_gateway.AIGatewayNewParams{
+		AccountID:               cloudflare.F(data.AccountID.ValueString()),
+		ID:                      cloudflare.F(data.ID.ValueString()),
+		CacheInvalidateOnUpdate: cloudflare.F(data.CacheInvalidateOnUpdate.ValueBool()),
+		CacheTTL:                cloudflare.F(data.CacheTTL.ValueInt64()),
+		CollectLogs:             cloudflare.F(data.CollectLogs.ValueBool()),
+		RateLimitingInterval:    cloudflare.F(data.RateLimitingInterval.ValueInt64()),
+		RateLimitingLimit:       cloudflare.F(data.RateLimitingLimit.ValueInt64()),
+		RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayNewParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
+		Authentication:          cloudflare.F(data.Authentication.ValueBool()),
+	}
+
+	// Only set optional fields if they have meaningful values
+	if data.IsDefault.ValueBool() {
+		params.IsDefault = cloudflare.F(data.IsDefault.ValueBool())
+	}
+	if data.LogManagement.ValueInt64() >= 10000 {
+		params.LogManagement = cloudflare.F(data.LogManagement.ValueInt64())
+	}
+	if data.LogManagementStrategy.ValueString() != "" {
+		params.LogManagementStrategy = cloudflare.F(ai_gateway.AIGatewayNewParamsLogManagementStrategy(data.LogManagementStrategy.ValueString()))
+	}
+	if data.Logpush.ValueBool() {
+		params.Logpush = cloudflare.F(data.Logpush.ValueBool())
+		if len(data.LogpushPublicKey.ValueString()) >= 16 {
+			params.LogpushPublicKey = cloudflare.F(data.LogpushPublicKey.ValueString())
+		}
+	}
+	if data.ZDR.ValueBool() {
+		params.Zdr = cloudflare.F(data.ZDR.ValueBool())
+	}
+
+	result, err := r.client.AIGateway.New(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create AI Gateway", err.Error())
 		return
 	}
 
 	data.ID = types.StringValue(result.ID)
-	data.AccountID = types.StringValue(result.AccountID)
+	if result.AccountID != "" {
+		data.AccountID = types.StringValue(result.AccountID)
+	}
 	if !result.CreatedAt.IsZero() {
 		data.CreatedAt = types.StringValue(result.CreatedAt.Format(time.RFC3339))
 	}
 	if !result.ModifiedAt.IsZero() {
 		data.ModifiedAt = types.StringValue(result.ModifiedAt.Format(time.RFC3339))
 	}
+	// Populate all fields from API response
+	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
+	data.CacheTTL = types.Int64Value(result.CacheTTL)
+	data.CollectLogs = types.BoolValue(result.CollectLogs)
+	data.RateLimitingInterval = types.Int64Value(result.RateLimitingInterval)
+	data.RateLimitingLimit = types.Int64Value(result.RateLimitingLimit)
+	data.RateLimitingTechnique = types.StringValue(string(result.RateLimitingTechnique))
+	data.Authentication = types.BoolValue(result.Authentication)
+	data.IsDefault = types.BoolValue(result.IsDefault)
+	data.LogManagement = types.Int64Value(result.LogManagement)
+	data.LogManagementStrategy = types.StringValue(string(result.LogManagementStrategy))
+	data.Logpush = types.BoolValue(result.Logpush)
+	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
+	data.StoreID = types.StringValue(result.StoreID)
+	data.ZDR = types.BoolValue(result.Zdr)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,13 +195,31 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	data.ID = types.StringValue(result.ID)
-	data.AccountID = types.StringValue(result.AccountID)
+	// Only update account_id if API returns a valid value (some APIs return null for account_id)
+	if result.AccountID != "" {
+		data.AccountID = types.StringValue(result.AccountID)
+	}
 	if !result.CreatedAt.IsZero() {
 		data.CreatedAt = types.StringValue(result.CreatedAt.Format(time.RFC3339))
 	}
 	if !result.ModifiedAt.IsZero() {
 		data.ModifiedAt = types.StringValue(result.ModifiedAt.Format(time.RFC3339))
 	}
+	// Populate other fields from API response
+	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
+	data.CacheTTL = types.Int64Value(result.CacheTTL)
+	data.CollectLogs = types.BoolValue(result.CollectLogs)
+	data.RateLimitingInterval = types.Int64Value(result.RateLimitingInterval)
+	data.RateLimitingLimit = types.Int64Value(result.RateLimitingLimit)
+	data.RateLimitingTechnique = types.StringValue(string(result.RateLimitingTechnique))
+	data.Authentication = types.BoolValue(result.Authentication)
+	data.IsDefault = types.BoolValue(result.IsDefault)
+	data.LogManagement = types.Int64Value(result.LogManagement)
+	data.LogManagementStrategy = types.StringValue(string(result.LogManagementStrategy))
+	data.Logpush = types.BoolValue(result.Logpush)
+	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
+	data.StoreID = types.StringValue(result.StoreID)
+	data.ZDR = types.BoolValue(result.Zdr)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
