@@ -13,9 +13,7 @@ builds:
       - "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}"
     goos:
       - darwin
-      - freebsd
       - linux
-      - windows
     goarch:
       - amd64
       - arm64
