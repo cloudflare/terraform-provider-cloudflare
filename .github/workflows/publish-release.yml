@@ -4,9 +4,6 @@ name: Publish Release
 permissions:
   contents: write
 
-concurrency:
-  group: publish
-
 on:
   push:
     tags:
