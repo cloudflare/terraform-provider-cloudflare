@@ -20,6 +20,7 @@ type CustomHostnamesResultListDataSourceEnvelope struct {
 type CustomHostnamesDataSourceModel struct {
 	ZoneID               types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
 	CertificateAuthority types.String                                                       `tfsdk:"certificate_authority" query:"certificate_authority,optional"`
+	CustomOriginServer   types.String                                                       `tfsdk:"custom_origin_server" query:"custom_origin_server,optional"`
 	Direction            types.String                                                       `tfsdk:"direction" query:"direction,optional"`
 	HostnameStatus       types.String                                                       `tfsdk:"hostname_status" query:"hostname_status,optional"`
 	ID                   types.String                                                       `tfsdk:"id" query:"id,optional"`
@@ -42,6 +43,9 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 	}
 	if !m.CertificateAuthority.IsNull() {
 		params.CertificateAuthority = cloudflare.F(custom_hostnames.CustomHostnameListParamsCertificateAuthority(m.CertificateAuthority.ValueString()))
+	}
+	if !m.CustomOriginServer.IsNull() {
+		params.CustomOriginServer = cloudflare.F(m.CustomOriginServer.ValueString())
 	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Direction.ValueString()))

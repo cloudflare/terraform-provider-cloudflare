@@ -53,6 +53,9 @@ func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params 
 	if !m.Filter.CertificateAuthority.IsNull() {
 		params.CertificateAuthority = cloudflare.F(custom_hostnames.CustomHostnameListParamsCertificateAuthority(m.Filter.CertificateAuthority.ValueString()))
 	}
+	if !m.Filter.CustomOriginServer.IsNull() {
+		params.CustomOriginServer = cloudflare.F(m.Filter.CustomOriginServer.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Filter.Direction.ValueString()))
 	}
@@ -153,6 +156,7 @@ type CustomHostnameSSLValidationRecordsDataSourceModel struct {
 type CustomHostnameFindOneByDataSourceModel struct {
 	ID                   types.String                            `tfsdk:"id" query:"id,optional"`
 	CertificateAuthority types.String                            `tfsdk:"certificate_authority" query:"certificate_authority,optional"`
+	CustomOriginServer   types.String                            `tfsdk:"custom_origin_server" query:"custom_origin_server,optional"`
 	Direction            types.String                            `tfsdk:"direction" query:"direction,optional"`
 	Hostname             *CustomHostnamesHostnameDataSourceModel `tfsdk:"hostname" query:"hostname,optional"`
 	HostnameStatus       types.String                            `tfsdk:"hostname_status" query:"hostname_status,optional"`
