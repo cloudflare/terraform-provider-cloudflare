@@ -22,6 +22,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_instance"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
@@ -149,6 +150,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/sso_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
@@ -629,6 +631,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
+		ai_gateway.NewResource,
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
