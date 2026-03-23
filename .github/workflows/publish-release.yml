@@ -33,11 +33,6 @@ jobs:
             goos: linux
             goarch: arm64
             ext: ""
-          - platform: windows_amd64
-            os: windows-latest
-            goos: windows
-            goarch: amd64
-            ext: ".exe"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
