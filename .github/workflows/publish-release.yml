@@ -15,6 +15,10 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug
+        run: |
+          echo "Starting publish release workflow"
+          echo "Tag: ${{ github.ref }}"
       - name: Checkout
         uses: actions/checkout@v6
         with:
