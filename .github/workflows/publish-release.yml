@@ -4,39 +4,18 @@ name: Publish Release
 permissions:
   contents: write
 
-concurrency:
-  group: publish
-
 on:
   push:
     tags:
       - "v*"
 jobs:
   goreleaser:
-    runs-on: lx64
+    runs-on: ubuntu-latest
     steps:
-      - name: Cleanup unused directories and tools
+      - name: Debug
         run: |
-          df -h /
-          sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing
-          sudo apt-get autoremove -y
-          sudo apt-get clean
-          sudo docker image prune --all --force
-          sudo rm -rf \
-            "$AGENT_TOOLSDIRECTORY" \
-            /opt/google/chrome \
-            /opt/microsoft/msedge \
-            /opt/microsoft/powershell \
-            /opt/pipx \
-            /usr/lib/mono \
-            /usr/local/julia* \
-            /usr/local/lib/android \
-            /usr/local/lib/node_modules \
-            /usr/local/share/chromium \
-            /usr/local/share/powershell \
-            /usr/share/dotnet \
-            /usr/share/swift
-          ghcup nuke
+          echo "Starting publish release workflow"
+          echo "Tag: ${{ github.ref }}"
           df -h /
       - name: Checkout
         uses: actions/checkout@v6
@@ -52,14 +31,34 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Run GoReleaser
+      - name: Build with GoReleaser (no publish)
         uses: goreleaser/goreleaser-action@v6.0.0
         with:
           version: latest
-          args: "release --clean --timeout 3h -p 3"
+          args: "build --clean --timeout 3h -p 1"
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check disk space after build
+        run: df -h /
+      - name: Create GitHub Release
+        run: |
+          gh release create ${{ github.ref_name }} --title "${{ github.ref_name }}" --notes ""
+      - name: Upload and delete each artifact
+        run: |
+          shopt -s globstar
+          for artifact in dist/**/*; do
+            if [ -f "$artifact" ]; then
+              echo "Uploading $artifact..."
+              gh release upload --clobber ${{ github.ref_name }} "$artifact"
+              rm -v "$artifact"
+              echo "Deleted $artifact"
+              echo "Disk space after deletion:"
+              df -h /
+            fi
+          done
+      - name: Verify release assets
+        run: gh release view ${{ github.ref_name }} --json assets
       - name: Run registry sync
         run: ./scripts/trigger-terraform-registry-sync
         env:
