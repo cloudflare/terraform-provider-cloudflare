@@ -17,9 +17,14 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Debug
         run: |
           echo "Triggering Terraform Registry sync for version ${{ inputs.version }}"
+          echo "Cookie set: ${TERRAFORM_REGISTRY_COOKIE:0:10}..."
+        env:
+          TERRAFORM_REGISTRY_COOKIE: ${{ secrets.TERRAFORM_REGISTRY_COOKIE }}
       - name: Run registry sync
         run: ./scripts/trigger-terraform-registry-sync
         env:
