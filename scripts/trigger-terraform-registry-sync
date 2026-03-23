@@ -7,6 +7,6 @@ if [ -z "${TERRAFORM_REGISTRY_COOKIE}" ]; then
   exit 1
 fi
 
-curl -X POST https://registry.terraform.io/github/providers/cloudflare/cloudflare/resync \
+curl -X POST https://registry.terraform.io/github/providers/trafgals/cloudflare/resync \
   -H 'Content-Type: application/vnd.api+json' \
   --cookie $TERRAFORM_REGISTRY_COOKIE
