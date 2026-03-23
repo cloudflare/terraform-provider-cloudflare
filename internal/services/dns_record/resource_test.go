@@ -1674,3 +1674,78 @@ resource "cloudflare_dns_record" "%[1]s" {
 		},
 	})
 }
+
+// TestAccCloudflareRecord_ProxiedCNAMEUpdateSettingsDrift verifies that updating a
+// proxied CNAME record does not cause drift on the settings block. This specifically
+// exercises the Update() code path (not just Create/Read) to ensure that
+// normalizeSettings is called after UnmarshalComputed in Update(), preventing
+// ipv4_only and ipv6_only from appearing as (known after apply) on subsequent plans.
+// Regression test for the fix to issues #5378, #5517, #5858, #6076, #6438.
+func TestAccCloudflareRecord_ProxiedCNAMEUpdateSettingsDrift(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create a proxied CNAME record with no settings block.
+			// After create, settings should be stable (all three sub-fields = false).
+			{
+				Config: testAccCloudflareRecordProxiedCNAMEConfig(zoneID, rnd, domain, "target."+domain, "1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "type", "CNAME"),
+					resource.TestCheckResourceAttr(resourceName, "proxied", "true"),
+					resource.TestCheckResourceAttr(resourceName, "settings.flatten_cname", "false"),
+					resource.TestCheckResourceAttr(resourceName, "settings.ipv4_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "settings.ipv6_only", "false"),
+				),
+				// Verify the post-create plan is empty (no drift after Create).
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 2: Update the record content, exercising the Update() code path.
+			// Settings must remain stable — ipv4_only and ipv6_only must not appear
+			// as (known after apply) after the update is applied.
+			{
+				Config: testAccCloudflareRecordProxiedCNAMEConfig(zoneID, rnd, domain, "updated."+domain, "1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "content", "updated."+domain),
+					resource.TestCheckResourceAttr(resourceName, "settings.flatten_cname", "false"),
+					resource.TestCheckResourceAttr(resourceName, "settings.ipv4_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "settings.ipv6_only", "false"),
+				),
+				// Verify the post-update plan is empty (no drift after Update).
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 3: Re-apply the same config — must produce no changes.
+			{
+				Config:             testAccCloudflareRecordProxiedCNAMEConfig(zoneID, rnd, domain, "updated."+domain, "1"),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func testAccCloudflareRecordProxiedCNAMEConfig(zoneID, rnd, domain, content, ttl string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[2]s" {
+  zone_id = "%[1]s"
+  name    = "tf-acctest-proxied-update.%[2]s.%[3]s"
+  type    = "CNAME"
+  content = "%[4]s"
+  proxied = true
+  ttl     = %[5]s
+}`, zoneID, rnd, domain, content, ttl)
+}
