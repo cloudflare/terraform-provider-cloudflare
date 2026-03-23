@@ -410,6 +410,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
+					"custom_origin_server": schema.StringAttribute{
+						Description: "Filter by custom origin server name.",
+						Optional:    true,
+					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order hostnames.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
