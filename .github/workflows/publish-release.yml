@@ -52,8 +52,9 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
         run: |
-          CGO_ENABLED=0 go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_v${{ github.ref_name }}${{ matrix.ext }} .
+          go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_v${{ github.ref_name }}${{ matrix.ext }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
