@@ -15,18 +15,28 @@ jobs:
         include:
           - platform: darwin_amd64
             os: macos-latest
+            goos: darwin
+            goarch: amd64
             ext: ""
           - platform: darwin_arm64
             os: macos-latest
+            goos: darwin
+            goarch: arm64
             ext: ""
           - platform: linux_amd64
             os: ubuntu-latest
+            goos: linux
+            goarch: amd64
             ext: ""
           - platform: linux_arm64
             os: ubuntu-latest
+            goos: linux
+            goarch: arm64
             ext: ""
           - platform: windows_amd64
             os: windows-latest
+            goos: windows
+            goarch: amd64
             ext: ".exe"
     runs-on: ${{ matrix.os }}
     steps:
@@ -40,8 +50,8 @@ jobs:
           go-version-file: "go.mod"
       - name: Build
         env:
-          GOOS: ${{ matrix.platform == 'darwin_amd64' || matrix.platform == 'darwin_arm64' && 'darwin' || matrix.platform == 'linux_amd64' || matrix.platform == 'linux_arm64' && 'linux' || 'windows' }}
-          GOARCH: ${{ matrix.platform == 'darwin_amd64' || matrix.platform == 'linux_amd64' || matrix.platform == 'windows_amd64' && 'amd64' || 'arm64' }}
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
         run: |
           CGO_ENABLED=0 go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/} -X main.commit=${GITHUB_SHA}" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_v${GITHUB_REF#refs/tags/}}${{ matrix.ext }} .
       - name: Upload artifact
