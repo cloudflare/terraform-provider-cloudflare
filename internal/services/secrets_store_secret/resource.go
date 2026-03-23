@@ -3,15 +3,10 @@ package secrets_store_secret
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/secrets_store"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -59,37 +54,39 @@ func (r *SecretsStoreSecretResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
+	var scopes []string
+	for _, s := range data.Scopes {
+		scopes = append(scopes, s.ValueString())
 	}
 
-	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
-
-	_, err = r.client.SecretsStore.Stores.Secrets.New(
+	result, err := r.client.SecretsStore.Stores.Secrets.New(
 		ctx,
 		data.StoreID.ValueString(),
 		secrets_store.StoreSecretNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			Name:      cloudflare.F(data.Name.ValueString()),
+			Body: []secrets_store.StoreSecretNewParamsBody{
+				{
+					Name:    cloudflare.F(data.Name.ValueString()),
+					Value:   cloudflare.F(data.SecretText.ValueString()),
+					Scopes:  cloudflare.F(scopes),
+					Comment: cloudflare.F(data.Comment.ValueString()),
+				},
+			},
 		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create secrets store secret", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize response", err.Error())
+
+	if len(result.Result) == 0 {
+		resp.Diagnostics.AddError("failed to create secrets store secret", "no secret returned")
 		return
 	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.Result[0].ID)
+	data.Name = types.StringValue(result.Result[0].Name)
+	data.Status = types.StringValue(string(result.Result[0].Status))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -111,37 +108,29 @@ func (r *SecretsStoreSecretResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
+	var scopes []string
+	for _, s := range data.Scopes {
+		scopes = append(scopes, s.ValueString())
 	}
 
-	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
-
-	_, err = r.client.SecretsStore.Stores.Secrets.Update(
+	result, err := r.client.SecretsStore.Stores.Secrets.Edit(
 		ctx,
 		state.StoreID.ValueString(),
 		state.ID.ValueString(),
-		secrets_store.StoreSecretUpdateParams{
+		secrets_store.StoreSecretEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Comment:   cloudflare.F(data.Comment.ValueString()),
+			Scopes:    cloudflare.F(scopes),
 		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to update secrets store secret", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize response", err.Error())
-		return
-	}
-	data = &env.Result
+
+	data.ID = types.StringValue(result.ID)
+	data.Name = types.StringValue(result.Name)
+	data.Status = types.StringValue(string(result.Status))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -155,26 +144,15 @@ func (r *SecretsStoreSecretResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
-
 	secrets, err := r.client.SecretsStore.Stores.Secrets.List(
 		ctx,
 		data.StoreID.ValueString(),
 		secrets_store.StoreSecretListParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to list secrets store secrets", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize response", err.Error())
 		return
 	}
 
@@ -183,7 +161,7 @@ func (r *SecretsStoreSecretResource) Read(ctx context.Context, req resource.Read
 		if secret.ID == data.ID.ValueString() {
 			data.ID = types.StringValue(secret.ID)
 			data.Name = types.StringValue(secret.Name)
-			data.Status = types.StringValue(secret.Status)
+			data.Status = types.StringValue(string(secret.Status))
 			found = true
 			break
 		}
@@ -214,7 +192,6 @@ func (r *SecretsStoreSecretResource) Delete(ctx context.Context, req resource.De
 		secrets_store.StoreSecretDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to delete secrets store secret", err.Error())
@@ -246,26 +223,15 @@ func (r *SecretsStoreSecretResource) ImportState(ctx context.Context, req resour
 	data.StoreID = types.StringValue(path_store_id)
 	data.ID = types.StringValue(path_id)
 
-	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
-
 	secrets, err := r.client.SecretsStore.Stores.Secrets.List(
 		ctx,
 		path_store_id,
 		secrets_store.StoreSecretListParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to list secrets store secrets", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize response", err.Error())
 		return
 	}
 
@@ -274,7 +240,7 @@ func (r *SecretsStoreSecretResource) ImportState(ctx context.Context, req resour
 		if secret.ID == path_id {
 			data.ID = types.StringValue(secret.ID)
 			data.Name = types.StringValue(secret.Name)
-			data.Status = types.StringValue(secret.Status)
+			data.Status = types.StringValue(string(secret.Status))
 			found = true
 			break
 		}
