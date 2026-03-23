@@ -54,12 +54,13 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: "0"
         run: |
-          go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_v${{ github.ref_name }}${{ matrix.ext }} .
+          VERSION="${GITHUB_REF#refs/tags/}"
+          go build -ldflags="-s -w -X main.version=${VERSION} -X main.commit=$GITHUB_SHA" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_${VERSION}${{ matrix.ext }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-provider-cloudflare_${{ matrix.platform }}_v${{ github.ref_name }}
-          path: terraform-provider-cloudflare_${{ matrix.platform }}_v${{ github.ref_name }}${{ matrix.ext }}
+          name: terraform-provider-cloudflare_${{ matrix.platform }}_${{ github.ref_name }}
+          path: terraform-provider-cloudflare_${{ matrix.platform }}_${{ github.ref_name }}${{ matrix.ext }}
           retention-days: 1
 
   # Create release and attach all artifacts
@@ -84,8 +85,8 @@ jobs:
       - name: Generate checksums
         run: |
           cd dist
-          sha256sum * > terraform-provider-cloudflare_${GITHUB_REF#refs/tags/}_SHA256SUMS
-          cat terraform-provider-cloudflare_${GITHUB_REF#refs/tags/}_SHA256SUMS
+          sha256sum * > terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
+          cat terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
       - name: Copy manifest
         run: cp ../terraform-registry-manifest.json dist/
       - name: Import GPG key
@@ -97,7 +98,7 @@ jobs:
       - name: Sign checksums
         run: |
           cd dist
-          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-cloudflare_${GITHUB_REF#refs/tags/}_SHA256SUMS
+          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
