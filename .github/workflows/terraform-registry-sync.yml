@@ -1,0 +1,26 @@
+---
+name: Terraform Registry Sync
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to sync'
+        required: true
+        type: string
+        default: '1.0.22'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug
+        run: |
+          echo "Triggering Terraform Registry sync for version ${{ inputs.version }}"
+      - name: Run registry sync
+        run: ./scripts/trigger-terraform-registry-sync
+        env:
+          TERRAFORM_REGISTRY_COOKIE: ${{ secrets.TERRAFORM_REGISTRY_COOKIE }}
