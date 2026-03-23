@@ -3,10 +3,13 @@
 package worker
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -18,6 +21,254 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+// Ensure WorkerResource types fully satisfy framework interfaces.
+var _ resource.ResourceWithConfigure = (*WorkerResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*WorkerResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkerResource)(nil)
+
+// WorkerBuildsTriggerResponse represents the API response for a builds trigger.
+type WorkerBuildsTriggerResponse struct {
+	Result WorkerBuildsTriggerResult `json:"result"`
+}
+
+// WorkerBuildsTriggerResult represents the trigger configuration from the API.
+type WorkerBuildsTriggerResult struct {
+	TriggerUUID                     string   `json:"trigger_uuid"`
+	ScriptName                      string   `json:"script_name"`
+	BuildCommand                    string   `json:"build_command"`
+	DeployCommand                   string   `json:"deploy_command"`
+	Branch                          string   `json:"branch"`
+	BranchIncludes                  []string `json:"branch_includes"`
+	BranchExcludes                  []string `json:"branch_excludes"`
+	NonProductionDeploymentsEnabled bool     `json:"non_production_deployments_enabled"`
+	ProviderType                    string   `json:"provider_type"`
+	ProviderAccountName             string   `json:"provider_account_name"`
+	ProviderAccountID               string   `json:"provider_account_id"`
+	RepoID                          string   `json:"repo_id"`
+	RepoName                        string   `json:"repo_name"`
+	CreatedOn                       string   `json:"created_on"`
+	ModifiedOn                      string   `json:"modified_on"`
+}
+
+// WorkerBuildsRepoConnectionRequest represents the request to connect a repository.
+type WorkerBuildsRepoConnectionRequest struct {
+	Builds []WorkerBuildsRepoConnectionBuild `json:"builds"`
+}
+
+// WorkerBuildsRepoConnectionBuild represents a build configuration for repo connection.
+type WorkerBuildsRepoConnectionBuild struct {
+	ScriptName    string `json:"script_name"`
+	RepoID        string `json:"repo_id"`
+	ProviderType  string `json:"provider_type"`
+	Branch        string `json:"branch"`
+	BuildCommand  string `json:"build_command,omitempty"`
+	DeployCommand string `json:"deploy_command,omitempty"`
+	RootDir       string `json:"root_dir,omitempty"`
+}
+
+// WorkerBuildsTriggerRequest represents the request to create/update a trigger.
+type WorkerBuildsTriggerRequest struct {
+	ScriptName                      string   `json:"script_name"`
+	BuildCommand                    string   `json:"build_command,omitempty"`
+	DeployCommand                   string   `json:"deploy_command,omitempty"`
+	Branch                          string   `json:"branch,omitempty"`
+	BranchIncludes                  []string `json:"branch_includes,omitempty"`
+	BranchExcludes                  []string `json:"branch_excludes,omitempty"`
+	NonProductionDeploymentsEnabled bool     `json:"non_production_deployments_enabled,omitempty"`
+	ProviderType                    string   `json:"provider_type,omitempty"`
+	ProviderAccountName             string   `json:"provider_account_name,omitempty"`
+	ProviderAccountID               string   `json:"provider_account_id,omitempty"`
+	RepoID                          string   `json:"repo_id,omitempty"`
+	RepoName                        string   `json:"repo_name,omitempty"`
+	Enabled                         bool     `json:"enabled,omitempty"`
+}
+
+// getBuildsTrigger retrieves the builds trigger for a worker.
+func (r *WorkerResource) getBuildsTrigger(ctx context.Context, accountID, scriptName string) (*WorkerBuildsTriggerResult, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/builds/workers/%s/triggers", accountID, scriptName), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := r.doAuthenticatedRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode == 404 {
+		return nil, nil
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get builds trigger: %s", res.Status)
+	}
+
+	var triggerResp struct {
+		Result WorkerBuildsTriggerResult `json:"result"`
+	}
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(bytes, &triggerResp); err != nil {
+		return nil, err
+	}
+
+	return &triggerResp.Result, nil
+}
+
+// createBuildsTrigger creates a builds trigger for a worker.
+func (r *WorkerResource) createBuildsTrigger(ctx context.Context, accountID string, trigger WorkerBuildsTriggerRequest) (*WorkerBuildsTriggerResult, error) {
+	triggerBytes, err := json.Marshal(trigger)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/builds/triggers", accountID), bytes.NewReader(triggerBytes))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := r.doAuthenticatedRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(res.Body)
+		return nil, fmt.Errorf("failed to create builds trigger: %s - %s", res.Status, string(bodyBytes))
+	}
+
+	var triggerResp struct {
+		Result WorkerBuildsTriggerResult `json:"result"`
+	}
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(bytes, &triggerResp); err != nil {
+		return nil, err
+	}
+
+	return &triggerResp.Result, nil
+}
+
+// updateBuildsTrigger updates a builds trigger.
+func (r *WorkerResource) updateBuildsTrigger(ctx context.Context, accountID, triggerUUID string, trigger WorkerBuildsTriggerRequest) (*WorkerBuildsTriggerResult, error) {
+	triggerBytes, err := json.Marshal(trigger)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "PATCH", fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/builds/triggers/%s", accountID, triggerUUID), bytes.NewReader(triggerBytes))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := r.doAuthenticatedRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(res.Body)
+		return nil, fmt.Errorf("failed to update builds trigger: %s - %s", res.Status, string(bodyBytes))
+	}
+
+	var triggerResp struct {
+		Result WorkerBuildsTriggerResult `json:"result"`
+	}
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(bytes, &triggerResp); err != nil {
+		return nil, err
+	}
+
+	return &triggerResp.Result, nil
+}
+
+// deleteBuildsTrigger deletes a builds trigger.
+func (r *WorkerResource) deleteBuildsTrigger(ctx context.Context, accountID, triggerUUID string) error {
+	req, err := http.NewRequestWithContext(ctx, "DELETE", fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/builds/triggers/%s", accountID, triggerUUID), nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := r.doAuthenticatedRequest(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 && res.StatusCode != 404 {
+		return fmt.Errorf("failed to delete builds trigger: %s", res.Status)
+	}
+
+	return nil
+}
+
+// connectBuildsRepo connects a repository to a worker.
+func (r *WorkerResource) connectBuildsRepo(ctx context.Context, accountID string, conn WorkerBuildsRepoConnectionRequest) error {
+	connBytes, err := json.Marshal(conn)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "PUT", fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/builds/repos/connections", accountID), bytes.NewReader(connBytes))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := r.doAuthenticatedRequest(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(res.Body)
+		return fmt.Errorf("failed to connect builds repo: %s - %s", res.Status, string(bodyBytes))
+	}
+
+	return nil
+}
+
+// getTriggerUUID retrieves the trigger UUID for a worker if it exists.
+func (r *WorkerResource) getTriggerUUID(ctx context.Context, accountID, scriptName string) (string, error) {
+	trigger, err := r.getBuildsTrigger(ctx, accountID, scriptName)
+	if err != nil {
+		return "", err
+	}
+	if trigger == nil {
+		return "", nil
+	}
+	return trigger.TriggerUUID, nil
+}
+
+// doAuthenticatedRequest performs an HTTP request using the SDK's authentication.
+func (r *WorkerResource) doAuthenticatedRequest(req *http.Request) (*http.Response, error) {
+	clientVal := reflect.ValueOf(r.client)
+	transportField := clientVal.Elem().FieldByName("transport")
+	if !transportField.IsValid() {
+		return nil, fmt.Errorf("failed to get transport from cloudflare client")
+	}
+	transport := transportField.Interface().(*http.Client)
+	return transport.Do(req)
+}
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*WorkerResource)(nil)
@@ -93,6 +344,73 @@ func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 	data = &env.Result
 
+	buildsPtr, buildsDiags := data.Builds.Value(ctx)
+	if buildsDiags.HasError() {
+		resp.Diagnostics.Append(buildsDiags...)
+		return
+	}
+
+	if buildsPtr != nil && !data.Builds.IsNull() {
+		builds := *buildsPtr
+
+		if !builds.Enabled.IsNull() && builds.Enabled.ValueBool() {
+			accountID := data.AccountID.ValueString()
+			scriptName := data.Name.ValueString()
+
+			connReq := WorkerBuildsRepoConnectionRequest{
+				Builds: []WorkerBuildsRepoConnectionBuild{
+					{
+						ScriptName:   scriptName,
+						RepoID:       builds.RepoID.ValueString(),
+						ProviderType: builds.ProviderType.ValueString(),
+						Branch:       builds.Branch.ValueString(),
+					},
+				},
+			}
+			if !builds.BuildCommand.IsNull() {
+				connReq.Builds[0].BuildCommand = builds.BuildCommand.ValueString()
+			}
+			if !builds.DeployCommand.IsNull() {
+				connReq.Builds[0].DeployCommand = builds.DeployCommand.ValueString()
+			}
+
+			if err := r.connectBuildsRepo(ctx, accountID, connReq); err != nil {
+				resp.Diagnostics.AddError("failed to connect builds repo", err.Error())
+				return
+			}
+
+			triggerReq := WorkerBuildsTriggerRequest{
+				ScriptName:                      scriptName,
+				BuildCommand:                    builds.BuildCommand.ValueString(),
+				DeployCommand:                   builds.DeployCommand.ValueString(),
+				Branch:                          builds.Branch.ValueString(),
+				NonProductionDeploymentsEnabled: builds.NonProductionDeploymentsEnabled.ValueBool(),
+				ProviderType:                    builds.ProviderType.ValueString(),
+				ProviderAccountName:             builds.ProviderAccountName.ValueString(),
+				ProviderAccountID:               builds.ProviderAccountID.ValueString(),
+				RepoID:                          builds.RepoID.ValueString(),
+				RepoName:                        builds.RepoName.ValueString(),
+				Enabled:                         builds.Enabled.ValueBool(),
+			}
+
+			if !builds.BranchIncludes.IsNull() {
+				var branchIncludes []string
+				builds.BranchIncludes.ElementsAs(ctx, &branchIncludes, false)
+				triggerReq.BranchIncludes = branchIncludes
+			}
+			if !builds.BranchExcludes.IsNull() {
+				var branchExcludes []string
+				builds.BranchExcludes.ElementsAs(ctx, &branchExcludes, false)
+				triggerReq.BranchExcludes = branchExcludes
+			}
+
+			if _, err := r.createBuildsTrigger(ctx, accountID, triggerReq); err != nil {
+				resp.Diagnostics.AddError("failed to create builds trigger", err.Error())
+				return
+			}
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -141,6 +459,132 @@ func (r *WorkerResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 	data = &env.Result
+
+	planBuildsPtr, planBuildsDiags := data.Builds.Value(ctx)
+	if planBuildsDiags.HasError() {
+		resp.Diagnostics.Append(planBuildsDiags...)
+		return
+	}
+
+	stateBuildsPtr, stateBuildsDiags := state.Builds.Value(ctx)
+	if stateBuildsDiags.HasError() {
+		resp.Diagnostics.Append(stateBuildsDiags...)
+		return
+	}
+
+	if planBuildsPtr != nil && !data.Builds.IsNull() {
+		planBuilds := *planBuildsPtr
+		if !planBuilds.Enabled.IsNull() && planBuilds.Enabled.ValueBool() {
+			accountID := data.AccountID.ValueString()
+			scriptName := data.Name.ValueString()
+
+			existingTrigger, err := r.getBuildsTrigger(ctx, accountID, scriptName)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to get builds trigger", err.Error())
+				return
+			}
+
+			if existingTrigger != nil {
+				triggerReq := WorkerBuildsTriggerRequest{
+					ScriptName:                      scriptName,
+					BuildCommand:                    planBuilds.BuildCommand.ValueString(),
+					DeployCommand:                   planBuilds.DeployCommand.ValueString(),
+					Branch:                          planBuilds.Branch.ValueString(),
+					NonProductionDeploymentsEnabled: planBuilds.NonProductionDeploymentsEnabled.ValueBool(),
+					ProviderType:                    planBuilds.ProviderType.ValueString(),
+					ProviderAccountName:             planBuilds.ProviderAccountName.ValueString(),
+					ProviderAccountID:               planBuilds.ProviderAccountID.ValueString(),
+					RepoID:                          planBuilds.RepoID.ValueString(),
+					RepoName:                        planBuilds.RepoName.ValueString(),
+					Enabled:                         planBuilds.Enabled.ValueBool(),
+				}
+
+				if !planBuilds.BranchIncludes.IsNull() {
+					var branchIncludes []string
+					planBuilds.BranchIncludes.ElementsAs(ctx, &branchIncludes, false)
+					triggerReq.BranchIncludes = branchIncludes
+				}
+				if !planBuilds.BranchExcludes.IsNull() {
+					var branchExcludes []string
+					planBuilds.BranchExcludes.ElementsAs(ctx, &branchExcludes, false)
+					triggerReq.BranchExcludes = branchExcludes
+				}
+
+				if _, err := r.updateBuildsTrigger(ctx, accountID, existingTrigger.TriggerUUID, triggerReq); err != nil {
+					resp.Diagnostics.AddError("failed to update builds trigger", err.Error())
+					return
+				}
+			} else {
+				connReq := WorkerBuildsRepoConnectionRequest{
+					Builds: []WorkerBuildsRepoConnectionBuild{
+						{
+							ScriptName:   scriptName,
+							RepoID:       planBuilds.RepoID.ValueString(),
+							ProviderType: planBuilds.ProviderType.ValueString(),
+							Branch:       planBuilds.Branch.ValueString(),
+						},
+					},
+				}
+				if !planBuilds.BuildCommand.IsNull() {
+					connReq.Builds[0].BuildCommand = planBuilds.BuildCommand.ValueString()
+				}
+				if !planBuilds.DeployCommand.IsNull() {
+					connReq.Builds[0].DeployCommand = planBuilds.DeployCommand.ValueString()
+				}
+
+				if err := r.connectBuildsRepo(ctx, accountID, connReq); err != nil {
+					resp.Diagnostics.AddError("failed to connect builds repo", err.Error())
+					return
+				}
+
+				triggerReq := WorkerBuildsTriggerRequest{
+					ScriptName:                      scriptName,
+					BuildCommand:                    planBuilds.BuildCommand.ValueString(),
+					DeployCommand:                   planBuilds.DeployCommand.ValueString(),
+					Branch:                          planBuilds.Branch.ValueString(),
+					NonProductionDeploymentsEnabled: planBuilds.NonProductionDeploymentsEnabled.ValueBool(),
+					ProviderType:                    planBuilds.ProviderType.ValueString(),
+					ProviderAccountName:             planBuilds.ProviderAccountName.ValueString(),
+					ProviderAccountID:               planBuilds.ProviderAccountID.ValueString(),
+					RepoID:                          planBuilds.RepoID.ValueString(),
+					RepoName:                        planBuilds.RepoName.ValueString(),
+					Enabled:                         planBuilds.Enabled.ValueBool(),
+				}
+
+				if !planBuilds.BranchIncludes.IsNull() {
+					var branchIncludes []string
+					planBuilds.BranchIncludes.ElementsAs(ctx, &branchIncludes, false)
+					triggerReq.BranchIncludes = branchIncludes
+				}
+				if !planBuilds.BranchExcludes.IsNull() {
+					var branchExcludes []string
+					planBuilds.BranchExcludes.ElementsAs(ctx, &branchExcludes, false)
+					triggerReq.BranchExcludes = branchExcludes
+				}
+
+				if _, err := r.createBuildsTrigger(ctx, accountID, triggerReq); err != nil {
+					resp.Diagnostics.AddError("failed to create builds trigger", err.Error())
+					return
+				}
+			}
+		}
+	} else if stateBuildsPtr != nil && !state.Builds.IsNull() && (planBuildsPtr == nil || planBuildsPtr.Enabled.IsNull() || !planBuildsPtr.Enabled.ValueBool()) {
+		accountID := data.AccountID.ValueString()
+		scriptName := data.Name.ValueString()
+
+		existingTrigger, err := r.getBuildsTrigger(ctx, accountID, scriptName)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to get builds trigger", err.Error())
+			return
+		}
+
+		if existingTrigger != nil {
+			if err := r.deleteBuildsTrigger(ctx, accountID, existingTrigger.TriggerUUID); err != nil {
+				resp.Diagnostics.AddError("failed to delete builds trigger", err.Error())
+				return
+			}
+		}
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -268,6 +712,7 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 	if (!plan.Name.IsUnknown() && !plan.Name.Equal(state.Name)) ||
 		(!plan.Logpush.IsUnknown() && !plan.Logpush.Equal(state.Logpush)) ||
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
+		(!plan.Builds.IsUnknown() && !plan.Builds.Equal(state.Builds)) ||
 		(!plan.Observability.IsUnknown() && !plan.Observability.Equal(state.Observability)) ||
 		(!plan.Subdomain.IsUnknown() && !plan.Subdomain.Equal(state.Subdomain)) ||
 		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {
