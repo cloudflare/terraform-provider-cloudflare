@@ -80,6 +80,14 @@ jobs:
             [ -f "$f" ] && mv "$f" "${f//_v/_}" 2>/dev/null || true
           done
           ls -la
+      - name: Add Terraform Registry manifest
+        run: |
+          set -e
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
+          # Copy manifest file to dist and rename to expected format
+          cp terraform-registry-manifest.json dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json
+          echo "Added manifest file to dist"
       - name: Create Terraform Registry zip packages
         run: |
           set -e
