@@ -171,9 +171,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"version_id": schema.StringAttribute{
 						Computed: true,
 					},
-					"comment": schema.StringAttribute{
-						Computed: true,
-					},
 				},
 			},
 			"route": schema.SingleNestedAttribute{
@@ -201,9 +198,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"version_id": schema.StringAttribute{
-								Computed: true,
-							},
-							"comment": schema.StringAttribute{
 								Computed: true,
 							},
 						},
@@ -355,9 +349,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version_id": schema.StringAttribute{
 								Computed: true,
 							},
-							"comment": schema.StringAttribute{
-								Computed: true,
-							},
 						},
 					},
 				},
@@ -380,9 +371,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
-						Computed: true,
-					},
-					"comment": schema.StringAttribute{
 						Computed: true,
 					},
 				},

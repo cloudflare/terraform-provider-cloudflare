@@ -42,7 +42,6 @@ type AIGatewayDynamicRoutingDeploymentDataSourceModel struct {
 	CreatedAt    types.String `tfsdk:"created_at" json:"created_at,computed"`
 	DeploymentID types.String `tfsdk:"deployment_id" json:"deployment_id,computed"`
 	VersionID    types.String `tfsdk:"version_id" json:"version_id,computed"`
-	Comment      types.String `tfsdk:"comment" json:"comment,computed"`
 }
 
 type AIGatewayDynamicRoutingElementsDataSourceModel struct {
@@ -98,5 +97,4 @@ type AIGatewayDynamicRoutingVersionDataSourceModel struct {
 	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Data      types.String `tfsdk:"data" json:"data,computed"`
 	VersionID types.String `tfsdk:"version_id" json:"version_id,computed"`
-	Comment   types.String `tfsdk:"comment" json:"comment,computed"`
 }
