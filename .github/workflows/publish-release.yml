@@ -82,7 +82,7 @@ jobs:
           sha256sum * > terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
           cat terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
       - name: Copy manifest
-        run: cp ../terraform-registry-manifest.json dist/
+        run: cp terraform-registry-manifest.json dist/
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
