@@ -200,6 +200,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
+					"merge_subrequests": schema.BoolAttribute{
+						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.",
+						Computed:    true,
+					},
 					"output_type": schema.StringAttribute{
 						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.\nAvailable values: \"ndjson\", \"csv\".",
 						Computed:    true,
