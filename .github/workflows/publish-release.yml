@@ -122,6 +122,8 @@ jobs:
               cd /
               rm -rf "$pkg_dir"
               echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_${os_arch}.zip"
+              # Return to DIST_DIR for next iteration
+              cd "$DIST_DIR"
             done
           done
           echo "=== Final zip files ==="
