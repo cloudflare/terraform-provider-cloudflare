@@ -50,9 +50,12 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 
 	// Result is [][]GatewayItem: the outer slice always has exactly one element
 	// (SinglePage is never paginated), and the inner slice is the list of items.
+	if len(page.Result) > 1 {
+		return nil, fmt.Errorf("unexpected pagination: items endpoint returned %d result pages, expected at most 1", len(page.Result))
+	}
 	// Allocate a non-nil slice so the caller can distinguish "0 items" from "404".
 	items := make([]*ZeroTrustListItemsModel, 0)
-	if len(page.Result) > 0 {
+	if len(page.Result) == 1 {
 		for _, item := range page.Result[0] {
 			items = append(items, &ZeroTrustListItemsModel{
 				Value:       types.StringValue(item.Value),
@@ -67,7 +70,9 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 // Returns StringNull() when the field is absent or null in the API response,
 // so state matches configs that omit the description field entirely.
 func gatewayItemDescription(item zero_trust.GatewayItem) types.String {
-	if item.JSON.Description.IsNull() || item.JSON.Description.IsMissing() {
+	// IsNull() returns true for both null and missing fields (status <= null),
+	// so no separate IsMissing() check is needed.
+	if item.JSON.Description.IsNull() {
 		return types.StringNull()
 	}
 	return types.StringValue(item.Description)
@@ -95,6 +100,14 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 	}
 
 	if plan.Items != nil && state.Items != nil {
+		// If any plan item has an unknown value we cannot reliably compare —
+		// bail out and let Terraform show the diff as-is.
+		for _, item := range *plan.Items {
+			if item != nil && (item.Value.IsUnknown() || item.Description.IsUnknown()) {
+				return
+			}
+		}
+
 		if computeItemsHash(*plan.Items) == computeItemsHash(*state.Items) {
 			// Use SetAttribute to surgically replace only the items attribute,
 			// avoiding clobbering unknown computed values in other plan fields.
