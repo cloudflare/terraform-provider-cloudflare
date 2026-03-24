@@ -83,7 +83,8 @@ jobs:
       - name: Create Terraform Registry zip packages
         run: |
           set -e
-          cd dist
+          DIST_DIR="$PWD/dist"
+          cd "$DIST_DIR"
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
           
@@ -102,12 +103,13 @@ jobs:
               pkg_dir=$(mktemp -d)
               cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_${VERSION}"
               cd "$pkg_dir"
-              zip -r "../terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip" . -q
-              cd ..
+              zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip" . -q
+              cd /
               rm -rf "$pkg_dir"
               echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip"
             done
           done
+          cd "$DIST_DIR"
           ls -la *.zip
       - name: Generate checksums for Terraform Registry packages
         run: |
