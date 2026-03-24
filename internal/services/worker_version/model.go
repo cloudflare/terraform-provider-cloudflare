@@ -125,10 +125,11 @@ type WorkerVersionAssetsConfigModel struct {
 type WorkerVersionBindingsModel struct {
 	Name                        types.String                        `tfsdk:"name" json:"name,required"`
 	Type                        types.String                        `tfsdk:"type" json:"type,required"`
+	InstanceName                types.String                        `tfsdk:"instance_name" json:"instance_name,optional"`
+	Namespace                   types.String                        `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                        `tfsdk:"dataset" json:"dataset,optional"`
 	ID                          types.String                        `tfsdk:"id" json:"id,optional"`
 	Part                        types.String                        `tfsdk:"part" json:"part,optional"`
-	Namespace                   types.String                        `tfsdk:"namespace" json:"namespace,optional"`
 	Outbound                    *WorkerVersionBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
 	ClassName                   types.String                        `tfsdk:"class_name" json:"class_name,computed_optional"`
 	DispatchNamespace           types.String                        `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
