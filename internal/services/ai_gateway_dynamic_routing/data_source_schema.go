@@ -52,9 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"version_id": schema.StringAttribute{
 						Computed: true,
 					},
-					"comment": schema.StringAttribute{
-						Computed: true,
-					},
 				},
 			},
 			"elements": schema.ListNestedAttribute{
@@ -192,9 +189,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
-						Computed: true,
-					},
-					"comment": schema.StringAttribute{
 						Computed: true,
 					},
 				},
