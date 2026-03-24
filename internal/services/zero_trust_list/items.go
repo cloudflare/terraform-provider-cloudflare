@@ -1,11 +1,11 @@
-package zero_trust_list
-
 // This file contains hand-written logic that extends the generated resource.go.
 // It is intentionally separate so generator regenerations leave it untouched.
 //
 // Hooks into resource.go:
 //   - Read()       calls fetchItems(ctx, client, accountID, listID) to populate data.Items
 //   - ModifyPlan() calls suppressItemsDiff(ctx, req, resp) for hash-based diff suppression
+
+package zero_trust_list
 
 import (
 	"context"
@@ -26,7 +26,12 @@ import (
 
 // fetchItems retrieves all items for a gateway list via the dedicated items
 // endpoint (GET /gateway/lists/{id}/items), which is separate from the list
-// metadata endpoint that Read() uses. Returns nil, nil if the list is gone.
+// metadata endpoint that Read() uses.
+//
+// Return values:
+//   - (items, nil)  — success; items is always non-nil (empty slice = list exists with 0 items)
+//   - (nil, nil)    — list was deleted (404); caller should remove resource from state
+//   - (nil, err)    — unexpected error
 func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listID string) ([]*ZeroTrustListItemsModel, error) {
 	page, err := client.ZeroTrust.Gateway.Lists.Items.List(
 		ctx,
@@ -46,7 +51,8 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 
 	// Result is [][]GatewayItem: the outer slice always has exactly one element
 	// (SinglePage is never paginated), and the inner slice is the list of items.
-	var items []*ZeroTrustListItemsModel
+	// Allocate a non-nil slice so the caller can distinguish "0 items" from "404".
+	items := make([]*ZeroTrustListItemsModel, 0)
 	if len(page.Result) > 0 {
 		for _, item := range page.Result[0] {
 			items = append(items, &ZeroTrustListItemsModel{
@@ -72,9 +78,9 @@ func gatewayItemDescription(item zero_trust.GatewayItem) types.String {
 // config and state are semantically identical (same values and descriptions,
 // regardless of set ordering).
 //
-// Background: Terraform's SetNestedAttribute comparison is O(n²) with expensive
-// nested object hashing (~70s for 2000 items). This hash-based approach takes
-// ~0.5ms for 5000 items, providing ~70,000x speedup for no-change plans.
+// Background: Terraform's SetNestedAttribute comparison is O(n) but each
+// element requires expensive nested object hashing (~70s for 2000 items).
+// This hash-based approach takes ~0.5ms for 5000 items (~70,000x speedup).
 func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	// Plan is null on destroy; state is null on first create.
 	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
@@ -98,11 +104,10 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 }
 
 // computeItemsHash computes a deterministic SHA-256 hash of list items for
-// efficient set comparison.
-//
-// Items are sorted before hashing to ensure order-independence (set semantics).
-// Each item is encoded as "<len(value)>:<value>/<len(desc)>:<desc>" using
-// length-prefixed fields to avoid separator-collision ambiguities.
+// efficient set comparison. Items are sorted before hashing to ensure
+// order-independence (set semantics). Each item is encoded as
+// "<len(value)>:<value>/<len(desc)>:<desc>" using length-prefixed fields
+// to avoid separator-collision ambiguities.
 func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 	encoded := make([]string, len(items))
 	for i, item := range items {
