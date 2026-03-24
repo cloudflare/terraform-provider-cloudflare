@@ -50,12 +50,11 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 	}
 
 	// Allocate a non-nil slice so the caller can distinguish "0 items" from "404".
-	// A null or empty Result field both mean the list exists with zero items.
+	// Result is [][]GatewayItem (SinglePage wraps the response array in an outer slice).
+	// Iterate all outer elements defensively — in practice there is always 0 or 1.
 	items := make([]*ZeroTrustListItemsModel, 0)
-	if !page.JSON.Result.IsNull() && len(page.Result) > 0 {
-		// Result is [][]GatewayItem where the outer slice is always length 1:
-		// SinglePage is not paginated; the inner slice holds all items.
-		for _, item := range page.Result[0] {
+	for _, batch := range page.Result {
+		for _, item := range batch {
 			items = append(items, &ZeroTrustListItemsModel{
 				Value:       types.StringValue(item.Value),
 				Description: gatewayItemDescription(item),
@@ -103,20 +102,38 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 		return
 	}
 
-	if plan.Items != nil && state.Items != nil {
-		// If any plan item has an unknown value we cannot reliably compare —
-		// bail out and let Terraform show the diff as-is.
-		for _, item := range *plan.Items {
-			if item != nil && (item.Value.IsUnknown() || item.Description.IsUnknown()) {
-				return
+	// Treat nil pointer-to-slice as equivalent to pointer-to-empty-slice so that
+	// a config with `items = []` and a state with no items field are compared correctly.
+	emptySlice := []*ZeroTrustListItemsModel{}
+	planItems := plan.Items
+	stateItems := state.Items
+	if planItems == nil {
+		planItems = &emptySlice
+	}
+	if stateItems == nil {
+		stateItems = &emptySlice
+	}
+
+	// If any plan item has an unknown value we cannot reliably compare —
+	// bail out and let Terraform show the diff as-is.
+	for _, item := range *planItems {
+		if item != nil && (item.Value.IsUnknown() || item.Description.IsUnknown()) {
+			return
+		}
+	}
+
+	if computeItemsHash(*planItems) == computeItemsHash(*stateItems) {
+		// Filter out any nil elements before writing to the plan — the framework's
+		// SetAttribute may not handle nil pointers inside a slice of struct pointers.
+		filtered := make([]*ZeroTrustListItemsModel, 0, len(*stateItems))
+		for _, item := range *stateItems {
+			if item != nil {
+				filtered = append(filtered, item)
 			}
 		}
-
-		if computeItemsHash(*plan.Items) == computeItemsHash(*state.Items) {
-			// Use SetAttribute to surgically replace only the items attribute,
-			// avoiding clobbering unknown computed values in other plan fields.
-			resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("items"), state.Items)...)
-		}
+		// Use SetAttribute to surgically replace only the items attribute,
+		// avoiding clobbering unknown computed values in other plan fields.
+		resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("items"), &filtered)...)
 	}
 }
 
