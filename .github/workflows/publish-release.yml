@@ -91,10 +91,16 @@ jobs:
         run: |
           cd dist
           VERSION="${{ github.ref_name }}"
+          # VERSION is like v1.0.34, files are renamed to remove v (1.0.34)
+          VERSION_NOV="${VERSION#v}"
           # Create .tgz packages for Terraform Registry using explicit platform mapping
           for arch in amd64 arm64; do
             for os in darwin linux; do
               binary="terraform-provider-cloudflare_${os}_${arch}_${VERSION}"
+              # Check if file exists with v prefix, if not try without
+              if [ ! -f "$binary" ]; then
+                binary="terraform-provider-cloudflare_${os}_${arch}_${VERSION_NOV}"
+              fi
               if [ -f "$binary" ]; then
                 os_arch="${os}_${arch}"
                 pkg_dir="pkg_$$RANDOM"
