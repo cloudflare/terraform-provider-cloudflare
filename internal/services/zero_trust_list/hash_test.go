@@ -127,16 +127,14 @@ func TestComputeItemsHash(t *testing.T) {
 			shouldMatch: false,
 		},
 		{
-			name: "nil item does not collide with empty-value item",
-			// A nil pointer in the items slice encodes as "nil", which is distinct
-			// from an item with empty value and null description.
+			name: "nil item is skipped — matches empty slice",
+			// nil pointers are skipped during hashing (consistent with nil-stripping
+			// in suppressItemsDiff), so [nil] hashes the same as [].
 			items1: []*ZeroTrustListItemsModel{
 				nil,
 			},
-			items2: []*ZeroTrustListItemsModel{
-				{Value: types.StringValue(""), Description: types.StringNull()},
-			},
-			shouldMatch: false,
+			items2:      []*ZeroTrustListItemsModel{},
+			shouldMatch: true,
 		},
 		{
 			name: "value containing null byte does not collide with value+description pair",

@@ -102,6 +102,11 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 		return
 	}
 
+	// If items are not configured in either plan or state, there is nothing to suppress.
+	if plan.Items == nil && state.Items == nil {
+		return
+	}
+
 	// Treat nil pointer-to-slice as equivalent to pointer-to-empty-slice so that
 	// a config with `items = []` and a state with no items field are compared correctly.
 	emptySlice := []*ZeroTrustListItemsModel{}
@@ -144,10 +149,11 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 // Each item is encoded with explicit type tags so that nil, null, unknown,
 // and empty-string values are all distinguishable from one another.
 func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
-	encoded := make([]string, len(items))
-	for i, item := range items {
+	// nil elements are skipped to match the nil-stripping in suppressItemsDiff,
+	// ensuring hash semantics are consistent with what gets written to the plan.
+	encoded := make([]string, 0, len(items))
+	for _, item := range items {
 		if item == nil {
-			encoded[i] = "nil"
 			continue
 		}
 
@@ -175,7 +181,7 @@ func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 			d = fmt.Sprintf("d(%d):%s", len(raw), raw)
 		}
 
-		encoded[i] = v + "/" + d
+		encoded = append(encoded, v+"/"+d)
 	}
 	sort.Strings(encoded)
 
