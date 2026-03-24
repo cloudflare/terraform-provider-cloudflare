@@ -4,9 +4,9 @@ package zero_trust_list
 
 import (
 	"context"
-	"crypto/sha256"
-	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
@@ -15,32 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"io"
-	"net/http"
-	"sort"
 )
-
-// readBody reads all bytes from an http.Response body.
-func readBody(res *http.Response) ([]byte, error) {
-	defer res.Body.Close()
-	return io.ReadAll(res.Body)
-}
-
-// is404 reports whether err is an API 404 response.
-func is404(err error) bool {
-	var apiErr *cloudflare.Error
-	return errors.As(err, &apiErr) && apiErr.StatusCode == 404
-}
-
-// itemDescription returns the description as a Terraform string value.
-// types.StringNull() is used when the field is absent in the API response
-// so state matches configs that omit the field entirely.
-func itemDescription(item zero_trust.GatewayItem) types.String {
-	if item.JSON.Description.IsNull() {
-		return types.StringNull()
-	}
-	return types.StringValue(item.Description)
-}
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustListResource)(nil)
@@ -217,34 +192,16 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 
-	// GET /gateway/lists/{id} does not return items; fetch them separately.
-	itemsPage, err := r.client.ZeroTrust.Gateway.Lists.Items.List(
-		ctx,
-		data.ID.ValueString(),
-		zero_trust.GatewayListItemListParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
+	// Fetch items separately — see items.go.
+	items, err := fetchItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
 	if err != nil {
-		if is404(err) {
-			resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
-			resp.State.RemoveResource(ctx)
-			return
-		}
 		resp.Diagnostics.AddError("failed to fetch list items", err.Error())
 		return
 	}
-	// Result is [][]GatewayItem: the outer slice always has exactly one element
-	// (SinglePage is never paginated), and the inner slice is the list of items.
-	var items []*ZeroTrustListItemsModel
-	if len(itemsPage.Result) > 0 {
-		for _, item := range itemsPage.Result[0] {
-			items = append(items, &ZeroTrustListItemsModel{
-				Value:       types.StringValue(item.Value),
-				Description: itemDescription(item),
-			})
-		}
+	if items == nil {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
 	}
 	data.Items = &items
 
@@ -323,57 +280,8 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// ModifyPlan suppresses spurious diffs when list items are semantically
+// unchanged — see items.go for the full implementation.
 func (r *ZeroTrustListResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	// Plan is null on destroy; state is null on first create. In both cases
-	// there is nothing to compare, so return early.
-	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
-		return
-	}
-
-	var plan, state *ZeroTrustListModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() || plan == nil || state == nil {
-		return
-	}
-
-	if plan.Items != nil && state.Items != nil {
-		if computeItemsHash(*plan.Items) == computeItemsHash(*state.Items) {
-			plan.Items = state.Items
-			resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
-		}
-	}
-}
-
-// computeItemsHash computes a deterministic hash of list items for efficient set
-// comparison. Terraform's SetNestedAttribute comparison is O(n) with expensive
-// nested object hashing (~70s for 2000 items). This hash-based approach takes
-// ~0.5ms for 5000 items, providing ~70,000x speedup for no-change plans.
-//
-// Items are sorted before hashing to ensure consistent results regardless of set
-// ordering. Both value and description are included in the hash.
-//
-// Encoding: each item is serialised as "<len(value)>:<value>/<len(desc)>:<desc>"
-// using length-prefixed fields. This avoids separator-collision ambiguities that
-// would arise if value or description contained the separator character.
-func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
-	values := make([]string, len(items))
-	for i, item := range items {
-		if item != nil {
-			v := item.Value.ValueString()
-			d := item.Description.ValueString()
-			values[i] = fmt.Sprintf("%d:%s/%d:%s", len(v), v, len(d), d)
-		}
-	}
-	sort.Strings(values)
-
-	h := sha256.New()
-	for _, v := range values {
-		h.Write([]byte(v))
-		h.Write([]byte{0})
-	}
-	var result [32]byte
-	copy(result[:], h.Sum(nil))
-	return result
+	suppressItemsDiff(ctx, req, resp)
 }
