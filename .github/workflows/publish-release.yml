@@ -7,33 +7,9 @@ on:
       - "v*"
 
 jobs:
-  # Build each platform on separate runners in parallel
+  # Build linux_amd64 only (minimum required for Terraform Registry)
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: darwin_amd64
-            os: macos-latest
-            goos: darwin
-            goarch: amd64
-            ext: ""
-          - platform: darwin_arm64
-            os: macos-latest
-            goos: darwin
-            goarch: arm64
-            ext: ""
-          - platform: linux_amd64
-            os: ubuntu-latest
-            goos: linux
-            goarch: amd64
-            ext: ""
-          - platform: linux_arm64
-            os: ubuntu-latest
-            goos: linux
-            goarch: arm64
-            ext: ""
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -45,16 +21,16 @@ jobs:
           go-version-file: "go.mod"
       - name: Build
         env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
+          GOOS: linux
+          GOARCH: amd64
           CGO_ENABLED: "0"
         run: |
-          go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_${{ matrix.platform }}_${{ github.ref_name }}${{ matrix.ext }} .
+          go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_linux_amd64_${{ github.ref_name }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-provider-cloudflare_${{ matrix.platform }}_${{ github.ref_name }}
-          path: terraform-provider-cloudflare_${{ matrix.platform }}_${{ github.ref_name }}${{ matrix.ext }}
+          name: terraform-provider-cloudflare_linux_amd64_${{ github.ref_name }}
+          path: terraform-provider-cloudflare_linux_amd64_${{ github.ref_name }}
           retention-days: 1
 
   # Create release and attach all artifacts
@@ -88,54 +64,31 @@ jobs:
           # Copy manifest file to dist and rename to expected format
           cp terraform-registry-manifest.json dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json
           echo "Added manifest file to dist"
-      - name: Create Terraform Registry zip packages
+      - name: Create Terraform Registry zip package
         run: |
           set -e
           DIST_DIR="$PWD/dist"
           cd "$DIST_DIR"
-          VERSION="${{ github.ref_name }}"           # e.g. v1.0.42
-          VERSION_NOV="${VERSION#v}"                 # e.g. 1.0.42 (strip leading v)
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
           
-          # Debug: list files in dist
           echo "=== Files in dist ==="
           ls -la
           
-          # Create .zip packages for Terraform Registry
-          for arch in amd64 arm64; do
-            for os in darwin linux; do
-              os_arch="${os}_${arch}"
-              # Check for files with v prefix first, then without
-              binary_with_v="terraform-provider-cloudflare_${os_arch}_${VERSION}"
-              binary_no_v="terraform-provider-cloudflare_${os_arch}_${VERSION_NOV}"
-              
-              echo "=== Checking ${os_arch} ==="
-              echo "Looking for: ${binary_with_v} or ${binary_no_v}"
-              
-              if [ -f "$binary_with_v" ]; then
-                binary="$binary_with_v"
-                echo "Found (with v): $binary"
-              elif [ -f "$binary_no_v" ]; then
-                binary="$binary_no_v"
-                echo "Found (no v): $binary"
-              else
-                echo "NOT FOUND, skipping"
-                continue
-              fi
-              
-              pkg_dir=$(mktemp -d)
-              # Binary inside zip MUST be named terraform-provider-namespace-name_vX.Y.Z for Terraform Registry
-              cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}"
-              cd "$pkg_dir"
-              zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_${os_arch}.zip" . -q
-              cd /
-              rm -rf "$pkg_dir"
-              echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_${os_arch}.zip"
-              # Return to DIST_DIR for next iteration
-              cd "$DIST_DIR"
-            done
-          done
+          binary="terraform-provider-cloudflare_linux_amd64_${VERSION_NOV}"
+          if [ ! -f "$binary" ]; then
+            echo "ERROR: $binary not found"
+            exit 1
+          fi
+          
+          pkg_dir=$(mktemp -d)
+          cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}"
+          cd "$pkg_dir"
+          zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" . -q
+          cd /
+          rm -rf "$pkg_dir"
+          echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip"
           echo "=== Final zip files ==="
-          cd "$DIST_DIR"
           ls -la *.zip
       - name: Generate checksums for Terraform Registry packages
         run: |
