@@ -85,38 +85,57 @@ jobs:
           set -e
           DIST_DIR="$PWD/dist"
           cd "$DIST_DIR"
-          VERSION="${{ github.ref_name }}"
-          VERSION_NOV="${VERSION#v}"
+          VERSION="${{ github.ref_name }}"           # e.g. v1.0.42
+          VERSION_NOV="${VERSION#v}"                 # e.g. 1.0.42 (strip leading v)
+          
+          # Debug: list files in dist
+          echo "=== Files in dist ==="
+          ls -la
           
           # Create .zip packages for Terraform Registry
           for arch in amd64 arm64; do
             for os in darwin linux; do
-              binary_name="terraform-provider-cloudflare_${os}_${arch}"
-              if [ -f "${binary_name}_${VERSION}" ]; then
-                binary="${binary_name}_${VERSION}"
-              elif [ -f "${binary_name}_${VERSION_NOV}" ]; then
-                binary="${binary_name}_${VERSION_NOV}"
+              os_arch="${os}_${arch}"
+              # Check for files with v prefix first, then without
+              binary_with_v="terraform-provider-cloudflare_${os_arch}_${VERSION}"
+              binary_no_v="terraform-provider-cloudflare_${os_arch}_${VERSION_NOV}"
+              
+              echo "=== Checking ${os_arch} ==="
+              echo "Looking for: ${binary_with_v} or ${binary_no_v}"
+              
+              if [ -f "$binary_with_v" ]; then
+                binary="$binary_with_v"
+                echo "Found (with v): $binary"
+              elif [ -f "$binary_no_v" ]; then
+                binary="$binary_no_v"
+                echo "Found (no v): $binary"
               else
+                echo "NOT FOUND, skipping"
                 continue
               fi
-              os_arch="${os}_${arch}"
+              
               pkg_dir=$(mktemp -d)
-              cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_${VERSION}"
+              # Binary inside zip MUST be named terraform-provider-namespace-name_vX.Y.Z for Terraform Registry
+              cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}"
               cd "$pkg_dir"
-              zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip" . -q
+              zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_${os_arch}.zip" . -q
               cd /
               rm -rf "$pkg_dir"
-              echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip"
+              echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_${os_arch}.zip"
             done
           done
+          echo "=== Final zip files ==="
           cd "$DIST_DIR"
           ls -la *.zip
       - name: Generate checksums for Terraform Registry packages
         run: |
+          set -e
           cd dist
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
           # Generate checksums for .zip files (Terraform Registry requirement)
-          sha256sum *.zip > terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
-          cat terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
+          sha256sum terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_*.zip > terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
+          cat terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
@@ -125,11 +144,14 @@ jobs:
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Sign checksums for Terraform Registry
         run: |
+          set -e
           cd dist
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
           # Sign with .sig extension and key fingerprint for Terraform Registry
-          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
+          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
           # Rename to include key ID for Terraform Registry compatibility
-          mv terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS.asc "terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS.sig"
+          mv terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.asc terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig
           ls -la *.sig *.asc 2>/dev/null || true
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
