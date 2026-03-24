@@ -75,10 +75,11 @@ type WorkerVersionAssetsConfigDataSourceModel struct {
 type WorkerVersionBindingsDataSourceModel struct {
 	Name                        types.String                                                           `tfsdk:"name" json:"name,computed"`
 	Type                        types.String                                                           `tfsdk:"type" json:"type,computed"`
+	InstanceName                types.String                                                           `tfsdk:"instance_name" json:"instance_name,computed"`
+	Namespace                   types.String                                                           `tfsdk:"namespace" json:"namespace,computed"`
 	Dataset                     types.String                                                           `tfsdk:"dataset" json:"dataset,computed"`
 	ID                          types.String                                                           `tfsdk:"id" json:"id,computed"`
 	Part                        types.String                                                           `tfsdk:"part" json:"part,computed"`
-	Namespace                   types.String                                                           `tfsdk:"namespace" json:"namespace,computed"`
 	Outbound                    customfield.NestedObject[WorkerVersionBindingsOutboundDataSourceModel] `tfsdk:"outbound" json:"outbound,computed"`
 	ClassName                   types.String                                                           `tfsdk:"class_name" json:"class_name,computed"`
 	DispatchNamespace           types.String                                                           `tfsdk:"dispatch_namespace" json:"dispatch_namespace,computed"`

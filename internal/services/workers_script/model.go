@@ -135,6 +135,8 @@ type WorkersScriptMetadataAssetsConfigModel struct {
 type WorkersScriptMetadataBindingsModel struct {
 	Name                        types.String                                `tfsdk:"name" json:"name,required"`
 	Type                        types.String                                `tfsdk:"type" json:"type,required"`
+	InstanceName                types.String                                `tfsdk:"instance_name" json:"instance_name,optional"`
+	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                                `tfsdk:"dataset" json:"dataset,optional"`
 	ID                          types.String                                `tfsdk:"id" json:"id,optional"`
 	Outbound                    *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`

@@ -174,11 +174,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"ai",
+									"ai_search",
+									"ai_search_namespace",
 									"analytics_engine",
 									"assets",
 									"browser",
@@ -212,6 +214,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"instance_name": schema.StringAttribute{
+							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
+							Computed:    true,
+						},
+						"namespace": schema.StringAttribute{
+							Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
+							Computed:    true,
+						},
 						"dataset": schema.StringAttribute{
 							Description: "The name of the dataset to bind to.",
 							Computed:    true,
@@ -222,10 +232,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"part": schema.StringAttribute{
 							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
-							Computed:    true,
-						},
-						"namespace": schema.StringAttribute{
-							Description: "The name of the dispatch namespace.",
 							Computed:    true,
 						},
 						"outbound": schema.SingleNestedAttribute{
