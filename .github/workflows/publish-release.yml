@@ -87,6 +87,30 @@ jobs:
           cat terraform-provider-cloudflare_${{ github.ref_name }}_SHA256SUMS
       - name: Copy manifest
         run: cp terraform-registry-manifest.json dist/
+      - name: Create Terraform Registry packages
+        run: |
+          cd dist
+          # Create .tgz packages for Terraform Registry
+          for binary in terraform-provider-cloudflare_*_*; do
+            if [ -f "$binary" ]; then
+              # Extract platform from filename (e.g., terraform-provider-cloudflare_linux_amd64_1.0.32)
+              platform=$(echo "$binary" | sed 's/terraform-provider-cloudflare_//')
+              os_arch="${platform%_*}"  # e.g., linux_amd64
+              version="${platform##*_}"  # e.g., 1.0.32
+              
+              # Create package directory
+              pkg_dir="pkg_$${RANDOM}"
+              mkdir -p "$${pkg_dir}/terraform-provider-trafgals-cloudflare_v$${version}"
+              cp "$$binary" "$${pkg_dir}/terraform-provider-trafgals-cloudflare_v$${version}/"
+              cp terraform-registry-manifest.json "$${pkg_dir}/terraform-provider-trafgals-cloudflare_v$${version}/"
+              
+              # Create .tgz with proper naming for Terraform Registry
+              tar -czf "terraform-provider-trafgals-cloudflare_v$${version}_$${os_arch}.tgz" "$${pkg_dir}"
+              rm -rf "$$pkg_dir"
+              echo "Created terraform-provider-trafgals-cloudflare_v$${version}_$${os_arch}.tgz"
+            fi
+          done
+          ls -la *.tgz
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
