@@ -89,6 +89,7 @@ jobs:
         run: cp terraform-registry-manifest.json dist/
       - name: Create Terraform Registry packages
         run: |
+          set -e
           cd dist
           VERSION="${{ github.ref_name }}"
           # VERSION is like v1.0.34, files are renamed to remove v (1.0.34)
@@ -96,24 +97,26 @@ jobs:
           # Create .tgz packages for Terraform Registry using explicit platform mapping
           for arch in amd64 arm64; do
             for os in darwin linux; do
-              binary="terraform-provider-cloudflare_${os}_${arch}_${VERSION}"
-              # Check if file exists with v prefix, if not try without
-              if [ ! -f "$binary" ]; then
-                binary="terraform-provider-cloudflare_${os}_${arch}_${VERSION_NOV}"
+              binary_name="terraform-provider-cloudflare_${os}_${arch}"
+              # Try with v prefix first, then without
+              if [ -f "${binary_name}_${VERSION}" ]; then
+                binary="${binary_name}_${VERSION}"
+              elif [ -f "${binary_name}_${VERSION_NOV}" ]; then
+                binary="${binary_name}_${VERSION_NOV}"
+              else
+                continue
               fi
-              if [ -f "$binary" ]; then
-                os_arch="${os}_${arch}"
-                pkg_dir="pkg_$$RANDOM"
-                mkdir -p "$$pkg_dir/terraform-provider-trafgals-cloudflare_$${VERSION}"
-                cp "$$binary" "$$pkg_dir/terraform-provider-trafgals-cloudflare_$${VERSION}/"
-                cp terraform-registry-manifest.json "$$pkg_dir/terraform-provider-trafgals-cloudflare_$${VERSION}/"
-                tar -czf "terraform-provider-trafgals-cloudflare_$${VERSION}_$${os_arch}.tgz" -C "$$pkg_dir" .
-                rm -rf "$$pkg_dir"
-                echo "Created terraform-provider-trafgals-cloudflare_$${VERSION}_$${os_arch}.tgz"
-              fi
+              os_arch="${os}_${arch}"
+              pkg_dir="pkg_$$RANDOM"
+              mkdir -p "${pkg_dir}/terraform-provider-trafgals-cloudflare_${VERSION}"
+              cp "${binary}" "${pkg_dir}/terraform-provider-trafgals-cloudflare_${VERSION}/"
+              cp terraform-registry-manifest.json "${pkg_dir}/terraform-provider-trafgals-cloudflare_${VERSION}/"
+              tar -czf "terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.tgz" -C "${pkg_dir}" .
+              rm -rf "${pkg_dir}"
+              echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.tgz"
             done
           done
-          ls -la *.tgz 2>/dev/null || echo "No .tgz files created"
+          ls -la *.tgz || true
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
