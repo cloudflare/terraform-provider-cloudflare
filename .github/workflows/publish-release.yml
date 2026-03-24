@@ -51,9 +51,11 @@ jobs:
       - name: Prepare artifacts
         run: |
           cd dist
-          # Rename without v prefix for checksums
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
+          # Rename files to remove v prefix: terraform-provider-cloudflare_linux_amd64_v1.0.46 -> terraform-provider-cloudflare_linux_amd64_1.0.46
           for f in *; do
-            [ -f "$f" ] && mv "$f" "${f//_v/_}" 2>/dev/null || true
+            [ -f "$f" ] && mv "$f" "${f//_v${VERSION_NOV}/_${VERSION_NOV}}" 2>/dev/null || true
           done
           ls -la
       - name: Add Terraform Registry manifest
