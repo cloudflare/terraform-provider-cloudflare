@@ -153,14 +153,34 @@ func TestComputeItemsHash(t *testing.T) {
 		},
 		{
 			name: "two entries do not collide with one entry whose value looks like concatenated encodings",
-			// Checks that a single item whose value happens to equal the raw concatenation
-			// of two items' encodings does not produce a hash match.
+			// Checks that a single item whose value equals the raw concatenation of two
+			// items' encodings does not produce a hash match.
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("a")},
 				{Value: types.StringValue("b")},
 			},
 			items2: []*ZeroTrustListItemsModel{
-				{Value: types.StringValue("4:v:a/null\x004:v:b/null")},
+				{Value: types.StringValue("v(1):a/d:null\x00v(1):b/d:null")},
+			},
+			shouldMatch: false,
+		},
+		{
+			name: "unknown value does not match null value",
+			items1: []*ZeroTrustListItemsModel{
+				{Value: types.StringUnknown()},
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringNull()},
+			},
+			shouldMatch: false,
+		},
+		{
+			name: "unknown description does not match null description",
+			items1: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("10.0.0.1"), Description: types.StringUnknown()},
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("10.0.0.1"), Description: types.StringNull()},
 			},
 			shouldMatch: false,
 		},

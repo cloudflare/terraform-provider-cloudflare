@@ -18,6 +18,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -48,11 +49,17 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 		return nil, err
 	}
 
+	// A null result field means the API returned no data — treat as gone.
+	if page.JSON.Result.IsNull() {
+		return nil, fmt.Errorf("items endpoint returned null result for list %s", listID)
+	}
+
 	// Result is [][]GatewayItem: the outer slice always has exactly one element
 	// (SinglePage is never paginated), and the inner slice is the list of items.
 	if len(page.Result) > 1 {
 		return nil, fmt.Errorf("unexpected pagination: items endpoint returned %d result pages, expected at most 1", len(page.Result))
 	}
+
 	// Allocate a non-nil slice so the caller can distinguish "0 items" from "404".
 	items := make([]*ZeroTrustListItemsModel, 0)
 	if len(page.Result) == 1 {
@@ -86,16 +93,21 @@ func gatewayItemDescription(item zero_trust.GatewayItem) types.String {
 // element requires expensive nested object hashing (~70s for 2000 items).
 // This hash-based approach takes ~0.5ms for 5000 items (~70,000x speedup).
 func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	// Plan is null on destroy; state is null on first create.
-	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+	// Plan is null on destroy; state is null on first create. !IsKnown() means
+	// the resource itself is not yet known (e.g. ID computed from another resource).
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() ||
+		!req.State.Raw.IsKnown() || !req.Plan.Raw.IsKnown() {
 		return
 	}
 
 	var plan, state *ZeroTrustListModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() || plan == nil || state == nil {
+	// Use local diagnostics so deserialization failures in this best-effort
+	// hook do not propagate as provider errors in the plan response.
+	var planDiags, stateDiags diag.Diagnostics
+	planDiags.Append(req.Plan.Get(ctx, &plan)...)
+	stateDiags.Append(req.State.Get(ctx, &state)...)
+	if planDiags.HasError() || stateDiags.HasError() || plan == nil || state == nil {
 		return
 	}
 
@@ -120,8 +132,8 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 // efficient set comparison. Items are sorted before hashing to ensure
 // order-independence (set semantics).
 //
-// Encoding: each item is "<nil|v:value/d:desc>" using explicit type tags so
-// that nil items, empty strings, and null values are all distinguishable.
+// Each item is encoded with explicit type tags so that nil, null, unknown,
+// and empty-string values are all distinguishable from one another.
 func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 	encoded := make([]string, len(items))
 	for i, item := range items {
@@ -129,18 +141,32 @@ func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 			encoded[i] = "nil"
 			continue
 		}
-		// Encode value: prefix with "v:" to distinguish from nil sentinel.
-		v := "v:" + item.Value.ValueString()
 
-		// Encode description: distinguish null/unknown from an explicit empty string.
-		var d string
-		if item.Description.IsNull() || item.Description.IsUnknown() {
-			d = "null"
-		} else {
-			d = "s:" + item.Description.ValueString()
+		// Encode value with explicit null/unknown/string tags.
+		var v string
+		switch {
+		case item.Value.IsUnknown():
+			v = "v:unknown"
+		case item.Value.IsNull():
+			v = "v:null"
+		default:
+			raw := item.Value.ValueString()
+			v = fmt.Sprintf("v(%d):%s", len(raw), raw)
 		}
 
-		encoded[i] = fmt.Sprintf("%d:%s/%s", len(v), v, d)
+		// Encode description with explicit null/unknown/string tags.
+		var d string
+		switch {
+		case item.Description.IsUnknown():
+			d = "d:unknown"
+		case item.Description.IsNull():
+			d = "d:null"
+		default:
+			raw := item.Description.ValueString()
+			d = fmt.Sprintf("d(%d):%s", len(raw), raw)
+		}
+
+		encoded[i] = v + "/" + d
 	}
 	sort.Strings(encoded)
 
