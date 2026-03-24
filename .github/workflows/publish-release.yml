@@ -85,15 +85,12 @@ jobs:
           set -e
           cd dist
           VERSION="${{ github.ref_name }}"
-          # VERSION is like v1.0.39, files are renamed to remove v (1.0.39)
           VERSION_NOV="${VERSION#v}"
           
           # Create .zip packages for Terraform Registry
-          # Structure: terraform-provider-<namespace>-<name>_v<version>_<os>_<arch>.zip
           for arch in amd64 arm64; do
             for os in darwin linux; do
               binary_name="terraform-provider-cloudflare_${os}_${arch}"
-              # Try with v prefix first, then without
               if [ -f "${binary_name}_${VERSION}" ]; then
                 binary="${binary_name}_${VERSION}"
               elif [ -f "${binary_name}_${VERSION_NOV}" ]; then
@@ -102,18 +99,13 @@ jobs:
                 continue
               fi
               os_arch="${os}_${arch}"
-              # Create package with proper Terraform Registry structure
-              # Binary inside zip must be named terraform-provider-<namespace>-<name>_v<version>
-              pkg_dir="pkg_$$RANDOM"
-              mkdir -p "$$pkg_dir"
-              # Rename binary to expected format: terraform-provider-trafgals-cloudflare_v<version>
-              cp "$$binary" "$$pkg_dir/terraform-provider-trafgals-cloudflare_$${VERSION}"
-              # Create zip with just the binary (no subdirectory)
-              cd "$$pkg_dir"
-              zip -r "../terraform-provider-trafgals-cloudflare_$${VERSION}_$${os_arch}.zip" . -q
+              pkg_dir=$(mktemp -d)
+              cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_${VERSION}"
+              cd "$pkg_dir"
+              zip -r "../terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip" . -q
               cd ..
-              rm -rf "$$pkg_dir"
-              echo "Created terraform-provider-trafgals-cloudflare_$${VERSION}_$${os_arch}.zip"
+              rm -rf "$pkg_dir"
+              echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip"
             done
           done
           ls -la *.zip
