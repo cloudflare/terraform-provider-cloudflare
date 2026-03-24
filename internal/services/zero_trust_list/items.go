@@ -68,9 +68,10 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 // Returns StringNull() when the field is absent or null in the API response,
 // so state matches configs that omit the description field entirely.
 func gatewayItemDescription(item zero_trust.GatewayItem) types.String {
-	// IsNull() returns true for both null and missing fields (status <= null),
-	// so no separate IsMissing() check is needed.
-	if item.JSON.Description.IsNull() {
+	// IsNull() covers null and missing (status <= null).
+	// IsInvalid() covers fields present in JSON but that failed to decode —
+	// in that case item.Description is the zero value "", so treat it as null.
+	if item.JSON.Description.IsNull() || item.JSON.Description.IsInvalid() {
 		return types.StringNull()
 	}
 	return types.StringValue(item.Description)
