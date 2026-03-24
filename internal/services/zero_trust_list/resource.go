@@ -7,10 +7,6 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"sort"
-
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
@@ -19,7 +15,32 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"io"
+	"net/http"
+	"sort"
 )
+
+// readBody reads all bytes from an http.Response body.
+func readBody(res *http.Response) ([]byte, error) {
+	defer res.Body.Close()
+	return io.ReadAll(res.Body)
+}
+
+// is404 reports whether err is an API 404 response.
+func is404(err error) bool {
+	var apiErr *cloudflare.Error
+	return errors.As(err, &apiErr) && apiErr.StatusCode == 404
+}
+
+// itemDescription returns the description as a Terraform string value.
+// types.StringNull() is used when the field is absent in the API response
+// so state matches configs that omit the field entirely.
+func itemDescription(item zero_trust.GatewayItem) types.String {
+	if item.JSON.Description.IsNull() {
+		return types.StringNull()
+	}
+	return types.StringValue(item.Description)
+}
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustListResource)(nil)
@@ -87,7 +108,7 @@ func (r *ZeroTrustListResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, err := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to read http response body", err.Error())
 		return
@@ -140,7 +161,7 @@ func (r *ZeroTrustListResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, err := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to read http response body", err.Error())
 		return
@@ -184,7 +205,7 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, err := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to read http response body", err.Error())
 		return
@@ -206,8 +227,7 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		var apiErr *cloudflare.Error
-		if errors.As(err, &apiErr) && apiErr.StatusCode == 404 {
+		if is404(err) {
 			resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
 			resp.State.RemoveResource(ctx)
 			return
@@ -220,15 +240,9 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 	var items []*ZeroTrustListItemsModel
 	if len(itemsPage.Result) > 0 {
 		for _, item := range itemsPage.Result[0] {
-			// Use StringNull() when description is absent/null in the API
-			// response so state matches configs that omit the field.
-			desc := types.StringNull()
-			if !item.JSON.Description.IsNull() {
-				desc = types.StringValue(item.Description)
-			}
 			items = append(items, &ZeroTrustListItemsModel{
 				Value:       types.StringValue(item.Value),
-				Description: desc,
+				Description: itemDescription(item),
 			})
 		}
 	}
@@ -294,7 +308,7 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, err := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to read http response body", err.Error())
 		return
