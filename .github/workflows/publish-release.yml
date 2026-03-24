@@ -80,6 +80,8 @@ jobs:
             [ -f "$f" ] && mv "$f" "${f//_v/_}" 2>/dev/null || true
           done
           ls -la
+      - name: Copy manifest for Terraform Registry packages
+        run: cp terraform-registry-manifest.json dist/
       - name: Create Terraform Registry packages
         run: |
           set -e
@@ -134,8 +136,6 @@ jobs:
           # Rename to include key ID for Terraform Registry compatibility
           mv terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS.asc "terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS.sig"
           ls -la *.sig *.asc 2>/dev/null || true
-      - name: Copy manifest
-        run: cp terraform-registry-manifest.json dist/
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
