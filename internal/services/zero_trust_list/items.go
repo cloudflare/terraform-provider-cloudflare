@@ -12,14 +12,13 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"sort"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -65,10 +64,10 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 }
 
 // gatewayItemDescription maps a GatewayItem description to a Terraform string.
-// Returns StringNull() when the field is absent so state matches configs that
-// omit the description field entirely, avoiding perpetual plan diffs.
+// Returns StringNull() when the field is absent or null in the API response,
+// so state matches configs that omit the description field entirely.
 func gatewayItemDescription(item zero_trust.GatewayItem) types.String {
-	if item.JSON.Description.IsNull() {
+	if item.JSON.Description.IsNull() || item.JSON.Description.IsMissing() {
 		return types.StringNull()
 	}
 	return types.StringValue(item.Description)
@@ -97,25 +96,38 @@ func suppressItemsDiff(ctx context.Context, req resource.ModifyPlanRequest, resp
 
 	if plan.Items != nil && state.Items != nil {
 		if computeItemsHash(*plan.Items) == computeItemsHash(*state.Items) {
-			plan.Items = state.Items
-			resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+			// Use SetAttribute to surgically replace only the items attribute,
+			// avoiding clobbering unknown computed values in other plan fields.
+			resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("items"), state.Items)...)
 		}
 	}
 }
 
 // computeItemsHash computes a deterministic SHA-256 hash of list items for
 // efficient set comparison. Items are sorted before hashing to ensure
-// order-independence (set semantics). Each item is encoded as
-// "<len(value)>:<value>/<len(desc)>:<desc>" using length-prefixed fields
-// to avoid separator-collision ambiguities.
+// order-independence (set semantics).
+//
+// Encoding: each item is "<nil|v:value/d:desc>" using explicit type tags so
+// that nil items, empty strings, and null values are all distinguishable.
 func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 	encoded := make([]string, len(items))
 	for i, item := range items {
-		if item != nil {
-			v := item.Value.ValueString()
-			d := item.Description.ValueString()
-			encoded[i] = fmt.Sprintf("%d:%s/%d:%s", len(v), v, len(d), d)
+		if item == nil {
+			encoded[i] = "nil"
+			continue
 		}
+		// Encode value: prefix with "v:" to distinguish from nil sentinel.
+		v := "v:" + item.Value.ValueString()
+
+		// Encode description: distinguish null/unknown from an explicit empty string.
+		var d string
+		if item.Description.IsNull() || item.Description.IsUnknown() {
+			d = "null"
+		} else {
+			d = "s:" + item.Description.ValueString()
+		}
+
+		encoded[i] = fmt.Sprintf("%d:%s/%s", len(v), v, d)
 	}
 	sort.Strings(encoded)
 
@@ -127,10 +139,4 @@ func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 	var result [32]byte
 	copy(result[:], h.Sum(nil))
 	return result
-}
-
-// readBody reads all bytes from an http.Response body.
-func readBody(res *http.Response) ([]byte, error) {
-	defer res.Body.Close()
-	return io.ReadAll(res.Body)
 }

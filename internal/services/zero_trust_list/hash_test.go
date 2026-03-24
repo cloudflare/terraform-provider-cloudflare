@@ -104,38 +104,45 @@ func TestComputeItemsHash(t *testing.T) {
 			shouldMatch: true,
 		},
 		{
-			name: "null vs empty string description treated as equivalent",
+			name: "null description does not match empty string description",
+			// The hash explicitly distinguishes null from "" to avoid suppressing
+			// a diff when a user changes description from null to "" or vice versa.
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("10.0.0.1"), Description: types.StringNull()},
 			},
 			items2: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("10.0.0.1"), Description: types.StringValue("")},
 			},
-			// Intentional: state will have description=null (from API response with absent
-			// description), while config may have description="" or omit the field entirely.
-			// The hash must treat these as equal to avoid a perpetual diff.
-			shouldMatch: true,
+			shouldMatch: false,
 		},
 		{
-			name: "null vs empty string value treated as equivalent",
+			name: "null value does not match empty string value",
+			// The hash explicitly distinguishes null from "" for value as well.
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringNull()},
 			},
 			items2: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("")},
 			},
-			// Intentional: null, unset, and "" are all semantically "no value" for
-			// this resource. The API treats them identically, and users should not
-			// see a plan diff when toggling between these forms in their config.
-			// types.String.ValueString() returns "" for null, unknown, and empty
-			// string — this collapse is deliberate, not a bug.
-			shouldMatch: true,
+			shouldMatch: false,
+		},
+		{
+			name: "nil item does not collide with empty-value item",
+			// A nil pointer in the items slice encodes as "nil", which is distinct
+			// from an item with empty value and null description.
+			items1: []*ZeroTrustListItemsModel{
+				nil,
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue(""), Description: types.StringNull()},
+			},
+			shouldMatch: false,
 		},
 		{
 			name: "value containing null byte does not collide with value+description pair",
 			// Regression: with the old "\x00" intra-item separator, {value="a", desc="b"}
 			// and {value="a\x00b", desc=""} both encoded as "a\x00b", producing a false match.
-			// Length-prefixed encoding eliminates this: "a"+"b" → "1:a/1:b", "a\x00b" → "4:a\x00b/0:".
+			// Length-prefixed encoding with type tags eliminates this.
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("a"), Description: types.StringValue("b")},
 			},
@@ -147,14 +154,13 @@ func TestComputeItemsHash(t *testing.T) {
 		{
 			name: "two entries do not collide with one entry whose value looks like concatenated encodings",
 			// Checks that a single item whose value happens to equal the raw concatenation
-			// of two items' length-prefixed encodings does not produce a hash match.
-			// The null-byte inter-item separator prevents this cross-item collision.
+			// of two items' encodings does not produce a hash match.
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("a")},
 				{Value: types.StringValue("b")},
 			},
 			items2: []*ZeroTrustListItemsModel{
-				{Value: types.StringValue("1:a/0:\x001:b/0:")},
+				{Value: types.StringValue("4:v:a/null\x004:v:b/null")},
 			},
 			shouldMatch: false,
 		},

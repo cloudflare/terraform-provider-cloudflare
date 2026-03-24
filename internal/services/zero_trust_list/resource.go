@@ -5,6 +5,7 @@ package zero_trust_list
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v6"
@@ -16,6 +17,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+// readBody reads all bytes from an http.Response body.
+func readBody(res *http.Response) ([]byte, error) {
+	defer res.Body.Close()
+	return io.ReadAll(res.Body)
+}
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustListResource)(nil)
