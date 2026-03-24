@@ -49,20 +49,12 @@ func fetchItems(ctx context.Context, client *cloudflare.Client, accountID, listI
 		return nil, err
 	}
 
-	// A null result field means the API returned no data — treat as gone.
-	if page.JSON.Result.IsNull() {
-		return nil, fmt.Errorf("items endpoint returned null result for list %s", listID)
-	}
-
-	// Result is [][]GatewayItem: the outer slice always has exactly one element
-	// (SinglePage is never paginated), and the inner slice is the list of items.
-	if len(page.Result) > 1 {
-		return nil, fmt.Errorf("unexpected pagination: items endpoint returned %d result pages, expected at most 1", len(page.Result))
-	}
-
 	// Allocate a non-nil slice so the caller can distinguish "0 items" from "404".
+	// A null or empty Result field both mean the list exists with zero items.
 	items := make([]*ZeroTrustListItemsModel, 0)
-	if len(page.Result) == 1 {
+	if !page.JSON.Result.IsNull() && len(page.Result) > 0 {
+		// Result is [][]GatewayItem where the outer slice is always length 1:
+		// SinglePage is not paginated; the inner slice holds all items.
 		for _, item := range page.Result[0] {
 			items = append(items, &ZeroTrustListItemsModel{
 				Value:       types.StringValue(item.Value),
