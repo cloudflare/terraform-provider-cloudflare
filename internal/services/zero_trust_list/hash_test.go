@@ -104,14 +104,59 @@ func TestComputeItemsHash(t *testing.T) {
 			shouldMatch: true,
 		},
 		{
-			name: "null vs empty string value",
+			name: "null vs empty string description treated as equivalent",
+			items1: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("10.0.0.1"), Description: types.StringNull()},
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("10.0.0.1"), Description: types.StringValue("")},
+			},
+			// Intentional: state will have description=null (from API response with absent
+			// description), while config may have description="" or omit the field entirely.
+			// The hash must treat these as equal to avoid a perpetual diff.
+			shouldMatch: true,
+		},
+		{
+			name: "null vs empty string value treated as equivalent",
 			items1: []*ZeroTrustListItemsModel{
 				{Value: types.StringNull()},
 			},
 			items2: []*ZeroTrustListItemsModel{
 				{Value: types.StringValue("")},
 			},
-			shouldMatch: true, // both result in empty string
+			// Intentional: null, unset, and "" are all semantically "no value" for
+			// this resource. The API treats them identically, and users should not
+			// see a plan diff when toggling between these forms in their config.
+			// types.String.ValueString() returns "" for null, unknown, and empty
+			// string — this collapse is deliberate, not a bug.
+			shouldMatch: true,
+		},
+		{
+			name: "value containing null byte does not collide with value+description pair",
+			// Regression: with the old "\x00" intra-item separator, {value="a", desc="b"}
+			// and {value="a\x00b", desc=""} both encoded as "a\x00b", producing a false match.
+			// Length-prefixed encoding eliminates this: "a"+"b" → "1:a/1:b", "a\x00b" → "4:a\x00b/0:".
+			items1: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("a"), Description: types.StringValue("b")},
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("a\x00b"), Description: types.StringValue("")},
+			},
+			shouldMatch: false,
+		},
+		{
+			name: "two entries do not collide with one entry whose value looks like concatenated encodings",
+			// Checks that a single item whose value happens to equal the raw concatenation
+			// of two items' length-prefixed encodings does not produce a hash match.
+			// The null-byte inter-item separator prevents this cross-item collision.
+			items1: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("a")},
+				{Value: types.StringValue("b")},
+			},
+			items2: []*ZeroTrustListItemsModel{
+				{Value: types.StringValue("1:a/0:\x001:b/0:")},
+			},
+			shouldMatch: false,
 		},
 	}
 

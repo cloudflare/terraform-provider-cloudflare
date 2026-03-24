@@ -5,6 +5,7 @@ package zero_trust_list
 import (
 	"context"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -86,7 +87,11 @@ func (r *ZeroTrustListResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -135,7 +140,11 @@ func (r *ZeroTrustListResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -154,8 +163,6 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	existingItems := data.Items
 
 	res := new(http.Response)
 	env := ZeroTrustListResultEnvelope{*data}
@@ -177,7 +184,11 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -185,9 +196,43 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 
-	if existingItems != nil {
-		data.Items = existingItems
+	// GET /gateway/lists/{id} does not return items; fetch them separately.
+	itemsPage, err := r.client.ZeroTrust.Gateway.Lists.Items.List(
+		ctx,
+		data.ID.ValueString(),
+		zero_trust.GatewayListItemListParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		var apiErr *cloudflare.Error
+		if errors.As(err, &apiErr) && apiErr.StatusCode == 404 {
+			resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("failed to fetch list items", err.Error())
+		return
 	}
+	// Result is [][]GatewayItem: the outer slice always has exactly one element
+	// (SinglePage is never paginated), and the inner slice is the list of items.
+	var items []*ZeroTrustListItemsModel
+	if len(itemsPage.Result) > 0 {
+		for _, item := range itemsPage.Result[0] {
+			// Use StringNull() when description is absent/null in the API
+			// response so state matches configs that omit the field.
+			desc := types.StringNull()
+			if !item.JSON.Description.IsNull() {
+				desc = types.StringValue(item.Description)
+			}
+			items = append(items, &ZeroTrustListItemsModel{
+				Value:       types.StringValue(item.Value),
+				Description: desc,
+			})
+		}
+	}
+	data.Items = &items
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -213,8 +258,6 @@ func (r *ZeroTrustListResource) Delete(ctx context.Context, req resource.DeleteR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -251,7 +294,11 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -263,7 +310,9 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 }
 
 func (r *ZeroTrustListResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.Plan.Raw.IsNull() {
+	// Plan is null on destroy; state is null on first create. In both cases
+	// there is nothing to compare, so return early.
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
 		return
 	}
 
@@ -288,19 +337,20 @@ func (r *ZeroTrustListResource) ModifyPlan(ctx context.Context, req resource.Mod
 // nested object hashing (~70s for 2000 items). This hash-based approach takes
 // ~0.5ms for 5000 items, providing ~70,000x speedup for no-change plans.
 //
-// Items are sorted by value before hashing to ensure consistent results regardless
-// of set ordering. Both value and description are included in the hash.
+// Items are sorted before hashing to ensure consistent results regardless of set
+// ordering. Both value and description are included in the hash.
+//
+// Encoding: each item is serialised as "<len(value)>:<value>/<len(desc)>:<desc>"
+// using length-prefixed fields. This avoids separator-collision ambiguities that
+// would arise if value or description contained the separator character.
 func computeItemsHash(items []*ZeroTrustListItemsModel) [32]byte {
 	values := make([]string, len(items))
 	for i, item := range items {
-		val := ""
 		if item != nil {
-			val = item.Value.ValueString()
-			if desc := item.Description.ValueString(); desc != "" {
-				val += "\x00" + desc
-			}
+			v := item.Value.ValueString()
+			d := item.Description.ValueString()
+			values[i] = fmt.Sprintf("%d:%s/%d:%s", len(v), v, len(d), d)
 		}
-		values[i] = val
 	}
 	sort.Strings(values)
 

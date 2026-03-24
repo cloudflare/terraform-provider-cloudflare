@@ -100,7 +100,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("My description")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListExact([]knownvalue.Check{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetExact([]knownvalue.Check{
 						knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"description": knownvalue.Null(),
 							"value":       knownvalue.StringExact("asdf-1234"),
@@ -149,7 +149,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("My description")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListSizeExact(1000)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(1000)),
 				},
 			},
 			{
@@ -165,7 +165,19 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 
 // TestAccCloudflareTeamsList_LargeListNoChangePlan verifies that planning a large
 // list with no changes completes quickly (regression test for performance optimization).
+//
+// NOTE: This test exercises the hash-based ModifyPlan optimization. If the optimization
+// were accidentally removed, this test would still pass — just much more slowly (~70s
+// for 2000 items vs ~0.5ms). The performance guarantee is not enforced by an assertion.
+//
+// NOTE: Items are fetched separately via GET /gateway/lists/{id}/items on each Read,
+// so external drift (changes outside Terraform) will be detected on the next plan/refresh.
+// The hash-based ModifyPlan optimization only suppresses diffs when config and refreshed
+// state items are semantically identical (same values and descriptions, regardless of order).
 func TestAccCloudflareTeamsList_LargeListNoChangePlan(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -224,7 +236,7 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListExact([]knownvalue.Check{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetExact([]knownvalue.Check{
 						knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"description": knownvalue.Null(),
 							"value":       knownvalue.StringExact("asdf-1234"),
@@ -244,7 +256,7 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.ListExact([]knownvalue.Check{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetExact([]knownvalue.Check{
 						knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"description": knownvalue.Null(),
 							"value":       knownvalue.StringExact("asdf-1234"),
@@ -288,30 +300,51 @@ func TestAccCloudflareTeamsList_Update(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "description", "My description"),
-					resource.TestCheckResourceAttr(resourceName, "type", "SERIAL"),
-					resource.TestCheckResourceAttr(resourceName, "items.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "items.0.value", "asdf-1234"),
-					resource.TestCheckResourceAttr(resourceName, "items.1.value", "asdf-5678"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("My description")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"value":       knownvalue.StringExact("asdf-1234"),
+							"description": knownvalue.Null(),
+						}),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"value":       knownvalue.StringExact("asdf-5678"),
+							"description": knownvalue.Null(),
+						}),
+					})),
+				},
 			},
 			{
 				Config: testAccCloudflareTeamsListConfigReorderedItemsUpdate(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "description", "My description update"),
-					resource.TestCheckResourceAttr(resourceName, "type", "SERIAL"),
-					resource.TestCheckResourceAttr(resourceName, "items.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "items.0.value", "asdf-1234"),
-					resource.TestCheckResourceAttr(resourceName, "items.1.value", "bsdf-5678"),
-					resource.TestCheckResourceAttr(resourceName, "items.2.value", "csdf-5678"),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("My description update")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"value":       knownvalue.StringExact("asdf-1234"),
+							"description": knownvalue.Null(),
+						}),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"value":       knownvalue.StringExact("bsdf-5678"),
+							"description": knownvalue.Null(),
+						}),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"value":       knownvalue.StringExact("csdf-5678"),
+							"description": knownvalue.Null(),
+						}),
+					})),
+				},
 			},
-
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -685,7 +718,7 @@ func testAccCloudflareTeamsListConfig2000Items(rnd, accountID string) string {
 	for i := 0; i < 2000; i++ {
 		items[i] = fmt.Sprintf(`{value = "serial-%d"}`, i)
 	}
-	return acctest.LoadTestCase("teamslistconfigbigitemcount.tf", rnd, accountID, strings.Join(items, ","))
+	return acctest.LoadTestCase("teamslistconfig2000items.tf", rnd, accountID, strings.Join(items, ","))
 }
 
 func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
