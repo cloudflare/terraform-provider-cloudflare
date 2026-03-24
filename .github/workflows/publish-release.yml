@@ -80,18 +80,16 @@ jobs:
             [ -f "$f" ] && mv "$f" "${f//_v/_}" 2>/dev/null || true
           done
           ls -la
-      - name: Copy manifest for Terraform Registry packages
-        run: cp terraform-registry-manifest.json dist/
-      - name: Create Terraform Registry packages
+      - name: Create Terraform Registry zip packages
         run: |
           set -e
           cd dist
           VERSION="${{ github.ref_name }}"
-          # VERSION is like v1.0.34, files are renamed to remove v (1.0.34)
+          # VERSION is like v1.0.38, files are renamed to remove v (1.0.38)
           VERSION_NOV="${VERSION#v}"
           
-          # Create .tgz packages for Terraform Registry
-          # Structure: <os>_<arch>/terraform-provider-<namespace>-<name>_v<version>
+          # Create .zip packages for Terraform Registry
+          # Structure: terraform-provider-<namespace>-<name>_v<version>_<os>_<arch>.zip
           for arch in amd64 arm64; do
             for os in darwin linux; do
               binary_name="terraform-provider-cloudflare_${os}_${arch}"
@@ -105,22 +103,19 @@ jobs:
               fi
               os_arch="${os}_${arch}"
               # Create package with proper Terraform Registry structure
-              pkg_dir="pkg_$$RANDOM"
-              mkdir -p "${pkg_dir}/${os_arch}"
-              # Binary must be named terraform-provider-trafgals-cloudflare_v<version>
-              cp "${binary}" "${pkg_dir}/${os_arch}/terraform-provider-trafgals-cloudflare_${VERSION}"
-              cp terraform-registry-manifest.json "${pkg_dir}/${os_arch}/"
-              tar -czf "terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.tgz" -C "${pkg_dir}" .
-              rm -rf "${pkg_dir}"
-              echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.tgz"
+              # Binary renamed to terraform-provider-trafgals-cloudflare_v<version>
+              zip -r "terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip" \
+                "${binary}" \
+                -q
+              echo "Created terraform-provider-trafgals-cloudflare_${VERSION}_${os_arch}.zip"
             done
           done
-          ls -la *.tgz
+          ls -la *.zip
       - name: Generate checksums for Terraform Registry packages
         run: |
           cd dist
-          # Generate checksums for .tgz files only (for Terraform Registry)
-          sha256sum *.tgz > terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
+          # Generate checksums for .zip files (Terraform Registry requirement)
+          sha256sum *.zip > terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
           cat terraform-provider-trafgals-cloudflare_${{ github.ref_name }}_SHA256SUMS
       - name: Import GPG key
         id: import_gpg
