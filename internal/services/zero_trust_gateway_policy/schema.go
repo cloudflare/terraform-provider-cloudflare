@@ -69,7 +69,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filters": schema.ListAttribute{
 				Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
 						stringvalidator.OneOfCaseInsensitive(
