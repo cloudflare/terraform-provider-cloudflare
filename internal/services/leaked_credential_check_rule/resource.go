@@ -153,6 +153,19 @@ func (r *LeakedCredentialCheckRuleResource) Read(ctx context.Context, req resour
 		return
 	}
 
+	// If the ID is empty the v4 provider failed to store the detection_id in
+	// state. Remove the resource so Terraform plans to recreate it with a
+	// proper ID rather than erroring with "missing required detection_id".
+	if data.ID.ValueString() == "" {
+		resp.Diagnostics.AddWarning(
+			"Leaked credential check rule has no ID in state",
+			"The resource has an empty ID, likely due to a v4 provider bug. "+
+				"It will be removed from state and recreated on the next apply.",
+		)
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	res := new(http.Response)
 	env := LeakedCredentialCheckRuleResultEnvelope{*data}
 	_, err := r.client.LeakedCredentialChecks.Detections.Get(
