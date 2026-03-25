@@ -125,8 +125,6 @@ jobs:
           VERSION_NOV="${VERSION#v}"
           gh release create "$VERSION" \
             --title "Release $VERSION" \
-            --draft "false" \
-            --prerelease "false" \
             --repo trafgals/terraform-provider-cloudflare \
             "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" \
             "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS" \
