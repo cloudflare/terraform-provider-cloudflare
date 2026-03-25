@@ -119,15 +119,18 @@ jobs:
           mv terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.asc terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig
           ls -la *.sig *.asc 2>/dev/null || true
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          draft: false
-          prerelease: false
-          generate_release_notes: false
-          files: |
-            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip
-            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
-            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig
-            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json
+        run: |
+          cd dist
+          VERSION="${{ github.ref_name }}"
+          VERSION_NOV="${VERSION#v}"
+          gh release create "$VERSION" \
+            --title "Release $VERSION" \
+            --draft false \
+            --prerelease false \
+            --repo trafgals/terraform-provider-cloudflare \
+            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" \
+            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS" \
+            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig" \
+            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
