@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Use your AI Search ID.",
+				Description:   "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -330,6 +330,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Default:  booldefault.StaticBool(false),
 			},
+			"indexing_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword_tokenizer": schema.StringAttribute{
+						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
+						},
+						Default: stringdefault.StaticString("porter"),
+					},
+				},
+			},
 			"public_endpoint_params": schema.SingleNestedAttribute{
 				Computed:      true,
 				Optional:      true,
@@ -628,6 +644,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_by": schema.StringAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"namespace": schema.StringAttribute{
+				Computed: true,
 			},
 			"public_endpoint_id": schema.StringAttribute{
 				Computed:      true,

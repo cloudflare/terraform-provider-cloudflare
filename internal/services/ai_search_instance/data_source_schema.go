@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Use your AI Search ID.",
+				Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -151,6 +151,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"modified_by": schema.StringAttribute{
 				Computed: true,
 			},
+			"namespace": schema.StringAttribute{
+				Computed: true,
+			},
 			"paused": schema.BoolAttribute{
 				Computed: true,
 			},
@@ -247,6 +250,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"field_name": schema.StringAttribute{
 							Computed: true,
+						},
+					},
+				},
+			},
+			"indexing_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword_tokenizer": schema.StringAttribute{
+						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
 						},
 					},
 				},
@@ -511,6 +527,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"namespace": schema.StringAttribute{
+						Optional: true,
+					},
 					"order_by": schema.StringAttribute{
 						Description: "Order By Column Name\nAvailable values: \"created_at\".",
 						Computed:    true,

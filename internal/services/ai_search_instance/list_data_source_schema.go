@@ -24,6 +24,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
+			"namespace": schema.StringAttribute{
+				Optional: true,
+			},
 			"search": schema.StringAttribute{
 				Description: "Search by id",
 				Optional:    true,
@@ -58,7 +61,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Use your AI Search ID.",
+							Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
@@ -191,6 +194,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"hybrid_search_enabled": schema.BoolAttribute{
 							Computed: true,
 						},
+						"indexing_options": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[AISearchInstancesIndexingOptionsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"keyword_tokenizer": schema.StringAttribute{
+									Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
+									},
+								},
+							},
+						},
 						"last_activity": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
@@ -214,6 +230,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"modified_by": schema.StringAttribute{
+							Computed: true,
+						},
+						"namespace": schema.StringAttribute{
 							Computed: true,
 						},
 						"paused": schema.BoolAttribute{

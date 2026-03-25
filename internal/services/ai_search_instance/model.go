@@ -43,6 +43,7 @@ type AISearchInstanceModel struct {
 	RewriteQuery                   types.Bool                                                          `tfsdk:"rewrite_query" json:"rewrite_query,computed_optional"`
 	ScoreThreshold                 types.Float64                                                       `tfsdk:"score_threshold" json:"score_threshold,computed_optional"`
 	Summarization                  types.Bool                                                          `tfsdk:"summarization" json:"summarization,computed_optional,no_refresh"`
+	IndexingOptions                customfield.NestedObject[AISearchInstanceIndexingOptionsModel]      `tfsdk:"indexing_options" json:"indexing_options,computed_optional"`
 	PublicEndpointParams           customfield.NestedObject[AISearchInstancePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
 	RetrievalOptions               customfield.NestedObject[AISearchInstanceRetrievalOptionsModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed_optional"`
 	SourceParams                   customfield.NestedObject[AISearchInstanceSourceParamsModel]         `tfsdk:"source_params" json:"source_params,computed_optional"`
@@ -52,6 +53,7 @@ type AISearchInstanceModel struct {
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
+	Namespace                      types.String                                                        `tfsdk:"namespace" json:"namespace,computed"`
 	PublicEndpointID               types.String                                                        `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	Status                         types.String                                                        `tfsdk:"status" json:"status,computed"`
 }
@@ -72,6 +74,10 @@ type AISearchInstanceCustomMetadataModel struct {
 type AISearchInstanceMetadataModel struct {
 	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
 	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
+}
+
+type AISearchInstanceIndexingOptionsModel struct {
+	KeywordTokenizer types.String `tfsdk:"keyword_tokenizer" json:"keyword_tokenizer,computed_optional"`
 }
 
 type AISearchInstancePublicEndpointParamsModel struct {
