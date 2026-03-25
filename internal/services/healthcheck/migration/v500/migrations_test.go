@@ -182,10 +182,6 @@ func TestMigrateHealthcheck_V4ToV5_HTTPBasic(t *testing.T) {
 				},
 				Config: testConfig,
 			}
-			// For from_v5 test case, v5 provider has computed field drift even on initial create
-			if tc.version == currentProviderVersion {
-				step1.ExpectNonEmptyPlan = true
-			}
 
 			resource.Test(t, resource.TestCase{
 				WorkingDir: tmpDir,
@@ -325,10 +321,6 @@ func TestMigrateHealthcheck_V4ToV5_HTTPHeaders(t *testing.T) {
 				},
 				Config: testConfig,
 			}
-			// For from_v5 test case, v5 provider has computed field drift even on initial create
-			if tc.version == currentProviderVersion {
-				step1.ExpectNonEmptyPlan = true
-			}
 
 			resource.Test(t, resource.TestCase{
 				WorkingDir: tmpDir,
@@ -434,10 +426,6 @@ func TestMigrateHealthcheck_V4ToV5_TCP(t *testing.T) {
 					},
 				},
 				Config: testConfig,
-			}
-			// For from_v5 test case, v5 provider has computed field drift even on initial create
-			if tc.version == currentProviderVersion {
-				step1.ExpectNonEmptyPlan = true
 			}
 
 			resource.Test(t, resource.TestCase{
