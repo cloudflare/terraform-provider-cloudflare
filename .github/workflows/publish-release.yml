@@ -89,6 +89,7 @@ jobs:
           zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" . -q
           rm -rf "$pkg_dir"
           echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip"
+          rm -f "$binary"
           echo "=== Final zip files ==="
           cd "$DIST_DIR"
           ls -la *.zip
@@ -98,8 +99,7 @@ jobs:
           cd dist
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
-          # Generate checksums for .zip files (Terraform Registry requirement)
-          sha256sum terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_*.zip > terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
+          sha256sum terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_*.zip terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json > terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
           cat terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
       - name: Import GPG key
         id: import_gpg
