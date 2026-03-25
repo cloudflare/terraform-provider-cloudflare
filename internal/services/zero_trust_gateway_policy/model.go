@@ -19,7 +19,7 @@ type ZeroTrustGatewayPolicyModel struct {
 	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,optional"`
-	Filters       *[]types.String                                                   `tfsdk:"filters" json:"filters,optional"`
+	Filters       customfield.List[types.String]                                    `tfsdk:"filters" json:"filters,computed_optional"`
 	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Identity      types.String                                                      `tfsdk:"identity" json:"identity,computed_optional"`
