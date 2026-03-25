@@ -155,9 +155,6 @@ func (r *ZeroTrustGatewayPolicyResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	// Store prior state for preserving config values not returned by API
-	priorFilters := data.Filters
-
 	res := new(http.Response)
 	env := ZeroTrustGatewayPolicyResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Rules.Get(
@@ -185,12 +182,6 @@ func (r *ZeroTrustGatewayPolicyResource) Read(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
-
-	// Preserve filters from prior state if API returns null
-	// The API doesn't return filters in the response, causing drift
-	if data.Filters == nil && priorFilters != nil {
-		data.Filters = priorFilters
-	}
 
 	// Normalize duration strings to prevent drift from API returning verbose formats
 	normalizeRuleSettingsDurations(ctx, data)
