@@ -87,10 +87,10 @@ jobs:
           cp "$binary" "$pkg_dir/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}"
           cd "$pkg_dir"
           zip -r "$DIST_DIR/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" . -q
-          cd /
           rm -rf "$pkg_dir"
           echo "Created terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip"
           echo "=== Final zip files ==="
+          cd "$DIST_DIR"
           ls -la *.zip
       - name: Generate checksums for Terraform Registry packages
         run: |
