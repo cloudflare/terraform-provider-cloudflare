@@ -19,6 +19,7 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 
 type AISearchInstancesDataSourceModel struct {
 	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	Namespace        types.String                                                         `tfsdk:"namespace" query:"namespace,optional"`
 	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
 	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`
 	OrderByDirection types.String                                                         `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
@@ -31,6 +32,9 @@ func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (para
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Namespace.IsNull() {
+		params.Namespace = cloudflare.F(m.Namespace.ValueString())
+	}
 	if !m.OrderBy.IsNull() {
 		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.OrderBy.ValueString()))
 	}
@@ -60,10 +64,12 @@ type AISearchInstancesResultDataSourceModel struct {
 	Enable               types.Bool                                                                     `tfsdk:"enable" json:"enable,computed"`
 	FusionMethod         types.String                                                                   `tfsdk:"fusion_method" json:"fusion_method,computed"`
 	HybridSearchEnabled  types.Bool                                                                     `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
+	IndexingOptions      customfield.NestedObject[AISearchInstancesIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
 	LastActivity         timetypes.RFC3339                                                              `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	MaxNumResults        types.Int64                                                                    `tfsdk:"max_num_results" json:"max_num_results,computed"`
 	Metadata             customfield.NestedObject[AISearchInstancesMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
 	ModifiedBy           types.String                                                                   `tfsdk:"modified_by" json:"modified_by,computed"`
+	Namespace            types.String                                                                   `tfsdk:"namespace" json:"namespace,computed"`
 	Paused               types.Bool                                                                     `tfsdk:"paused" json:"paused,computed"`
 	PublicEndpointID     types.String                                                                   `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchInstancesPublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
@@ -83,6 +89,10 @@ type AISearchInstancesResultDataSourceModel struct {
 type AISearchInstancesCustomMetadataDataSourceModel struct {
 	DataType  types.String `tfsdk:"data_type" json:"data_type,computed"`
 	FieldName types.String `tfsdk:"field_name" json:"field_name,computed"`
+}
+
+type AISearchInstancesIndexingOptionsDataSourceModel struct {
+	KeywordTokenizer types.String `tfsdk:"keyword_tokenizer" json:"keyword_tokenizer,computed"`
 }
 
 type AISearchInstancesMetadataDataSourceModel struct {
