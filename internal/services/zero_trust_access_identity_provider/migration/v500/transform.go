@@ -78,10 +78,12 @@ func transformConfig(ctx context.Context, source SourceConfigModel) (*TargetConf
 		SSOTargetURL:          migrations.FalseyStringToNull(source.SSOTargetURL),
 		RedirectURL:           source.RedirectURL,
 
-		ConditionalAccessEnabled: migrations.FalseyBoolToNull(source.ConditionalAccessEnabled),
-		SupportGroups:            migrations.FalseyBoolToNull(source.SupportGroups),
-		PKCEEnabled:              migrations.FalseyBoolToNull(source.PKCEEnabled),
-		SignRequest:              migrations.FalseyBoolToNull(source.SignRequest),
+		// Preserve explicit boolean values - don't convert false to null
+		// These fields can be explicitly set to false by the user
+		ConditionalAccessEnabled: source.ConditionalAccessEnabled,
+		SupportGroups:            source.SupportGroups,
+		PKCEEnabled:              source.PKCEEnabled,
+		SignRequest:              source.SignRequest,
 	}
 
 	// api_token: deprecated, not copied

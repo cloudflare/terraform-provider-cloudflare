@@ -17,5 +17,14 @@ func (r *ZeroTrustDLPPredefinedEntryResource) UpgradeState(ctx context.Context) 
 				resp.State.Raw = req.State.Raw
 			},
 		},
+		// Handle upgrades from v5 production state (schema_version=1).
+		// Users on v5.0–v5.18 had GetSchemaVersion(1, 500) which stored state
+		// at version 1. State is already in v5 format — no transformation needed.
+		1: {
+			PriorSchema: &targetSchema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				resp.State.Raw = req.State.Raw
+			},
+		},
 	}
 }
