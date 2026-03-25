@@ -64,7 +64,7 @@ jobs:
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
           # Copy manifest file to dist and rename to expected format
-          cp terraform-registry-manifest.json dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json
+          cp terraform-registry-manifest.json dist/terraform-provider-trafgals-cloudflare_${VERSION_NOV}_manifest.json
           echo "Added manifest file to dist"
       - name: Create Terraform Registry zip package
         run: |
@@ -99,8 +99,8 @@ jobs:
           cd dist
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
-          sha256sum terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_*.zip terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json > terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
-          cat terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
+          sha256sum terraform-provider-trafgals-cloudflare_${VERSION_NOV}_linux_amd64.zip terraform-provider-trafgals-cloudflare_${VERSION_NOV}_manifest.json > terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS
+          cat terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
@@ -114,9 +114,9 @@ jobs:
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
           # Sign with .sig extension and key fingerprint for Terraform Registry
-          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
+          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS
           # Rename to include key ID for Terraform Registry compatibility
-          mv terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.asc terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig
+          mv terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS.asc terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS.sig
           ls -la *.sig *.asc 2>/dev/null || true
       - name: Create GitHub Release
         run: |
@@ -126,9 +126,9 @@ jobs:
           gh release create "$VERSION" \
             --title "Release $VERSION" \
             --repo trafgals/terraform-provider-cloudflare \
-            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip" \
-            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS" \
-            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig" \
-            "terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json"
+            "terraform-provider-trafgals-cloudflare_${VERSION_NOV}_linux_amd64.zip" \
+            "terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS" \
+            "terraform-provider-trafgals-cloudflare_${VERSION_NOV}_SHA256SUMS.sig" \
+            "terraform-provider-trafgals-cloudflare_${VERSION_NOV}_manifest.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
