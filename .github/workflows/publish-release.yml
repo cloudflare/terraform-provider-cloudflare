@@ -124,6 +124,10 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: false
-          files: dist/*
+          files: |
+            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_linux_amd64.zip
+            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS
+            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_SHA256SUMS.sig
+            dist/terraform-provider-trafgals-cloudflare_v${VERSION_NOV}_manifest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
