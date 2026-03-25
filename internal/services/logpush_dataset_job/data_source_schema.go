@@ -111,6 +111,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"destination_conf": schema.StringAttribute{
 				Description: "Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Flag that indicates if the job is enabled.",
