@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -67,11 +68,20 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 		RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayNewParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
 		Authentication:          cloudflare.F(data.Authentication.ValueBool()),
 		IsDefault:               cloudflare.F(data.IsDefault.ValueBool()),
-		LogManagement:           cloudflare.F(data.LogManagement.ValueInt64()),
-		LogManagementStrategy:   cloudflare.F(ai_gateway.AIGatewayNewParamsLogManagementStrategy(data.LogManagementStrategy.ValueString())),
 		Logpush:                 cloudflare.F(data.Logpush.ValueBool()),
-		LogpushPublicKey:        cloudflare.F(data.LogpushPublicKey.ValueString()),
 		Zdr:                     cloudflare.F(data.ZDR.ValueBool()),
+	}
+
+	if !data.LogManagement.IsNull() && data.LogManagement.ValueInt64() >= 10000 {
+		params.LogManagement = cloudflare.F(data.LogManagement.ValueInt64())
+	}
+
+	if !data.LogManagementStrategy.IsNull() && data.LogManagementStrategy.ValueString() != "" {
+		params.LogManagementStrategy = cloudflare.F(ai_gateway.AIGatewayNewParamsLogManagementStrategy(data.LogManagementStrategy.ValueString()))
+	}
+
+	if !data.LogpushPublicKey.IsNull() && len(data.LogpushPublicKey.ValueString()) >= 16 {
+		params.LogpushPublicKey = cloudflare.F(data.LogpushPublicKey.ValueString())
 	}
 
 	result, err := r.client.AIGateway.New(ctx, params)
@@ -81,7 +91,6 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	data.ID = types.StringValue(result.ID)
-	data.AccountID = types.StringValue(result.AccountID)
 	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
 	data.CacheTTL = types.Int64Value(result.CacheTTL)
 	data.CollectLogs = types.BoolValue(result.CollectLogs)
@@ -95,6 +104,9 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 	data.Logpush = types.BoolValue(result.Logpush)
 	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
 	data.ZDR = types.BoolValue(result.Zdr)
+	data.CreatedAt = timetypes.NewRFC3339TimeValue(result.CreatedAt)
+	data.ModifiedAt = timetypes.NewRFC3339TimeValue(result.ModifiedAt)
+	data.StoreID = types.StringValue(result.StoreID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -126,11 +138,20 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 		RateLimitingTechnique:   cloudflare.F(ai_gateway.AIGatewayUpdateParamsRateLimitingTechnique(data.RateLimitingTechnique.ValueString())),
 		Authentication:          cloudflare.F(data.Authentication.ValueBool()),
 		IsDefault:               cloudflare.F(data.IsDefault.ValueBool()),
-		LogManagement:           cloudflare.F(data.LogManagement.ValueInt64()),
-		LogManagementStrategy:   cloudflare.F(ai_gateway.AIGatewayUpdateParamsLogManagementStrategy(data.LogManagementStrategy.ValueString())),
 		Logpush:                 cloudflare.F(data.Logpush.ValueBool()),
-		LogpushPublicKey:        cloudflare.F(data.LogpushPublicKey.ValueString()),
 		Zdr:                     cloudflare.F(data.ZDR.ValueBool()),
+	}
+
+	if !data.LogManagement.IsNull() && data.LogManagement.ValueInt64() >= 10000 {
+		params.LogManagement = cloudflare.F(data.LogManagement.ValueInt64())
+	}
+
+	if !data.LogManagementStrategy.IsNull() && data.LogManagementStrategy.ValueString() != "" {
+		params.LogManagementStrategy = cloudflare.F(ai_gateway.AIGatewayUpdateParamsLogManagementStrategy(data.LogManagementStrategy.ValueString()))
+	}
+
+	if !data.LogpushPublicKey.IsNull() && len(data.LogpushPublicKey.ValueString()) >= 16 {
+		params.LogpushPublicKey = cloudflare.F(data.LogpushPublicKey.ValueString())
 	}
 
 	result, err := r.client.AIGateway.Update(ctx, data.ID.ValueString(), params)
@@ -139,7 +160,6 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.AccountID = types.StringValue(result.AccountID)
 	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
 	data.CacheTTL = types.Int64Value(result.CacheTTL)
 	data.CollectLogs = types.BoolValue(result.CollectLogs)
@@ -153,6 +173,9 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 	data.Logpush = types.BoolValue(result.Logpush)
 	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
 	data.ZDR = types.BoolValue(result.Zdr)
+	data.CreatedAt = timetypes.NewRFC3339TimeValue(result.CreatedAt)
+	data.ModifiedAt = timetypes.NewRFC3339TimeValue(result.ModifiedAt)
+	data.StoreID = types.StringValue(result.StoreID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -179,7 +202,6 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	data.ID = types.StringValue(result.ID)
-	data.AccountID = types.StringValue(result.AccountID)
 	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
 	data.CacheTTL = types.Int64Value(result.CacheTTL)
 	data.CollectLogs = types.BoolValue(result.CollectLogs)
@@ -193,6 +215,9 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 	data.Logpush = types.BoolValue(result.Logpush)
 	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
 	data.ZDR = types.BoolValue(result.Zdr)
+	data.CreatedAt = timetypes.NewRFC3339TimeValue(result.CreatedAt)
+	data.ModifiedAt = timetypes.NewRFC3339TimeValue(result.ModifiedAt)
+	data.StoreID = types.StringValue(result.StoreID)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -253,7 +278,6 @@ func (r *AIGatewayResource) ImportState(ctx context.Context, req resource.Import
 	}
 
 	data.ID = types.StringValue(result.ID)
-	data.AccountID = types.StringValue(result.AccountID)
 	data.CacheInvalidateOnUpdate = types.BoolValue(result.CacheInvalidateOnUpdate)
 	data.CacheTTL = types.Int64Value(result.CacheTTL)
 	data.CollectLogs = types.BoolValue(result.CollectLogs)
@@ -267,6 +291,10 @@ func (r *AIGatewayResource) ImportState(ctx context.Context, req resource.Import
 	data.Logpush = types.BoolValue(result.Logpush)
 	data.LogpushPublicKey = types.StringValue(result.LogpushPublicKey)
 	data.ZDR = types.BoolValue(result.Zdr)
+	data.CreatedAt = timetypes.NewRFC3339TimeValue(result.CreatedAt)
+	data.ModifiedAt = timetypes.NewRFC3339TimeValue(result.ModifiedAt)
+	data.StoreID = types.StringValue(result.StoreID)
+	data.WorkersAIBillingMode = types.StringValue("postpaid")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
