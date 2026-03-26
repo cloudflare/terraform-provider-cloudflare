@@ -19,6 +19,7 @@ type WorkerModel struct {
 	Name          types.String                                          `tfsdk:"name" json:"name,required"`
 	Logpush       types.Bool                                            `tfsdk:"logpush" json:"logpush,computed_optional"`
 	Tags          customfield.Set[types.String]                         `tfsdk:"tags" json:"tags,computed_optional"`
+	Builds        customfield.NestedObject[WorkerBuildsModel]           `tfsdk:"builds" json:"builds,computed_optional"`
 	Observability customfield.NestedObject[WorkerObservabilityModel]    `tfsdk:"observability" json:"observability,computed_optional"`
 	Subdomain     customfield.NestedObject[WorkerSubdomainModel]        `tfsdk:"subdomain" json:"subdomain,computed_optional"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
@@ -45,6 +46,21 @@ type WorkerObservabilityLogsModel struct {
 	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed_optional"`
 	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
 	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,computed_optional"`
+}
+
+type WorkerBuildsModel struct {
+	Enabled                         types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	BuildCommand                    types.String                   `tfsdk:"build_command" json:"build_command,computed_optional"`
+	DeployCommand                   types.String                   `tfsdk:"deploy_command" json:"deploy_command,computed_optional"`
+	NonProductionDeploymentsEnabled types.Bool                     `tfsdk:"non_production_deployments_enabled" json:"non_production_deployments_enabled,computed_optional"`
+	Branch                          types.String                   `tfsdk:"branch" json:"branch,computed_optional"`
+	BranchIncludes                  customfield.List[types.String] `tfsdk:"branch_includes" json:"branch_includes,computed_optional"`
+	BranchExcludes                  customfield.List[types.String] `tfsdk:"branch_excludes" json:"branch_excludes,computed_optional"`
+	ProviderType                    types.String                   `tfsdk:"provider_type" json:"provider_type,computed_optional"`
+	ProviderAccountName             types.String                   `tfsdk:"provider_account_name" json:"provider_account_name,computed_optional"`
+	ProviderAccountID               types.String                   `tfsdk:"provider_account_id" json:"provider_account_id,computed_optional"`
+	RepoID                          types.String                   `tfsdk:"repo_id" json:"repo_id,computed_optional"`
+	RepoName                        types.String                   `tfsdk:"repo_name" json:"repo_name,computed_optional"`
 }
 
 type WorkerSubdomainModel struct {
