@@ -49,7 +49,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
       field = "timestamp"
       direction = "desc"
     }]
-    keyword_match_mode = "exact_match"
+    keyword_match_mode = "and"
   }
   rewrite_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
   rewrite_query = true

@@ -62,6 +62,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	CustomMetadata       customfield.NestedObjectList[AISearchInstancesCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	EmbeddingModel       types.String                                                                   `tfsdk:"embedding_model" json:"embedding_model,computed"`
 	Enable               types.Bool                                                                     `tfsdk:"enable" json:"enable,computed"`
+	EngineVersion        types.Float64                                                                  `tfsdk:"engine_version" json:"engine_version,computed"`
 	FusionMethod         types.String                                                                   `tfsdk:"fusion_method" json:"fusion_method,computed"`
 	HybridSearchEnabled  types.Bool                                                                     `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	IndexingOptions      customfield.NestedObject[AISearchInstancesIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
