@@ -172,6 +172,8 @@ type WorkersScriptMetadataBindingsModel struct {
 	DispatchNamespace           types.String                                `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
 	Entrypoint                  types.String                                `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	ServiceID                   types.String                                `tfsdk:"service_id" json:"service_id,optional"`
+	NetworkID                   types.String                                `tfsdk:"network_id" json:"network_id,optional"`
+	TunnelID                    types.String                                `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {

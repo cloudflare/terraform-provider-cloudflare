@@ -170,83 +170,92 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\".",
-									Required:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"ai",
-											"ai_search",
-											"ai_search_namespace",
-											"analytics_engine",
-											"assets",
-											"browser",
-											"d1",
-											"data_blob",
-											"dispatch_namespace",
-											"durable_object_namespace",
-											"hyperdrive",
-											"inherit",
-											"images",
-											"json",
-											"kv_namespace",
-											"media",
-											"mtls_certificate",
-											"plain_text",
-											"pipelines",
-											"queue",
-											"ratelimit",
-											"r2_bucket",
-											"secret_text",
-											"send_email",
-											"service",
-											"text_blob",
-											"vectorize",
-											"version_metadata",
-											"secrets_store_secret",
-											"secret_key",
-											"workflow",
-											"wasm_module",
-											"vpc_service",
-										),
-									},
-								},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Required:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"ai",
+									"ai_search",
+									"ai_search_namespace",
+									"analytics_engine",
+									"assets",
+									"browser",
+									"d1",
+									"data_blob",
+									"dispatch_namespace",
+									"durable_object_namespace",
+									"hyperdrive",
+									"inherit",
+									"images",
+									"json",
+									"kv_namespace",
+									"media",
+									"mtls_certificate",
+									"plain_text",
+									"pipelines",
+									"queue",
+									"ratelimit",
+									"r2_bucket",
+									"secret_text",
+									"send_email",
+									"service",
+									"text_blob",
+									"vectorize",
+									"version_metadata",
+									"secrets_store_secret",
+									"secret_key",
+									"workflow",
+									"wasm_module",
+									"vpc_service",
+									"vpc_network",
+								),
+							},
+						},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
-									Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
+							Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
+							Optional:    true,
+						},
+						"outbound": schema.SingleNestedAttribute{
+							Description: "Outbound worker.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"params": schema.ListNestedAttribute{
+									Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
 									Optional:    true,
-								},
-								"outbound": schema.SingleNestedAttribute{
-						Description: "Outbound worker.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"params": schema.ListAttribute{
-								Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"worker": schema.SingleNestedAttribute{
-								Description: "Outbound worker.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"environment": schema.StringAttribute{
-										Description: "Environment of the outbound worker.",
-										Optional:    true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "Name of the parameter.",
+												Required:    true,
+											},
+										},
 									},
-									"service": schema.StringAttribute{
-										Description: "Name of the outbound worker.",
-										Optional:    true,
+								},
+								"worker": schema.SingleNestedAttribute{
+									Description: "Outbound worker.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+
+										"environment": schema.StringAttribute{
+											Description: "Environment of the outbound worker.",
+											Optional:    true,
+										},
+										"service": schema.StringAttribute{
+											Description: "Name of the outbound worker.",
+											Optional:    true,
+										},
 									},
 								},
 							},
 						},
-					},
 						"class_name": schema.StringAttribute{
 							Description: "The exported class name of the Durable Object.",
 							Computed:    true,
@@ -269,6 +278,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"json": schema.StringAttribute{
@@ -389,7 +399,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Computed:    true,
 							Optional:    true,
+							Default:     stringdefault.StaticString("latest"),
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
 							Description: "List of allowed destination addresses.",

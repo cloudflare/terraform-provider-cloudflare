@@ -110,6 +110,8 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	KeyJwk                      jsontypes.Normalized                                                    `tfsdk:"key_jwk" json:"key_jwk,computed"`
 	WorkflowName                types.String                                                            `tfsdk:"workflow_name" json:"workflow_name,computed"`
 	ServiceID                   types.String                                                            `tfsdk:"service_id" json:"service_id,computed"`
+	NetworkID                   types.String                                                            `tfsdk:"network_id" json:"network_id,computed"`
+	TunnelID                    types.String                                                            `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 }
 
 type WorkerVersionsBindingsOutboundDataSourceModel struct {
