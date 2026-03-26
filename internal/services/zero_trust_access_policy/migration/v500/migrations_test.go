@@ -21,6 +21,9 @@ import (
 //go:embed testdata/v4_basic.tf
 var v4BasicConfig string
 
+//go:embed testdata/v4_email_domain.tf
+var v4EmailDomainConfig string
+
 //go:embed testdata/v4_complex.tf
 var v4ComplexConfig string
 
@@ -688,6 +691,59 @@ func TestMigrateZeroTrustAccessPolicyFromV5_15_WithConditionTypes(t *testing.T) 
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("require"), knownvalue.ListSizeExact(1)),
 				},
 			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyEmailDomainTransformation tests that email_domain
+// is correctly migrated from v4 list syntax to v5 object syntax.
+// Reproduces TKT-005: email_domain = ["domain"] → email_domain = { domain = "domain" }
+// Reported by research team (terraform-cfaccounts MR !7756).
+func TestMigrateZeroTrustAccessPolicyEmailDomainTransformation(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	if domain == "" {
+		domain = consts.TestCloudflareAlternativeDomain
+	}
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(v4EmailDomainConfig, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+				// Verify email_domain transformation: list → object with domain field
+				// v4: email_domain = ["example.com"]
+				// v5: email_domain = { domain = "example.com" }
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+				statecheck.ExpectKnownValue(
+					resourceName,
+					tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"),
+					knownvalue.StringExact(domain),
+				),
+			}),
 		},
 	})
 }
