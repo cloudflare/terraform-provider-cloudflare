@@ -26,12 +26,13 @@ var _ resource.ResourceWithUpgradeState = (*NotificationPolicyResource)(nil)
 // dual-format detection that was required in earlier implementations.
 func (r *NotificationPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-	sourceSchema := v500.SourceCloudflareNotificationPolicySchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
+		// PriorSchema: nil — v4 SDKv2 state encoding is incompatible with
+		// Plugin Framework schema types. The upgrader reads raw JSON directly.
 		0: {
-			PriorSchema:   &sourceSchema,
+			PriorSchema:   nil,
 			StateUpgrader: v500.UpgradeFromV4,
 		},
 
