@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
+	"os"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -75,13 +75,13 @@ type WorkerBuildsTriggerRequest struct {
 	Branch                          string   `json:"branch,omitempty"`
 	BranchIncludes                  []string `json:"branch_includes,omitempty"`
 	BranchExcludes                  []string `json:"branch_excludes,omitempty"`
-	NonProductionDeploymentsEnabled bool     `json:"non_production_deployments_enabled,omitempty"`
+	NonProductionDeploymentsEnabled bool     `json:"non_production_deployments_enabled"`
 	ProviderType                    string   `json:"provider_type,omitempty"`
 	ProviderAccountName             string   `json:"provider_account_name,omitempty"`
 	ProviderAccountID               string   `json:"provider_account_id,omitempty"`
 	RepoID                          string   `json:"repo_id,omitempty"`
 	RepoName                        string   `json:"repo_name,omitempty"`
-	Enabled                         bool     `json:"enabled,omitempty"`
+	Enabled                         bool     `json:"enabled"`
 }
 
 // getBuildsTrigger retrieves the builds trigger for a worker.
@@ -243,7 +243,7 @@ func (r *WorkerResource) connectBuildsRepo(ctx context.Context, accountID string
 
 // doAuthenticatedRequest performs an HTTP request using the SDK's authentication.
 func (r *WorkerResource) doAuthenticatedRequest(req *http.Request) (*http.Response, error) {
-	req.Header.Set("Authorization", "Bearer "+r.authToken)
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("CLOUDFLARE_API_TOKEN"))
 	req.Header.Set("Content-Type", "application/json")
 
 	httpClient := &http.Client{}
@@ -256,8 +256,7 @@ func NewResource() resource.Resource {
 
 // WorkerResource defines the resource implementation.
 type WorkerResource struct {
-	client    *cloudflare.Client
-	authToken string
+	client *cloudflare.Client
 }
 
 func (r *WorkerResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -281,13 +280,6 @@ func (r *WorkerResource) Configure(ctx context.Context, req resource.ConfigureRe
 	}
 
 	r.client = client
-
-	// Extract auth token from the client using reflection
-	clientVal := reflect.ValueOf(client).Elem()
-	authTokenField := clientVal.FieldByName("authToken")
-	if authTokenField.IsValid() && authTokenField.CanInterface() {
-		r.authToken = authTokenField.Interface().(string)
-	}
 }
 
 func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
