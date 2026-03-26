@@ -1022,7 +1022,7 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		"--config-dir", tmpDir,
 		"--source-version", sourceVersion,
 		"--target-version", targetVersion,
-		"--yes", // skip phased migration prompts — state cleanup is handled by the test harness
+		"--skip-phase-check", // skip phased migration prompts — state cleanup is handled by the test harness
 	}
 
 	// Add debug logging if TF_LOG is set
