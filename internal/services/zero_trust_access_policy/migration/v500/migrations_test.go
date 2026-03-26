@@ -709,7 +709,7 @@ func TestMigrateZeroTrustAccessPolicyEmailDomainTransformation(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_policy." + rnd
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	if domain == "" {
-		domain = consts.TestCloudflareAlternativeDomain
+		t.Skip("CLOUDFLARE_DOMAIN must be set for this test")
 	}
 	tmpDir := t.TempDir()
 
