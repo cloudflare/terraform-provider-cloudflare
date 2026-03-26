@@ -113,11 +113,10 @@ jobs:
           cd dist
           VERSION="${{ github.ref_name }}"
           VERSION_NOV="${VERSION#v}"
-          # Sign with .sig extension and key fingerprint for Terraform Registry
-          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --armor --detach-sign terraform-provider-cloudflare_${VERSION_NOV}_SHA256SUMS
-          # Rename to include key ID for Terraform Registry compatibility
-          mv terraform-provider-cloudflare_${VERSION_NOV}_SHA256SUMS.asc terraform-provider-cloudflare_${VERSION_NOV}_SHA256SUMS.sig
-          ls -la *.sig *.asc 2>/dev/null || true
+          # Sign checksums for Terraform Registry (binary signature, not armored)
+          gpg --batch --yes --local-user ${{ steps.import_gpg.outputs.fingerprint }} --detach-sign terraform-provider-cloudflare_${VERSION_NOV}_SHA256SUMS
+          # Verify .sig file was created
+          ls -la terraform-provider-cloudflare_${VERSION_NOV}_SHA256SUMS.sig 2>/dev/null || echo "ERROR: .sig file not found"
       - name: Create GitHub Release
         run: |
           cd dist
