@@ -124,6 +124,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"enable": schema.BoolAttribute{
 				Computed: true,
 			},
+			"engine_version": schema.Float64Attribute{
+				Computed: true,
+			},
 			"fusion_method": schema.StringAttribute{
 				Description: `Available values: "max", "rrf".`,
 				Computed:    true,
@@ -381,10 +384,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("exact_match", "fuzzy_match"),
+							stringvalidator.OneOfCaseInsensitive("and", "or"),
 						},
 					},
 				},

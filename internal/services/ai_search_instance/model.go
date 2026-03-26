@@ -50,6 +50,7 @@ type AISearchInstanceModel struct {
 	CreatedAt                      timetypes.RFC3339                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
 	Enable                         types.Bool                                                          `tfsdk:"enable" json:"enable,computed"`
+	EngineVersion                  types.Float64                                                       `tfsdk:"engine_version" json:"engine_version,computed"`
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
