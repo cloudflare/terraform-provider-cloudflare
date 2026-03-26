@@ -125,7 +125,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\".",
+									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 									Required:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -162,6 +162,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"workflow",
 											"wasm_module",
 											"vpc_service",
+											"vpc_network",
 										),
 									},
 								},
@@ -378,6 +379,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"service_id": schema.StringAttribute{
 									Description: "Identifier of the VPC service to bind to.",
+									Optional:    true,
+								},
+								"network_id": schema.StringAttribute{
+									Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+									Optional:    true,
+								},
+								"tunnel_id": schema.StringAttribute{
+									Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
 									Optional:    true,
 								},
 							},
