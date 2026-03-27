@@ -19,6 +19,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+// buildHealthcheckPlanChecks returns the appropriate plan checks for migration step 2.
+// For from_v4 (v4→v5): allows tcp_config/http_config computed field drift.
+// For from_v5 (v5→v5): requires a completely empty plan.
+func buildHealthcheckPlanChecks(sourceVer string) []plancheck.PlanCheck {
+	if sourceVer == "v4" {
+		return []plancheck.PlanCheck{
+			acctest.DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptHealthcheckConfigDrift,
+		}
+	}
+	return []plancheck.PlanCheck{
+		acctest.DebugNonEmptyPlan,
+		plancheck.ExpectEmptyPlan(),
+	}
+}
+
 var (
 	currentProviderVersion = internal.PackageVersion // Current v5 release
 )
@@ -187,10 +203,10 @@ func TestMigrateHealthcheck_V4ToV5_HTTPBasic(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					step1,
-					// Step 2: Run migration and verify state with custom plan check
-					// Note: Persistent drift is expected for tcp_config/http_config computed fields.
-					// Our custom plan check only allows the tcp_config/http_config drift as acceptable,
-					// failing on anything else.
+					// Step 2: Run migration and verify state with custom plan check.
+					// For from_v4: allows tcp_config/http_config computed field drift.
+					// For from_v5: requires a completely empty plan (no PostApplyPostRefresh
+					// to avoid "expected a non-empty plan" framework error when plan is empty).
 					{
 						PreConfig: func() {
 							acctest.WriteOutConfig(t, testConfig, tmpDir)
@@ -199,16 +215,7 @@ func TestMigrateHealthcheck_V4ToV5_HTTPBasic(t *testing.T) {
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
 						ConfigPlanChecks: resource.ConfigPlanChecks{
-							PreApply: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
-							PostApplyPostRefresh: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
+							PreApply: buildHealthcheckPlanChecks(sourceVer),
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
 							// Verify core fields
@@ -326,10 +333,10 @@ func TestMigrateHealthcheck_V4ToV5_HTTPHeaders(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					step1,
-					// Step 2: Run migration and verify state with custom plan check
-					// Note: Persistent drift is expected for tcp_config/http_config computed fields.
-					// Our custom plan check only allows the tcp_config/http_config drift as acceptable,
-					// failing on anything else.
+					// Step 2: Run migration and verify state with custom plan check.
+					// For from_v4: allows tcp_config/http_config computed field drift.
+					// For from_v5: requires a completely empty plan (no PostApplyPostRefresh
+					// to avoid "expected a non-empty plan" framework error when plan is empty).
 					{
 						PreConfig: func() {
 							acctest.WriteOutConfig(t, testConfig, tmpDir)
@@ -338,16 +345,7 @@ func TestMigrateHealthcheck_V4ToV5_HTTPHeaders(t *testing.T) {
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
 						ConfigPlanChecks: resource.ConfigPlanChecks{
-							PreApply: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
-							PostApplyPostRefresh: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
+							PreApply: buildHealthcheckPlanChecks(sourceVer),
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
 							// Verify http_config.header exists as map
@@ -432,10 +430,10 @@ func TestMigrateHealthcheck_V4ToV5_TCP(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
 					step1,
-					// Step 2: Run migration and verify state with custom plan check
-					// Note: Persistent drift is expected for tcp_config/http_config computed fields.
-					// Our custom plan check only allows the tcp_config/http_config drift as acceptable,
-					// failing on anything else.
+					// Step 2: Run migration and verify state with custom plan check.
+					// For from_v4: allows tcp_config/http_config computed field drift.
+					// For from_v5: requires a completely empty plan (no PostApplyPostRefresh
+					// to avoid "expected a non-empty plan" framework error when plan is empty).
 					{
 						PreConfig: func() {
 							acctest.WriteOutConfig(t, testConfig, tmpDir)
@@ -444,16 +442,7 @@ func TestMigrateHealthcheck_V4ToV5_TCP(t *testing.T) {
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
 						ConfigPlanChecks: resource.ConfigPlanChecks{
-							PreApply: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
-							PostApplyPostRefresh: []plancheck.PlanCheck{
-								acctest.DebugNonEmptyPlan,
-								// Only allow tcp_config/http_config drift, fail on other changes
-								ExpectEmptyPlanExceptHealthcheckConfigDrift,
-							},
+							PreApply: buildHealthcheckPlanChecks(sourceVer),
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
 							// Verify type is TCP
