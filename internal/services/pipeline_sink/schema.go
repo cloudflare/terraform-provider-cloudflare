@@ -66,6 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"secret_access_key": schema.StringAttribute{
 								Description: "Cloudflare Account ID for the bucket",
 								Required:    true,
+								Sensitive:   true,
 							},
 						},
 					},
@@ -143,6 +144,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"token": schema.StringAttribute{
 						Description: "Authentication token",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"table_name": schema.StringAttribute{
 						Description: "Table name",
