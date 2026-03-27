@@ -26,6 +26,7 @@ jobs:
           CGO_ENABLED: "0"
         run: |
           go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -X main.commit=${{ github.sha }}" -trimpath -o terraform-provider-cloudflare_linux_amd64_${{ github.ref_name }} .
+          chmod +x terraform-provider-cloudflare_linux_amd64_${{ github.ref_name }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
