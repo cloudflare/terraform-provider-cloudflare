@@ -86,6 +86,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 		version           string
 		configFn          func(rnd, accountID string) string
 		tlsDecryptEnabled bool
+		needsCert         bool
 	}{
 		{
 			name:    "from_v4_latest",
@@ -96,12 +97,10 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 			tlsDecryptEnabled: false,
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
+			name:      "from_v5",
+			version:   currentProviderVersion,
+			needsCert: true,
 			configFn: func(rnd, accountID string) string {
-				if certID == "" {
-					t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for from_v5 sub-test.")
-				}
 				return fmt.Sprintf(v5FlatBooleansConfig, rnd, accountID, certID)
 			},
 			tlsDecryptEnabled: true,
@@ -110,6 +109,9 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if certID == "" {
+				t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for this sub-test.")
+			}
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_zero_trust_gateway_settings." + rnd
@@ -271,6 +273,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 		version           string
 		configFn          func(rnd, accountID string) string
 		tlsDecryptEnabled bool
+		needsCert         bool
 	}{
 		{
 			name:    "from_v4_latest",
@@ -281,12 +284,10 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 			tlsDecryptEnabled: false,
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
+			name:      "from_v5",
+			version:   currentProviderVersion,
+			needsCert: true,
 			configFn: func(rnd, accountID string) string {
-				if certID == "" {
-					t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for from_v5 sub-test.")
-				}
 				return fmt.Sprintf(v5ComprehensiveConfig, rnd, accountID, certID)
 			},
 			tlsDecryptEnabled: true,
@@ -295,6 +296,9 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if certID == "" {
+				t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for this sub-test.")
+			}
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_zero_trust_gateway_settings." + rnd
@@ -356,7 +360,6 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("enabled"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("msg"), knownvalue.StringExact("Scanning")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("support_url"), knownvalue.StringExact("https://support.example.com/")),
-
 						},
 					),
 				},
