@@ -48,13 +48,6 @@ func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, 
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Debug(ctx, "No-op state upgrade from v1 to v500 (schema versions are compatible)")
 
-	// This is a no-op: v1 and v500 have identical schemas.
-	// We just need to parse and re-set the state to update the schema version metadata.
-	var state TargetAuthenticatedOriginPullsSettingsModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
+	// No-op: v1 and v500 have identical schemas — copy raw state directly.
+	resp.State.Raw = req.State.Raw
 }

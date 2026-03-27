@@ -146,6 +146,22 @@ changes.
 
 - Renamed to `cloudflare_zero_trust_access_policy`
 
+~> **Application-scoped policies cannot be automatically migrated.** If your
+`cloudflare_access_policy` resource has an `application_id` attribute, it
+cannot be migrated using `tf-migrate` or state upgraders. These policies use a
+different API endpoint (`/access/apps/{app_id}/policies/`) than account-level
+policies (`/access/policies/`).
+
+In v5, application-scoped policies are managed as inline `policies` attributes
+within the `cloudflare_zero_trust_access_application` resource. To migrate:
+
+1. Remove the policy from state: `terraform state rm cloudflare_access_policy.example`
+2. Add the policy configuration inline in your `cloudflare_zero_trust_access_application` resource's `policies` attribute
+3. Run `terraform apply`
+
+See the [migration guide](version-5-migration#application-scoped-access-policies)
+for detailed instructions.
+
 ## cloudflare_access_service_token
 
 - Renamed to `cloudflare_zero_trust_access_service_token`
@@ -189,6 +205,8 @@ changes.
 ## cloudflare_dlp_profile
 
 - Renamed to `cloudflare_zero_trust_custom_dlp_profile` or `cloudflare_zero_trust_predefined_dlp_profile` depending on which you are targeting.
+
+- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
 
 ## cloudflare_fallback_domain / cloudflare_zero_trust_local_fallback_domain
 
@@ -439,6 +457,8 @@ resource "cloudflare_api_token" "example" {
 
 In version 4, `cloudflare_authenticated_origin_pulls` was a single polymorphic resource that handled three different modes of Authenticated Origin Pulls (AOP) based on which optional attributes were set. In version 5, this has been split into separate resources that map to distinct API endpoints.
 
+- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
+
 **Migration Note:** After importing resources, you may see computed fields (like `id`, `status`, `expires_on`) refresh on the first `terraform plan`. This is expected behavior as Terraform populates these values from the API. Additionally, certificate resources require a temporary `lifecycle { ignore_changes = [private_key] }` block after import, since the API doesn't return private keys for security reasons.
 
 **Migration paths by mode:**
@@ -643,6 +663,8 @@ Delete outputs entirely during migration, add them back after verification is co
 ## cloudflare_authenticated_origin_pulls_certificate
 
 In version 4, this resource had a `type` attribute with values `"per-zone"` or `"per-hostname"` to differentiate between zone-level and hostname-level certificates. In version 5, these are now separate resources.
+
+- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
 
 ### Per-Zone Certificate
 

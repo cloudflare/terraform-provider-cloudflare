@@ -13,37 +13,38 @@ var _ resource.ResourceWithUpgradeState = (*RulesetResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// This handles two upgrade paths:
-// 1. v4 state (schema_version=1) -> v5 (version=500): Full transformation
-//   - MaxItems:1 ListNestedBlock arrays -> SingleNestedAttribute objects
-//   - headers: List[{name,...}] -> Map[name -> {...}]
-//   - cookie_fields/request_fields/response_fields: Set[string] -> List[{name:string}]
-//   - query_string include/exclude: Set[string] -> {list:[...]} or {all:true}
-//   - products/phases/rulesets: TypeSet -> ListAttribute
-//   - disable_railgun: removed in v5
-//   - rules map: map[string]string (CSV) -> map[string][]string
+// Schema version history:
+// - v4 Plugin Framework: schema_version=1 (after internal V0->V1 ratelimit rename)
+// - v5 production (v5.0-v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
+// - v5 current: schema_version=500
 //
-// 2. v5 state (version=1) -> v5 (version=500): No-op upgrade
-//   - Just bumps version number, no transformation
+// IMPORTANT: Both v4 and v5 production state are at schema_version=1, but they have
+// incompatible formats:
+// - v4: action_parameters stored as ARRAY (ListNestedBlock)
+// - v5: action_parameters stored as OBJECT (SingleNestedAttribute)
 //
-// The v4 Plugin Framework provider used schema_version=1 (after its internal V0->V1
-// migration for ratelimit field rename). Both v4 and v5 state are at version=1.
+// Upgrade paths:
+// 0: v5 fresh resources (schema_version=0) -> no-op
+// 1: AMBIGUOUS - v4 format (array) or v5 production format (object), detected at runtime
 func (r *RulesetResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	v5Schema := ResourceSchema(ctx)
 
-	v4Schema := v500.SourceV4RulesetSchema()
-
 	return map[int64]resource.StateUpgrader{
-		// Handle fresh v5 resources (version 0 -> 500)
+		// Handle fresh v5 resources (version 0 -> 500): no-op.
 		0: {
 			PriorSchema:   &v5Schema,
 			StateUpgrader: v500.UpgradeFromV5,
 		},
 
-		// Handle state from v4 Plugin Framework provider (schema_version=1)
+		// Handle schema_version=1 -- ambiguous between v4 and v5 production.
+		//
+		// PriorSchema is nil so the framework skips pre-decoding req.State entirely.
+		// Both paths are handled via req.RawState.JSON in UpgradeFromV1Ambiguous:
+		// - v4 format (action_parameters is array): full transform via raw state
+		// - v5 format (action_parameters is object): no-op re-decode with target schema
 		1: {
-			PriorSchema:   &v4Schema,
-			StateUpgrader: v500.UpgradeFromV4,
+			PriorSchema:   nil,
+			StateUpgrader: v500.UpgradeFromV1Ambiguous,
 		},
 	}
 }
