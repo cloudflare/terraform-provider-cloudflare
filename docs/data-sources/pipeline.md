@@ -29,6 +29,7 @@ data "cloudflare_pipeline" "example_pipeline" {
 ### Read-Only
 
 - `created_at` (String)
+- `failure_reason` (String) Indicates the reason for the failure of the Pipeline.
 - `id` (String) Specifies the public ID of the pipeline.
 - `modified_at` (String)
 - `name` (String) Indicates the name of the Pipeline.
