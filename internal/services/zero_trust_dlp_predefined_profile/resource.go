@@ -66,6 +66,13 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 		return
 	}
 
+	// Preserve entries from plan to avoid inconsistency when API returns an empty list.
+	// On first Create there is no prior state, so ModifyPlan cannot copy state→plan for
+	// entries. The API always returns the full entries list (possibly empty []), but the
+	// plan has entries=null when the user omits the deprecated attribute. We restore the
+	// plan value so state matches what Terraform expected after apply.
+	planEntries := data.Entries
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -95,6 +102,13 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 	}
 	data = &env.Result
 	data.ID = data.ProfileID
+
+	// Restore entries from plan when the API returned an empty list but the plan had
+	// entries=null (user omitted the deprecated attribute). This prevents the framework
+	// from raising "Provider produced inconsistent result after apply" on first create.
+	if planEntries.IsNull() && data.Entries.IsNull() == false && len(data.Entries.Elements()) == 0 {
+		data.Entries = planEntries
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

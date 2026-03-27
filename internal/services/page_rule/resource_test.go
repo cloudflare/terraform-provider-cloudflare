@@ -1927,6 +1927,12 @@ func TestAccCloudflarePageRule_TrueClientIPHeaderOnOff(t *testing.T) {
 }
 
 func TestAccCloudflarePageRule_WAFOnOff(t *testing.T) {
+	// The WAF page rule setting is deprecated for zones that have been migrated to
+	// Managed Rulesets. The API returns:
+	//   ".settings[0]: WAF is deprecated for this zone, Managed Rulesets should be used instead"
+	// Skip this test since the CI test zone no longer supports the legacy WAF page rule action.
+	t.Skip("Skipping: WAF page rule setting is deprecated for this zone; Managed Rulesets should be used instead")
+
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

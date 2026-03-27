@@ -136,7 +136,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 resource "cloudflare_teams_account" "%[1]s" {
   account_id                 = "%[2]s"
   activity_log_enabled       = true
-  tls_decrypt_enabled        = true
+  tls_decrypt_enabled        = false
   protocol_detection_enabled = false
 }`, rnd, accountID)
 
@@ -163,7 +163,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// Verify boolean fields are nested under settings
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("activity_log").AtMapKey("enabled"), knownvalue.Bool(true)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(true)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(false)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("protocol_detection").AtMapKey("enabled"), knownvalue.Bool(false)),
 			}),
 		},
@@ -538,7 +538,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 resource "cloudflare_teams_account" "%[1]s" {
   account_id                             = "%[2]s"
   activity_log_enabled                   = true
-  tls_decrypt_enabled                    = true
+  tls_decrypt_enabled                    = false
   protocol_detection_enabled             = false
   url_browser_isolation_enabled          = true
   non_identity_browser_isolation_enabled = false
@@ -611,7 +611,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 
 					// Verify flat boolean transformations
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("activity_log").AtMapKey("enabled"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("protocol_detection").AtMapKey("enabled"), knownvalue.Bool(false)),
 
 					// Verify browser isolation with field rename
