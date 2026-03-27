@@ -119,7 +119,6 @@ Available values: "bic", "hot", "rateLimit", "securityLevel", "uaBlock", "waf", 
 - `public` (Attributes) Set the public cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--public))
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
-- `redirects_for_ai_training` (Boolean) Whether to redirect verified AI training crawlers to canonical URLs.
 - `request_body_buffering` (String) The request body buffering mode to configure.
 Available values: "none", "standard", "full".
 - `request_fields` (Attributes List) The raw request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))
