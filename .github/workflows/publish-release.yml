@@ -86,6 +86,7 @@ jobs:
           
           pkg_dir=$(mktemp -d)
           cp "$binary" "$pkg_dir/terraform-provider-cloudflare_v${VERSION_NOV}"
+          chmod +x "$pkg_dir/terraform-provider-cloudflare_v${VERSION_NOV}"
           cd "$pkg_dir"
           zip -r "$DIST_DIR/terraform-provider-cloudflare_${VERSION_NOV}_linux_amd64.zip" . -q
           rm -rf "$pkg_dir"
