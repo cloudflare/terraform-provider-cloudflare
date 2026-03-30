@@ -371,7 +371,6 @@ type TargetV5ActionParametersModel struct {
 	ReadTimeout             types.Int64  `tfsdk:"read_timeout"`
 	RespectStrongEtags      types.Bool   `tfsdk:"respect_strong_etags"`
 	RocketLoader            types.Bool   `tfsdk:"rocket_loader"`
-	RedirectsForAITraining  types.Bool   `tfsdk:"redirects_for_ai_training"`
 	SecurityLevel           types.String `tfsdk:"security_level"`
 	ServerSideExcludes      types.Bool   `tfsdk:"server_side_excludes"`
 	SSL                     types.String `tfsdk:"ssl"`
