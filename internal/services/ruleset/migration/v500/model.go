@@ -371,7 +371,6 @@ type TargetV5ActionParametersModel struct {
 	ReadTimeout             types.Int64  `tfsdk:"read_timeout"`
 	RespectStrongEtags      types.Bool   `tfsdk:"respect_strong_etags"`
 	RocketLoader            types.Bool   `tfsdk:"rocket_loader"`
-	RedirectsForAITraining  types.Bool   `tfsdk:"redirects_for_ai_training"`
 	SecurityLevel           types.String `tfsdk:"security_level"`
 	ServerSideExcludes      types.Bool   `tfsdk:"server_side_excludes"`
 	SSL                     types.String `tfsdk:"ssl"`
@@ -380,9 +379,10 @@ type TargetV5ActionParametersModel struct {
 	Ruleset                 types.String `tfsdk:"ruleset"`
 
 	// New in v5 (absent in v4)
-	AssetName             types.String `tfsdk:"asset_name"`
-	RequestBodyBuffering  types.String `tfsdk:"request_body_buffering"`
-	ResponseBodyBuffering types.String `tfsdk:"response_body_buffering"`
+	AssetName              types.String `tfsdk:"asset_name"`
+	RequestBodyBuffering   types.String `tfsdk:"request_body_buffering"`
+	ResponseBodyBuffering  types.String `tfsdk:"response_body_buffering"`
+	RedirectsForAITraining types.Bool   `tfsdk:"redirects_for_ai_training"`
 
 	// Cache control fields (set_cache_settings action)
 	StripETags        types.Bool `tfsdk:"strip_etags"`
