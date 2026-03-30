@@ -43,9 +43,9 @@ func testSweepCloudflareZeroTrustGatewaySettings(r string) error {
 	var client *cloudflare.Client
 	var err error
 	if apiToken != "" {
-		client, err = cloudflare.NewClient(option.WithAPIToken(apiToken))
+		client = cloudflare.NewClient(option.WithAPIToken(apiToken))
 	} else {
-		client, err = cloudflare.NewClient(
+		client = cloudflare.NewClient(
 			option.WithAPIKey(apiKey),
 			option.WithAPIEmail(email),
 		)
@@ -66,7 +66,6 @@ func testSweepCloudflareZeroTrustGatewaySettings(r string) error {
 			ActivityLog:       cloudflare.F(zero_trust.ActivityLogSettingsParam{Enabled: cloudflare.F(false)}),
 			TLSDecrypt:        cloudflare.F(zero_trust.TLSSettingsParam{Enabled: cloudflare.F(false)}),
 			ProtocolDetection: cloudflare.F(zero_trust.ProtocolDetectionParam{Enabled: cloudflare.F(false)}),
-			FIPS:              cloudflare.F(zero_trust.GatewayConfigurationSettingsFIPSParam{TLS: cloudflare.F(false)}),
 			BodyScanning:      cloudflare.F(zero_trust.BodyScanningSettingsParam{InspectionMode: cloudflare.F(zero_trust.BodyScanningSettingsInspectionModeShallow)}),
 		}),
 	})
