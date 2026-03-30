@@ -42,6 +42,9 @@ var v4ServiceTokenConfig string
 //go:embed testdata/v4_unsupported.tf
 var v4UnsupportedConfig string
 
+//go:embed testdata/v4_connection_rules.tf
+var v4ConnectionRulesConfig string
+
 //go:embed testdata/v5_basic.tf
 var v5BasicConfig string
 
@@ -743,6 +746,55 @@ func TestMigrateZeroTrustAccessPolicyEmailDomainTransformation(t *testing.T) {
 					tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"),
 					knownvalue.StringExact(domain),
 				),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyConnectionRules tests that connection_rules
+// with application_id and precedence are correctly migrated from v4 to v5.
+// Reproduces TKT-007: connection_rules stored as JSON array [] in v4 state
+// causes "invalid JSON, expected '{', got '['" error during state upgrade.
+// Reported by research team (terraform-cfaccounts MR !7756).
+func TestMigrateZeroTrustAccessPolicyConnectionRules(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(v4ConnectionRulesConfig, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			// With the PriorSchema: nil fix, state upgrade succeeds
+			// The key success is that we don't get: "AttributeName("connection_rules"): invalid JSON, expected "{", got "[""
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				// Verify include was transformed correctly
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
 			}),
 		},
 	})
