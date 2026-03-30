@@ -31,6 +31,7 @@ resource "cloudflare_pipeline" "example_pipeline" {
 ### Read-Only
 
 - `created_at` (String)
+- `failure_reason` (String) Indicates the reason for the failure of the Pipeline.
 - `id` (String) Indicates a unique identifier for this pipeline.
 - `modified_at` (String)
 - `status` (String) Indicates the current status of the Pipeline.
