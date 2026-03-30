@@ -72,29 +72,29 @@ type SourceCORSHeadersModel struct {
 
 // SourceSaaSAppModel represents the v4 saas_app block structure.
 type SourceSaaSAppModel struct {
-	AuthType                 types.String                    `tfsdk:"auth_type"`
-	ConsumerServiceURL       types.String                    `tfsdk:"consumer_service_url"`
-	SPEntityID               types.String                    `tfsdk:"sp_entity_id"`
-	IdPEntityID              types.String                    `tfsdk:"idp_entity_id"`
-	PublicKey                types.String                    `tfsdk:"public_key"`
-	NameIDFormat             types.String                    `tfsdk:"name_id_format"`
-	NameIDTransformJsonata   types.String                    `tfsdk:"name_id_transform_jsonata"`
-	SAMLAttrTransformJsonata types.String                    `tfsdk:"saml_attribute_transform_jsonata"`
-	DefaultRelayState        types.String                    `tfsdk:"default_relay_state"`
-	SSOEndpoint              types.String                    `tfsdk:"sso_endpoint"`
-	AppLauncherURL           types.String                    `tfsdk:"app_launcher_url"`
-	ClientID                 types.String                    `tfsdk:"client_id"`
-	ClientSecret             types.String                    `tfsdk:"client_secret"`
-	AccessTokenLifetime      types.String                    `tfsdk:"access_token_lifetime"`
-	AllowPKCEWithoutSecret   types.Bool                      `tfsdk:"allow_pkce_without_client_secret"`
-	GroupFilterRegex         types.String                    `tfsdk:"group_filter_regex"`
-	GrantTypes               types.Set                       `tfsdk:"grant_types"`
-	RedirectURIs             types.Set                       `tfsdk:"redirect_uris"`
-	Scopes                   types.Set                       `tfsdk:"scopes"`
-	CustomAttributes         []SourceCustomAttributeModel    `tfsdk:"custom_attribute"`
-	CustomClaims             []SourceCustomClaimModel        `tfsdk:"custom_claim"`
-	HybridAndImplicitOptions []SourceHybridOptionsModel      `tfsdk:"hybrid_and_implicit_options"`
-	RefreshTokenOptions      []SourceRefreshTokenModel       `tfsdk:"refresh_token_options"`
+	AuthType                 types.String                 `tfsdk:"auth_type"`
+	ConsumerServiceURL       types.String                 `tfsdk:"consumer_service_url"`
+	SPEntityID               types.String                 `tfsdk:"sp_entity_id"`
+	IdPEntityID              types.String                 `tfsdk:"idp_entity_id"`
+	PublicKey                types.String                 `tfsdk:"public_key"`
+	NameIDFormat             types.String                 `tfsdk:"name_id_format"`
+	NameIDTransformJsonata   types.String                 `tfsdk:"name_id_transform_jsonata"`
+	SAMLAttrTransformJsonata types.String                 `tfsdk:"saml_attribute_transform_jsonata"`
+	DefaultRelayState        types.String                 `tfsdk:"default_relay_state"`
+	SSOEndpoint              types.String                 `tfsdk:"sso_endpoint"`
+	AppLauncherURL           types.String                 `tfsdk:"app_launcher_url"`
+	ClientID                 types.String                 `tfsdk:"client_id"`
+	ClientSecret             types.String                 `tfsdk:"client_secret"`
+	AccessTokenLifetime      types.String                 `tfsdk:"access_token_lifetime"`
+	AllowPKCEWithoutSecret   types.Bool                   `tfsdk:"allow_pkce_without_client_secret"`
+	GroupFilterRegex         types.String                 `tfsdk:"group_filter_regex"`
+	GrantTypes               types.Set                    `tfsdk:"grant_types"`
+	RedirectURIs             types.Set                    `tfsdk:"redirect_uris"`
+	Scopes                   types.Set                    `tfsdk:"scopes"`
+	CustomAttributes         []SourceCustomAttributeModel `tfsdk:"custom_attribute"`
+	CustomClaims             []SourceCustomClaimModel     `tfsdk:"custom_claim"`
+	HybridAndImplicitOptions []SourceHybridOptionsModel   `tfsdk:"hybrid_and_implicit_options"`
+	RefreshTokenOptions      []SourceRefreshTokenModel    `tfsdk:"refresh_token_options"`
 }
 
 // SourceCustomAttributeModel represents the v4 custom_attribute block structure.
@@ -114,9 +114,9 @@ type SourceCustomAttributeSourceModel struct {
 
 // SourceCustomClaimModel represents the v4 custom_claim block structure.
 type SourceCustomClaimModel struct {
-	Name     types.String                  `tfsdk:"name"`
-	Required types.Bool                    `tfsdk:"required"`
-	Scope    types.String                  `tfsdk:"scope"`
+	Name     types.String                   `tfsdk:"name"`
+	Required types.Bool                     `tfsdk:"required"`
+	Scope    types.String                   `tfsdk:"scope"`
 	Source   []SourceCustomClaimSourceModel `tfsdk:"source"`
 }
 
@@ -162,12 +162,12 @@ type SourceSCIMAuthModel struct {
 
 // SourceSCIMMappingsModel represents the v4 scim_config mappings block.
 type SourceSCIMMappingsModel struct {
-	Schema           types.String                 `tfsdk:"schema"`
-	Enabled          types.Bool                   `tfsdk:"enabled"`
-	Filter           types.String                 `tfsdk:"filter"`
-	TransformJsonata types.String                 `tfsdk:"transform_jsonata"`
-	Strictness       types.String                 `tfsdk:"strictness"`
-	Operations       []SourceSCIMOperationsModel  `tfsdk:"operations"`
+	Schema           types.String                `tfsdk:"schema"`
+	Enabled          types.Bool                  `tfsdk:"enabled"`
+	Filter           types.String                `tfsdk:"filter"`
+	TransformJsonata types.String                `tfsdk:"transform_jsonata"`
+	Strictness       types.String                `tfsdk:"strictness"`
+	Operations       []SourceSCIMOperationsModel `tfsdk:"operations"`
 }
 
 // SourceSCIMOperationsModel represents the v4 scim_config mappings operations block.
@@ -219,47 +219,47 @@ type SourceTargetAttributesModel struct {
 // TargetAccessApplicationModel represents the v5 cloudflare_zero_trust_access_application state structure.
 // This is a copy of the main model to avoid import cycles.
 type TargetAccessApplicationModel struct {
-	ID                          types.String                                                               `tfsdk:"id"`
-	AccountID                   types.String                                                               `tfsdk:"account_id"`
-	ZoneID                      types.String                                                               `tfsdk:"zone_id"`
-	AllowAuthenticateViaWARP    types.Bool                                                                 `tfsdk:"allow_authenticate_via_warp"`
-	AllowIframe                 types.Bool                                                                 `tfsdk:"allow_iframe"`
-	AppLauncherLogoURL          types.String                                                               `tfsdk:"app_launcher_logo_url"`
-	BgColor                     types.String                                                               `tfsdk:"bg_color"`
-	CustomDenyMessage           types.String                                                               `tfsdk:"custom_deny_message"`
-	CustomDenyURL               types.String                                                               `tfsdk:"custom_deny_url"`
-	CustomNonIdentityDenyURL    types.String                                                               `tfsdk:"custom_non_identity_deny_url"`
-	Domain                      types.String                                                               `tfsdk:"domain"`
-	HeaderBgColor               types.String                                                               `tfsdk:"header_bg_color"`
-	LogoURL                     types.String                                                               `tfsdk:"logo_url"`
-	Name                        types.String                                                               `tfsdk:"name"`
-	OptionsPreflightBypass      types.Bool                                                                 `tfsdk:"options_preflight_bypass"`
-	ReadServiceTokensFromHeader types.String                                                               `tfsdk:"read_service_tokens_from_header"`
-	SameSiteCookieAttribute     types.String                                                               `tfsdk:"same_site_cookie_attribute"`
-	ServiceAuth401Redirect      types.Bool                                                                 `tfsdk:"service_auth_401_redirect"`
-	SkipInterstitial            types.Bool                                                                 `tfsdk:"skip_interstitial"`
-	Type                        types.String                                                               `tfsdk:"type"`
-	AllowedIdPs                 *[]types.String                                                            `tfsdk:"allowed_idps"`
-	CustomPages                 *[]types.String                                                            `tfsdk:"custom_pages"`
-	CORSHeaders                 *TargetCORSHeadersModel                                                    `tfsdk:"cors_headers"`
-	FooterLinks                 *[]*TargetFooterLinksModel                                                 `tfsdk:"footer_links"`
-	OAuthConfiguration          *TargetOAuthConfigurationModel                                             `tfsdk:"oauth_configuration"`
-	SCIMConfig                  *TargetSCIMConfigModel                                                     `tfsdk:"scim_config"`
-	TargetCriteria              *[]*TargetTargetCriteriaModel                                              `tfsdk:"target_criteria"`
-	AppLauncherVisible          types.Bool                                                                 `tfsdk:"app_launcher_visible"`
-	AutoRedirectToIdentity      types.Bool                                                                 `tfsdk:"auto_redirect_to_identity"`
-	EnableBindingCookie         types.Bool                                                                 `tfsdk:"enable_binding_cookie"`
-	HTTPOnlyCookieAttribute     types.Bool                                                                 `tfsdk:"http_only_cookie_attribute"`
-	PathCookieAttribute         types.Bool                                                                 `tfsdk:"path_cookie_attribute"`
-	SessionDuration             types.String                                                               `tfsdk:"session_duration"`
-	SkipAppLauncherLoginPage    types.Bool                                                                 `tfsdk:"skip_app_launcher_login_page"`
-	SelfHostedDomains           customfield.Set[types.String]                                              `tfsdk:"self_hosted_domains"`
-	Tags                        customfield.Set[types.String]                                              `tfsdk:"tags"`
-	Destinations                customfield.NestedObjectList[TargetDestinationsModel]                      `tfsdk:"destinations"`
-	LandingPageDesign           customfield.NestedObject[TargetLandingPageDesignModel]                     `tfsdk:"landing_page_design"`
-	Policies                    *[]TargetPoliciesModel                                                     `tfsdk:"policies"`
-	AUD                         types.String                                                               `tfsdk:"aud"`
-	SaaSApp                     *TargetSaaSAppModel                                                        `tfsdk:"saas_app"`
+	ID                          types.String                                           `tfsdk:"id"`
+	AccountID                   types.String                                           `tfsdk:"account_id"`
+	ZoneID                      types.String                                           `tfsdk:"zone_id"`
+	AllowAuthenticateViaWARP    types.Bool                                             `tfsdk:"allow_authenticate_via_warp"`
+	AllowIframe                 types.Bool                                             `tfsdk:"allow_iframe"`
+	AppLauncherLogoURL          types.String                                           `tfsdk:"app_launcher_logo_url"`
+	BgColor                     types.String                                           `tfsdk:"bg_color"`
+	CustomDenyMessage           types.String                                           `tfsdk:"custom_deny_message"`
+	CustomDenyURL               types.String                                           `tfsdk:"custom_deny_url"`
+	CustomNonIdentityDenyURL    types.String                                           `tfsdk:"custom_non_identity_deny_url"`
+	Domain                      types.String                                           `tfsdk:"domain"`
+	HeaderBgColor               types.String                                           `tfsdk:"header_bg_color"`
+	LogoURL                     types.String                                           `tfsdk:"logo_url"`
+	Name                        types.String                                           `tfsdk:"name"`
+	OptionsPreflightBypass      types.Bool                                             `tfsdk:"options_preflight_bypass"`
+	ReadServiceTokensFromHeader types.String                                           `tfsdk:"read_service_tokens_from_header"`
+	SameSiteCookieAttribute     types.String                                           `tfsdk:"same_site_cookie_attribute"`
+	ServiceAuth401Redirect      types.Bool                                             `tfsdk:"service_auth_401_redirect"`
+	SkipInterstitial            types.Bool                                             `tfsdk:"skip_interstitial"`
+	Type                        types.String                                           `tfsdk:"type"`
+	AllowedIdPs                 *[]types.String                                        `tfsdk:"allowed_idps"`
+	CustomPages                 *[]types.String                                        `tfsdk:"custom_pages"`
+	CORSHeaders                 *TargetCORSHeadersModel                                `tfsdk:"cors_headers"`
+	FooterLinks                 *[]*TargetFooterLinksModel                             `tfsdk:"footer_links"`
+	OAuthConfiguration          *TargetOAuthConfigurationModel                         `tfsdk:"oauth_configuration"`
+	SCIMConfig                  *TargetSCIMConfigModel                                 `tfsdk:"scim_config"`
+	TargetCriteria              *[]*TargetTargetCriteriaModel                          `tfsdk:"target_criteria"`
+	AppLauncherVisible          types.Bool                                             `tfsdk:"app_launcher_visible"`
+	AutoRedirectToIdentity      types.Bool                                             `tfsdk:"auto_redirect_to_identity"`
+	EnableBindingCookie         types.Bool                                             `tfsdk:"enable_binding_cookie"`
+	HTTPOnlyCookieAttribute     types.Bool                                             `tfsdk:"http_only_cookie_attribute"`
+	PathCookieAttribute         types.Bool                                             `tfsdk:"path_cookie_attribute"`
+	SessionDuration             types.String                                           `tfsdk:"session_duration"`
+	SkipAppLauncherLoginPage    types.Bool                                             `tfsdk:"skip_app_launcher_login_page"`
+	SelfHostedDomains           customfield.Set[types.String]                          `tfsdk:"self_hosted_domains"`
+	Tags                        customfield.Set[types.String]                          `tfsdk:"tags"`
+	Destinations                customfield.NestedObjectList[TargetDestinationsModel]  `tfsdk:"destinations"`
+	LandingPageDesign           customfield.NestedObject[TargetLandingPageDesignModel] `tfsdk:"landing_page_design"`
+	Policies                    *[]TargetPoliciesModel                                 `tfsdk:"policies"`
+	AUD                         types.String                                           `tfsdk:"aud"`
+	SaaSApp                     *TargetSaaSAppModel                                    `tfsdk:"saas_app"`
 }
 
 type TargetCORSHeadersModel struct {
@@ -279,9 +279,9 @@ type TargetFooterLinksModel struct {
 }
 
 type TargetOAuthConfigurationModel struct {
-	Enabled                   types.Bool                                      `tfsdk:"enabled"`
-	DynamicClientRegistration *TargetOAuthConfigurationDynamicClientRegModel  `tfsdk:"dynamic_client_registration"`
-	Grant                     *TargetOAuthConfigurationGrantModel             `tfsdk:"grant"`
+	Enabled                   types.Bool                                     `tfsdk:"enabled"`
+	DynamicClientRegistration *TargetOAuthConfigurationDynamicClientRegModel `tfsdk:"dynamic_client_registration"`
+	Grant                     *TargetOAuthConfigurationGrantModel            `tfsdk:"grant"`
 }
 
 type TargetOAuthConfigurationDynamicClientRegModel struct {
@@ -297,29 +297,29 @@ type TargetOAuthConfigurationGrantModel struct {
 }
 
 type TargetSaaSAppModel struct {
-	AuthType                      types.String                          `tfsdk:"auth_type"`
-	ConsumerServiceURL            types.String                          `tfsdk:"consumer_service_url"`
-	CustomAttributes              *[]*TargetCustomAttributesModel       `tfsdk:"custom_attributes"`
-	DefaultRelayState             types.String                          `tfsdk:"default_relay_state"`
-	IdPEntityID                   types.String                          `tfsdk:"idp_entity_id"`
-	NameIDFormat                  types.String                          `tfsdk:"name_id_format"`
-	NameIDTransformJsonata        types.String                          `tfsdk:"name_id_transform_jsonata"`
-	PublicKey                     types.String                          `tfsdk:"public_key"`
-	SAMLAttributeTransformJsonata types.String                          `tfsdk:"saml_attribute_transform_jsonata"`
-	SPEntityID                    types.String                          `tfsdk:"sp_entity_id"`
-	SSOEndpoint                   types.String                          `tfsdk:"sso_endpoint"`
-	AccessTokenLifetime           types.String                          `tfsdk:"access_token_lifetime"`
-	AllowPKCEWithoutClientSecret  types.Bool                            `tfsdk:"allow_pkce_without_client_secret"`
-	AppLauncherURL                types.String                          `tfsdk:"app_launcher_url"`
-	ClientID                      types.String                          `tfsdk:"client_id"`
-	ClientSecret                  types.String                          `tfsdk:"client_secret"`
-	CustomClaims                  *[]*TargetCustomClaimsModel           `tfsdk:"custom_claims"`
-	GrantTypes                    *[]types.String                       `tfsdk:"grant_types"`
-	GroupFilterRegex              types.String                          `tfsdk:"group_filter_regex"`
-	HybridAndImplicitOptions      *TargetHybridAndImplicitOptionsModel  `tfsdk:"hybrid_and_implicit_options"`
-	RedirectURIs                  *[]types.String                       `tfsdk:"redirect_uris"`
-	RefreshTokenOptions           *TargetRefreshTokenOptionsModel       `tfsdk:"refresh_token_options"`
-	Scopes                        *[]types.String                       `tfsdk:"scopes"`
+	AuthType                      types.String                         `tfsdk:"auth_type"`
+	ConsumerServiceURL            types.String                         `tfsdk:"consumer_service_url"`
+	CustomAttributes              *[]*TargetCustomAttributesModel      `tfsdk:"custom_attributes"`
+	DefaultRelayState             types.String                         `tfsdk:"default_relay_state"`
+	IdPEntityID                   types.String                         `tfsdk:"idp_entity_id"`
+	NameIDFormat                  types.String                         `tfsdk:"name_id_format"`
+	NameIDTransformJsonata        types.String                         `tfsdk:"name_id_transform_jsonata"`
+	PublicKey                     types.String                         `tfsdk:"public_key"`
+	SAMLAttributeTransformJsonata types.String                         `tfsdk:"saml_attribute_transform_jsonata"`
+	SPEntityID                    types.String                         `tfsdk:"sp_entity_id"`
+	SSOEndpoint                   types.String                         `tfsdk:"sso_endpoint"`
+	AccessTokenLifetime           types.String                         `tfsdk:"access_token_lifetime"`
+	AllowPKCEWithoutClientSecret  types.Bool                           `tfsdk:"allow_pkce_without_client_secret"`
+	AppLauncherURL                types.String                         `tfsdk:"app_launcher_url"`
+	ClientID                      types.String                         `tfsdk:"client_id"`
+	ClientSecret                  types.String                         `tfsdk:"client_secret"`
+	CustomClaims                  *[]*TargetCustomClaimsModel          `tfsdk:"custom_claims"`
+	GrantTypes                    *[]types.String                      `tfsdk:"grant_types"`
+	GroupFilterRegex              types.String                         `tfsdk:"group_filter_regex"`
+	HybridAndImplicitOptions      *TargetHybridAndImplicitOptionsModel `tfsdk:"hybrid_and_implicit_options"`
+	RedirectURIs                  *[]types.String                      `tfsdk:"redirect_uris"`
+	RefreshTokenOptions           *TargetRefreshTokenOptionsModel      `tfsdk:"refresh_token_options"`
+	Scopes                        *[]types.String                      `tfsdk:"scopes"`
 }
 
 type TargetCustomAttributesModel struct {
@@ -331,8 +331,8 @@ type TargetCustomAttributesModel struct {
 }
 
 type TargetCustomAttributesSourceModel struct {
-	Name      types.String                         `tfsdk:"name"`
-	NameByIdP *[]*TargetNameByIdPModel             `tfsdk:"name_by_idp"`
+	Name      types.String             `tfsdk:"name"`
+	NameByIdP *[]*TargetNameByIdPModel `tfsdk:"name_by_idp"`
 }
 
 type TargetNameByIdPModel struct {
@@ -341,10 +341,10 @@ type TargetNameByIdPModel struct {
 }
 
 type TargetCustomClaimsModel struct {
-	Name     types.String                    `tfsdk:"name"`
-	Required types.Bool                      `tfsdk:"required"`
-	Scope    types.String                    `tfsdk:"scope"`
-	Source   *TargetCustomClaimsSourceModel  `tfsdk:"source"`
+	Name     types.String                   `tfsdk:"name"`
+	Required types.Bool                     `tfsdk:"required"`
+	Scope    types.String                   `tfsdk:"scope"`
+	Source   *TargetCustomClaimsSourceModel `tfsdk:"source"`
 }
 
 type TargetCustomClaimsSourceModel struct {
@@ -362,12 +362,12 @@ type TargetRefreshTokenOptionsModel struct {
 }
 
 type TargetSCIMConfigModel struct {
-	IdPUID             types.String                      `tfsdk:"idp_uid"`
-	RemoteURI          types.String                      `tfsdk:"remote_uri"`
-	Authentication     *TargetSCIMAuthenticationModel    `tfsdk:"authentication"`
-	DeactivateOnDelete types.Bool                        `tfsdk:"deactivate_on_delete"`
-	Enabled            types.Bool                        `tfsdk:"enabled"`
-	Mappings           *[]*TargetSCIMMappingsModel       `tfsdk:"mappings"`
+	IdPUID             types.String                   `tfsdk:"idp_uid"`
+	RemoteURI          types.String                   `tfsdk:"remote_uri"`
+	Authentication     *TargetSCIMAuthenticationModel `tfsdk:"authentication"`
+	DeactivateOnDelete types.Bool                     `tfsdk:"deactivate_on_delete"`
+	Enabled            types.Bool                     `tfsdk:"enabled"`
+	Mappings           *[]*TargetSCIMMappingsModel    `tfsdk:"mappings"`
 }
 
 type TargetSCIMAuthenticationModel struct {
@@ -383,12 +383,12 @@ type TargetSCIMAuthenticationModel struct {
 }
 
 type TargetSCIMMappingsModel struct {
-	Schema           types.String                  `tfsdk:"schema"`
-	Enabled          types.Bool                    `tfsdk:"enabled"`
-	Filter           types.String                  `tfsdk:"filter"`
-	Operations       *TargetSCIMOperationsModel    `tfsdk:"operations"`
-	Strictness       types.String                  `tfsdk:"strictness"`
-	TransformJsonata types.String                  `tfsdk:"transform_jsonata"`
+	Schema           types.String               `tfsdk:"schema"`
+	Enabled          types.Bool                 `tfsdk:"enabled"`
+	Filter           types.String               `tfsdk:"filter"`
+	Operations       *TargetSCIMOperationsModel `tfsdk:"operations"`
+	Strictness       types.String               `tfsdk:"strictness"`
+	TransformJsonata types.String               `tfsdk:"transform_jsonata"`
 }
 
 type TargetSCIMOperationsModel struct {
@@ -425,12 +425,12 @@ type TargetLandingPageDesignModel struct {
 // TargetPoliciesModel represents the v5 policies structure.
 // This is a copy of ZeroTrustAccessApplicationPoliciesModel to maintain upgrade path stability.
 type TargetPoliciesModel struct {
-	ID              types.String                                         `tfsdk:"id"`
-	Precedence      types.Int64                                          `tfsdk:"precedence"`
-	Decision        types.String                                         `tfsdk:"decision"`
+	ID              types.String                                            `tfsdk:"id"`
+	Precedence      types.Int64                                             `tfsdk:"precedence"`
+	Decision        types.String                                            `tfsdk:"decision"`
 	Include         customfield.NestedObjectSet[TargetPoliciesIncludeModel] `tfsdk:"include"`
-	Name            types.String                                         `tfsdk:"name"`
-	ConnectionRules *TargetPoliciesConnectionRulesModel                  `tfsdk:"connection_rules"`
+	Name            types.String                                            `tfsdk:"name"`
+	ConnectionRules *TargetPoliciesConnectionRulesModel                     `tfsdk:"connection_rules"`
 	Exclude         customfield.NestedObjectSet[TargetPoliciesExcludeModel] `tfsdk:"exclude"`
 	Require         customfield.NestedObjectSet[TargetPoliciesRequireModel] `tfsdk:"require"`
 }
@@ -566,11 +566,17 @@ type TargetPoliciesIncludeLinkedAppTokenModel struct {
 
 type TargetPoliciesConnectionRulesModel struct {
 	SSH *TargetPoliciesConnectionRulesSSHModel `tfsdk:"ssh"`
+	RDP *TargetPoliciesConnectionRulesRDPModel `tfsdk:"rdp"`
 }
 
 type TargetPoliciesConnectionRulesSSHModel struct {
 	Usernames       *[]types.String `tfsdk:"usernames"`
 	AllowEmailAlias types.Bool      `tfsdk:"allow_email_alias"`
+}
+
+type TargetPoliciesConnectionRulesRDPModel struct {
+	AllowedClipboardLocalToRemoteFormats *[]types.String `tfsdk:"allowed_clipboard_local_to_remote_formats"`
+	AllowedClipboardRemoteToLocalFormats *[]types.String `tfsdk:"allowed_clipboard_remote_to_local_formats"`
 }
 
 type TargetPoliciesExcludeModel struct {
