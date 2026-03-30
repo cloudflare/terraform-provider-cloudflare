@@ -891,6 +891,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"redirects_for_ai_training": schema.BoolAttribute{
+									Description: "Whether to redirect verified AI training crawlers to canonical URLs.",
+									Computed:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+								},
 								"request_body_buffering": schema.StringAttribute{
 									Description: "The request body buffering mode to configure.\nAvailable values: \"none\", \"standard\", \"full\".",
 									Computed:    true,

@@ -37,3 +37,12 @@ func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, 
 
 	tflog.Info(ctx, "State upgrade from legacy cloudflare_queue completed successfully")
 }
+
+// UpgradeFromV1 handles state upgrades from v5 production state (schema_version=1) to v5 (500).
+//
+// Users on v5.0–v5.18 had GetSchemaVersion(1, 500) which stored state at version 1.
+// State is already in v5 format — no transformation needed, just bump the version.
+func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading queue state from schema_version=1 to 500 (no-op)")
+	resp.State.Raw = req.State.Raw
+}

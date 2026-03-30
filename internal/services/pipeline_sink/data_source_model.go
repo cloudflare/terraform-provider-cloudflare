@@ -54,20 +54,13 @@ func (m *PipelineSinkDataSourceModel) toListParams(_ context.Context) (params pi
 type PipelineSinkConfigDataSourceModel struct {
 	AccountID     types.String                                                             `tfsdk:"account_id" json:"account_id,computed"`
 	Bucket        types.String                                                             `tfsdk:"bucket" json:"bucket,computed"`
-	Credentials   customfield.NestedObject[PipelineSinkConfigCredentialsDataSourceModel]   `tfsdk:"credentials" json:"credentials,computed"`
 	FileNaming    customfield.NestedObject[PipelineSinkConfigFileNamingDataSourceModel]    `tfsdk:"file_naming" json:"file_naming,computed"`
 	Jurisdiction  types.String                                                             `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	Partitioning  customfield.NestedObject[PipelineSinkConfigPartitioningDataSourceModel]  `tfsdk:"partitioning" json:"partitioning,computed"`
 	Path          types.String                                                             `tfsdk:"path" json:"path,computed"`
 	RollingPolicy customfield.NestedObject[PipelineSinkConfigRollingPolicyDataSourceModel] `tfsdk:"rolling_policy" json:"rolling_policy,computed"`
-	Token         types.String                                                             `tfsdk:"token" json:"token,computed"`
 	TableName     types.String                                                             `tfsdk:"table_name" json:"table_name,computed"`
 	Namespace     types.String                                                             `tfsdk:"namespace" json:"namespace,computed"`
-}
-
-type PipelineSinkConfigCredentialsDataSourceModel struct {
-	AccessKeyID     types.String `tfsdk:"access_key_id" json:"access_key_id,computed"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secret_access_key,computed"`
 }
 
 type PipelineSinkConfigFileNamingDataSourceModel struct {

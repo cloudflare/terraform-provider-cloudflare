@@ -50,11 +50,13 @@ func Transform(ctx context.Context, source SourceCloudflareCertificatePackModel)
 	// Step 5: Transform validation_errors (structure is compatible, just convert to customfield list)
 	target.ValidationErrors = transformValidationErrors(ctx, source.ValidationErrors, &diags)
 
-	// Step 6: Set new computed fields to null (will be refreshed from API)
+	// Step 6: Set new computed fields
+	// PrimaryCertificate and Status are null (will be refreshed from API)
+	// Certificates and DCVDelegationRecords are initialized to empty lists to prevent drift
 	target.PrimaryCertificate = types.StringNull()
 	target.Status = types.StringNull()
-	target.Certificates = customfield.NullObjectList[TargetCertificatesModel](ctx)
-	target.DCVDelegationRecords = customfield.NullObjectList[TargetDCVDelegationRecordsModel](ctx)
+	target.Certificates = customfield.NewObjectListMust(ctx, []TargetCertificatesModel{})
+	target.DCVDelegationRecords = customfield.NewObjectListMust(ctx, []TargetDCVDelegationRecordsModel{})
 
 	return target, diags
 }

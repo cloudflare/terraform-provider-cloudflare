@@ -79,10 +79,14 @@ func skipIfAPIToken(t *testing.T) {
 func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 	skipIfAPIToken(t)
 
+	certID := os.Getenv("CLOUDFLARE_GATEWAY_CERTIFICATE_ID")
+
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, accountID string) string
+		name              string
+		version           string
+		configFn          func(rnd, accountID string) string
+		tlsDecryptEnabled bool
+		needsCert         bool
 	}{
 		{
 			name:    "from_v4_latest",
@@ -90,18 +94,24 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 			configFn: func(rnd, accountID string) string {
 				return fmt.Sprintf(v4FlatBooleansConfig, rnd, accountID)
 			},
+			tlsDecryptEnabled: false,
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
+			name:      "from_v5",
+			version:   currentProviderVersion,
+			needsCert: true,
 			configFn: func(rnd, accountID string) string {
-				return fmt.Sprintf(v5FlatBooleansConfig, rnd, accountID)
+				return fmt.Sprintf(v5FlatBooleansConfig, rnd, accountID, certID)
 			},
+			tlsDecryptEnabled: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if certID == "" {
+				t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for this sub-test.")
+			}
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_zero_trust_gateway_settings." + rnd
@@ -143,7 +153,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_FlatBooleans(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 							// Verify flat booleans were moved to nested settings
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("activity_log").AtMapKey("enabled"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(true)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(tc.tlsDecryptEnabled)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("protocol_detection").AtMapKey("enabled"), knownvalue.Bool(false)),
 						},
 					),
@@ -256,10 +266,14 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Antivirus(t *testing.T) {
 func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 	skipIfAPIToken(t)
 
+	certID := os.Getenv("CLOUDFLARE_GATEWAY_CERTIFICATE_ID")
+
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, accountID string) string
+		name              string
+		version           string
+		configFn          func(rnd, accountID string) string
+		tlsDecryptEnabled bool
+		needsCert         bool
 	}{
 		{
 			name:    "from_v4_latest",
@@ -267,18 +281,24 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 			configFn: func(rnd, accountID string) string {
 				return fmt.Sprintf(v4ComprehensiveConfig, rnd, accountID)
 			},
+			tlsDecryptEnabled: false,
 		},
 		{
-			name:    "from_v5",
-			version: currentProviderVersion,
+			name:      "from_v5",
+			version:   currentProviderVersion,
+			needsCert: true,
 			configFn: func(rnd, accountID string) string {
-				return fmt.Sprintf(v5ComprehensiveConfig, rnd, accountID)
+				return fmt.Sprintf(v5ComprehensiveConfig, rnd, accountID, certID)
 			},
+			tlsDecryptEnabled: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if certID == "" {
+				t.Skip("CLOUDFLARE_GATEWAY_CERTIFICATE_ID must be set for this sub-test.")
+			}
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_zero_trust_gateway_settings." + rnd
@@ -320,7 +340,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 
 							// Flat boolean → nested
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("activity_log").AtMapKey("enabled"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(true)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(tc.tlsDecryptEnabled)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("protocol_detection").AtMapKey("enabled"), knownvalue.Bool(false)),
 
 							// Browser isolation with field rename
@@ -340,7 +360,6 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Comprehensive(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("enabled"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("msg"), knownvalue.StringExact("Scanning")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("antivirus").AtMapKey("notification_settings").AtMapKey("support_url"), knownvalue.StringExact("https://support.example.com/")),
-
 						},
 					),
 				},
@@ -360,9 +379,10 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Minimal(t *testing.T) {
 	skipIfAPIToken(t)
 
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, accountID string) string
+		name              string
+		version           string
+		configFn          func(rnd, accountID string) string
+		tlsDecryptEnabled bool
 	}{
 		{
 			name:    "from_v4_latest",
@@ -370,13 +390,32 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Minimal(t *testing.T) {
 			configFn: func(rnd, accountID string) string {
 				return fmt.Sprintf(v4FlatBooleansConfig, rnd, accountID)
 			},
+			tlsDecryptEnabled: false,
 		},
 		{
+			// from_v5 uses a truly minimal config (no cert, tls_decrypt=false) so that
+			// the null-cleanup assertions below hold — this test's purpose is to verify
+			// that fields absent from the user's config are null after migration.
 			name:    "from_v5",
 			version: currentProviderVersion,
 			configFn: func(rnd, accountID string) string {
-				return fmt.Sprintf(v5FlatBooleansConfig, rnd, accountID)
+				return fmt.Sprintf(`
+resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
+  account_id = "%[2]s"
+  settings = {
+    activity_log = {
+      enabled = true
+    }
+    tls_decrypt = {
+      enabled = false
+    }
+    protocol_detection = {
+      enabled = false
+    }
+  }
+}`, rnd, accountID)
 			},
+			tlsDecryptEnabled: false,
 		},
 	}
 
@@ -422,7 +461,7 @@ func TestMigrateZeroTrustGatewaySettings_V4ToV5_Minimal(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 							// Flat booleans in config are present and correct
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("activity_log").AtMapKey("enabled"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(true)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("tls_decrypt").AtMapKey("enabled"), knownvalue.Bool(tc.tlsDecryptEnabled)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtMapKey("protocol_detection").AtMapKey("enabled"), knownvalue.Bool(false)),
 							// Fields NOT in user config must be null — migration must not carry
 							// over v4 API-returned values for blocks the user never configured
