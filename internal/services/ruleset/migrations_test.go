@@ -3,6 +3,7 @@ package ruleset_test
 import (
 	"fmt"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -14,8 +15,20 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+// Zone-phase mutexes: each zone can only have one entrypoint ruleset per phase.
+// Tests that share a phase must serialize to avoid "exceeded maximum number" errors.
+var (
+	muPhaseFirewallCustom  sync.Mutex // http_request_firewall_custom
+	muPhaseCacheSettings   sync.Mutex // http_request_cache_settings
+	muPhaseDynamicRedirect sync.Mutex // http_request_dynamic_redirect
+	muPhaseLateTransform   sync.Mutex // http_request_late_transform
+)
+
 // TestMigrateCloudflareRulesetBasic tests migration of basic ruleset with only required attributes
 func TestMigrateCloudflareRulesetBasic(t *testing.T) {
+	t.Parallel()
+	muPhaseFirewallCustom.Lock()
+	defer muPhaseFirewallCustom.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -51,6 +64,7 @@ func TestMigrateCloudflareRulesetBasic(t *testing.T) {
 
 // TestMigrateCloudflareRulesetSimpleRules tests migration of rules block to list attribute
 func TestMigrateCloudflareRulesetSimpleRules(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -87,6 +101,7 @@ func TestMigrateCloudflareRulesetSimpleRules(t *testing.T) {
 
 // TestMigrateCloudflareRulesetRewriteRules tests migration with rewrite action and URI blocks
 func TestMigrateCloudflareRulesetRewriteRules(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -119,6 +134,7 @@ func TestMigrateCloudflareRulesetRewriteRules(t *testing.T) {
 
 // TestMigrateCloudflareRulesetDynamicRules tests migration with dynamic rules blocks
 func TestMigrateCloudflareRulesetDynamicRules(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -157,6 +173,9 @@ func TestMigrateCloudflareRulesetDynamicRules(t *testing.T) {
 
 // TestMigrateCloudflareRulesetRedirectFromValue tests migration with redirect from_value blocks
 func TestMigrateCloudflareRulesetRedirectFromValue(t *testing.T) {
+	t.Parallel()
+	muPhaseDynamicRedirect.Lock()
+	defer muPhaseDynamicRedirect.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -194,6 +213,7 @@ func TestMigrateCloudflareRulesetRedirectFromValue(t *testing.T) {
 
 // TestMigrateCloudflareRulesetHeadersListToMap tests migration of headers from list to map format
 func TestMigrateCloudflareRulesetHeadersListToMap(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -229,6 +249,9 @@ func TestMigrateCloudflareRulesetHeadersListToMap(t *testing.T) {
 
 // TestMigrateCloudflareRulesetCacheKeyQueryString tests migration of cache_key query_string include from list to object
 func TestMigrateCloudflareRulesetCacheKeyQueryString(t *testing.T) {
+	t.Parallel()
+	muPhaseCacheSettings.Lock()
+	defer muPhaseCacheSettings.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -264,6 +287,7 @@ func TestMigrateCloudflareRulesetCacheKeyQueryString(t *testing.T) {
 
 // TestMigrateCloudflareRulesetLogCustomFields tests migration of log custom fields (cookie_fields, request_fields, response_fields)
 func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -314,6 +338,9 @@ func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
 
 // TestMigrateCloudflareRulesetEdgeTTLStatusCode tests migration of edge_ttl status_code_ttl numeric fields
 func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
+	t.Parallel()
+	muPhaseCacheSettings.Lock()
+	defer muPhaseCacheSettings.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -368,6 +395,7 @@ func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
 
 // TestMigrateCloudflareRulesetWAFManagedOverrides tests migration of WAF overrides (categories and rules remain as arrays)
 func TestMigrateCloudflareRulesetWAFManagedOverrides(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -407,6 +435,7 @@ func TestMigrateCloudflareRulesetWAFManagedOverrides(t *testing.T) {
 
 // TestMigrateCloudflareRulesetRateLimit tests migration of http_ratelimit phase
 func TestMigrateCloudflareRulesetRateLimit(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -458,6 +487,7 @@ func TestMigrateCloudflareRulesetRateLimit(t *testing.T) {
 
 // TestMigrateCloudflareRulesetOriginRoute tests migration of origin routing rules
 func TestMigrateCloudflareRulesetOriginRoute(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -501,6 +531,9 @@ func TestMigrateCloudflareRulesetOriginRoute(t *testing.T) {
 
 // TestMigrateCloudflareRulesetLateTransform tests migration of late transform phase rules
 func TestMigrateCloudflareRulesetLateTransform(t *testing.T) {
+	t.Parallel()
+	muPhaseLateTransform.Lock()
+	defer muPhaseLateTransform.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -544,6 +577,9 @@ func TestMigrateCloudflareRulesetLateTransform(t *testing.T) {
 
 // TestMigrateCloudflareRulesetRedirectFromList tests migration of redirect phase with from_list and from_value
 func TestMigrateCloudflareRulesetRedirectFromList(t *testing.T) {
+	t.Parallel()
+	muPhaseDynamicRedirect.Lock()
+	defer muPhaseDynamicRedirect.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -593,6 +629,9 @@ func TestMigrateCloudflareRulesetRedirectFromList(t *testing.T) {
 
 // TestMigrateCloudflareRulesetSanitize tests migration of sanitize phase rules
 func TestMigrateCloudflareRulesetSanitize(t *testing.T) {
+	t.Parallel()
+	muPhaseLateTransform.Lock()
+	defer muPhaseLateTransform.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -638,6 +677,7 @@ func TestMigrateCloudflareRulesetSanitize(t *testing.T) {
 
 // TestMigrateCloudflareRulesetConfigSettings tests migration of config_settings phase rules
 func TestMigrateCloudflareRulesetConfigSettings(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -687,6 +727,7 @@ func TestMigrateCloudflareRulesetConfigSettings(t *testing.T) {
 
 // TestMigrateCloudflareRulesetCustomErrors tests migration of custom_errors phase rules
 func TestMigrateCloudflareRulesetCustomErrors(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -733,6 +774,7 @@ func TestMigrateCloudflareRulesetCustomErrors(t *testing.T) {
 
 // TestMigrateCloudflareRulesetResponseCompression tests migration of response_compression phase rules
 func TestMigrateCloudflareRulesetResponseCompression(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -778,6 +820,7 @@ func TestMigrateCloudflareRulesetResponseCompression(t *testing.T) {
 
 // TestMigrateCloudflareRulesetResponseFirewall tests migration of response_firewall_managed phase rules
 func TestMigrateCloudflareRulesetResponseFirewall(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
@@ -819,6 +862,9 @@ func TestMigrateCloudflareRulesetResponseFirewall(t *testing.T) {
 
 // TestMigrateCloudflareRulesetSBFM tests migration of SBFM (Super Bot Fight Mode) phase rules
 func TestMigrateCloudflareRulesetSBFM(t *testing.T) {
+	t.Parallel()
+	muPhaseFirewallCustom.Lock()
+	defer muPhaseFirewallCustom.Unlock()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	tmpDir := t.TempDir()
