@@ -54,7 +54,9 @@ sections, there is the need to migrate attributes and potentially the resource r
 [version 5 migration guide](version-5-migration).
 
 For automatic configuration (HCL) migrations, use [tf-migrate], the official
-Cloudflare Terraform Provider migration tool.
+Cloudflare Terraform Provider migration tool. It handles resource renames,
+attribute changes, block restructuring, `moved {}` blocks, and `import {}`
+blocks for new v5 resources — across 80+ resource types.
 
 **Installation:**
 
@@ -67,11 +69,17 @@ go install github.com/cloudflare/tf-migrate/cmd/tf-migrate@latest
 **Migrate your configuration:**
 
 ```bash
-# Preview changes (dry run)
+# Preview changes without modifying files (dry run)
 tf-migrate migrate --dry-run --source-version v4 --target-version v5
 
-# Apply the migration
+# Apply the migration in-place
 tf-migrate migrate --source-version v4 --target-version v5
+
+# Apply the migration, specifying an explicit provider version
+tf-migrate migrate \
+  --source-version v4 \
+  --target-version v5 \
+  --target-provider-version 5.x.y
 ```
 
 **Migrate specific resources only:**
@@ -83,17 +91,74 @@ tf-migrate migrate \
   --target-version v5
 ```
 
+After migration, tf-migrate prints a summary of actionable warnings (manual
+steps required) and informational notices (changes applied automatically). Use
+`--verbose` to see all notices, or `--quiet` to suppress everything except errors.
+
+#### Phased migration for `cloudflare_zone_settings_override`
+
+`cloudflare_zone_settings_override` has no equivalent in v5 — each setting
+becomes an independent `cloudflare_zone_setting` resource. Because v4 state
+entries for `cloudflare_zone_settings_override` must be removed **before**
+switching to the v5 provider (to avoid schema conflicts), tf-migrate handles
+this automatically in two phases when it detects these resources:
+
+**Phase 1 (first run):**
+
+tf-migrate comments out each `cloudflare_zone_settings_override` block and
+replaces it with a `removed { lifecycle { destroy = false } }` block:
+
+```hcl
+# tf-migrate: resource "cloudflare_zone_settings_override" "example" {
+# tf-migrate:   zone_id = var.zone_id
+# tf-migrate:   settings {
+# tf-migrate:     always_online = "on"
+# tf-migrate:   }
+# tf-migrate: }
+
+removed {
+  from = cloudflare_zone_settings_override.example
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+Commit and push these files. Your CI/CD pipeline (e.g. Atlantis) will apply
+using the **current v4 provider**, which processes the `removed {}` blocks and
+drops the state entries without affecting infrastructure.
+
+**Phase 2 (second run, after v4 apply succeeds):**
+
+Re-run `tf-migrate migrate` in the same directory. It detects the commented-out
+blocks and prompts:
+
+```
+It looks like phase 1 has already run (resource blocks are commented out).
+Did you apply the v4 config and remove the resources from state? [y/N]:
+```
+
+On confirmation, tf-migrate uncomments the resource blocks, removes the
+`removed {}` blocks, and runs the full v4→v5 migration — splitting each
+`cloudflare_zone_settings_override` into individual `cloudflare_zone_setting`
+resources.
+
+If your workspace does not use `cloudflare_zone_settings_override`, tf-migrate
+completes the migration in a single pass.
+
 ~> `tf-migrate` handles configuration (HCL) transformations only. State migration
 is handled automatically by the v5 provider's built-in state upgraders when you
 run `terraform plan` or `terraform apply`. See the
 [version 5 migration guide](version-5-migration) for details.
 
-~> While all efforts have been made to ease the transition, some of the more complex
-resources that may contain difficult to reconcile resources have been intentionally
-skipped for the automatic migration and are only manually documented. If you are
-using modules or other dynamic features of HCL, the provided codemods may not be
-as effective. We recommend reviewing the manual migration notes to verify all the
-changes.
+~> While all efforts have been made to ease the transition, some resources require
+manual steps after migration. tf-migrate prints actionable warnings with exact
+file paths and commands when manual intervention is needed. Search migrated files
+for `MIGRATION WARNING` to find all locations requiring attention:
+
+```bash
+grep -rn "MIGRATION WARNING" ./terraform
+```
 
 ### Manual
 
@@ -205,8 +270,6 @@ for detailed instructions.
 ## cloudflare_dlp_profile
 
 - Renamed to `cloudflare_zero_trust_custom_dlp_profile` or `cloudflare_zero_trust_predefined_dlp_profile` depending on which you are targeting.
-
-- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
 
 ## cloudflare_fallback_domain / cloudflare_zero_trust_local_fallback_domain
 
@@ -457,8 +520,6 @@ resource "cloudflare_api_token" "example" {
 
 In version 4, `cloudflare_authenticated_origin_pulls` was a single polymorphic resource that handled three different modes of Authenticated Origin Pulls (AOP) based on which optional attributes were set. In version 5, this has been split into separate resources that map to distinct API endpoints.
 
-- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
-
 **Migration Note:** After importing resources, you may see computed fields (like `id`, `status`, `expires_on`) refresh on the first `terraform plan`. This is expected behavior as Terraform populates these values from the API. Additionally, certificate resources require a temporary `lifecycle { ignore_changes = [private_key] }` block after import, since the API doesn't return private keys for security reasons.
 
 **Migration paths by mode:**
@@ -663,8 +724,6 @@ Delete outputs entirely during migration, add them back after verification is co
 ## cloudflare_authenticated_origin_pulls_certificate
 
 In version 4, this resource had a `type` attribute with values `"per-zone"` or `"per-hostname"` to differentiate between zone-level and hostname-level certificates. In version 5, these are now separate resources.
-
-- See [tf-migrate resource rename limitations](version-5-migration#tf-migrate-resource-rename-limitations) for conditional rename caveats.
 
 ### Per-Zone Certificate
 

@@ -6,6 +6,9 @@ import (
 	"os"
 	"testing"
 
+	cloudflare "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -27,10 +30,51 @@ func init() {
 
 func testSweepCloudflareZeroTrustGatewaySettings(r string) error {
 	ctx := context.Background()
-	// Gateway Settings is an account-level gateway configuration setting.
-	// It's a singleton setting per account, not something that accumulates.
-	// No sweeping required.
-	tflog.Info(ctx, "Zero Trust Gateway Settings doesn't require sweeping (account setting)")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		tflog.Warn(ctx, "CLOUDFLARE_ACCOUNT_ID not set, skipping gateway settings sweep")
+		return nil
+	}
+
+	apiKey := os.Getenv("CLOUDFLARE_API_KEY")
+	email := os.Getenv("CLOUDFLARE_EMAIL")
+	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
+
+	var client *cloudflare.Client
+	var err error
+	if apiToken != "" {
+		client = cloudflare.NewClient(option.WithAPIToken(apiToken))
+	} else {
+		client = cloudflare.NewClient(
+			option.WithAPIKey(apiKey),
+			option.WithAPIEmail(email),
+		)
+	}
+	if err != nil {
+		return fmt.Errorf("error creating Cloudflare client: %w", err)
+	}
+
+	// Reset gateway settings to clean defaults so subsequent test runs start
+	// from a known state. Tests that enable fips.tls, body_scanning deep
+	// inspection, or tls_decrypt leave the account in a state that causes
+	// error 2211 ("TLS decryption cannot be enabled without a certificate")
+	// for any test that follows.
+	tflog.Info(ctx, "Sweeping Zero Trust Gateway Settings — resetting to clean defaults")
+	_, err = client.ZeroTrust.Gateway.Configurations.Update(ctx, zero_trust.GatewayConfigurationUpdateParams{
+		AccountID: cloudflare.F(accountID),
+		Settings: cloudflare.F(zero_trust.GatewayConfigurationSettingsParam{
+			ActivityLog:       cloudflare.F(zero_trust.ActivityLogSettingsParam{Enabled: cloudflare.F(false)}),
+			TLSDecrypt:        cloudflare.F(zero_trust.TLSSettingsParam{Enabled: cloudflare.F(false)}),
+			ProtocolDetection: cloudflare.F(zero_trust.ProtocolDetectionParam{Enabled: cloudflare.F(false)}),
+			BodyScanning:      cloudflare.F(zero_trust.BodyScanningSettingsParam{InspectionMode: cloudflare.F(zero_trust.BodyScanningSettingsInspectionModeShallow)}),
+		}),
+	})
+	if err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Failed to reset gateway settings: %s", err))
+		// Non-fatal — log and continue so other sweepers still run
+	} else {
+		tflog.Info(ctx, "Zero Trust Gateway Settings reset to clean defaults")
+	}
 	return nil
 }
 

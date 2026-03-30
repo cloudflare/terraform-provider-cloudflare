@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.19.0-beta.4 (2026-03-30)
+
+Full Changelog: [v5.19.0-beta.3...v5.19.0-beta.4](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.3...v5.19.0-beta.4)
+
+### Features
+
+* **docs:** update migration guide ([6fc1e14](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6fc1e14a1c70f8457c3c174a18bbe53d299aa108))
+* **tests:** migration model parity tests ([b6d60d7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b6d60d701aec05a586585ce992b657de7de5d45e))
+
+
+### Bug Fixes
+
+* **healthcheck:** use buildHealthcheckPlanChecks helper for correct plan checks per migration source ([f5746e2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f5746e21b11035577d2857a7468a8710ef9adf7a))
+* **ruleset/v500:** add redirects_for_ai_training to SourceV4ActionParametersModel ([16470fa](https://github.com/cloudflare/terraform-provider-cloudflare/commit/16470faa78de35630cc609b9314e21c26c488cf8))
+* **ruleset:** fix migration ([a07c0da](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a07c0da1686cfab859814e1c280fd923202eb620))
+* **rulesets:** duplicate model attribute ([819a40c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/819a40c6fa8e15bef300e73706f7a3f930e8b902))
+* **zero_trust_access_policy:** fix testdata ([866f6ac](https://github.com/cloudflare/terraform-provider-cloudflare/commit/866f6ac8555e2b47b34bb7a59002d07481fafafa))
+* **zero_trust_gateway_settings:** breaking changes ([b5ca509](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b5ca5093543bc2e8ddc91112d87477249bef5163))
+* **zero_trust_gateway_settings:** implement sweeper to reset account to clean defaults ([d996a66](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d996a6649a97345f905d030ed15549d26ad3aab4))
+
+
+### Chores
+
+* **pipeline_resources:** update docs ([edfa566](https://github.com/cloudflare/terraform-provider-cloudflare/commit/edfa5661cf88a9347ac16869edc517e1ddcecc94))
+
 ## 5.19.0-beta.3 (2026-03-27)
 
 Full Changelog: [v5.19.0-beta.2...v5.19.0-beta.3](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.2...v5.19.0-beta.3)
