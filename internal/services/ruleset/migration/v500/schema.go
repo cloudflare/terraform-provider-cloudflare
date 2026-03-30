@@ -161,6 +161,9 @@ func SourceV4RulesetSchema() schema.Schema {
 									"rocket_loader": schema.BoolAttribute{
 										Optional: true,
 									},
+									"redirects_for_ai_training": schema.BoolAttribute{
+										Optional: true,
+									},
 									"rules": schema.MapAttribute{
 										ElementType: types.StringType,
 										Optional:    true,
