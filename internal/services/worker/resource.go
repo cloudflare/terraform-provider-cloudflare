@@ -319,14 +319,8 @@ func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 	data = &env.Result
 
-	buildsPtr, buildsDiags := data.Builds.Value(ctx)
-	if buildsDiags.HasError() {
-		resp.Diagnostics.Append(buildsDiags...)
-		return
-	}
-
-	if buildsPtr != nil && !data.Builds.IsNull() {
-		builds := *buildsPtr
+	if len(data.Builds) > 0 {
+		builds := data.Builds[0]
 
 		if !builds.Enabled.IsNull() && builds.Enabled.ValueBool() {
 			accountID := data.AccountID.ValueString()
@@ -435,20 +429,9 @@ func (r *WorkerResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 	data = &env.Result
 
-	planBuildsPtr, planBuildsDiags := data.Builds.Value(ctx)
-	if planBuildsDiags.HasError() {
-		resp.Diagnostics.Append(planBuildsDiags...)
-		return
-	}
+	if len(data.Builds) > 0 {
+		planBuilds := data.Builds[0]
 
-	stateBuildsPtr, stateBuildsDiags := state.Builds.Value(ctx)
-	if stateBuildsDiags.HasError() {
-		resp.Diagnostics.Append(stateBuildsDiags...)
-		return
-	}
-
-	if planBuildsPtr != nil && !data.Builds.IsNull() {
-		planBuilds := *planBuildsPtr
 		if !planBuilds.Enabled.IsNull() && planBuilds.Enabled.ValueBool() {
 			accountID := data.AccountID.ValueString()
 			scriptName := data.Name.ValueString()
@@ -543,7 +526,7 @@ func (r *WorkerResource) Update(ctx context.Context, req resource.UpdateRequest,
 				}
 			}
 		}
-	} else if stateBuildsPtr != nil && !state.Builds.IsNull() && (planBuildsPtr == nil || planBuildsPtr.Enabled.IsNull() || !planBuildsPtr.Enabled.ValueBool()) {
+	} else if len(state.Builds) > 0 && (len(data.Builds) == 0 || data.Builds[0].Enabled.IsNull() || !data.Builds[0].Enabled.ValueBool()) {
 		accountID := data.AccountID.ValueString()
 		scriptName := data.Name.ValueString()
 
@@ -687,7 +670,6 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 	if (!plan.Name.IsUnknown() && !plan.Name.Equal(state.Name)) ||
 		(!plan.Logpush.IsUnknown() && !plan.Logpush.Equal(state.Logpush)) ||
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
-		(!plan.Builds.IsUnknown() && !plan.Builds.Equal(state.Builds)) ||
 		(!plan.Observability.IsUnknown() && !plan.Observability.Equal(state.Observability)) ||
 		(!plan.Subdomain.IsUnknown() && !plan.Subdomain.Equal(state.Subdomain)) ||
 		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {

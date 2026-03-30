@@ -19,7 +19,7 @@ type WorkerModel struct {
 	Name          types.String                                          `tfsdk:"name" json:"name,required"`
 	Logpush       types.Bool                                            `tfsdk:"logpush" json:"logpush,computed_optional"`
 	Tags          customfield.Set[types.String]                         `tfsdk:"tags" json:"tags,computed_optional"`
-	Builds        customfield.NestedObject[WorkerBuildsModel]           `tfsdk:"builds" json:"builds,computed_optional"`
+	Builds        []WorkerBuildsModel                                   `tfsdk:"builds" json:"builds,computed_optional"`
 	Observability customfield.NestedObject[WorkerObservabilityModel]    `tfsdk:"observability" json:"observability,computed_optional"`
 	Subdomain     customfield.NestedObject[WorkerSubdomainModel]        `tfsdk:"subdomain" json:"subdomain,computed_optional"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`

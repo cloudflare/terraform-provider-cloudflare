@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -17,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -54,82 +52,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 				Default:     setdefault.StaticValue(customfield.NewSetMust[types.String](ctx, nil).SetValue),
-			},
-			"builds": schema.SingleNestedAttribute{
-				Description: "Workers Builds configuration for CI/CD integration with Git repositories.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkerBuildsModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"enabled": schema.BoolAttribute{
-						Description: "Whether Workers Builds is enabled for the Worker.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-					"build_command": schema.StringAttribute{
-						Description: "The build command to execute when deploying the Worker.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"deploy_command": schema.StringAttribute{
-						Description: "The deploy command to execute when deploying the Worker.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"non_production_deployments_enabled": schema.BoolAttribute{
-						Description: "Whether to trigger builds for non-production branches.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"branch": schema.StringAttribute{
-						Description: "The Git branch to use for production deployments.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"branch_includes": schema.ListAttribute{
-						Description: "Branches to include for preview deployments.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
-						ElementType: types.StringType,
-					},
-					"branch_excludes": schema.ListAttribute{
-						Description: "Branches to exclude from preview deployments.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
-						ElementType: types.StringType,
-					},
-					"provider_type": schema.StringAttribute{
-						Description: "The source control management provider. Available values: \"github\", \"gitlab\".",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("github", "gitlab"),
-						},
-					},
-					"provider_account_name": schema.StringAttribute{
-						Description: "The account name of the Git provider (e.g., organization or username).",
-						Computed:    true,
-						Optional:    true,
-					},
-					"provider_account_id": schema.StringAttribute{
-						Description: "The account ID of the Git provider.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"repo_id": schema.StringAttribute{
-						Description: "The ID of the repository.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"repo_name": schema.StringAttribute{
-						Description: "The name of the repository.",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
 			},
 			"observability": schema.SingleNestedAttribute{
 				Description: "Observability settings for the Worker.",
@@ -374,6 +296,69 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 							},
+						},
+					},
+				},
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"builds": schema.ListNestedBlock{
+				Description: "Workers Builds configuration for CI/CD integration with Git repositories.",
+				NestedObject: schema.NestedBlockObject{
+					Attributes: map[string]schema.Attribute{
+						"enabled": schema.BoolAttribute{
+							Description: "Whether Workers Builds is enabled for the Worker.",
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(false),
+						},
+						"build_command": schema.StringAttribute{
+							Description: "The build command to execute when deploying the Worker.",
+							Optional:    true,
+						},
+						"deploy_command": schema.StringAttribute{
+							Description: "The deploy command to execute when deploying the Worker.",
+							Optional:    true,
+						},
+						"non_production_deployments_enabled": schema.BoolAttribute{
+							Description: "Whether to trigger builds for non-production branches.",
+							Optional:    true,
+						},
+						"branch": schema.StringAttribute{
+							Description: "The Git branch to use for production deployments.",
+							Optional:    true,
+						},
+						"branch_includes": schema.ListAttribute{
+							Description: "Branches to include for preview deployments.",
+							Optional:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"branch_excludes": schema.ListAttribute{
+							Description: "Branches to exclude from preview deployments.",
+							Optional:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"provider_type": schema.StringAttribute{
+							Description: "The source control management provider. Available values: \"github\", \"gitlab\".",
+							Optional:    true,
+						},
+						"provider_account_name": schema.StringAttribute{
+							Description: "The account name of the Git provider (e.g., organization or username).",
+							Optional:    true,
+						},
+						"provider_account_id": schema.StringAttribute{
+							Description: "The account ID of the Git provider.",
+							Optional:    true,
+						},
+						"repo_id": schema.StringAttribute{
+							Description: "The ID of the repository.",
+							Optional:    true,
+						},
+						"repo_name": schema.StringAttribute{
+							Description: "The name of the repository.",
+							Optional:    true,
 						},
 					},
 				},
