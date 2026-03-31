@@ -18,17 +18,20 @@ type ConnectivityDirectoryServiceResultDataSourceEnvelope struct {
 }
 
 type ConnectivityDirectoryServiceDataSourceModel struct {
-	ID        types.String                                                              `tfsdk:"id" path:"service_id,computed"`
-	ServiceID types.String                                                              `tfsdk:"service_id" path:"service_id,computed_optional"`
-	AccountID types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
-	CreatedAt timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	HTTPPort  types.Int64                                                               `tfsdk:"http_port" json:"http_port,computed"`
-	HTTPSPort types.Int64                                                               `tfsdk:"https_port" json:"https_port,computed"`
-	Name      types.String                                                              `tfsdk:"name" json:"name,computed"`
-	Type      types.String                                                              `tfsdk:"type" json:"type,computed"`
-	UpdatedAt timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Host      customfield.NestedObject[ConnectivityDirectoryServiceHostDataSourceModel] `tfsdk:"host" json:"host,computed"`
-	Filter    *ConnectivityDirectoryServiceFindOneByDataSourceModel                     `tfsdk:"filter"`
+	ID          types.String                                                                     `tfsdk:"id" path:"service_id,computed"`
+	ServiceID   types.String                                                                     `tfsdk:"service_id" path:"service_id,computed_optional"`
+	AccountID   types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AppProtocol types.String                                                                     `tfsdk:"app_protocol" json:"app_protocol,computed"`
+	CreatedAt   timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	HTTPPort    types.Int64                                                                      `tfsdk:"http_port" json:"http_port,computed"`
+	HTTPSPort   types.Int64                                                                      `tfsdk:"https_port" json:"https_port,computed"`
+	Name        types.String                                                                     `tfsdk:"name" json:"name,computed"`
+	TCPPort     types.Int64                                                                      `tfsdk:"tcp_port" json:"tcp_port,computed"`
+	Type        types.String                                                                     `tfsdk:"type" json:"type,computed"`
+	UpdatedAt   timetypes.RFC3339                                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Host        customfield.NestedObject[ConnectivityDirectoryServiceHostDataSourceModel]        `tfsdk:"host" json:"host,computed"`
+	TLSSettings customfield.NestedObject[ConnectivityDirectoryServiceTLSSettingsDataSourceModel] `tfsdk:"tls_settings" json:"tls_settings,computed"`
+	Filter      *ConnectivityDirectoryServiceFindOneByDataSourceModel                            `tfsdk:"filter"`
 }
 
 func (m *ConnectivityDirectoryServiceDataSourceModel) toReadParams(_ context.Context) (params connectivity.DirectoryServiceGetParams, diags diag.Diagnostics) {
@@ -66,6 +69,10 @@ type ConnectivityDirectoryServiceHostNetworkDataSourceModel struct {
 type ConnectivityDirectoryServiceHostResolverNetworkDataSourceModel struct {
 	TunnelID    types.String                   `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	ResolverIPs customfield.List[types.String] `tfsdk:"resolver_ips" json:"resolver_ips,computed"`
+}
+
+type ConnectivityDirectoryServiceTLSSettingsDataSourceModel struct {
+	CERTVerificationMode types.String `tfsdk:"cert_verification_mode" json:"cert_verification_mode,computed"`
 }
 
 type ConnectivityDirectoryServiceFindOneByDataSourceModel struct {

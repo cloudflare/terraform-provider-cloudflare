@@ -289,11 +289,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("rrf"),
 			},
-			"hybrid_search_enabled": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				Default:  booldefault.StaticBool(false),
-			},
 			"max_num_results": schema.Int64Attribute{
 				Computed: true,
 				Optional: true,
@@ -329,6 +324,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 				Optional: true,
 				Default:  booldefault.StaticBool(false),
+			},
+			"index_method": schema.SingleNestedAttribute{
+				Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword": schema.BoolAttribute{
+						Description: "Enable keyword (BM25) storage backend.",
+						Required:    true,
+					},
+					"vector": schema.BoolAttribute{
+						Description: "Enable vector (embedding) storage backend.",
+						Required:    true,
+					},
+				},
 			},
 			"indexing_options": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -634,6 +645,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"engine_version": schema.Float64Attribute{
 				Computed: true,
 				Default:  float64default.StaticFloat64(2),
+			},
+			"hybrid_search_enabled": schema.BoolAttribute{
+				Description:        "Deprecated — use index_method instead.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				Default:            booldefault.StaticBool(false),
 			},
 			"last_activity": schema.StringAttribute{
 				Computed:      true,

@@ -59,6 +59,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_origin_trust_store"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_page_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
@@ -636,6 +637,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		custom_page_asset.NewResource,
 		pipeline.NewResource,
 		pipeline_sink.NewResource,
 		pipeline_stream.NewResource,
@@ -1014,6 +1016,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		custom_page_asset.NewCustomPageAssetDataSource,
+		custom_page_asset.NewCustomPageAssetsDataSource,
 		pipeline.NewPipelineDataSource,
 		pipeline_sink.NewPipelineSinkDataSource,
 		pipeline_sink.NewPipelineSinksDataSource,

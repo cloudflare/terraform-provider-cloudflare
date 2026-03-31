@@ -14,7 +14,10 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   }]
   embedding_model = "@cf/qwen/qwen3-embedding-0.6b"
   fusion_method = "max"
-  hybrid_search_enabled = true
+  index_method = {
+    keyword = true
+    vector = true
+  }
   indexing_options = {
     keyword_tokenizer = "porter"
   }

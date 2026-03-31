@@ -30,6 +30,7 @@ type WorkerVersionModel struct {
 	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
 	Limits             customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
 	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	MigrationTag       types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
 	Source             types.String                                             `tfsdk:"source" json:"source,computed"`
 	MainScriptBase64   types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`

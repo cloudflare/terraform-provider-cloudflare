@@ -195,7 +195,24 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"hybrid_search_enabled": schema.BoolAttribute{
-							Computed: true,
+							Description:        "Deprecated — use index_method instead.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+						},
+						"index_method": schema.SingleNestedAttribute{
+							Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[AISearchInstancesIndexMethodDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"keyword": schema.BoolAttribute{
+									Description: "Enable keyword (BM25) storage backend.",
+									Computed:    true,
+								},
+								"vector": schema.BoolAttribute{
+									Description: "Enable vector (embedding) storage backend.",
+									Computed:    true,
+								},
+							},
 						},
 						"indexing_options": schema.SingleNestedAttribute{
 							Computed:   true,

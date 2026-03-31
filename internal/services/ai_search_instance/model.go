@@ -36,13 +36,13 @@ type AISearchInstanceModel struct {
 	ChunkOverlap                   types.Int64                                                         `tfsdk:"chunk_overlap" json:"chunk_overlap,computed_optional"`
 	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,computed_optional"`
 	FusionMethod                   types.String                                                        `tfsdk:"fusion_method" json:"fusion_method,computed_optional"`
-	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed_optional"`
 	MaxNumResults                  types.Int64                                                         `tfsdk:"max_num_results" json:"max_num_results,computed_optional"`
 	Paused                         types.Bool                                                          `tfsdk:"paused" json:"paused,computed_optional"`
 	Reranking                      types.Bool                                                          `tfsdk:"reranking" json:"reranking,computed_optional"`
 	RewriteQuery                   types.Bool                                                          `tfsdk:"rewrite_query" json:"rewrite_query,computed_optional"`
 	ScoreThreshold                 types.Float64                                                       `tfsdk:"score_threshold" json:"score_threshold,computed_optional"`
 	Summarization                  types.Bool                                                          `tfsdk:"summarization" json:"summarization,computed_optional,no_refresh"`
+	IndexMethod                    customfield.NestedObject[AISearchInstanceIndexMethodModel]          `tfsdk:"index_method" json:"index_method,computed_optional"`
 	IndexingOptions                customfield.NestedObject[AISearchInstanceIndexingOptionsModel]      `tfsdk:"indexing_options" json:"indexing_options,computed_optional"`
 	PublicEndpointParams           customfield.NestedObject[AISearchInstancePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
 	RetrievalOptions               customfield.NestedObject[AISearchInstanceRetrievalOptionsModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed_optional"`
@@ -51,6 +51,7 @@ type AISearchInstanceModel struct {
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
 	Enable                         types.Bool                                                          `tfsdk:"enable" json:"enable,computed"`
 	EngineVersion                  types.Float64                                                       `tfsdk:"engine_version" json:"engine_version,computed"`
+	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
@@ -75,6 +76,11 @@ type AISearchInstanceCustomMetadataModel struct {
 type AISearchInstanceMetadataModel struct {
 	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
 	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
+}
+
+type AISearchInstanceIndexMethodModel struct {
+	Keyword types.Bool `tfsdk:"keyword" json:"keyword,required"`
+	Vector  types.Bool `tfsdk:"vector" json:"vector,required"`
 }
 
 type AISearchInstanceIndexingOptionsModel struct {

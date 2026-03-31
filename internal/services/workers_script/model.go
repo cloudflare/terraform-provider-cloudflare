@@ -162,7 +162,6 @@ type WorkersScriptMetadataBindingsModel struct {
 	WorkflowName                types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
 	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,optional"`
 	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
-	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Environment                 types.String                                `tfsdk:"environment" json:"environment,optional"`
 	OldName                     types.String                                `tfsdk:"old_name" json:"old_name,optional"`
 	AllowedDestinationAddresses *[]types.String                             `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,optional"`

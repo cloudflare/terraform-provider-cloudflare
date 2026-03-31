@@ -672,6 +672,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"migration_tag": schema.StringAttribute{
+				Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",
+				Computed:    true,
+			},
 			"number": schema.Int64Attribute{
 				Description: "The integer version number, starting from one.",
 				Computed:    true,

@@ -9,5 +9,5 @@ export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v
 
 REPLACEMENT="${1:-"../cloudflare-go"}"
 echo "==> Replacing Go SDK with $REPLACEMENT"
-go mod edit -replace github.com/cloudflare/cloudflare-go="$REPLACEMENT"
+go mod edit -replace github.com/cloudflare/cloudflare-go/v6="$REPLACEMENT"
 go mod tidy -e

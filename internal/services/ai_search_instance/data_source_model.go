@@ -50,6 +50,7 @@ type AISearchInstanceDataSourceModel struct {
 	TokenID              types.String                                                                  `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                  `tfsdk:"type" json:"type,computed"`
 	CustomMetadata       customfield.NestedObjectList[AISearchInstanceCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
+	IndexMethod          customfield.NestedObject[AISearchInstanceIndexMethodDataSourceModel]          `tfsdk:"index_method" json:"index_method,computed"`
 	IndexingOptions      customfield.NestedObject[AISearchInstanceIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
 	Metadata             customfield.NestedObject[AISearchInstanceMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchInstancePublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
@@ -90,6 +91,11 @@ func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (param
 type AISearchInstanceCustomMetadataDataSourceModel struct {
 	DataType  types.String `tfsdk:"data_type" json:"data_type,computed"`
 	FieldName types.String `tfsdk:"field_name" json:"field_name,computed"`
+}
+
+type AISearchInstanceIndexMethodDataSourceModel struct {
+	Keyword types.Bool `tfsdk:"keyword" json:"keyword,computed"`
+	Vector  types.Bool `tfsdk:"vector" json:"vector,computed"`
 }
 
 type AISearchInstanceIndexingOptionsDataSourceModel struct {

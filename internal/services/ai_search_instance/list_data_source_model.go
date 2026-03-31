@@ -65,6 +65,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	EngineVersion        types.Float64                                                                  `tfsdk:"engine_version" json:"engine_version,computed"`
 	FusionMethod         types.String                                                                   `tfsdk:"fusion_method" json:"fusion_method,computed"`
 	HybridSearchEnabled  types.Bool                                                                     `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
+	IndexMethod          customfield.NestedObject[AISearchInstancesIndexMethodDataSourceModel]          `tfsdk:"index_method" json:"index_method,computed"`
 	IndexingOptions      customfield.NestedObject[AISearchInstancesIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
 	LastActivity         timetypes.RFC3339                                                              `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	MaxNumResults        types.Int64                                                                    `tfsdk:"max_num_results" json:"max_num_results,computed"`
@@ -90,6 +91,11 @@ type AISearchInstancesResultDataSourceModel struct {
 type AISearchInstancesCustomMetadataDataSourceModel struct {
 	DataType  types.String `tfsdk:"data_type" json:"data_type,computed"`
 	FieldName types.String `tfsdk:"field_name" json:"field_name,computed"`
+}
+
+type AISearchInstancesIndexMethodDataSourceModel struct {
+	Keyword types.Bool `tfsdk:"keyword" json:"keyword,computed"`
+	Vector  types.Bool `tfsdk:"vector" json:"vector,computed"`
 }
 
 type AISearchInstancesIndexingOptionsDataSourceModel struct {

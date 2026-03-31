@@ -53,13 +53,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"sensitivity_levels": schema.ListAttribute{
-				Description: "Sensitivity levels to associate with the profile as (group_id, level_id) tuples.",
-				Optional:    true,
-				ElementType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
 				Optional:           true,
@@ -139,6 +132,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Optional: true,
+						},
+					},
+				},
+			},
+			"sensitivity_levels": schema.ListNestedAttribute{
+				Description: "Sensitivity levels to associate with the profile.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"group_id": schema.StringAttribute{
+							Required: true,
+						},
+						"level_id": schema.StringAttribute{
+							Required: true,
 						},
 					},
 				},

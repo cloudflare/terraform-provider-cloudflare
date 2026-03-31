@@ -437,6 +437,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules).",
 							Computed:    true,
 						},
+						"migration_tag": schema.StringAttribute{
+							Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",
+							Computed:    true,
+						},
 						"migrations": schema.SingleNestedAttribute{
 							Description: "Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed.",
 							Computed:    true,
