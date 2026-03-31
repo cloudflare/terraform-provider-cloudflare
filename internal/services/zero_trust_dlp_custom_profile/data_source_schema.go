@@ -96,14 +96,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"sensitivity_levels": schema.ListAttribute{
-				Description: "Sensitivity levels associated with this profile as (group_id, level_id) tuples.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[customfield.List[types.String]](ctx),
-				ElementType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
 				Computed:           true,
@@ -234,6 +226,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"word_list": schema.StringAttribute{
 							Computed:   true,
 							CustomType: jsontypes.NormalizedType{},
+						},
+					},
+				},
+			},
+			"sensitivity_levels": schema.ListNestedAttribute{
+				Description: "Sensitivity levels associated with this profile.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileSensitivityLevelsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"group_id": schema.StringAttribute{
+							Computed: true,
+						},
+						"level_id": schema.StringAttribute{
+							Computed: true,
 						},
 					},
 				},

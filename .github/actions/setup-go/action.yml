@@ -1,0 +1,29 @@
+name: Setup Go
+description: 'Sets up Go environment with private modules'
+inputs:
+  stainless-api-key:
+    required: false
+    description: the value of the STAINLESS_API_KEY secret
+runs:
+  using: composite
+  steps:
+    - uses: stainless-api/retrieve-github-access-token@v1
+      id: get_token
+      if: github.repository == 'stainless-sdks/cloudflare-terraform'
+      with:
+        repo: stainless-sdks/cloudflare-go
+        stainless-api-key: ${{ inputs.stainless-api-key }}
+
+    - name: Configure Git for to access Go SDK's staging repo
+      if: github.repository == 'stainless-sdks/cloudflare-terraform'
+      shell: bash
+      run: git config --global url."https://x-access-token:${{ steps.get_token.outputs.github_access_token }}@github.com/stainless-sdks/cloudflare-go".insteadOf "https://github.com/stainless-sdks/cloudflare-go"
+
+    - name: Setup go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: ./go.mod
+
+    - name: Bootstrap
+      shell: bash
+      run: ./scripts/bootstrap

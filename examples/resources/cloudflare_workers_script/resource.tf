@@ -85,5 +85,5 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }]
     usage_model = "standard"
   }
-  files = [null]
+  files = ["Example data"]
 }

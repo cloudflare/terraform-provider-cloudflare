@@ -27,6 +27,7 @@ type WorkerVersionDataSourceModel struct {
 	CompatibilityDate  types.String                                                       `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
 	CreatedOn          timetypes.RFC3339                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	MainModule         types.String                                                       `tfsdk:"main_module" json:"main_module,computed"`
+	MigrationTag       types.String                                                       `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	Number             types.Int64                                                        `tfsdk:"number" json:"number,computed"`
 	Source             types.String                                                       `tfsdk:"source" json:"source,computed"`
 	StartupTimeMs      types.Int64                                                        `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`

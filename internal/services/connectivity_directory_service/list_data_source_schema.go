@@ -25,10 +25,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "http".`,
+				Description: `Available values: "tcp", "http".`,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("http"),
+					stringvalidator.OneOfCaseInsensitive("tcp", "http"),
 				},
 			},
 			"max_items": schema.Int64Attribute{
@@ -44,9 +44,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ConnectivityDirectoryServicesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Computed: true,
-						},
 						"host": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ConnectivityDirectoryServicesHostDataSourceModel](ctx),
@@ -89,10 +86,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "http".`,
+							Description: `Available values: "tcp", "http".`,
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("http"),
+								stringvalidator.OneOfCaseInsensitive("tcp", "http"),
 							},
 						},
 						"created_at": schema.StringAttribute{
@@ -114,9 +111,33 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"service_id": schema.StringAttribute{
 							Computed: true,
 						},
+						"tls_settings": schema.SingleNestedAttribute{
+							Description: "TLS settings for a connectivity service.\n\nIf omitted, the default mode (`verify_full`) is used.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ConnectivityDirectoryServicesTLSSettingsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"cert_verification_mode": schema.StringAttribute{
+									Description: "TLS certificate verification mode for the connection to the origin.\n\n- `\"verify_full\"` — verify certificate chain and hostname (default)\n- `\"verify_ca\"` — verify certificate chain only, skip hostname check\n- `\"disabled\"` — do not verify the server certificate at all",
+									Computed:    true,
+								},
+							},
+						},
 						"updated_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
+						},
+						"app_protocol": schema.StringAttribute{
+							Description: `Available values: "postgresql", "mysql".`,
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("postgresql", "mysql"),
+							},
+						},
+						"tcp_port": schema.Int64Attribute{
+							Computed: true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(1),
+							},
 						},
 					},
 				},

@@ -580,6 +580,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"usages": schema.SetAttribute{
 							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"key_base64": schema.StringAttribute{
@@ -630,6 +631,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the version was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"migration_tag": schema.StringAttribute{
+				Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",
+				Computed:    true,
 			},
 			"number": schema.Int64Attribute{
 				Description: "The integer version number, starting from one.",

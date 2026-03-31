@@ -3,6 +3,7 @@ package apijson
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"reflect"
@@ -19,6 +20,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	type_helpers "github.com/cloudflare/terraform-provider-cloudflare/internal/types"
 )
 
 // decoders is a synchronized map with roughly the following type:
@@ -478,23 +480,44 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.Float64Value{})) {
 		return d.decodeTerraformPrimitive(func() any { return types.Float64Null() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			// use ParseFloat just to validate that it's a valid number
-			_, err := strconv.ParseFloat(node.Str, 64)
-			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
-				return fmt.Errorf("apijson: failed to parse types.Float64Value")
+			var rawVal string
+			switch node.Type {
+			case gjson.String:
+				rawVal = node.Str
+			case gjson.Number:
+				rawVal = node.Raw
+			default:
+				return errors.New("apijson: failed to parse as basetypes.Float64Value")
 			}
-			value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
+
+			f64Val, err := type_helpers.NewFloat64ValueFromString(rawVal)
+			if err != nil {
+				return fmt.Errorf("apijson: %w", err)
+			}
+
+			value.Set(reflect.ValueOf(f64Val))
 			return nil
 		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.NumberValue{})) {
 		return d.decodeTerraformPrimitive(func() any { return types.NumberNull() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			value.Set(reflect.ValueOf(types.NumberValue(big.NewFloat(node.Float()))))
-			_, err := strconv.ParseFloat(node.Str, 64)
-			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
-				return fmt.Errorf("apijson: failed to parse types.Float64Value")
+			var rawVal string
+			switch node.Type {
+			case gjson.String:
+				rawVal = node.Str
+			case gjson.Number:
+				rawVal = node.Raw
+			default:
+				return errors.New("apijson: failed to parse as basetypes.NumberValue")
 			}
+
+			numberVal, err := type_helpers.NewNumberValueFromString(rawVal)
+			if err != nil {
+				return fmt.Errorf("apijson: %w", err)
+			}
+
+			value.Set(reflect.ValueOf(numberVal))
 			return nil
 		})
 	}
@@ -1350,7 +1373,7 @@ func (d *decoderBuilder) inferTerraformAttrFromValue(node gjson.Result) (attr.Va
 		if err == nil {
 			return types.Int64Value(node.Int()), nil
 		}
-		return types.Float64Value(node.Float()), nil
+		return type_helpers.NewFloat64ValueFromString(node.String())
 	case gjson.String:
 		return types.StringValue(node.String()), nil
 	case gjson.JSON:

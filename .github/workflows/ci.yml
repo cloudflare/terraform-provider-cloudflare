@@ -1,16 +1,21 @@
 name: CI
 on:
   push:
-    branches-ignore:
-      - 'generated'
-      - 'codegen/**'
-      - 'integrated/**'
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
+    branches:
+      - '**'
+      - '!integrated/**'
+      - '!stl-preview-head/**'
+      - '!stl-preview-base/**'
+      - '!generated'
+      - '!codegen/**'
+      - 'codegen/stl/**'
   pull_request:
     branches-ignore:
       - 'stl-preview-head/**'
       - 'stl-preview-base/**'
+
+env:
+  GOPRIVATE: github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6
 
 jobs:
   lint:
@@ -19,10 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup go
-        uses: actions/setup-go@v5
+      - uses: ./.github/actions/setup-go
         with:
-          go-version-file: ./go.mod
+          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/cloudflare-terraform'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -36,10 +45,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup go
-        uses: actions/setup-go@v5
+      - uses: ./.github/actions/setup-go
         with:
-          go-version-file: ./go.mod
+          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/cloudflare-terraform'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap

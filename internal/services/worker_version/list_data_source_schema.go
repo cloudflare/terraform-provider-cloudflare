@@ -433,6 +433,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).",
 							Computed:    true,
 						},
+						"migration_tag": schema.StringAttribute{
+							Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",
+							Computed:    true,
+						},
 						"migrations": schema.SingleNestedAttribute{
 							Description: "Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed.",
 							Computed:    true,
