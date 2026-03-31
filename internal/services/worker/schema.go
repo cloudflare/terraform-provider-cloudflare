@@ -70,9 +70,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Default:     float64default.StaticFloat64(1),
-						PlanModifiers: []planmodifier.Float64{
-							NormalizeFloat64(),
-						},
 					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
@@ -91,9 +88,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 								Optional:    true,
 								Default:     float64default.StaticFloat64(1),
-								PlanModifiers: []planmodifier.Float64{
-									NormalizeFloat64(),
-								},
 							},
 							"invocation_logs": schema.BoolAttribute{
 								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
