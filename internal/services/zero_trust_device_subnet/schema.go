@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceSubnetResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the subnet.",
