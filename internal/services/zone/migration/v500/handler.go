@@ -2,21 +2,35 @@ package v500
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
 //
-// This performs a full transformation from v4 → v5 format.
-// The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
+// PriorSchema is nil in migrations.go — v4 SDKv2 state encoding is incompatible with
+// Plugin Framework schema types (e.g. plan stored as string "enterprise" but v5 schema
+// expects SingleNestedAttribute object). We unmarshal raw JSON directly.
 func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading zone state from v4 SDKv2 provider (schema_version=0)")
 
-	// Parse v4 state using v4 model
+	// Unmarshal raw state using the v4 source schema type system
+	sourceSchema := SourceCloudflareZoneSchema()
+	sourceType := sourceSchema.Type().TerraformType(ctx)
+
+	rawValue, err := req.RawState.Unmarshal(sourceType)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to unmarshal v4 zone state",
+			fmt.Sprintf("Could not parse raw state as v4 format: %s", err))
+		return
+	}
+
+	state := tfsdk.State{Raw: rawValue, Schema: sourceSchema}
 	var v4State SourceCloudflareZoneModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
+	resp.Diagnostics.Append(state.Get(ctx, &v4State)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}

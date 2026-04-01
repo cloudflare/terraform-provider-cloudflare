@@ -57,7 +57,6 @@ Read-Only:
 
 - `account_id` (String) Cloudflare Account ID for the bucket
 - `bucket` (String) R2 Bucket to write to
-- `credentials` (Attributes) (see [below for nested schema](#nestedatt--config--credentials))
 - `file_naming` (Attributes) Controls filename prefix/suffix and strategy. (see [below for nested schema](#nestedatt--config--file_naming))
 - `jurisdiction` (String) Jurisdiction this bucket is hosted in
 - `namespace` (String) Table namespace
@@ -65,16 +64,6 @@ Read-Only:
 - `path` (String) Subpath within the bucket to write to
 - `rolling_policy` (Attributes) Rolling policy for file sinks (when & why to close a file and open a new one). (see [below for nested schema](#nestedatt--config--rolling_policy))
 - `table_name` (String) Table name
-- `token` (String) Authentication token
-
-<a id="nestedatt--config--credentials"></a>
-### Nested Schema for `config.credentials`
-
-Read-Only:
-
-- `access_key_id` (String) Cloudflare Account ID for the bucket
-- `secret_access_key` (String) Cloudflare Account ID for the bucket
-
 
 <a id="nestedatt--config--file_naming"></a>
 ### Nested Schema for `config.file_naming`

@@ -44,5 +44,5 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	// No transformation needed - state is already in v5 format
 	// Just copy the state as-is to bump the version from 1 → 500
-	resp.Diagnostics.Append(resp.State.Set(ctx, req.RawState)...)
+	resp.State.Raw = req.State.Raw
 }

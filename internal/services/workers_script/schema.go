@@ -199,6 +199,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"secret_text",
 									"send_email",
 									"service",
+									"tail_consumer",
 									"text_blob",
 									"vectorize",
 									"version_metadata",
@@ -227,23 +228,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Outbound worker.",
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
-								"params": schema.ListNestedAttribute{
+								"params": schema.ListAttribute{
 									Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
 									Optional:    true,
-									NestedObject: schema.NestedAttributeObject{
-										Attributes: map[string]schema.Attribute{
-											"name": schema.StringAttribute{
-												Description: "Name of the parameter.",
-												Required:    true,
-											},
-										},
-									},
+									ElementType: types.StringType,
 								},
 								"worker": schema.SingleNestedAttribute{
 									Description: "Outbound worker.",
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
-
 										"environment": schema.StringAttribute{
 											Description: "Environment of the outbound worker.",
 											Optional:    true,
@@ -278,7 +271,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"json": schema.StringAttribute{
@@ -399,9 +391,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
-							Computed:    true,
 							Optional:    true,
-							Default:     stringdefault.StaticString("latest"),
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
 							Description: "List of allowed destination addresses.",
@@ -438,6 +428,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"service_id": schema.StringAttribute{
 							Description: "Identifier of the VPC service to bind to.",
+							Optional:    true,
+						},
+						"network_id": schema.StringAttribute{
+							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Optional:    true,
+						},
+						"tunnel_id": schema.StringAttribute{
+							Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
 							Optional:    true,
 						},
 						"instance_name": schema.StringAttribute{

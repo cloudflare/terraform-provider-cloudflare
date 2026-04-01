@@ -136,6 +136,7 @@ jobs:
             display_name: Gateway and Policies
             email: tf-acct-zero-trust-gateway-and-policies@cfapi.net
             api_key_secret: TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_API_KEY
+            gateway_certificate_id_secret: TF_ACCT_ZERO_TRUST_GATEWAY_AND_POLICIES_CERTIFICATE_ID
           # - name: dlp-config # commented out due to test account inconsistencies
           #   display_name: DLP Config
           #   email: tf-acct-zero-trust-dlp-config@cfapi.net
@@ -216,6 +217,7 @@ jobs:
       CLOUDFLARE_EMAIL: ${{ matrix.test.email }}
       CLOUDFLARE_API_KEY: ${{ secrets[matrix.test.api_key_secret] }}
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
+      CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
     steps:
       - uses: actions/checkout@v4
 

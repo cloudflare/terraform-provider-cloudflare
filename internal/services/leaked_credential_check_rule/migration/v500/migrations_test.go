@@ -31,7 +31,6 @@ var v4ComplexConfig string
 var v5ComplexConfig string
 
 func TestMigrateLeakedCredentialCheckRuleBasic(t *testing.T) {
-	t.Skip("Product has not been enabled in CI account")
 	testCases := []struct {
 		name     string
 		version  string
@@ -101,7 +100,6 @@ func TestMigrateLeakedCredentialCheckRuleBasic(t *testing.T) {
 }
 
 func TestMigrateLeakedCredentialCheckRuleComplexExpressions(t *testing.T) {
-	t.Skip("Product has not been enabled in CI account")
 	testCases := []struct {
 		name     string
 		version  string

@@ -154,6 +154,9 @@ func (r *ZeroTrustGatewaySettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+	// Store prior state for preserving optional field values
+	priorSettings := data.Settings
+
 	res := new(http.Response)
 	env := ZeroTrustGatewaySettingsResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Configurations.Get(
@@ -182,7 +185,40 @@ func (r *ZeroTrustGatewaySettingsResource) Read(ctx context.Context, req resourc
 	data = &env.Result
 	data.ID = data.AccountID
 
+	// Preserve optional field values from prior state when API returns null
+	preserveBlockPageFields(data.Settings, priorSettings)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// preserveBlockPageFields preserves optional fields from prior state when API returns null
+func preserveBlockPageFields(current *ZeroTrustGatewaySettingsSettingsModel, prior *ZeroTrustGatewaySettingsSettingsModel) {
+	if current == nil || prior == nil || current.BlockPage == nil || prior.BlockPage == nil {
+		return
+	}
+
+	bp := current.BlockPage
+	priorBp := prior.BlockPage
+
+	// Preserve optional fields that API may not return
+	if bp.IncludeContext.IsNull() && !priorBp.IncludeContext.IsNull() {
+		bp.IncludeContext = priorBp.IncludeContext
+	}
+	if bp.MailtoAddress.IsNull() && !priorBp.MailtoAddress.IsNull() {
+		bp.MailtoAddress = priorBp.MailtoAddress
+	}
+	if bp.MailtoSubject.IsNull() && !priorBp.MailtoSubject.IsNull() {
+		bp.MailtoSubject = priorBp.MailtoSubject
+	}
+	if bp.Mode.IsNull() && !priorBp.Mode.IsNull() {
+		bp.Mode = priorBp.Mode
+	}
+	if bp.SuppressFooter.IsNull() && !priorBp.SuppressFooter.IsNull() {
+		bp.SuppressFooter = priorBp.SuppressFooter
+	}
+	if bp.TargetURI.IsNull() && !priorBp.TargetURI.IsNull() {
+		bp.TargetURI = priorBp.TargetURI
+	}
 }
 
 func (r *ZeroTrustGatewaySettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

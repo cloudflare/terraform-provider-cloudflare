@@ -270,9 +270,18 @@ func TestAccUpgradeNotificationPolicy_FromPublishedV5(t *testing.T) {
 
 	config := testCheckCloudflareNotificationPolicy(rnd, accountID)
 
+	// Stepping-stone upgrade: 5.16.0 → 5.18.0 → latest.
+	//
+	// v5.16.0 stored state at schema_version=0 and included the alert_interval attribute
+	// which is absent from the v4 source schema used by the latest provider's UpgradeState[0]
+	// handler. v5.18.0 introduced a no-op UpgradeState[0] that bumps the version to 1 using
+	// the current v5 schema, making the state compatible with the latest provider's
+	// UpgradeState[1] handler. Jumping directly from 5.16.0 to latest would fail because
+	// the latest UpgradeState[0] handler's v4 source schema does not include alert_interval.
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() { acctest.TestAccPreCheck(t) },
 		Steps: []resource.TestStep{
+			// Step 1: create with v5.16.0 (schema_version=0, includes alert_interval)
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
@@ -282,6 +291,17 @@ func TestAccUpgradeNotificationPolicy_FromPublishedV5(t *testing.T) {
 				},
 				Config: config,
 			},
+			// Step 2: upgrade to v5.18.0 (bumps schema_version 0→1, no-op transform)
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.18.0",
+					},
+				},
+				Config: config,
+			},
+			// Step 3: upgrade to latest (schema_version 1→500, no-op transform)
 			{
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,

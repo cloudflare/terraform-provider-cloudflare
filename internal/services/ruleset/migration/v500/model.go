@@ -83,6 +83,7 @@ type SourceV4ActionParametersModel struct {
 	Response                 []*SourceV4ResponseModel     `tfsdk:"response"`
 	ResponseFields           types.Set                    `tfsdk:"response_fields"`
 	RocketLoader             types.Bool                   `tfsdk:"rocket_loader"`
+	RedirectsForAITraining   types.Bool                   `tfsdk:"redirects_for_ai_training"`
 	Rules                    map[string]types.String      `tfsdk:"rules"`
 	Ruleset                  types.String                 `tfsdk:"ruleset"`
 	Rulesets                 types.Set                    `tfsdk:"rulesets"`
@@ -378,9 +379,10 @@ type TargetV5ActionParametersModel struct {
 	Ruleset                 types.String `tfsdk:"ruleset"`
 
 	// New in v5 (absent in v4)
-	AssetName             types.String `tfsdk:"asset_name"`
-	RequestBodyBuffering  types.String `tfsdk:"request_body_buffering"`
-	ResponseBodyBuffering types.String `tfsdk:"response_body_buffering"`
+	AssetName              types.String `tfsdk:"asset_name"`
+	RequestBodyBuffering   types.String `tfsdk:"request_body_buffering"`
+	ResponseBodyBuffering  types.String `tfsdk:"response_body_buffering"`
+	RedirectsForAITraining types.Bool   `tfsdk:"redirects_for_ai_training"`
 
 	// Cache control fields (set_cache_settings action)
 	StripETags        types.Bool `tfsdk:"strip_etags"`

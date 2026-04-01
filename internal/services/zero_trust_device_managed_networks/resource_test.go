@@ -131,11 +131,19 @@ func TestAccUpgradeZeroTrustDeviceManagedNetworks_FromPublishedV5(t *testing.T) 
 
 	config := testAccCloudflareDeviceManagedNetworks(accountID, rnd)
 
+	// Stepping-stone upgrade: 5.16.0 → 5.17.0 → latest.
+	//
+	// v5.16.0 stored state at schema_version=0 with config as a SingleNestedAttribute
+	// (object). v5.17.0 introduced a no-op UpgradeState[0] that bumps the version to 1
+	// using the current v5 schema, making the state compatible with the latest provider's
+	// UpgradeState[1] handler. Jumping directly from 5.16.0 to latest would fail because
+	// the latest UpgradeState[0] handler expects the legacy v4 list-block format.
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		Steps: []resource.TestStep{
+			// Step 1: create with v5.16.0 (schema_version=0, config as object)
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
@@ -145,6 +153,17 @@ func TestAccUpgradeZeroTrustDeviceManagedNetworks_FromPublishedV5(t *testing.T) 
 				},
 				Config: config,
 			},
+			// Step 2: upgrade to v5.17.0 (bumps schema_version 0→1, no-op transform)
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.17.0",
+					},
+				},
+				Config: config,
+			},
+			// Step 3: upgrade to latest (schema_version 1→500, no-op transform)
 			{
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Config:                   config,

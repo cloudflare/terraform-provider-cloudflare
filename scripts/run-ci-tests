@@ -87,7 +87,7 @@ get_product_group_services() {
             echo "regional_hostname spectrum_application"
             ;;
         gateway-and-policies)
-            echo "zero_trust_gateway_policy zero_trust_gateway_settings zero_trust_gateway_proxy_endpoint"
+            echo "zero_trust_gateway_certificate zero_trust_gateway_policy zero_trust_gateway_settings zero_trust_gateway_proxy_endpoint"
             ;;
         dlp-config)
             echo "zero_trust_dlp_entry zero_trust_dlp_custom_profile"
@@ -284,7 +284,6 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/zero_trust_dlp_custom_profile"
     "resource=./internal/services/zero_trust_dlp_entry"
     "resource=./internal/services/zero_trust_dlp_predefined_profile"
-    "resource=./internal/services/zero_trust_gateway_certificate"
     "resource=./internal/services/zero_trust_gateway_proxy_endpoint"
     "resource=./internal/services/zero_trust_gateway_policy"
     "resource=./internal/services/zero_trust_gateway_settings"

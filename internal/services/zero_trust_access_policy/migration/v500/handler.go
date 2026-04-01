@@ -2,28 +2,86 @@ package v500
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+// detectAccessPolicyV4State returns true if the raw state looks like v4 format.
+// Detection: v4 stores connection_rules as a JSON array []; v4 also has application_id
+// or precedence fields that v5 removes.
+func detectAccessPolicyV4State(req resource.UpgradeStateRequest) bool {
+	if req.RawState == nil || len(req.RawState.JSON) == 0 {
+		return false
+	}
+	var raw map[string]interface{}
+	if err := json.Unmarshal(req.RawState.JSON, &raw); err != nil {
+		return false
+	}
+	// v4 had application_id and precedence fields that v5 removes
+	_, hasPrecedence := raw["precedence"]
+	_, hasAppID := raw["application_id"]
+	if hasPrecedence || hasAppID {
+		return true
+	}
+	// v4 stores connection_rules as array [], v5 as null or object {}
+	if cr, ok := raw["connection_rules"]; ok && cr != nil {
+		_, isArray := cr.([]interface{})
+		return isArray
+	}
+	return false
+}
+
+// upgradeAccessPolicyFromV4 transforms v4 state to v5 using the source schema and Transform function.
+func upgradeAccessPolicyFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	v4Schema := SourceAccessPolicySchema()
+	v4Type := v4Schema.Type().TerraformType(ctx)
+
+	rawValue, err := req.RawState.Unmarshal(v4Type)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to unmarshal v4 access policy state",
+			fmt.Sprintf("Could not parse raw state as v4 format: %s\n\nThis resource may need to be imported manually.", err))
+		return
+	}
+
+	state := tfsdk.State{Raw: rawValue, Schema: v4Schema}
+	var v4State SourceAccessPolicyModel
+	resp.Diagnostics.Append(state.Get(ctx, &v4State)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	v5State, diags := Transform(ctx, v4State)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
+	tflog.Info(ctx, "v4 access policy state transformation completed via UpgradeFromSchemaV0")
+}
+
 // UpgradeFromSchemaV0 handles state upgrades from schema_version=0 to current version.
-// This is a no-op upgrade for early v5 state (v5.12-v5.15) which had schema_version=0.
+// Both v4 cloudflare_access_policy (when resource name was already zero_trust_access_policy)
+// and early v5 cloudflare_zero_trust_access_policy have schema_version=0.
 //
-// IMPORTANT: Both v4 cloudflare_access_policy and early v5 cloudflare_zero_trust_access_policy
-// have schema_version=0, but this upgrader only handles v5 format because we use v5Schema
-// as PriorSchema in migrations.go.
-//
-// For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through
-// MoveState instead of UpgradeState. `terraform state mv` from v4 is NOT supported.
+// This handler detects the format and either transforms v4 state or passes v5 state through.
 func UpgradeFromSchemaV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading zero_trust_access_policy state from schema_version=0 (no-op)")
+	tflog.Info(ctx, "Upgrading zero_trust_access_policy state from schema_version=0")
 
-	// No-op: v5 state is already in the correct format, just copy raw state through
+	if detectAccessPolicyV4State(req) {
+		tflog.Info(ctx, "Detected v4 format in schema_version=0 state, transforming")
+		upgradeAccessPolicyFromV4(ctx, req, resp)
+		return
+	}
+
+	// Early v5 state (v5.12-v5.15) — pass through unchanged
+	tflog.Info(ctx, "Detected v5 format in schema_version=0 state, no-op upgrade")
 	resp.State.Raw = req.State.Raw
-
-	tflog.Info(ctx, "State upgrade from schema_version=0 completed")
 }
 
 // UpgradeFromSchemaV1 handles state upgrades from schema_version=1 to current version.

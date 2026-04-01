@@ -7,10 +7,12 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
     tls_decrypt = {
       enabled = true
     }
+    certificate = {
+      id = "%[3]s"
+    }
     activity_log = {
       enabled = true
     }
-
     antivirus = {
       enabled_download_phase = false
       enabled_upload_phase = false

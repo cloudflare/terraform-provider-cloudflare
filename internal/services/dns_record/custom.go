@@ -3,8 +3,51 @@ package dns_record
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
+
+// normalizeSettings unconditionally materializes the settings object with false defaults
+// for any sub-fields that are null. This handles two cases:
+//  1. The API returns a settings object but omits some sub-fields (null sub-fields).
+//  2. The API omits the settings object entirely (data.Settings.IsNull()), which it does
+//     for non-proxied CNAME records where these fields are not applicable.
+//
+// In both cases we treat absent as false so that state is stable against a config of
+// settings = { flatten_cname = false } (or ipv4_only / ipv6_only = false).
+func normalizeSettings(ctx context.Context, data *DNSRecordModel, diags *diag.Diagnostics) {
+	// settings sub-fields (ipv4_only, ipv6_only, flatten_cname) only apply to CNAME
+	// records. For all other record types the API never returns a settings object, so
+	// leave state as null to avoid injecting spurious settings into non-CNAME records.
+	if data.Type.IsNull() || data.Type.IsUnknown() || data.Type.ValueString() != "CNAME" {
+		return
+	}
+
+	var s DNSRecordSettingsModel
+	if !data.Settings.IsNull() && !data.Settings.IsUnknown() {
+		// Populate s from the existing object; ignore errors (s stays zero-value).
+		data.Settings.As(ctx, &s, basetypes.ObjectAsOptions{})
+	}
+	// s sub-fields are null either because Settings was null (API omitted the object
+	// entirely for non-proxied CNAME records) or because the API returned the object
+	// without those particular sub-fields. Treat absent as false.
+	if s.IPV4Only.IsNull() {
+		s.IPV4Only = types.BoolValue(false)
+	}
+	if s.IPV6Only.IsNull() {
+		s.IPV6Only = types.BoolValue(false)
+	}
+	if s.FlattenCNAME.IsNull() {
+		s.FlattenCNAME = types.BoolValue(false)
+	}
+	normalized, d := customfield.NewObject[DNSRecordSettingsModel](ctx, &s)
+	diags.Append(d...)
+	if !diags.HasError() {
+		data.Settings = normalized
+	}
+}
 
 // Equal compares two DNSRecordDataModel instances for equality
 func (d *DNSRecordDataModel) Equal(other *DNSRecordDataModel) bool {
