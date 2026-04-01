@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -289,6 +291,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("rrf"),
 			},
+
 			"max_num_results": schema.Int64Attribute{
 				Computed: true,
 				Optional: true,
@@ -330,6 +333,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"keyword": schema.BoolAttribute{
 						Description: "Enable keyword (BM25) storage backend.",
@@ -345,6 +351,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				Optional:   true,
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					useStateForUnknownIncludingNullObject(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"keyword_tokenizer": schema.StringAttribute{
 						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
@@ -458,7 +467,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"direction": schema.StringAttribute{
-									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional ��� defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional - defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -644,7 +653,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"engine_version": schema.Float64Attribute{
 				Computed: true,
-				Default:  float64default.StaticFloat64(2),
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
 				Description:        "Deprecated — use index_method instead.",
@@ -667,7 +678,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"namespace": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"public_endpoint_id": schema.StringAttribute{
 				Computed:      true,
@@ -679,7 +691,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"vectorize_name": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 			},
 		},
 	}

@@ -36,6 +36,7 @@ type AISearchInstanceModel struct {
 	ChunkOverlap                   types.Int64                                                         `tfsdk:"chunk_overlap" json:"chunk_overlap,computed_optional"`
 	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,computed_optional"`
 	FusionMethod                   types.String                                                        `tfsdk:"fusion_method" json:"fusion_method,computed_optional"`
+	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	MaxNumResults                  types.Int64                                                         `tfsdk:"max_num_results" json:"max_num_results,computed_optional"`
 	Paused                         types.Bool                                                          `tfsdk:"paused" json:"paused,computed_optional"`
 	Reranking                      types.Bool                                                          `tfsdk:"reranking" json:"reranking,computed_optional"`
@@ -51,13 +52,13 @@ type AISearchInstanceModel struct {
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
 	Enable                         types.Bool                                                          `tfsdk:"enable" json:"enable,computed"`
 	EngineVersion                  types.Float64                                                       `tfsdk:"engine_version" json:"engine_version,computed"`
-	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
 	Namespace                      types.String                                                        `tfsdk:"namespace" json:"namespace,computed"`
 	PublicEndpointID               types.String                                                        `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	Status                         types.String                                                        `tfsdk:"status" json:"status,computed"`
+	VectorizeName                  types.String                                                        `tfsdk:"vectorize_name" json:"vectorize_name,computed"`
 }
 
 func (m AISearchInstanceModel) MarshalJSON() (data []byte, err error) {
