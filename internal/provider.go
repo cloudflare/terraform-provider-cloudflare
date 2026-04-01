@@ -116,6 +116,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_cloud_regions"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
@@ -425,6 +426,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		organization.NewResource,
 		organization_profile.NewResource,
 		origin_ca_certificate.NewResource,
+		origin_cloud_regions.NewResource,
 		user.NewResource,
 		api_token.NewResource,
 		zone.NewResource,
