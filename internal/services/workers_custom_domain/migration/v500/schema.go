@@ -28,6 +28,10 @@ func SourceSchemaV0() schema.Schema {
 			"zone_name": schema.StringAttribute{
 				Computed: true,
 			},
+			"cert_id": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 		},
 	}
 }
