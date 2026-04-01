@@ -107,6 +107,8 @@ func TestAccCloudflareAISearchInstance_Basic(t *testing.T) {
 					"system_prompt_aisearch",
 					"system_prompt_index_summarization",
 					"system_prompt_rewrite_query",
+					"index_method.keyword",
+					"index_method.vector",
 				},
 			},
 		},
