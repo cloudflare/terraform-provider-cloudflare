@@ -2,8 +2,10 @@ package v500_test
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -41,6 +43,12 @@ var v4ServiceTokenConfig string
 
 //go:embed testdata/v4_unsupported.tf
 var v4UnsupportedConfig string
+
+//go:embed testdata/v4_connection_rules.tf
+var v4ConnectionRulesConfig string
+
+//go:embed testdata/v4_connection_rules_email.tf
+var v4ConnectionRulesEmailConfig string
 
 //go:embed testdata/v5_basic.tf
 var v5BasicConfig string
@@ -746,4 +754,191 @@ func TestMigrateZeroTrustAccessPolicyEmailDomainTransformation(t *testing.T) {
 			}),
 		},
 	})
+}
+
+// TestMigrateZeroTrustAccessPolicyConnectionRules tests that connection_rules
+// with application_id and precedence are correctly migrated from v4 to v5.
+// Reproduces TKT-007: connection_rules stored as JSON array [] in v4 state
+// causes "invalid JSON, expected '{', got '['" error during state upgrade.
+// Reported by research team (terraform-cfaccounts MR !7756).
+func TestMigrateZeroTrustAccessPolicyConnectionRules(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(v4ConnectionRulesConfig, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			// With the PriorSchema: nil fix, state upgrade succeeds
+			// The key success is that we don't get: "AttributeName("connection_rules"): invalid JSON, expected "{", got "["
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				// Verify include was transformed correctly
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyStateMvScenario tests migration after manual `terraform state mv`.
+// This reproduces the research-team issue where users did `terraform state mv` instead of using
+// the `moved` block, resulting in cloudflare_zero_trust_access_policy resources with v4-format state.
+//
+// Error: AttributeName("connection_rules"): invalid JSON, expected "{", got "["
+//
+// To reproduce the bug (with PriorSchema: &v5Schema):
+// 1. Create resource with v4 cloudflare_access_policy
+// 2. Rename resource type in state to cloudflare_zero_trust_access_policy (simulating state mv)
+// 3. Update config to use cloudflare_zero_trust_access_policy
+// 4. Run v5 provider - triggers UpgradeState with v4-format data
+// 5. With PriorSchema: &v5Schema, the framework fails to parse connection_rules=[] as object {}
+func TestMigrateZeroTrustAccessPolicyStateMvScenario(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(v4ConnectionRulesEmailConfig, rnd, accountID)
+	// v5 config uses cloudflare_zero_trust_access_policy
+	v5Config := fmt.Sprintf(`resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+
+  include = [{
+    everyone = {}
+  }]
+
+  connection_rules = {
+    ssh = {
+      usernames         = ["root", "admin"]
+      allow_email_alias = true
+    }
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			{
+				// Step 2: Simulate `terraform state mv` by renaming resource type in state file
+				// This leaves cloudflare_zero_trust_access_policy with v4-format state data
+				PreConfig: func() {
+					renameResourceTypeInState(t, tmpDir, "cloudflare_access_policy", "cloudflare_zero_trust_access_policy", rnd)
+				},
+				// Step 3: Run v5 provider with renamed resource
+				// This triggers UpgradeState (not MoveState) because resource type already matches
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   v5Config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+		},
+	})
+}
+
+// renameResourceTypeInState renames a resource type in the terraform state file.
+// This simulates what `terraform state mv` does.
+func renameResourceTypeInState(t *testing.T, tmpDir string, oldType string, newType string, resourceName string) {
+	// Find the terraform working directory (work* subdirectory of tmpDir)
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		t.Fatalf("Could not find work directory in %s: %v", tmpDir, err)
+	}
+	workDir := matches[0]
+	stateFile := filepath.Join(workDir, "terraform.tfstate")
+
+	data, err := os.ReadFile(stateFile)
+	if err != nil {
+		t.Fatalf("Could not read state file %s: %v", stateFile, err)
+	}
+
+	// Parse state
+	var state struct {
+		Version   int `json:"version"`
+		Resources []struct {
+			Module    string          `json:"module,omitempty"`
+			Mode      string          `json:"mode"`
+			Type      string          `json:"type"`
+			Name      string          `json:"name"`
+			Provider  string          `json:"provider"`
+			Instances json.RawMessage `json:"instances"`
+		} `json:"resources"`
+	}
+	if err := json.Unmarshal(data, &state); err != nil {
+		t.Fatalf("Could not parse state file: %v", err)
+	}
+
+	// Rename resource type
+	found := false
+	for i := range state.Resources {
+		if state.Resources[i].Type == oldType && state.Resources[i].Name == resourceName {
+			state.Resources[i].Type = newType
+			state.Resources[i].Provider = "provider[\"registry.terraform.io/cloudflare/cloudflare\"]"
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Could not find resource %s.%s in state", oldType, resourceName)
+	}
+
+	// Write back
+	newData, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		t.Fatalf("Could not marshal state: %v", err)
+	}
+
+	if err := os.WriteFile(stateFile, newData, 0644); err != nil {
+		t.Fatalf("Could not write state file: %v", err)
+	}
+
+	t.Logf("Renamed %s.%s to %s.%s in state file", oldType, resourceName, newType, resourceName)
 }

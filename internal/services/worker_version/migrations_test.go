@@ -256,7 +256,9 @@ func TestMigrateWorkerVersionFromV0_WithStartupTimeMs(t *testing.T) {
 		"number":              tftypes.NewValue(tftypes.Number, 1),
 		"source":              tftypes.NewValue(tftypes.String, "api"),
 		"main_script_base64":  tftypes.NewValue(tftypes.String, nil),
+		"migration_tag":       tftypes.NewValue(tftypes.String, nil),
 		"startup_time_ms":     tftypes.NewValue(tftypes.Number, 100),
+		"urls":                tftypes.NewValue(schemaV0.Attributes["urls"].GetType().TerraformType(ctx), nil),
 	})
 
 	state := tfsdk.State{
@@ -285,4 +287,3 @@ func TestMigrateWorkerVersionFromV0_WithStartupTimeMs(t *testing.T) {
 		t.Errorf("Expected StartupTimeMs to be 100, got %d", model.StartupTimeMs.ValueInt64())
 	}
 }
-

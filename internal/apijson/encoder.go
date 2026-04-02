@@ -148,6 +148,10 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 }
 
 func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
+	// Capture root before any mutation below (e.root is set to false at line 179
+	// before the switch dispatches to newStructTypeEncoder).
+	isRoot := e.root
+
 	// Check if type implements CustomMarshaler interface
 	customMarshalerType := reflect.TypeOf((*CustomMarshaler)(nil)).Elem()
 	if t.Implements(customMarshalerType) {
@@ -221,7 +225,7 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 		if t.Implements(attrType) {
 			return e.newTerraformTypeEncoder(t)
 		}
-		return e.newStructTypeEncoder(t)
+		return e.newStructTypeEncoder(t, isRoot)
 	case reflect.Array:
 		fallthrough
 	case reflect.Slice:
@@ -567,7 +571,7 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 	}
 }
 
-func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
+func (e *encoder) newStructTypeEncoder(t reflect.Type, isRoot bool) encoderFunc {
 	encoderFields := []encoderField{}
 	extraEncoder := (*encoderField)(nil)
 
@@ -667,6 +671,16 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		}
 
 		if !someFieldsSet && e.patch {
+			// At the root level, return an empty object rather than nil so the
+			// caller always has a valid JSON body to send. This matters when all
+			// serializable fields are either unchanged (omitted by patch diffing)
+			// or computed_optional unknowns (omitted by handleNullAndUndefined).
+			// Returning nil here would produce an empty request body which most
+			// APIs reject with 400. Nested sub-objects still return nil so they
+			// are omitted from the parent object as expected.
+			if isRoot {
+				return []byte("{}"), nil
+			}
 			return nil, nil
 		}
 

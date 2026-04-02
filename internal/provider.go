@@ -22,6 +22,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway_dynamic_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_instance"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
@@ -57,6 +59,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_origin_trust_store"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_page_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
@@ -622,6 +625,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		ai_gateway.NewResource,
+		ai_gateway_dynamic_routing.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
@@ -632,6 +637,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		custom_page_asset.NewResource,
 		pipeline.NewResource,
 		pipeline_sink.NewResource,
 		pipeline_stream.NewResource,
@@ -986,6 +992,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
 		cloudforce_one_request_priority.NewCloudforceOneRequestPriorityDataSource,
 		cloudforce_one_request_asset.NewCloudforceOneRequestAssetDataSource,
+		ai_gateway.NewAIGatewayDataSource,
+		ai_gateway.NewAIGatewaysDataSource,
+		ai_gateway_dynamic_routing.NewAIGatewayDynamicRoutingDataSource,
 		account_permission_group.NewAccountPermissionGroupDataSource,
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
@@ -1007,6 +1016,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		custom_page_asset.NewCustomPageAssetDataSource,
+		custom_page_asset.NewCustomPageAssetsDataSource,
 		pipeline.NewPipelineDataSource,
 		pipeline_sink.NewPipelineSinkDataSource,
 		pipeline_sink.NewPipelineSinksDataSource,

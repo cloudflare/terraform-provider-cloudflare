@@ -22,6 +22,7 @@ type CustomSSLDataSourceModel struct {
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
 	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
 	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	CustomCsrID         types.String                                                      `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer              types.String                                                      `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn          timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

@@ -66,6 +66,7 @@ type TargetCustomSSLModel struct {
 	Type               types.String                                                `tfsdk:"type"`
 	Certificate        types.String                                                `tfsdk:"certificate"`
 	PrivateKey         types.String                                                `tfsdk:"private_key"`
+	CustomCsrID        types.String                                                `tfsdk:"custom_csr_id"`
 	Policy             types.String                                                `tfsdk:"policy"`
 	GeoRestrictions    *TargetCustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions"`
 	BundleMethod       types.String                                                `tfsdk:"bundle_method"`

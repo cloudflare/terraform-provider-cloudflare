@@ -153,6 +153,7 @@ type TargetWorkersScriptModel struct {
 type TargetBindingsModel struct {
 	Name                        types.String                  `tfsdk:"name"`
 	Type                        types.String                  `tfsdk:"type"`
+	InstanceName                types.String                  `tfsdk:"instance_name"`
 	Dataset                     types.String                  `tfsdk:"dataset"`
 	ID                          types.String                  `tfsdk:"id"`
 	Outbound                    *TargetBindingsOutboundModel  `tfsdk:"outbound"`
@@ -185,6 +186,11 @@ type TargetBindingsModel struct {
 	AllowedSenderAddresses      *[]types.String               `tfsdk:"allowed_sender_addresses"`
 	DestinationAddress          types.String                  `tfsdk:"destination_address"`
 	Service                     types.String                  `tfsdk:"service"`
+	DispatchNamespace           types.String                  `tfsdk:"dispatch_namespace"`
+	Entrypoint                  types.String                  `tfsdk:"entrypoint"`
+	ServiceID                   types.String                  `tfsdk:"service_id"`
+	NetworkID                   types.String                  `tfsdk:"network_id"`
+	TunnelID                    types.String                  `tfsdk:"tunnel_id"`
 }
 
 type TargetBindingsOutboundModel struct {
@@ -253,15 +259,23 @@ type TargetMigrationsStepsModel struct {
 }
 
 type TargetObservabilityModel struct {
-	Enabled          types.Bool                    `tfsdk:"enabled"`
-	HeadSamplingRate types.Float64                 `tfsdk:"head_sampling_rate"`
-	Logs             *TargetObservabilityLogsModel `tfsdk:"logs"`
+	Enabled          types.Bool                      `tfsdk:"enabled"`
+	HeadSamplingRate types.Float64                   `tfsdk:"head_sampling_rate"`
+	Logs             *TargetObservabilityLogsModel   `tfsdk:"logs"`
+	Traces           *TargetObservabilityTracesModel `tfsdk:"traces"`
 }
 
 type TargetObservabilityLogsModel struct {
 	Enabled          types.Bool      `tfsdk:"enabled"`
 	InvocationLogs   types.Bool      `tfsdk:"invocation_logs"`
 	Destinations     *[]types.String `tfsdk:"destinations"`
+	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate"`
+	Persist          types.Bool      `tfsdk:"persist"`
+}
+
+type TargetObservabilityTracesModel struct {
+	Destinations     *[]types.String `tfsdk:"destinations"`
+	Enabled          types.Bool      `tfsdk:"enabled"`
 	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate"`
 	Persist          types.Bool      `tfsdk:"persist"`
 }

@@ -40,11 +40,12 @@ func (r *ZeroTrustAccessPolicyResource) UpgradeState(ctx context.Context) map[in
 	v5Schema := ResourceSchema(ctx)
 
 	return map[int64]resource.StateUpgrader{
-		// Handle early v5 state with schema_version=0 (v5.12-v5.15)
-		// Uses v5Schema - only works for v5 format, NOT v4
-		// v4 migration must use `moved` blocks which go through MoveState
+		// Handle early v5 state with schema_version=0 (v5.12-v5.15) AND v4 state
+		// PriorSchema is nil to allow raw JSON unmarshaling in handler
+		// Handler detects v4 format (application_id/precedence/connection_rules=[])
+		// and transforms using v4 source schema, or passes v5 state through unchanged
 		0: {
-			PriorSchema:   &v5Schema,
+			PriorSchema:   nil,
 			StateUpgrader: v500.UpgradeFromSchemaV0,
 		},
 		// Handle upgrades from v5 with schema_version=1
