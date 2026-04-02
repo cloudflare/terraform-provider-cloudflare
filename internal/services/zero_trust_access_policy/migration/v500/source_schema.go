@@ -147,6 +147,10 @@ func sourceConditionGroupAttributes() map[string]schema.Attribute {
 		"common_name": schema.StringAttribute{
 			Optional: true,
 		},
+		"common_names": schema.ListAttribute{
+			ElementType: types.StringType,
+			Optional:    true,
+		},
 		"auth_method": schema.StringAttribute{
 			Optional: true,
 		},

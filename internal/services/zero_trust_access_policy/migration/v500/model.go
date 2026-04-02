@@ -42,6 +42,7 @@ type SourceConditionGroupModel struct {
 	Geo                  types.List   `tfsdk:"geo"`
 	LoginMethod          types.List   `tfsdk:"login_method"`
 	CommonName           types.String `tfsdk:"common_name"`
+	CommonNames          types.List   `tfsdk:"common_names"`
 	AuthMethod           types.String `tfsdk:"auth_method"`
 	// v4 uses simple string lists for these
 	DevicePosture types.List `tfsdk:"device_posture"`
