@@ -259,10 +259,11 @@ func createTerraformValue(t *testing.T, s schema.Schema, values map[string]inter
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	valueMap := make(map[string]tftypes.Value)
+	for name, attrType := range attrTypes {
+		valueMap[name] = tftypes.NewValue(attrType, nil)
+	}
 	for name, val := range values {
-		if val == nil {
-			valueMap[name] = tftypes.NewValue(attrTypes[name], nil)
-		} else {
+		if val != nil {
 			valueMap[name] = tftypes.NewValue(attrTypes[name], val)
 		}
 	}

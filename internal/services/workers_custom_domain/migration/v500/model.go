@@ -11,6 +11,7 @@ type SourceV4WorkersCustomDomainModel struct {
 	ZoneID      types.String `tfsdk:"zone_id"`
 	Environment types.String `tfsdk:"environment"`
 	ZoneName    types.String `tfsdk:"zone_name"`
+	CertId      types.String `tfsdk:"cert_id"`
 }
 
 // TargetWorkersCustomDomainModel represents v5 cloudflare_workers_custom_domain state.
@@ -22,4 +23,5 @@ type TargetWorkersCustomDomainModel struct {
 	ZoneID      types.String `tfsdk:"zone_id"`
 	Environment types.String `tfsdk:"environment"`
 	ZoneName    types.String `tfsdk:"zone_name"`
+	CertId      types.String `tfsdk:"cert_id"`
 }
