@@ -6,11 +6,14 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpPortalsDataSource)(nil)
@@ -47,6 +50,98 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"name": schema.StringAttribute{
 							Computed: true,
+						},
+						"servers": schema.ListNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Description: "server id",
+										Computed:    true,
+									},
+									"auth_type": schema.StringAttribute{
+										Description: `Available values: "oauth", "bearer", "unauthenticated".`,
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"oauth",
+												"bearer",
+												"unauthenticated",
+											),
+										},
+									},
+									"hostname": schema.StringAttribute{
+										Computed: true,
+									},
+									"name": schema.StringAttribute{
+										Computed: true,
+									},
+									"prompts": schema.ListAttribute{
+										Computed:   true,
+										CustomType: customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+										ElementType: types.MapType{
+											ElemType: jsontypes.NormalizedType{},
+										},
+									},
+									"tools": schema.ListAttribute{
+										Computed:   true,
+										CustomType: customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+										ElementType: types.MapType{
+											ElemType: jsontypes.NormalizedType{},
+										},
+									},
+									"updated_prompts": schema.DynamicAttribute{
+										Computed:   true,
+										CustomType: customfield.NormalizedDynamicType{},
+									},
+									"updated_tools": schema.DynamicAttribute{
+										Computed:   true,
+										CustomType: customfield.NormalizedDynamicType{},
+									},
+									"created_at": schema.StringAttribute{
+										Computed:   true,
+										CustomType: timetypes.RFC3339Type{},
+									},
+									"created_by": schema.StringAttribute{
+										Computed: true,
+									},
+									"default_disabled": schema.BoolAttribute{
+										Computed: true,
+									},
+									"description": schema.StringAttribute{
+										Computed: true,
+									},
+									"error": schema.StringAttribute{
+										Computed: true,
+									},
+									"last_successful_sync": schema.StringAttribute{
+										Computed:   true,
+										CustomType: timetypes.RFC3339Type{},
+									},
+									"last_synced": schema.StringAttribute{
+										Computed:   true,
+										CustomType: timetypes.RFC3339Type{},
+									},
+									"modified_at": schema.StringAttribute{
+										Computed:   true,
+										CustomType: timetypes.RFC3339Type{},
+									},
+									"modified_by": schema.StringAttribute{
+										Computed: true,
+									},
+									"on_behalf": schema.BoolAttribute{
+										Computed: true,
+									},
+									"status": schema.StringAttribute{
+										Computed: true,
+									},
+								},
+							},
+						},
+						"allow_code_mode": schema.BoolAttribute{
+							Description: "Allow remote code execution in Dynamic Workers (beta)",
+							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,

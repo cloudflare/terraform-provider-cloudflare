@@ -82,6 +82,7 @@ func (d *ZeroTrustGatewayLoggingDataSource) Read(ctx context.Context, req dataso
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

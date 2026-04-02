@@ -31,16 +31,16 @@ type SourceV4ZeroTrustAccessGroupModel struct {
 // Complex nested objects (gsuite, github, etc.) are stored as []Object because they're TypeList MaxItems:1.
 type SourceV4AccessGroupOptionModel struct {
 	// Simple string array selectors (stored as []interface{} in state, parsed as types.List)
-	Email       types.List `tfsdk:"email"`        // List[String]
-	EmailDomain types.List `tfsdk:"email_domain"` // List[String]
-	EmailList   types.List `tfsdk:"email_list"`   // List[String]
-	IP          types.List `tfsdk:"ip"`           // List[String]
-	IPList      types.List `tfsdk:"ip_list"`      // List[String]
-	ServiceToken types.List `tfsdk:"service_token"` // List[String]
-	Group       types.List `tfsdk:"group"`        // List[String]
+	Email         types.List `tfsdk:"email"`          // List[String]
+	EmailDomain   types.List `tfsdk:"email_domain"`   // List[String]
+	EmailList     types.List `tfsdk:"email_list"`     // List[String]
+	IP            types.List `tfsdk:"ip"`             // List[String]
+	IPList        types.List `tfsdk:"ip_list"`        // List[String]
+	ServiceToken  types.List `tfsdk:"service_token"`  // List[String]
+	Group         types.List `tfsdk:"group"`          // List[String]
 	DevicePosture types.List `tfsdk:"device_posture"` // List[String]
-	LoginMethod types.List `tfsdk:"login_method"` // List[String]
-	Geo         types.List `tfsdk:"geo"`          // List[String]
+	LoginMethod   types.List `tfsdk:"login_method"`   // List[String]
+	Geo           types.List `tfsdk:"geo"`            // List[String]
 
 	// String scalar selectors (single values, not arrays)
 	CommonName types.String `tfsdk:"common_name"` // String
@@ -55,39 +55,39 @@ type SourceV4AccessGroupOptionModel struct {
 	CommonNames types.List `tfsdk:"common_names"` // List[String] - overflow field
 
 	// Complex nested object selectors (TypeList MaxItems:1 = array with 1 element)
-	GitHub            []SourceV4GitHubModel            `tfsdk:"github"` // Renamed to github_organization in v5
-	GSuite            []SourceV4GSuiteModel            `tfsdk:"gsuite"`
-	Azure             []SourceV4AzureModel             `tfsdk:"azure"` // Renamed to azure_ad in v5
-	Okta              []SourceV4OktaModel              `tfsdk:"okta"`
-	SAML              []SourceV4SAMLModel              `tfsdk:"saml"`
+	GitHub             []SourceV4GitHubModel             `tfsdk:"github"` // Renamed to github_organization in v5
+	GSuite             []SourceV4GSuiteModel             `tfsdk:"gsuite"`
+	Azure              []SourceV4AzureModel              `tfsdk:"azure"` // Renamed to azure_ad in v5
+	Okta               []SourceV4OktaModel               `tfsdk:"okta"`
+	SAML               []SourceV4SAMLModel               `tfsdk:"saml"`
 	ExternalEvaluation []SourceV4ExternalEvaluationModel `tfsdk:"external_evaluation"`
-	AuthContext       []SourceV4AuthContextModel       `tfsdk:"auth_context"`
+	AuthContext        []SourceV4AuthContextModel        `tfsdk:"auth_context"`
 }
 
 // SourceV4GitHubModel represents the github selector from v4.x
 // Renamed to github_organization in v5, and teams becomes team (singular)
 type SourceV4GitHubModel struct {
-	Name               types.String `tfsdk:"name"`                  // String
-	Teams              types.List   `tfsdk:"teams"`                 // List[String] - becomes singular 'team' in v5
+	Name               types.String `tfsdk:"name"`                 // String
+	Teams              types.List   `tfsdk:"teams"`                // List[String] - becomes singular 'team' in v5
 	IdentityProviderID types.String `tfsdk:"identity_provider_id"` // String (optional in v4)
 }
 
 // SourceV4GSuiteModel represents the gsuite selector from v4.x
 type SourceV4GSuiteModel struct {
-	Email              types.List   `tfsdk:"email"`                 // List[String] - extract first element in v5
+	Email              types.List   `tfsdk:"email"`                // List[String] - extract first element in v5
 	IdentityProviderID types.String `tfsdk:"identity_provider_id"` // String (required)
 }
 
 // SourceV4AzureModel represents the azure selector from v4.x
 // Renamed to azure_ad in v5
 type SourceV4AzureModel struct {
-	ID                 types.List   `tfsdk:"id"`                    // List[String] - extract first element in v5
+	ID                 types.List   `tfsdk:"id"`                   // List[String] - extract first element in v5
 	IdentityProviderID types.String `tfsdk:"identity_provider_id"` // String (optional in v4)
 }
 
 // SourceV4OktaModel represents the okta selector from v4.x
 type SourceV4OktaModel struct {
-	Name               types.List   `tfsdk:"name"`                  // List[String] - extract first element in v5
+	Name               types.List   `tfsdk:"name"`                 // List[String] - extract first element in v5
 	IdentityProviderID types.String `tfsdk:"identity_provider_id"` // String (optional in v4)
 }
 
@@ -106,9 +106,9 @@ type SourceV4ExternalEvaluationModel struct {
 
 // SourceV4AuthContextModel represents the auth_context selector from v4.x
 type SourceV4AuthContextModel struct {
-	ID                 types.String `tfsdk:"id"`                    // String (required in v4)
+	ID                 types.String `tfsdk:"id"`                   // String (required in v4)
 	IdentityProviderID types.String `tfsdk:"identity_provider_id"` // String (required in v4)
-	AcID               types.String `tfsdk:"ac_id"`                 // String (required in v4)
+	AcID               types.String `tfsdk:"ac_id"`                // String (required in v4)
 }
 
 // ============================================================================
@@ -119,14 +119,14 @@ type SourceV4AuthContextModel struct {
 // This mirrors the structure in the parent package's ZeroTrustAccessGroupModel.
 // We duplicate it here to avoid import cycles (migrations.go imports v500, which can't import parent).
 type TargetV5ZeroTrustAccessGroupModel struct {
-	ID        types.String                                           `tfsdk:"id"`
-	AccountID types.String                                           `tfsdk:"account_id"`
-	ZoneID    types.String                                           `tfsdk:"zone_id"`
-	Name      types.String                                           `tfsdk:"name"`
-	Include   *[]*TargetV5ZeroTrustAccessGroupIncludeModel           `tfsdk:"include"`
-	IsDefault types.Bool                                              `tfsdk:"is_default"`
-	Exclude   *[]*TargetV5ZeroTrustAccessGroupIncludeModel           `tfsdk:"exclude"`  // Same structure as Include
-	Require   *[]*TargetV5ZeroTrustAccessGroupIncludeModel           `tfsdk:"require"`  // Same structure as Include
+	ID        types.String                                 `tfsdk:"id"`
+	AccountID types.String                                 `tfsdk:"account_id"`
+	ZoneID    types.String                                 `tfsdk:"zone_id"`
+	Name      types.String                                 `tfsdk:"name"`
+	Include   *[]*TargetV5ZeroTrustAccessGroupIncludeModel `tfsdk:"include"`
+	IsDefault types.Bool                                   `tfsdk:"is_default"`
+	Exclude   *[]*TargetV5ZeroTrustAccessGroupIncludeModel `tfsdk:"exclude"` // Same structure as Include
+	Require   *[]*TargetV5ZeroTrustAccessGroupIncludeModel `tfsdk:"require"` // Same structure as Include
 }
 
 // TargetV5ZeroTrustAccessGroupIncludeModel represents a selector block in v5.
@@ -157,6 +157,11 @@ type TargetV5ZeroTrustAccessGroupIncludeModel struct {
 	OIDC                 *TargetV5OIDCModel                 `tfsdk:"oidc"`
 	ServiceToken         *TargetV5ServiceTokenModel         `tfsdk:"service_token"`
 	LinkedAppToken       *TargetV5LinkedAppTokenModel       `tfsdk:"linked_app_token"`
+	UserRiskScore        *TargetV5UserRiskScoreModel        `tfsdk:"user_risk_score"`
+}
+
+type TargetV5UserRiskScoreModel struct {
+	UserRiskScore *[]types.String `tfsdk:"user_risk_score"`
 }
 
 // Target V5 nested selector models

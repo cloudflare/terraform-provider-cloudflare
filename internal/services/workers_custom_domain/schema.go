@@ -18,38 +18,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifer of the Worker Domain.",
+				Description:   "Immutable ID of the domain.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifer of the account.",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostname": schema.StringAttribute{
-				Description:   "Hostname of the Worker Domain.",
+				Description:   "Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"service": schema.StringAttribute{
-				Description:   "Worker service associated with the zone and hostname.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier of the zone.",
+				Description:   "Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"environment": schema.StringAttribute{
-				Description:        "Worker environment associated with the zone and hostname.",
+				Description:        "Worker environment associated with the domain.",
+				Computed:           true,
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-				PlanModifiers:      []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers:      []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+			},
+			"zone_id": schema.StringAttribute{
+				Description:   "ID of the zone containing the domain hostname.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"zone_name": schema.StringAttribute{
-				Description: "Name of the zone.",
+				Description:   "Name of the zone containing the domain hostname.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+			},
+			"cert_id": schema.StringAttribute{
+				Description: "ID of the TLS certificate issued for the domain.",
 				Computed:    true,
 			},
 		},

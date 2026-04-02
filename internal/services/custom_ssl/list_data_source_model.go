@@ -44,6 +44,7 @@ type CustomSSLsResultDataSourceModel struct {
 	ID                 types.String                                                       `tfsdk:"id" json:"id,computed"`
 	ZoneID             types.String                                                       `tfsdk:"zone_id" json:"zone_id,computed"`
 	BundleMethod       types.String                                                       `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	CustomCsrID        types.String                                                       `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
 	ExpiresOn          timetypes.RFC3339                                                  `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	GeoRestrictions    customfield.NestedObject[CustomSSLsGeoRestrictionsDataSourceModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed"`
 	Hosts              customfield.List[types.String]                                     `tfsdk:"hosts" json:"hosts,computed"`

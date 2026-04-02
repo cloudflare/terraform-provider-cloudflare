@@ -49,6 +49,7 @@ type CustomHostnameSSLModel struct {
 	CloudflareBranding   types.Bool                                 `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional,no_refresh"`
 	CustomCERTBundle     *[]*CustomHostnameSSLCustomCERTBundleModel `tfsdk:"custom_cert_bundle" json:"custom_cert_bundle,optional,no_refresh"`
 	CustomCertificate    types.String                               `tfsdk:"custom_certificate" json:"custom_certificate,optional"`
+	CustomCsrID          types.String                               `tfsdk:"custom_csr_id" json:"custom_csr_id,optional"`
 	CustomKey            types.String                               `tfsdk:"custom_key" json:"custom_key,optional"`
 	Method               types.String                               `tfsdk:"method" json:"method,optional"`
 	Settings             *CustomHostnameSSLSettingsModel            `tfsdk:"settings" json:"settings,optional"`

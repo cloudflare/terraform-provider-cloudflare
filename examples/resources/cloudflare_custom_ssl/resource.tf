@@ -56,6 +56,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 
   EOT
   bundle_method = "ubiquitous"
+  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
   deploy = "staging"
   geo_restrictions = {
     label = "us"

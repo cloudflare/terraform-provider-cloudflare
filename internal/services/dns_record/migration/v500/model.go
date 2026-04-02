@@ -101,6 +101,7 @@ type TargetDNSRecordModel struct {
 	TTL               types.Float64                 `tfsdk:"ttl"`
 	Priority          types.Float64                 `tfsdk:"priority"`
 	Proxied           types.Bool                    `tfsdk:"proxied"`
+	PrivateRouting    types.Bool                    `tfsdk:"private_routing"`
 	Comment           types.String                  `tfsdk:"comment"`
 	Tags              customfield.Set[types.String] `tfsdk:"tags"`
 	Data              *TargetDNSRecordDataModel     `tfsdk:"data"`

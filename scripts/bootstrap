@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
@@ -19,10 +19,8 @@ if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ] && [ "$SKIP_BREW" != "1" ] 
   }
 fi
 
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6"
+
 echo "==> Installing Go dependencies…"
-# Set GOPRIVATE if the repository appears to be private
-REPO_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://github.com/cloudflare/cloudflare-go)
-if [ "$REPO_STATUS" = "404" ]; then
-  export GOPRIVATE=github.com/cloudflare/cloudflare-go
-fi
 go mod tidy -e || true

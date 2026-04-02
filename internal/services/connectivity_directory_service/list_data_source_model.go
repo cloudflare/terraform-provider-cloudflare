@@ -37,15 +37,17 @@ func (m *ConnectivityDirectoryServicesDataSourceModel) toListParams(_ context.Co
 }
 
 type ConnectivityDirectoryServicesResultDataSourceModel struct {
-	ID        types.String                                                               `tfsdk:"id" json:"service_id,computed"`
-	Host      customfield.NestedObject[ConnectivityDirectoryServicesHostDataSourceModel] `tfsdk:"host" json:"host,computed"`
-	Name      types.String                                                               `tfsdk:"name" json:"name,computed"`
-	Type      types.String                                                               `tfsdk:"type" json:"type,computed"`
-	CreatedAt timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	HTTPPort  types.Int64                                                                `tfsdk:"http_port" json:"http_port,computed"`
-	HTTPSPort types.Int64                                                                `tfsdk:"https_port" json:"https_port,computed"`
-	ServiceID types.String                                                               `tfsdk:"service_id" json:"service_id,computed"`
-	UpdatedAt timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Host        customfield.NestedObject[ConnectivityDirectoryServicesHostDataSourceModel]        `tfsdk:"host" json:"host,computed"`
+	Name        types.String                                                                      `tfsdk:"name" json:"name,computed"`
+	Type        types.String                                                                      `tfsdk:"type" json:"type,computed"`
+	CreatedAt   timetypes.RFC3339                                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	HTTPPort    types.Int64                                                                       `tfsdk:"http_port" json:"http_port,computed"`
+	HTTPSPort   types.Int64                                                                       `tfsdk:"https_port" json:"https_port,computed"`
+	ServiceID   types.String                                                                      `tfsdk:"service_id" json:"service_id,computed"`
+	TLSSettings customfield.NestedObject[ConnectivityDirectoryServicesTLSSettingsDataSourceModel] `tfsdk:"tls_settings" json:"tls_settings,computed"`
+	UpdatedAt   timetypes.RFC3339                                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	AppProtocol types.String                                                                      `tfsdk:"app_protocol" json:"app_protocol,computed"`
+	TCPPort     types.Int64                                                                       `tfsdk:"tcp_port" json:"tcp_port,computed"`
 }
 
 type ConnectivityDirectoryServicesHostDataSourceModel struct {
@@ -63,4 +65,8 @@ type ConnectivityDirectoryServicesHostNetworkDataSourceModel struct {
 type ConnectivityDirectoryServicesHostResolverNetworkDataSourceModel struct {
 	TunnelID    types.String                   `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	ResolverIPs customfield.List[types.String] `tfsdk:"resolver_ips" json:"resolver_ips,computed"`
+}
+
+type ConnectivityDirectoryServicesTLSSettingsDataSourceModel struct {
+	CERTVerificationMode types.String `tfsdk:"cert_verification_mode" json:"cert_verification_mode,computed"`
 }

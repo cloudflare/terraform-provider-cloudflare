@@ -39,10 +39,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "http".`,
+				Description: `Available values: "tcp", "http".`,
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("http"),
+					stringvalidator.OneOfCaseInsensitive("tcp", "http"),
 				},
 			},
 			"host": schema.SingleNestedAttribute{
@@ -79,6 +79,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"app_protocol": schema.StringAttribute{
+				Description: `Available values: "postgresql", "mysql".`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("postgresql", "mysql"),
+				},
+			},
 			"http_port": schema.Int64Attribute{
 				Optional: true,
 				Validators: []validator.Int64{
@@ -89,6 +96,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
+				},
+			},
+			"tcp_port": schema.Int64Attribute{
+				Optional: true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
+				},
+			},
+			"tls_settings": schema.SingleNestedAttribute{
+				Description: "TLS settings for a connectivity service.\n\nIf omitted, the default mode (`verify_full`) is used.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"cert_verification_mode": schema.StringAttribute{
+						Description: "TLS certificate verification mode for the connection to the origin.\n\n- `\"verify_full\"` — verify certificate chain and hostname (default)\n- `\"verify_ca\"` — verify certificate chain only, skip hostname check\n- `\"disabled\"` — do not verify the server certificate at all",
+						Required:    true,
+					},
 				},
 			},
 			"created_at": schema.StringAttribute{

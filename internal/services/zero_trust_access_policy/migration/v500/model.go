@@ -21,10 +21,10 @@ type SourceAccessPolicyModel struct {
 	ApprovalRequired             types.Bool   `tfsdk:"approval_required"`
 
 	// v4 stores these as list blocks
-	Include         []SourceConditionGroupModel `tfsdk:"include"`
-	Exclude         []SourceConditionGroupModel `tfsdk:"exclude"`
-	Require         []SourceConditionGroupModel `tfsdk:"require"`
-	ApprovalGroup   []SourceApprovalGroupModel  `tfsdk:"approval_group"`
+	Include         []SourceConditionGroupModel  `tfsdk:"include"`
+	Exclude         []SourceConditionGroupModel  `tfsdk:"exclude"`
+	Require         []SourceConditionGroupModel  `tfsdk:"require"`
+	ApprovalGroup   []SourceApprovalGroupModel   `tfsdk:"approval_group"`
 	ConnectionRules []SourceConnectionRulesModel `tfsdk:"connection_rules"`
 }
 
@@ -132,21 +132,21 @@ type SourceAuthContextModel struct {
 // TargetAccessPolicyModel represents the v5 cloudflare_zero_trust_access_policy state structure.
 // This is a copy of the main model to avoid import cycles.
 type TargetAccessPolicyModel struct {
-	ID                           types.String                    `tfsdk:"id"`
-	AccountID                    types.String                    `tfsdk:"account_id"`
-	Decision                     types.String                    `tfsdk:"decision"`
-	Name                         types.String                    `tfsdk:"name"`
-	ApprovalRequired             types.Bool                      `tfsdk:"approval_required"`
-	IsolationRequired            types.Bool                      `tfsdk:"isolation_required"`
-	PurposeJustificationPrompt   types.String                    `tfsdk:"purpose_justification_prompt"`
-	PurposeJustificationRequired types.Bool                      `tfsdk:"purpose_justification_required"`
-	ApprovalGroups               *[]*TargetApprovalGroupsModel   `tfsdk:"approval_groups"`
-	ConnectionRules              *TargetConnectionRulesModel     `tfsdk:"connection_rules"`
-	MfaConfig                    *TargetMfaConfigModel           `tfsdk:"mfa_config"`
-	SessionDuration              types.String                    `tfsdk:"session_duration"`
-	Exclude                      []TargetConditionModel          `tfsdk:"exclude"`
-	Include                      []TargetConditionModel          `tfsdk:"include"`
-	Require                      []TargetConditionModel          `tfsdk:"require"`
+	ID                           types.String                  `tfsdk:"id"`
+	AccountID                    types.String                  `tfsdk:"account_id"`
+	Decision                     types.String                  `tfsdk:"decision"`
+	Name                         types.String                  `tfsdk:"name"`
+	ApprovalRequired             types.Bool                    `tfsdk:"approval_required"`
+	IsolationRequired            types.Bool                    `tfsdk:"isolation_required"`
+	PurposeJustificationPrompt   types.String                  `tfsdk:"purpose_justification_prompt"`
+	PurposeJustificationRequired types.Bool                    `tfsdk:"purpose_justification_required"`
+	ApprovalGroups               *[]*TargetApprovalGroupsModel `tfsdk:"approval_groups"`
+	ConnectionRules              *TargetConnectionRulesModel   `tfsdk:"connection_rules"`
+	MfaConfig                    *TargetMfaConfigModel         `tfsdk:"mfa_config"`
+	SessionDuration              types.String                  `tfsdk:"session_duration"`
+	Exclude                      []TargetConditionModel        `tfsdk:"exclude"`
+	Include                      []TargetConditionModel        `tfsdk:"include"`
+	Require                      []TargetConditionModel        `tfsdk:"require"`
 }
 
 type TargetApprovalGroupsModel struct {
@@ -166,7 +166,7 @@ type TargetConnectionRulesRDPModel struct {
 
 type TargetMfaConfigModel struct {
 	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators"`
-	MfaBypass             types.Bool      `tfsdk:"mfa_bypass"`
+	MfaDisabled           types.Bool      `tfsdk:"mfa_disabled"`
 	SessionDuration       types.String    `tfsdk:"session_duration"`
 }
 
@@ -197,6 +197,11 @@ type TargetConditionModel struct {
 	OIDC                 *TargetOIDCModel                 `tfsdk:"oidc"`
 	ServiceToken         *TargetServiceTokenModel         `tfsdk:"service_token"`
 	LinkedAppToken       *TargetLinkedAppTokenModel       `tfsdk:"linked_app_token"`
+	UserRiskScore        *TargetUserRiskScoreModel        `tfsdk:"user_risk_score"`
+}
+
+type TargetUserRiskScoreModel struct {
+	UserRiskScore *[]types.String `tfsdk:"user_risk_score"`
 }
 
 type TargetGroupModel struct {

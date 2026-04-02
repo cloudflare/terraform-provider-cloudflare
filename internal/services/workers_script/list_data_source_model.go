@@ -67,15 +67,23 @@ type WorkersScriptsNamedHandlersDataSourceModel struct {
 }
 
 type WorkersScriptsObservabilityDataSourceModel struct {
-	Enabled          types.Bool                                                               `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                            `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptsObservabilityLogsDataSourceModel] `tfsdk:"logs" json:"logs,computed"`
+	Enabled          types.Bool                                                                 `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                              `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs             customfield.NestedObject[WorkersScriptsObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces           customfield.NestedObject[WorkersScriptsObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkersScriptsObservabilityLogsDataSourceModel struct {
 	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
 	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkersScriptsObservabilityTracesDataSourceModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
 }

@@ -32,6 +32,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
+			"app_protocol": schema.StringAttribute{
+				Description: `Available values: "postgresql", "mysql".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("postgresql", "mysql"),
+				},
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -51,11 +58,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Computed: true,
 			},
+			"tcp_port": schema.Int64Attribute{
+				Computed: true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
+				},
+			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "http".`,
+				Description: `Available values: "tcp", "http".`,
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("http"),
+					stringvalidator.OneOfCaseInsensitive("tcp", "http"),
 				},
 			},
 			"updated_at": schema.StringAttribute{
@@ -100,14 +113,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"tls_settings": schema.SingleNestedAttribute{
+				Description: "TLS settings for a connectivity service.\n\nIf omitted, the default mode (`verify_full`) is used.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ConnectivityDirectoryServiceTLSSettingsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"cert_verification_mode": schema.StringAttribute{
+						Description: "TLS certificate verification mode for the connection to the origin.\n\n- `\"verify_full\"` — verify certificate chain and hostname (default)\n- `\"verify_ca\"` — verify certificate chain only, skip hostname check\n- `\"disabled\"` — do not verify the server certificate at all",
+						Computed:    true,
+					},
+				},
+			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Description: `Available values: "http".`,
+						Description: `Available values: "tcp", "http".`,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("http"),
+							stringvalidator.OneOfCaseInsensitive("tcp", "http"),
 						},
 					},
 				},

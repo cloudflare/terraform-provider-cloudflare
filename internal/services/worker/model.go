@@ -23,6 +23,7 @@ type WorkerModel struct {
 	Subdomain     customfield.NestedObject[WorkerSubdomainModel]        `tfsdk:"subdomain" json:"subdomain,computed_optional"`
 	TailConsumers customfield.NestedObjectSet[WorkerTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	CreatedOn     timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DeployedOn    timetypes.RFC3339                                     `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 	UpdatedOn     timetypes.RFC3339                                     `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
 	References    customfield.NestedObject[WorkerReferencesModel]       `tfsdk:"references" json:"references,computed"`
 }
@@ -36,15 +37,25 @@ func (m WorkerModel) MarshalJSONForUpdate(state WorkerModel) (data []byte, err e
 }
 
 type WorkerObservabilityModel struct {
-	Enabled          types.Bool                                             `tfsdk:"enabled" json:"enabled,computed_optional"`
-	HeadSamplingRate types.Float64                                          `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
-	Logs             customfield.NestedObject[WorkerObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed_optional"`
+	Enabled          types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                                            `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Logs             customfield.NestedObject[WorkerObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed_optional"`
+	Traces           customfield.NestedObject[WorkerObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed_optional"`
 }
 
 type WorkerObservabilityLogsModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed_optional"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
-	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,computed_optional"`
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed_optional"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
+}
+
+type WorkerObservabilityTracesModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
 }
 
 type WorkerSubdomainModel struct {

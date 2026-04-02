@@ -77,6 +77,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"custom_csr_id": schema.StringAttribute{
+							Description: "The identifier for the Custom CSR that was used.",
+							Computed:    true,
+						},
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate from the authority expires.",
 							Computed:    true,
