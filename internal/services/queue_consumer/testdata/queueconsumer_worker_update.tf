@@ -3,9 +3,9 @@ resource "cloudflare_queue" "test_queue" {
   queue_name = "%[2]s"
 }
 
-resource "cloudflare_workers_script" "worker_script" {
+resource "cloudflare_workers_script" "worker_script_updated" {
   account_id  = "%[5]s"
-  script_name = "test-worker-consumer-worker-update"
+  script_name = "test-worker-consumer-worker-update-script"
   bindings = [
     {
       type       = "queue"
@@ -31,7 +31,7 @@ resource "cloudflare_queue_consumer" "%[3]s" {
   account_id  = "%[4]s"
   queue_id    = cloudflare_queue.test_queue.id
   type        = "worker"
-  script_name = cloudflare_workers_script.worker_script.script_name
+  script_name = cloudflare_workers_script.worker_script_updated.script_name
 
-  depends_on = [cloudflare_workers_script.worker_script, cloudflare_queue.test_queue]
+  depends_on = [cloudflare_workers_script.worker_script_updated, cloudflare_queue.test_queue]
 }

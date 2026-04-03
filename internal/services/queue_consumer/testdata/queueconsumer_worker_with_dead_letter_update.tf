@@ -15,7 +15,7 @@ resource "cloudflare_queue" "dlq2" {
 
 resource "cloudflare_workers_script" "worker_script_with_dead_letter" {
   account_id  = "%[9]s"
-  script_name = "test-worker-consumer-worker-with-dead-letter-update"
+  script_name = "test-worker-consumer-worker-with-dead-letter-script"
   bindings = [
     {
       type       = "queue"
