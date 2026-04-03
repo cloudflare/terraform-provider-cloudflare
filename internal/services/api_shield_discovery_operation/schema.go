@@ -19,6 +19,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version:            500,
 		DeprecationMessage: "This resource is no longer supported. It cannot be imported.",
+		Version:            500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",

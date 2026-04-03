@@ -16,6 +16,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkersForPlatformsDispatchNames
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the Workers for Platforms dispatch namespace.",

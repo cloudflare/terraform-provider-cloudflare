@@ -18,6 +18,7 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityTrustedDomainsResou
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "The unique identifier for the trusted domain.",

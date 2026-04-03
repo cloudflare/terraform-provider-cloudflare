@@ -25,6 +25,7 @@ var _ resource.ResourceWithConfigValidators = (*LogpushJobResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description: "Unique id of the job.",

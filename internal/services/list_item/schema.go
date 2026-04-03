@@ -24,6 +24,7 @@ var _ resource.ResourceWithConfigValidators = (*ListItemResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID for this resource.",
