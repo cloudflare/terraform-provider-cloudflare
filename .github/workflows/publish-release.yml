@@ -39,6 +39,16 @@ jobs:
             goarch: arm64
             extension: .exe
     steps:
+      - name: Cleanup unused directories and tools
+        run: |
+          df -h /
+          sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing 2>/dev/null || true
+          sudo apt-get autoremove -y 2>/dev/null || true
+          sudo apt-get clean 2>/dev/null || true
+          sudo docker image prune --all --force 2>/dev/null || true
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY" /opt/google/chrome /opt/microsoft/msedge /opt/microsoft/powershell /opt/pipx /usr/lib/mono /usr/local/julia* /usr/local/lib/android /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell /usr/share/dotnet /usr/share/swift 2>/dev/null || true
+          ghcup nuke 2>/dev/null || true
+          df -h /
       - name: Checkout
         uses: actions/checkout@v6
         with:
