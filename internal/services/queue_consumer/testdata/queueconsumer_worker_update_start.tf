@@ -3,9 +3,9 @@ resource "cloudflare_queue" "test_queue" {
   queue_name = "%[2]s"
 }
 
-resource "cloudflare_workers_script" "worker_script" {
+resource "cloudflare_workers_script" "worker_script_updated" {
   account_id  = "%[5]s"
-  script_name = "test-worker-consumer-worker-update-start"
+  script_name = "test-worker-consumer-worker-update-script"
   bindings = [
     {
       type       = "queue"
@@ -13,7 +13,7 @@ resource "cloudflare_workers_script" "worker_script" {
       queue_name = cloudflare_queue.test_queue.queue_name
     }
   ]
-  content             = <<-EOT
+  content     = <<-EOT
 export default {
   async queue(batch, env, ctx) {
     for (const message of batch.messages) {
@@ -22,7 +22,7 @@ export default {
   }
 };
 EOT
-  main_module         = "index.js"
+  main_module = "index.js"
 
   depends_on = [cloudflare_queue.test_queue]
 }
@@ -31,13 +31,7 @@ resource "cloudflare_queue_consumer" "%[3]s" {
   account_id  = "%[4]s"
   queue_id    = cloudflare_queue.test_queue.id
   type        = "worker"
-  script_name = cloudflare_workers_script.worker_script.script_name
+  script_name = cloudflare_workers_script.worker_script_updated.script_name
 
-
-lifecycle {
-    ignore_changes = [
-      settings
-    ]
-}
-  depends_on = [cloudflare_workers_script.worker_script, cloudflare_queue.test_queue]
+  depends_on = [cloudflare_workers_script.worker_script_updated, cloudflare_queue.test_queue]
 }
