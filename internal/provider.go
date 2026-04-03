@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -301,11 +302,12 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 
 			consts.APIKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/fundamentals/api/get-started/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`[0-9a-f]{37}`),
-						"API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)",
+					customvalidator.NewSensitiveRegexMatchesValidator(
+						regexp.MustCompile(`^[0-9A-Za-z\-_]{37,60}$`),
+						"API key must only contain characters 0-9, a-z, A-Z, hyphens and underscores",
 					),
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot(consts.EmailSchemaKey),
@@ -315,17 +317,19 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 
 			consts.APITokenSchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
-						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
+					customvalidator.NewSensitiveRegexMatchesValidator(
+						regexp.MustCompile(`^[0-9A-Za-z\-_]{40,80}$`),
+						"API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
 				},
 			},
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 			},
 
