@@ -17,7 +17,6 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version:     500,
 		Description: "Manages API Shield configuration properties for a zone, specifically auth ID characteristics.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{

@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*R2DataCatalogResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Use this to uniquely identify the activated catalog.",

@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*ContentScanningExpressionResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "defines the unique ID for this custom scan expression.",
