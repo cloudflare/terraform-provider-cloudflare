@@ -18,7 +18,6 @@ var _ resource.ResourceWithConfigValidators = (*SnippetRulesResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Use this field to specify the unique ID of the zone.",

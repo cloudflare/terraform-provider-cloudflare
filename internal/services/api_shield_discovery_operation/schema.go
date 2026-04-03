@@ -18,7 +18,6 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldDiscoveryOperationResou
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		DeprecationMessage: "This resource is no longer supported. It cannot be imported.",
-		Version:            500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",

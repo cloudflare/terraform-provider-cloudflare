@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*SnippetResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
 				Description:   "Identify the snippet.",

@@ -18,7 +18,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDEXTestResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier for the test.",

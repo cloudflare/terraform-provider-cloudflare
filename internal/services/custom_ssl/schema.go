@@ -22,7 +22,6 @@ var _ resource.ResourceWithConfigValidators = (*CustomSSLResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
