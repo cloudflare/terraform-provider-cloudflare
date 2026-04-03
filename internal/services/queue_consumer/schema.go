@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-
 )
 
 var _ resource.ResourceWithConfigValidators = (*QueueConsumerResource)(nil)
@@ -34,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"consumer_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "worker", "http_pull".`,
@@ -80,11 +79,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"queue_name": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

@@ -19,6 +19,7 @@ type QueueConsumerModel struct {
 	Type            types.String                `tfsdk:"type" json:"type,required"`
 	DeadLetterQueue types.String                `tfsdk:"dead_letter_queue" json:"dead_letter_queue,optional,no_refresh"`
 	ScriptName      types.String                `tfsdk:"script_name" json:"script_name,optional"`
+	Script          types.String                `tfsdk:"-" json:"script,computed"` // API returns "script" but we expose "script_name"
 	Settings        *QueueConsumerSettingsModel `tfsdk:"settings" json:"settings,optional"`
 	CreatedOn       timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	QueueName       types.String                `tfsdk:"queue_name" json:"queue_name,computed"`
