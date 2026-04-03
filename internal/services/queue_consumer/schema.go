@@ -5,6 +5,7 @@ package queue_consumer
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -55,6 +56,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"settings": schema.SingleNestedAttribute{
 				Optional:      true,
 				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[QueueConsumerSettingsModel](ctx),
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"batch_size": schema.Float64Attribute{
