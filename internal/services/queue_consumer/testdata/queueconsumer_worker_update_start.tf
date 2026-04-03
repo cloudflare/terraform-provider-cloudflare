@@ -13,7 +13,7 @@ resource "cloudflare_workers_script" "worker_script" {
       queue_name = cloudflare_queue.test_queue.queue_name
     }
   ]
-  content             = <<-EOT
+  content     = <<-EOT
 export default {
   async queue(batch, env, ctx) {
     for (const message of batch.messages) {
@@ -22,7 +22,7 @@ export default {
   }
 };
 EOT
-  main_module         = "index.js"
+  main_module = "index.js"
 
   depends_on = [cloudflare_queue.test_queue]
 }
@@ -33,11 +33,5 @@ resource "cloudflare_queue_consumer" "%[3]s" {
   type        = "worker"
   script_name = cloudflare_workers_script.worker_script.script_name
 
-
-lifecycle {
-    ignore_changes = [
-      settings
-    ]
-}
   depends_on = [cloudflare_workers_script.worker_script, cloudflare_queue.test_queue]
 }

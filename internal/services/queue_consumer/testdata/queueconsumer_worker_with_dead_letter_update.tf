@@ -23,7 +23,7 @@ resource "cloudflare_workers_script" "worker_script_with_dead_letter" {
       queue_name = cloudflare_queue.test_queue.queue_name
     }
   ]
-  content             = <<-EOT
+  content     = <<-EOT
 export default {
   async queue(batch, env, ctx) {
     for (const message of batch.messages) {
@@ -32,7 +32,7 @@ export default {
   }
 };
 EOT
-  main_module         = "index.js"
+  main_module = "index.js"
 
   depends_on = [cloudflare_queue.test_queue]
 }
@@ -44,10 +44,5 @@ resource "cloudflare_queue_consumer" "%[7]s" {
   script_name       = cloudflare_workers_script.worker_script_with_dead_letter.script_name
   dead_letter_queue = cloudflare_queue.dlq2.queue_name
 
-  lifecycle {
-    ignore_changes = [
-      settings
-    ]
-  }
   depends_on = [cloudflare_workers_script.worker_script_with_dead_letter, cloudflare_queue.test_queue]
 }
