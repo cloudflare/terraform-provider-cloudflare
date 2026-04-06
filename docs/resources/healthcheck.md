@@ -90,7 +90,7 @@ Optional:
 - `method` (String) The HTTP method to use for the health check.
 Available values: "GET", "HEAD".
 - `path` (String) The endpoint path to health check against.
-- `port` (Number) Port number to connect to for the health check. Defaults to 80 if type is HTTP or 443 if type is HTTPS.
+- `port` (Number) Port number to connect to for the health check. Defaults to 80.
 
 
 <a id="nestedatt--tcp_config"></a>
