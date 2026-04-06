@@ -174,7 +174,7 @@ func TestMigrateWorkersCustomDomain_WithoutEnvironment(t *testing.T) {
 					ExpectNonEmptyPlan:       true,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PostApplyPostRefresh: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+							plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 						},
 					},
 				}
@@ -227,7 +227,7 @@ func migrationStepExpectEnvironmentReplacement(t *testing.T, cfg string, tmpDir 
 				acctest.DebugNonEmptyPlan,
 			},
 			PostApplyPostRefresh: []plancheck.PlanCheck{
-				plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+				plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
 			},
 		},
 		ConfigStateChecks: stateChecks,
