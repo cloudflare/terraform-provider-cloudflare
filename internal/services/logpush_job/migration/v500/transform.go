@@ -48,13 +48,13 @@ func Transform(ctx context.Context, source SourceCloudflareLogpushJobModel) (*Ta
 
 	// Step 3: Initialize target with direct copies
 	target := &TargetLogpushJobModel{
-		ID:              targetID,
-		AccountID:       source.AccountID,
-		ZoneID:          source.ZoneID,
-		Dataset:         source.Dataset,
-		DestinationConf: source.DestinationConf,
-		Enabled:         source.Enabled,
-		Frequency:       source.Frequency,
+		ID:                 targetID,
+		AccountID:          source.AccountID,
+		ZoneID:             source.ZoneID,
+		Dataset:            source.Dataset,
+		DestinationConf:    source.DestinationConf,
+		Enabled:            source.Enabled,
+		Frequency:          source.Frequency,
 		OwnershipChallenge: source.OwnershipChallenge,
 	}
 
@@ -122,6 +122,9 @@ func transformOutputOptions(ctx context.Context, source SourceLogpushJobOutputOp
 	target.RecordPrefix = preserveV4Default(source.RecordPrefix, "{")
 	target.RecordSuffix = preserveV4Default(source.RecordSuffix, "}\n")
 	target.TimestampFormat = preserveV4Default(source.TimestampFormat, "unixnano")
+
+	// Set default for merge_subrequests (not present in v4 state, default is false)
+	target.MergeSubrequests = types.BoolValue(false)
 
 	// cve_2021_44228 has default false in both v4 and v5, so no special handling needed
 	// sample_rate has default 1.0 in v4, but we preserve the actual value from state
