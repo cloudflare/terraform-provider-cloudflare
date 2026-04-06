@@ -21,6 +21,11 @@ description: |-
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `namespace` (String)
+- `order_by` (String) Order By Column Name
+Available values: "created_at".
+- `order_by_direction` (String) Order By Direction
+Available values: "asc", "desc".
 - `search` (String) Search by id
 
 ### Read-Only
@@ -41,16 +46,20 @@ Read-Only:
 - `created_at` (String)
 - `created_by` (String)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--result--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
 - `enable` (Boolean)
+- `engine_version` (Number)
 - `fusion_method` (String) Available values: "max", "rrf".
-- `hybrid_search_enabled` (Boolean)
-- `id` (String) Use your AI Search ID.
+- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
+- `id` (String) AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
+- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--result--index_method))
+- `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--result--indexing_options))
 - `last_activity` (String)
 - `max_num_results` (Number)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--result--metadata))
 - `modified_at` (String)
 - `modified_by` (String)
+- `namespace` (String)
 - `paused` (Boolean)
 - `public_endpoint_id` (String)
 - `public_endpoint_params` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params))
@@ -65,15 +74,32 @@ Read-Only:
 - `status` (String)
 - `token_id` (String)
 - `type` (String) Available values: "r2", "web-crawler".
-- `vectorize_name` (String)
 
 <a id="nestedatt--result--custom_metadata"></a>
 ### Nested Schema for `result.custom_metadata`
 
 Read-Only:
 
-- `data_type` (String) Available values: "text", "number", "boolean".
+- `data_type` (String) Available values: "text", "number", "boolean", "datetime".
 - `field_name` (String)
+
+
+<a id="nestedatt--result--index_method"></a>
+### Nested Schema for `result.index_method`
+
+Read-Only:
+
+- `keyword` (Boolean) Enable keyword (BM25) storage backend.
+- `vector` (Boolean) Enable vector (embedding) storage backend.
+
+
+<a id="nestedatt--result--indexing_options"></a>
+### Nested Schema for `result.indexing_options`
+
+Read-Only:
+
+- `keyword_tokenizer` (String) Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.
+Available values: "porter", "trigram".
 
 
 <a id="nestedatt--result--metadata"></a>
@@ -138,8 +164,19 @@ Read-Only:
 
 Read-Only:
 
-- `keyword_match_mode` (String) Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.
-Available values: "exact_match", "fuzzy_match".
+- `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--result--retrieval_options--boost_by))
+- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.
+Available values: "and", "or".
+
+<a id="nestedatt--result--retrieval_options--boost_by"></a>
+### Nested Schema for `result.retrieval_options.boost_by`
+
+Read-Only:
+
+- `direction` (String) Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional ��� defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
+Available values: "asc", "desc", "exists", "not_exists".
+- `field` (String) Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.
+
 
 
 <a id="nestedatt--result--source_params"></a>
@@ -158,19 +195,42 @@ Read-Only:
 
 Read-Only:
 
+- `crawl_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--crawl_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options))
-- `parse_type` (String) Available values: "sitemap", "feed-rss".
+- `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--store_options))
+
+<a id="nestedatt--result--source_params--web_crawler--crawl_options"></a>
+### Nested Schema for `result.source_params.web_crawler.crawl_options`
+
+Read-Only:
+
+- `depth` (Number)
+- `include_external_links` (Boolean)
+- `include_subdomains` (Boolean)
+- `max_age` (Number)
+- `source` (String) Available values: "all", "sitemaps", "links".
+
 
 <a id="nestedatt--result--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `result.source_params.web_crawler.parse_options`
 
 Read-Only:
 
+- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options--content_selector))
 - `include_headers` (Map of String)
 - `include_images` (Boolean)
 - `specific_sitemaps` (List of String) List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.
 - `use_browser_rendering` (Boolean)
+
+<a id="nestedatt--result--source_params--web_crawler--parse_options--content_selector"></a>
+### Nested Schema for `result.source_params.web_crawler.parse_options.content_selector`
+
+Read-Only:
+
+- `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
+- `selector` (String) CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.
+
 
 
 <a id="nestedatt--result--source_params--web_crawler--store_options"></a>

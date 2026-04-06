@@ -140,7 +140,8 @@ Read-Only:
 - `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
 - `name` (String) Complete DNS record name, including the zone name, in Punycode.
-- `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
+- `priority` (Number) Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.
+- `private_routing` (Boolean) Enables private network routing to the origin.
 - `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--result--settings))

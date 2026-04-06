@@ -15,9 +15,16 @@ description: |-
 data "cloudflare_custom_hostnames" "example_custom_hostnames" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   id = "0d89c70d-ad9f-4843-b99f-6cc0252067e9"
+  certificate_authority = "google"
+  custom_origin_server = "origin2.example.com"
   direction = "desc"
-  hostname = "app.example.com"
+  hostname = {
+    contain = "example.com"
+  }
+  hostname_status = "provisioned"
   ssl = 0
+  ssl_status = "active"
+  wildcard = false
 }
 ```
 
@@ -30,19 +37,35 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
 
 ### Optional
 
+- `certificate_authority` (String) Filter by the certificate authority that issued the SSL certificate.
+Available values: "google", "lets_encrypt", "ssl_com".
+- `custom_origin_server` (String) Filter by custom origin server name.
 - `direction` (String) Direction to order hostnames.
 Available values: "asc", "desc".
-- `hostname` (String) Fully qualified domain name to match against. This parameter cannot be used with the 'id' parameter.
+- `hostname` (Attributes) (see [below for nested schema](#nestedatt--hostname))
+- `hostname_status` (String) Filter by the hostname's activation status.
+Available values: "active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked".
 - `id` (String) Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order hostnames by.
 Available values: "ssl", "ssl_status".
 - `ssl` (Number) Whether to filter hostnames based on if they have SSL enabled.
 Available values: 0, 1.
+- `ssl_status` (String) Filter by SSL certificate status.
+Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
+- `wildcard` (Boolean) Filter by whether the custom hostname is a wildcard hostname.
 
 ### Read-Only
 
 - `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
+
+<a id="nestedatt--hostname"></a>
+### Nested Schema for `hostname`
+
+Optional:
+
+- `contain` (String) Filters hostnames by a substring match on the hostname value. This parameter cannot be used with the 'id' parameter.
+
 
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`

@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_connectivity_directory_services" "example_connectivity_directory_services" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  type = "http"
+  type = "tcp"
 }
 ```
 
@@ -28,7 +28,7 @@ data "cloudflare_connectivity_directory_services" "example_connectivity_director
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
-- `type` (String) Available values: "http".
+- `type` (String) Available values: "tcp", "http".
 
 ### Read-Only
 
@@ -39,14 +39,18 @@ data "cloudflare_connectivity_directory_services" "example_connectivity_director
 
 Read-Only:
 
+- `app_protocol` (String) Available values: "postgresql", "mysql".
 - `created_at` (String)
 - `host` (Attributes) (see [below for nested schema](#nestedatt--result--host))
 - `http_port` (Number)
 - `https_port` (Number)
-- `id` (String)
 - `name` (String)
 - `service_id` (String)
-- `type` (String) Available values: "http".
+- `tcp_port` (Number)
+- `tls_settings` (Attributes) TLS settings for a connectivity service.
+
+If omitted, the default mode (`verify_full`) is used. (see [below for nested schema](#nestedatt--result--tls_settings))
+- `type` (String) Available values: "tcp", "http".
 - `updated_at` (String)
 
 <a id="nestedatt--result--host"></a>
@@ -75,5 +79,18 @@ Read-Only:
 
 - `resolver_ips` (List of String)
 - `tunnel_id` (String)
+
+
+
+<a id="nestedatt--result--tls_settings"></a>
+### Nested Schema for `result.tls_settings`
+
+Read-Only:
+
+- `cert_verification_mode` (String) TLS certificate verification mode for the connection to the origin.
+
+- `"verify_full"` — verify certificate chain and hostname (default)
+- `"verify_ca"` — verify certificate chain only, skip hostname check
+- `"disabled"` — do not verify the server certificate at all
 
 

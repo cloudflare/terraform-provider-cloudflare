@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
-  account_id = "9a7806061c88ada191ed06f989cc3dac"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   domain_id = "dbe10b4bc17c295377eabd600e1787fd"
 }
 ```
@@ -23,31 +23,32 @@ data "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Identifer of the account.
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `domain_id` (String) Identifer of the Worker Domain.
+- `domain_id` (String) ID of the domain.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
-- `environment` (String, Deprecated) Worker environment associated with the zone and hostname.
-- `hostname` (String) Hostname of the Worker Domain.
-- `id` (String) Identifer of the Worker Domain.
-- `service` (String) Worker service associated with the zone and hostname.
-- `zone_id` (String) Identifier of the zone.
-- `zone_name` (String) Name of the zone.
+- `cert_id` (String) ID of the TLS certificate issued for the domain.
+- `environment` (String, Deprecated) Worker environment associated with the domain.
+- `hostname` (String) Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.
+- `id` (String) ID of the domain.
+- `service` (String) Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.
+- `zone_id` (String) ID of the zone containing the domain hostname.
+- `zone_name` (String) Name of the zone containing the domain hostname.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Optional:
 
-- `environment` (String) Worker environment associated with the zone and hostname.
-- `hostname` (String) Hostname of the Worker Domain.
-- `service` (String) Worker service associated with the zone and hostname.
-- `zone_id` (String) Identifier of the zone.
-- `zone_name` (String) Name of the zone.
+- `environment` (String) Worker environment associated with the domain.
+- `hostname` (String) Hostname of the domain.
+- `service` (String) Name of the Worker associated with the domain.
+- `zone_id` (String) ID of the zone containing the domain hostname.
+- `zone_name` (String) Name of the zone containing the domain hostname.
 
 

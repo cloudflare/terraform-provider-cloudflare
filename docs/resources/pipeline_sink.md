@@ -104,7 +104,7 @@ Optional:
 - `path` (String) Subpath within the bucket to write to
 - `rolling_policy` (Attributes) Rolling policy for file sinks (when & why to close a file and open a new one). (see [below for nested schema](#nestedatt--config--rolling_policy))
 - `table_name` (String) Table name
-- `token` (String) Authentication token
+- `token` (String, Sensitive) Authentication token
 
 <a id="nestedatt--config--credentials"></a>
 ### Nested Schema for `config.credentials`
@@ -112,7 +112,7 @@ Optional:
 Required:
 
 - `access_key_id` (String) Cloudflare Account ID for the bucket
-- `secret_access_key` (String) Cloudflare Account ID for the bucket
+- `secret_access_key` (String, Sensitive) Cloudflare Account ID for the bucket
 
 
 <a id="nestedatt--config--file_naming"></a>

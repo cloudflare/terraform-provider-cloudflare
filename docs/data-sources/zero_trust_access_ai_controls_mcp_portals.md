@@ -39,6 +39,7 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_portals" "example_zero_trust_
 
 Read-Only:
 
+- `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
 - `created_at` (String)
 - `created_by` (String)
 - `description` (String)
@@ -48,5 +49,31 @@ Read-Only:
 - `modified_by` (String)
 - `name` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
+- `servers` (Attributes List) (see [below for nested schema](#nestedatt--result--servers))
+
+<a id="nestedatt--result--servers"></a>
+### Nested Schema for `result.servers`
+
+Read-Only:
+
+- `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
+- `created_at` (String)
+- `created_by` (String)
+- `default_disabled` (Boolean)
+- `description` (String)
+- `error` (String)
+- `hostname` (String)
+- `id` (String) server id
+- `last_successful_sync` (String)
+- `last_synced` (String)
+- `modified_at` (String)
+- `modified_by` (String)
+- `name` (String)
+- `on_behalf` (Boolean)
+- `prompts` (List of Map of String)
+- `status` (String)
+- `tools` (List of Map of String)
+- `updated_prompts` (Dynamic)
+- `updated_tools` (Dynamic)
 
 

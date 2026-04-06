@@ -33,12 +33,15 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 - `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
 - `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `created_at` (String) When the profile was created.
+- `data_classes` (List of String) Data classes associated with this profile.
+- `data_tags` (List of String) Data tags associated with this profile.
 - `description` (String) The description of the profile.
 - `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
 - `id` (String) The ID of this resource.
 - `name` (String) The name of the profile.
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
+- `sensitivity_levels` (Attributes List) Sensitivity levels associated with this profile. (see [below for nested schema](#nestedatt--sensitivity_levels))
 - `shared_entries` (Attributes List) (see [below for nested schema](#nestedatt--shared_entries))
 - `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
@@ -109,6 +112,15 @@ Read-Only:
 - `topic_type` (String) Available values: "Intent", "Content".
 - `type` (String) Available values: "PromptTopic".
 
+
+
+<a id="nestedatt--sensitivity_levels"></a>
+### Nested Schema for `sensitivity_levels`
+
+Read-Only:
+
+- `group_id` (String)
+- `level_id` (String)
 
 
 <a id="nestedatt--shared_entries"></a>

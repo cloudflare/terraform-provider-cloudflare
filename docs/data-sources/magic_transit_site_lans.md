@@ -42,6 +42,8 @@ Read-Only:
 - `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
 - `id` (String) Identifier
+- `is_breakout` (Boolean) mark true to use this LAN for source-based breakout traffic
+- `is_prioritized` (Boolean) mark true to use this LAN for source-based prioritized traffic
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--result--nat))
 - `physport` (Number)

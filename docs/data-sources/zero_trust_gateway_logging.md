@@ -26,6 +26,7 @@ data "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_logging
 
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `redact_pii` (Boolean) Indicate whether to redact personally identifiable information from activity logging (PII fields include source IP, user email, user ID, device ID, URL, referrer, and user agent).
 - `settings_by_rule_type` (Attributes) Configure logging settings for each rule type. (see [below for nested schema](#nestedatt--settings_by_rule_type))
 

@@ -31,7 +31,9 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 - `activated` (Boolean)
 - `device` (Attributes) (see [below for nested schema](#nestedatt--device))
 - `id` (String) The ID of this resource.
+- `interrupt_window_days_of_week` (List of String) Allowed days of the week for upgrades. Default is all days.
 - `interrupt_window_duration_hours` (Number)
+- `interrupt_window_embargo_dates` (List of String) List of dates (YYYY-MM-DD) when upgrades are blocked.
 - `interrupt_window_hour_of_day` (Number)
 - `last_heartbeat` (String)
 - `last_seen_version` (String)

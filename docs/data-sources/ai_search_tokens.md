@@ -21,6 +21,10 @@ description: |-
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `order_by` (String) Order By Column Name
+Available values: "created_at".
+- `order_by_direction` (String) Order By Direction
+Available values: "asc", "desc".
 
 ### Read-Only
 

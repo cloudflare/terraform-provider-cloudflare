@@ -31,6 +31,7 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
     cve_2021_44228 = false
     field_delimiter = ","
     field_names = ["Datetime", "DstIP", "SrcIP"]
+    merge_subrequests = true
     output_type = "ndjson"
     record_delimiter = ""
     record_prefix = "{"
@@ -51,13 +52,13 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
 
 ### Required
 
-- `destination_conf` (String) Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.
+- `destination_conf` (String, Sensitive) Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.
 
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `dataset` (String) Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).
-Available values: "access_requests", "audit_logs", "audit_logs_v2", "biso_user_actions", "casb_findings", "device_posture_results", "dex_application_tests", "dex_device_state_events", "dlp_forensic_copies", "dns_firewall_logs", "dns_logs", "email_security_alerts", "firewall_events", "gateway_dns", "gateway_http", "gateway_network", "http_requests", "ipsec_logs", "magic_ids_detections", "nel_reports", "network_analytics_logs", "page_shield_events", "sinkhole_http_logs", "spectrum_events", "ssh_logs", "warp_config_changes", "warp_toggle_changes", "workers_trace_events", "zaraz_events", "zero_trust_network_sessions".
+Available values: "access_requests", "audit_logs", "audit_logs_v2", "biso_user_actions", "casb_findings", "device_posture_results", "dex_application_tests", "dex_device_state_events", "dlp_forensic_copies", "dns_firewall_logs", "dns_logs", "email_security_alerts", "firewall_events", "gateway_dns", "gateway_http", "gateway_network", "http_requests", "ipsec_logs", "magic_ids_detections", "mcp_portal_logs", "nel_reports", "network_analytics_logs", "page_shield_events", "sinkhole_http_logs", "spectrum_events", "ssh_logs", "warp_config_changes", "warp_toggle_changes", "workers_trace_events", "zaraz_events", "zero_trust_network_sessions".
 - `enabled` (Boolean) Flag that indicates if the job is enabled.
 - `filter` (String) The filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/filters/).
 - `frequency` (String, Deprecated) This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.
@@ -90,6 +91,7 @@ Optional:
 - `cve_2021_44228` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
 - `field_delimiter` (String) String to join fields. This field be ignored when `record_template` is set.
 - `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
+- `merge_subrequests` (Boolean) If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.
 - `output_type` (String) Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.
 Available values: "ndjson", "csv".
 - `record_delimiter` (String) String to be inserted in-between the records as separator.
@@ -97,8 +99,8 @@ Available values: "ndjson", "csv".
 - `record_suffix` (String) String to be appended after each record.
 - `record_template` (String) String to use as template for each record instead of the default json key value mapping. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.
 - `sample_rate` (Number) Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
-- `timestamp_format` (String) String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.
-Available values: "unixnano", "unix", "rfc3339".
+- `timestamp_format` (String) String to specify the format for timestamps, such as `unixnano`, `unix`, `rfc3339`, `rfc3339ms` or `rfc3339ns`.
+Available values: "unixnano", "unix", "rfc3339", "rfc3339ms", "rfc3339ns".
 
 ## Import
 

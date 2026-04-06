@@ -27,6 +27,10 @@ data "cloudflare_workers" "example_workers" {
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `order` (String) Sort direction.
+Available values: "asc", "desc".
+- `order_by` (String) Property to sort results by.
+Available values: "deployed_on", "updated_on", "created_on", "name".
 
 ### Read-Only
 
@@ -38,6 +42,7 @@ data "cloudflare_workers" "example_workers" {
 Read-Only:
 
 - `created_on` (String) When the Worker was created.
+- `deployed_on` (String) When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.
 - `id` (String) Immutable ID of the Worker.
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `name` (String) Name of the Worker.
@@ -56,15 +61,29 @@ Read-Only:
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--logs))
+- `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--traces))
 
 <a id="nestedatt--result--observability--logs"></a>
 ### Nested Schema for `result.observability.logs`
 
 Read-Only:
 
+- `destinations` (List of String) A list of destinations where logs will be exported to.
 - `enabled` (Boolean) Whether logs are enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+<a id="nestedatt--result--observability--traces"></a>
+### Nested Schema for `result.observability.traces`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where traces will be exported to.
+- `enabled` (Boolean) Whether traces are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `persist` (Boolean) Whether trace persistence is enabled for the Worker.
 
 
 
