@@ -12,7 +12,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -58,6 +60,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[WorkerObservabilityModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "Whether observability is enabled for the Worker.",
@@ -79,6 +84,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityLogsModel](ctx),
+						PlanModifiers: []planmodifier.Object{
+							objectplanmodifier.UseStateForUnknown(),
+						},
 						Attributes: map[string]schema.Attribute{
 							"destinations": schema.ListAttribute{
 								Description: "A list of destinations where logs will be exported to.",
@@ -86,6 +94,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
+								PlanModifiers: []planmodifier.List{
+									listplanmodifier.UseStateForUnknown(),
+								},
 							},
 							"enabled": schema.BoolAttribute{
 								Description: "Whether logs are enabled for the Worker.",
@@ -121,6 +132,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityTracesModel](ctx),
+						PlanModifiers: []planmodifier.Object{
+							objectplanmodifier.UseStateForUnknown(),
+						},
 						Attributes: map[string]schema.Attribute{
 							"destinations": schema.ListAttribute{
 								Description: "A list of destinations where traces will be exported to.",
@@ -128,6 +142,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
+								PlanModifiers: []planmodifier.List{
+									listplanmodifier.UseStateForUnknown(),
+								},
 							},
 							"enabled": schema.BoolAttribute{
 								Description: "Whether traces are enabled for the Worker.",
@@ -148,10 +165,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 						},
-						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityLogsModel{
+						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityTracesModel{
 							Enabled:          types.BoolValue(false),
 							HeadSamplingRate: types.Float64Value(1),
-							InvocationLogs:   types.BoolValue(true),
+							Persist:          types.BoolValue(true),
+							Destinations:     customfield.NewListMust[types.String](ctx, nil),
 						}).ObjectValue),
 					},
 				},
@@ -162,6 +180,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Enabled:          types.BoolValue(false),
 						HeadSamplingRate: types.Float64Value(1),
 						InvocationLogs:   types.BoolValue(true),
+						Persist:          types.BoolValue(true),
+						Destinations:     customfield.NewListMust[types.String](ctx, nil),
+					}),
+					Traces: customfield.NewObjectMust(ctx, &WorkerObservabilityTracesModel{
+						Enabled:          types.BoolValue(false),
+						HeadSamplingRate: types.Float64Value(1),
+						Persist:          types.BoolValue(true),
+						Destinations:     customfield.NewListMust[types.String](ctx, nil),
 					}),
 				}).ObjectValue),
 			},
@@ -221,6 +247,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"updated_on": schema.StringAttribute{
 				Description: "When the Worker was most recently updated.",

@@ -106,9 +106,17 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"invocation_logs":    knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
+						}),
+						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"persist":            knownvalue.Bool(true),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -133,9 +141,17 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"invocation_logs":    knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
+						}),
+						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"persist":            knownvalue.Bool(true),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{

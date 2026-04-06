@@ -37,9 +37,17 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"invocation_logs":    knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
+						}),
+						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"persist":            knownvalue.Bool(true),
 						}),
 					})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -59,9 +67,17 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"invocation_logs":    knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
+						}),
+						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"persist":            knownvalue.Bool(true),
 						}),
 					})),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
