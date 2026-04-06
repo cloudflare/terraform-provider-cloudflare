@@ -88,10 +88,10 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 				// Note: disable_railgun was removed in v5, so we exclude it
 				simpleFields := []string{
 					"additional_cacheable_ports", "automatic_https_rewrites", "bic", "cache",
-					"content", "content_type", "disable_apps", "disable_zaraz",
+					"content", "content_converter", "content_type", "disable_apps", "disable_zaraz",
 					"disable_rum", "fonts", "email_obfuscation", "host_header", "hotlink_protection",
 					"id", "increment", "mirage", "opportunistic_encryption", "origin_cache_control",
-					"polish", "products", "read_timeout", "respect_strong_etags",
+					"polish", "products", "read_timeout", "redirects_for_ai_training", "respect_strong_etags",
 					"rocket_loader", "rules", "ruleset", "rulesets", "security_level",
 					"server_side_excludes", "ssl", "status_code", "sxg", "origin_error_page_passthru",
 				}

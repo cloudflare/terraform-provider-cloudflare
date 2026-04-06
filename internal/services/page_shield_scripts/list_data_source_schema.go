@@ -137,8 +137,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"dataflow_score": schema.Int64Attribute{
-							Description: "The dataflow score of the JavaScript content.",
-							Computed:    true,
+							Description:        "The dataflow score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.Int64{
 								int64validator.Between(1, 99),
 							},
@@ -189,8 +190,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"obfuscation_score": schema.Int64Attribute{
-							Description: "The obfuscation score of the JavaScript content.",
-							Computed:    true,
+							Description:        "The obfuscation score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.Int64{
 								int64validator.Between(1, 99),
 							},

@@ -25,8 +25,4 @@ resource "cloudflare_queue_consumer" "%[2]s" {
   type        = "worker"
   script_name = cloudflare_workers_script.worker_script.script_name
   depends_on  = [cloudflare_workers_script.worker_script]
-
-  lifecycle {
-    ignore_changes = [settings]
-  }
 }

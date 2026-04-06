@@ -39,7 +39,7 @@ func testSweepCloudflareOrgs(_ string) error {
 
 	orgs, err := client.Organizations.List(ctx, organizations.OrganizationListParams{})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch organizations: %s",err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch organizations: %s", err))
 		return err
 	}
 	if len(orgs.Result) == 0 {
@@ -54,7 +54,7 @@ func testSweepCloudflareOrgs(_ string) error {
 		tflog.Info(ctx, fmt.Sprintf("Deleting organization: %s (%s)", org.Name, org.ID))
 		_, err = client.Organizations.Delete(ctx, org.ID)
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete organization %s (%s): %s", org.Name, org.ID,err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete organization %s (%s): %s", org.Name, org.ID, err))
 			continue
 		}
 		tflog.Info(ctx, fmt.Sprintf("Deleted organization: %s (%s)", org.Name, org.ID))
@@ -64,6 +64,7 @@ func testSweepCloudflareOrgs(_ string) error {
 
 // TestAccCloudflareOrganization_Basic tests the basic CRUD operations for organization resource
 func TestAccCloudflareOrganization_Basic(t *testing.T) {
+	t.Skip("User is not eligible to create an organization:  no_enterprise_accounts")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := rnd
@@ -112,6 +113,7 @@ func TestAccCloudflareOrganization_Basic(t *testing.T) {
 
 // TestAccCloudflareOrganization_WithProfile tests organization creation with profile information
 func TestAccCloudflareOrganization_WithProfile(t *testing.T) {
+	t.Skip("User is not eligible to create an organization:  no_enterprise_accounts")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := rnd

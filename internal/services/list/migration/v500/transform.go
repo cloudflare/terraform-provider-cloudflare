@@ -2,6 +2,7 @@ package v500
 
 import (
 	"context"
+	"net"
 	"net/url"
 	"strings"
 
@@ -142,8 +143,8 @@ func convertEnabledDisabledToBool(v types.String) types.Bool {
 	}
 }
 
-// normalizeIPAddress removes CIDR notation from IP addresses.
-// The v5 provider stores IP addresses without CIDR suffix.
+// normalizeIPAddress normalizes list IP/CIDR values to match list validator behavior.
+// Keep CIDRs intact except host CIDRs (/32 IPv4, /128 IPv6), which normalize to plain IP.
 func normalizeIPAddress(v types.String) types.String {
 	if v.IsNull() || v.IsUnknown() {
 		return v
@@ -152,9 +153,16 @@ func normalizeIPAddress(v types.String) types.String {
 	if ip == "" {
 		return v
 	}
-	if idx := strings.Index(ip, "/"); idx != -1 {
-		return types.StringValue(ip[:idx])
+
+	parsedIP, network, err := net.ParseCIDR(ip)
+	if err == nil && network != nil {
+		ones, bits := network.Mask.Size()
+		if (bits == 32 && ones == 32) || (bits == 128 && ones == 128) {
+			return types.StringValue(parsedIP.String())
+		}
+		return v
 	}
+
 	return v
 }
 

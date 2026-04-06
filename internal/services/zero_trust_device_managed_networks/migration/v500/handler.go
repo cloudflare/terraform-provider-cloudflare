@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -19,31 +20,43 @@ func UpgradeFromV1(
 	resp.State.Raw = req.State.Raw
 }
 
-// UpgradeFromLegacyV0 handles state upgrades from the legacy cloudflare_device_managed_networks resource to cloudflare_zero_trust_device_managed_networks.
-// This is triggered when users manually run `terraform state mv cloudflare_device_managed_networks.x cloudflare_zero_trust_device_managed_networks.x`
-// (Terraform < 1.8), which preserves the source schema_version=0 from the legacy provider.
+// UpgradeFromLegacyV0 handles state upgrades for schema_version=0.
 //
-// Note: schema_version=0 (implicit) was the schema version of cloudflare_device_managed_networks in the legacy (SDKv2) provider
-// before it was renamed. The state structure matches SourceCloudflareDeviceManagedNetworksModel.
+// This handles v4 state where config is a list block (array in JSON).
+// We parse using the source model, transform to target model, and set the upgraded state.
 func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading state from legacy cloudflare_device_managed_networks (schema_version=0)")
+	tflog.Info(ctx, "Upgrading zero trust device managed networks state from schema_version=0")
 
-	// Parse the state (schema_version=0, source resource type)
+	// Parse using v4-shaped source model (config as list block / array)
 	var sourceState SourceCloudflareDeviceManagedNetworksModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Transform to target
-	targetState, diags := Transform(ctx, sourceState)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	// Transform to v5 target model (config as SingleNestedAttribute / object)
+	targetState := TargetZeroTrustDeviceManagedNetworksModel{
+		ID:        sourceState.ID,
+		AccountID: sourceState.AccountID,
+		Name:      sourceState.Name,
+		Type:      sourceState.Type,
+	}
+
+	// Backfill computed network_id from id
+	if !sourceState.ID.IsNull() && !sourceState.ID.IsUnknown() {
+		targetState.NetworkID = types.StringValue(sourceState.ID.ValueString())
+	}
+
+	// Transform config from list (array) to object
+	if len(sourceState.Config) > 0 {
+		targetState.Config = &TargetConfigModel{
+			TLSSockaddr: sourceState.Config[0].TLSSockaddr,
+			Sha256:      sourceState.Config[0].Sha256,
+		}
 	}
 
 	// Set the upgraded state
-	resp.Diagnostics.Append(resp.State.Set(ctx, targetState)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &targetState)...)
 
-	tflog.Info(ctx, "State upgrade from legacy cloudflare_device_managed_networks completed successfully")
+	tflog.Info(ctx, "State upgrade from schema_version=0 completed successfully")
 }

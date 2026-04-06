@@ -782,6 +782,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"content_converter": schema.BoolAttribute{
+									Description: "Whether to enable content conversion (e.g., HTML to Markdown).",
+									Computed:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+								},
 								"disable_apps": schema.BoolAttribute{
 									Description: "Whether to disable Cloudflare Apps.",
 									Computed:    true,
@@ -878,6 +888,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											"lossless",
 											"lossy",
 											"webp",
+										),
+									},
+								},
+								"redirects_for_ai_training": schema.BoolAttribute{
+									Description: "Whether to redirect verified AI training crawlers to canonical URLs.",
+									Computed:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
 										),
 									},
 								},

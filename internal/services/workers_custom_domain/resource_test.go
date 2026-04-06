@@ -62,7 +62,7 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 		}
 
 		tflog.Info(ctx, fmt.Sprintf("Deleting workers custom domain: %s (account: %s)", domain.Hostname, accountID))
-		err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
+		_, err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
 			AccountID: cfv3.F(accountID),
 		})
 		if err != nil {

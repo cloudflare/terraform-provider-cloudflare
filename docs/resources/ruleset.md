@@ -92,6 +92,7 @@ Optional:
 - `cache_key` (Attributes) Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
 - `cache_reserve` (Attributes) Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
 - `content` (String) The response content.
+- `content_converter` (Boolean) Whether to enable content conversion (e.g., HTML to Markdown).
 - `content_type` (String) The content type header to set with the error response.
 Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))
@@ -136,6 +137,7 @@ Available values: "bic", "hot", "rateLimit", "securityLevel", "uaBlock", "waf", 
 - `public` (Attributes) Set the public cache control directive. (see [below for nested schema](#nestedatt--rules--action_parameters--public))
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
+- `redirects_for_ai_training` (Boolean) Whether to redirect verified AI training crawlers to canonical URLs.
 - `request_body_buffering` (String) The request body buffering mode to configure.
 Available values: "none", "standard", "full".
 - `request_fields` (Attributes List) The raw request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))

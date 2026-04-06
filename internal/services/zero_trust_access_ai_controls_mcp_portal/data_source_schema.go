@@ -30,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
+			"allow_code_mode": schema.BoolAttribute{
+				Description: "Allow remote code execution in Dynamic Workers (beta)",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},

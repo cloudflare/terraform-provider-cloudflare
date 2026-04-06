@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6"
+
 echo "==> Running tests"
 go test -v ./... "$@"
-
-echo "==> Running cmd/migrate tests"
-(cd cmd/migrate && go test -v ./... "$@")

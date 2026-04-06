@@ -1,16 +1,21 @@
 name: CI
 on:
   push:
-    branches-ignore:
-      - 'generated'
-      - 'codegen/**'
-      - 'integrated/**'
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
+    branches:
+      - '**'
+      - '!integrated/**'
+      - '!stl-preview-head/**'
+      - '!stl-preview-base/**'
+      - '!generated'
+      - '!codegen/**'
+      - 'codegen/stl/**'
   pull_request:
     branches-ignore:
       - 'stl-preview-head/**'
       - 'stl-preview-base/**'
+
+env:
+  GOPRIVATE: github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6
 
 jobs:
   lint:
@@ -19,10 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup go
-        uses: actions/setup-go@v5
+      - uses: ./.github/actions/setup-go
         with:
-          go-version-file: ./go.mod
+          go-version: '1.24'
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/cloudflare-terraform'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -31,18 +40,33 @@ jobs:
         run: ./scripts/lint
 
   test:
+    name: Unit Tests (shard ${{ matrix.shard }})
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup go
-        uses: actions/setup-go@v5
+      - uses: ./.github/actions/setup-go
         with:
-          go-version-file: ./go.mod
+          go-version: '1.24'
+          cache-dependency-path: go.sum
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/cloudflare-terraform'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap
 
       - name: Run tests
-        run: ./scripts/test
+        run: |
+          # Get all packages and select this shard (1-indexed)
+          packages=$(go list ./... | awk "NR % 4 == (${{ matrix.shard }} - 1)")
+          if [ -n "$packages" ]; then
+            echo "$packages" | xargs go test -v
+          fi

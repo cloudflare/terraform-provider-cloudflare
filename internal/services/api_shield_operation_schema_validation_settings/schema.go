@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldOperationSchemaValidati
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version:            500,
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_operation_settings` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{

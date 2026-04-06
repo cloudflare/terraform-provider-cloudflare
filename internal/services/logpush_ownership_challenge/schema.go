@@ -15,7 +15,7 @@ var _ resource.ResourceWithConfigValidators = (*LogpushOwnershipChallengeResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -30,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"destination_conf": schema.StringAttribute{
 				Description:   "Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Required:      true,
+				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"filename": schema.StringAttribute{

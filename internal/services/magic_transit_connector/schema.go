@@ -5,17 +5,24 @@ package magic_transit_connector
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*MagicTransitConnectorResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -56,6 +63,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"interrupt_window_duration_hours": schema.Float64Attribute{
 				Computed: true,
 				Optional: true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 24),
+				},
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
 				Computed: true,
@@ -68,6 +78,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"timezone": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
+			},
+			"interrupt_window_days_of_week": schema.ListAttribute{
+				Description: "Allowed days of the week for upgrades. Default is all days.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"Sunday",
+							"Monday",
+							"Tuesday",
+							"Wednesday",
+							"Thursday",
+							"Friday",
+							"Saturday",
+						),
+					),
+				},
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"interrupt_window_embargo_dates": schema.ListAttribute{
+				Description: "List of dates (YYYY-MM-DD) when upgrades are blocked.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"last_heartbeat": schema.StringAttribute{
 				Computed: true,

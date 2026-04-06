@@ -36,8 +36,10 @@ func customResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"description": schema.StringAttribute{
-				Description: "An optional human provided description of the static route.",
-				Optional:    true,
+				Description:   "An optional human provided description of the static route.",
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"weight": schema.Int64Attribute{
 				Description: "Optional weight of the ECMP scope - if provided.",

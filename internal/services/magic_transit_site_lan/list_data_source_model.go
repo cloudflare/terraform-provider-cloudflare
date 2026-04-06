@@ -35,6 +35,8 @@ type MagicTransitSiteLANsResultDataSourceModel struct {
 	ID               types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	BondID           types.Int64                                                                    `tfsdk:"bond_id" json:"bond_id,computed"`
 	HaLink           types.Bool                                                                     `tfsdk:"ha_link" json:"ha_link,computed"`
+	IsBreakout       types.Bool                                                                     `tfsdk:"is_breakout" json:"is_breakout,computed"`
+	IsPrioritized    types.Bool                                                                     `tfsdk:"is_prioritized" json:"is_prioritized,computed"`
 	Name             types.String                                                                   `tfsdk:"name" json:"name,computed"`
 	Nat              customfield.NestedObject[MagicTransitSiteLANsNatDataSourceModel]               `tfsdk:"nat" json:"nat,computed"`
 	Physport         types.Int64                                                                    `tfsdk:"physport" json:"physport,computed"`

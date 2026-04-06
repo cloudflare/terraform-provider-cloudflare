@@ -89,12 +89,11 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 	return nil
 }
 
-// TestAccCustomSSL_Basic tests the basic CRUD lifecycle of a custom SSL certificate.
-// This validates that the resource can be created, read, imported, and deleted.
-// Note: Update scenarios are not tested here because the Cloudflare API requires replacing
-// the entire certificate (including cert and key) to change any properties like bundle_method.
+// TestAccCustomSSL_Lifecycle tests the full lifecycle of a custom SSL certificate.
+// This validates that the resource can be created, replaced (new cert/key triggers
+// destroy+create due to RequiresReplace), imported, and deleted.
 // Reference: https://developers.cloudflare.com/api/resources/custom_certificates/methods/edit/
-func TestAccCustomSSL_Basic(t *testing.T) {
+func TestAccCustomSSL_Lifecycle(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
 		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
 	}
@@ -109,6 +108,11 @@ func TestAccCustomSSL_Basic(t *testing.T) {
 		t.Fatalf("Failed to generate certificate: %s", err)
 	}
 
+	certUpdated, keyUpdated, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate updated certificate: %s", err)
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_Credentials(t)
@@ -118,6 +122,7 @@ func TestAccCustomSSL_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
+			// Step 1: Create with initial cert/key
 			{
 				Config: testAccCustomSSLBasicConfig(zoneID, rnd, cert, key),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -126,6 +131,21 @@ func TestAccCustomSSL_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
+			// Step 2: Replace cert/key — triggers destroy+create (new ID)
+			{
+				Config: testAccCustomSSLBasicConfig(zoneID, rnd, certUpdated, keyUpdated),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionDestroyBeforeCreate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("force")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+			// Step 3: Import
 			{
 				ResourceName:      name,
 				ImportState:       true,
@@ -255,8 +275,8 @@ func TestAccCustomSSL_NoPolicyDrift(t *testing.T) {
 }
 
 // TestAccCustomSSL_NoBundleMethodDrift verifies that bundle_method is persisted correctly
-// through the create → read → plan cycle. This is a regression test for SECENG-12729
-// where the PATCH request omitted bundle_method, causing API error 2100 or drift.
+// through the create → update → read → plan cycle. This is a regression test where the PATCH request
+// omitted bundle_method and allows sending only bundle_method (without cert/key replacement)
 func TestAccCustomSSL_NoBundleMethodDrift(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
 		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
@@ -264,15 +284,10 @@ func TestAccCustomSSL_NoBundleMethodDrift(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_custom_ssl." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-
-	expiry := time.Now().Add(time.Hour * 1)
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
-	if err != nil {
-		t.Fatalf("Failed to generate certificate: %s", err)
-	}
-
-	config := testAccCustomSSLBasicConfig(zoneID, rnd, cert, key)
+	bundleMethod := "ubiquitous"
+	bundleMethodUpdated := "force"
+	config := testAccCustomSSLBundleMethodConfig(zoneID, rnd, bundleMethod)
+	configUpdated := testAccCustomSSLBundleMethodConfig(zoneID, rnd, bundleMethodUpdated)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -296,12 +311,28 @@ func TestAccCustomSSL_NoBundleMethodDrift(t *testing.T) {
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("ubiquitous")),
+				},
+			},
+			// Step 2: Update bundle_method only
+			{
+				Config: configUpdated,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("bundle_method"), knownvalue.StringExact("force")),
 				},
 			},
-			// Step 2: Re-apply identical config — bundle_method must not drift
+			// Step 3: Re-apply identical config — bundle_method must not drift
 			{
-				Config: config,
+				Config: configUpdated,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),
@@ -310,6 +341,10 @@ func TestAccCustomSSL_NoBundleMethodDrift(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCustomSSLBundleMethodConfig(zoneID, rnd, bundleMethod string) string {
+	return acctest.LoadTestCase("customsslcertbundlemethod.tf", zoneID, rnd, bundleMethod)
 }
 
 func testAccCustomSSLWithPolicyConfig(zoneID, rnd, cert, key, policy string) string {

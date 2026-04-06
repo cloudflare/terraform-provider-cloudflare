@@ -18,7 +18,7 @@ type HealthcheckModel struct {
 	ZoneID               types.String                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	Address              types.String                                         `tfsdk:"address" json:"address,required"`
 	Name                 types.String                                         `tfsdk:"name" json:"name,required"`
-	Description          types.String                                         `tfsdk:"description" json:"description,optional"`
+	Description          types.String                                         `tfsdk:"description" json:"description,computed_optional"`
 	CheckRegions         *[]types.String                                      `tfsdk:"check_regions" json:"check_regions,optional"`
 	ConsecutiveFails     types.Int64                                          `tfsdk:"consecutive_fails" json:"consecutive_fails,computed_optional"`
 	ConsecutiveSuccesses types.Int64                                          `tfsdk:"consecutive_successes" json:"consecutive_successes,computed_optional"`

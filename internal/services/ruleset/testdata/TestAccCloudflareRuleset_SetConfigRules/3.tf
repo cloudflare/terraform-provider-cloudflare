@@ -15,15 +15,17 @@ resource "cloudflare_ruleset" "my_ruleset" {
           html = false
           js   = false
         }
-        bic                      = true
-        email_obfuscation        = true
-        fonts                    = true
-        hotlink_protection       = true
-        mirage                   = true
-        opportunistic_encryption = true
-        rocket_loader            = true
-        server_side_excludes     = true
-        sxg                      = true
+        bic                       = true
+        content_converter         = true
+        email_obfuscation         = true
+        fonts                     = true
+        hotlink_protection        = true
+        mirage                    = true
+        opportunistic_encryption  = true
+        redirects_for_ai_training = true
+        rocket_loader             = true
+        server_side_excludes      = true
+        sxg                       = true
       }
     }
   ]

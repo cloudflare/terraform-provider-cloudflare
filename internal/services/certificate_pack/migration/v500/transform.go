@@ -50,10 +50,13 @@ func Transform(ctx context.Context, source SourceCloudflareCertificatePackModel)
 	// Step 5: Transform validation_errors (structure is compatible, just convert to customfield list)
 	target.ValidationErrors = transformValidationErrors(ctx, source.ValidationErrors, &diags)
 
-	// Step 6: Set new computed fields to null (will be refreshed from API)
+	// Step 6: Set new computed fields
+	// PrimaryCertificate and Status are null (will be refreshed from API)
+	// Certificates and DCVDelegationRecords are initialized to empty lists to prevent drift
 	target.PrimaryCertificate = types.StringNull()
 	target.Status = types.StringNull()
-	target.Certificates = customfield.NullObjectList[TargetCertificatesModel](ctx)
+	target.Certificates = customfield.NewObjectListMust(ctx, []TargetCertificatesModel{})
+	target.DCVDelegationRecords = customfield.NewObjectListMust(ctx, []TargetDCVDelegationRecordsModel{})
 
 	return target, diags
 }
@@ -84,7 +87,7 @@ func convertSetToCustomFieldSet(ctx context.Context, source types.Set, diags *di
 }
 
 // transformValidationRecords converts v4 validation_records to v5 format.
-// This removes cname_target and cname_name fields from each item.
+// This maps cname_name -> cname and preserves cname_target. Status is set to null (computed).
 func transformValidationRecords(ctx context.Context, source []SourceValidationRecordsModel, diags *diag.Diagnostics) customfield.NestedObjectList[TargetValidationRecordsModel] {
 	if source == nil || len(source) == 0 {
 		// Return empty list (not null) to match tf-migrate behavior
@@ -95,11 +98,14 @@ func transformValidationRecords(ctx context.Context, source []SourceValidationRe
 	targetRecords := make([]TargetValidationRecordsModel, 0, len(source))
 	for _, sourceRecord := range source {
 		targetRecord := TargetValidationRecordsModel{
-			TXTName:  sourceRecord.TXTName,
-			TXTValue: sourceRecord.TXTValue,
-			HTTPURL:  sourceRecord.HTTPURL,
-			HTTPBody: sourceRecord.HTTPBody,
-			Emails:   convertListToCustomFieldList(ctx, sourceRecord.Emails, diags),
+			CNAME:       sourceRecord.CNAMEName,   // v4: cname_name -> v5: cname
+			CNAMETarget: sourceRecord.CNAMETarget, // Preserved from v4
+			Emails:      convertListToCustomFieldList(ctx, sourceRecord.Emails, diags),
+			HTTPBody:    sourceRecord.HTTPBody,
+			HTTPURL:     sourceRecord.HTTPURL,
+			Status:      types.StringNull(), // New computed field in v5
+			TXTName:     sourceRecord.TXTName,
+			TXTValue:    sourceRecord.TXTValue,
 		}
 		targetRecords = append(targetRecords, targetRecord)
 	}

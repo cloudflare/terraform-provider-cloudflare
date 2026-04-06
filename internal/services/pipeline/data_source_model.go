@@ -17,15 +17,16 @@ type PipelineResultDataSourceEnvelope struct {
 }
 
 type PipelineDataSourceModel struct {
-	ID         types.String                                                `tfsdk:"id" path:"pipeline_id,computed"`
-	PipelineID types.String                                                `tfsdk:"pipeline_id" path:"pipeline_id,required"`
-	AccountID  types.String                                                `tfsdk:"account_id" path:"account_id,required"`
-	CreatedAt  types.String                                                `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt types.String                                                `tfsdk:"modified_at" json:"modified_at,computed"`
-	Name       types.String                                                `tfsdk:"name" json:"name,computed"`
-	Sql        types.String                                                `tfsdk:"sql" json:"sql,computed"`
-	Status     types.String                                                `tfsdk:"status" json:"status,computed"`
-	Tables     customfield.NestedObjectList[PipelineTablesDataSourceModel] `tfsdk:"tables" json:"tables,computed"`
+	ID            types.String                                                `tfsdk:"id" path:"pipeline_id,computed"`
+	PipelineID    types.String                                                `tfsdk:"pipeline_id" path:"pipeline_id,required"`
+	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	CreatedAt     types.String                                                `tfsdk:"created_at" json:"created_at,computed"`
+	FailureReason types.String                                                `tfsdk:"failure_reason" json:"failure_reason,computed"`
+	ModifiedAt    types.String                                                `tfsdk:"modified_at" json:"modified_at,computed"`
+	Name          types.String                                                `tfsdk:"name" json:"name,computed"`
+	Sql           types.String                                                `tfsdk:"sql" json:"sql,computed"`
+	Status        types.String                                                `tfsdk:"status" json:"status,computed"`
+	Tables        customfield.NestedObjectList[PipelineTablesDataSourceModel] `tfsdk:"tables" json:"tables,computed"`
 }
 
 func (m *PipelineDataSourceModel) toReadParams(_ context.Context) (params pipelines.PipelineGetV1Params, diags diag.Diagnostics) {

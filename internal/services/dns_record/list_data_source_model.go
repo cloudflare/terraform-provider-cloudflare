@@ -180,6 +180,7 @@ type DNSRecordsResultDataSourceModel struct {
 	Type              types.String                                                `tfsdk:"type" json:"type,computed"`
 	Comment           types.String                                                `tfsdk:"comment" json:"comment,computed"`
 	Content           types.String                                                `tfsdk:"content" json:"content,computed"`
+	PrivateRouting    types.Bool                                                  `tfsdk:"private_routing" json:"private_routing,computed"`
 	Proxied           types.Bool                                                  `tfsdk:"proxied" json:"proxied,computed"`
 	Settings          customfield.NestedObject[DNSRecordsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Tags              customfield.Set[types.String]                               `tfsdk:"tags" json:"tags,computed"`

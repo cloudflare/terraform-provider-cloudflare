@@ -93,13 +93,60 @@ func Transform(ctx context.Context, source SourceCloudflareZoneDNSSECModel) (*Ta
 		target.ModifiedOn = types.StringNull()
 	}
 
-	// Status field: Set to null (optional-only field limitation)
-	// Users will need to manually set status after migration if desired
-	target.Status = types.StringNull()
+	// Status field: Map v4 values to v5 values with pending state normalization
+	// v4 API returned transient states: active, pending, disabled, pending-disabled, error
+	// v5 resource only accepts intent states: active, disabled
+	//
+	// Mapping rationale:
+	// - pending -> active (user intended to enable DNSSEC, activation in progress)
+	// - pending-disabled -> disabled (user intended to disable DNSSEC, deactivation in progress)
+	// - error -> null (unclear intent, user must resolve manually)
+	//
+	// Note: After migration, the API may briefly still return pending status while
+	// activation/deactivation completes. This is handled by drift exemptions and
+	// will self-correct once the API operation finishes.
 	if !source.Status.IsNull() && !source.Status.IsUnknown() {
-		tflog.Debug(ctx, "Setting status to null during migration (optional-only field limitation)", map[string]interface{}{
-			"source_status": source.Status.ValueString(),
-		})
+		sourceStatus := source.Status.ValueString()
+		switch sourceStatus {
+		case "active":
+			target.Status = types.StringValue("active")
+			tflog.Debug(ctx, "Preserved status 'active'", map[string]interface{}{
+				"source_status": sourceStatus,
+			})
+		case "disabled":
+			target.Status = types.StringValue("disabled")
+			tflog.Debug(ctx, "Preserved status 'disabled'", map[string]interface{}{
+				"source_status": sourceStatus,
+			})
+		case "pending":
+			// Normalize pending -> active (preserve user's intent to enable DNSSEC)
+			target.Status = types.StringValue("active")
+			tflog.Debug(ctx, "Normalized 'pending' status to 'active'", map[string]interface{}{
+				"source_status": sourceStatus,
+				"target_status": "active",
+			})
+		case "pending-disabled":
+			// Normalize pending-disabled -> disabled (preserve user's intent to disable DNSSEC)
+			target.Status = types.StringValue("disabled")
+			tflog.Debug(ctx, "Normalized 'pending-disabled' status to 'disabled'", map[string]interface{}{
+				"source_status": sourceStatus,
+				"target_status": "disabled",
+			})
+		case "error":
+			// Error state - set to null, user must resolve manually
+			target.Status = types.StringNull()
+			tflog.Warn(ctx, "DNSSEC was in error state, setting to null - user must set explicit state", map[string]interface{}{
+				"source_status": sourceStatus,
+			})
+		default:
+			// Unknown status value, set to null
+			target.Status = types.StringNull()
+			tflog.Warn(ctx, "Unknown status value, setting to null", map[string]interface{}{
+				"source_status": sourceStatus,
+			})
+		}
+	} else {
+		target.Status = types.StringNull()
 	}
 
 	// New v5 fields that don't exist in v4 - set to null

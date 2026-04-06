@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Use your AI Search ID.",
+				Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -105,7 +105,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"embedding_model": schema.StringAttribute{
-				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -114,6 +114,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"@cf/baai/bge-large-en-v1.5",
 						"@cf/google/embeddinggemma-300m",
 						"google-ai-studio/gemini-embedding-001",
+						"google-ai-studio/gemini-embedding-2-preview",
 						"openai/text-embedding-3-small",
 						"openai/text-embedding-3-large",
 						"",
@@ -121,6 +122,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"enable": schema.BoolAttribute{
+				Computed: true,
+			},
+			"engine_version": schema.Float64Attribute{
 				Computed: true,
 			},
 			"fusion_method": schema.StringAttribute{
@@ -131,7 +135,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
-				Computed: true,
+				Description:        "Deprecated — use index_method instead.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"last_activity": schema.StringAttribute{
 				Computed:   true,
@@ -148,6 +154,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified_by": schema.StringAttribute{
+				Computed: true,
+			},
+			"namespace": schema.StringAttribute{
 				Computed: true,
 			},
 			"paused": schema.BoolAttribute{
@@ -227,27 +236,53 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
 			},
-			"vectorize_name": schema.StringAttribute{
-				Computed: true,
-			},
 			"custom_metadata": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[AISearchInstanceCustomMetadataDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"data_type": schema.StringAttribute{
-							Description: `Available values: "text", "number", "boolean".`,
+							Description: `Available values: "text", "number", "boolean", "datetime".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"text",
 									"number",
 									"boolean",
+									"datetime",
 								),
 							},
 						},
 						"field_name": schema.StringAttribute{
 							Computed: true,
+						},
+					},
+				},
+			},
+			"index_method": schema.SingleNestedAttribute{
+				Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword": schema.BoolAttribute{
+						Description: "Enable keyword (BM25) storage backend.",
+						Computed:    true,
+					},
+					"vector": schema.BoolAttribute{
+						Description: "Enable vector (embedding) storage backend.",
+						Computed:    true,
+					},
+				},
+			},
+			"indexing_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"keyword_tokenizer": schema.StringAttribute{
+						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
 						},
 					},
 				},
@@ -340,11 +375,36 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"boost_by": schema.ListNestedAttribute{
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[AISearchInstanceRetrievalOptionsBoostByDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"field": schema.StringAttribute{
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.",
+									Computed:    true,
+								},
+								"direction": schema.StringAttribute{
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional ��� defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"asc",
+											"desc",
+											"exists",
+											"not_exists",
+										),
+									},
+								},
+							},
+						},
+					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("exact_match", "fuzzy_match"),
+							stringvalidator.OneOfCaseInsensitive("and", "or"),
 						},
 					},
 				},
@@ -375,10 +435,62 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"crawl_options": schema.SingleNestedAttribute{
+								Computed:   true,
+								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerCrawlOptionsDataSourceModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"depth": schema.Float64Attribute{
+										Computed: true,
+										Validators: []validator.Float64{
+											float64validator.Between(1, 100000),
+										},
+									},
+									"include_external_links": schema.BoolAttribute{
+										Computed: true,
+									},
+									"include_subdomains": schema.BoolAttribute{
+										Computed: true,
+									},
+									"max_age": schema.Float64Attribute{
+										Computed: true,
+										Validators: []validator.Float64{
+											float64validator.Between(0, 604800),
+										},
+									},
+									"source": schema.StringAttribute{
+										Description: `Available values: "all", "sitemaps", "links".`,
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"sitemaps",
+												"links",
+											),
+										},
+									},
+								},
+							},
 							"parse_options": schema.SingleNestedAttribute{
 								Computed:   true,
 								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
+									"content_selector": schema.ListNestedAttribute{
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectListType[AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"path": schema.StringAttribute{
+													Description: "Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.",
+													Computed:    true,
+												},
+												"selector": schema.StringAttribute{
+													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Computed:    true,
+												},
+											},
+										},
+									},
 									"include_headers": schema.MapAttribute{
 										Computed:    true,
 										CustomType:  customfield.NewMapType[types.String](ctx),
@@ -399,10 +511,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: `Available values: "sitemap", "feed-rss".`,
+								Description: `Available values: "sitemap", "feed-rss", "crawl".`,
 								Computed:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("sitemap", "feed-rss"),
+									stringvalidator.OneOfCaseInsensitive(
+										"sitemap",
+										"feed-rss",
+										"crawl",
+									),
 								},
 							},
 							"store_options": schema.SingleNestedAttribute{
@@ -431,6 +547,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"namespace": schema.StringAttribute{
+						Optional: true,
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Order By Column Name\nAvailable values: \"created_at\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("created_at"),
+						},
+					},
+					"order_by_direction": schema.StringAttribute{
+						Description: "Order By Direction\nAvailable values: \"asc\", \"desc\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
 					"search": schema.StringAttribute{
 						Description: "Search by id",
 						Optional:    true,

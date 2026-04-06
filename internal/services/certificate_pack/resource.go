@@ -110,6 +110,9 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 	if data.Certificates.IsNull() {
 		data.Certificates, _ = customfield.NewObjectList[CertificatePackCertificatesModel](ctx, []CertificatePackCertificatesModel{})
 	}
+	if data.DCVDelegationRecords.IsNull() {
+		data.DCVDelegationRecords, _ = customfield.NewObjectList[CertificatePackDCVDelegationRecordsModel](ctx, []CertificatePackDCVDelegationRecordsModel{})
+	}
 	if data.ValidationErrors.IsNull() {
 		data.ValidationErrors, _ = customfield.NewObjectList[CertificatePackValidationErrorsModel](ctx, []CertificatePackValidationErrorsModel{})
 	}
@@ -175,6 +178,9 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 	// For computed list fields, preserve state if API didn't return them
 	if data.Certificates.IsNull() && !stateData.Certificates.IsNull() {
 		data.Certificates = stateData.Certificates
+	}
+	if data.DCVDelegationRecords.IsNull() && !stateData.DCVDelegationRecords.IsNull() {
+		data.DCVDelegationRecords = stateData.DCVDelegationRecords
 	}
 	if data.ValidationErrors.IsNull() && !stateData.ValidationErrors.IsNull() {
 		data.ValidationErrors = stateData.ValidationErrors
@@ -293,6 +299,11 @@ func (r *CertificatePackResource) ModifyPlan(ctx context.Context, req resource.M
 
 	if plan.ValidationRecords.IsNull() && !state.ValidationRecords.IsNull() {
 		plan.ValidationRecords = state.ValidationRecords
+		modified = true
+	}
+
+	if plan.DCVDelegationRecords.IsNull() && !state.DCVDelegationRecords.IsNull() {
+		plan.DCVDelegationRecords = state.DCVDelegationRecords
 		modified = true
 	}
 

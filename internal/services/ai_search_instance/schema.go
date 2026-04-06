@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -26,9 +28,10 @@ var _ resource.ResourceWithConfigValidators = (*AISearchInstanceResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Use your AI Search ID.",
+				Description:   "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -37,12 +40,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"source": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "r2", "web-crawler".`,
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
@@ -92,7 +95,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"embedding_model": schema.StringAttribute{
-				Description:   `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Description:   `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
@@ -103,6 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"@cf/baai/bge-large-en-v1.5",
 						"@cf/google/embeddinggemma-300m",
 						"google-ai-studio/gemini-embedding-001",
+						"google-ai-studio/gemini-embedding-2-preview",
 						"openai/text-embedding-3-small",
 						"openai/text-embedding-3-large",
 						"",
@@ -209,13 +213,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"data_type": schema.StringAttribute{
-							Description: `Available values: "text", "number", "boolean".`,
+							Description: `Available values: "text", "number", "boolean", "datetime".`,
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"text",
 									"number",
 									"boolean",
+									"datetime",
 								),
 							},
 						},
@@ -284,13 +289,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("max", "rrf"),
 				},
-				Default: stringdefault.StaticString("max"),
+				Default: stringdefault.StaticString("rrf"),
 			},
-			"hybrid_search_enabled": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				Default:  booldefault.StaticBool(false),
-			},
+
 			"max_num_results": schema.Int64Attribute{
 				Computed: true,
 				Optional: true,
@@ -326,6 +327,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 				Optional: true,
 				Default:  booldefault.StaticBool(false),
+			},
+			"index_method": schema.SingleNestedAttribute{
+				Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
+				Attributes: map[string]schema.Attribute{
+					"keyword": schema.BoolAttribute{
+						Description: "Enable keyword (BM25) storage backend.",
+						Required:    true,
+					},
+					"vector": schema.BoolAttribute{
+						Description: "Enable vector (embedding) storage backend.",
+						Required:    true,
+					},
+				},
+			},
+			"indexing_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					useStateForUnknownIncludingNullObject(),
+				},
+				Attributes: map[string]schema.Attribute{
+					"keyword_tokenizer": schema.StringAttribute{
+						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
+						},
+						Default: stringdefault.StaticString("porter"),
+					},
+				},
 			},
 			"public_endpoint_params": schema.SingleNestedAttribute{
 				Computed:      true,
@@ -418,14 +457,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
 				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
+					"boost_by": schema.ListNestedAttribute{
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"field": schema.StringAttribute{
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.",
+									Required:    true,
+								},
+								"direction": schema.StringAttribute{
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional - defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"asc",
+											"desc",
+											"exists",
+											"not_exists",
+										),
+									},
+								},
+							},
+						},
+					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.\nAvailable values: \"exact_match\", \"fuzzy_match\".",
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("exact_match", "fuzzy_match"),
+							stringvalidator.OneOfCaseInsensitive("and", "or"),
 						},
-						Default: stringdefault.StaticString("exact_match"),
+						Default: stringdefault.StaticString("and"),
 					},
 				},
 			},
@@ -458,9 +521,65 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"crawl_options": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"depth": schema.Float64Attribute{
+										Optional: true,
+										Validators: []validator.Float64{
+											float64validator.Between(1, 100000),
+										},
+									},
+									"include_external_links": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+										Default:  booldefault.StaticBool(false),
+									},
+									"include_subdomains": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+										Default:  booldefault.StaticBool(false),
+									},
+									"max_age": schema.Float64Attribute{
+										Optional: true,
+										Validators: []validator.Float64{
+											float64validator.Between(0, 604800),
+										},
+									},
+									"source": schema.StringAttribute{
+										Description: `Available values: "all", "sitemaps", "links".`,
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"sitemaps",
+												"links",
+											),
+										},
+										Default: stringdefault.StaticString("all"),
+									},
+								},
+							},
 							"parse_options": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
+									"content_selector": schema.ListNestedAttribute{
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Optional:    true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"path": schema.StringAttribute{
+													Description: "Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.",
+													Required:    true,
+												},
+												"selector": schema.StringAttribute{
+													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Required:    true,
+												},
+											},
+										},
+									},
 									"include_headers": schema.MapAttribute{
 										Optional:    true,
 										ElementType: types.StringType,
@@ -483,11 +602,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: `Available values: "sitemap", "feed-rss".`,
+								Description: `Available values: "sitemap", "feed-rss", "crawl".`,
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("sitemap", "feed-rss"),
+									stringvalidator.OneOfCaseInsensitive(
+										"sitemap",
+										"feed-rss",
+										"crawl",
+									),
 								},
 								Default: stringdefault.StaticString("sitemap"),
 							},
@@ -528,6 +651,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 				Default:  booldefault.StaticBool(true),
 			},
+			"engine_version": schema.Float64Attribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.UseStateForUnknown(),
+				},
+			},
+			"hybrid_search_enabled": schema.BoolAttribute{
+				Description:        "Deprecated — use index_method instead.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				Default:            booldefault.StaticBool(false),
+			},
 			"last_activity": schema.StringAttribute{
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
@@ -542,6 +677,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"namespace": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"public_endpoint_id": schema.StringAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
@@ -552,7 +691,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"vectorize_name": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 			},
 		},
 	}

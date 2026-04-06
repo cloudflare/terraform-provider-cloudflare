@@ -3,4 +3,7 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
+  limits = {
+    steps = 1
+  }
 }

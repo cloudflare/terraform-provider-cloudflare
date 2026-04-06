@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingDNSResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -319,6 +320,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters.",
+						Computed:    true,
+					},
+					"total_pages": schema.Float64Attribute{
+						Description: "The number of total pages in the entire result set.",
 						Computed:    true,
 					},
 				},

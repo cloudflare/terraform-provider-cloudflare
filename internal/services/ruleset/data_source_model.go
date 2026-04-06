@@ -78,6 +78,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	AutomaticHTTPSRewrites  types.Bool                                                                          `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,computed"`
 	Autominify              customfield.NestedObject[RulesetRulesActionParametersAutominifyDataSourceModel]     `tfsdk:"autominify" json:"autominify,computed"`
 	BIC                     types.Bool                                                                          `tfsdk:"bic" json:"bic,computed"`
+	ContentConverter        types.Bool                                                                          `tfsdk:"content_converter" json:"content_converter,computed"`
 	DisableApps             types.Bool                                                                          `tfsdk:"disable_apps" json:"disable_apps,computed"`
 	DisableRUM              types.Bool                                                                          `tfsdk:"disable_rum" json:"disable_rum,computed"`
 	DisableZaraz            types.Bool                                                                          `tfsdk:"disable_zaraz" json:"disable_zaraz,computed"`
@@ -87,6 +88,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	Mirage                  types.Bool                                                                          `tfsdk:"mirage" json:"mirage,computed"`
 	OpportunisticEncryption types.Bool                                                                          `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,computed"`
 	Polish                  types.String                                                                        `tfsdk:"polish" json:"polish,computed"`
+	RedirectsForAITraining  types.Bool                                                                          `tfsdk:"redirects_for_ai_training" json:"redirects_for_ai_training,computed"`
 	RequestBodyBuffering    types.String                                                                        `tfsdk:"request_body_buffering" json:"request_body_buffering,computed"`
 	ResponseBodyBuffering   types.String                                                                        `tfsdk:"response_body_buffering" json:"response_body_buffering,computed"`
 	RocketLoader            types.Bool                                                                          `tfsdk:"rocket_loader" json:"rocket_loader,computed"`

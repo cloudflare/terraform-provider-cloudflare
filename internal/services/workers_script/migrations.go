@@ -43,6 +43,10 @@ func (r *WorkersScriptResource) MoveState(ctx context.Context) []resource.StateM
 //
 // Version 1:
 //   - Path D: V5 state after run_worker_first upgrade or tf-migrate output → no-op
+//
+// Version 2:
+//   - Path E: V5 production state (v5.0–v5.18 had GetSchemaVersion(2, 500)) → no-op
+//     Users on those releases stored state at version 2; no transformation needed.
 func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
@@ -57,6 +61,12 @@ func (r *WorkersScriptResource) UpgradeState(ctx context.Context) map[int64]reso
 		},
 		// Version 1: V5 state after run_worker_first change or tf-migrate output — no-op
 		1: {
+			PriorSchema:   &targetSchema,
+			StateUpgrader: v500.UpgradeFromV1,
+		},
+		// Version 2: V5 production state (v5.0–v5.18 stored state at version 2 via
+		// GetSchemaVersion(2, 500)). State is already in v5 format — no-op.
+		2: {
 			PriorSchema:   &targetSchema,
 			StateUpgrader: v500.UpgradeFromV1,
 		},

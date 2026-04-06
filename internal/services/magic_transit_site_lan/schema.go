@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*MagicTransitSiteLANResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -40,6 +41,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bond_id": schema.Int64Attribute{
 				Optional: true,
+			},
+			"is_breakout": schema.BoolAttribute{
+				Description: "mark true to use this LAN for source-based breakout traffic",
+				Optional:    true,
+			},
+			"is_prioritized": schema.BoolAttribute{
+				Description: "mark true to use this LAN for source-based prioritized traffic",
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Optional: true,

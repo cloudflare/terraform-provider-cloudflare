@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*CloudforceOneRequestAssetResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "Asset ID.",

@@ -13,14 +13,15 @@ type PipelineResultEnvelope struct {
 }
 
 type PipelineModel struct {
-	ID         types.String                                      `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                      `tfsdk:"account_id" path:"account_id,required"`
-	Name       types.String                                      `tfsdk:"name" json:"name,required"`
-	Sql        types.String                                      `tfsdk:"sql" json:"sql,required"`
-	CreatedAt  types.String                                      `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt types.String                                      `tfsdk:"modified_at" json:"modified_at,computed"`
-	Status     types.String                                      `tfsdk:"status" json:"status,computed"`
-	Tables     customfield.NestedObjectList[PipelineTablesModel] `tfsdk:"tables" json:"tables,computed"`
+	ID            types.String                                      `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                                      `tfsdk:"account_id" path:"account_id,required"`
+	Name          types.String                                      `tfsdk:"name" json:"name,required"`
+	Sql           types.String                                      `tfsdk:"sql" json:"sql,required"`
+	CreatedAt     types.String                                      `tfsdk:"created_at" json:"created_at,computed"`
+	FailureReason types.String                                      `tfsdk:"failure_reason" json:"failure_reason,computed"`
+	ModifiedAt    types.String                                      `tfsdk:"modified_at" json:"modified_at,computed"`
+	Status        types.String                                      `tfsdk:"status" json:"status,computed"`
+	Tables        customfield.NestedObjectList[PipelineTablesModel] `tfsdk:"tables" json:"tables,computed"`
 }
 
 func (m PipelineModel) MarshalJSON() (data []byte, err error) {

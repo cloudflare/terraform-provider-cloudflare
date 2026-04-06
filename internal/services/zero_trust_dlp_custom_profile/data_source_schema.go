@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPCustomProfileDataSource)(nil)
@@ -82,6 +83,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the profile was lasted updated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"data_classes": schema.ListAttribute{
+				Description: "Data classes associated with this profile.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"data_tags": schema.ListAttribute{
+				Description: "Data tags associated with this profile.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -213,6 +226,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"word_list": schema.StringAttribute{
 							Computed:   true,
 							CustomType: jsontypes.NormalizedType{},
+						},
+					},
+				},
+			},
+			"sensitivity_levels": schema.ListNestedAttribute{
+				Description: "Sensitivity levels associated with this profile.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileSensitivityLevelsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"group_id": schema.StringAttribute{
+							Computed: true,
+						},
+						"level_id": schema.StringAttribute{
+							Computed: true,
 						},
 					},
 				},

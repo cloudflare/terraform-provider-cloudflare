@@ -17,7 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDevicePostureIntegratio
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",
@@ -80,6 +80,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"client_key": schema.StringAttribute{
 						Description: "The Uptycs client secret.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"access_client_id": schema.StringAttribute{
 						Description: "If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.",

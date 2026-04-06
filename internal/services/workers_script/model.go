@@ -135,6 +135,8 @@ type WorkersScriptMetadataAssetsConfigModel struct {
 type WorkersScriptMetadataBindingsModel struct {
 	Name                        types.String                                `tfsdk:"name" json:"name,required"`
 	Type                        types.String                                `tfsdk:"type" json:"type,required"`
+	InstanceName                types.String                                `tfsdk:"instance_name" json:"instance_name,optional"`
+	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                                `tfsdk:"dataset" json:"dataset,optional"`
 	ID                          types.String                                `tfsdk:"id" json:"id,optional"`
 	Outbound                    *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
@@ -160,13 +162,17 @@ type WorkersScriptMetadataBindingsModel struct {
 	WorkflowName                types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
 	VersionID                   types.String                                `tfsdk:"version_id" json:"version_id,optional"`
 	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
-	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Environment                 types.String                                `tfsdk:"environment" json:"environment,optional"`
 	OldName                     types.String                                `tfsdk:"old_name" json:"old_name,optional"`
 	AllowedDestinationAddresses *[]types.String                             `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,optional"`
 	AllowedSenderAddresses      *[]types.String                             `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,optional"`
 	DestinationAddress          types.String                                `tfsdk:"destination_address" json:"destination_address,optional"`
 	Service                     types.String                                `tfsdk:"service" json:"service,optional"`
+	DispatchNamespace           types.String                                `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
+	Entrypoint                  types.String                                `tfsdk:"entrypoint" json:"entrypoint,optional"`
+	ServiceID                   types.String                                `tfsdk:"service_id" json:"service_id,optional"`
+	NetworkID                   types.String                                `tfsdk:"network_id" json:"network_id,optional"`
+	TunnelID                    types.String                                `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
@@ -230,15 +236,23 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
-	Enabled          types.Bool                                   `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate types.Float64                                `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Logs             *WorkersScriptMetadataObservabilityLogsModel `tfsdk:"logs" json:"logs,optional"`
+	Enabled          types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
+	HeadSamplingRate types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Logs             *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
+	Traces           *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
 }
 
 type WorkersScriptMetadataObservabilityLogsModel struct {
 	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,required"`
 	InvocationLogs   types.Bool      `tfsdk:"invocation_logs" json:"invocation_logs,required"`
 	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+}
+
+type WorkersScriptMetadataObservabilityTracesModel struct {
+	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
 	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
 }
@@ -271,15 +285,23 @@ type WorkersScriptNamedHandlersModel struct {
 }
 
 type WorkersScriptObservabilityModel struct {
-	Enabled          types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel] `tfsdk:"logs" json:"logs,computed"`
+	Enabled          types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces           customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkersScriptObservabilityLogsModel struct {
 	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
 	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkersScriptObservabilityTracesModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
 }

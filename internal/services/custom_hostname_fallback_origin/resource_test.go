@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/custom_hostnames"
+	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -48,6 +50,52 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginUpdated(zoneID, rnd, subd
 	return acctest.LoadTestCase("customhostnamefallbackorigin_updated.tf", zoneID, rnd, subdomain, domain)
 }
 
+// createTestDNSRecord creates a DNS record via API for testing purposes.
+// Returns the record ID for cleanup.
+func createTestDNSRecord(t *testing.T, zoneID, name, domain string) string {
+	client := acctest.SharedClient()
+	ctx := context.Background()
+
+	record, err := client.DNS.Records.New(ctx, dns.RecordNewParams{
+		ZoneID: cloudflare.F(zoneID),
+		Body: dns.CNAMERecordParam{
+			Name:    cloudflare.F(name),
+			Type:    cloudflare.F(dns.CNAMERecordTypeCNAME),
+			Content: cloudflare.F(domain),
+			Proxied: cloudflare.F(true),
+			TTL:     cloudflare.F(dns.TTL1),
+		},
+	})
+	if err != nil {
+		t.Fatalf("Failed to create DNS record %s: %v", name, err)
+	}
+	return record.ID
+}
+
+// deleteTestDNSRecord deletes a DNS record via API, waiting for fallback origin deletion first.
+func deleteTestDNSRecord(t *testing.T, zoneID, recordID string) {
+	client := acctest.SharedClient()
+	ctx := context.Background()
+
+	// Wait for fallback origin to be fully deleted (not just pending_deletion)
+	// before attempting to delete the DNS record
+	maxRetries := 15
+	for i := range maxRetries {
+		_, err := client.DNS.Records.Delete(ctx, recordID, dns.RecordDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		})
+		if err == nil {
+			return // Successfully deleted
+		}
+		// If we get the "configured as fallback origin" error, wait and retry
+		if i < maxRetries-1 {
+			time.Sleep(time.Duration(i+1) * time.Second)
+		}
+	}
+	// Don't fail the test for cleanup issues, just log
+	t.Logf("Warning: Could not delete DNS record %s after retries", recordID)
+}
+
 func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 
@@ -81,6 +129,9 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.Stat
 }
 
 func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
@@ -92,6 +143,20 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
+
+	// Create DNS records via API before the test (not managed by Terraform)
+	// This avoids destruction order issues with the async fallback origin delete API
+	dnsRecordName1 := fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)
+	dnsRecordName2 := fmt.Sprintf("fallback-origin-updated.%s.%s", rnd, domain)
+
+	dnsRecordID1 := createTestDNSRecord(t, zoneID, dnsRecordName1, domain)
+	dnsRecordID2 := createTestDNSRecord(t, zoneID, dnsRecordName2, domain)
+
+	// Cleanup DNS records after test completes
+	t.Cleanup(func() {
+		deleteTestDNSRecord(t, zoneID, dnsRecordID1)
+		deleteTestDNSRecord(t, zoneID, dnsRecordID2)
+	})
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -158,6 +223,9 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 }
 
 func TestAccUpgradeCustomHostnameFallbackOrigin_FromPublishedV5(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
+	}
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
@@ -168,6 +236,15 @@ func TestAccUpgradeCustomHostnameFallbackOrigin_FromPublishedV5(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
+
+	// Create DNS record via API before the test
+	dnsRecordName := fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)
+	dnsRecordID := createTestDNSRecord(t, zoneID, dnsRecordName, domain)
+
+	// Cleanup DNS record after test completes
+	t.Cleanup(func() {
+		deleteTestDNSRecord(t, zoneID, dnsRecordID)
+	})
 
 	config := testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain)
 

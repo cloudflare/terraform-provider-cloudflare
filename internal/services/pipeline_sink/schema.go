@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*PipelineSinkResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Indicates a unique identifier for this sink.",
@@ -66,6 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"secret_access_key": schema.StringAttribute{
 								Description: "Cloudflare Account ID for the bucket",
 								Required:    true,
+								Sensitive:   true,
 							},
 						},
 					},
@@ -143,6 +145,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"token": schema.StringAttribute{
 						Description: "Authentication token",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"table_name": schema.StringAttribute{
 						Description: "Table name",

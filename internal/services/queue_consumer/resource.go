@@ -89,7 +89,7 @@ func (r *QueueConsumerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
-	FixInconsistentCRUDResponses(data)
+	FixInconsistentCRUDResponses(ctx, data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -140,7 +140,7 @@ func (r *QueueConsumerResource) Update(ctx context.Context, req resource.UpdateR
 	}
 	data = &env.Result
 
-	FixInconsistentCRUDResponses(data)
+	FixInconsistentCRUDResponses(ctx, data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -181,7 +181,7 @@ func (r *QueueConsumerResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
-	FixInconsistentCRUDResponses(data)
+	FixInconsistentCRUDResponses(ctx, data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

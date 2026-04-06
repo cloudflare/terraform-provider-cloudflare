@@ -168,6 +168,7 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 		"CLOUDFLARE_BYO_IP_CIDR",
 		"CLOUDFLARE_BYO_IP_ASN",
 		"CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID",
+		"CLOUDFLARE_BYO_IP_PREFIX_ID",
 	}
 
 	for _, k := range requiredKeys {
@@ -1021,6 +1022,7 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		"--config-dir", tmpDir,
 		"--source-version", sourceVersion,
 		"--target-version", targetVersion,
+		"--skip-phase-check", // skip phased migration prompts — state cleanup is handled by the test harness
 	}
 
 	// Add debug logging if TF_LOG is set
@@ -1252,6 +1254,127 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 			WriteOutConfig(t, v4Config, tmpDir)
 			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
 			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
+	}
+}
+
+// RunStateRmForObsoleteTypes removes state entries whose resource type is no longer
+// known to the v5 provider. The working directory is found by globbing for "work*"
+// subdirectories inside tmpDir (created by the terraform-plugin-testing framework).
+// This is the test equivalent of the e2e runner's removeObsoleteStateEntries step.
+//
+// Implementation note: we read the state JSON directly to discover addresses (bypassing
+// "terraform state list", which requires provider schema and fails after tf-migrate
+// rewrites the config to v5 syntax with a stale .terraform directory). We then call
+// "terraform state rm -state=<path> <addr>" for each match, which does not need
+// provider schema — it only manipulates the state file by address.
+func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []string) {
+	t.Helper()
+
+	// Find the terraform working directory (work* subdirectory of tmpDir).
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		debugLogf(t, "RunStateRmForObsoleteTypes: no work* directory found in %s", tmpDir)
+		return
+	}
+	workDir := matches[0]
+
+	stateFile := filepath.Join(workDir, "terraform.tfstate")
+	data, err := os.ReadFile(stateFile)
+	if err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: cannot read state file %s: %v", stateFile, err)
+		return
+	}
+
+	// Parse just enough of the state to enumerate resource addresses.
+	var state struct {
+		Resources []struct {
+			Module string `json:"module,omitempty"`
+			Mode   string `json:"mode"`
+			Type   string `json:"type"`
+			Name   string `json:"name"`
+		} `json:"resources"`
+	}
+	if err := json.Unmarshal(data, &state); err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: cannot parse state file: %v", err)
+		return
+	}
+
+	// Build set of obsolete types for O(1) lookup.
+	obsoleteSet := make(map[string]bool, len(obsoleteTypes))
+	for _, typ := range obsoleteTypes {
+		obsoleteSet[typ] = true
+	}
+
+	// Collect addresses of resources whose type is obsolete.
+	var addrs []string
+	for _, r := range state.Resources {
+		if !obsoleteSet[r.Type] {
+			continue
+		}
+		addr := r.Type + "." + r.Name
+		if r.Module != "" {
+			addr = r.Module + "." + addr
+		}
+		addrs = append(addrs, addr)
+	}
+	if len(addrs) == 0 {
+		debugLogf(t, "RunStateRmForObsoleteTypes: no obsolete entries found in state")
+		return
+	}
+
+	// Find the terraform binary.
+	tfBin, err := exec.LookPath("terraform")
+	if err != nil {
+		t.Errorf("RunStateRmForObsoleteTypes: terraform binary not found: %v", err)
+		return
+	}
+
+	// Run "terraform state rm -state=<path> <addr>" for each obsolete address.
+	// The -state flag means Terraform reads/writes the file directly without
+	// needing to initialise providers, so this works even with a stale .terraform dir.
+	for _, addr := range addrs {
+		args := []string{"state", "rm", "-state=" + stateFile, addr}
+		cmd := exec.Command(tfBin, args...)
+		cmd.Dir = workDir
+		if out, err := cmd.CombinedOutput(); err != nil {
+			t.Errorf("RunStateRmForObsoleteTypes: failed to remove %s: %v\n%s", addr, err, out)
+		} else {
+			debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
+		}
+	}
+}
+
+// MigrationV2TestStepForZoneSetting creates a test step for cloudflare_zone_settings_override
+// migration. After tf-migrate runs, removes cloudflare_zone_settings_override state entries
+// before terraform plan — the v5 provider has no schema for this type and cannot read the
+// old state entry to process the removed block.
+func MigrationV2TestStepForZoneSetting(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	var planChecks []plancheck.PlanCheck
+	if sourceVersion == "v4" {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for zone_setting: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			RunStateRmForObsoleteTypes(t, tmpDir, []string{"cloudflare_zone_settings_override"})
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),

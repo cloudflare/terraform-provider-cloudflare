@@ -20,7 +20,7 @@ type CustomMagicWANGRETunnelModel struct {
 	CustomerGREEndpoint    types.String                                                `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required"`
 	InterfaceAddress       types.String                                                `tfsdk:"interface_address" json:"interface_address,required"`
 	Name                   types.String                                                `tfsdk:"name" json:"name,required"`
-	Description            types.String                                                `tfsdk:"description" json:"description,optional"`
+	Description            types.String                                                `tfsdk:"description" json:"description,computed_optional"`
 	InterfaceAddress6      types.String                                                `tfsdk:"interface_address6" json:"interface_address6,optional"`
 	AutomaticReturnRouting types.Bool                                                  `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed_optional"`
 	Mtu                    types.Int64                                                 `tfsdk:"mtu" json:"mtu,computed_optional"`

@@ -21,11 +21,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: `Identifier for the version, which can be ID or the literal "latest" to operate on the most recently created version.`,
+				Description: `Identifier for the version, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created version.`,
 				Computed:    true,
 			},
 			"version_id": schema.StringAttribute{
-				Description: `Identifier for the version, which can be ID or the literal "latest" to operate on the most recently created version.`,
+				Description: `Identifier for the version, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created version.`,
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
@@ -60,6 +60,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules).",
 				Computed:    true,
 			},
+			"migration_tag": schema.StringAttribute{
+				Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",
+				Computed:    true,
+			},
 			"number": schema.Int64Attribute{
 				Description: "The integer version number, starting from one.",
 				Computed:    true,
@@ -88,6 +92,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
 				Computed:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"urls": schema.ListAttribute{
+				Description: "All routable URLs that always point to this version. Does not include alias URLs, since aliases can be updated to point to a different version.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"annotations": schema.SingleNestedAttribute{
@@ -168,11 +178,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"ai",
+									"ai_search",
+									"ai_search_namespace",
 									"analytics_engine",
 									"assets",
 									"browser",
@@ -185,6 +197,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"images",
 									"json",
 									"kv_namespace",
+									"media",
 									"mtls_certificate",
 									"plain_text",
 									"pipelines",
@@ -201,8 +214,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"secret_key",
 									"workflow",
 									"wasm_module",
+									"vpc_service",
+									"vpc_network",
 								),
 							},
+						},
+						"instance_name": schema.StringAttribute{
+							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
+							Computed:    true,
+						},
+						"namespace": schema.StringAttribute{
+							Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
+							Computed:    true,
 						},
 						"dataset": schema.StringAttribute{
 							Description: "The name of the dataset to bind to.",
@@ -214,10 +237,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"part": schema.StringAttribute{
 							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
-							Computed:    true,
-						},
-						"namespace": schema.StringAttribute{
-							Description: "The name of the dispatch namespace.",
 							Computed:    true,
 						},
 						"outbound": schema.SingleNestedAttribute{
@@ -261,6 +280,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"class_name": schema.StringAttribute{
 							Description: "The exported class name of the Durable Object.",
+							Computed:    true,
+						},
+						"dispatch_namespace": schema.StringAttribute{
+							Description: "The dispatch namespace the Durable Object script belongs to.",
 							Computed:    true,
 						},
 						"environment": schema.StringAttribute{
@@ -325,10 +348,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"jurisdiction": schema.StringAttribute{
-							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+								stringvalidator.OneOfCaseInsensitive(
+									"eu",
+									"fedramp",
+									"fedramp-high",
+								),
 							},
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
@@ -349,6 +376,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"service": schema.StringAttribute{
 							Description: "Name of Worker to bind to.",
+							Computed:    true,
+						},
+						"entrypoint": schema.StringAttribute{
+							Description: "Entrypoint to invoke on the target Worker.",
 							Computed:    true,
 						},
 						"index_name": schema.StringAttribute{
@@ -399,6 +430,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"workflow_name": schema.StringAttribute{
 							Description: "Name of the Workflow to bind to.",
+							Computed:    true,
+						},
+						"service_id": schema.StringAttribute{
+							Description: "Identifier of the VPC service to bind to.",
+							Computed:    true,
+						},
+						"network_id": schema.StringAttribute{
+							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Computed:    true,
+						},
+						"tunnel_id": schema.StringAttribute{
+							Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
 							Computed:    true,
 						},
 					},

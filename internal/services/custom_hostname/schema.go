@@ -21,7 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*CustomHostnameResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -91,6 +91,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
+						Optional:    true,
+					},
+					"custom_csr_id": schema.StringAttribute{
+						Description: "The identifier for the Custom CSR that was used.",
 						Optional:    true,
 					},
 					"custom_key": schema.StringAttribute{

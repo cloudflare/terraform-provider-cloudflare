@@ -41,6 +41,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The D1 database's size, in bytes.",
 				Computed:    true,
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.\nAvailable values: \"eu\", \"fedramp\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+				},
+			},
 			"name": schema.StringAttribute{
 				Description: "D1 database name.",
 				Computed:    true,

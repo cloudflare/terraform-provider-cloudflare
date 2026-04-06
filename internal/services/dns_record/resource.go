@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -103,6 +104,8 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 	}
 	data = &env.Result
 
+	normalizeSettings(ctx, data, &resp.Diagnostics)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -152,6 +155,8 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 	data = &env.Result
 
+	normalizeSettings(ctx, data, &resp.Diagnostics)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -191,6 +196,11 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+
+	// avoid unnecessary diff: the Cloudflare API omits the settings object entirely for
+	// non-proxied CNAME records. Unconditionally materialize settings as a known object
+	// with false defaults so state is stable against a config of settings = { flatten_cname = false }.
+	normalizeSettings(ctx, data, &resp.Diagnostics)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -261,6 +271,9 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 	data = &env.Result
+
+	// avoid unnecessary diff: same normalization as Read()
+	normalizeSettings(ctx, data, &resp.Diagnostics)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -542,6 +555,37 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			plan.TagsModifiedOn = state.TagsModifiedOn
 		}
 		// Otherwise let it be unknown (will be updated by the API)
+	}
+
+	// For CNAME records, resolve null/unknown settings sub-fields to false in the plan.
+	// These fields (ipv4_only, ipv6_only, flatten_cname) only apply to CNAME records.
+	// The API never returns them for other record types, so we only inject defaults here
+	// for CNAME to avoid spurious diffs on A/AAAA/MX/etc. records with settings = {}.
+	if !plan.Type.IsNull() && !plan.Type.IsUnknown() && plan.Type.ValueString() == "CNAME" {
+		if !plan.Settings.IsUnknown() {
+			var s DNSRecordSettingsModel
+			if !plan.Settings.IsNull() {
+				plan.Settings.As(ctx, &s, basetypes.ObjectAsOptions{})
+			}
+			changed := false
+			if s.IPV4Only.IsNull() || s.IPV4Only.IsUnknown() {
+				s.IPV4Only = types.BoolValue(false)
+				changed = true
+			}
+			if s.IPV6Only.IsNull() || s.IPV6Only.IsUnknown() {
+				s.IPV6Only = types.BoolValue(false)
+				changed = true
+			}
+			if s.FlattenCNAME.IsNull() || s.FlattenCNAME.IsUnknown() {
+				s.FlattenCNAME = types.BoolValue(false)
+				changed = true
+			}
+			if changed {
+				if normalized, diags := customfield.NewObject[DNSRecordSettingsModel](ctx, &s); !diags.HasError() {
+					plan.Settings = normalized
+				}
+			}
+		}
 	}
 
 	// Set the updated plan

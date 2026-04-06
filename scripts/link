@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-if [[ -n "$1" ]]; then
-  LOCAL_GO="$1"
-  shift
-else
-  LOCAL_GO=../cloudflare-go
-fi
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6"
 
-echo "==> Linking with local directory"
+REPLACEMENT="${1:-"../cloudflare-go"}"
+echo "==> Replacing Go SDK with $REPLACEMENT"
+go mod edit -replace github.com/cloudflare/cloudflare-go/v6="$REPLACEMENT"
 go mod tidy -e
-go mod edit -replace github.com/cloudflare/cloudflare-go/v6="$LOCAL_GO"

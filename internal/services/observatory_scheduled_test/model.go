@@ -17,8 +17,8 @@ type ObservatoryScheduledTestModel struct {
 	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
 	URL       types.String                                                    `tfsdk:"url" path:"url,required"`
 	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
-	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
-	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
+	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed_optional"`
+	Region    types.String                                                    `tfsdk:"region" json:"region,computed_optional"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed,no_refresh"`
 	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed,no_refresh"`
 }

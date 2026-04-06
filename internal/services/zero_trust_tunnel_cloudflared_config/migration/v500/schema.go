@@ -1,9 +1,26 @@
 package v500
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+// UnionV0Schema returns a permissive schema for version=0 that can parse both:
+// - v4 SDKv2 state (config as list)
+// - early v5 state (config as object)
+//
+// We model config as DynamicAttribute and detect/parse the exact format in the upgrader.
+func UnionV0Schema(buildSchema func(context.Context) schema.Schema, ctx context.Context) *schema.Schema {
+	s := buildSchema(ctx)
+	s.Version = 0
+	s.Attributes["config"] = schema.DynamicAttribute{
+		Optional: true,
+		Computed: true,
+	}
+	return &s
+}
 
 // SourceV4TunnelConfigSchema returns the schema for the v4 SDKv2 zero_trust_tunnel_cloudflared_config resource.
 // Schema version: 0 (default SDKv2, no explicit SchemaVersion defined).

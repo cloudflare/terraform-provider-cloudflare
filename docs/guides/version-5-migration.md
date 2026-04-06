@@ -33,6 +33,13 @@ per-resource attribute change details if you prefer manual HCL changes.
 
 ## Prerequisites
 
+~> **IMPORTANT: Back up your Terraform state before migrating.** The v5
+provider's state upgraders will automatically transform your state when you
+run `terraform plan` or `terraform apply`. While these transformations are
+tested extensively, you should always have a backup in case you need to
+rollback. Run `terraform state pull > terraform.tfstate.backup` before
+starting, or ensure your remote backend has versioning enabled.
+
 Before starting the migration:
 
 - **Terraform 1.8+** is recommended if you use any
@@ -288,9 +295,16 @@ the migrated state until the provider refreshes them:
 
 | Resource | Attributes | Details |
 |---|---|---|
+| `cloudflare_account` | `settings.abuse_contact_email`, `unit`, `managed_by`, `created_on` | New v5 computed fields not present in v4 state. |
+| `cloudflare_account_member` | `policies`, `user` | New v5 computed fields not present in v4 state. |
+| `cloudflare_custom_ssl` | `keyless_server` | New v5 computed field not present in v4 state. |
+| `cloudflare_observatory_scheduled_test` | `schedule`, `test` | New v5 computed fields not present in v4 state. |
+| `cloudflare_page_rule` | `created_on`, `modified_on` | New v5 computed timestamp fields. |
 | `cloudflare_r2_bucket` | `jurisdiction` | v5 adds `jurisdiction = "default"` to all R2 buckets. Not present in v4 state. |
+| `cloudflare_zone` | `plan`, `meta`, `owner`, `tenant`, `tenant_unit` | v5 restructured these as computed-only nested objects. Will refresh from API. |
 | `cloudflare_zero_trust_access_identity_provider` | `support_groups`, `conditional_access_enabled` | Azure/OIDC fields not carried forward by the state upgrader. |
 | `cloudflare_zero_trust_access_identity_provider` | `idp_public_certs` | SAML providers: v4 `idp_public_cert` (string) becomes `idp_public_certs` (list) in v5. The state upgrader does not transform this. |
+| `cloudflare_zero_trust_gateway_settings` | `settings.host_selector`, `settings.inspection`, `settings.sandbox` | New v5 settings fields not present in v4 state. |
 
 #### Resource creation from splits
 
@@ -318,6 +332,96 @@ This is a one-time normalization applied by the state upgrader.
 `cloudflare_list` resources with IP items may show CIDR notation being
 stripped (e.g., `10.0.0.0/8` to `10.0.0.0` with the comment updated) to
 match the v5 schema format.
+
+#### Account settings restructure
+
+`cloudflare_account` resources will show:
+
+- `enforce_twofactor` moves from top-level to `settings.enforce_twofactor`
+- New computed fields (`settings.abuse_contact_email`, `unit`, `managed_by`, `created_on`) appear as `(known after apply)`
+
+#### Account member field renames
+
+`cloudflare_account_member` resources will show field renames:
+
+```
+~ email_address = "user@example.com" -> null
++ email         = "user@example.com"
+~ role_ids      = ["abc123"] -> null
++ roles         = ["abc123"]
+```
+
+New computed fields (`policies`, `user`) appear as `(known after apply)`.
+
+#### Custom SSL restructure
+
+`cloudflare_custom_ssl` resources will show:
+
+- Nested `custom_ssl_options[0].{certificate,private_key,bundle_method,type}` hoisted to top-level attributes
+- `geo_restrictions` changes from string to nested object with `label` attribute
+- `custom_ssl_priority` is dropped (was write-only in v4)
+- Timestamp fields change format
+
+#### Page rule status default change
+
+`cloudflare_page_rule` resources with no explicit `status` may show:
+
+```
+~ status = "" -> "active"
+```
+
+The v5 default changed from `"active"` to `"disabled"`. The state upgrader
+preserves the v4 behavior by explicitly setting `"active"` for resources
+without a status.
+
+Deprecated fields `disable_railgun` and `minify` are dropped during migration.
+
+#### Zone field restructure
+
+`cloudflare_zone` resources will show:
+
+- `zone` renamed to `name`
+- `account_id` moves to `account.id` (nested object)
+- `jump_start` is dropped (removed in v5)
+- `plan` and `meta` become computed-only (will refresh from API)
+
+#### Zero Trust Gateway Settings restructure
+
+`cloudflare_zero_trust_gateway_settings` resources will show significant
+restructuring:
+
+- Flat booleans (`activity_log_enabled`, `tls_decrypt_enabled`, `protocol_detection_enabled`) move to `settings.*` nested objects
+- `antivirus.notification_settings[0].message` renamed to `notification_settings.msg`
+- `logging`, `proxy`, `ssh_session_log`, `payload_log` are dropped
+
+#### Zero Trust Access Policy normalization
+
+`cloudflare_zero_trust_access_policy` resources normalize `false` boolean
+values to `null` for optional fields (`isolation_required`,
+`purpose_justification_required`, `approval_required`). This prevents drift
+since the API treats `false` and `null` as equivalent.
+
+#### Load Balancer field renames
+
+`cloudflare_load_balancer` resources will show field renames:
+
+- `default_pool_ids` renamed to `default_pools`
+- `fallback_pool_id` renamed to `fallback_pool`
+- Type conversions: `ttl`, `session_affinity_ttl`, `drain_duration` change from Int64 to Float64
+
+`cloudflare_load_balancer_pool` resources will show:
+
+- `check_regions` changes from Set to List (may show reordering)
+- `origins` array may show reordering on first plan
+- `load_shedding` and `origin_steering` change from array blocks to nested objects
+
+#### Turnstile Widget field changes
+
+`cloudflare_turnstile_widget` resources will show:
+
+- `domains` changes from Set to List (alphabetically sorted)
+- `off_label` renamed to `offlabel` (case change)
+- New computed fields (`created_on`, `modified_on`, `clearance_level`, `ephemeral_id`)
 
 #### Schema type changes
 
@@ -475,7 +579,7 @@ automatic state transformation for the rename.
 | `cloudflare_authenticated_origin_pulls` | `cloudflare_authenticated_origin_pulls_settings` | Auto |
 | `cloudflare_authenticated_origin_pulls_certificate` (per-hostname) | `cloudflare_authenticated_origin_pulls_hostname_certificate` | Auto |
 | `cloudflare_device_dex_test` | `cloudflare_zero_trust_dex_test` | Auto |
-| `cloudflare_device_managed_networks` | `cloudflare_zero_trust_device_managed_networks` | Auto |
+| `cloudflare_device_managed_networks` | `cloudflare_zero_trust_device_managed_networks` | Auto* |
 | `cloudflare_device_policy_certificates` | `cloudflare_zero_trust_device_certificates` | Manual |
 | `cloudflare_device_posture_integration` | `cloudflare_zero_trust_device_posture_integration` | Manual |
 | `cloudflare_device_posture_rule` | `cloudflare_zero_trust_device_posture_rule` | Auto |
@@ -506,6 +610,11 @@ automatic state transformation for the rename.
 | `cloudflare_worker_route` | `cloudflare_workers_route` | Auto |
 | `cloudflare_worker_script` | `cloudflare_workers_script` | Auto |
 | `cloudflare_workers_for_platforms_namespace` | `cloudflare_workers_for_platforms_dispatch_namespace` | Auto |
+
+\* Exception for Terraform < 1.8: `cloudflare_device_managed_networks` ->
+`cloudflare_zero_trust_device_managed_networks` does not support
+`terraform state mv`. Use Terraform 1.8+ `moved` blocks, or use
+`terraform state rm` + `terraform import`.
 
 ### Using `moved` Blocks (Terraform 1.8+)
 
@@ -557,6 +666,11 @@ For resources marked **Auto** in the rename table:
 terraform state mv cloudflare_record.example cloudflare_dns_record.example
 ```
 
+~> Exception: `cloudflare_device_managed_networks` ->
+`cloudflare_zero_trust_device_managed_networks` cannot be migrated via
+`terraform state mv` on Terraform < 1.8. Use Terraform 1.8+ with `moved`
+blocks, or use `terraform state rm` + `terraform import`.
+
 Then update the resource type in your HCL to match the new name. On the next
 `terraform plan`, the provider's state upgrader detects the old
 `schema_version` and transforms the state automatically.
@@ -571,24 +685,102 @@ as described [above](#using-terraform-state-rm-and-import-manual-resources).
 Some resources cannot be handled by state upgraders alone and require
 additional manual steps after running `tf-migrate` or updating your HCL.
 
+### Application-Scoped Access Policies
+
+~> **`cloudflare_access_policy` resources with `application_id` cannot be
+automatically migrated.** `tf-migrate` will skip these resources and print a
+warning.
+
+In v4, `cloudflare_access_policy` could be used for both account-level policies
+and application-scoped policies (when `application_id` was set). These two types
+use different API endpoints:
+
+- **Account-level policies**: `POST /access/policies/`
+- **Application-scoped policies**: `POST /access/apps/{app_id}/policies/`
+
+In v5, application-scoped policies are no longer standalone resources. Instead,
+they are defined inline within the `cloudflare_zero_trust_access_application`
+resource using the `policies` attribute.
+
+#### Migration Steps
+
+**1.** Identify application-scoped policies in your configuration:
+
+```hcl
+# This is an application-scoped policy (has application_id)
+resource "cloudflare_access_policy" "app_policy" {
+  account_id     = "f037e56e89293a057740de681ac9abbe"
+  application_id = "abc123"  # <-- This makes it application-scoped
+  name           = "Allow employees"
+  decision       = "allow"
+  precedence     = 1
+
+  include {
+    email_domain = ["example.com"]
+  }
+}
+```
+
+**2.** Remove the policy from Terraform state:
+
+```bash
+terraform state rm cloudflare_access_policy.app_policy
+```
+
+**3.** Add the policy inline in your application resource:
+
+```hcl
+resource "cloudflare_zero_trust_access_application" "my_app" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "My Application"
+  domain     = "app.example.com"
+  type       = "self_hosted"
+
+  # Policies are now inline
+  policies = [
+    {
+      name       = "Allow employees"
+      decision   = "allow"
+      precedence = 1
+      include    = [{ email_domain = { domain = "example.com" } }]
+    }
+  ]
+}
+```
+
+**4.** Run `terraform apply` to update the application with the inline policy.
+
+#### Key Differences
+
+| v4 | v5 |
+|---|---|
+| Separate `cloudflare_access_policy` resource with `application_id` | Inline `policies` attribute in `cloudflare_zero_trust_access_application` |
+| `include { email_domain = ["example.com"] }` (block with array) | `include = [{ email_domain = { domain = "example.com" } }]` (attribute with objects) |
+| `precedence` as top-level attribute | `precedence` inside each policy object |
+
+~> **Account-level policies** (without `application_id`) migrate normally using
+`tf-migrate` and are renamed to `cloudflare_zero_trust_access_policy`.
+
 ### `cloudflare_zone_settings_override`
 
 In v4, `cloudflare_zone_settings_override` was a single resource that managed
 all zone settings in one block. In v5, this has been replaced by individual
-`cloudflare_zone_setting` resources -- one per setting. This is a one-to-many
-split that cannot be handled by a state upgrader.
+`cloudflare_zone_setting` resources — one per setting.
 
-#### With tf-migrate
+#### With tf-migrate (recommended)
 
-`tf-migrate` automatically splits the v4 resource into individual v5 resources.
+`tf-migrate` automatically handles the full transformation. Run it as part of
+Step 2 if you have not already done so.
 
-**1.** Run `tf-migrate` (if you have not already done so in Step 2):
+**What tf-migrate generates** for each `cloudflare_zone_settings_override` resource:
 
-```bash
-tf-migrate migrate --source-version v4 --target-version v5
-```
+- One `cloudflare_zone_setting` resource per setting
+- One `import` block per setting so Terraform adopts the existing API state
+  rather than creating new resources (requires Terraform 1.7+)
+- One `removed` block so Terraform drops the old state entry without destroying
+  anything (requires Terraform 1.7+)
 
-This transforms your configuration from:
+For example, this v4 configuration:
 
 ```hcl
 resource "cloudflare_zone_settings_override" "example" {
@@ -616,7 +808,7 @@ resource "cloudflare_zone_settings_override" "example" {
 }
 ```
 
-Into individual resources:
+Becomes:
 
 ```hcl
 resource "cloudflare_zone_setting" "example_always_online" {
@@ -624,17 +816,29 @@ resource "cloudflare_zone_setting" "example_always_online" {
   setting_id = "always_online"
   value      = "on"
 }
+import {
+  to = cloudflare_zone_setting.example_always_online
+  id = "0da42c8d2132a9ddaf714f9e7c920711/always_online"
+}
 
 resource "cloudflare_zone_setting" "example_brotli" {
   zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
   setting_id = "brotli"
   value      = "on"
 }
+import {
+  to = cloudflare_zone_setting.example_brotli
+  id = "0da42c8d2132a9ddaf714f9e7c920711/brotli"
+}
 
 resource "cloudflare_zone_setting" "example_browser_cache_ttl" {
   zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
   setting_id = "browser_cache_ttl"
   value      = 14400
+}
+import {
+  to = cloudflare_zone_setting.example_browser_cache_ttl
+  id = "0da42c8d2132a9ddaf714f9e7c920711/browser_cache_ttl"
 }
 
 resource "cloudflare_zone_setting" "example_minify" {
@@ -645,6 +849,10 @@ resource "cloudflare_zone_setting" "example_minify" {
     html = "on"
     js   = "off"
   }
+}
+import {
+  to = cloudflare_zone_setting.example_minify
+  id = "0da42c8d2132a9ddaf714f9e7c920711/minify"
 }
 
 resource "cloudflare_zone_setting" "example_security_header" {
@@ -660,36 +868,71 @@ resource "cloudflare_zone_setting" "example_security_header" {
     }
   }
 }
+import {
+  to = cloudflare_zone_setting.example_security_header
+  id = "0da42c8d2132a9ddaf714f9e7c920711/security_header"
+}
+
+removed {
+  from = cloudflare_zone_settings_override.example
+  lifecycle {
+    destroy = false
+  }
+}
 ```
 
 ~> `tf-migrate` skips the deprecated `universal_ssl` setting and maps
 `zero_rtt` to the v5 setting ID `0rtt`. The resource name remains
 `{name}_zero_rtt` but the `setting_id` is set to `"0rtt"`.
 
-**2.** Remove the old resource from state and import the new resources:
+**After running tf-migrate, two manual steps are required:**
+
+**Step 1: Remove the old state entry.**
+
+The v5 provider has no schema for `cloudflare_zone_settings_override`, so
+Terraform cannot read the old state entry to process the `removed` block.
+Remove it before running `terraform plan`:
 
 ```bash
-# Remove the v4 resource
 terraform state rm cloudflare_zone_settings_override.example
-
-# Import each new v5 resource (format: <zone_id>/<setting_id>)
-terraform import cloudflare_zone_setting.example_always_online 0da42c8d2132a9ddaf714f9e7c920711/always_online
-terraform import cloudflare_zone_setting.example_brotli 0da42c8d2132a9ddaf714f9e7c920711/brotli
-terraform import cloudflare_zone_setting.example_browser_cache_ttl 0da42c8d2132a9ddaf714f9e7c920711/browser_cache_ttl
-terraform import cloudflare_zone_setting.example_minify 0da42c8d2132a9ddaf714f9e7c920711/minify
-terraform import cloudflare_zone_setting.example_security_header 0da42c8d2132a9ddaf714f9e7c920711/security_header
 ```
 
-**3.** Verify:
+If the resource is inside a Terraform module:
 
 ```bash
-terraform plan
-# Should show no changes
+terraform state rm module.<module_name>.cloudflare_zone_settings_override.example
+```
+
+~> `tf-migrate` prints the exact `terraform state rm` command for each
+resource in its output. Look for the `⚠️ Action required` warnings.
+
+**Step 2: Move import blocks to the root module (if using modules).**
+
+`import` blocks are only valid in the root Terraform module. If the migrated
+file is used as a child module, move the `import` blocks to your root module
+and prefix the `to` address with the module path:
+
+```hcl
+# In your root module (e.g. main.tf), not inside the child module:
+import {
+  to = module.<module_name>.cloudflare_zone_setting.example_always_online
+  id = "<zone_id>/always_online"
+}
+# ... repeat for each setting
+```
+
+If the migrated file is your root module (no module wrapping), the import
+blocks work as-is and no action is needed.
+
+**Step 3: Apply.**
+
+```bash
+terraform plan   # Shows imports and no creates/destroys
+terraform apply  # Imports existing settings into state
+terraform plan   # Should show no changes
 ```
 
 #### Without tf-migrate
-
-If you prefer not to use `tf-migrate`, follow these steps manually.
 
 **1.** Remove the v4 resource from state:
 
@@ -703,29 +946,29 @@ setting you were managing:
 
 ```hcl
 resource "cloudflare_zone_setting" "example_always_online" {
-  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  zone_id    = "<zone_id>"
   setting_id = "always_online"
   value      = "on"
 }
 
 resource "cloudflare_zone_setting" "example_brotli" {
-  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  zone_id    = "<zone_id>"
   setting_id = "brotli"
   value      = "on"
 }
+# ... one resource per setting
 ```
 
 Key differences from v4:
 
 - Each setting is its own resource with a `setting_id` and `value` attribute.
-- Nested blocks like `minify { css = "on" }` become
-  `value = { css = "on" }`.
+- Nested blocks like `minify { css = "on" }` become `value = { css = "on" }`.
 - The `security_header` block must be wrapped:
   `value = { strict_transport_security = { enabled = true, ... } }`.
 - The `universal_ssl` setting has been removed. Do not create a resource for it.
 - The v4 setting name `zero_rtt` maps to the v5 setting ID `0rtt`.
 
-**3.** Import each new resource into state:
+**3.** Import each new resource into state (format: `<zone_id>/<setting_id>`):
 
 ```bash
 terraform import cloudflare_zone_setting.example_always_online <zone_id>/always_online
@@ -929,16 +1172,46 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_argo_tiered_caching` |
 | **Spectrum** | `cloudflare_spectrum_application` |
 | **Addressing** | `cloudflare_regional_hostname` |
+| | `cloudflare_byo_ip_prefix` |
 | **Bot Management** | `cloudflare_bot_management` |
 | **Healthchecks** | `cloudflare_healthcheck` |
 | **Custom Pages** | `cloudflare_custom_pages` |
 | **Rules** | `cloudflare_list` |
 | | `cloudflare_list_item` |
 | **Logpush** | `cloudflare_logpush_job` |
+| | `cloudflare_logpush_ownership_challenge` |
 | **Logs** | `cloudflare_logpull_retention` |
-| **Alerting** | `cloudflare_notification_policy_webhooks` |
+| **Alerting** | `cloudflare_notification_policy` |
+| | `cloudflare_notification_policy_webhooks` |
 | **R2** | `cloudflare_r2_bucket` |
 | **User** | `cloudflare_api_token` |
+| **Account** | `cloudflare_account` |
+| | `cloudflare_account_member` |
+| | `cloudflare_account_token` |
+| **SSL/TLS** | `cloudflare_authenticated_origin_pulls` |
+| | `cloudflare_authenticated_origin_pulls_certificate` |
+| | `cloudflare_certificate_pack` |
+| | `cloudflare_custom_hostname` |
+| | `cloudflare_custom_hostname_fallback_origin` |
+| | `cloudflare_custom_ssl` |
+| | `cloudflare_mtls_certificate` |
+| | `cloudflare_origin_ca_certificate` |
+| **Security** | `cloudflare_access_rule` |
+| | `cloudflare_leaked_credential_check` |
+| | `cloudflare_leaked_credential_check_rule` |
+| **API Shield** | `cloudflare_api_shield` |
+| | `cloudflare_api_shield_operation` |
+| **Pages** | `cloudflare_pages_project` |
+| | `cloudflare_pages_domain` |
+| **Cache** | `cloudflare_regional_tiered_cache` |
+| | `cloudflare_tiered_cache` |
+| **Images** | `cloudflare_image_variant` |
+| **Turnstile** | `cloudflare_turnstile_widget` |
+| **Observatory** | `cloudflare_observatory_scheduled_test` |
+| **Queues** | `cloudflare_queue` |
+| | `cloudflare_queue_consumer` |
+| **Workers** | `cloudflare_workers_custom_domain` |
+| | `cloudflare_workers_for_platforms_dispatch_namespace` |
 | **Zero Trust** | `cloudflare_zero_trust_access_application` |
 | | `cloudflare_zero_trust_access_group` |
 | | `cloudflare_zero_trust_access_identity_provider` |
@@ -946,14 +1219,28 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_zero_trust_access_mtls_hostname_settings` |
 | | `cloudflare_zero_trust_access_policy` |
 | | `cloudflare_zero_trust_access_service_token` |
+| | `cloudflare_zero_trust_device_custom_profile` |
+| | `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` |
+| | `cloudflare_zero_trust_device_default_profile` |
+| | `cloudflare_zero_trust_device_default_profile_local_domain_fallback` |
+| | `cloudflare_zero_trust_device_managed_networks` |
+| | `cloudflare_zero_trust_device_posture_integration` |
 | | `cloudflare_zero_trust_device_posture_rule` |
+| | `cloudflare_zero_trust_dex_test` |
 | | `cloudflare_zero_trust_dlp_custom_profile` |
 | | `cloudflare_zero_trust_dlp_custom_entry` |
+| | `cloudflare_zero_trust_dlp_predefined_profile` |
 | | `cloudflare_zero_trust_dlp_predefined_entry` |
 | | `cloudflare_zero_trust_dlp_integration_entry` |
+| | `cloudflare_zero_trust_gateway_certificate` |
 | | `cloudflare_zero_trust_gateway_policy` |
+| | `cloudflare_zero_trust_gateway_settings` |
 | | `cloudflare_zero_trust_list` |
+| | `cloudflare_zero_trust_organization` |
+| | `cloudflare_zero_trust_tunnel_cloudflared` |
+| | `cloudflare_zero_trust_tunnel_cloudflared_config` |
 | | `cloudflare_zero_trust_tunnel_cloudflared_route` |
+| | `cloudflare_zero_trust_tunnel_cloudflared_virtual_network` |
 
 ---
 
@@ -1130,6 +1417,26 @@ structures, `for_each` with dynamic resource types, or heavy use of
 `templatefile`, you may need to make some HCL changes manually. Refer to the
 [version 5 upgrade guide] for per-resource attribute change details.
 
+#### tf-migrate resource rename limitations
+
+`tf-migrate` supports resource rename post-processing, but a small set of resources use conditional routing where one v4 type can map to multiple v5 types. In these cases, automatic global reference rewriting may require manual verification.
+ `cloudflare_authenticated_origin_pulls`
+- `cloudflare_authenticated_origin_pulls` may migrate to:
+  - `cloudflare_authenticated_origin_pulls_settings` (when `hostname` is not set)
+  - `cloudflare_authenticated_origin_pulls` (when `hostname` is set)
+- The target type depends on resource shape, not just the v4 type name.
+ `cloudflare_authenticated_origin_pulls_certificate`
+- `cloudflare_authenticated_origin_pulls_certificate` may migrate to:
+  - `cloudflare_authenticated_origin_pulls_certificate` (when `type = "per-zone"`)
+  - `cloudflare_authenticated_origin_pulls_hostname_certificate` (when `type = "per-hostname"`)
+- The target type depends on certificate mode, not just the v4 type name.
+ `cloudflare_dlp_profile` / `cloudflare_zero_trust_dlp_profile`
+- Both v4 resource names share the same migration logic and may migrate to:
+  - `cloudflare_zero_trust_dlp_custom_profile` (when `type = "custom"`)
+  - `cloudflare_zero_trust_dlp_predefined_profile` (when `type = "predefined"`)
+- The target type depends on the profile `type` value.
+~> For the resources above, review generated `moved` blocks and cross-resource references before apply.
+
 ### State locked during migration
 
 Ensure no other Terraform processes are running. If using remote state with
@@ -1165,10 +1472,10 @@ you do, upgrade to v5.18 first.
 **What if I am on Terraform < 1.8?**
 
 You can still migrate. `moved` blocks require Terraform 1.8+, but the
-provider also supports migration via `terraform state mv`, which works on any
-Terraform version. When you run `terraform state mv cloudflare_record.x
+provider also supports migration via `terraform state mv` for most renamed
+resources. When you run `terraform state mv cloudflare_record.x
 cloudflare_dns_record.x`, the provider's state upgraders automatically
-transform the state on the next plan/apply. See
+transform the state on the next plan/apply. See exceptions in
 [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
 for details.
 
