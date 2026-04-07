@@ -80,6 +80,7 @@ Read-Only:
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--logs))
+- `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--traces))
 
 <a id="nestedatt--result--observability--logs"></a>
 ### Nested Schema for `result.observability.logs`
@@ -91,6 +92,17 @@ Read-Only:
 - `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 - `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
 - `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+<a id="nestedatt--result--observability--traces"></a>
+### Nested Schema for `result.observability.traces`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where traces will be exported to.
+- `enabled` (Boolean) Whether traces are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `persist` (Boolean) Whether trace persistence is enabled for the Worker.
 
 
 

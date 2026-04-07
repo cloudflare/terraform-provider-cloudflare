@@ -170,11 +170,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"ai",
+									"ai_search",
+									"ai_search_namespace",
 									"analytics_engine",
 									"assets",
 									"browser",
@@ -187,6 +189,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"images",
 									"json",
 									"kv_namespace",
+									"media",
 									"mtls_certificate",
 									"plain_text",
 									"pipelines",
@@ -204,6 +207,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"secret_key",
 									"workflow",
 									"wasm_module",
+									"vpc_service",
+									"vpc_network",
 								),
 							},
 						},
@@ -216,7 +221,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
-							Description: "The name of the dispatch namespace.",
+							Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
 							Optional:    true,
 						},
 						"outbound": schema.SingleNestedAttribute{
@@ -403,11 +408,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"jurisdiction": schema.StringAttribute{
-							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+								stringvalidator.OneOfCaseInsensitive(
+									"eu",
+									"fedramp",
+									"fedramp-high",
+								),
 							},
+						},
+						"dispatch_namespace": schema.StringAttribute{
+							Description: "The dispatch namespace the Durable Object script belongs to.",
+							Optional:    true,
+						},
+						"entrypoint": schema.StringAttribute{
+							Description: "Entrypoint to invoke on the target Worker.",
+							Optional:    true,
+						},
+						"service_id": schema.StringAttribute{
+							Description: "Identifier of the VPC service to bind to.",
+							Optional:    true,
+						},
+						"network_id": schema.StringAttribute{
+							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Optional:    true,
+						},
+						"tunnel_id": schema.StringAttribute{
+							Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
+							Optional:    true,
+						},
+						"instance_name": schema.StringAttribute{
+							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
+							Optional:    true,
 						},
 					},
 				},
@@ -608,6 +641,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"persist": schema.BoolAttribute{
 								Description: "Whether log persistence is enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+							},
+						},
+					},
+					"traces": schema.SingleNestedAttribute{
+						Description: "Trace settings for the Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where traces will be exported to.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Whether traces are enabled for the Worker.",
+								Optional:    true,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Optional:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether trace persistence is enabled for the Worker.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(true),

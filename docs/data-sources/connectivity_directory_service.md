@@ -32,13 +32,18 @@ data "cloudflare_connectivity_directory_service" "example_connectivity_directory
 
 ### Read-Only
 
+- `app_protocol` (String) Available values: "postgresql", "mysql".
 - `created_at` (String)
 - `host` (Attributes) (see [below for nested schema](#nestedatt--host))
 - `http_port` (Number)
 - `https_port` (Number)
 - `id` (String) The ID of this resource.
 - `name` (String)
-- `type` (String) Available values: "http".
+- `tcp_port` (Number)
+- `tls_settings` (Attributes) TLS settings for a connectivity service.
+
+If omitted, the default mode (`verify_full`) is used. (see [below for nested schema](#nestedatt--tls_settings))
+- `type` (String) Available values: "tcp", "http".
 - `updated_at` (String)
 
 <a id="nestedatt--filter"></a>
@@ -46,7 +51,7 @@ data "cloudflare_connectivity_directory_service" "example_connectivity_directory
 
 Optional:
 
-- `type` (String) Available values: "http".
+- `type` (String) Available values: "tcp", "http".
 
 
 <a id="nestedatt--host"></a>
@@ -75,5 +80,18 @@ Read-Only:
 
 - `resolver_ips` (List of String)
 - `tunnel_id` (String)
+
+
+
+<a id="nestedatt--tls_settings"></a>
+### Nested Schema for `tls_settings`
+
+Read-Only:
+
+- `cert_verification_mode` (String) TLS certificate verification mode for the connection to the origin.
+
+- `"verify_full"` — verify certificate chain and hostname (default)
+- `"verify_ca"` — verify certificate chain only, skip hostname check
+- `"disabled"` — do not verify the server certificate at all
 
 

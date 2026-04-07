@@ -50,14 +50,30 @@ Available values: "active", "pending", "active_redeploying", "moved", "pending_d
 
 Optional:
 
+- `certificate_authority` (String) Filter by the certificate authority that issued the SSL certificate.
+Available values: "google", "lets_encrypt", "ssl_com".
+- `custom_origin_server` (String) Filter by custom origin server name.
 - `direction` (String) Direction to order hostnames.
 Available values: "asc", "desc".
-- `hostname` (String) Fully qualified domain name to match against. This parameter cannot be used with the 'id' parameter.
+- `hostname` (Attributes) (see [below for nested schema](#nestedatt--filter--hostname))
+- `hostname_status` (String) Filter by the hostname's activation status.
+Available values: "active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked".
 - `id` (String) Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.
 - `order` (String) Field to order hostnames by.
 Available values: "ssl", "ssl_status".
 - `ssl` (Number) Whether to filter hostnames based on if they have SSL enabled.
 Available values: 0, 1.
+- `ssl_status` (String) Filter by SSL certificate status.
+Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
+- `wildcard` (Boolean) Filter by whether the custom hostname is a wildcard hostname.
+
+<a id="nestedatt--filter--hostname"></a>
+### Nested Schema for `filter.hostname`
+
+Optional:
+
+- `contain` (String) Filters hostnames by a substring match on the hostname value. This parameter cannot be used with the 'id' parameter.
+
 
 
 <a id="nestedatt--ownership_verification"></a>

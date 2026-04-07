@@ -17,9 +17,7 @@ description: |-
 ### Required
 
 - `account_id` (String)
-- `id` (String) Use your AI Search ID.
-- `source` (String)
-- `type` (String) Available values: "r2", "web-crawler".
+- `id` (String) AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
 
 ### Optional
 
@@ -31,9 +29,10 @@ description: |-
 - `chunk_overlap` (Number)
 - `chunk_size` (Number)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
 - `fusion_method` (String) Available values: "max", "rrf".
-- `hybrid_search_enabled` (Boolean)
+- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--index_method))
+- `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--indexing_options))
 - `max_num_results` (Number)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `paused` (Boolean)
@@ -44,6 +43,7 @@ description: |-
 - `rewrite_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
 - `rewrite_query` (Boolean)
 - `score_threshold` (Number)
+- `source` (String)
 - `source_params` (Attributes) (see [below for nested schema](#nestedatt--source_params))
 - `summarization` (Boolean)
 - `summarization_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
@@ -51,15 +51,19 @@ description: |-
 - `system_prompt_index_summarization` (String)
 - `system_prompt_rewrite_query` (String)
 - `token_id` (String)
+- `type` (String) Available values: "r2", "web-crawler".
 
 ### Read-Only
 
 - `created_at` (String)
 - `created_by` (String)
 - `enable` (Boolean)
+- `engine_version` (Number)
+- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
 - `last_activity` (String)
 - `modified_at` (String)
 - `modified_by` (String)
+- `namespace` (String)
 - `public_endpoint_id` (String)
 - `status` (String)
 - `vectorize_name` (String)
@@ -69,8 +73,26 @@ description: |-
 
 Required:
 
-- `data_type` (String) Available values: "text", "number", "boolean".
+- `data_type` (String) Available values: "text", "number", "boolean", "datetime".
 - `field_name` (String)
+
+
+<a id="nestedatt--index_method"></a>
+### Nested Schema for `index_method`
+
+Required:
+
+- `keyword` (Boolean) Enable keyword (BM25) storage backend.
+- `vector` (Boolean) Enable vector (embedding) storage backend.
+
+
+<a id="nestedatt--indexing_options"></a>
+### Nested Schema for `indexing_options`
+
+Optional:
+
+- `keyword_tokenizer` (String) Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.
+Available values: "porter", "trigram".
 
 
 <a id="nestedatt--metadata"></a>
@@ -135,8 +157,22 @@ Optional:
 
 Optional:
 
-- `keyword_match_mode` (String) Controls how keyword search terms are matched. exact_match requires all terms to appear (AND); fuzzy_match returns results containing any term (OR). Defaults to exact_match.
-Available values: "exact_match", "fuzzy_match".
+- `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--retrieval_options--boost_by))
+- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.
+Available values: "and", "or".
+
+<a id="nestedatt--retrieval_options--boost_by"></a>
+### Nested Schema for `retrieval_options.boost_by`
+
+Required:
+
+- `field` (String) Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.
+
+Optional:
+
+- `direction` (String) Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional - defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
+Available values: "asc", "desc", "exists", "not_exists".
+
 
 
 <a id="nestedatt--source_params"></a>
@@ -155,19 +191,42 @@ Optional:
 
 Optional:
 
+- `crawl_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--crawl_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
-- `parse_type` (String) Available values: "sitemap", "feed-rss".
+- `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--store_options))
+
+<a id="nestedatt--source_params--web_crawler--crawl_options"></a>
+### Nested Schema for `source_params.web_crawler.crawl_options`
+
+Optional:
+
+- `depth` (Number)
+- `include_external_links` (Boolean)
+- `include_subdomains` (Boolean)
+- `max_age` (Number)
+- `source` (String) Available values: "all", "sitemaps", "links".
+
 
 <a id="nestedatt--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `source_params.web_crawler.parse_options`
 
 Optional:
 
+- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options--content_selector))
 - `include_headers` (Map of String)
 - `include_images` (Boolean)
 - `specific_sitemaps` (List of String) List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.
 - `use_browser_rendering` (Boolean)
+
+<a id="nestedatt--source_params--web_crawler--parse_options--content_selector"></a>
+### Nested Schema for `source_params.web_crawler.parse_options.content_selector`
+
+Required:
+
+- `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
+- `selector` (String) CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.
+
 
 
 <a id="nestedatt--source_params--web_crawler--store_options"></a>

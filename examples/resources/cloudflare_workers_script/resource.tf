@@ -14,61 +14,71 @@ resource "cloudflare_workers_script" "example_workers_script" {
         /foo /bar 301
         /news/* /blog/:splat
         EOT
-      html_handling = "auto-trailing-slash"
-      not_found_handling = "none"
-      run_worker_first = false
+        html_handling = "auto-trailing-slash"
+        not_found_handling = "404-page"
+        run_worker_first = ["string"]
+        serve_directly = true
+      }
+      jwt = "jwt"
     }
-    jwt = "jwt"
-  }
-  bindings = [{
-    name = "MY_ENV_VAR"
-    text = "my_data"
-    type = "plain_text"
-  }]
-  compatibility_date = "2021-01-01"
-  compatibility_flags = ["nodejs_compat"]
-  content_file = "worker.js"
-  content_sha256 = filesha256("worker.js")
-  keep_assets = false
-  keep_bindings = ["kv_namespace"]
-  limits = {
-    cpu_ms = 50
-  }
-  logpush = false
-  main_module = "worker.js"
-  migrations = {
-    deleted_classes = ["string"]
-    new_classes = ["string"]
-    new_sqlite_classes = ["string"]
-    new_tag = "v2"
-    old_tag = "v1"
-    renamed_classes = [{
-      from = "from"
-      to = "to"
+    bindings = [{
+      name = "MY_ENV_VAR"
+      text = "my_data"
+      type = "plain_text"
     }]
-    transferred_classes = [{
-      from = "from"
-      from_script = "from_script"
-      to = "to"
-    }]
-  }
-  observability = {
-    enabled = true
-    head_sampling_rate = 0.1
-    logs = {
+    body_part = "worker.js"
+    compatibility_date = "2021-01-01"
+    compatibility_flags = ["nodejs_compat"]
+    keep_assets = false
+    keep_bindings = ["string"]
+    limits = {
+      cpu_ms = 50
+    }
+    logpush = false
+    main_module = "worker.js"
+    migrations = {
+      deleted_classes = ["string"]
+      new_classes = ["string"]
+      new_sqlite_classes = ["string"]
+      new_tag = "v2"
+      old_tag = "v1"
+      renamed_classes = [{
+        from = "from"
+        to = "to"
+      }]
+      transferred_classes = [{
+        from = "from"
+        from_script = "from_script"
+        to = "to"
+      }]
+    }
+    observability = {
       enabled = true
-      invocation_logs = true
-      destinations = ["cloudflare"]
       head_sampling_rate = 0.1
-      persist = true
+      logs = {
+        enabled = true
+        invocation_logs = true
+        destinations = ["cloudflare"]
+        head_sampling_rate = 0.1
+        persist = true
+      }
+      traces = {
+        destinations = ["cloudflare"]
+        enabled = true
+        head_sampling_rate = 0.1
+        persist = true
+      }
     }
+    placement = {
+      mode = "smart"
+    }
+    tags = ["string"]
+    tail_consumers = [{
+      service = "my-log-consumer"
+      environment = "production"
+      namespace = "my-namespace"
+    }]
+    usage_model = "standard"
   }
-  placement = {
-    mode = "smart"
-  }
-  tail_consumers = [{
-    service = "my-log-consumer"
-    environment = "production"
-    namespace = "my-namespace"
-  }]
+  files = ["Example data"]
 }

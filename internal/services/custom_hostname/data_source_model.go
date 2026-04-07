@@ -50,17 +50,36 @@ func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params 
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}
+	if !m.Filter.CertificateAuthority.IsNull() {
+		params.CertificateAuthority = cloudflare.F(custom_hostnames.CustomHostnameListParamsCertificateAuthority(m.Filter.CertificateAuthority.ValueString()))
+	}
+	if !m.Filter.CustomOriginServer.IsNull() {
+		params.CustomOriginServer = cloudflare.F(m.Filter.CustomOriginServer.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Filter.Direction.ValueString()))
 	}
-	if !m.Filter.Hostname.IsNull() {
-		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
+	if m.Filter.Hostname != nil {
+		paramsHostname := custom_hostnames.CustomHostnameListParamsHostname{}
+		if !m.Filter.Hostname.Contain.IsNull() {
+			paramsHostname.Contain = cloudflare.F(m.Filter.Hostname.Contain.ValueString())
+		}
+		params.Hostname = cloudflare.F(paramsHostname)
+	}
+	if !m.Filter.HostnameStatus.IsNull() {
+		params.HostnameStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsHostnameStatus(m.Filter.HostnameStatus.ValueString()))
 	}
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.SSL.IsNull() {
 		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.Filter.SSL.ValueFloat64()))
+	}
+	if !m.Filter.SSLStatus.IsNull() {
+		params.SSLStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSLStatus(m.Filter.SSLStatus.ValueString()))
+	}
+	if !m.Filter.Wildcard.IsNull() {
+		params.Wildcard = cloudflare.F(m.Filter.Wildcard.ValueBool())
 	}
 
 	return
@@ -135,9 +154,14 @@ type CustomHostnameSSLValidationRecordsDataSourceModel struct {
 }
 
 type CustomHostnameFindOneByDataSourceModel struct {
-	ID        types.String  `tfsdk:"id" query:"id,optional"`
-	Direction types.String  `tfsdk:"direction" query:"direction,optional"`
-	Hostname  types.String  `tfsdk:"hostname" query:"hostname,optional"`
-	Order     types.String  `tfsdk:"order" query:"order,computed_optional"`
-	SSL       types.Float64 `tfsdk:"ssl" query:"ssl,optional"`
+	ID                   types.String                            `tfsdk:"id" query:"id,optional"`
+	CertificateAuthority types.String                            `tfsdk:"certificate_authority" query:"certificate_authority,optional"`
+	CustomOriginServer   types.String                            `tfsdk:"custom_origin_server" query:"custom_origin_server,optional"`
+	Direction            types.String                            `tfsdk:"direction" query:"direction,optional"`
+	Hostname             *CustomHostnamesHostnameDataSourceModel `tfsdk:"hostname" query:"hostname,optional"`
+	HostnameStatus       types.String                            `tfsdk:"hostname_status" query:"hostname_status,optional"`
+	Order                types.String                            `tfsdk:"order" query:"order,computed_optional"`
+	SSL                  types.Float64                           `tfsdk:"ssl" query:"ssl,optional"`
+	SSLStatus            types.String                            `tfsdk:"ssl_status" query:"ssl_status,optional"`
+	Wildcard             types.Bool                              `tfsdk:"wildcard" query:"wildcard,optional"`
 }

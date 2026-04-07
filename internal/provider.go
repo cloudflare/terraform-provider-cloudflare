@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -22,6 +23,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway_dynamic_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_instance"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
@@ -57,6 +60,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_origin_trust_store"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_page_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
@@ -298,11 +302,12 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 
 			consts.APIKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/fundamentals/api/get-started/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`[0-9a-f]{37}`),
-						"API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)",
+					customvalidator.NewSensitiveRegexMatchesValidator(
+						regexp.MustCompile(`^[0-9A-Za-z\-_]{37,60}$`),
+						"API key must only contain characters 0-9, a-z, A-Z, hyphens and underscores",
 					),
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot(consts.EmailSchemaKey),
@@ -312,17 +317,19 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 
 			consts.APITokenSchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
-						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
+					customvalidator.NewSensitiveRegexMatchesValidator(
+						regexp.MustCompile(`^[0-9A-Za-z\-_]{40,80}$`),
+						"API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
 				},
 			},
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
+				Sensitive:           true,
 				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 			},
 
@@ -622,6 +629,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		ai_gateway.NewResource,
+		ai_gateway_dynamic_routing.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
@@ -632,6 +641,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
+		custom_page_asset.NewResource,
 		pipeline.NewResource,
 		pipeline_sink.NewResource,
 		pipeline_stream.NewResource,
@@ -986,6 +996,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
 		cloudforce_one_request_priority.NewCloudforceOneRequestPriorityDataSource,
 		cloudforce_one_request_asset.NewCloudforceOneRequestAssetDataSource,
+		ai_gateway.NewAIGatewayDataSource,
+		ai_gateway.NewAIGatewaysDataSource,
+		ai_gateway_dynamic_routing.NewAIGatewayDynamicRoutingDataSource,
 		account_permission_group.NewAccountPermissionGroupDataSource,
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
@@ -1007,6 +1020,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_search_token.NewAISearchTokensDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		custom_page_asset.NewCustomPageAssetDataSource,
+		custom_page_asset.NewCustomPageAssetsDataSource,
 		pipeline.NewPipelineDataSource,
 		pipeline_sink.NewPipelineSinkDataSource,
 		pipeline_sink.NewPipelineSinksDataSource,

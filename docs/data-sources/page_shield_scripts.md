@@ -30,7 +30,7 @@ data "cloudflare_page_shield_scripts" "example_page_shield_scripts" {
 
 - `added_at` (String)
 - `cryptomining_score` (Number) The cryptomining score of the JavaScript content.
-- `dataflow_score` (Number) The dataflow score of the JavaScript content.
+- `dataflow_score` (Number, Deprecated) The dataflow score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
 - `domain_reported_malicious` (Boolean)
 - `fetched_at` (String) The timestamp of when the script was last fetched.
 - `first_page_url` (String)
@@ -44,7 +44,7 @@ data "cloudflare_page_shield_scripts" "example_page_shield_scripts" {
 - `malicious_domain_categories` (List of String)
 - `malicious_url_categories` (List of String)
 - `malware_score` (Number) The malware score of the JavaScript content.
-- `obfuscation_score` (Number) The obfuscation score of the JavaScript content.
+- `obfuscation_score` (Number, Deprecated) The obfuscation score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
 - `page_urls` (List of String)
 - `url` (String)
 - `url_contains_cdn_cgi_path` (Boolean)
@@ -57,12 +57,12 @@ data "cloudflare_page_shield_scripts" "example_page_shield_scripts" {
 Read-Only:
 
 - `cryptomining_score` (Number) The cryptomining score of the JavaScript content.
-- `dataflow_score` (Number) The dataflow score of the JavaScript content.
+- `dataflow_score` (Number, Deprecated) The dataflow score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
 - `fetched_at` (String) The timestamp of when the script was last fetched.
 - `hash` (String) The computed hash of the analyzed script.
 - `js_integrity_score` (Number) The integrity score of the JavaScript content.
 - `magecart_score` (Number) The magecart score of the JavaScript content.
 - `malware_score` (Number) The malware score of the JavaScript content.
-- `obfuscation_score` (Number) The obfuscation score of the JavaScript content.
+- `obfuscation_score` (Number, Deprecated) The obfuscation score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
 
 

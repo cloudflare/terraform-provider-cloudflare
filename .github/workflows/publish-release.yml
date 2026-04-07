@@ -11,32 +11,43 @@ on:
   push:
     tags:
       - "v*"
+
 jobs:
-  goreleaser:
+  build:
     runs-on: lx64
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: freebsd
+            goarch: amd64
+          - goos: freebsd
+            goarch: arm64
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+            extension: .exe
+          - goos: windows
+            goarch: arm64
+            extension: .exe
     steps:
       - name: Cleanup unused directories and tools
         run: |
           df -h /
-          sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing
-          sudo apt-get autoremove -y
-          sudo apt-get clean
-          sudo docker image prune --all --force
-          sudo rm -rf \
-            "$AGENT_TOOLSDIRECTORY" \
-            /opt/google/chrome \
-            /opt/microsoft/msedge \
-            /opt/microsoft/powershell \
-            /opt/pipx \
-            /usr/lib/mono \
-            /usr/local/julia* \
-            /usr/local/lib/android \
-            /usr/local/lib/node_modules \
-            /usr/local/share/chromium \
-            /usr/local/share/powershell \
-            /usr/share/dotnet \
-            /usr/share/swift
-          ghcup nuke
+          sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing 2>/dev/null || true
+          sudo apt-get autoremove -y 2>/dev/null || true
+          sudo apt-get clean 2>/dev/null || true
+          sudo docker image prune --all --force 2>/dev/null || true
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY" /opt/google/chrome /opt/microsoft/msedge /opt/microsoft/powershell /opt/pipx /usr/lib/mono /usr/local/julia* /usr/local/lib/android /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell /usr/share/dotnet /usr/share/swift 2>/dev/null || true
+          ghcup nuke 2>/dev/null || true
           df -h /
       - name: Checkout
         uses: actions/checkout@v6
@@ -46,19 +57,75 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          BINARY_NAME="terraform-provider-cloudflare_v${VERSION}${{ matrix.extension }}"
+          COMMIT=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(git log -1 --format=%ct)
+          go build -trimpath -ldflags "-s -w -X main.version=${VERSION} -X main.commit=${COMMIT}" -o "dist/${BINARY_NAME}"
+          touch -d "@${TIMESTAMP}" "dist/${BINARY_NAME}"
+          echo "binary_name=${BINARY_NAME}" >> $GITHUB_ENV
+          echo "version=${VERSION}" >> $GITHUB_ENV
+      - name: Create archive
+        run: |
+          cd dist
+          ARCHIVE_NAME="terraform-provider-cloudflare_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+          zip "$ARCHIVE_NAME" "${BINARY_NAME}" ../CHANGELOG.md ../LICENSE ../README.md
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-provider-cloudflare-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*.zip
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: lx64
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6.0.0
+      - name: Copy manifest
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          cp terraform-registry-manifest.json "dist/terraform-provider-cloudflare_${VERSION}_manifest.json"
+      - name: Generate checksums
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          cd dist
+          sha256sum terraform-provider-cloudflare_*.zip "terraform-provider-cloudflare_${VERSION}_manifest.json" > "terraform-provider-cloudflare_${VERSION}_SHA256SUMS"
+      - name: Sign checksums
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          cd dist
+          gpg --batch --local-user "${{ steps.import_gpg.outputs.fingerprint }}" --output "terraform-provider-cloudflare_${VERSION}_SHA256SUMS.sig" --detach-sign "terraform-provider-cloudflare_${VERSION}_SHA256SUMS"
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          version: latest
-          args: "release --clean --timeout 3h -p 3"
+          files: |
+            dist/*.zip
+            dist/*_SHA256SUMS
+            dist/*_SHA256SUMS.sig
+            dist/*_manifest.json
         env:
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run registry sync
         run: ./scripts/trigger-terraform-registry-sync

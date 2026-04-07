@@ -27,6 +27,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
     -----END CERTIFICATE-----
 
     EOT
+    custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
     custom_key = <<EOT
     -----BEGIN RSA PRIVATE KEY-----
     MIIEowIBAAKCAQEAwQHoetcl9+5ikGzV6cMzWtWPJHqXT3wpbEkRU9Yz7lgvddmG

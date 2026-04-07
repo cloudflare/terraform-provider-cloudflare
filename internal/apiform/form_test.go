@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	type_helpers "github.com/cloudflare/terraform-provider-cloudflare/internal/types"
 )
 
 func P[T any](v T) *T { return &v }
@@ -325,7 +326,7 @@ Content-Type: application/json
 		TerraformTypes{
 			A: types.BoolValue(true),
 			B: types.Int64Value(237628372683),
-			C: types.Float64Value(654),
+			C: type_helpers.NewFloat64ValueFromStringUnsafe("654"),
 			D: types.StringValue("a string value"),
 			E: timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
 			F: customfield.NewObjectMust(context.TODO(), &NestedTerraformType{
@@ -334,7 +335,7 @@ Content-Type: application/json
 			G: types.ObjectValueMust(map[string]attr.Type{"hello": basetypes.StringType{}}, map[string]attr.Value{"hello": basetypes.NewStringValue("world")}),
 			H: types.ListValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("a"), basetypes.NewStringValue("b")}),
 			I: types.MapValueMust(basetypes.Int64Type{}, map[string]attr.Value{"a": basetypes.NewInt64Value(3), "b": basetypes.NewInt64Value(8932)}),
-			J: types.SetValueMust(basetypes.Float64Type{}, []attr.Value{basetypes.NewFloat64Value(23.345), basetypes.NewFloat64Value(15)}),
+			J: types.SetValueMust(basetypes.Float64Type{}, []attr.Value{type_helpers.NewFloat64ValueFromStringUnsafe("23.345"), type_helpers.NewFloat64ValueFromStringUnsafe("15")}),
 			K: types.DynamicValue(types.ObjectValueMust(map[string]attr.Type{"dynamic_hello": basetypes.StringType{}}, map[string]attr.Value{"dynamic_hello": basetypes.NewStringValue("dynamic_world")})),
 			L: customfield.NewListMust[types.String](context.TODO(), []attr.Value{basetypes.NewStringValue("a"), basetypes.NewStringValue("b")}),
 			M: customfield.NewMapMust[types.String](context.TODO(), map[string]types.String{"a": basetypes.NewStringValue("3"), "b": basetypes.NewStringValue("8932")}),

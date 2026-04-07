@@ -32,6 +32,7 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_trust_a
 
 ### Read-Only
 
+- `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
 - `created_at` (String)
 - `created_by` (String)
 - `description` (String)

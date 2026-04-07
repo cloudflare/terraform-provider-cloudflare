@@ -13,10 +13,10 @@ description: |-
 
 ```terraform
 data "cloudflare_workers_custom_domains" "example_workers_custom_domains" {
-  account_id = "9a7806061c88ada191ed06f989cc3dac"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   environment = "production"
-  hostname = "foo.example.com"
-  service = "foo"
+  hostname = "app.example.com"
+  service = "my-worker"
   zone_id = "593c9c94de529bbbfaac7c53ced0447d"
   zone_name = "example.com"
 }
@@ -27,16 +27,16 @@ data "cloudflare_workers_custom_domains" "example_workers_custom_domains" {
 
 ### Required
 
-- `account_id` (String) Identifer of the account.
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `environment` (String) Worker environment associated with the zone and hostname.
-- `hostname` (String) Hostname of the Worker Domain.
+- `environment` (String) Worker environment associated with the domain.
+- `hostname` (String) Hostname of the domain.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `service` (String) Worker service associated with the zone and hostname.
-- `zone_id` (String) Identifier of the zone.
-- `zone_name` (String) Name of the zone.
+- `service` (String) Name of the Worker associated with the domain.
+- `zone_id` (String) ID of the zone containing the domain hostname.
+- `zone_name` (String) Name of the zone containing the domain hostname.
 
 ### Read-Only
 
@@ -47,11 +47,12 @@ data "cloudflare_workers_custom_domains" "example_workers_custom_domains" {
 
 Read-Only:
 
-- `environment` (String, Deprecated) Worker environment associated with the zone and hostname.
-- `hostname` (String) Hostname of the Worker Domain.
-- `id` (String) Identifer of the Worker Domain.
-- `service` (String) Worker service associated with the zone and hostname.
-- `zone_id` (String) Identifier of the zone.
-- `zone_name` (String) Name of the zone.
+- `cert_id` (String) ID of the TLS certificate issued for the domain.
+- `environment` (String, Deprecated) Worker environment associated with the domain.
+- `hostname` (String) Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.
+- `id` (String) Immutable ID of the domain.
+- `service` (String) Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.
+- `zone_id` (String) ID of the zone containing the domain hostname.
+- `zone_name` (String) Name of the zone containing the domain hostname.
 
 

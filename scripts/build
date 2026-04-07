@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
+
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6"
 
 cd "$(dirname "$0")/.."
 

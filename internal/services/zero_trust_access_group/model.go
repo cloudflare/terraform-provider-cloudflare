@@ -55,6 +55,7 @@ type ZeroTrustAccessGroupIncludeModel struct {
 	OIDC                 *ZeroTrustAccessGroupIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 	LinkedAppToken       *ZeroTrustAccessGroupIncludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore        *ZeroTrustAccessGroupIncludeUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 }
 
 type ZeroTrustAccessGroupIncludeGroupModel struct {
@@ -162,6 +163,10 @@ type ZeroTrustAccessGroupIncludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
 
+type ZeroTrustAccessGroupIncludeUserRiskScoreModel struct {
+	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
+}
+
 type ZeroTrustAccessGroupExcludeModel struct {
 	Group                *ZeroTrustAccessGroupExcludeGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessGroupExcludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -187,6 +192,7 @@ type ZeroTrustAccessGroupExcludeModel struct {
 	OIDC                 *ZeroTrustAccessGroupExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 	LinkedAppToken       *ZeroTrustAccessGroupExcludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore        *ZeroTrustAccessGroupExcludeUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 }
 
 type ZeroTrustAccessGroupExcludeGroupModel struct {
@@ -294,6 +300,10 @@ type ZeroTrustAccessGroupExcludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
 
+type ZeroTrustAccessGroupExcludeUserRiskScoreModel struct {
+	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
+}
+
 type ZeroTrustAccessGroupRequireModel struct {
 	Group                *ZeroTrustAccessGroupRequireGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessGroupRequireAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -319,6 +329,7 @@ type ZeroTrustAccessGroupRequireModel struct {
 	OIDC                 *ZeroTrustAccessGroupRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 	LinkedAppToken       *ZeroTrustAccessGroupRequireLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore        *ZeroTrustAccessGroupRequireUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 }
 
 type ZeroTrustAccessGroupRequireGroupModel struct {
@@ -424,4 +435,8 @@ type ZeroTrustAccessGroupRequireServiceTokenModel struct {
 
 type ZeroTrustAccessGroupRequireLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
+}
+
+type ZeroTrustAccessGroupRequireUserRiskScoreModel struct {
+	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
 }

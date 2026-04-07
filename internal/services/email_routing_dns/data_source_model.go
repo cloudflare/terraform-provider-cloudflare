@@ -93,4 +93,5 @@ type EmailRoutingDNSResultInfoDataSourceModel struct {
 	Page                 types.Float64 `tfsdk:"page" json:"page,computed"`
 	PerPage              types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
 	TotalCount           types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
+	TotalPages           types.Float64 `tfsdk:"total_pages" json:"total_pages,computed"`
 }

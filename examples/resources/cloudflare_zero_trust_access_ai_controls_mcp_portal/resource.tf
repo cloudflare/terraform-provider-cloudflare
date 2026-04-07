@@ -3,6 +3,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
   id = "my-mcp-portal"
   hostname = "exmaple.com"
   name = "My MCP Portal"
+  allow_code_mode = true
   description = "This is my custom MCP Portal"
   secure_web_gateway = false
   servers = [{
@@ -11,11 +12,13 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
     on_behalf = true
     updated_prompts = [{
       name = "name"
+      alias = "my-custom-alias"
       description = "description"
       enabled = true
     }]
     updated_tools = [{
       name = "name"
+      alias = "my-custom-alias"
       description = "description"
       enabled = true
     }]

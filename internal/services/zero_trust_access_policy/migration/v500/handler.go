@@ -81,7 +81,18 @@ func UpgradeFromSchemaV0(ctx context.Context, req resource.UpgradeStateRequest, 
 
 	// Early v5 state (v5.12-v5.15) — pass through unchanged
 	tflog.Info(ctx, "Detected v5 format in schema_version=0 state, no-op upgrade")
-	resp.State.Raw = req.State.Raw
+
+	// When PriorSchema is nil (as set in migrations.go for v4 compatibility),
+	// req.State is nil and only req.RawState is available. We need to unmarshal
+	// the raw state using the target schema type.
+	v5Type := resp.State.Schema.Type().TerraformType(ctx)
+	rawValue, err := req.RawState.Unmarshal(v5Type)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to unmarshal v5 state during upgrade",
+			fmt.Sprintf("Could not parse state as v5 format: %s", err))
+		return
+	}
+	resp.State.Raw = rawValue
 }
 
 // UpgradeFromSchemaV1 handles state upgrades from schema_version=1 to current version.

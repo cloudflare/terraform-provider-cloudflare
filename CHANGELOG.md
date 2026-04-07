@@ -1,5 +1,54 @@
 # Changelog
 
+## 5.19.0-beta.5 (2026-04-07)
+
+Full Changelog: [v5.19.0-beta.4...v5.19.0-beta.5](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.4...v5.19.0-beta.5)
+
+### Features
+
+* chore: bump go sdk version ([6e48004](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6e48004861aa2f8b77c4ed83e318fa4b5cb38177))
+* feat: bump schema version to 500 ([aadbc10](https://github.com/cloudflare/terraform-provider-cloudflare/commit/aadbc10afa0690c904ebbd925a9b465be0b39176))
+* fix: make prism default server ([d2a18c9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d2a18c960d0c5bc3bfc3fa7d0863299415513fca))
+
+
+### Bug Fixes
+
+* **ai_search_instance:** conflict resolution ([f6c3236](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f6c3236587d6fc6d899d6f66ca87dded4e113fb8))
+* **CI:** pin go releaser ([700c4e3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/700c4e31134cbd44b33e9c3465cdf597179240c1))
+* **CI:** pin go releaser to latest ([a8f99a2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a8f99a22bdb47c41a01fbde463adeadeff599b78))
+* **CI:** unit tests ([09bfd8b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/09bfd8b1ebe78bdd006c271745ce0bef61143760))
+* **dns_record:** Remove private_routing default value ([ada77b4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ada77b42a12f574cf1a139f2d17f3b48df9abc1b))
+* duplicate attributes ([82c4128](https://github.com/cloudflare/terraform-provider-cloudflare/commit/82c4128572c510916a4ab976138c78cd344c431e))
+* **list_item:** remove context ([69f751d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/69f751d43a18f284760c1a7f421e69f2d1783be8))
+* **logpush_job:** update model for migration ([b789273](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b789273b164ac964777c88c7f6ccb1659018b586))
+* mark provider credential fields as sensitive and update validation regex ([5f6ff4f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5f6ff4f905b7c219433fc570bb4a47e2be5fc7c2))
+* migration model parity ([267b81e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/267b81e4090c7058a13bd361b8b8fb7f2d6fbb47))
+* **worker:** Add UseStateForUnknown() plan modifiers and update tests for observability.traces ([8cfe12d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8cfe12d1ac66f3e5563b1e792e82a8b4d92b35d9))
+* **workers_custom_domain:** handle http 200 no content header ([ea0ca97](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ea0ca978e837ae110437faa3e552f2f0d01f6277))
+* **workers_custom_domain:** upate assertions ([000f0b1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/000f0b17203610f46aadd3ff7b18b6263a72a73f))
+* **zero_trust_access_policy:** nil pointer panic in state upgrader ([ebe2b68](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ebe2b68beeeeaec39515685a38b6918554e650aa))
+* **zero_trust_access_policy:** set PriorSchema nil for v4 state upgrade (TKT-007) ([4d64732](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4d647326a2a8608112d201d7d82ba8acd5dfdf46))
+
+
+### Chores
+
+* **ci:** bump tf-migrate version ([64d58ef](https://github.com/cloudflare/terraform-provider-cloudflare/commit/64d58efef28283cee45f354cd88c5b453cc2ece2))
+* **ci:** disk clean up ([cc1ebca](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cc1ebca46e30a2637f32314d7c56d2f4f8cf75b2))
+* **docs:** regen docs ([d3948b8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d3948b8686d059276ab7e0bf7a6e4599a73f6eaa))
+* **internal:** codegen related update ([c5fdb89](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c5fdb895a5037b555f4e805fa5adad0635b86ad2))
+* **internal:** codegen related update ([f593d24](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f593d2410ed3e1f65535ae078ced43d87c1b16bd))
+* **internal:** codegen related update ([e71aa0e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e71aa0e1c9bc29b9b69ecb061c6d34c0c27f1726))
+
+
+### Documentation
+
+* **healthcheck:** update port description to clarify defaults ([1860800](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1860800496a68c94b73b4998a6f7bd46bb32b9b0))
+
+
+### Refactors
+
+* **ci:** improve release time ([d8bb69d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d8bb69da33108bdad481634f87b25aec8a7a2483))
+
 ## 5.19.0-beta.4 (2026-03-30)
 
 Full Changelog: [v5.19.0-beta.3...v5.19.0-beta.4](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.3...v5.19.0-beta.4)

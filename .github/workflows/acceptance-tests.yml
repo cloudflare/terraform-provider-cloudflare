@@ -185,6 +185,10 @@ jobs:
             display_name: R2 Storage
             email: tf-acct-storage-r2-storage@cfapi.net
             api_key_secret: TF_ACCT_STORAGE_R2_STORAGE_API_KEY
+          - name: data-platform
+            display_name: Data Platform
+            email: tf-acct-storage-data-platform@cfapi.net
+            api_key_secret: TF_ACCT_STORAGE_DATA_PLATFORM_API_KEY
           - name: pages
             display_name: Pages
             email: tf-acct-pages-pages@cfapi.net

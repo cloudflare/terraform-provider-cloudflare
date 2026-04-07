@@ -23,6 +23,7 @@ type DNSRecordModel struct {
 	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
 	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
 	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
+	PrivateRouting    types.Bool                                       `tfsdk:"private_routing" json:"private_routing,optional"`
 	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
 	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,required"`
 	Tags              customfield.Set[types.String]                    `tfsdk:"tags" json:"tags,computed_optional"`

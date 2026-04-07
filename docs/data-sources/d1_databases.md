@@ -41,6 +41,8 @@ Read-Only:
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `id` (String) D1 database identifier (UUID).
+- `jurisdiction` (String) Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.
+Available values: "eu", "fedramp".
 - `name` (String) D1 database name.
 - `uuid` (String) D1 database identifier (UUID).
 - `version` (String)

@@ -52,7 +52,7 @@ Optional:
 - `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
 - `auth_url` (String) The Workspace One Authorization URL depending on your region.
 - `client_id` (String) The Workspace One client ID provided in the Workspace One Admin Dashboard.
-- `client_key` (String) The Uptycs client secret.
+- `client_key` (String, Sensitive) The Uptycs client secret.
 - `client_secret` (String, Sensitive) The Workspace One client secret provided in the Workspace One Admin Dashboard.
 - `customer_id` (String) The Crowdstrike customer ID.
 

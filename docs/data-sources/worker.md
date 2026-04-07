@@ -24,11 +24,16 @@ data "cloudflare_worker" "example_worker" {
 ### Required
 
 - `account_id` (String) Identifier.
+
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Read-Only
 
 - `created_on` (String) When the Worker was created.
+- `deployed_on` (String) When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.
 - `id` (String) Identifier for the Worker, which can be ID or name.
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `name` (String) Name of the Worker.
@@ -39,6 +44,17 @@ data "cloudflare_worker" "example_worker" {
 - `tail_consumers` (Attributes Set) Other Workers that should consume logs from the Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `updated_on` (String) When the Worker was most recently updated.
 
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `order` (String) Sort direction.
+Available values: "asc", "desc".
+- `order_by` (String) Property to sort results by.
+Available values: "deployed_on", "updated_on", "created_on", "name".
+
+
 <a id="nestedatt--observability"></a>
 ### Nested Schema for `observability`
 
@@ -47,15 +63,29 @@ Read-Only:
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
+- `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--observability--traces))
 
 <a id="nestedatt--observability--logs"></a>
 ### Nested Schema for `observability.logs`
 
 Read-Only:
 
+- `destinations` (List of String) A list of destinations where logs will be exported to.
 - `enabled` (Boolean) Whether logs are enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+<a id="nestedatt--observability--traces"></a>
+### Nested Schema for `observability.traces`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where traces will be exported to.
+- `enabled` (Boolean) Whether traces are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `persist` (Boolean) Whether trace persistence is enabled for the Worker.
 
 
 

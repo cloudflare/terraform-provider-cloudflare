@@ -70,6 +70,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 
   EOT
   bundle_method = "ubiquitous"
+  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
   deploy = "staging"
   geo_restrictions = {
     label = "us"
@@ -92,6 +93,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 Available values: "ubiquitous", "optimal", "force".
+- `custom_csr_id` (String) The identifier for the Custom CSR that was used.
 - `deploy` (String) The environment to deploy the certificate to.
 Available values: "staging", "production".
 - `geo_restrictions` (Attributes) Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance. (see [below for nested schema](#nestedatt--geo_restrictions))

@@ -262,6 +262,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A valid IPv4 address.",
 							Computed:    true,
 						},
+						"private_routing": schema.BoolAttribute{
+							Description: "Enables private network routing to the origin.",
+							Computed:    true,
+						},
 						"proxied": schema.BoolAttribute{
 							Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 							Computed:    true,
@@ -325,7 +329,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"priority": schema.Float64Attribute{
-							Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+							Description: "Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.",
 							Computed:    true,
 							Validators: []validator.Float64{
 								float64validator.Between(0, 65535),

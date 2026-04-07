@@ -6,9 +6,17 @@ resource "cloudflare_worker" "example_worker" {
     enabled = true
     head_sampling_rate = 1
     logs = {
+      destinations = ["string"]
       enabled = true
       head_sampling_rate = 1
       invocation_logs = true
+      persist = true
+    }
+    traces = {
+      destinations = ["string"]
+      enabled = true
+      head_sampling_rate = 1
+      persist = true
     }
   }
   subdomain = {

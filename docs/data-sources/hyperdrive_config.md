@@ -37,6 +37,10 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
+Maximum allowed: 20 for free tier accounts, 100 for paid tier accounts.
+If not specified, defaults to 20 for free tier and 60 for paid tier.
+Contact Cloudflare if you need a higher limit.
+
 <a id="nestedatt--caching"></a>
 ### Nested Schema for `caching`
 
