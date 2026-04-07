@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -21,10 +20,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
-const (
-	requestTimeout = 10 * time.Second
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -92,7 +87,6 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -121,7 +115,6 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 			Search:    cloudflare.F(searchTerm),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(requestTimeout),
 	)
 	if listItems.Err() != nil {
 		resp.Diagnostics.AddError("failed to search list items", listItems.Err().Error())
@@ -159,7 +152,6 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -198,7 +190,6 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		rules.ListItemGetParams{AccountID: cloudflare.F(data.AccountID.ValueString())},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(requestTimeout),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -244,7 +235,6 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
-		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
