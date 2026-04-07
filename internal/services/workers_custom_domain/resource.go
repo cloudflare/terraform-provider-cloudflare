@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -16,6 +17,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -157,8 +159,18 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+		// The API may return an empty content-type for DELETE responses which causes
+		// the SDK to fail with a content-type handling error. Treat this as success
+		// since DELETE is idempotent and a response indicates the server processed it.
+		errStr := err.Error()
+		if strings.Contains(errStr, "expected destination type") && strings.Contains(errStr, "content-type") {
+			tflog.Warn(ctx, "Delete operation returned non-JSON response, assuming success", map[string]interface{}{
+				"id": data.ID.ValueString(),
+			})
+		} else {
+			resp.Diagnostics.AddError("failed to make http request", errStr)
+			return
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

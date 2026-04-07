@@ -171,7 +171,6 @@ func TestMigrateWorkersCustomDomain_WithoutEnvironment(t *testing.T) {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 					Config:                   testConfig,
-					ExpectNonEmptyPlan:       true,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PostApplyPostRefresh: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
@@ -221,7 +220,7 @@ func migrationStepExpectEnvironmentReplacement(t *testing.T, cfg string, tmpDir 
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		ExpectNonEmptyPlan:       true,
+		ExpectNonEmptyPlan:       false,
 		ConfigPlanChecks: resource.ConfigPlanChecks{
 			PreApply: []plancheck.PlanCheck{
 				acctest.DebugNonEmptyPlan,
