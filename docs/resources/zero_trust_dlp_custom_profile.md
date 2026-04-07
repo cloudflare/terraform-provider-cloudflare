@@ -53,10 +53,13 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_custom_entry" {
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `data_classes` (List of String) Data class IDs to associate with the profile.
+- `data_tags` (List of String) Data tag IDs to associate with the profile.
 - `description` (String) The description of the profile.
 - `entries` (Attributes Set, Deprecated) Custom entries from this profile.
 If this field is omitted, entries owned by this profile will not be changed. (see [below for nested schema](#nestedatt--entries))
 - `ocr_enabled` (Boolean)
+- `sensitivity_levels` (Attributes List) Sensitivity levels to associate with the profile. (see [below for nested schema](#nestedatt--sensitivity_levels))
 - `shared_entries` (Attributes Set) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--shared_entries))
 
 ### Read-Only
@@ -109,6 +112,15 @@ Optional:
 
 - `validation` (String, Deprecated) Available values: "luhn".
 
+
+
+<a id="nestedatt--sensitivity_levels"></a>
+### Nested Schema for `sensitivity_levels`
+
+Required:
+
+- `group_id` (String)
+- `level_id` (String)
 
 
 <a id="nestedatt--shared_entries"></a>

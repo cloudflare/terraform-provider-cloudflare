@@ -37,7 +37,6 @@ data "cloudflare_zero_trust_organization" "example_zero_trust_organization" {
 - `is_ui_read_only` (Boolean) Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))
-- `mfa_configuration_allowed` (Boolean) Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.
 - `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.
 - `name` (String) The name of your Zero Trust organization.
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.

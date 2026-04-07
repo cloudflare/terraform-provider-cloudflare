@@ -17,6 +17,9 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
+  limits = {
+    steps = 1
+  }
 }
 ```
 
@@ -30,6 +33,10 @@ resource "cloudflare_workflow" "example_workflow" {
 - `script_name` (String)
 - `workflow_name` (String)
 
+### Optional
+
+- `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
+
 ### Read-Only
 
 - `created_on` (String)
@@ -41,6 +48,14 @@ resource "cloudflare_workflow" "example_workflow" {
 - `terminator_running` (Number)
 - `triggered_on` (String)
 - `version_id` (String)
+
+<a id="nestedatt--limits"></a>
+### Nested Schema for `limits`
+
+Optional:
+
+- `steps` (Number)
+
 
 <a id="nestedatt--instances"></a>
 ### Nested Schema for `instances`

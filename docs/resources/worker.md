@@ -20,9 +20,17 @@ resource "cloudflare_worker" "example_worker" {
     enabled = true
     head_sampling_rate = 1
     logs = {
+      destinations = ["string"]
       enabled = true
       head_sampling_rate = 1
       invocation_logs = true
+      persist = true
+    }
+    traces = {
+      destinations = ["string"]
+      enabled = true
+      head_sampling_rate = 1
+      persist = true
     }
   }
   subdomain = {
@@ -55,6 +63,7 @@ resource "cloudflare_worker" "example_worker" {
 ### Read-Only
 
 - `created_on` (String) When the Worker was created.
+- `deployed_on` (String) When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.
 - `id` (String) Immutable ID of the Worker.
 - `references` (Attributes) Other resources that reference the Worker and depend on it existing. (see [below for nested schema](#nestedatt--references))
 - `updated_on` (String) When the Worker was most recently updated.
@@ -67,15 +76,29 @@ Optional:
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
+- `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--observability--traces))
 
 <a id="nestedatt--observability--logs"></a>
 ### Nested Schema for `observability.logs`
 
 Optional:
 
+- `destinations` (List of String) A list of destinations where logs will be exported to.
 - `enabled` (Boolean) Whether logs are enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+<a id="nestedatt--observability--traces"></a>
+### Nested Schema for `observability.traces`
+
+Optional:
+
+- `destinations` (List of String) A list of destinations where traces will be exported to.
+- `enabled` (Boolean) Whether traces are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `persist` (Boolean) Whether trace persistence is enabled for the Worker.
 
 
 

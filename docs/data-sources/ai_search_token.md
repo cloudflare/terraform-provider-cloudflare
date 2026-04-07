@@ -18,6 +18,10 @@ description: |-
 
 - `account_id` (String)
 
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+
 ### Read-Only
 
 - `cf_api_id` (String)
@@ -29,5 +33,15 @@ description: |-
 - `modified_at` (String)
 - `modified_by` (String)
 - `name` (String)
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `order_by` (String) Order By Column Name
+Available values: "created_at".
+- `order_by_direction` (String) Order By Direction
+Available values: "asc", "desc".
 
 

@@ -135,5 +135,6 @@ Read-Only:
 - `page` (Number) Current page within paginated list of results.
 - `per_page` (Number) Number of results per page of results.
 - `total_count` (Number) Total results available without any search parameters.
+- `total_pages` (Number) The number of total pages in the entire result set.
 
 

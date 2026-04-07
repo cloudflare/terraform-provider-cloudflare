@@ -13,11 +13,12 @@ description: |-
 
 ```terraform
 resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
-  account_id = "9a7806061c88ada191ed06f989cc3dac"
-  hostname = "foo.example.com"
-  service = "foo"
-  zone_id = "593c9c94de529bbbfaac7c53ced0447d"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  hostname = "app.example.com"
+  service = "my-worker"
   environment = "production"
+  zone_id = "593c9c94de529bbbfaac7c53ced0447d"
+  zone_name = "example.com"
 }
 ```
 
@@ -26,19 +27,20 @@ resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Identifer of the account.
-- `hostname` (String) Hostname of the Worker Domain.
-- `service` (String) Worker service associated with the zone and hostname.
-- `zone_id` (String) Identifier of the zone.
+- `account_id` (String) Identifier.
+- `hostname` (String) Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.
+- `service` (String) Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.
 
 ### Optional
 
-- `environment` (String, Deprecated) Worker environment associated with the zone and hostname.
+- `environment` (String, Deprecated) Worker environment associated with the domain.
+- `zone_id` (String) ID of the zone containing the domain hostname.
+- `zone_name` (String) Name of the zone containing the domain hostname.
 
 ### Read-Only
 
-- `id` (String) Identifer of the Worker Domain.
-- `zone_name` (String) Name of the zone.
+- `cert_id` (String) ID of the TLS certificate issued for the domain.
+- `id` (String) Immutable ID of the domain.
 
 ## Import
 

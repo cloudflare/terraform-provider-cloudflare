@@ -15,16 +15,18 @@ description: |-
 resource "cloudflare_connectivity_directory_service" "example_connectivity_directory_service" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   host = {
-    hostname = "api.example.com"
-    resolver_network = {
+    ipv4 = "10.0.0.1"
+    network = {
       tunnel_id = "0191dce4-9ab4-7fce-b660-8e5dec5172da"
-      resolver_ips = ["string"]
     }
   }
-  name = "web-server"
+  name = "web-app"
   type = "http"
   http_port = 8080
   https_port = 8443
+  tls_settings = {
+    cert_verification_mode = "verify_full"
+  }
 }
 ```
 
@@ -36,12 +38,17 @@ resource "cloudflare_connectivity_directory_service" "example_connectivity_direc
 - `account_id` (String) Account identifier
 - `host` (Attributes) (see [below for nested schema](#nestedatt--host))
 - `name` (String)
-- `type` (String) Available values: "http".
+- `type` (String) Available values: "tcp", "http".
 
 ### Optional
 
+- `app_protocol` (String) Available values: "postgresql", "mysql".
 - `http_port` (Number)
 - `https_port` (Number)
+- `tcp_port` (Number)
+- `tls_settings` (Attributes) TLS settings for a connectivity service.
+
+If omitted, the default mode (`verify_full`) is used. (see [below for nested schema](#nestedatt--tls_settings))
 
 ### Read-Only
 
@@ -79,6 +86,19 @@ Required:
 Optional:
 
 - `resolver_ips` (List of String)
+
+
+
+<a id="nestedatt--tls_settings"></a>
+### Nested Schema for `tls_settings`
+
+Required:
+
+- `cert_verification_mode` (String) TLS certificate verification mode for the connection to the origin.
+
+- `"verify_full"` — verify certificate chain and hostname (default)
+- `"verify_ca"` — verify certificate chain only, skip hostname check
+- `"disabled"` — do not verify the server certificate at all
 
 ## Import
 

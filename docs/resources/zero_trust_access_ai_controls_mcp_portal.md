@@ -17,6 +17,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
   id = "my-mcp-portal"
   hostname = "exmaple.com"
   name = "My MCP Portal"
+  allow_code_mode = true
   description = "This is my custom MCP Portal"
   secure_web_gateway = false
   servers = [{
@@ -25,11 +26,13 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
     on_behalf = true
     updated_prompts = [{
       name = "name"
+      alias = "my-custom-alias"
       description = "description"
       enabled = true
     }]
     updated_tools = [{
       name = "name"
+      alias = "my-custom-alias"
       description = "description"
       enabled = true
     }]
@@ -49,6 +52,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 
 ### Optional
 
+- `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
 - `description` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
 - `servers` (Attributes List) (see [below for nested schema](#nestedatt--servers))
@@ -83,6 +87,7 @@ Required:
 
 Optional:
 
+- `alias` (String)
 - `description` (String)
 - `enabled` (Boolean)
 
@@ -96,6 +101,7 @@ Required:
 
 Optional:
 
+- `alias` (String)
 - `description` (String)
 - `enabled` (Boolean)
 
