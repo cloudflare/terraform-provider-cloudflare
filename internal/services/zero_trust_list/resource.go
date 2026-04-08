@@ -18,6 +18,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// readBody reads all bytes from an http.Response body.
+func readBody(res *http.Response) ([]byte, error) {
+	defer res.Body.Close()
+	return io.ReadAll(res.Body)
+}
+
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustListResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustListResource)(nil)
@@ -84,7 +90,11 @@ func (r *ZeroTrustListResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -133,7 +143,11 @@ func (r *ZeroTrustListResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -173,13 +187,30 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
+
+	// Fetch items separately — see items.go.
+	items, err := fetchItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch list items", err.Error())
+		return
+	}
+	if items == nil {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	data.Items = &items
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -205,8 +236,6 @@ func (r *ZeroTrustListResource) Delete(ctx context.Context, req resource.DeleteR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -243,7 +272,11 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := readBody(res)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read http response body", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -254,6 +287,8 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustListResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+// ModifyPlan suppresses spurious diffs when list items are semantically
+// unchanged — see items.go for the full implementation.
+func (r *ZeroTrustListResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	suppressItemsDiff(ctx, req, resp)
 }
