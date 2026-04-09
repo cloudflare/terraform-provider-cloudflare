@@ -5,6 +5,7 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -14,6 +15,13 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersForPlatformsDispatchN
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Name of the Workers for Platforms dispatch namespace.",

@@ -5,6 +5,7 @@ package email_security_impersonation_registry
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,6 +18,12 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityImpersonationRegist
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloud Email Security: Read",
+				"Cloud Email Security: Write",
+			},
+		}.String(),
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{

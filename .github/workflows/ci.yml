@@ -31,7 +31,7 @@ jobs:
       - name: Link staging branch
         if: github.repository == 'stainless-sdks/cloudflare-terraform'
         run: |
-          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || go mod edit -dropreplace='github.com/stainless-sdks/cloudflare-go/v6'
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -58,7 +58,7 @@ jobs:
       - name: Link staging branch
         if: github.repository == 'stainless-sdks/cloudflare-terraform'
         run: |
-          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || true
+          ./scripts/link 'github.com/stainless-sdks/cloudflare-go/v6@${{ github.ref_name }}' || go mod edit -dropreplace='github.com/stainless-sdks/cloudflare-go/v6'
 
       - name: Bootstrap
         run: ./scripts/bootstrap
