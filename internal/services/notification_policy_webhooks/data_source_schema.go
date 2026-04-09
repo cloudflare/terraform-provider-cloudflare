@@ -5,6 +5,7 @@ package notification_policy_webhooks
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -16,6 +17,15 @@ var _ datasource.DataSourceWithConfigValidators = (*NotificationPolicyWebhooksDa
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Settings Read",
+				"Account Settings Write",
+				"Notifications Read",
+				"Notifications Write",
+				"Zero Trust: PII Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of a webhook",
