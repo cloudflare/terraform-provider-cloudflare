@@ -5,6 +5,7 @@ package zero_trust_tunnel_cloudflared_token
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -13,6 +14,13 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredTo
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloudflare One Connector: cloudflared Write",
+				"Cloudflare One Connectors Write",
+				"Cloudflare Tunnel Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID",
