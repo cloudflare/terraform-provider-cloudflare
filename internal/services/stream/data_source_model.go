@@ -19,31 +19,34 @@ type StreamResultDataSourceEnvelope struct {
 }
 
 type StreamDataSourceModel struct {
-	AccountID             types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	Identifier            types.String                                             `tfsdk:"identifier" path:"identifier,required"`
-	Created               timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Creator               types.String                                             `tfsdk:"creator" json:"creator,computed"`
-	Duration              types.Float64                                            `tfsdk:"duration" json:"duration,computed"`
-	LiveInput             types.String                                             `tfsdk:"live_input" json:"liveInput,computed"`
-	MaxDurationSeconds    types.Int64                                              `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,computed"`
-	Modified              timetypes.RFC3339                                        `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Preview               types.String                                             `tfsdk:"preview" json:"preview,computed"`
-	ReadyToStream         types.Bool                                               `tfsdk:"ready_to_stream" json:"readyToStream,computed"`
-	ReadyToStreamAt       timetypes.RFC3339                                        `tfsdk:"ready_to_stream_at" json:"readyToStreamAt,computed" format:"date-time"`
-	RequireSignedURLs     types.Bool                                               `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
-	ScheduledDeletion     timetypes.RFC3339                                        `tfsdk:"scheduled_deletion" json:"scheduledDeletion,computed" format:"date-time"`
-	Size                  types.Float64                                            `tfsdk:"size" json:"size,computed"`
-	Thumbnail             types.String                                             `tfsdk:"thumbnail" json:"thumbnail,computed"`
-	ThumbnailTimestampPct types.Float64                                            `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed"`
-	UID                   types.String                                             `tfsdk:"uid" json:"uid,computed"`
-	UploadExpiry          timetypes.RFC3339                                        `tfsdk:"upload_expiry" json:"uploadExpiry,computed" format:"date-time"`
-	Uploaded              timetypes.RFC3339                                        `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
-	AllowedOrigins        customfield.List[types.String]                           `tfsdk:"allowed_origins" json:"allowedOrigins,computed"`
-	Input                 customfield.NestedObject[StreamInputDataSourceModel]     `tfsdk:"input" json:"input,computed"`
-	Playback              customfield.NestedObject[StreamPlaybackDataSourceModel]  `tfsdk:"playback" json:"playback,computed"`
-	Status                customfield.NestedObject[StreamStatusDataSourceModel]    `tfsdk:"status" json:"status,computed"`
-	Watermark             customfield.NestedObject[StreamWatermarkDataSourceModel] `tfsdk:"watermark" json:"watermark,computed"`
-	Meta                  jsontypes.Normalized                                     `tfsdk:"meta" json:"meta,computed"`
+	AccountID             types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	Identifier            types.String                                                 `tfsdk:"identifier" path:"identifier,required"`
+	ClippedFrom           types.String                                                 `tfsdk:"clipped_from" json:"clippedFrom,computed"`
+	Created               timetypes.RFC3339                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Creator               types.String                                                 `tfsdk:"creator" json:"creator,computed"`
+	Duration              types.Float64                                                `tfsdk:"duration" json:"duration,computed"`
+	LiveInput             types.String                                                 `tfsdk:"live_input" json:"liveInput,computed"`
+	MaxDurationSeconds    types.Int64                                                  `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,computed"`
+	MaxSizeBytes          types.Int64                                                  `tfsdk:"max_size_bytes" json:"maxSizeBytes,computed"`
+	Modified              timetypes.RFC3339                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Preview               types.String                                                 `tfsdk:"preview" json:"preview,computed"`
+	ReadyToStream         types.Bool                                                   `tfsdk:"ready_to_stream" json:"readyToStream,computed"`
+	ReadyToStreamAt       timetypes.RFC3339                                            `tfsdk:"ready_to_stream_at" json:"readyToStreamAt,computed" format:"date-time"`
+	RequireSignedURLs     types.Bool                                                   `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
+	ScheduledDeletion     timetypes.RFC3339                                            `tfsdk:"scheduled_deletion" json:"scheduledDeletion,computed" format:"date-time"`
+	Size                  types.Float64                                                `tfsdk:"size" json:"size,computed"`
+	Thumbnail             types.String                                                 `tfsdk:"thumbnail" json:"thumbnail,computed"`
+	ThumbnailTimestampPct types.Float64                                                `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed"`
+	UID                   types.String                                                 `tfsdk:"uid" json:"uid,computed"`
+	UploadExpiry          timetypes.RFC3339                                            `tfsdk:"upload_expiry" json:"uploadExpiry,computed" format:"date-time"`
+	Uploaded              timetypes.RFC3339                                            `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
+	AllowedOrigins        customfield.List[types.String]                               `tfsdk:"allowed_origins" json:"allowedOrigins,computed"`
+	Input                 customfield.NestedObject[StreamInputDataSourceModel]         `tfsdk:"input" json:"input,computed"`
+	Playback              customfield.NestedObject[StreamPlaybackDataSourceModel]      `tfsdk:"playback" json:"playback,computed"`
+	PublicDetails         customfield.NestedObject[StreamPublicDetailsDataSourceModel] `tfsdk:"public_details" json:"publicDetails,computed"`
+	Status                customfield.NestedObject[StreamStatusDataSourceModel]        `tfsdk:"status" json:"status,computed"`
+	Watermark             customfield.NestedObject[StreamWatermarkDataSourceModel]     `tfsdk:"watermark" json:"watermark,computed"`
+	Meta                  jsontypes.Normalized                                         `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m *StreamDataSourceModel) toReadParams(_ context.Context) (params stream.StreamGetParams, diags diag.Diagnostics) {
@@ -62,6 +65,14 @@ type StreamInputDataSourceModel struct {
 type StreamPlaybackDataSourceModel struct {
 	Dash types.String `tfsdk:"dash" json:"dash,computed"`
 	Hls  types.String `tfsdk:"hls" json:"hls,computed"`
+}
+
+type StreamPublicDetailsDataSourceModel struct {
+	ChannelLink types.String `tfsdk:"channel_link" json:"channel_link,computed"`
+	Logo        types.String `tfsdk:"logo" json:"logo,computed"`
+	MediaID     types.Int64  `tfsdk:"media_id" json:"media_id,computed"`
+	ShareLink   types.String `tfsdk:"share_link" json:"share_link,computed"`
+	Title       types.String `tfsdk:"title" json:"title,computed"`
 }
 
 type StreamStatusDataSourceModel struct {

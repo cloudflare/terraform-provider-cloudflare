@@ -5,6 +5,7 @@ package stream_audio_track
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -31,28 +32,37 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Required:    true,
 			},
-			"default": schema.BoolAttribute{
-				Description: "Denotes whether the audio track will be played by default in a player.",
+			"audio": schema.ListNestedAttribute{
+				Description: "Array of audio tracks for the video.",
 				Computed:    true,
-			},
-			"label": schema.StringAttribute{
-				Description: "A string to uniquely identify the track amongst other audio track labels for the specified video.",
-				Computed:    true,
-			},
-			"status": schema.StringAttribute{
-				Description: "Specifies the processing status of the video.\nAvailable values: \"queued\", \"ready\", \"error\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"queued",
-						"ready",
-						"error",
-					),
+				CustomType:  customfield.NewNestedObjectListType[StreamAudioTrackAudioDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"default": schema.BoolAttribute{
+							Description: "Denotes whether the audio track will be played by default in a player.",
+							Computed:    true,
+						},
+						"label": schema.StringAttribute{
+							Description: "A string to uniquely identify the track amongst other audio track labels for the specified video.",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "Specifies the processing status of the video.\nAvailable values: \"queued\", \"ready\", \"error\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"queued",
+									"ready",
+									"error",
+								),
+							},
+						},
+						"uid": schema.StringAttribute{
+							Description: "A Cloudflare-generated unique identifier for a media item.",
+							Computed:    true,
+						},
+					},
 				},
-			},
-			"uid": schema.StringAttribute{
-				Description: "A Cloudflare-generated unique identifier for a media item.",
-				Computed:    true,
 			},
 		},
 	}

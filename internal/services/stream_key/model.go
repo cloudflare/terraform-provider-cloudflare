@@ -17,6 +17,7 @@ type StreamKeyModel struct {
 	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Jwk       types.String      `tfsdk:"jwk" json:"jwk,computed,no_refresh"`
+	KeyID     types.String      `tfsdk:"key_id" json:"key_id,computed"`
 	Pem       types.String      `tfsdk:"pem" json:"pem,computed,no_refresh"`
 }
 

@@ -91,6 +91,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
       }
     }
   }
+  sync_interval = 3600
   token_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
   type = "r2"
 }

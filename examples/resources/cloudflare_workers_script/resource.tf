@@ -38,6 +38,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     keep_bindings = ["string"]
     limits = {
       cpu_ms = 50
+      subrequests = 1000
     }
     logpush = false
     main_module = "worker.js"

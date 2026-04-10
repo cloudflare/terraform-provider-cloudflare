@@ -35,6 +35,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"key_id": schema.StringAttribute{
+				Description: "The unique identifier for the signing key.",
+				Computed:    true,
+			},
 		},
 	}
 }

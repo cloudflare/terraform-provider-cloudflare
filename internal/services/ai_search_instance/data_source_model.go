@@ -47,6 +47,7 @@ type AISearchInstanceDataSourceModel struct {
 	ScoreThreshold       types.Float64                                                                 `tfsdk:"score_threshold" json:"score_threshold,computed"`
 	Source               types.String                                                                  `tfsdk:"source" json:"source,computed"`
 	Status               types.String                                                                  `tfsdk:"status" json:"status,computed"`
+	SyncInterval         types.Float64                                                                 `tfsdk:"sync_interval" json:"sync_interval,computed"`
 	TokenID              types.String                                                                  `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                  `tfsdk:"type" json:"type,computed"`
 	CustomMetadata       customfield.NestedObjectList[AISearchInstanceCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`

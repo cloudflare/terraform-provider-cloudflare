@@ -40,20 +40,20 @@ type ZeroTrustAccessAIControlsMcpPortalServersModel struct {
 	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required,no_refresh"`
 	DefaultDisabled types.Bool                                                       `tfsdk:"default_disabled" json:"default_disabled,computed_optional"`
 	OnBehalf        types.Bool                                                       `tfsdk:"on_behalf" json:"on_behalf,computed_optional"`
-	UpdatedPrompts  *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional,no_refresh"`
-	UpdatedTools    *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel   `tfsdk:"updated_tools" json:"updated_tools,optional,no_refresh"`
+	UpdatedPrompts  *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional"`
+	UpdatedTools    *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel   `tfsdk:"updated_tools" json:"updated_tools,optional"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel struct {
 	Name        types.String `tfsdk:"name" json:"name,required"`
-	Alias       types.String `tfsdk:"alias" json:"alias,optional"`
+	Alias       types.String `tfsdk:"alias" json:"alias,optional,no_refresh"`
 	Description types.String `tfsdk:"description" json:"description,optional"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel struct {
 	Name        types.String `tfsdk:"name" json:"name,required"`
-	Alias       types.String `tfsdk:"alias" json:"alias,optional"`
+	Alias       types.String `tfsdk:"alias" json:"alias,optional,no_refresh"`
 	Description types.String `tfsdk:"description" json:"description,optional"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 }

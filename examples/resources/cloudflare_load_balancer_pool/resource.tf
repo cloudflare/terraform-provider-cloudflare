@@ -4,6 +4,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   origins = [{
     address = "0.0.0.0"
     enabled = true
+    flatten_cname = true
     header = {
       host = ["example.com"]
     }

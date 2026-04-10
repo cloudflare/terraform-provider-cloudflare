@@ -37,28 +37,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"percent_complete": schema.Float64Attribute{
-				Description: "Indicates the progress as a percentage between 0 and 100.",
-				Computed:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 100),
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "The status of a generated download.\nAvailable values: \"ready\", \"inprogress\", \"error\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"ready",
-						"inprogress",
-						"error",
-					),
-				},
-			},
-			"url": schema.StringAttribute{
-				Description: "The URL to access the generated download.",
-				Computed:    true,
-			},
 			"audio": schema.SingleNestedAttribute{
 				Description: "The audio-only download. Only present if this download type has been created.",
 				Computed:    true,

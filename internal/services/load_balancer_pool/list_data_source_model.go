@@ -88,6 +88,7 @@ type LoadBalancerPoolsOriginsDataSourceModel struct {
 	Address          types.String                                                            `tfsdk:"address" json:"address,computed"`
 	DisabledAt       timetypes.RFC3339                                                       `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled          types.Bool                                                              `tfsdk:"enabled" json:"enabled,computed"`
+	FlattenCNAME     types.Bool                                                              `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
 	Header           customfield.NestedObject[LoadBalancerPoolsOriginsHeaderDataSourceModel] `tfsdk:"header" json:"header,computed"`
 	Name             types.String                                                            `tfsdk:"name" json:"name,computed"`
 	Port             types.Int64                                                             `tfsdk:"port" json:"port,computed"`

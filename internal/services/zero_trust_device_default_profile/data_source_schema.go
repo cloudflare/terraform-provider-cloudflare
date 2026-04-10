@@ -61,6 +61,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"gateway_unique_id": schema.StringAttribute{
 				Computed: true,
 			},
+			"policy_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Computed:    true,

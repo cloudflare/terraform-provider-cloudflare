@@ -31,11 +31,11 @@ func (m *MagicNetworkMonitoringRulesDataSourceModel) toListParams(_ context.Cont
 }
 
 type MagicNetworkMonitoringRulesResultDataSourceModel struct {
+	ID                     types.String                   `tfsdk:"id" json:"id,computed"`
 	AutomaticAdvertisement types.Bool                     `tfsdk:"automatic_advertisement" json:"automatic_advertisement,computed"`
 	Name                   types.String                   `tfsdk:"name" json:"name,computed"`
 	Prefixes               customfield.List[types.String] `tfsdk:"prefixes" json:"prefixes,computed"`
 	Type                   types.String                   `tfsdk:"type" json:"type,computed"`
-	ID                     types.String                   `tfsdk:"id" json:"id,computed"`
 	BandwidthThreshold     types.Float64                  `tfsdk:"bandwidth_threshold" json:"bandwidth_threshold,computed"`
 	Duration               types.String                   `tfsdk:"duration" json:"duration,computed"`
 	PacketThreshold        types.Float64                  `tfsdk:"packet_threshold" json:"packet_threshold,computed"`

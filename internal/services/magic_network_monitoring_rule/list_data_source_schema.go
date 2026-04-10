@@ -44,6 +44,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[MagicNetworkMonitoringRulesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The id of the rule. Must be unique.",
+							Computed:    true,
+						},
 						"automatic_advertisement": schema.BoolAttribute{
 							Description: "Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.",
 							Computed:    true,
@@ -67,10 +71,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"advanced_ddos",
 								),
 							},
-						},
-						"id": schema.StringAttribute{
-							Description: "The id of the rule. Must be unique.",
-							Computed:    true,
 						},
 						"bandwidth_threshold": schema.Float64Attribute{
 							Description: "The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.",

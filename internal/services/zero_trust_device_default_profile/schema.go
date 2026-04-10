@@ -194,6 +194,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"gateway_unique_id": schema.StringAttribute{
 				Computed: true,
 			},
+			"policy_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileFallbackDomainsModel](ctx),

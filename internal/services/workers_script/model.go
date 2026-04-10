@@ -110,6 +110,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	InstanceName                types.String                                `tfsdk:"instance_name" json:"instance_name,optional"`
 	Namespace                   types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                                `tfsdk:"dataset" json:"dataset,optional"`
+	DatabaseID                  types.String                                `tfsdk:"database_id" json:"database_id,optional"`
 	ID                          types.String                                `tfsdk:"id" json:"id,optional"`
 	Part                        types.String                                `tfsdk:"part" json:"part,optional"`
 	Outbound                    *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
@@ -136,6 +137,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	IndexName                   types.String                                `tfsdk:"index_name" json:"index_name,optional"`
 	SecretName                  types.String                                `tfsdk:"secret_name" json:"secret_name,optional"`
 	StoreID                     types.String                                `tfsdk:"store_id" json:"store_id,optional"`
+	AppID                       types.String                                `tfsdk:"app_id" json:"app_id,optional"`
 	Algorithm                   jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format                      types.String                                `tfsdk:"format" json:"format,optional"`
 	Usages                      *[]types.String                             `tfsdk:"usages" json:"usages,optional"`
@@ -168,7 +170,8 @@ type WorkersScriptMetadataBindingsSimpleModel struct {
 }
 
 type WorkersScriptMetadataLimitsModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
+	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
+	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,optional"`
 }
 
 type WorkersScriptMetadataMigrationsModel struct {

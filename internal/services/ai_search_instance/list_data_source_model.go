@@ -84,6 +84,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	Source               types.String                                                                   `tfsdk:"source" json:"source,computed"`
 	SourceParams         customfield.NestedObject[AISearchInstancesSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
 	Status               types.String                                                                   `tfsdk:"status" json:"status,computed"`
+	SyncInterval         types.Float64                                                                  `tfsdk:"sync_interval" json:"sync_interval,computed"`
 	TokenID              types.String                                                                   `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
 }
