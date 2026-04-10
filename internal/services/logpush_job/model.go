@@ -43,17 +43,16 @@ func (m LogpushJobModel) MarshalJSONForUpdate(state LogpushJobModel) (data []byt
 }
 
 type LogpushJobOutputOptionsModel struct {
-	BatchPrefix      types.String    `tfsdk:"batch_prefix" json:"batch_prefix,optional"`
-	BatchSuffix      types.String    `tfsdk:"batch_suffix" json:"batch_suffix,optional"`
-	Cve2021_44228    types.Bool      `tfsdk:"cve_2021_44228" json:"CVE-2021-44228,computed_optional,decode_null_to_zero"`
-	FieldDelimiter   types.String    `tfsdk:"field_delimiter" json:"field_delimiter,optional"`
-	FieldNames       *[]types.String `tfsdk:"field_names" json:"field_names,optional"`
-	MergeSubrequests types.Bool      `tfsdk:"merge_subrequests" json:"merge_subrequests,optional"`
-	OutputType       types.String    `tfsdk:"output_type" json:"output_type,optional"`
-	RecordDelimiter  types.String    `tfsdk:"record_delimiter" json:"record_delimiter,optional"`
-	RecordPrefix     types.String    `tfsdk:"record_prefix" json:"record_prefix,optional"`
-	RecordSuffix     types.String    `tfsdk:"record_suffix" json:"record_suffix,optional"`
-	RecordTemplate   types.String    `tfsdk:"record_template" json:"record_template,optional"`
-	SampleRate       types.Float64   `tfsdk:"sample_rate" json:"sample_rate,optional"`
-	TimestampFormat  types.String    `tfsdk:"timestamp_format" json:"timestamp_format,optional"`
+	BatchPrefix     types.String    `tfsdk:"batch_prefix" json:"batch_prefix,optional"`
+	BatchSuffix     types.String    `tfsdk:"batch_suffix" json:"batch_suffix,optional"`
+	Cve2021_44228   types.Bool      `tfsdk:"cve_2021_44228" json:"CVE-2021-44228,computed_optional,decode_null_to_zero"`
+	FieldDelimiter  types.String    `tfsdk:"field_delimiter" json:"field_delimiter,optional"`
+	FieldNames      *[]types.String `tfsdk:"field_names" json:"field_names,optional"`
+	OutputType      types.String    `tfsdk:"output_type" json:"output_type,optional"`
+	RecordDelimiter types.String    `tfsdk:"record_delimiter" json:"record_delimiter,optional"`
+	RecordPrefix    types.String    `tfsdk:"record_prefix" json:"record_prefix,optional"`
+	RecordSuffix    types.String    `tfsdk:"record_suffix" json:"record_suffix,optional"`
+	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template,optional"`
+	SampleRate      types.Float64   `tfsdk:"sample_rate" json:"sample_rate,optional"`
+	TimestampFormat types.String    `tfsdk:"timestamp_format" json:"timestamp_format,optional"`
 }

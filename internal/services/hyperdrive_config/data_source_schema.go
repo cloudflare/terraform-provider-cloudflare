@@ -78,8 +78,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"mtls": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigMTLSDataSourceModel](ctx),
+				Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[HyperdriveConfigMTLSDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ca_certificate_id": schema.StringAttribute{
 						Description: "Define CA certificate ID obtained after uploading CA cert.",
@@ -139,6 +140,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.",
 						Computed:    true,
 						Sensitive:   true,
+					},
+					"service_id": schema.StringAttribute{
+						Description: "The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.",
+						Computed:    true,
 					},
 				},
 			},

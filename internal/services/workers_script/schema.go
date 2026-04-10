@@ -219,10 +219,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"dataset": schema.StringAttribute{
-							Description: "The name of the dataset to bind to.",
-							Optional:    true,
-						},
+								"dataset": schema.StringAttribute{
+						Description: "The name of the dataset to bind to.",
+						Optional:    true,
+					},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -449,6 +449,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
 							Optional:    true,
 						},
+						"database_id": schema.StringAttribute{
+							Description: "Identifier of the D1 database to bind to.",
+							Optional:    true,
+						},
+						"app_id": schema.StringAttribute{
+							Description: "ID of the Flagship app to bind to for feature flag evaluation.",
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -484,6 +492,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"cpu_ms": schema.Int64Attribute{
 						Description: "The amount of CPU time this Worker can use in milliseconds.",
+						Optional:    true,
+					},
+					"subrequests": schema.Int64Attribute{
+						Description: "The number of subrequests this Worker can make per request.",
 						Optional:    true,
 					},
 				},
@@ -856,6 +868,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Optional dispatch namespace the script belongs to.",
 							Optional:    true,
 						},
+					},
+				},
+			},
+			"annotations": schema.SingleNestedAttribute{
+				Description: "Annotations for the version created by this upload.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"workers_message": schema.StringAttribute{
+						Description: "Human-readable message about the version. Truncated to 1000 bytes if longer.",
+						Optional:    true,
+					},
+					"workers_tag": schema.StringAttribute{
+						Description: "User-provided identifier for the version. Maximum 100 bytes.",
+						Optional:    true,
 					},
 				},
 			},

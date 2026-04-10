@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -30,7 +31,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"notification_url": schema.StringAttribute{
 				Description: "The URL where webhooks will be sent.",
-				Required:    true,
+				Optional:    true,
+			},
+			"modified": schema.StringAttribute{
+				Description: "The date and time the webhook was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"secret": schema.StringAttribute{
+				Description: "The secret used to verify webhook signatures.",
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

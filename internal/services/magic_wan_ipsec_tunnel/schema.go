@@ -70,6 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"psk": schema.StringAttribute{
 				Description: "A randomly generated or provided string for use in the IPsec tunnel.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"bgp": schema.SingleNestedAttribute{
 				Optional: true,

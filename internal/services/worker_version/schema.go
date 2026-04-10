@@ -59,6 +59,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"containers": schema.SetNestedAttribute{
+				Description: "List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"class_name": schema.StringAttribute{
+							Description: "Select which Durable Object class should get this container attached.",
+							Required:    true,
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
+			},
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed.",
 				Optional:    true,
@@ -296,11 +309,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WorkerVersionAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
-						Description: "Human-readable message about the version.",
+						Description: "Human-readable message about the version. Truncated to 1000 bytes if longer.",
 						Optional:    true,
 					},
 					"workers_tag": schema.StringAttribute{
-						Description: "User-provided identifier for the version.",
+						Description: "User-provided identifier for the version. Maximum 100 bytes.",
 						Optional:    true,
 					},
 					"workers_triggered_by": schema.StringAttribute{
@@ -385,7 +398,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -418,6 +431,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
+									"flagship",
 									"secret_key",
 									"workflow",
 									"wasm_module",
@@ -436,6 +450,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"dataset": schema.StringAttribute{
 							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
+						"database_id": schema.StringAttribute{
+							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
 						},
 						"id": schema.StringAttribute{
@@ -607,6 +625,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "ID of the store containing the secret.",
 							Optional:    true,
 						},
+						"app_id": schema.StringAttribute{
+							Description: "ID of the Flagship app to bind to for feature flag evaluation.",
+							Optional:    true,
+						},
 						"algorithm": schema.StringAttribute{
 							Description: "Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
 							Optional:    true,
@@ -669,7 +691,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"cpu_ms": schema.Int64Attribute{
 						Description: "CPU time limit in milliseconds.",
-						Required:    true,
+						Optional:    true,
+					},
+					"subrequests": schema.Int64Attribute{
+						Description: "Subrequest limit per request.",
+						Optional:    true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},

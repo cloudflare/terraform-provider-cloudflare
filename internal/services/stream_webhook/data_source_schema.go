@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -24,6 +25,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
 				Required:    true,
+			},
+			"modified": schema.StringAttribute{
+				Description: "The date and time the webhook was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"notification_url": schema.StringAttribute{
+				Description: "The URL where webhooks will be sent.",
+				Computed:    true,
+			},
+			"secret": schema.StringAttribute{
+				Description: "The secret used to verify webhook signatures.",
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

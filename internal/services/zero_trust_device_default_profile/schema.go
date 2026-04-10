@@ -203,6 +203,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"policy_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},

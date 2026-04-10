@@ -20,6 +20,7 @@ type StreamKeyDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" path:"account_id,computed"`
 	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
+	KeyID     types.String      `tfsdk:"key_id" json:"key_id,computed"`
 }
 
 func (m *StreamKeyDataSourceModel) toReadParams(_ context.Context) (params stream.KeyGetParams, diags diag.Diagnostics) {
