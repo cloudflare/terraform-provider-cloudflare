@@ -25,7 +25,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"D1 Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "D1 database identifier (UUID).",

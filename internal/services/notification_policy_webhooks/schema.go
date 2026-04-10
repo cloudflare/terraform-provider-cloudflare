@@ -28,7 +28,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zero Trust: PII Read",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",

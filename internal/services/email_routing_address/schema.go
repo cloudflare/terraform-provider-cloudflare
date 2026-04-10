@@ -23,7 +23,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Email Routing Addresses Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Destination address identifier.",

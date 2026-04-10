@@ -24,7 +24,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Cloud Email Security: Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Computed:      true,

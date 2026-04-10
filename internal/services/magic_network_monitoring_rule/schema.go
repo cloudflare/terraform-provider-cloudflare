@@ -28,7 +28,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Magic Network Monitoring Config Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The id of the rule. Must be unique.",

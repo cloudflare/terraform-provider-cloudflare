@@ -15,7 +15,6 @@ var _ resource.ResourceWithConfigValidators = (*OrganizationProfileResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"organization_id": schema.StringAttribute{
 				Required:      true,

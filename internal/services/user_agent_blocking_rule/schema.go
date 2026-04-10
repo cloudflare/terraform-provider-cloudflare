@@ -25,7 +25,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Firewall Services Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the User Agent Blocking rule.",
