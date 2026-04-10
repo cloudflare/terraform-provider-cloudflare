@@ -24,7 +24,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Snippets Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
 				Description:   "Identify the snippet.",

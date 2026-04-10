@@ -21,7 +21,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zero Trust Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required:      true,

@@ -51,7 +51,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Account API Tokens Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Token identifier tag.",

@@ -22,7 +22,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Stream Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The account identifier tag.",

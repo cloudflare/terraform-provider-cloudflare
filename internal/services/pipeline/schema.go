@@ -25,7 +25,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Pipelines Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Indicates a unique identifier for this pipeline.",

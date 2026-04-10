@@ -26,7 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Domain API Gateway Read",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",

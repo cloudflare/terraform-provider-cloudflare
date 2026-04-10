@@ -26,7 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Access: Mutual TLS Certificates Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The ID of the application that will use this certificate.",
