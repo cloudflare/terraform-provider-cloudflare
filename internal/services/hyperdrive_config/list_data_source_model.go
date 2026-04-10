@@ -51,6 +51,7 @@ type HyperdriveConfigsOriginDataSourceModel struct {
 	User               types.String `tfsdk:"user" json:"user,computed"`
 	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
 	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,computed"`
+	ServiceID          types.String `tfsdk:"service_id" json:"service_id,computed"`
 }
 
 type HyperdriveConfigsCachingDataSourceModel struct {

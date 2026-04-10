@@ -29,6 +29,7 @@ type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 	Enabled                    types.Bool                                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	ExcludeOfficeIPs           types.Bool                                                                                `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
 	GatewayUniqueID            types.String                                                                              `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
+	PolicyID                   types.String                                                                              `tfsdk:"policy_id" json:"policy_id,computed"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                                `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed"`
 	SccmVpnBoundarySupport     types.Bool                                                                                `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed"`
 	SupportURL                 types.String                                                                              `tfsdk:"support_url" json:"support_url,computed"`

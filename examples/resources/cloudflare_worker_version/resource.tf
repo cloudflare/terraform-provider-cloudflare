@@ -20,8 +20,12 @@ resource "cloudflare_worker_version" "example_worker_version" {
   }]
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
+  containers = [{
+    class_name = "MyDurableObject"
+  }]
   limits = {
     cpu_ms = 50
+    subrequests = 1000
   }
   main_module = "index.js"
   migrations = {

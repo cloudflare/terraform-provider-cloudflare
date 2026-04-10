@@ -39,9 +39,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"file": schema.StringAttribute{
-				Description:   "The image file to upload.",
-				Required:      true,
+			"url": schema.StringAttribute{
+				Description:   "URL of the watermark image to copy.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{

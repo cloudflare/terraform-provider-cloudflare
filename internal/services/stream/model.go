@@ -20,21 +20,24 @@ type StreamModel struct {
 	Creator               types.String                                   `tfsdk:"creator" json:"creator,optional"`
 	MaxDurationSeconds    types.Int64                                    `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,optional"`
 	ScheduledDeletion     timetypes.RFC3339                              `tfsdk:"scheduled_deletion" json:"scheduledDeletion,optional" format:"date-time"`
+	UID                   types.String                                   `tfsdk:"uid" json:"uid,optional"`
 	UploadExpiry          timetypes.RFC3339                              `tfsdk:"upload_expiry" json:"uploadExpiry,optional" format:"date-time"`
 	AllowedOrigins        *[]types.String                                `tfsdk:"allowed_origins" json:"allowedOrigins,optional"`
+	PublicDetails         *StreamPublicDetailsModel                      `tfsdk:"public_details" json:"publicDetails,optional"`
 	Meta                  jsontypes.Normalized                           `tfsdk:"meta" json:"meta,optional"`
 	RequireSignedURLs     types.Bool                                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
 	ThumbnailTimestampPct types.Float64                                  `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed_optional"`
+	ClippedFrom           types.String                                   `tfsdk:"clipped_from" json:"clippedFrom,computed"`
 	Created               timetypes.RFC3339                              `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Duration              types.Float64                                  `tfsdk:"duration" json:"duration,computed"`
 	LiveInput             types.String                                   `tfsdk:"live_input" json:"liveInput,computed"`
+	MaxSizeBytes          types.Int64                                    `tfsdk:"max_size_bytes" json:"maxSizeBytes,computed"`
 	Modified              timetypes.RFC3339                              `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Preview               types.String                                   `tfsdk:"preview" json:"preview,computed"`
 	ReadyToStream         types.Bool                                     `tfsdk:"ready_to_stream" json:"readyToStream,computed"`
 	ReadyToStreamAt       timetypes.RFC3339                              `tfsdk:"ready_to_stream_at" json:"readyToStreamAt,computed" format:"date-time"`
 	Size                  types.Float64                                  `tfsdk:"size" json:"size,computed"`
 	Thumbnail             types.String                                   `tfsdk:"thumbnail" json:"thumbnail,computed"`
-	UID                   types.String                                   `tfsdk:"uid" json:"uid,computed"`
 	Uploaded              timetypes.RFC3339                              `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
 	Input                 customfield.NestedObject[StreamInputModel]     `tfsdk:"input" json:"input,computed"`
 	Playback              customfield.NestedObject[StreamPlaybackModel]  `tfsdk:"playback" json:"playback,computed"`
@@ -48,6 +51,13 @@ func (m StreamModel) MarshalJSON() (data []byte, err error) {
 
 func (m StreamModel) MarshalJSONForUpdate(state StreamModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type StreamPublicDetailsModel struct {
+	ChannelLink types.String `tfsdk:"channel_link" json:"channel_link,optional"`
+	Logo        types.String `tfsdk:"logo" json:"logo,optional"`
+	ShareLink   types.String `tfsdk:"share_link" json:"share_link,optional"`
+	Title       types.String `tfsdk:"title" json:"title,optional"`
 }
 
 type StreamInputModel struct {

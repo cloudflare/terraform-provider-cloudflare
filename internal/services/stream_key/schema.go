@@ -44,6 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Sensitive:   true,
 			},
+			"key_id": schema.StringAttribute{
+				Description: "The unique identifier for the signing key.",
+				Computed:    true,
+			},
 			"pem": schema.StringAttribute{
 				Description: "The signing key in PEM format.",
 				Computed:    true,

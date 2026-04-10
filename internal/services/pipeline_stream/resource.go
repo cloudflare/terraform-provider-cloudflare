@@ -193,7 +193,7 @@ func (r *PipelineStreamResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	err := r.client.Pipelines.Streams.Delete(
+	_, err := r.client.Pipelines.Streams.Delete(
 		ctx,
 		data.ID.ValueString(),
 		pipelines.StreamDeleteParams{

@@ -148,7 +148,7 @@ func (r *PipelineSinkResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	err := r.client.Pipelines.Sinks.Delete(
+	_, err := r.client.Pipelines.Sinks.Delete(
 		ctx,
 		data.ID.ValueString(),
 		pipelines.SinkDeleteParams{

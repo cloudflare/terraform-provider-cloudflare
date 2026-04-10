@@ -48,6 +48,7 @@ type LoadBalancerPoolOriginsModel struct {
 	Address          types.String                        `tfsdk:"address" json:"address,optional"`
 	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed_optional" format:"date-time"`
 	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
+	FlattenCNAME     types.Bool                          `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header,optional"`
 	Name             types.String                        `tfsdk:"name" json:"name,optional"`
 	Port             types.Int64                         `tfsdk:"port" json:"port,computed_optional"`

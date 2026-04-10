@@ -20,6 +20,7 @@ type WorkerVersionModel struct {
 	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
 	CompatibilityDate  types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule         types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
+	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
 	Migrations         *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
 	Modules            *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
 	Placement          *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
@@ -44,6 +45,10 @@ func (m WorkerVersionModel) MarshalJSON() (data []byte, err error) {
 
 func (m WorkerVersionModel) MarshalJSONForUpdate(state WorkerVersionModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type WorkerVersionContainersModel struct {
+	ClassName types.String `tfsdk:"class_name" json:"class_name,required"`
 }
 
 type WorkerVersionMigrationsModel struct {
@@ -134,6 +139,7 @@ type WorkerVersionBindingsModel struct {
 	InstanceName                types.String                        `tfsdk:"instance_name" json:"instance_name,optional"`
 	Namespace                   types.String                        `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                        `tfsdk:"dataset" json:"dataset,optional"`
+	DatabaseID                  types.String                        `tfsdk:"database_id" json:"database_id,optional"`
 	ID                          types.String                        `tfsdk:"id" json:"id,optional"`
 	Part                        types.String                        `tfsdk:"part" json:"part,optional"`
 	Outbound                    *WorkerVersionBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
@@ -160,6 +166,7 @@ type WorkerVersionBindingsModel struct {
 	IndexName                   types.String                        `tfsdk:"index_name" json:"index_name,optional"`
 	SecretName                  types.String                        `tfsdk:"secret_name" json:"secret_name,optional"`
 	StoreID                     types.String                        `tfsdk:"store_id" json:"store_id,optional"`
+	AppID                       types.String                        `tfsdk:"app_id" json:"app_id,optional"`
 	Algorithm                   jsontypes.Normalized                `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format                      types.String                        `tfsdk:"format" json:"format,optional"`
 	Usages                      customfield.Set[types.String]       `tfsdk:"usages" json:"usages,optional"`
@@ -192,5 +199,6 @@ type WorkerVersionBindingsSimpleModel struct {
 }
 
 type WorkerVersionLimitsModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,required"`
+	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
+	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,optional"`
 }

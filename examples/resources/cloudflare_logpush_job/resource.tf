@@ -17,7 +17,6 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
     cve_2021_44228 = false
     field_delimiter = ","
     field_names = ["Datetime", "DstIP", "SrcIP"]
-    merge_subrequests = true
     output_type = "ndjson"
     record_delimiter = ""
     record_prefix = "{"

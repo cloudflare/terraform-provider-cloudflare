@@ -51,10 +51,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"auth_credentials": schema.StringAttribute{
-				Optional: true,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"description": schema.StringAttribute{
 				Optional: true,
+			},
+			"updated_prompts": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Required: true,
+						},
+						"alias": schema.StringAttribute{
+							Optional: true,
+						},
+						"description": schema.StringAttribute{
+							Optional: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Optional: true,
+						},
+					},
+				},
+			},
+			"updated_tools": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Required: true,
+						},
+						"alias": schema.StringAttribute{
+							Optional: true,
+						},
+						"description": schema.StringAttribute{
+							Optional: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Optional: true,
+						},
+					},
+				},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,
