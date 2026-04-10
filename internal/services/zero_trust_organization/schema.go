@@ -28,7 +28,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Access: Organizations, Identity Providers, and Groups Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",

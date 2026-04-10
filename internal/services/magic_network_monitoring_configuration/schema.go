@@ -27,7 +27,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Magic Network Monitoring Config Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required:      true,

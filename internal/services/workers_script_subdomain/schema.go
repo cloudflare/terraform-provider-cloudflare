@@ -23,7 +23,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Tail Read",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",

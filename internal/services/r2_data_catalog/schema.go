@@ -26,7 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers R2 Data Catalog Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Use this to uniquely identify the activated catalog.",

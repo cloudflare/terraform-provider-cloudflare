@@ -27,7 +27,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Scripts Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",

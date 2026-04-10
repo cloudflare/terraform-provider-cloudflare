@@ -23,7 +23,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers R2 Storage Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "Account ID.",

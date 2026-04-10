@@ -23,7 +23,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Scripts Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",

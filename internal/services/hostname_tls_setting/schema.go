@@ -25,7 +25,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"SSL and Certificates Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The TLS Setting name. The value type depends on the setting:\n- `ciphers`: value is an array of cipher suite strings (e.g., `[\"ECDHE-RSA-AES128-GCM-SHA256\", \"AES128-GCM-SHA256\"]`)\n- `min_tls_version`: value is a TLS version string (`\"1.0\"`, `\"1.1\"`, `\"1.2\"`, or `\"1.3\"`)\n- `http2`: value is `\"on\"` or `\"off\"`\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",

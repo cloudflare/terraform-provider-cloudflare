@@ -22,7 +22,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"SSL and Certificates Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Required:      true,
