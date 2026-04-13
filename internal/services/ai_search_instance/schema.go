@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -47,6 +48,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"hybrid_search_enabled": schema.BoolAttribute{
+				Description:        "Deprecated — use index_method instead.",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				PlanModifiers:      []planmodifier.Bool{boolplanmodifier.RequiresReplaceIfConfigured()},
+				Default:            booldefault.StaticBool(false),
 			},
 			"ai_gateway_id": schema.StringAttribute{
 				Optional: true,
@@ -234,6 +243,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Optional: true,
+					},
+					"search_for_agents": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"hostname": schema.StringAttribute{
+								Required: true,
+							},
+							"zone_id": schema.StringAttribute{
+								Required: true,
+							},
+							"zone_name": schema.StringAttribute{
+								Required: true,
+							},
+						},
 					},
 					"worker_domain": schema.StringAttribute{
 						Optional: true,
@@ -479,7 +502,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.\nAvailable values: \"and\", \"or\".",
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -648,12 +671,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"engine_version": schema.Float64Attribute{
 				Computed: true,
 				Default:  float64default.StaticFloat64(2),
-			},
-			"hybrid_search_enabled": schema.BoolAttribute{
-				Description:        "Deprecated — use index_method instead.",
-				Computed:           true,
-				DeprecationMessage: "This attribute is deprecated.",
-				Default:            booldefault.StaticBool(false),
 			},
 			"last_activity": schema.StringAttribute{
 				Computed:   true,

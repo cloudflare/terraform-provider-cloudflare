@@ -18,6 +18,7 @@ type AISearchInstanceModel struct {
 	AccountID                      types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Source                         types.String                                                        `tfsdk:"source" json:"source,optional"`
 	Type                           types.String                                                        `tfsdk:"type" json:"type,optional"`
+	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed_optional"`
 	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,optional"`
 	AISearchModel                  types.String                                                        `tfsdk:"aisearch_model" json:"ai_search_model,optional"`
 	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,optional"`
@@ -52,7 +53,6 @@ type AISearchInstanceModel struct {
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
 	Enable                         types.Bool                                                          `tfsdk:"enable" json:"enable,computed"`
 	EngineVersion                  types.Float64                                                       `tfsdk:"engine_version" json:"engine_version,computed"`
-	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
 	LastActivity                   timetypes.RFC3339                                                   `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
 	ModifiedAt                     timetypes.RFC3339                                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                     types.String                                                        `tfsdk:"modified_by" json:"modified_by,computed"`
@@ -75,8 +75,15 @@ type AISearchInstanceCustomMetadataModel struct {
 }
 
 type AISearchInstanceMetadataModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
+	CreatedFromAISearchWizard types.Bool                                    `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
+	SearchForAgents           *AISearchInstanceMetadataSearchForAgentsModel `tfsdk:"search_for_agents" json:"search_for_agents,optional"`
+	WorkerDomain              types.String                                  `tfsdk:"worker_domain" json:"worker_domain,optional"`
+}
+
+type AISearchInstanceMetadataSearchForAgentsModel struct {
+	Hostname types.String `tfsdk:"hostname" json:"hostname,required"`
+	ZoneID   types.String `tfsdk:"zone_id" json:"zone_id,required"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,required"`
 }
 
 type AISearchInstanceIndexMethodModel struct {
