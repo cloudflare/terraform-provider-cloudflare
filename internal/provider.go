@@ -162,6 +162,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential_set"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_target_environment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_event"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_rules"
@@ -540,6 +543,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
 		web_analytics_rule.NewResource,
+		vulnerability_scanner_credential_set.NewResource,
+		vulnerability_scanner_credential.NewResource,
+		vulnerability_scanner_target_environment.NewResource,
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
@@ -888,6 +894,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		hyperdrive_config.NewHyperdriveConfigsDataSource,
 		web_analytics_site.NewWebAnalyticsSiteDataSource,
 		web_analytics_site.NewWebAnalyticsSitesDataSource,
+		vulnerability_scanner_credential_set.NewVulnerabilityScannerCredentialSetDataSource,
+		vulnerability_scanner_credential_set.NewVulnerabilityScannerCredentialSetsDataSource,
+		vulnerability_scanner_credential.NewVulnerabilityScannerCredentialDataSource,
+		vulnerability_scanner_credential.NewVulnerabilityScannerCredentialsDataSource,
+		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentDataSource,
+		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentsDataSource,
 		bot_management.NewBotManagementDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
