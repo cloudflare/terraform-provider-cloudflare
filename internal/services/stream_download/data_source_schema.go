@@ -13,12 +13,6 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamDownloadDataSource)(ni
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Stream Read",
-				"Stream Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
