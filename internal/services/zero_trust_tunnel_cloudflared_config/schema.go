@@ -5,7 +5,6 @@ package zero_trust_tunnel_cloudflared_config
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,16 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredConfig
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Cloudflare One Connector: cloudflared Read",
-				"Cloudflare One Connector: cloudflared Write",
-				"Cloudflare One Connectors Read",
-				"Cloudflare One Connectors Write",
-				"Cloudflare Tunnel Read",
-				"Cloudflare Tunnel Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID of the tunnel.",
