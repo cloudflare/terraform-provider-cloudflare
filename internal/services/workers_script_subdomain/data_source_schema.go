@@ -5,6 +5,7 @@ package workers_script_subdomain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -13,6 +14,13 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersScriptSubdomainDataSo
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",

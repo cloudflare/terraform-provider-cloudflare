@@ -20,7 +20,7 @@ type WaitingRoomModel struct {
 	Name                       types.String                                                   `tfsdk:"name" json:"name,required"`
 	NewUsersPerMinute          types.Int64                                                    `tfsdk:"new_users_per_minute" json:"new_users_per_minute,required"`
 	TotalActiveUsers           types.Int64                                                    `tfsdk:"total_active_users" json:"total_active_users,required"`
-	CookieSuffix               types.String                                                   `tfsdk:"cookie_suffix" json:"cookie_suffix,optional"`
+	CookieSuffix               types.String                                                   `tfsdk:"cookie_suffix" json:"cookie_suffix,computed_optional"`
 	CustomPageHTML             types.String                                                   `tfsdk:"custom_page_html" json:"custom_page_html,computed_optional"`
 	DefaultTemplateLanguage    types.String                                                   `tfsdk:"default_template_language" json:"default_template_language,computed_optional"`
 	Description                types.String                                                   `tfsdk:"description" json:"description,computed_optional"`
