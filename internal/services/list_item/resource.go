@@ -238,6 +238,12 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	}
 
+	params := rules.ListItemDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	deletePayload := bodyDeletePayload{
 		Items: []bodyDeleteItems{{
 			ID: data.ID.ValueString(),

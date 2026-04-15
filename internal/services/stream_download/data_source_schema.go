@@ -28,6 +28,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Optional:    true,
 			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
+			},
 		},
 	}
 }

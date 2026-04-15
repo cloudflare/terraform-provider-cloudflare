@@ -24,7 +24,7 @@ type R2BucketModel struct {
 type CreateR2BucketModel struct {
 	ID           types.String `tfsdk:"id" json:"-,computed"`
 	Name         types.String `tfsdk:"name" json:"name,required"`
-	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Location     types.String `tfsdk:"location" json:"locationHint,computed_optional"`
 	Jurisdiction types.String `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
 	StorageClass types.String `tfsdk:"storage_class" json:"storageClass,computed_optional"`

@@ -114,6 +114,12 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
+	params := managed_transforms.ManagedTransformEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())

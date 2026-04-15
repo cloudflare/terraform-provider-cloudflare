@@ -243,6 +243,10 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 
 	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 		updateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
