@@ -16,7 +16,7 @@ type ZeroTrustAccessAIControlsMcpServerResultEnvelope struct {
 
 type ZeroTrustAccessAIControlsMcpServerModel struct {
 	ID                 types.String                                              `tfsdk:"id" json:"id,required"`
-	AccountID          types.String                                              `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	AuthType           types.String                                              `tfsdk:"auth_type" json:"auth_type,required"`
 	Hostname           types.String                                              `tfsdk:"hostname" json:"hostname,required"`
 	Name               types.String                                              `tfsdk:"name" json:"name,required"`

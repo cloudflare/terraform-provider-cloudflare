@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID",
-				Required:    true,
+				Optional:    true,
 			},
 			"exclude_prefix": schema.StringAttribute{
 				Optional: true,

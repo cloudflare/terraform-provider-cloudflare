@@ -19,15 +19,17 @@ type WorkerVersionsResultListDataSourceEnvelope struct {
 }
 
 type WorkerVersionsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID  types.String                                                      `tfsdk:"worker_id" path:"worker_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkerVersionsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkerVersionsDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerVersionListParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerVersionListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.BetaWorkerVersionListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

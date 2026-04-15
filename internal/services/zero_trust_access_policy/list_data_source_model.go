@@ -18,14 +18,16 @@ type ZeroTrustAccessPoliciesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessPoliciesDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessPolicyListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessPolicyListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.AccessPolicyListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

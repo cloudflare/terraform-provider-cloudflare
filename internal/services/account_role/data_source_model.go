@@ -17,8 +17,8 @@ type AccountRoleResultDataSourceEnvelope struct {
 }
 
 type AccountRoleDataSourceModel struct {
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	RoleID      types.String                                                    `tfsdk:"role_id" path:"role_id,required"`
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Description types.String                                                    `tfsdk:"description" json:"description,computed"`
 	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
 	Name        types.String                                                    `tfsdk:"name" json:"name,computed"`
@@ -26,8 +26,10 @@ type AccountRoleDataSourceModel struct {
 }
 
 func (m *AccountRoleDataSourceModel) toReadParams(_ context.Context) (params accounts.RoleGetParams, diags diag.Diagnostics) {
-	params = accounts.RoleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = accounts.RoleGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

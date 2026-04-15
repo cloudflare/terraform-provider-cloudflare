@@ -16,8 +16,8 @@ type AIGatewayDynamicRoutingResultEnvelope struct {
 
 type AIGatewayDynamicRoutingModel struct {
 	ID         types.String                                                     `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	GatewayID  types.String                                                     `tfsdk:"gateway_id" path:"gateway_id,required"`
+	AccountID  types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Elements   *[]*AIGatewayDynamicRoutingElementsModel                         `tfsdk:"elements" json:"elements,required"`
 	Name       types.String                                                     `tfsdk:"name" json:"name,required"`
 	CreatedAt  timetypes.RFC3339                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

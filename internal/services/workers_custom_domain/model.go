@@ -13,7 +13,7 @@ type WorkersCustomDomainResultEnvelope struct {
 
 type WorkersCustomDomainModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Hostname    types.String `tfsdk:"hostname" json:"hostname,required"`
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`

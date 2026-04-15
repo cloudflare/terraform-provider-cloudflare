@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Indicates whether zone-level authenticated origin pulls is enabled.",

@@ -64,6 +64,12 @@ func (r *ZeroTrustDeviceIPProfileResource) Create(ctx context.Context, req resou
 		return
 	}
 
+	params := zero_trust.DeviceIPProfileNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZeroTrustDeviceIPProfileResource) Create(ctx context.Context, req resou
 	env := ZeroTrustDeviceIPProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Devices.IPProfiles.New(
 		ctx,
-		zero_trust.DeviceIPProfileNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *ZeroTrustDeviceIPProfileResource) Update(ctx context.Context, req resou
 		return
 	}
 
+	params := zero_trust.DeviceIPProfileUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZeroTrustDeviceIPProfileResource) Update(ctx context.Context, req resou
 	_, err = r.client.ZeroTrust.Devices.IPProfiles.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DeviceIPProfileUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *ZeroTrustDeviceIPProfileResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+	params := zero_trust.DeviceIPProfileGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDeviceIPProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.IPProfiles.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DeviceIPProfileGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *ZeroTrustDeviceIPProfileResource) Delete(ctx context.Context, req resou
 		return
 	}
 
+	params := zero_trust.DeviceIPProfileDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Devices.IPProfiles.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DeviceIPProfileDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

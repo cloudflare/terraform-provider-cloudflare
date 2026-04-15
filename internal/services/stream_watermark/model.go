@@ -17,7 +17,7 @@ type StreamWatermarkResultEnvelope struct {
 }
 
 type StreamWatermarkModel struct {
-	AccountID      types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Identifier     types.String      `tfsdk:"identifier" path:"identifier,optional"`
 	URL            types.String      `tfsdk:"url" json:"url,optional,no_refresh"`
 	Name           types.String      `tfsdk:"name" json:"name,computed_optional"`

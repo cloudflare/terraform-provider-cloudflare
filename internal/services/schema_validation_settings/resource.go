@@ -61,6 +61,12 @@ func (r *SchemaValidationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 
+	params := schema_validation.SettingUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -70,9 +76,7 @@ func (r *SchemaValidationSettingsResource) Create(ctx context.Context, req resou
 	env := SchemaValidationSettingsResultEnvelope{*data}
 	_, err = r.client.SchemaValidation.Settings.Update(
 		ctx,
-		schema_validation.SettingUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -109,6 +113,12 @@ func (r *SchemaValidationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 
+	params := schema_validation.SettingUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -118,9 +128,7 @@ func (r *SchemaValidationSettingsResource) Update(ctx context.Context, req resou
 	env := SchemaValidationSettingsResultEnvelope{*data}
 	_, err = r.client.SchemaValidation.Settings.Update(
 		ctx,
-		schema_validation.SettingUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -149,13 +157,17 @@ func (r *SchemaValidationSettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+	params := schema_validation.SettingGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := SchemaValidationSettingsResultEnvelope{*data}
 	_, err := r.client.SchemaValidation.Settings.Get(
 		ctx,
-		schema_validation.SettingGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

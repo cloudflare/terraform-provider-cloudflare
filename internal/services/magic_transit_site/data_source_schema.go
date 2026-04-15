@@ -36,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"connector_id": schema.StringAttribute{
 				Description: "Magic Connector identifier tag.",

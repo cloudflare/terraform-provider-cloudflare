@@ -17,14 +17,16 @@ type StreamAudioTrackResultDataSourceEnvelope struct {
 }
 
 type StreamAudioTrackDataSourceModel struct {
-	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String                                                       `tfsdk:"identifier" path:"identifier,required"`
+	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Audio      customfield.NestedObjectList[StreamAudioTrackAudioDataSourceModel] `tfsdk:"audio" json:"audio,computed"`
 }
 
 func (m *StreamAudioTrackDataSourceModel) toReadParams(_ context.Context) (params stream.AudioTrackGetParams, diags diag.Diagnostics) {
-	params = stream.AudioTrackGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = stream.AudioTrackGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

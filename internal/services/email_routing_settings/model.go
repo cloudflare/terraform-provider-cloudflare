@@ -14,7 +14,7 @@ type EmailRoutingSettingsResultEnvelope struct {
 
 type EmailRoutingSettingsModel struct {
 	ID         types.String      `tfsdk:"id" json:"id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Created    timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Enabled    types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
 	Modified   timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`

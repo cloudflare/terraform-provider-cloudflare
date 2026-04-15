@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"auth_type": schema.StringAttribute{
 				Description: `Available values: "oauth", "bearer", "unauthenticated".`,

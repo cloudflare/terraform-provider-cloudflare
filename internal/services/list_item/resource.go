@@ -68,6 +68,12 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	params := rules.ListItemNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -181,6 +187,12 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	params := rules.ListItemGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ListItemResultEnvelope{*data}
 	_, err := r.client.Rules.Lists.Items.Get(
@@ -220,6 +232,12 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	params := rules.ListItemDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	deletePayload := bodyDeletePayload{
 		Items: []bodyDeleteItems{{
 			ID: data.ID.ValueString(),
@@ -230,9 +248,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 	_, err := r.client.Rules.Lists.Items.Delete(
 		ctx,
 		data.ListID.ValueString(),
-		rules.ListItemDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
 	)

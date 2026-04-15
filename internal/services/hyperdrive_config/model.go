@@ -14,7 +14,7 @@ type HyperdriveConfigResultEnvelope struct {
 
 type HyperdriveConfigModel struct {
 	ID                    types.String                  `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID             types.String                  `tfsdk:"account_id" path:"account_id,optional"`
 	Name                  types.String                  `tfsdk:"name" json:"name,required"`
 	Origin                *HyperdriveConfigOriginModel  `tfsdk:"origin" json:"origin,required"`
 	OriginConnectionLimit types.Int64                   `tfsdk:"origin_connection_limit" json:"origin_connection_limit,optional"`

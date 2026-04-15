@@ -19,7 +19,7 @@ type PageShieldScriptsResultDataSourceEnvelope struct {
 
 type PageShieldScriptsDataSourceModel struct {
 	ScriptID                  types.String                                                           `tfsdk:"script_id" path:"script_id,required"`
-	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	AddedAt                   timetypes.RFC3339                                                      `tfsdk:"added_at" json:"added_at,computed" format:"date-time"`
 	CryptominingScore         types.Int64                                                            `tfsdk:"cryptomining_score" json:"cryptomining_score,computed"`
 	DataflowScore             types.Int64                                                            `tfsdk:"dataflow_score" json:"dataflow_score,computed"`
@@ -45,8 +45,10 @@ type PageShieldScriptsDataSourceModel struct {
 }
 
 func (m *PageShieldScriptsDataSourceModel) toReadParams(_ context.Context) (params page_shield.ScriptGetParams, diags diag.Diagnostics) {
-	params = page_shield.ScriptGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = page_shield.ScriptGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

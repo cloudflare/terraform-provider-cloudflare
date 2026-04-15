@@ -49,13 +49,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier tag.",
-				Required:    true,
-			},
 			"permission_group_id": schema.StringAttribute{
 				Description: "Permission Group identifier tag.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Optional:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier of the permission group.",

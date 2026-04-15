@@ -16,14 +16,16 @@ type ZeroTrustTunnelWARPConnectorTokenResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelWARPConnectorTokenDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Token     types.String `tfsdk:"token" json:"token,computed"`
 }
 
 func (m *ZeroTrustTunnelWARPConnectorTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelWARPConnectorTokenGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelWARPConnectorTokenGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.TunnelWARPConnectorTokenGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

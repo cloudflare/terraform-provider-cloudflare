@@ -18,16 +18,17 @@ type APIShieldResultDataSourceEnvelope struct {
 
 type APIShieldDataSourceModel struct {
 	ID                    types.String                                                                `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                types.String                                                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	Normalize             types.Bool                                                                  `tfsdk:"normalize" query:"normalize,optional"`
 	AuthIDCharacteristics customfield.NestedObjectList[APIShieldAuthIDCharacteristicsDataSourceModel] `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,computed"`
 }
 
 func (m *APIShieldDataSourceModel) toReadParams(_ context.Context) (params api_gateway.ConfigurationGetParams, diags diag.Diagnostics) {
-	params = api_gateway.ConfigurationGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = api_gateway.ConfigurationGetParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Normalize.IsNull() {
 		params.Normalize = cloudflare.F(m.Normalize.ValueBool())
 	}

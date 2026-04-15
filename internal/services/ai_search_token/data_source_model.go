@@ -18,7 +18,7 @@ type AISearchTokenResultDataSourceEnvelope struct {
 
 type AISearchTokenDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,optional"`
 	CfAPIID    types.String                           `tfsdk:"cf_api_id" json:"cf_api_id,computed"`
 	CreatedAt  timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy  types.String                           `tfsdk:"created_by" json:"created_by,computed"`
@@ -31,18 +31,21 @@ type AISearchTokenDataSourceModel struct {
 }
 
 func (m *AISearchTokenDataSourceModel) toReadParams(_ context.Context) (params ai_search.TokenReadParams, diags diag.Diagnostics) {
-	params = ai_search.TokenReadParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = ai_search.TokenReadParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *AISearchTokenDataSourceModel) toListParams(_ context.Context) (params ai_search.TokenListParams, diags diag.Diagnostics) {
-	params = ai_search.TokenListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_search.TokenListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.OrderBy.IsNull() {
 		params.OrderBy = cloudflare.F(ai_search.TokenListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}

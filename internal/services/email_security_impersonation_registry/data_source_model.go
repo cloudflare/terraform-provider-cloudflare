@@ -19,7 +19,7 @@ type EmailSecurityImpersonationRegistryResultDataSourceEnvelope struct {
 type EmailSecurityImpersonationRegistryDataSourceModel struct {
 	ID                      types.Int64                                                 `tfsdk:"id" path:"display_name_id,computed"`
 	DisplayNameID           types.Int64                                                 `tfsdk:"display_name_id" path:"display_name_id,optional"`
-	AccountID               types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID               types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	Comments                types.String                                                `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt               timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DirectoryID             types.Int64                                                 `tfsdk:"directory_id" json:"directory_id,computed"`
@@ -34,18 +34,21 @@ type EmailSecurityImpersonationRegistryDataSourceModel struct {
 }
 
 func (m *EmailSecurityImpersonationRegistryDataSourceModel) toReadParams(_ context.Context) (params email_security.SettingImpersonationRegistryGetParams, diags diag.Diagnostics) {
-	params = email_security.SettingImpersonationRegistryGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = email_security.SettingImpersonationRegistryGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *EmailSecurityImpersonationRegistryDataSourceModel) toListParams(_ context.Context) (params email_security.SettingImpersonationRegistryListParams, diags diag.Diagnostics) {
-	params = email_security.SettingImpersonationRegistryListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = email_security.SettingImpersonationRegistryListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingImpersonationRegistryListParamsDirection(m.Filter.Direction.ValueString()))
 	}

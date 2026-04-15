@@ -19,9 +19,9 @@ type AIGatewayDynamicRoutingResultDataSourceEnvelope struct {
 }
 
 type AIGatewayDynamicRoutingDataSourceModel struct {
-	AccountID  types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	GatewayID  types.String                                                                 `tfsdk:"gateway_id" path:"gateway_id,required"`
 	ID         types.String                                                                 `tfsdk:"id" path:"id,required"`
+	AccountID  types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt  timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt timetypes.RFC3339                                                            `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Name       types.String                                                                 `tfsdk:"name" json:"name,computed"`
@@ -31,8 +31,10 @@ type AIGatewayDynamicRoutingDataSourceModel struct {
 }
 
 func (m *AIGatewayDynamicRoutingDataSourceModel) toReadParams(_ context.Context) (params ai_gateway.DynamicRoutingGetParams, diags diag.Diagnostics) {
-	params = ai_gateway.DynamicRoutingGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = ai_gateway.DynamicRoutingGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

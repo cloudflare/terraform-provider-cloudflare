@@ -64,6 +64,12 @@ func (r *PipelineResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	params := pipelines.PipelineNewV1Params{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *PipelineResource) Create(ctx context.Context, req resource.CreateReques
 	env := PipelineResultEnvelope{*data}
 	_, err = r.client.Pipelines.NewV1(
 		ctx,
-		pipelines.PipelineNewV1Params{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -108,14 +112,18 @@ func (r *PipelineResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	params := pipelines.PipelineGetV1Params{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := PipelineResultEnvelope{*data}
 	_, err := r.client.Pipelines.GetV1(
 		ctx,
 		data.ID.ValueString(),
-		pipelines.PipelineGetV1Params{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -148,12 +156,16 @@ func (r *PipelineResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	params := pipelines.PipelineDeleteV1Params{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Pipelines.DeleteV1(
 		ctx,
 		data.ID.ValueString(),
-		pipelines.PipelineDeleteV1Params{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -22,13 +22,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Required:    true,
-			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
+				Optional:    true,
 			},
 			"token": schema.StringAttribute{
 				Description: "The Tunnel Token is used as a mechanism to authenticate the operation of a tunnel.",

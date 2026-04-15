@@ -18,14 +18,16 @@ type R2BucketLockResultDataSourceEnvelope struct {
 }
 
 type R2BucketLockDataSourceModel struct {
-	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                   `tfsdk:"bucket_name" path:"bucket_name,required"`
+	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	Rules      customfield.NestedObjectList[R2BucketLockRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketLockDataSourceModel) toReadParams(_ context.Context) (params r2.BucketLockGetParams, diags diag.Diagnostics) {
-	params = r2.BucketLockGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2.BucketLockGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

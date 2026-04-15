@@ -19,7 +19,7 @@ type CloudforceOneRequestMessageResultDataSourceEnvelope struct {
 type CloudforceOneRequestMessageDataSourceModel struct {
 	ID                types.String      `tfsdk:"id" path:"request_id,computed"`
 	RequestID         types.String      `tfsdk:"request_id" path:"request_id,required"`
-	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID         types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Page              types.Int64       `tfsdk:"page" json:"page,required"`
 	PerPage           types.Int64       `tfsdk:"per_page" json:"per_page,required"`
 	After             timetypes.RFC3339 `tfsdk:"after" json:"after,optional" format:"date-time"`
@@ -34,8 +34,10 @@ type CloudforceOneRequestMessageDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestMessageDataSourceModel) toReadParams(_ context.Context) (params cloudforce_one.RequestMessageGetParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestMessageGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = cloudforce_one.RequestMessageGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

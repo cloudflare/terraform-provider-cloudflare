@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"allow_code_mode": schema.BoolAttribute{
 				Description: "Allow remote code execution in Dynamic Workers (beta)",

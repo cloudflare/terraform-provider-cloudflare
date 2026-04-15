@@ -21,7 +21,7 @@ type ImageResultDataSourceEnvelope struct {
 type ImageDataSourceModel struct {
 	ID                types.String                   `tfsdk:"id" path:"image_id,computed"`
 	ImageID           types.String                   `tfsdk:"image_id" path:"image_id,required"`
-	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	Creator           types.String                   `tfsdk:"creator" json:"creator,computed"`
 	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
 	RequireSignedURLs types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
@@ -31,8 +31,10 @@ type ImageDataSourceModel struct {
 }
 
 func (m *ImageDataSourceModel) toReadParams(_ context.Context) (params images.V1GetParams, diags diag.Diagnostics) {
-	params = images.V1GetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = images.V1GetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

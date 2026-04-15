@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",

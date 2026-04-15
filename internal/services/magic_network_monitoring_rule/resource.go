@@ -64,6 +64,12 @@ func (r *MagicNetworkMonitoringRuleResource) Create(ctx context.Context, req res
 		return
 	}
 
+	params := magic_network_monitoring.RuleNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *MagicNetworkMonitoringRuleResource) Create(ctx context.Context, req res
 	env := MagicNetworkMonitoringRuleResultEnvelope{*data}
 	_, err = r.client.MagicNetworkMonitoring.Rules.New(
 		ctx,
-		magic_network_monitoring.RuleNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *MagicNetworkMonitoringRuleResource) Update(ctx context.Context, req res
 		return
 	}
 
+	params := magic_network_monitoring.RuleUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -121,9 +131,7 @@ func (r *MagicNetworkMonitoringRuleResource) Update(ctx context.Context, req res
 	env := MagicNetworkMonitoringRuleResultEnvelope{*data}
 	_, err = r.client.MagicNetworkMonitoring.Rules.Update(
 		ctx,
-		magic_network_monitoring.RuleUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -152,14 +160,18 @@ func (r *MagicNetworkMonitoringRuleResource) Read(ctx context.Context, req resou
 		return
 	}
 
+	params := magic_network_monitoring.RuleGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := MagicNetworkMonitoringRuleResultEnvelope{*data}
 	_, err := r.client.MagicNetworkMonitoring.Rules.Get(
 		ctx,
 		data.ID.ValueString(),
-		magic_network_monitoring.RuleGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -192,12 +204,16 @@ func (r *MagicNetworkMonitoringRuleResource) Delete(ctx context.Context, req res
 		return
 	}
 
+	params := magic_network_monitoring.RuleDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.MagicNetworkMonitoring.Rules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		magic_network_monitoring.RuleDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

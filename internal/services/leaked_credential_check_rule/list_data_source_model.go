@@ -17,14 +17,16 @@ type LeakedCredentialCheckRulesResultListDataSourceEnvelope struct {
 }
 
 type LeakedCredentialCheckRulesDataSourceModel struct {
-	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems types.Int64                                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[LeakedCredentialCheckRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LeakedCredentialCheckRulesDataSourceModel) toListParams(_ context.Context) (params leaked_credential_checks.DetectionListParams, diags diag.Diagnostics) {
-	params = leaked_credential_checks.DetectionListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = leaked_credential_checks.DetectionListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

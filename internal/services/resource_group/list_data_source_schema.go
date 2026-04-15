@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "ID of the resource group to be fetched.",

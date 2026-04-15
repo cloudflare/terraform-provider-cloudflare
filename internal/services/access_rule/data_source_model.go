@@ -37,6 +37,13 @@ func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params fire
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
@@ -47,6 +54,12 @@ func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params fire
 func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if m.Filter.Configuration != nil {
 		paramsConfiguration := firewall.AccessRuleListParamsConfiguration{}
 		if !m.Filter.Configuration.Target.IsNull() {

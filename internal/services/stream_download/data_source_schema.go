@@ -20,13 +20,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"identifier": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 		},
 	}

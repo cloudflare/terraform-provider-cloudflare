@@ -23,10 +23,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"identifier": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Required:    true,
@@ -34,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"language": schema.StringAttribute{
 				Description: "The language tag in BCP 47 format.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"generated": schema.BoolAttribute{
 				Description: "Whether the caption was generated via AI.",

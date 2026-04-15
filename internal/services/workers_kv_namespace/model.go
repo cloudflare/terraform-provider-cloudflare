@@ -13,7 +13,7 @@ type WorkersKVNamespaceResultEnvelope struct {
 
 type WorkersKVNamespaceModel struct {
 	ID                  types.String `tfsdk:"id" json:"id,computed"`
-	AccountID           types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID           types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Title               types.String `tfsdk:"title" json:"title,required"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 }

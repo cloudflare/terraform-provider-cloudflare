@@ -21,8 +21,8 @@ type WorkerVersionResultDataSourceEnvelope struct {
 type WorkerVersionDataSourceModel struct {
 	ID                 types.String                                                        `tfsdk:"id" path:"version_id,computed"`
 	VersionID          types.String                                                        `tfsdk:"version_id" path:"version_id,required"`
-	AccountID          types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID           types.String                                                        `tfsdk:"worker_id" path:"worker_id,required"`
+	AccountID          types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	Include            types.String                                                        `tfsdk:"include" query:"include,optional"`
 	CompatibilityDate  types.String                                                        `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
 	CreatedOn          timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -46,10 +46,11 @@ type WorkerVersionDataSourceModel struct {
 }
 
 func (m *WorkerVersionDataSourceModel) toReadParams(_ context.Context) (params workers.BetaWorkerVersionGetParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerVersionGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = workers.BetaWorkerVersionGetParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Include.IsNull() {
 		params.Include = cloudflare.F(workers.BetaWorkerVersionGetParamsInclude(m.Include.ValueString()))
 	}

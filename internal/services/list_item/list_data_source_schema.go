@@ -24,13 +24,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID for this resource.",
-				Required:    true,
-			},
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID for this resource.",
+				Optional:    true,
 			},
 			"per_page": schema.Int64Attribute{
 				Description: "Amount of results to include in each paginated response. A non-negative 32 bit integer.",

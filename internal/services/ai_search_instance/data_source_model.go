@@ -19,7 +19,7 @@ type AISearchInstanceResultDataSourceEnvelope struct {
 
 type AISearchInstanceDataSourceModel struct {
 	ID                   types.String                                                                  `tfsdk:"id" path:"id,computed_optional"`
-	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	AIGatewayID          types.String                                                                  `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                  `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                    `tfsdk:"cache" json:"cache,computed"`
@@ -61,18 +61,21 @@ type AISearchInstanceDataSourceModel struct {
 }
 
 func (m *AISearchInstanceDataSourceModel) toReadParams(_ context.Context) (params ai_search.InstanceReadParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceReadParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = ai_search.InstanceReadParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_search.InstanceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Namespace.IsNull() {
 		params.Namespace = cloudflare.F(m.Filter.Namespace.ValueString())
 	}

@@ -28,13 +28,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"live_input_identifier": schema.StringAttribute{
 				Description: "A unique identifier for a live input.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the live input was created.",

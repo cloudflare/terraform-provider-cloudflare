@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "The account id",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the webhook destination was created.",

@@ -14,7 +14,7 @@ type EmailSecurityImpersonationRegistryResultEnvelope struct {
 
 type EmailSecurityImpersonationRegistryModel struct {
 	ID                      types.Int64       `tfsdk:"id" json:"id,computed"`
-	AccountID               types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID               types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Email                   types.String      `tfsdk:"email" json:"email,required"`
 	IsEmailRegex            types.Bool        `tfsdk:"is_email_regex" json:"is_email_regex,required"`
 	Name                    types.String      `tfsdk:"name" json:"name,required"`

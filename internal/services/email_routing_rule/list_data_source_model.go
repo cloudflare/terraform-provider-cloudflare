@@ -17,17 +17,18 @@ type EmailRoutingRulesResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRulesDataSourceModel struct {
-	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled  types.Bool                                                           `tfsdk:"enabled" query:"enabled,optional"`
 	MaxItems types.Int64                                                          `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[EmailRoutingRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *EmailRoutingRulesDataSourceModel) toListParams(_ context.Context) (params email_routing.RuleListParams, diags diag.Diagnostics) {
-	params = email_routing.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = email_routing.RuleListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Enabled.IsNull() {
 		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Enabled.ValueBool()))
 	}

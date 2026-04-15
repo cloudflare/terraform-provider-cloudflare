@@ -16,14 +16,16 @@ type CloudConnectorRulesResultDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
-	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	ID     types.String                                `tfsdk:"id" json:"id,computed"`
 	Rules  *[]*CloudConnectorRulesDataSourceRulesModel `tfsdk:"rules" json:"rules,computed,no_refresh"`
 }
 
 func (m *CloudConnectorRulesDataSourceModel) toReadParams(_ context.Context) (params cloud_connector.RuleListParams, diags diag.Diagnostics) {
-	params = cloud_connector.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = cloud_connector.RuleListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

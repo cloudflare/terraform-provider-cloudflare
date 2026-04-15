@@ -64,6 +64,16 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Create(ctx context.Contex
 		return
 	}
 
+	params := zero_trust.AccessApplicationCANewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,14 +81,6 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Create(ctx context.Contex
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessShortLivedCertificateResultEnvelope{*data}
-	params := zero_trust.AccessApplicationCANewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.ZeroTrust.Access.Applications.CAs.New(
 		ctx,
 		data.AppID.ValueString(),
@@ -116,16 +118,18 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Read(ctx context.Context,
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessShortLivedCertificateResultEnvelope{*data}
 	params := zero_trust.AccessApplicationCAGetParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessShortLivedCertificateResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Applications.CAs.Get(
 		ctx,
 		data.AppID.ValueString(),
@@ -167,7 +171,9 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Delete(ctx context.Contex
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 

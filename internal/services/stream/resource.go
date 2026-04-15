@@ -61,6 +61,12 @@ func (r *StreamResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
+	params := stream.StreamNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -69,9 +75,7 @@ func (r *StreamResource) Create(ctx context.Context, req resource.CreateRequest,
 	res := new(http.Response)
 	err = r.client.Stream.New(
 		ctx,
-		stream.StreamNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -107,6 +111,12 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
+	params := stream.StreamEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -117,9 +127,7 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 	_, err = r.client.Stream.Edit(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.StreamEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -148,14 +156,18 @@ func (r *StreamResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
+	params := stream.StreamGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := StreamResultEnvelope{*data}
 	_, err := r.client.Stream.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.StreamGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -188,12 +200,16 @@ func (r *StreamResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
+	params := stream.StreamDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	err := r.client.Stream.Delete(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.StreamDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

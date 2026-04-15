@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"after": schema.StringAttribute{
 				Description: "Alias for 'start'. Returns videos created after this date/time (RFC 3339 format).",

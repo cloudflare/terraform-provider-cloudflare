@@ -19,7 +19,7 @@ type R2DataCatalogResultDataSourceEnvelope struct {
 type R2DataCatalogDataSourceModel struct {
 	ID                types.String                                                            `tfsdk:"id" path:"bucket_name,computed"`
 	BucketName        types.String                                                            `tfsdk:"bucket_name" path:"bucket_name,required"`
-	AccountID         types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID         types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	Bucket            types.String                                                            `tfsdk:"bucket" json:"bucket,computed"`
 	CredentialStatus  types.String                                                            `tfsdk:"credential_status" json:"credential_status,computed"`
 	Name              types.String                                                            `tfsdk:"name" json:"name,computed"`
@@ -28,8 +28,10 @@ type R2DataCatalogDataSourceModel struct {
 }
 
 func (m *R2DataCatalogDataSourceModel) toReadParams(_ context.Context) (params r2_data_catalog.R2DataCatalogGetParams, diags diag.Diagnostics) {
-	params = r2_data_catalog.R2DataCatalogGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2_data_catalog.R2DataCatalogGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

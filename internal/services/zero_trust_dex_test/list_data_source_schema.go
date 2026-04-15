@@ -28,7 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"kind": schema.StringAttribute{
 				Description: "Filter by test type\nAvailable values: \"http\", \"traceroute\".",

@@ -18,7 +18,7 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 }
 
 type AISearchInstancesDataSourceModel struct {
-	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Namespace        types.String                                                         `tfsdk:"namespace" query:"namespace,optional"`
 	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
 	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`
@@ -28,10 +28,11 @@ type AISearchInstancesDataSourceModel struct {
 }
 
 func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_search.InstanceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Namespace.IsNull() {
 		params.Namespace = cloudflare.F(m.Namespace.ValueString())
 	}

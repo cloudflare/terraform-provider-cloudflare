@@ -64,6 +64,12 @@ func (r *ConnectivityDirectoryServiceResource) Create(ctx context.Context, req r
 		return
 	}
 
+	params := connectivity.DirectoryServiceNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ConnectivityDirectoryServiceResource) Create(ctx context.Context, req r
 	env := ConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err = r.client.Connectivity.Directory.Services.New(
 		ctx,
-		connectivity.DirectoryServiceNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *ConnectivityDirectoryServiceResource) Update(ctx context.Context, req r
 		return
 	}
 
+	params := connectivity.DirectoryServiceUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *ConnectivityDirectoryServiceResource) Update(ctx context.Context, req r
 	_, err = r.client.Connectivity.Directory.Services.Update(
 		ctx,
 		data.ServiceID.ValueString(),
-		connectivity.DirectoryServiceUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *ConnectivityDirectoryServiceResource) Read(ctx context.Context, req res
 		return
 	}
 
+	params := connectivity.DirectoryServiceGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ConnectivityDirectoryServiceResultEnvelope{*data}
 	_, err := r.client.Connectivity.Directory.Services.Get(
 		ctx,
 		data.ServiceID.ValueString(),
-		connectivity.DirectoryServiceGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,12 +208,16 @@ func (r *ConnectivityDirectoryServiceResource) Delete(ctx context.Context, req r
 		return
 	}
 
+	params := connectivity.DirectoryServiceDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	err := r.client.Connectivity.Directory.Services.Delete(
 		ctx,
 		data.ServiceID.ValueString(),
-		connectivity.DirectoryServiceDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

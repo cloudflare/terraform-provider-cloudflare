@@ -17,14 +17,16 @@ type MagicNetworkMonitoringRulesResultListDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringRulesDataSourceModel struct {
-	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[MagicNetworkMonitoringRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicNetworkMonitoringRulesDataSourceModel) toListParams(_ context.Context) (params magic_network_monitoring.RuleListParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.RuleListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = magic_network_monitoring.RuleListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

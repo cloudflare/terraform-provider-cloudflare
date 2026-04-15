@@ -15,7 +15,7 @@ type SSOConnectorResultEnvelope struct {
 
 type SSOConnectorModel struct {
 	ID                 types.String                                            `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                            `tfsdk:"account_id" path:"account_id,optional"`
 	EmailDomain        types.String                                            `tfsdk:"email_domain" json:"email_domain,required"`
 	BeginVerification  types.Bool                                              `tfsdk:"begin_verification" json:"begin_verification,computed_optional,no_refresh"`
 	Enabled            types.Bool                                              `tfsdk:"enabled" json:"enabled,optional"`

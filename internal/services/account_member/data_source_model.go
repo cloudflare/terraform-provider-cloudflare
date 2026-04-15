@@ -19,7 +19,7 @@ type AccountMemberResultDataSourceEnvelope struct {
 type AccountMemberDataSourceModel struct {
 	ID        types.String                                                       `tfsdk:"id" path:"member_id,computed"`
 	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`
-	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Email     types.String                                                       `tfsdk:"email" json:"email,computed"`
 	Status    types.String                                                       `tfsdk:"status" json:"status,computed"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
@@ -29,18 +29,21 @@ type AccountMemberDataSourceModel struct {
 }
 
 func (m *AccountMemberDataSourceModel) toReadParams(_ context.Context) (params accounts.MemberGetParams, diags diag.Diagnostics) {
-	params = accounts.MemberGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = accounts.MemberGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *AccountMemberDataSourceModel) toListParams(_ context.Context) (params accounts.MemberListParams, diags diag.Diagnostics) {
-	params = accounts.MemberListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = accounts.MemberListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Filter.Direction.ValueString()))
 	}

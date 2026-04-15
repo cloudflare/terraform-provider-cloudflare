@@ -64,6 +64,12 @@ func (r *LogpullRetentionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := logs.ControlRetentionNewParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *LogpullRetentionResource) Create(ctx context.Context, req resource.Crea
 	env := LogpullRetentionResultEnvelope{*data}
 	_, err = r.client.Logs.Control.Retention.New(
 		ctx,
-		logs.ControlRetentionNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -109,13 +113,17 @@ func (r *LogpullRetentionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := logs.ControlRetentionGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := LogpullRetentionResultEnvelope{*data}
 	_, err := r.client.Logs.Control.Retention.Get(
 		ctx,
-		logs.ControlRetentionGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -65,6 +65,12 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 		return
 	}
 
+	params := zero_trust.AccessPolicyNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Policies.New(
 		ctx,
-		zero_trust.AccessPolicyNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -127,6 +131,12 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 		return
 	}
 
+	params := zero_trust.AccessPolicyUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -137,9 +147,7 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 	_, err = r.client.ZeroTrust.Access.Policies.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessPolicyUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,14 +187,18 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
+	params := zero_trust.AccessPolicyGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Policies.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessPolicyGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -231,12 +243,16 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 		return
 	}
 
+	params := zero_trust.AccessPolicyDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Policies.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessPolicyDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -61,6 +61,12 @@ func (r *StreamAudioTrackResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := stream.AudioTrackEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -72,9 +78,7 @@ func (r *StreamAudioTrackResource) Create(ctx context.Context, req resource.Crea
 		ctx,
 		data.Identifier.ValueString(),
 		data.AudioIdentifier.ValueString(),
-		stream.AudioTrackEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -111,6 +115,12 @@ func (r *StreamAudioTrackResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := stream.AudioTrackEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *StreamAudioTrackResource) Update(ctx context.Context, req resource.Upda
 		ctx,
 		data.Identifier.ValueString(),
 		data.AudioIdentifier.ValueString(),
-		stream.AudioTrackEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *StreamAudioTrackResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := stream.AudioTrackGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := StreamAudioTrackResultEnvelope{*data}
 	_, err := r.client.Stream.AudioTracks.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.AudioTrackGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,13 +205,17 @@ func (r *StreamAudioTrackResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	params := stream.AudioTrackDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Stream.AudioTracks.Delete(
 		ctx,
 		data.Identifier.ValueString(),
 		data.AudioIdentifier.ValueString(),
-		stream.AudioTrackDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

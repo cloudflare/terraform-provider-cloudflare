@@ -18,14 +18,16 @@ type HyperdriveConfigsResultListDataSourceEnvelope struct {
 }
 
 type HyperdriveConfigsDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[HyperdriveConfigsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *HyperdriveConfigsDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
-	params = hyperdrive.ConfigListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = hyperdrive.ConfigListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

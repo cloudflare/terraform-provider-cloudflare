@@ -29,13 +29,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
 			"site_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

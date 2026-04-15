@@ -64,6 +64,12 @@ func (r *ZoneCacheVariantsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
+	params := cache.VariantEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZoneCacheVariantsResource) Create(ctx context.Context, req resource.Cre
 	env := ZoneCacheVariantsResultEnvelope{*data}
 	_, err = r.client.Cache.Variants.Edit(
 		ctx,
-		cache.VariantEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
+	params := cache.VariantEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 	env := ZoneCacheVariantsResultEnvelope{*data}
 	_, err = r.client.Cache.Variants.Edit(
 		ctx,
-		cache.VariantEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,13 +162,17 @@ func (r *ZoneCacheVariantsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
+	params := cache.VariantGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZoneCacheVariantsResultEnvelope{*data}
 	_, err := r.client.Cache.Variants.Get(
 		ctx,
-		cache.VariantGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -194,11 +206,15 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
+	params := cache.VariantDeleteParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Cache.Variants.Delete(
 		ctx,
-		cache.VariantDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

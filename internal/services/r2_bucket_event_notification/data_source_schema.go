@@ -26,10 +26,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
-				Required:    true,
-			},
 			"bucket_name": schema.StringAttribute{
 				Description: "Name of the bucket.",
 				Required:    true,
@@ -37,6 +33,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"queue_id": schema.StringAttribute{
 				Description: "Queue ID.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account ID.",
+				Optional:    true,
 			},
 			"queue_name": schema.StringAttribute{
 				Description: "Name of the queue.",

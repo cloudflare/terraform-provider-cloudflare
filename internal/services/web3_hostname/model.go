@@ -14,7 +14,7 @@ type Web3HostnameResultEnvelope struct {
 
 type Web3HostnameModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name        types.String      `tfsdk:"name" json:"name,required"`
 	Target      types.String      `tfsdk:"target" json:"target,required"`
 	Description types.String      `tfsdk:"description" json:"description,optional"`

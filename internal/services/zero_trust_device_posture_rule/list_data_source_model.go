@@ -17,14 +17,16 @@ type ZeroTrustDevicePostureRulesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureRulesDataSourceModel struct {
-	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDevicePostureRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDevicePostureRulesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePostureListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

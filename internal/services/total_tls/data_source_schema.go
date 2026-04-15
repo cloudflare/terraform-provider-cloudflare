@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.\nAvailable values: \"google\", \"lets_encrypt\", \"ssl_com\".",

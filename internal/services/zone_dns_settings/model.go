@@ -12,7 +12,7 @@ type ZoneDNSSettingsResultEnvelope struct {
 }
 
 type ZoneDNSSettingsModel struct {
-	ZoneID             types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID             types.String                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	FlattenAllCNAMEs   types.Bool                       `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
 	FoundationDNS      types.Bool                       `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
 	MultiProvider      types.Bool                       `tfsdk:"multi_provider" json:"multi_provider,optional"`

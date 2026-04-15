@@ -22,13 +22,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the Worker is available on the workers.dev subdomain.",

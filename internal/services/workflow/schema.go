@@ -36,12 +36,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"account_id": schema.StringAttribute{
+			"workflow_name": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"workflow_name": schema.StringAttribute{
-				Required:      true,
+			"account_id": schema.StringAttribute{
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"class_name": schema.StringAttribute{

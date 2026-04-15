@@ -20,7 +20,7 @@ type ZeroTrustAccessAIControlsMcpPortalResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
 	ID               types.String                                                                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
 	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`
@@ -35,18 +35,21 @@ type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalReadParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpPortalReadParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.AccessAIControlMcpPortalReadParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpPortalListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.AccessAIControlMcpPortalListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}

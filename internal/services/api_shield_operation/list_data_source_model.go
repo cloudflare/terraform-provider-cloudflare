@@ -19,7 +19,7 @@ type APIShieldOperationsResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationsDataSourceModel struct {
-	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	Direction types.String                                                           `tfsdk:"direction" query:"direction,optional"`
 	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint,optional"`
 	Order     types.String                                                           `tfsdk:"order" query:"order,optional"`
@@ -51,12 +51,14 @@ func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (pa
 	}
 
 	params = api_gateway.OperationListParams{
-		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
 		Feature: cloudflare.F(mFeature),
 		Host:    cloudflare.F(mHost),
 		Method:  cloudflare.F(mMethod),
 	}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(api_gateway.OperationListParamsDirection(m.Direction.ValueString()))
 	}

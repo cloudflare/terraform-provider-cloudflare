@@ -36,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",
-				Required:    true,
+				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{
 				Description:        "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",

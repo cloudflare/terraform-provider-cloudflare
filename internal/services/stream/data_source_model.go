@@ -19,8 +19,8 @@ type StreamResultDataSourceEnvelope struct {
 }
 
 type StreamDataSourceModel struct {
-	AccountID             types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Identifier            types.String                                                 `tfsdk:"identifier" path:"identifier,required"`
+	AccountID             types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	ClippedFrom           types.String                                                 `tfsdk:"clipped_from" json:"clippedFrom,computed"`
 	Created               timetypes.RFC3339                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Creator               types.String                                                 `tfsdk:"creator" json:"creator,computed"`
@@ -50,8 +50,10 @@ type StreamDataSourceModel struct {
 }
 
 func (m *StreamDataSourceModel) toReadParams(_ context.Context) (params stream.StreamGetParams, diags diag.Diagnostics) {
-	params = stream.StreamGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = stream.StreamGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

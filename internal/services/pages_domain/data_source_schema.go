@@ -32,13 +32,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The domain name.",
 				Required:    true,
 			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: `Available values: "google", "lets_encrypt".`,

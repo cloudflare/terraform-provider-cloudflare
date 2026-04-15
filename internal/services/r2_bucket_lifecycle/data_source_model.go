@@ -18,14 +18,16 @@ type R2BucketLifecycleResultDataSourceEnvelope struct {
 }
 
 type R2BucketLifecycleDataSourceModel struct {
-	AccountID  types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
+	AccountID  types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	Rules      customfield.NestedObjectList[R2BucketLifecycleRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketLifecycleDataSourceModel) toReadParams(_ context.Context) (params r2.BucketLifecycleGetParams, diags diag.Diagnostics) {
-	params = r2.BucketLifecycleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2.BucketLifecycleGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Zone identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Sets the direction by which results are ordered.\nAvailable values: \"asc\", \"desc\".",

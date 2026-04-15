@@ -66,6 +66,12 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	params := kv.NamespaceValueUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	multipartData, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
@@ -78,9 +84,7 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,6 +122,12 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	params := kv.NamespaceValueUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	multipartData, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
@@ -130,9 +140,7 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(contentType, multipartData),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,14 +170,18 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	params := kv.NamespaceValueGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	_, err := r.client.KV.Namespaces.Values.Get(
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -227,13 +239,17 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	params := kv.NamespaceValueDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.KV.Namespaces.Values.Delete(
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

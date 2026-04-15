@@ -13,8 +13,8 @@ type StreamAudioTrackResultEnvelope struct {
 }
 
 type StreamAudioTrackModel struct {
-	AccountID       types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	Identifier      types.String                                             `tfsdk:"identifier" path:"identifier,required"`
+	AccountID       types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	AudioIdentifier types.String                                             `tfsdk:"audio_identifier" path:"audio_identifier,optional"`
 	Label           types.String                                             `tfsdk:"label" json:"label,optional,no_refresh"`
 	Default         types.Bool                                               `tfsdk:"default" json:"default,computed_optional,no_refresh"`

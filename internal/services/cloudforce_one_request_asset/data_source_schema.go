@@ -30,13 +30,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "UUID.",
 				Required:    true,
 			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"request_id": schema.StringAttribute{
 				Description: "UUID.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "Defines the asset creation time.",

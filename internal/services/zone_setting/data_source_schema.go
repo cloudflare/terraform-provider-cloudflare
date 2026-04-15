@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",

@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Specifies the public ID of the account.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

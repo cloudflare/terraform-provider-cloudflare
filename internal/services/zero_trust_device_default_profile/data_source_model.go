@@ -18,7 +18,7 @@ type ZeroTrustDeviceDefaultProfileResultDataSourceEnvelope struct {
 
 type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 	ID                         types.String                                                                              `tfsdk:"id" path:"account_id,computed"`
-	AccountID                  types.String                                                                              `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                  types.String                                                                              `tfsdk:"account_id" path:"account_id,optional"`
 	AllowModeSwitch            types.Bool                                                                                `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
 	AllowUpdates               types.Bool                                                                                `tfsdk:"allow_updates" json:"allow_updates,computed"`
 	AllowedToLeave             types.Bool                                                                                `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`
@@ -42,8 +42,10 @@ type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceDefaultProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyDefaultGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePolicyDefaultGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePolicyDefaultGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

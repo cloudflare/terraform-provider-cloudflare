@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"creator": schema.StringAttribute{
 				Description: `Internal user ID set within the creator field. Setting to empty string "" will return images where creator field is not set`,

@@ -18,17 +18,18 @@ type LoadBalancerPoolsResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerPoolsDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Monitor   types.String                                                         `tfsdk:"monitor" query:"monitor,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LoadBalancerPoolsDataSourceModel) toListParams(_ context.Context) (params load_balancers.PoolListParams, diags diag.Diagnostics) {
-	params = load_balancers.PoolListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = load_balancers.PoolListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Monitor.IsNull() {
 		params.Monitor = cloudflare.F(m.Monitor.ValueString())
 	}

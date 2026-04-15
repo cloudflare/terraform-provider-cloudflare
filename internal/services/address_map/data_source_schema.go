@@ -35,7 +35,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",
-				Required:    true,
+				Optional:    true,
 			},
 			"can_delete": schema.BoolAttribute{
 				Description: "If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.",

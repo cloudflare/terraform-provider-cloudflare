@@ -33,13 +33,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"deployment_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"author_email": schema.StringAttribute{
 				Computed: true,

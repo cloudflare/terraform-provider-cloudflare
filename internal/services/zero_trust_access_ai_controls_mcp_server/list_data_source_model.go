@@ -19,17 +19,18 @@ type ZeroTrustAccessAIControlsMcpServersResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessAIControlsMcpServersDataSourceModel struct {
-	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Search    types.String                                                                           `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpServersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessAIControlsMcpServersDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessAIControlMcpServerListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpServerListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.AccessAIControlMcpServerListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}

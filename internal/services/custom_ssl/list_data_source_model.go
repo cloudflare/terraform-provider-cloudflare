@@ -18,7 +18,7 @@ type CustomSSLsResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLsDataSourceModel struct {
-	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	Status   types.String                                                  `tfsdk:"status" query:"status,optional"`
 	Match    types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems types.Int64                                                   `tfsdk:"max_items"`
@@ -26,10 +26,11 @@ type CustomSSLsDataSourceModel struct {
 }
 
 func (m *CustomSSLsDataSourceModel) toListParams(_ context.Context) (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
-	params = custom_certificates.CustomCertificateListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = custom_certificates.CustomCertificateListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Match.IsNull() {
 		params.Match = cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(m.Match.ValueString()))
 	}

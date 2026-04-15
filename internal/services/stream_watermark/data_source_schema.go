@@ -24,13 +24,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The account identifier tag.",
-				Required:    true,
-			},
 			"identifier": schema.StringAttribute{
 				Description: "The unique identifier for a watermark profile.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The account identifier tag.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and a time a watermark profile was created.",

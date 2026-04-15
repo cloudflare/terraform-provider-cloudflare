@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"zone_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"auto_refresh_seconds": schema.Float64Attribute{
 				Description: "How often should a secondary zone auto refresh regardless of DNS NOTIFY.\nNot applicable for primary zones.",

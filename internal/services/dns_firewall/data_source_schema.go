@@ -36,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"deprecate_any_requests": schema.BoolAttribute{
 				Description: "Whether to refuse to answer queries for the ANY type",

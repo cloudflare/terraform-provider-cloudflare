@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"default_sampling": schema.Float64Attribute{
 				Description: "Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.",

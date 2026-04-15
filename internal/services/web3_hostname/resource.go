@@ -64,6 +64,12 @@ func (r *Web3HostnameResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	params := web3.HostnameNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *Web3HostnameResource) Create(ctx context.Context, req resource.CreateRe
 	env := Web3HostnameResultEnvelope{*data}
 	_, err = r.client.Web3.Hostnames.New(
 		ctx,
-		web3.HostnameNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *Web3HostnameResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	params := web3.HostnameEditParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *Web3HostnameResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Web3.Hostnames.Edit(
 		ctx,
 		data.ID.ValueString(),
-		web3.HostnameEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *Web3HostnameResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	params := web3.HostnameGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := Web3HostnameResultEnvelope{*data}
 	_, err := r.client.Web3.Hostnames.Get(
 		ctx,
 		data.ID.ValueString(),
-		web3.HostnameGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *Web3HostnameResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	params := web3.HostnameDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Web3.Hostnames.Delete(
 		ctx,
 		data.ID.ValueString(),
-		web3.HostnameDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

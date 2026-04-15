@@ -23,13 +23,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier tag.",
-				Required:    true,
-			},
 			"role_id": schema.StringAttribute{
 				Description: "Role identifier tag.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of role's permissions.",

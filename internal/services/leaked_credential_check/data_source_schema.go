@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Determines whether or not Leaked Credential Checks are enabled.",

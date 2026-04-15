@@ -35,6 +35,10 @@ provider "cloudflare" {
   api_email = "user@example.com" # or set CLOUDFLARE_EMAIL env variable
   # Used when interacting with the Origin CA certificates API. [View/change your key](https://developers.cloudflare.com/fundamentals/api/get-started/ca-keys/#viewchange-your-origin-ca-keys).
   user_service_key = "v1.0-144c9defac04969c7bfad8ef-631a41d003a32d25fe878081ef365c49503f7fada600da935e2851a1c7326084b85cbf6429c4b859de8475731dc92a9c329631e6d59e6c73da7b198497172b4cefe071d90d0f5d2719" # or set CLOUDFLARE_API_USER_SERVICE_KEY env variable
+  # Sets an account ID to be used with all account-scoped requests.
+  account_id = "f037e56e89293a057740de681ac9accp" # or set CLOUDFLARE_ACCOUNT_ID env variable
+  # Sets a zone ID to be used with all zone-scoped requests.
+  zone_id = "f037e56e89293a057740de681ac9accp" # or set CLOUDFLARE_ZONE_ID env variable
 }
 
 # Configure a resource
@@ -61,10 +65,12 @@ If an environment variable is provided, then the option does not need to be set 
 
 | Property         | Environment variable              | Required | Default value |
 | ---------------- | --------------------------------- | -------- | ------------- |
+| zone_id          | `CLOUDFLARE_ZONE_ID`              | false    | —             |
 | user_service_key | `CLOUDFLARE_API_USER_SERVICE_KEY` | false    | —             |
 | api_token        | `CLOUDFLARE_API_TOKEN`            | false    | —             |
 | api_key          | `CLOUDFLARE_API_KEY`              | false    | —             |
 | api_email        | `CLOUDFLARE_EMAIL`                | false    | —             |
+| account_id       | `CLOUDFLARE_ACCOUNT_ID`           | false    | —             |
 
 ## Semantic versioning
 

@@ -64,6 +64,12 @@ func (r *PageShieldPolicyResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := page_shield.PolicyNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *PageShieldPolicyResource) Create(ctx context.Context, req resource.Crea
 	env := PageShieldPolicyResultEnvelope{*data}
 	_, err = r.client.PageShield.Policies.New(
 		ctx,
-		page_shield.PolicyNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *PageShieldPolicyResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := page_shield.PolicyUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *PageShieldPolicyResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.PageShield.Policies.Update(
 		ctx,
 		data.ID.ValueString(),
-		page_shield.PolicyUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *PageShieldPolicyResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := page_shield.PolicyGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := PageShieldPolicyResultEnvelope{*data}
 	_, err := r.client.PageShield.Policies.Get(
 		ctx,
 		data.ID.ValueString(),
-		page_shield.PolicyGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *PageShieldPolicyResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	params := page_shield.PolicyDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	err := r.client.PageShield.Policies.Delete(
 		ctx,
 		data.ID.ValueString(),
-		page_shield.PolicyDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

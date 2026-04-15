@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "The RFC3339Nano timestamp when the Device IP profile was created.",

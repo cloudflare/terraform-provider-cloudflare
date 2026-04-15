@@ -21,11 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*R2BucketCORSResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"bucket_name": schema.StringAttribute{
 				Description:   "Name of the bucket.",
 				Required:      true,
@@ -43,6 +38,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"fedramp",
 					),
 				},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Account ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{
 				Optional: true,

@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"zone_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"checked_time": schema.StringAttribute{
 				Description: "The time for a specific event.",

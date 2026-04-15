@@ -15,7 +15,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"disable_for_time": schema.Float64Attribute{
 				Description: "Sets the time limit, in seconds, that a user can use an override code to bypass WARP.",

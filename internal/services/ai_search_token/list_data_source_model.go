@@ -18,7 +18,7 @@ type AISearchTokensResultListDataSourceEnvelope struct {
 }
 
 type AISearchTokensDataSourceModel struct {
-	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	OrderBy          types.String                                                      `tfsdk:"order_by" query:"order_by,computed_optional"`
 	OrderByDirection types.String                                                      `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
 	MaxItems         types.Int64                                                       `tfsdk:"max_items"`
@@ -26,10 +26,11 @@ type AISearchTokensDataSourceModel struct {
 }
 
 func (m *AISearchTokensDataSourceModel) toListParams(_ context.Context) (params ai_search.TokenListParams, diags diag.Diagnostics) {
-	params = ai_search.TokenListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_search.TokenListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.OrderBy.IsNull() {
 		params.OrderBy = cloudflare.F(ai_search.TokenListParamsOrderBy(m.OrderBy.ValueString()))
 	}

@@ -18,8 +18,8 @@ type WorkersKVResultEnvelope struct {
 type WorkersKVModel struct {
 	ID          types.String         `tfsdk:"id" json:"-,computed"`
 	KeyName     types.String         `tfsdk:"key_name" path:"key_name,required"`
-	AccountID   types.String         `tfsdk:"account_id" path:"account_id,required"`
 	NamespaceID types.String         `tfsdk:"namespace_id" path:"namespace_id,required"`
+	AccountID   types.String         `tfsdk:"account_id" path:"account_id,optional"`
 	Value       types.String         `tfsdk:"value" json:"value,required,no_refresh"`
 	Metadata    jsontypes.Normalized `tfsdk:"metadata" json:"metadata,optional,no_refresh"`
 }

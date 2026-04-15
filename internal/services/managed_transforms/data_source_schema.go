@@ -66,7 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The unique ID of the zone.",
-				Required:    true,
+				Optional:    true,
 			},
 			"managed_request_headers": schema.ListNestedAttribute{
 				Description: "The list of Managed Request Transforms.",

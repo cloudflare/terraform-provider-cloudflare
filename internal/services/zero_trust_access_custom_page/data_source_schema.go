@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"custom_html": schema.StringAttribute{
 				Description: "Custom page HTML.",

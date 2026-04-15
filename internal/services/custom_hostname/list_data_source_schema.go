@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "Filter by the certificate authority that issued the SSL certificate.\nAvailable values: \"google\", \"lets_encrypt\", \"ssl_com\".",

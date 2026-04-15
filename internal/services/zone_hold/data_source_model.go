@@ -17,15 +17,17 @@ type ZoneHoldResultDataSourceEnvelope struct {
 
 type ZoneHoldDataSourceModel struct {
 	ID                types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
 	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed"`
 	IncludeSubdomains types.String `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
 }
 
 func (m *ZoneHoldDataSourceModel) toReadParams(_ context.Context) (params zones.HoldGetParams, diags diag.Diagnostics) {
-	params = zones.HoldGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = zones.HoldGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

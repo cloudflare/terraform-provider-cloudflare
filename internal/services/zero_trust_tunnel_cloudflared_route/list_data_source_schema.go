@@ -32,7 +32,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID",
-				Required:    true,
+				Optional:    true,
 			},
 			"existed_at": schema.StringAttribute{
 				Description: "If provided, include only resources that were created (and not deleted) before this time. URL encoded.",

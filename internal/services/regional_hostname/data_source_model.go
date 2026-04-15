@@ -19,15 +19,17 @@ type RegionalHostnameResultDataSourceEnvelope struct {
 type RegionalHostnameDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" path:"hostname,computed"`
 	Hostname  types.String      `tfsdk:"hostname" path:"hostname,required"`
-	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`
 	Routing   types.String      `tfsdk:"routing" json:"routing,computed"`
 }
 
 func (m *RegionalHostnameDataSourceModel) toReadParams(_ context.Context) (params addressing.RegionalHostnameGetParams, diags diag.Diagnostics) {
-	params = addressing.RegionalHostnameGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = addressing.RegionalHostnameGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

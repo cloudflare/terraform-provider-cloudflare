@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",

@@ -25,10 +25,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
-				Required:    true,
-			},
 			"bucket_name": schema.StringAttribute{
 				Description: "Name of the bucket.",
 				Required:    true,
@@ -36,6 +32,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"domain": schema.StringAttribute{
 				Description: "Name of the custom domain.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account ID.",
+				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether this bucket is publicly accessible at the specified custom domain.",

@@ -15,7 +15,7 @@ type AISearchInstanceResultEnvelope struct {
 
 type AISearchInstanceModel struct {
 	ID                             types.String                                                        `tfsdk:"id" json:"id,required"`
-	AccountID                      types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                      types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	Source                         types.String                                                        `tfsdk:"source" json:"source,optional"`
 	Type                           types.String                                                        `tfsdk:"type" json:"type,optional"`
 	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed_optional"`

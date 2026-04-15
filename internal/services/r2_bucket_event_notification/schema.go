@@ -28,11 +28,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"bucket_name": schema.StringAttribute{
 				Description:   "Name of the bucket.",
 				Required:      true,
@@ -54,6 +49,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"queue_id": schema.StringAttribute{
 				Description:   "Queue ID.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Account ID.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{

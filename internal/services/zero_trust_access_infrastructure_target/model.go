@@ -14,7 +14,7 @@ type ZeroTrustAccessInfrastructureTargetResultEnvelope struct {
 
 type ZeroTrustAccessInfrastructureTargetModel struct {
 	ID         types.String                                `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                `tfsdk:"account_id" path:"account_id,optional"`
 	Hostname   types.String                                `tfsdk:"hostname" json:"hostname,required"`
 	IP         *ZeroTrustAccessInfrastructureTargetIPModel `tfsdk:"ip" json:"ip,required"`
 	CreatedAt  timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

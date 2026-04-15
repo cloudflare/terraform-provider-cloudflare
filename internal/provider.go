@@ -287,6 +287,8 @@ type CloudflareProviderModel struct {
 	APIToken                types.String `tfsdk:"api_token" json:"api_token"`
 	UserAgentOperatorSuffix types.String `tfsdk:"user_agent_operator_suffix" json:"user_agent_operator_suffix"`
 	BaseURL                 types.String `tfsdk:"base_url" json:"base_url"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,optional"`
+	ZoneID         types.String `tfsdk:"zone_id" json:"zone_id,optional"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -344,6 +346,12 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 			consts.BaseURLSchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Value to override the default HTTP client base URL. Alternatively, can be configured using the `%s` environment variable.", consts.BaseURLSchemaKey),
+			},
+			"account_id": schema.StringAttribute{
+				Optional: true,
+			},
+			"zone_id": schema.StringAttribute{
+				Optional: true,
 			},
 		},
 	}

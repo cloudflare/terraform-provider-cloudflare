@@ -14,13 +14,13 @@ var _ datasource.DataSourceWithConfigValidators = (*RegistrarDomainDataSource)(n
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
 			"domain_name": schema.StringAttribute{
 				Description: "Fully qualified domain name (FQDN) including the extension\n(e.g., `example.com`, `mybrand.app`). The domain name uniquely\nidentifies a registration — the same domain cannot be registered\ntwice, making it a natural idempotency key for registration requests.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 		},
 	}

@@ -20,7 +20,7 @@ type CustomHostnameResultDataSourceEnvelope struct {
 type CustomHostnameDataSourceModel struct {
 	ID                        types.String                                                                     `tfsdk:"id" path:"custom_hostname_id,computed"`
 	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id,optional"`
-	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt                 timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomOriginServer        types.String                                                                     `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
 	CustomOriginSNI           types.String                                                                     `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
@@ -35,18 +35,21 @@ type CustomHostnameDataSourceModel struct {
 }
 
 func (m *CustomHostnameDataSourceModel) toReadParams(_ context.Context) (params custom_hostnames.CustomHostnameGetParams, diags diag.Diagnostics) {
-	params = custom_hostnames.CustomHostnameGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = custom_hostnames.CustomHostnameGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
-	params = custom_hostnames.CustomHostnameListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = custom_hostnames.CustomHostnameListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

@@ -64,6 +64,12 @@ func (r *AIGatewayDynamicRoutingResource) Create(ctx context.Context, req resour
 		return
 	}
 
+	params := ai_gateway.DynamicRoutingNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *AIGatewayDynamicRoutingResource) Create(ctx context.Context, req resour
 	_, err = r.client.AIGateway.DynamicRouting.New(
 		ctx,
 		data.GatewayID.ValueString(),
-		ai_gateway.DynamicRoutingNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *AIGatewayDynamicRoutingResource) Update(ctx context.Context, req resour
 		return
 	}
 
+	params := ai_gateway.DynamicRoutingUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *AIGatewayDynamicRoutingResource) Update(ctx context.Context, req resour
 		ctx,
 		data.GatewayID.ValueString(),
 		data.ID.ValueString(),
-		ai_gateway.DynamicRoutingUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,15 +161,19 @@ func (r *AIGatewayDynamicRoutingResource) Read(ctx context.Context, req resource
 		return
 	}
 
+	params := ai_gateway.DynamicRoutingGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := AIGatewayDynamicRoutingResultEnvelope{*data}
 	_, err := r.client.AIGateway.DynamicRouting.Get(
 		ctx,
 		data.GatewayID.ValueString(),
 		data.ID.ValueString(),
-		ai_gateway.DynamicRoutingGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -194,13 +206,17 @@ func (r *AIGatewayDynamicRoutingResource) Delete(ctx context.Context, req resour
 		return
 	}
 
+	params := ai_gateway.DynamicRoutingDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.AIGateway.DynamicRouting.Delete(
 		ctx,
 		data.GatewayID.ValueString(),
 		data.ID.ValueString(),
-		ai_gateway.DynamicRoutingDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

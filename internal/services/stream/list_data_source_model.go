@@ -20,7 +20,7 @@ type StreamsResultListDataSourceEnvelope struct {
 }
 
 type StreamsDataSourceModel struct {
-	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	After         timetypes.RFC3339                                          `tfsdk:"after" query:"after,optional" format:"date-time"`
 	Before        timetypes.RFC3339                                          `tfsdk:"before" query:"before,optional" format:"date-time"`
 	Creator       types.String                                               `tfsdk:"creator" query:"creator,optional"`
@@ -50,10 +50,11 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 	mStart, errs := m.Start.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = stream.StreamListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = stream.StreamListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

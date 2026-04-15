@@ -18,14 +18,16 @@ type CallsSFUAppsResultListDataSourceEnvelope struct {
 }
 
 type CallsSFUAppsDataSourceModel struct {
-	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[CallsSFUAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CallsSFUAppsDataSourceModel) toListParams(_ context.Context) (params calls.SFUListParams, diags diag.Diagnostics) {
-	params = calls.SFUListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = calls.SFUListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

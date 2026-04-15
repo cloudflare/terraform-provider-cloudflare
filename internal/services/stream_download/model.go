@@ -13,11 +13,11 @@ type StreamDownloadResultEnvelope struct {
 }
 
 type StreamDownloadModel struct {
-	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
 	Identifier      types.String                                         `tfsdk:"identifier" path:"identifier,required"`
 	PercentComplete types.Float64                                        `tfsdk:"percent_complete" json:"percentComplete,computed,no_refresh"`
 	Status          types.String                                         `tfsdk:"status" json:"status,computed,no_refresh"`
 	URL             types.String                                         `tfsdk:"url" json:"url,computed,no_refresh"`
+	AccountID  types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Audio           customfield.NestedObject[StreamDownloadAudioModel]   `tfsdk:"audio" json:"audio,computed"`
 	Default         customfield.NestedObject[StreamDownloadDefaultModel] `tfsdk:"default" json:"default,computed"`
 }
