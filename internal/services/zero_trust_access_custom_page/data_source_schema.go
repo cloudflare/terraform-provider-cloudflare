@@ -5,7 +5,6 @@ package zero_trust_access_custom_page
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -16,12 +15,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessCustomPageDat
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Access: Custom Pages Read",
-				"Access: Custom Pages Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "UUID.",

@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -22,12 +21,6 @@ var _ datasource.DataSourceWithConfigValidators = (*PipelineStreamDataSource)(ni
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Pipelines Read",
-				"Pipelines Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Specifies the public ID of the stream.",

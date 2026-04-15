@@ -5,7 +5,6 @@ package snippet
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,12 +14,6 @@ var _ datasource.DataSourceWithConfigValidators = (*SnippetDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Snippets Read",
-				"Snippets Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
 				Description: "Identify the snippet.",

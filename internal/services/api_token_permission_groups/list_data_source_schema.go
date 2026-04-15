@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -20,12 +19,6 @@ var _ datasource.DataSourceWithConfigValidators = (*APITokenPermissionGroupsList
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"API Tokens Read",
-				"API Tokens Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
 				Description: "Filter by the name of the permission group.\nThe value must be URL-encoded.",

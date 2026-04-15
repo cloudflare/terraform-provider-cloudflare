@@ -5,7 +5,6 @@ package cloudforce_one_request_message
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -18,11 +17,6 @@ var _ resource.ResourceWithConfigValidators = (*CloudforceOneRequestMessageResou
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Cloudforce One Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "Message ID.",
