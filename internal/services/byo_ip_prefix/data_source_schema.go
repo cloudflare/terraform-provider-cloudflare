@@ -5,7 +5,6 @@ package byo_ip_prefix
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,16 +14,6 @@ var _ datasource.DataSourceWithConfigValidators = (*ByoIPPrefixDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"IP Prefixes: BGP On Demand Read",
-				"IP Prefixes: BGP On Demand Write",
-				"IP Prefixes: Read",
-				"IP Prefixes: Write",
-				"Magic Transit Read",
-				"Magic Transit Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier of an IP Prefix.",

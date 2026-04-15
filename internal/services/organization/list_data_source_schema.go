@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -19,12 +18,6 @@ var _ datasource.DataSourceWithConfigValidators = (*OrganizationsDataSource)(nil
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"User Details Read",
-				"User Details Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"page_size": schema.Int64Attribute{
 				Description: "The amount of items to return. Defaults to 10.",
