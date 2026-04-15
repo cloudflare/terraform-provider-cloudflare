@@ -5,6 +5,7 @@ package queue_consumer
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -18,6 +19,14 @@ var _ resource.ResourceWithConfigValidators = (*QueueConsumerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Queues Read",
+				"Queues Write",
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",

@@ -5,6 +5,7 @@ package zero_trust_access_mtls_hostname_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,6 +16,12 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessMTLSHostnameS
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Mutual TLS Certificates Read",
+				"Access: Mutual TLS Certificates Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
