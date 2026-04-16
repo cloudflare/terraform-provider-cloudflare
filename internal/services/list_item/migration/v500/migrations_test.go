@@ -118,7 +118,7 @@ func TestMigrateCloudflareListItemFromV4WithHostname(t *testing.T) {
 // In v5, separate list_item resources remain as separate resources.
 // tf-migrate converts the redirect block to a redirect attribute (block → SingleNestedAttribute)
 // and converts "enabled"/"disabled" strings to true/false booleans.
-// Note: The v4 test config uses true/false (not "enabled"/"disabled") because v4.52.5 already uses BoolAttribute.
+// Note: The v4 test config uses true/false (not "enabled"/"disabled") because v4.52.7 already uses BoolAttribute.
 func TestMigrateCloudflareListItemFromV4WithRedirect(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()

@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	legacyProviderVersion  = "4.52.1"                // Last stable v4 release
+	legacyProviderVersion  = "4.52.7"                // Last stable v4 release
 	currentProviderVersion = internal.PackageVersion // Current v5 release
 )
 

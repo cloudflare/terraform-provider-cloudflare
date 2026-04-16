@@ -33,7 +33,7 @@ import (
 // - v5→v5 tests will CREATE the org (v5 supports create)
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.5
+// - Last stable v4 release: default 4.52.7
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 
 // createV4StateWithResourceType creates a v4 state file with a configurable resource type.

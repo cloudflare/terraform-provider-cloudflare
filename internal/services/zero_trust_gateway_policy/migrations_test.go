@@ -49,13 +49,13 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.1", "v4", "v5", false, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.7", "v4", "v5", false, []statecheck.StateCheck{
 				// Resource should be renamed to cloudflare_zero_trust_gateway_policy
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
@@ -111,12 +111,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.1", "v4", "v5", true, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.7", "v4", "v5", true, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
@@ -179,12 +179,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.1", "v4", "v5", true, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.7", "v4", "v5", true, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
@@ -250,12 +250,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.1", "v4", "v5", true, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.7", "v4", "v5", true, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("allow")),
@@ -306,12 +306,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.1", "v4", "v5", false, []statecheck.StateCheck{
+			acctest.MigrationV2TestStepForGatewayPolicy(t, v4Config, tmpDir, "4.52.7", "v4", "v5", false, []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
