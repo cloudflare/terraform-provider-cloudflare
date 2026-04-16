@@ -75,43 +75,45 @@ func TestMigrateManagedHeaders_Basic(t *testing.T) {
 			testConfig := tc.configFn(rnd, zoneID)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
-			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+		resource.Test(t, resource.TestCase{
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					// ExpectNonEmptyPlan allows API drift on step 1 (zone is shared; other tests
+					// may have enabled/disabled headers before this test runs).
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_true_client_ip_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_visitor_location_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_security_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-					})...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_true_client_ip_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_visitor_location_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_security_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+				})...),
 		})
 	}
 }
@@ -149,33 +151,34 @@ func TestMigrateManagedHeaders_RequestOnly(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_true_client_ip_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{})),
-					})...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_true_client_ip_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{})),
+				})...),
+		})
 		})
 	}
 }
@@ -213,33 +216,34 @@ func TestMigrateManagedHeaders_ResponseOnly(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_security_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-					})...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_security_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+				})...),
+		})
 		})
 	}
 }
@@ -277,28 +281,29 @@ func TestMigrateManagedHeaders_Empty(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{})),
-					})...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{})),
+				})...),
+		})
 		})
 	}
 }
@@ -343,42 +348,43 @@ func TestMigrateManagedHeaders_MultiVersion(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_true_client_ip_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_visitor_location_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
-							knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"id":      knownvalue.StringExact("add_security_headers"),
-								"enabled": knownvalue.Bool(true),
-							}),
-						})),
-					})...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_true_client_ip_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_visitor_location_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"id":      knownvalue.StringExact("add_security_headers"),
+							"enabled": knownvalue.Bool(true),
+						}),
+					})),
+				})...),
+		})
 		})
 	}
 }
@@ -507,24 +513,25 @@ func TestMigrateManagedHeaders_EdgeCases(t *testing.T) {
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck: func() {
-					acctest.TestAccPreCheck(t)
-					acctest.TestAccPreCheck_ZoneID(t)
-				},
-				WorkingDir: tmpDir,
-				Steps: append([]resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: tc.version,
-							},
+			PreCheck: func() {
+				acctest.TestAccPreCheck(t)
+				acctest.TestAccPreCheck_ZoneID(t)
+			},
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					ExpectNonEmptyPlan: true,
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: tc.version,
 						},
-						Config: testConfig,
 					},
+					Config: testConfig,
 				},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, tc.checks(resourceName, zoneID))...),
-			})
+			},
+				acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, tc.checks(resourceName, zoneID))...),
+		})
 		})
 	}
 }

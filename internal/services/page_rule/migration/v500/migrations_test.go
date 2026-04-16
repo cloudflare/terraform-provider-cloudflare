@@ -187,45 +187,40 @@ func TestMigratePageRule_V4ToV5_CacheKeyFields(t *testing.T) {
 				}
 			}
 
+			stateChecks := []statecheck.StateCheck{
+				// Verify cache_key_fields.host.resolved
+				statecheck.ExpectKnownValue(
+					"cloudflare_page_rule."+rnd,
+					tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("host").AtMapKey("resolved"),
+					knownvalue.Bool(true),
+				),
+				// Verify cache_key_fields.user.device_type
+				statecheck.ExpectKnownValue(
+					"cloudflare_page_rule."+rnd,
+					tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("device_type"),
+					knownvalue.Bool(true),
+				),
+				// Verify cache_key_fields.user.geo
+				statecheck.ExpectKnownValue(
+					"cloudflare_page_rule."+rnd,
+					tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("geo"),
+					knownvalue.Bool(false),
+				),
+				// CRITICAL: Verify cache_key_fields.user.lang = false (added during migration)
+				statecheck.ExpectKnownValue(
+					"cloudflare_page_rule."+rnd,
+					tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("lang"),
+					knownvalue.Bool(false),
+				),
+			}
+
+			// Use MigrationV2TestStepWithPlan (3-step: migrate → PlanOnly normalize → verify) because
+			// the Cloudflare API normalizes {exclude: ["utm_source"]} to {include: ["*"], exclude: ["utm_source"]},
+			// causing a non-empty plan after migration that resolves after a single plan/apply cycle.
 			resource.Test(t, resource.TestCase{
 				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
-					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer,
-						[]statecheck.StateCheck{
-							// Verify cache_key_fields.host.resolved
-							statecheck.ExpectKnownValue(
-								"cloudflare_page_rule."+rnd,
-								tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("host").AtMapKey("resolved"),
-								knownvalue.Bool(true),
-							),
-							// Verify cache_key_fields.query_string.exclude
-							statecheck.ExpectKnownValue(
-								"cloudflare_page_rule."+rnd,
-								tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("query_string").AtMapKey("exclude").AtSliceIndex(0),
-								knownvalue.StringExact("utm_source"),
-							),
-							// Verify cache_key_fields.user.device_type
-							statecheck.ExpectKnownValue(
-								"cloudflare_page_rule."+rnd,
-								tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("device_type"),
-								knownvalue.Bool(true),
-							),
-							// Verify cache_key_fields.user.geo
-							statecheck.ExpectKnownValue(
-								"cloudflare_page_rule."+rnd,
-								tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("geo"),
-								knownvalue.Bool(false),
-							),
-							// CRITICAL: Verify cache_key_fields.user.lang = false (added during migration)
-							statecheck.ExpectKnownValue(
-								"cloudflare_page_rule."+rnd,
-								tfjsonpath.New("actions").AtMapKey("cache_key_fields").AtMapKey("user").AtMapKey("lang"),
-								knownvalue.Bool(false),
-							),
-						},
-					),
-				},
+				Steps: append([]resource.TestStep{firstStep},
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...),
 			})
 		})
 	}

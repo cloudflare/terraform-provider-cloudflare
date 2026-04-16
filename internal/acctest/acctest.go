@@ -15,6 +15,7 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/rulesets"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -71,6 +72,42 @@ func TestAccPreCheck_Credentials(t *testing.T) {
 func TestAccPreCheck_ZoneID(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ZONE_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test.")
+	}
+}
+
+// TestAccPreCheck_CleanZoneRulesets deletes all non-managed rulesets from the test zone.
+// Call this from PreCheck in migration tests for resources that use per-phase singleton
+// rulesets (e.g., http_request_firewall_custom) to ensure a clean starting state across
+// retries — the sweeper only runs once before the first attempt.
+func TestAccPreCheck_CleanZoneRulesets(t *testing.T) {
+	t.Helper()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
+
+	ctx := context.Background()
+	client := SharedClient()
+
+	iter := client.Rulesets.ListAutoPaging(ctx, rulesets.RulesetListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	for iter.Next() {
+		rs := iter.Current()
+		// Only delete zone-kind and custom rulesets; skip managed.
+		if rs.Kind == rulesets.KindManaged {
+			continue
+		}
+		if err := client.Rulesets.Delete(ctx, rs.ID, rulesets.RulesetDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		}); err != nil {
+			// Log but don't fail — a 404 means it's already gone.
+			t.Logf("TestAccPreCheck_CleanZoneRulesets: failed to delete ruleset %s: %v", rs.ID, err)
+		}
+	}
+	if err := iter.Err(); err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneRulesets: failed to list rulesets: %v", err)
 	}
 }
 
@@ -1190,6 +1227,56 @@ func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, e
 				DebugNonEmptyPlan,
 				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
 			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+
+	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
+// MigrationV2TestStepForManagedTransforms creates multiple test steps for cloudflare_managed_headers
+// migration to cloudflare_managed_transforms. After tf-migrate runs, removes
+// cloudflare_managed_headers state entries before terraform plan — the v5 provider has no schema
+// for this type and the state upgrade path requires the moved block to have been applied first.
+func MigrationV2TestStepForManagedTransforms(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// Step 1: Run migration and remove the obsolete cloudflare_managed_headers state entry
+	migrationStep := resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			debugLogf(t, "Running migration command for managed_transforms: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
+			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			RunStateRmForObsoleteTypes(t, tmpDir, []string{"cloudflare_managed_headers"})
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+	}
+
+	// Step 2: Run plan-only to process import blocks and normalize state
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true,
+	}
+
+	// Step 3: Verify final plan is clean and state is correct
+	var planChecks []plancheck.PlanCheck
+	if sourceVersion == "v4" {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
 		},
 		ConfigStateChecks: stateChecks,
 	}
