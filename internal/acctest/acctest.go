@@ -992,6 +992,26 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 	}
 	debugLogf(t, "Successfully wrote v4 config (%d bytes)", len(v4Config))
 
+	// Write provider.tf with required_providers block for tf-migrate
+	providerConfig := `terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.52.7"
+    }
+  }
+}
+
+provider "cloudflare" {}
+`
+	providerConfigPath := filepath.Join(tmpDir, "provider.tf")
+	debugLogf(t, "Writing provider config to: %s", providerConfigPath)
+
+	err = os.WriteFile(providerConfigPath, []byte(providerConfig), 0644)
+	if err != nil {
+		t.Fatalf("Failed to write provider config file: %v", err)
+	}
+	debugLogf(t, "Successfully wrote provider config")
 }
 
 // RunMigrationV2Command runs the new tf-migrate binary to transform config and state
@@ -1022,7 +1042,8 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		"--config-dir", tmpDir,
 		"--source-version", sourceVersion,
 		"--target-version", targetVersion,
-		"--skip-phase-check", // skip phased migration prompts — state cleanup is handled by the test harness
+		"--skip-phase-check",   // skip phased migration prompts — state cleanup is handled by the test harness
+		"--skip-version-check", // skip version check — we know the provider version in tests
 	}
 
 	// Add debug logging if TF_LOG is set

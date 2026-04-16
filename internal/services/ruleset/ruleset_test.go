@@ -4821,7 +4821,10 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_RouteRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
