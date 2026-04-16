@@ -1290,11 +1290,10 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 // subdirectories inside tmpDir (created by the terraform-plugin-testing framework).
 // This is the test equivalent of the e2e runner's removeObsoleteStateEntries step.
 //
-// Implementation note: we read the state JSON directly to discover addresses (bypassing
-// "terraform state list", which requires provider schema and fails after tf-migrate
-// rewrites the config to v5 syntax with a stale .terraform directory). We then call
-// "terraform state rm -state=<path> <addr>" for each match, which does not need
-// provider schema — it only manipulates the state file by address.
+// Implementation note: we read the state JSON directly, filter out obsolete resource
+// entries, and write the modified state back. This avoids a dependency on the
+// "terraform" binary (which is not available in all CI environments). The serial is
+// incremented so Terraform accepts the modified state file.
 func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []string) {
 	t.Helper()
 
@@ -1313,16 +1312,9 @@ func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []str
 		return
 	}
 
-	// Parse just enough of the state to enumerate resource addresses.
-	var state struct {
-		Resources []struct {
-			Module string `json:"module,omitempty"`
-			Mode   string `json:"mode"`
-			Type   string `json:"type"`
-			Name   string `json:"name"`
-		} `json:"resources"`
-	}
-	if err := json.Unmarshal(data, &state); err != nil {
+	// Parse the full state so we can filter and rewrite it.
+	var rawState map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawState); err != nil {
 		debugLogf(t, "RunStateRmForObsoleteTypes: cannot parse state file: %v", err)
 		return
 	}
@@ -1333,42 +1325,70 @@ func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []str
 		obsoleteSet[typ] = true
 	}
 
-	// Collect addresses of resources whose type is obsolete.
-	var addrs []string
-	for _, r := range state.Resources {
-		if !obsoleteSet[r.Type] {
+	// Decode just the resources array to filter it.
+	var resources []json.RawMessage
+	if err := json.Unmarshal(rawState["resources"], &resources); err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: cannot parse resources array: %v", err)
+		return
+	}
+
+	var kept []json.RawMessage
+	var removedAddrs []string
+	for _, res := range resources {
+		var r struct {
+			Module string `json:"module,omitempty"`
+			Mode   string `json:"mode"`
+			Type   string `json:"type"`
+			Name   string `json:"name"`
+		}
+		if err := json.Unmarshal(res, &r); err != nil {
+			kept = append(kept, res)
 			continue
 		}
-		addr := r.Type + "." + r.Name
-		if r.Module != "" {
-			addr = r.Module + "." + addr
+		if obsoleteSet[r.Type] {
+			addr := r.Type + "." + r.Name
+			if r.Module != "" {
+				addr = r.Module + "." + addr
+			}
+			removedAddrs = append(removedAddrs, addr)
+		} else {
+			kept = append(kept, res)
 		}
-		addrs = append(addrs, addr)
 	}
-	if len(addrs) == 0 {
+
+	if len(removedAddrs) == 0 {
 		debugLogf(t, "RunStateRmForObsoleteTypes: no obsolete entries found in state")
 		return
 	}
 
-	// Find the terraform binary.
-	tfBin, err := exec.LookPath("terraform")
+	// Rebuild the resources JSON array with only the kept entries.
+	keptJSON, err := json.Marshal(kept)
 	if err != nil {
-		t.Errorf("RunStateRmForObsoleteTypes: terraform binary not found: %v", err)
+		t.Errorf("RunStateRmForObsoleteTypes: failed to marshal kept resources: %v", err)
+		return
+	}
+	rawState["resources"] = keptJSON
+
+	// Increment the serial so Terraform accepts the modified state.
+	var serial int64
+	if err := json.Unmarshal(rawState["serial"], &serial); err == nil {
+		serialJSON, _ := json.Marshal(serial + 1)
+		rawState["serial"] = serialJSON
+	}
+
+	// Write the modified state back to disk.
+	out, err := json.MarshalIndent(rawState, "", "  ")
+	if err != nil {
+		t.Errorf("RunStateRmForObsoleteTypes: failed to marshal modified state: %v", err)
+		return
+	}
+	if err := os.WriteFile(stateFile, out, 0600); err != nil {
+		t.Errorf("RunStateRmForObsoleteTypes: failed to write state file: %v", err)
 		return
 	}
 
-	// Run "terraform state rm -state=<path> <addr>" for each obsolete address.
-	// The -state flag means Terraform reads/writes the file directly without
-	// needing to initialise providers, so this works even with a stale .terraform dir.
-	for _, addr := range addrs {
-		args := []string{"state", "rm", "-state=" + stateFile, addr}
-		cmd := exec.Command(tfBin, args...)
-		cmd.Dir = workDir
-		if out, err := cmd.CombinedOutput(); err != nil {
-			t.Errorf("RunStateRmForObsoleteTypes: failed to remove %s: %v\n%s", addr, err, out)
-		} else {
-			debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
-		}
+	for _, addr := range removedAddrs {
+		debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
 	}
 }
 
