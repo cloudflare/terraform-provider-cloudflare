@@ -80,7 +80,7 @@ func TestMigrateBYOIPPrefix_Basic(t *testing.T) {
 	acctest.WriteOutConfig(t, testConfig, tmpDir)
 
 	// Run tf-migrate
-	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.5")
+	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.7")
 	acctest.RunMigrationV2Command(t, testConfig, tmpDir, sourceVer, targetVer)
 
 	// Verify migration results
@@ -108,7 +108,7 @@ func TestMigrateBYOIPPrefix_WithAdvertisement(t *testing.T) {
 
 	acctest.WriteOutConfig(t, testConfig, tmpDir)
 
-	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.5")
+	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.7")
 	acctest.RunMigrationV2Command(t, testConfig, tmpDir, sourceVer, targetVer)
 
 	verifyBYOIPPrefixMigration(t, tmpDir, accountID, true)
@@ -135,7 +135,7 @@ func TestMigrateBYOIPPrefix_Minimal(t *testing.T) {
 
 	acctest.WriteOutConfig(t, testConfig, tmpDir)
 
-	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.5")
+	sourceVer, targetVer := acctest.InferMigrationVersions("4.52.7")
 	acctest.RunMigrationV2Command(t, testConfig, tmpDir, sourceVer, targetVer)
 
 	verifyBYOIPPrefixMigration(t, tmpDir, accountID, false)
