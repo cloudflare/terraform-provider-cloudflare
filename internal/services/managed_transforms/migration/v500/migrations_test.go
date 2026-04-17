@@ -79,6 +79,7 @@ func TestMigrateManagedHeaders_Basic(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -152,6 +153,7 @@ func TestMigrateManagedHeaders_RequestOnly(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -216,6 +218,7 @@ func TestMigrateManagedHeaders_ResponseOnly(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -280,6 +283,7 @@ func TestMigrateManagedHeaders_Empty(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -346,6 +350,7 @@ func TestMigrateManagedHeaders_MultiVersion(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -510,6 +515,7 @@ func TestMigrateManagedHeaders_EdgeCases(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
+					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{

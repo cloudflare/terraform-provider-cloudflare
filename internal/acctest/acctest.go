@@ -14,6 +14,7 @@ import (
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/rulesets"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -108,6 +109,55 @@ func TestAccPreCheck_CleanZoneRulesets(t *testing.T) {
 	}
 	if err := iter.Err(); err != nil {
 		t.Logf("TestAccPreCheck_CleanZoneRulesets: failed to list rulesets: %v", err)
+	}
+}
+
+// TestAccPreCheck_CleanZoneManagedTransforms disables all managed header transforms on the test
+// zone. Because cloudflare_managed_transforms is a singleton per zone, tests that run in sequence
+// can see stale enabled/disabled state from previous tests. Call this from PreCheck in migration
+// tests for managed_transforms to ensure a clean starting state.
+func TestAccPreCheck_CleanZoneManagedTransforms(t *testing.T) {
+	t.Helper()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
+
+	ctx := context.Background()
+	client := SharedClient()
+
+	res, err := client.ManagedTransforms.List(ctx, managed_transforms.ManagedTransformListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneManagedTransforms: failed to list managed transforms: %v", err)
+		return
+	}
+
+	// Build lists with all headers disabled.
+	reqHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedRequestHeader, 0, len(res.ManagedRequestHeaders))
+	for _, h := range res.ManagedRequestHeaders {
+		reqHeaders = append(reqHeaders, managed_transforms.ManagedTransformEditParamsManagedRequestHeader{
+			ID:      cloudflare.F(h.ID),
+			Enabled: cloudflare.F(false),
+		})
+	}
+	respHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedResponseHeader, 0, len(res.ManagedResponseHeaders))
+	for _, h := range res.ManagedResponseHeaders {
+		respHeaders = append(respHeaders, managed_transforms.ManagedTransformEditParamsManagedResponseHeader{
+			ID:      cloudflare.F(h.ID),
+			Enabled: cloudflare.F(false),
+		})
+	}
+
+	_, err = client.ManagedTransforms.Edit(ctx, managed_transforms.ManagedTransformEditParams{
+		ZoneID:                 cloudflare.F(zoneID),
+		ManagedRequestHeaders:  cloudflare.F(reqHeaders),
+		ManagedResponseHeaders: cloudflare.F(respHeaders),
+	})
+	if err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneManagedTransforms: failed to disable managed transforms: %v", err)
 	}
 }
 
