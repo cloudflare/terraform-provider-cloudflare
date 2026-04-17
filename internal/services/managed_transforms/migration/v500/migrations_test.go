@@ -83,9 +83,6 @@ func TestMigrateManagedHeaders_Basic(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						// ExpectNonEmptyPlan allows API drift on step 1 (zone is shared; other tests
-						// may have enabled/disabled headers before this test runs).
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
@@ -159,7 +156,6 @@ func TestMigrateManagedHeaders_RequestOnly(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
@@ -224,7 +220,6 @@ func TestMigrateManagedHeaders_ResponseOnly(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
@@ -289,7 +284,6 @@ func TestMigrateManagedHeaders_Empty(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
@@ -356,7 +350,6 @@ func TestMigrateManagedHeaders_MultiVersion(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
@@ -521,7 +514,6 @@ func TestMigrateManagedHeaders_EdgeCases(t *testing.T) {
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
 					{
-						ExpectNonEmptyPlan: true,
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
