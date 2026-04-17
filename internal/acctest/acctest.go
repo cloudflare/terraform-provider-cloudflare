@@ -1235,53 +1235,12 @@ func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, e
 }
 
 // MigrationV2TestStepForManagedTransforms creates multiple test steps for cloudflare_managed_headers
-// migration to cloudflare_managed_transforms. After tf-migrate runs, removes
-// cloudflare_managed_headers state entries before terraform plan — the v5 provider has no schema
-// for this type and the state upgrade path requires the moved block to have been applied first.
+// migration to cloudflare_managed_transforms. tf-migrate produces a moved block that triggers the
+// v5 provider's MoveState handler on apply, converting the cloudflare_managed_headers state entry
+// to cloudflare_managed_transforms. This is identical to MigrationV2TestStepWithPlan — the helper
+// exists as a named alias so tests can signal their intent clearly.
 func MigrationV2TestStepForManagedTransforms(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
-	// Step 1: Run migration and remove the obsolete cloudflare_managed_headers state entry
-	migrationStep := resource.TestStep{
-		PreConfig: func() {
-			WriteOutConfig(t, v4Config, tmpDir)
-			debugLogf(t, "Running migration command for managed_transforms: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
-			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
-			RunStateRmForObsoleteTypes(t, tmpDir, []string{"cloudflare_managed_headers"})
-		},
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-	}
-
-	// Step 2: Run plan-only to process import blocks and normalize state
-	planStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		PlanOnly:                 true,
-	}
-
-	// Step 3: Verify final plan is clean and state is correct
-	var planChecks []plancheck.PlanCheck
-	if sourceVersion == "v4" {
-		planChecks = []plancheck.PlanCheck{
-			DebugNonEmptyPlan,
-			ExpectEmptyPlanExceptFalseyToNull,
-		}
-	} else {
-		planChecks = []plancheck.PlanCheck{
-			DebugNonEmptyPlan,
-			plancheck.ExpectEmptyPlan(),
-		}
-	}
-
-	validationStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		ConfigPlanChecks: resource.ConfigPlanChecks{
-			PreApply: planChecks,
-		},
-		ConfigStateChecks: stateChecks,
-	}
-
-	return []resource.TestStep{migrationStep, planStep, validationStep}
+	return MigrationV2TestStepWithPlan(t, v4Config, tmpDir, exactVersion, sourceVersion, targetVersion, stateChecks)
 }
 
 // InferMigrationVersions determines source and target versions from test provider version.
