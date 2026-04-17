@@ -214,13 +214,14 @@ func TestMigratePageRule_V4ToV5_CacheKeyFields(t *testing.T) {
 				),
 			}
 
-			// Use MigrationV2TestStepWithPlan (3-step: migrate → PlanOnly normalize → verify) because
+			// Use MigrationV2TestStepAllowCreate (2-step: migrate+apply → verify clean plan) because
 			// the Cloudflare API normalizes {exclude: ["utm_source"]} to {include: ["*"], exclude: ["utm_source"]},
-			// causing a non-empty plan after migration that resolves after a single plan/apply cycle.
+			// causing a non-empty plan after migration that is not a falsey-to-null change. Allowing the
+			// apply to proceed and then verifying a clean plan on step 2 is the correct approach.
 			resource.Test(t, resource.TestCase{
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{firstStep},
-					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...),
+					acctest.MigrationV2TestStepAllowCreate(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, stateChecks)...),
 			})
 		})
 	}
