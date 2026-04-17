@@ -218,6 +218,7 @@ jobs:
       CLOUDFLARE_API_KEY: ${{ secrets[matrix.test.api_key_secret] }}
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
       CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
+      CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS: ${{ matrix.test.name == 'email-routing' && matrix.test.email || '' }}
     steps:
       - uses: actions/checkout@v4
 

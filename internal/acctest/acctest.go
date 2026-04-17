@@ -196,6 +196,14 @@ func TestAccPreCheck_Email(t *testing.T) {
 	}
 }
 
+// Test helper method checking `CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS` is present.
+// This address must already be verified in the Cloudflare account under test.
+func TestAccPreCheck_EmailRoutingDestinationAddress(t *testing.T) {
+	if v := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey); v == "" {
+		t.Skipf("%s must be set for this acceptance test. The address must be pre-verified as an email routing destination in the account.", consts.EmailRoutingDestinationAddressEnvVarKey)
+	}
+}
+
 // Test helper method checking `CLOUDFLARE_API_KEY` is present.
 func TestAccPreCheck_APIKey(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
