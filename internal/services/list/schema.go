@@ -122,6 +122,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("redirect")),
 								ipValidator(),
 							},
+							PlanModifiers: []planmodifier.String{ipNormalizer()},
 						},
 						"redirect": schema.SingleNestedAttribute{
 							Description: "The definition of the redirect.",
