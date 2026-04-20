@@ -263,23 +263,21 @@ func buildV4ToV5MigrationTestSteps(
 	var importedState *terraform.InstanceState
 
 	return []resource.TestStep{
-		// Step 1: Import existing org with v5 to get real values
+		// Step 1: Import existing org with v5 to get real values.
+		// Use Config (not ConfigDirectory) with the local v5 provider to avoid the
+		// provider.tf written by WriteOutConfig (which pins ~> 4.52.7 and causes
+		// "provider does not support resource type" when combined with ProtoV6ProviderFactories).
 		{
-			PreConfig: func() {
-				// Write minimal v5 config for import
-				v5ImportConfig := fmt.Sprintf(`
+			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+			Config: fmt.Sprintf(`
 resource "cloudflare_zero_trust_organization" "test" {
   account_id = "%s"
 }
-`, accountID)
-				acctest.WriteOutConfig(t, v5ImportConfig, tmpDir)
-			},
-			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-			ConfigDirectory:          config.StaticDirectory(tmpDir),
-			ResourceName:             "cloudflare_zero_trust_organization.test",
-			ImportState:              true,
-			ImportStateId:            accountID,
-			ImportStateVerify:        false,
+`, accountID),
+			ResourceName:      "cloudflare_zero_trust_organization.test",
+			ImportState:       true,
+			ImportStateId:     accountID,
+			ImportStateVerify: false,
 			ImportStateCheck: func(states []*terraform.InstanceState) error {
 				if len(states) == 0 {
 					return fmt.Errorf("Zero Trust organization does not exist in account %s", accountID)
