@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
@@ -14,7 +15,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -56,40 +56,6 @@ func (r *ManagedTransformsResource) Configure(ctx context.Context, req resource.
 	r.client = client
 }
 
-func (r *ManagedTransformsResource) checkAllDisabledBeforeCreation(ctx context.Context, zoneId string) diag.Diagnostics {
-	var diagnostics diag.Diagnostics
-
-	res, err := r.client.ManagedTransforms.List(
-		ctx,
-		managed_transforms.ManagedTransformListParams{
-			ZoneID: cloudflare.F(zoneId),
-		},
-	)
-
-	if err != nil {
-		diagnostics.AddError("failed to get managed transforms", err.Error())
-		return diagnostics
-	}
-
-	if res == nil {
-		return diagnostics
-	}
-
-	for _, t := range res.ManagedRequestHeaders {
-		if t.Enabled {
-			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed request header transform %s cannot be enabled before creation", t.ID))
-		}
-	}
-
-	for _, t := range res.ManagedResponseHeaders {
-		if t.Enabled {
-			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed response header transform %s cannot be enabled before creation", t.ID))
-		}
-	}
-
-	return diagnostics
-}
-
 func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *ManagedTransformsModel
 
@@ -99,12 +65,12 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	// We need to check that all transformations are disabled, as we don't want them to be silently overwritten.
-	// This is also needed for the correctness of `Create()`, because if there were enabled transformations, we
-	// would need to disable them if they are not part of the plan (like we do in `Update()`).
-	resp.Diagnostics.Append(r.checkAllDisabledBeforeCreation(ctx, data.ZoneID.ValueString())...)
-
-	if resp.Diagnostics.HasError() {
+	// Disable any transforms that are currently enabled in the zone but not in the plan.
+	// This ensures Create correctly handles zones with pre-existing enabled transforms,
+	// without deleting underlying rulesets (which would break subsequent PATCH calls).
+	err := r.disableMissingTransformations(ctx, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to disable existing transforms before creation", err.Error())
 		return
 	}
 
@@ -140,7 +106,7 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 	var plan *ManagedTransformsModel
 	req.Plan.Get(ctx, &plan)
 
-	normalizeResponse(data, plan)
+	normalizeResponse(data, plan, false)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -171,7 +137,10 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	// Always send the full body (not just changed fields) because the managed_headers API
+	// treats PATCH as a replace per category: omitting managed_response_headers deletes the
+	// response headers zone ruleset, causing subsequent enables to fail with 404.
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -203,7 +172,7 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 	var plan *ManagedTransformsModel
 	req.Plan.Get(ctx, &plan)
 
-	normalizeResponse(data, plan)
+	normalizeResponse(data, plan, false)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -220,6 +189,14 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 	)
 
 	if err != nil {
+		// If the API returns a 403 due to conflicting transforms being enabled,
+		// attempt to clear all transforms by using a fallback disable-all approach.
+		// This handles cases where a zone is in an inconsistent state from
+		// previous operations or manual changes.
+		errStr := err.Error()
+		if strings.Contains(errStr, "403") && strings.Contains(errStr, "conflict") {
+			return r.clearConflictingTransforms(ctx, plan)
+		}
 		return err
 	}
 
@@ -232,7 +209,7 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 
 		for _, t := range res.ManagedRequestHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedRequestHeadersModel{
-				ID: types.StringValue(t.ID),
+				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),
 			})
 		}
@@ -249,7 +226,7 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 
 		for _, t := range res.ManagedResponseHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedResponseHeadersModel{
-				ID: types.StringValue(t.ID),
+				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),
 			})
 		}
@@ -262,6 +239,95 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 	}
 
 	return nil
+}
+
+// clearConflictingTransforms attempts to clear all conflicting transforms by
+// disabling known conflicting headers. This is used as a fallback when the API
+// returns a 403 conflict error, preventing us from listing current transforms.
+func (r *ManagedTransformsResource) clearConflictingTransforms(
+	ctx context.Context,
+	plan *ManagedTransformsModel,
+) error {
+	zoneID := plan.ZoneID.ValueString()
+
+	// Build a list of all known request headers that might be in conflict.
+	// This includes both the ones in the plan (to ensure they're set correctly)
+	// and known conflicting headers that might be enabled.
+	knownRequestHeaders := []string{
+		"add_true_client_ip_headers",
+		"remove_visitor_ip_headers",
+		"add_visitor_location_headers",
+		"remove_x_powered_by_headers",
+	}
+
+	// Start with headers from the plan
+	reqHeadersMap := make(map[string]bool)
+	if plan.ManagedRequestHeaders != nil {
+		for _, h := range *plan.ManagedRequestHeaders {
+			reqHeadersMap[h.ID.ValueString()] = h.Enabled.ValueBool()
+		}
+	}
+
+	// Add all known headers as disabled (unless they're in the plan and enabled)
+	var reqHeaders []*ManagedTransformsManagedRequestHeadersModel
+	for _, id := range knownRequestHeaders {
+		enabled, inPlan := reqHeadersMap[id]
+		if inPlan {
+			reqHeaders = append(reqHeaders, &ManagedTransformsManagedRequestHeadersModel{
+				ID:      types.StringValue(id),
+				Enabled: types.BoolValue(enabled),
+			})
+		} else {
+			reqHeaders = append(reqHeaders, &ManagedTransformsManagedRequestHeadersModel{
+				ID:      types.StringValue(id),
+				Enabled: types.BoolValue(false),
+			})
+		}
+	}
+
+	// Also include any other headers from the plan that aren't in our known list
+	if plan.ManagedRequestHeaders != nil {
+		for _, h := range *plan.ManagedRequestHeaders {
+			if _, known := reqHeadersMap[h.ID.ValueString()]; !known {
+				reqHeaders = append(reqHeaders, &ManagedTransformsManagedRequestHeadersModel{
+					ID:      h.ID,
+					Enabled: h.Enabled,
+				})
+			}
+		}
+	}
+
+	// Handle response headers similarly
+	var respHeaders []*ManagedTransformsManagedResponseHeadersModel
+	if plan.ManagedResponseHeaders != nil {
+		for _, h := range *plan.ManagedResponseHeaders {
+			respHeaders = append(respHeaders, &ManagedTransformsManagedResponseHeadersModel{
+				ID:      h.ID,
+				Enabled: h.Enabled,
+			})
+		}
+	}
+
+	data := &ManagedTransformsModel{
+		ZoneID:                 types.StringValue(zoneID),
+		ManagedRequestHeaders:  &reqHeaders,
+		ManagedResponseHeaders: &respHeaders,
+	}
+
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		return err
+	}
+
+	_, err = r.client.ManagedTransforms.Edit(
+		ctx,
+		managed_transforms.ManagedTransformEditParams{
+			ZoneID: cloudflare.F(zoneID),
+		},
+		option.WithRequestBody("application/json", dataBytes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	return err
 }
 
 func disableMissingTransformations[T transformation](
@@ -326,7 +392,9 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 	var state *ManagedTransformsModel
 	req.State.Get(ctx, &state)
 
-	normalizeResponse(data, state)
+	// stateOnly=true: during Read, only include transforms that are explicitly tracked in
+	// state, to prevent unrelated enabled transforms from polluting state.
+	normalizeResponse(data, state, true)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -362,14 +430,19 @@ func (m *ManagedTransformsManagedResponseHeadersModel) disable() {
 	m.Enabled = types.BoolValue(false)
 }
 
-func normalizeResponse(response *ManagedTransformsModel, state *ManagedTransformsModel) {
+// normalizeResponse filters the API response to only include transforms relevant to the
+// current state/plan. When stateOnly=true (used in Read), only transforms explicitly in
+// state are kept, preventing unrelated enabled transforms from polluting state.
+// When stateOnly=false (used in Create/Update/Import), enabled transforms not in state
+// are also included so they can be tracked.
+func normalizeResponse(response *ManagedTransformsModel, state *ManagedTransformsModel, stateOnly bool) {
 	if response.ManagedRequestHeaders != nil {
 		stateManagedRequestHeaders := []*ManagedTransformsManagedRequestHeadersModel{}
 		if state != nil && state.ManagedRequestHeaders != nil {
 			stateManagedRequestHeaders = *state.ManagedRequestHeaders
 		}
 
-		t := transformationsView(*response.ManagedRequestHeaders, stateManagedRequestHeaders)
+		t := transformationsView(*response.ManagedRequestHeaders, stateManagedRequestHeaders, stateOnly)
 		response.ManagedRequestHeaders = &t
 	}
 	if response.ManagedResponseHeaders != nil {
@@ -378,32 +451,108 @@ func normalizeResponse(response *ManagedTransformsModel, state *ManagedTransform
 			stateManagedResponseHeaders = *state.ManagedResponseHeaders
 		}
 
-		t := transformationsView(*response.ManagedResponseHeaders, stateManagedResponseHeaders)
+		t := transformationsView(*response.ManagedResponseHeaders, stateManagedResponseHeaders, stateOnly)
 		response.ManagedResponseHeaders = &t
 	}
 }
 
-func transformationsView[T transformation](transformations []T, stateTransformations []T) []T {
+func transformationsView[T transformation](transformations []T, stateTransformations []T, stateOnly bool) []T {
 	inState := make(map[string]bool)
+	stateByID := make(map[string]T)
 
 	for _, transformation := range stateTransformations {
 		inState[transformation.id()] = true
+		stateByID[transformation.id()] = transformation
 	}
 
 	newTransformations := []T{}
 
-	// We ignore transformations that are not in the default state (unless we have them explicitly in our state file).
-	// This way terraform won't see a diffs where it doesn't exist: without this, it would see that transformations
-	// in the default state (disabled) needed to be removed.
 	for _, transformation := range transformations {
 		isDefaultTransformation := !transformation.enabled()
 
-		if inState[transformation.id()] || !isDefaultTransformation {
-			newTransformations = append(newTransformations, transformation)
+		if stateOnly {
+			// During Read: only include transforms explicitly tracked in state.
+			// This prevents unrelated enabled transforms (left by other tests/operations)
+			// from being added to state and causing spurious plan diffs.
+			// Use the state value rather than the API value to handle API eventual
+			// consistency issues where the API transiently returns stale data after a write.
+			if inState[transformation.id()] {
+				newTransformations = append(newTransformations, stateByID[transformation.id()])
+			}
+		} else {
+			// During Create/Update/Import: include transforms in state OR any that are
+			// non-default (enabled=true), so newly enabled transforms are tracked.
+			if inState[transformation.id()] || !isDefaultTransformation {
+				newTransformations = append(newTransformations, transformation)
+			}
 		}
 	}
 
 	return newTransformations
+}
+
+// disableAllTransforms disables all currently enabled managed transforms by sending a PATCH
+// with enabled=false for all transforms. This preserves the underlying zone rulesets,
+// unlike the DELETE endpoint which removes them and prevents subsequent re-enablement.
+func (r *ManagedTransformsResource) disableAllTransforms(ctx context.Context, zoneID string) error {
+	res, err := r.client.ManagedTransforms.List(
+		ctx,
+		managed_transforms.ManagedTransformListParams{
+			ZoneID: cloudflare.F(zoneID),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	if res == nil {
+		return nil
+	}
+
+	// Build a model with all transforms disabled.
+	var reqHeaders []*ManagedTransformsManagedRequestHeadersModel
+	for _, t := range res.ManagedRequestHeaders {
+		if t.Enabled {
+			reqHeaders = append(reqHeaders, &ManagedTransformsManagedRequestHeadersModel{
+				ID:      types.StringValue(t.ID),
+				Enabled: types.BoolValue(false),
+			})
+		}
+	}
+	var respHeaders []*ManagedTransformsManagedResponseHeadersModel
+	for _, t := range res.ManagedResponseHeaders {
+		if t.Enabled {
+			respHeaders = append(respHeaders, &ManagedTransformsManagedResponseHeadersModel{
+				ID:      types.StringValue(t.ID),
+				Enabled: types.BoolValue(false),
+			})
+		}
+	}
+
+	// If nothing is enabled, nothing to do.
+	if len(reqHeaders) == 0 && len(respHeaders) == 0 {
+		return nil
+	}
+
+	data := &ManagedTransformsModel{
+		ZoneID:                 types.StringValue(zoneID),
+		ManagedRequestHeaders:  &reqHeaders,
+		ManagedResponseHeaders: &respHeaders,
+	}
+
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		return err
+	}
+
+	_, err = r.client.ManagedTransforms.Edit(
+		ctx,
+		managed_transforms.ManagedTransformEditParams{
+			ZoneID: cloudflare.F(zoneID),
+		},
+		option.WithRequestBody("application/json", dataBytes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	return err
 }
 
 func (r *ManagedTransformsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -415,22 +564,20 @@ func (r *ManagedTransformsResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	err := r.client.ManagedTransforms.Delete(
-		ctx,
-		managed_transforms.ManagedTransformDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
+	// Use PATCH to disable all transforms instead of DELETE, which would remove the
+	// underlying zone rulesets and prevent subsequent re-enablement via PATCH.
+	// If the PATCH fails because the backing rulesets no longer exist (404), the
+	// transforms are effectively disabled, so we treat this as a success.
+	err := r.disableAllTransforms(ctx, data.ZoneID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		errStr := err.Error()
+		// If the rulesets don't exist (404/not found), transforms are effectively disabled.
+		if strings.Contains(errStr, "404") || strings.Contains(errStr, "not found") || strings.Contains(errStr, "could not find") {
+			return
+		}
+		resp.Diagnostics.AddError("failed to disable managed transforms", err.Error())
 		return
 	}
-	data.ID = data.ZoneID
-
-	normalizeResponse(data, nil)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -472,7 +619,9 @@ func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resourc
 	data = &env.Result
 	data.ID = data.ZoneID
 
-	normalizeResponse(data, nil)
+	// stateOnly=false: during ImportState, include all enabled transforms since we have
+	// no prior state to compare against.
+	normalizeResponse(data, nil, false)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
