@@ -622,7 +622,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *ZeroTrustGatewayPolicyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+	resp.Schema = customResourceSchema(ctx)
 }
 
 func (r *ZeroTrustGatewayPolicyResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
