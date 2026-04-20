@@ -230,8 +230,13 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
       - name: Run ${{ matrix.test.display_name }} Tests
-        run: ./scripts/run-ci-tests ${{ matrix.test.name }} acceptance
+        run: TF_ACC_TERRAFORM_PATH=$(which terraform) ./scripts/run-ci-tests ${{ matrix.test.name }} acceptance
 
   check-results:
     name: Check Test Results
