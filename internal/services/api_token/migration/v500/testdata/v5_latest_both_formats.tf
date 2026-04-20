@@ -17,9 +17,7 @@ resource "cloudflare_api_token" "%[1]s" {
         id = "c8fed203ed3043cba015a93ad1616f1f"
       }]
       resources = jsonencode({
-        "com.cloudflare.api.account.%[2]s" = {
-          "com.cloudflare.api.account.zone.*" = "*"
-        }
+        "com.cloudflare.api.account.zone.*" = "*"
       })
     }
   ]
