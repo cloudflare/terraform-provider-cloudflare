@@ -206,6 +206,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"policy_id": schema.StringAttribute{
 				Computed: true,
 			},
+			"policy_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},

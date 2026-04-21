@@ -98,6 +98,7 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 }
 
 type WorkersScriptMetadataModel struct {
+	Annotations        *WorkersScriptMetadataAnnotationsModel      `tfsdk:"annotations" json:"annotations,optional"`
 	Assets             *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
 	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart           types.String                                                     `tfsdk:"body_part" json:"body_part,optional"`
@@ -114,6 +115,11 @@ type WorkersScriptMetadataModel struct {
 	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
 	TailConsumers customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	UsageModel    types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+}
+
+type WorkersScriptMetadataAnnotationsModel struct {
+	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,optional"`
+	WorkersTag     types.String `tfsdk:"workers_tag" json:"workers/tag,optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
