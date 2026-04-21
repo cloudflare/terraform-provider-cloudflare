@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -90,8 +91,48 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+		// Error code 20217: "exceeded maximum number of zone/account rulesets for phase X"
+		// This means a singleton entrypoint ruleset already exists for this phase (e.g. because
+		// WAF enrollment pre-creates it). Adopt the existing ruleset by finding it via the phase
+		// entrypoint GET and updating it in-place instead of creating a new one.
+		if strings.Contains(err.Error(), "20217") || strings.Contains(err.Error(), "WAF enrollment is required") {
+			existingID, findErr := r.findExistingRulesetForPhase(ctx, data)
+			if findErr != nil {
+				resp.Diagnostics.AddError("failed to make http request", err.Error())
+				resp.Diagnostics.AddError("failed to find existing ruleset for phase", findErr.Error())
+				return
+			}
+			data.ID = types.StringValue(existingID)
+			// Use the phase entrypoint PUT endpoint instead of the regular ruleset PUT.
+			// The regular PUT enforces that the name matches the locked entrypoint name
+			// ("default"), whereas the entrypoint endpoint accepts any name and updates
+			// only the rules/description.
+			// The phase entrypoint endpoint does not accept "kind" or "phase" in the request body.
+			phaseUpdateBody, _ := sjson.Delete(string(dataBytes), "kind")
+			phaseUpdateBody, _ = sjson.Delete(phaseUpdateBody, "phase")
+			phaseUpdateParams := rulesets.PhaseUpdateParams{}
+			if !data.AccountID.IsNull() {
+				phaseUpdateParams.AccountID = cloudflare.F(data.AccountID.ValueString())
+			} else {
+				phaseUpdateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+			}
+			res = new(http.Response)
+			_, err = r.client.Rulesets.Phases.Update(
+				ctx,
+				rulesets.Phase(data.Phase.ValueString()),
+				phaseUpdateParams,
+				option.WithRequestBody("application/json", []byte(phaseUpdateBody)),
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to make http request", err.Error())
+				return
+			}
+		} else {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
 	}
 	bytes, _ := io.ReadAll(res.Body)
 	bytes = transformQueryStringJSON(bytes)
@@ -103,6 +144,25 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// findExistingRulesetForPhase fetches the phase entrypoint ruleset and returns its ID.
+// Used as a fallback when Create returns a singleton-phase conflict (error 20217 or
+// "WAF enrollment is required"), meaning the entrypoint already exists and we should
+// adopt it via Update rather than trying to create a new one.
+func (r *RulesetResource) findExistingRulesetForPhase(ctx context.Context, data *RulesetModel) (string, error) {
+	getParams := rulesets.PhaseGetParams{}
+	if !data.AccountID.IsNull() {
+		getParams.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		getParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+	phase := rulesets.Phase(data.Phase.ValueString())
+	existing, err := r.client.Rulesets.Phases.Get(ctx, phase, getParams)
+	if err != nil {
+		return "", fmt.Errorf("no existing ruleset found for phase %q: %w", data.Phase.ValueString(), err)
+	}
+	return existing.ID, nil
 }
 
 func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -142,8 +202,36 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+		// The API rejects name changes on singleton phase entrypoint rulesets
+		// ("the name field cannot be modified: got X, want default"). Fall back to
+		// the phase entrypoint PUT endpoint which accepts any name.
+		// The phase entrypoint endpoint does not accept "kind" or "phase" in the request body.
+		if strings.Contains(err.Error(), "name field cannot be modified") {
+			phaseUpdateBody, _ := sjson.Delete(string(dataBytes), "kind")
+			phaseUpdateBody, _ = sjson.Delete(phaseUpdateBody, "phase")
+			phaseUpdateParams := rulesets.PhaseUpdateParams{}
+			if !data.AccountID.IsNull() {
+				phaseUpdateParams.AccountID = cloudflare.F(data.AccountID.ValueString())
+			} else {
+				phaseUpdateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+			}
+			res = new(http.Response)
+			_, err = r.client.Rulesets.Phases.Update(
+				ctx,
+				rulesets.Phase(data.Phase.ValueString()),
+				phaseUpdateParams,
+				option.WithRequestBody("application/json", []byte(phaseUpdateBody)),
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to make http request", err.Error())
+				return
+			}
+		} else {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
 	}
 	bytes, _ := io.ReadAll(res.Body)
 	bytes = transformQueryStringJSON(bytes)

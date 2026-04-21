@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -87,9 +88,79 @@ func init() {
 	})
 }
 
+// deletePhaseEntrypoints deletes existing phase entrypoint rulesets of the given kind (KindZone
+// or KindRoot) for the given phases. This is needed before tests that create phase entrypoints,
+// because the API rejects creation with error 20217 if an entrypoint for that phase already exists.
+func deletePhaseEntrypoints(t *testing.T, kind rulesets.Kind, listParams rulesets.RulesetListParams, deleteParams rulesets.RulesetDeleteParams, phases ...rulesets.Phase) {
+	t.Helper()
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	iter := client.Rulesets.ListAutoPaging(ctx, listParams)
+	wantPhase := make(map[rulesets.Phase]bool, len(phases))
+	for _, p := range phases {
+		wantPhase[p] = true
+	}
+	for iter.Next() {
+		r := iter.Current()
+		if r.Kind == kind && wantPhase[r.Phase] {
+			p := deleteParams
+			if err := client.Rulesets.Delete(ctx, r.ID, p); err != nil {
+				t.Logf("deletePhaseEntrypoints: warning deleting %s/%s (%s): %s", kind, r.Phase, r.ID, err)
+			}
+		}
+	}
+	if err := iter.Err(); err != nil {
+		t.Logf("deletePhaseEntrypoints: warning listing rulesets: %s", err)
+	}
+}
+
+// deleteAllZonePhaseEntrypoints deletes all existing kind=zone phase entrypoint rulesets on the
+// test zone. Called in the PreCheck of every test that creates zone phase entrypoints so that
+// leftover entrypoints from prior tests don't cause error 20217.
+func deleteAllZonePhaseEntrypoints(t *testing.T) {
+	t.Helper()
+	if zoneID == "" {
+		return
+	}
+	deletePhaseEntrypoints(t,
+		rulesets.KindZone,
+		rulesets.RulesetListParams{ZoneID: cloudflare.F(zoneID)},
+		rulesets.RulesetDeleteParams{ZoneID: cloudflare.F(zoneID)},
+		rulesets.PhaseHTTPRequestFirewallCustom,
+		rulesets.PhaseHTTPRequestFirewallManaged,
+		rulesets.PhaseDDoSL7,
+		rulesets.PhaseHTTPConfigSettings,
+		rulesets.PhaseHTTPCustomErrors,
+		rulesets.PhaseHTTPLogCustomFields,
+		rulesets.PhaseHTTPRatelimit,
+		rulesets.PhaseHTTPRequestCacheSettings,
+		rulesets.PhaseHTTPRequestDynamicRedirect,
+		rulesets.PhaseHTTPRequestLateTransform,
+		rulesets.PhaseHTTPRequestOrigin,
+		rulesets.PhaseHTTPRequestRedirect,
+		rulesets.PhaseHTTPRequestSanitize,
+		rulesets.PhaseHTTPRequestSBFM,
+		rulesets.PhaseHTTPRequestTransform,
+		rulesets.PhaseHTTPResponseCompression,
+		rulesets.PhaseHTTPResponseFirewallManaged,
+		rulesets.PhaseHTTPResponseHeadersTransform,
+		rulesets.PhaseHTTPResponseCacheSettings,
+	)
+}
+
 func TestAccCloudflareRulesets(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+			deletePhaseEntrypoints(t,
+				rulesets.KindRoot,
+				rulesets.RulesetListParams{AccountID: cloudflare.F(accountID)},
+				rulesets.RulesetDeleteParams{AccountID: cloudflare.F(accountID)},
+				rulesets.PhaseHTTPRequestFirewallCustom,
+				rulesets.PhaseHTTPRequestFirewallManaged,
+			)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -208,7 +279,10 @@ func TestAccCloudflareRulesets(t *testing.T) {
 
 func TestAccCloudflareRuleset_Kind(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -275,7 +349,10 @@ func TestAccCloudflareRuleset_Kind(t *testing.T) {
 
 func TestAccCloudflareRuleset_Name(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -340,9 +417,40 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 	})
 }
 
+// ensureWAFEnrollment attempts to advance the zone's WAF migration state so that the rulesets
+// engine accepts creates/updates for the http_request_firewall_managed phase without returning
+// "WAF enrollment is required". It tries the known migration states in order; errors are logged
+// as warnings because the zone may already be at a later state where earlier transitions are
+// no longer accepted.
+func ensureWAFEnrollment(t *testing.T) {
+	t.Helper()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	params := rulesets.PhaseUpdateParams{
+		ZoneID: cloudflare.F(zoneID),
+		Rules:  cloudflare.F([]rulesets.PhaseUpdateParamsRuleUnion{}),
+	}
+	for _, state := range []string{"start", "pending"} {
+		// Errors are expected if the zone is already at or past this migration state.
+		client.Rulesets.Phases.Update( //nolint:errcheck
+			ctx,
+			rulesets.PhaseHTTPRequestFirewallManaged,
+			params,
+			option.WithQuery("waf_migration", state),
+		)
+	}
+}
+
 func TestAccCloudflareRuleset_Phase(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -409,7 +517,10 @@ func TestAccCloudflareRuleset_Phase(t *testing.T) {
 
 func TestAccCloudflareRuleset_Description(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -497,7 +608,10 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 
 func TestAccCloudflareRuleset_Rules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -556,7 +670,10 @@ func TestAccCloudflareRuleset_Rules(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesActionParameters(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -635,7 +752,10 @@ func TestAccCloudflareRuleset_RulesActionParameters(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesDescription(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -755,7 +875,10 @@ func TestAccCloudflareRuleset_RulesDescription(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesEnabled(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -875,7 +998,10 @@ func TestAccCloudflareRuleset_RulesEnabled(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesExposedCredentialCheck(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -984,7 +1110,10 @@ func TestAccCloudflareRuleset_RulesExposedCredentialCheck(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1120,7 +1249,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 	t.Run("modify", func(t *testing.T) {
 		t.Run("action", func(t *testing.T) {
 			resource.Test(t, resource.TestCase{
-				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
@@ -1242,7 +1374,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 
 		t.Run("expression", func(t *testing.T) {
 			resource.Test(t, resource.TestCase{
-				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
@@ -1367,7 +1502,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 
 		t.Run("id", func(t *testing.T) {
 			resource.Test(t, resource.TestCase{
-				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
@@ -1498,7 +1636,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 
 func TestAccCloudflareRuleset_RulesRatelimit(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1738,7 +1879,10 @@ func TestAccCloudflareRuleset_RulesRatelimit(t *testing.T) {
 func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 	t.Run("add", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -1895,7 +2039,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 	t.Run("append", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -2052,7 +2199,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 	t.Run("modify", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -2191,7 +2341,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 	t.Run("remove", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -2315,7 +2468,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 	t.Run("reverse", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -2454,7 +2610,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 	t.Run("truncate", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
-			PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+			PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
@@ -2579,7 +2738,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 
 func TestAccCloudflareRuleset_LastUpdated(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -2644,7 +2806,10 @@ func TestAccCloudflareRuleset_LastUpdated(t *testing.T) {
 
 func TestAccCloudflareRuleset_Version(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -2709,7 +2874,10 @@ func TestAccCloudflareRuleset_Version(t *testing.T) {
 
 func TestAccCloudflareRuleset_BlockRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -2830,7 +2998,10 @@ func TestAccCloudflareRuleset_BlockRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_ChallengeRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -2962,7 +3133,10 @@ func TestAccCloudflareRuleset_ChallengeRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_CompressResponseRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -3103,9 +3277,13 @@ func TestAccCloudflareRuleset_CompressResponseRules(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_ExecuteRules(t *testing.T) {
-	t.Skip("FIXME: skip test; WAF enrollment is required for http_request_firewall_managed phase but is not available in the test environment")
+	t.Skip("FIXME: skip test; WAF subscription is required for http_request_firewall_managed execute rules but is not available in the test environment")
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+			ensureWAFEnrollment(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -3646,7 +3824,10 @@ func TestAccCloudflareRuleset_ExecuteRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_LogRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -3696,7 +3877,10 @@ func TestAccCloudflareRuleset_LogRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_LogCustomFieldRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -3943,7 +4127,10 @@ func TestAccCloudflareRuleset_LogCustomFieldRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_RedirectRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -4213,7 +4400,10 @@ func TestAccCloudflareRuleset_RedirectRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -5082,7 +5272,10 @@ func TestAccCloudflareRuleset_RouteRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_ServeErrorRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -5209,7 +5402,10 @@ func TestAccCloudflareRuleset_ServeErrorRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -6604,7 +6800,10 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 func TestAccCloudflareRuleset_SetConfigRules(t *testing.T) {
 	t.Skip(`FIXME: skip test due to feature deprecations; mirage and disable_apps are deprecated, but have suddenly EOL'd`)
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -7224,7 +7423,10 @@ func TestAccCloudflareRuleset_SetConfigRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_SkipRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -7458,7 +7660,10 @@ func TestAccCloudflareRuleset_SkipRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_SetCacheControlRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -7911,7 +8116,10 @@ func TestAccCloudflareRuleset_SetCacheControlRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_SetCacheTagsRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			deleteAllZonePhaseEntrypoints(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
