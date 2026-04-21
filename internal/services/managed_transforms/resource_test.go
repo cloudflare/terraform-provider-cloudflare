@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"os"
 	"strconv"
@@ -68,10 +69,103 @@ func testSweepCloudflareManagedTransforms(r string) error {
 }
 
 func cleanup(t *testing.T) {
-	err := testSweepCloudflareManagedTransforms("")
+	ctx := context.Background()
+	client := acctest.SharedClient()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
 
+	// List current transforms to find which are enabled.
+	current, err := client.ManagedTransforms.List(ctx, managed_transforms.ManagedTransformListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
 	if err != nil {
-		t.Fatal("failed to cleanup resource for testing")
+		// If the API returns 403 due to conflicting transforms, try to clear all known transforms.
+		// This handles cases where previous test runs left conflicting transforms enabled.
+		errStr := err.Error()
+		if strings.Contains(errStr, "403") && strings.Contains(errStr, "conflict") {
+			tflog.Warn(ctx, fmt.Sprintf("cleanup: detected conflicting transforms, attempting to clear: %s", err))
+			clearAllTransforms(ctx, client, zoneID)
+			return
+		}
+		// Log but don't fail - disableMissingTransformations in Create will handle pre-existing state.
+		tflog.Warn(ctx, fmt.Sprintf("cleanup: failed to list managed transforms: %s", err))
+		return
+	}
+
+	// Build PATCH body with all enabled transforms set to false.
+	// Using PATCH (not DELETE) preserves underlying zone rulesets so they can be re-enabled later.
+	var reqHeaders []managed_transforms.ManagedTransformEditParamsManagedRequestHeader
+	for _, h := range current.ManagedRequestHeaders {
+		if h.Enabled {
+			reqHeaders = append(reqHeaders, managed_transforms.ManagedTransformEditParamsManagedRequestHeader{
+				ID:      cloudflare.F(h.ID),
+				Enabled: cloudflare.F(false),
+			})
+		}
+	}
+	var respHeaders []managed_transforms.ManagedTransformEditParamsManagedResponseHeader
+	for _, h := range current.ManagedResponseHeaders {
+		if h.Enabled {
+			respHeaders = append(respHeaders, managed_transforms.ManagedTransformEditParamsManagedResponseHeader{
+				ID:      cloudflare.F(h.ID),
+				Enabled: cloudflare.F(false),
+			})
+		}
+	}
+
+	if len(reqHeaders) == 0 && len(respHeaders) == 0 {
+		return // Nothing to disable
+	}
+
+	// Ensure non-nil slices for the API call.
+	if reqHeaders == nil {
+		reqHeaders = []managed_transforms.ManagedTransformEditParamsManagedRequestHeader{}
+	}
+	if respHeaders == nil {
+		respHeaders = []managed_transforms.ManagedTransformEditParamsManagedResponseHeader{}
+	}
+
+	_, err = client.ManagedTransforms.Edit(ctx, managed_transforms.ManagedTransformEditParams{
+		ZoneID:                 cloudflare.F(zoneID),
+		ManagedRequestHeaders:  cloudflare.F(reqHeaders),
+		ManagedResponseHeaders: cloudflare.F(respHeaders),
+	})
+	if err != nil {
+		// Log but don't fail - disableMissingTransformations in Create will handle pre-existing state.
+		tflog.Warn(ctx, fmt.Sprintf("cleanup: failed to disable managed transforms: %s", err))
+	}
+}
+
+// clearAllTransforms attempts to disable all known managed transforms.
+// This is used as a fallback when the List API returns 403 due to conflicts.
+func clearAllTransforms(ctx context.Context, client *cloudflare.Client, zoneID string) {
+	// List of all known request headers that might be enabled
+	knownRequestHeaders := []string{
+		"add_true_client_ip_headers",
+		"remove_visitor_ip_headers",
+		"add_visitor_location_headers",
+		"remove_x_powered_by_headers",
+	}
+
+	// Build PATCH body with all known transforms disabled
+	var reqHeaders []managed_transforms.ManagedTransformEditParamsManagedRequestHeader
+	for _, id := range knownRequestHeaders {
+		reqHeaders = append(reqHeaders, managed_transforms.ManagedTransformEditParamsManagedRequestHeader{
+			ID:      cloudflare.F(id),
+			Enabled: cloudflare.F(false),
+		})
+	}
+
+	_, err := client.ManagedTransforms.Edit(ctx, managed_transforms.ManagedTransformEditParams{
+		ZoneID:                cloudflare.F(zoneID),
+		ManagedRequestHeaders: cloudflare.F(reqHeaders),
+		// Response headers - empty array to disable all
+		ManagedResponseHeaders: cloudflare.F([]managed_transforms.ManagedTransformEditParamsManagedResponseHeader{}),
+	})
+	if err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("cleanup: failed to clear conflicting transforms: %s", err))
 	}
 }
 
