@@ -778,7 +778,7 @@ func TestMigrateAPITokenFromV5_4_BothResourceFormats(t *testing.T) {
 			{ExternalProviders: map[string]resource.ExternalProvider{"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "5.4.0"}}, Config: fmt.Sprintf(v5EarlyBothFormatsConfig, rnd, accountID), ExpectNonEmptyPlan: true},
 			{ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories, Config: fmt.Sprintf(v5LatestBothFormatsConfig, rnd, accountID), ConfigStateChecks: []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("resources"), knownvalue.StringExact(fmt.Sprintf(`{"com.cloudflare.api.account.%s":"*"}`, accountID))),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("resources"), knownvalue.StringExact(fmt.Sprintf(`{"com.cloudflare.api.account.%s":{"com.cloudflare.api.account.zone.*":"*"}}`, accountID))),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("resources"), knownvalue.StringExact(`{"com.cloudflare.api.account.zone.*":"*"}`)),
 			}},
 		},
 	})
