@@ -104,8 +104,15 @@ type AISearchInstanceIndexingOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceMetadataDataSourceModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,computed"`
+	CreatedFromAISearchWizard types.Bool                                                                       `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
+	SearchForAgents           customfield.NestedObject[AISearchInstanceMetadataSearchForAgentsDataSourceModel] `tfsdk:"search_for_agents" json:"search_for_agents,computed"`
+	WorkerDomain              types.String                                                                     `tfsdk:"worker_domain" json:"worker_domain,computed"`
+}
+
+type AISearchInstanceMetadataSearchForAgentsDataSourceModel struct {
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
+	ZoneID   types.String `tfsdk:"zone_id" json:"zone_id,computed"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed"`
 }
 
 type AISearchInstancePublicEndpointParamsDataSourceModel struct {

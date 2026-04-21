@@ -76,8 +76,15 @@ type AISearchInstanceCustomMetadataModel struct {
 }
 
 type AISearchInstanceMetadataModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
+	CreatedFromAISearchWizard types.Bool                                    `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
+	SearchForAgents           *AISearchInstanceMetadataSearchForAgentsModel `tfsdk:"search_for_agents" json:"search_for_agents,optional"`
+	WorkerDomain              types.String                                  `tfsdk:"worker_domain" json:"worker_domain,optional"`
+}
+
+type AISearchInstanceMetadataSearchForAgentsModel struct {
+	Hostname types.String `tfsdk:"hostname" json:"hostname,required"`
+	ZoneID   types.String `tfsdk:"zone_id" json:"zone_id,required"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,required"`
 }
 
 type AISearchInstanceIndexMethodModel struct {

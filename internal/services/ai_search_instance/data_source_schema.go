@@ -312,6 +312,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Computed: true,
 					},
+					"search_for_agents": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[AISearchInstanceMetadataSearchForAgentsDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"hostname": schema.StringAttribute{
+								Computed: true,
+							},
+							"zone_id": schema.StringAttribute{
+								Computed: true,
+							},
+							"zone_name": schema.StringAttribute{
+								Computed: true,
+							},
+						},
+					},
 					"worker_domain": schema.StringAttribute{
 						Computed: true,
 					},
@@ -419,7 +434,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'. Legacy values 'exact_match' and 'fuzzy_match' are accepted and map to 'and' and 'or' respectively.\nAvailable values: \"and\", \"or\".",
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("and", "or"),
