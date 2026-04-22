@@ -34,6 +34,7 @@ env:
   CLOUDFLARE_BYO_IP_ASN: 13335
   CLOUDFLARE_BYO_IP_LOA_DOCUMENT_ID: 5ea1802a15394e649c157d0a25051d41
   CLOUDFLARE_BYO_IP_PREFIX_ID: a64cba4d4b764793ad6208410a652e74
+  CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS: terraform-provider-acct@cloudflare.com
 
 jobs:
   acceptance-tests:
@@ -218,7 +219,6 @@ jobs:
       CLOUDFLARE_API_KEY: ${{ secrets[matrix.test.api_key_secret] }}
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
       CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
-      CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS: ${{ matrix.test.name == 'email-routing' && matrix.test.email || '' }}
     steps:
       - uses: actions/checkout@v4
 
