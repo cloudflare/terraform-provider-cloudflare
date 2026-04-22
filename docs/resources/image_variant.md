@@ -40,34 +40,11 @@ resource "cloudflare_image_variant" "example_image_variant" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 
 <a id="nestedatt--options"></a>
 ### Nested Schema for `options`
 
 Required:
-
-- `fit` (String) The fit property describes how the width and height dimensions should be interpreted.
-Available values: "scale-down", "contain", "cover", "crop", "pad".
-- `height` (Number) Maximum height in image pixels.
-- `metadata` (String) What EXIF data should be preserved in the output image.
-Available values: "keep", "copyright", "none".
-- `width` (Number) Maximum width in image pixels.
-
-
-<a id="nestedatt--variant"></a>
-### Nested Schema for `variant`
-
-Read-Only:
-
-- `id` (String)
-- `never_require_signed_urls` (Boolean) Indicates whether the variant can access an image without a signature, regardless of image access control.
-- `options` (Attributes) Allows you to define image resizing sizes for different use cases. (see [below for nested schema](#nestedatt--variant--options))
-
-<a id="nestedatt--variant--options"></a>
-### Nested Schema for `variant.options`
-
-Read-Only:
 
 - `fit` (String) The fit property describes how the width and height dimensions should be interpreted.
 Available values: "scale-down", "contain", "cover", "crop", "pad".
@@ -83,5 +60,3 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_image_variant.example '<account_id>/<variant_id>'
 ```
-
-

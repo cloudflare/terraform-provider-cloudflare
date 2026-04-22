@@ -51,5 +51,3 @@ Available values: "scale-down", "contain", "cover", "crop", "pad".
 - `metadata` (String) What EXIF data should be preserved in the output image.
 Available values: "keep", "copyright", "none".
 - `width` (Number) Maximum width in image pixels.
-
-
