@@ -5,7 +5,7 @@ resource "cloudflare_queue" "test_queue" {
 
 resource "cloudflare_workers_script" "worker_script" {
   account_id  = "%[5]s"
-  script_name = "test-worker"
+  script_name = "test-worker-%[3]s"
   bindings = [
     {
       type       = "queue"
