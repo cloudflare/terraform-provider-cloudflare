@@ -248,11 +248,11 @@ func TestAccPreCheck_CrowdStrike(t *testing.T) {
 // are present.
 func TestAccPreCheck_Pages(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
-		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test.")
+		t.Skip("Skipping acceptance test as CLOUDFLARE_PAGES_OWNER is not set.")
 	}
 
 	if v := os.Getenv("CLOUDFLARE_PAGES_REPO"); v == "" {
-		t.Fatal("CLOUDFLARE_PAGES_REPO must be set for this acceptance test.")
+		t.Skip("Skipping acceptance test as CLOUDFLARE_PAGES_REPO is not set.")
 	}
 }
 
