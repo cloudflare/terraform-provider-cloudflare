@@ -68,9 +68,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"content_bots_protection": schema.StringAttribute{
-				Description: "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
 				},
