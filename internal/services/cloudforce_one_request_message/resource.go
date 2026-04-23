@@ -64,6 +64,12 @@ func (r *CloudforceOneRequestMessageResource) Create(ctx context.Context, req re
 		return
 	}
 
+	params := cloudforce_one.RequestMessageNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *CloudforceOneRequestMessageResource) Create(ctx context.Context, req re
 	_, err = r.client.CloudforceOne.Requests.Message.New(
 		ctx,
 		data.RequestID.ValueString(),
-		cloudforce_one.RequestMessageNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *CloudforceOneRequestMessageResource) Update(ctx context.Context, req re
 		return
 	}
 
+	params := cloudforce_one.RequestMessageUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -124,9 +134,7 @@ func (r *CloudforceOneRequestMessageResource) Update(ctx context.Context, req re
 		ctx,
 		data.RequestID.ValueString(),
 		data.ID.ValueInt64(),
-		cloudforce_one.RequestMessageUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *CloudforceOneRequestMessageResource) Read(ctx context.Context, req reso
 		return
 	}
 
+	params := cloudforce_one.RequestMessageGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := CloudforceOneRequestMessageResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Message.Get(
 		ctx,
 		data.RequestID.ValueString(),
-		cloudforce_one.RequestMessageGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -195,13 +207,17 @@ func (r *CloudforceOneRequestMessageResource) Delete(ctx context.Context, req re
 		return
 	}
 
+	params := cloudforce_one.RequestMessageDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.CloudforceOne.Requests.Message.Delete(
 		ctx,
 		data.RequestID.ValueString(),
 		data.ID.ValueInt64(),
-		cloudforce_one.RequestMessageDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

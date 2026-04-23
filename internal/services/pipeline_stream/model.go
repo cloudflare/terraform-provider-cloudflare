@@ -15,7 +15,7 @@ type PipelineStreamResultEnvelope struct {
 
 type PipelineStreamModel struct {
 	ID            types.String                                               `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	Name          types.String                                               `tfsdk:"name" json:"name,required"`
 	Format        *PipelineStreamFormatModel                                 `tfsdk:"format" json:"format,optional"`
 	Schema        *PipelineStreamSchemaModel                                 `tfsdk:"schema" json:"schema,optional"`

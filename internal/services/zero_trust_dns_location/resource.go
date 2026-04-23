@@ -64,6 +64,12 @@ func (r *ZeroTrustDNSLocationResource) Create(ctx context.Context, req resource.
 		return
 	}
 
+	params := zero_trust.GatewayLocationNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZeroTrustDNSLocationResource) Create(ctx context.Context, req resource.
 	env := ZeroTrustDNSLocationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Locations.New(
 		ctx,
-		zero_trust.GatewayLocationNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *ZeroTrustDNSLocationResource) Update(ctx context.Context, req resource.
 		return
 	}
 
+	params := zero_trust.GatewayLocationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZeroTrustDNSLocationResource) Update(ctx context.Context, req resource.
 	_, err = r.client.ZeroTrust.Gateway.Locations.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.GatewayLocationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *ZeroTrustDNSLocationResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
+	params := zero_trust.GatewayLocationGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDNSLocationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Locations.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.GatewayLocationGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *ZeroTrustDNSLocationResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
+	params := zero_trust.GatewayLocationDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Gateway.Locations.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.GatewayLocationDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

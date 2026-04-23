@@ -12,7 +12,7 @@ type ZeroTrustRiskBehaviorResultEnvelope struct {
 }
 
 type ZeroTrustRiskBehaviorModel struct {
-	AccountID types.String                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Behaviors *map[string]ZeroTrustRiskBehaviorBehaviorsModel `tfsdk:"behaviors" json:"behaviors,required"`
 }
 

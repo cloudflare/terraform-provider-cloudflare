@@ -5,6 +5,7 @@ package stream_caption_language
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,11 +16,13 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamCaptionLanguageDataSou
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Required:    true,
@@ -27,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"language": schema.StringAttribute{
 				Description: "The language tag in BCP 47 format.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"generated": schema.BoolAttribute{
 				Description: "Whether the caption was generated via AI.",

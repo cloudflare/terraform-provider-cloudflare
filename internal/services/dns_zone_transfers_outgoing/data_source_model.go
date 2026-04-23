@@ -18,7 +18,7 @@ type DNSZoneTransfersOutgoingResultDataSourceEnvelope struct {
 
 type DNSZoneTransfersOutgoingDataSourceModel struct {
 	ID                  types.String                  `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID              types.String                  `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID              types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	CheckedTime         types.String                  `tfsdk:"checked_time" json:"checked_time,computed"`
 	CreatedTime         types.String                  `tfsdk:"created_time" json:"created_time,computed"`
 	LastTransferredTime types.String                  `tfsdk:"last_transferred_time" json:"last_transferred_time,computed"`
@@ -28,8 +28,10 @@ type DNSZoneTransfersOutgoingDataSourceModel struct {
 }
 
 func (m *DNSZoneTransfersOutgoingDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferOutgoingGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferOutgoingGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = dns.ZoneTransferOutgoingGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

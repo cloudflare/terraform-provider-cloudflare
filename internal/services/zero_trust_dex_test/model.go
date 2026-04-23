@@ -15,7 +15,7 @@ type ZeroTrustDEXTestResultEnvelope struct {
 type ZeroTrustDEXTestModel struct {
 	ID             types.String                                                      `tfsdk:"id" json:"-,computed"`
 	TestID         types.String                                                      `tfsdk:"test_id" json:"test_id,computed"`
-	AccountID      types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Enabled        types.Bool                                                        `tfsdk:"enabled" json:"enabled,required"`
 	Interval       types.String                                                      `tfsdk:"interval" json:"interval,required"`
 	Name           types.String                                                      `tfsdk:"name" json:"name,required"`

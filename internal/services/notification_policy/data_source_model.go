@@ -20,7 +20,7 @@ type NotificationPolicyResultDataSourceEnvelope struct {
 type NotificationPolicyDataSourceModel struct {
 	ID            types.String                                                          `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID      types.String                                                          `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	AlertInterval types.String                                                          `tfsdk:"alert_interval" json:"alert_interval,computed"`
 	AlertType     types.String                                                          `tfsdk:"alert_type" json:"alert_type,computed"`
 	Created       timetypes.RFC3339                                                     `tfsdk:"created" json:"created,computed" format:"date-time"`
@@ -33,8 +33,10 @@ type NotificationPolicyDataSourceModel struct {
 }
 
 func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (params alerting.PolicyGetParams, diags diag.Diagnostics) {
-	params = alerting.PolicyGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = alerting.PolicyGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

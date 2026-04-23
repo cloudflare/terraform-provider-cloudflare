@@ -14,7 +14,7 @@ type ZeroTrustNetworkHostnameRouteResultEnvelope struct {
 
 type ZeroTrustNetworkHostnameRouteModel struct {
 	ID         types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Comment    types.String      `tfsdk:"comment" json:"comment,optional"`
 	Hostname   types.String      `tfsdk:"hostname" json:"hostname,optional"`
 	TunnelID   types.String      `tfsdk:"tunnel_id" json:"tunnel_id,optional"`

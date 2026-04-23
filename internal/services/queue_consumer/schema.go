@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,16 +21,23 @@ var _ resource.ResourceWithConfigValidators = (*QueueConsumerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Queues Read",
+				"Queues Write",
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"queue_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"queue_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"consumer_id": schema.StringAttribute{

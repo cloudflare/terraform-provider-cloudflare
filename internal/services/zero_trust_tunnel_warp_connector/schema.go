@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -22,7 +23,14 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelWARPConnectorReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloudflare One Connector: WARP Read",
+				"Cloudflare One Connector: WARP Write",
+				"Cloudflare One Connectors Read",
+				"Cloudflare One Connectors Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID of the tunnel.",
@@ -31,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Cloudflare account ID",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ha": schema.BoolAttribute{

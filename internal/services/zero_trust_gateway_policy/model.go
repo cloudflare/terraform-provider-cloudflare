@@ -15,7 +15,7 @@ type ZeroTrustGatewayPolicyResultEnvelope struct {
 
 type ZeroTrustGatewayPolicyModel struct {
 	ID            types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,optional"`
@@ -98,6 +98,7 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 	Printing types.String `tfsdk:"printing" json:"printing,optional"`
 	Upload   types.String `tfsdk:"upload" json:"upload,optional"`
 	Version  types.String `tfsdk:"version" json:"version,computed_optional"`
+	WmID     types.String `tfsdk:"wm_id" json:"wm_id,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBlockPageModel struct {

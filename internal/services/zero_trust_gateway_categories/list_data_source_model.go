@@ -17,14 +17,16 @@ type ZeroTrustGatewayCategoriesListResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayCategoriesListDataSourceModel struct {
-	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustGatewayCategoriesListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustGatewayCategoriesListDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayCategoryListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayCategoryListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayCategoryListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

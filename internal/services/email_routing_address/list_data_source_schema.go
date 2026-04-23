@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -18,10 +19,16 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingAddressesDataSou
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Email Routing Addresses Read",
+				"Email Routing Addresses Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Sorts results in an ascending or descending order.\nAvailable values: \"asc\", \"desc\".",

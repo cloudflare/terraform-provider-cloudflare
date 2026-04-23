@@ -5,6 +5,7 @@ package email_routing_catch_all
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,7 +20,12 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingCatchAllResource)(ni
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Email Routing Rules Read",
+				"Email Routing Rules Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",

@@ -5,6 +5,7 @@ package workers_custom_domain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -15,7 +16,12 @@ var _ resource.ResourceWithConfigValidators = (*WorkersCustomDomainResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Immutable ID of the domain.",
@@ -24,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostname": schema.StringAttribute{

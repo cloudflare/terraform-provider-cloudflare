@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,6 +19,12 @@ var _ datasource.DataSourceWithConfigValidators = (*DNSFirewallDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"DNS Firewall Read",
+				"DNS Firewall Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier.",
@@ -29,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"deprecate_any_requests": schema.BoolAttribute{
 				Description: "Whether to refuse to answer queries for the ANY type",

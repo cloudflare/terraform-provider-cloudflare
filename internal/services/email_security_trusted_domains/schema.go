@@ -5,6 +5,7 @@ package email_security_trusted_domains
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -18,7 +19,12 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityTrustedDomainsResou
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloud Email Security: Read",
+				"Cloud Email Security: Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "The unique identifier for the trusted domain.",
@@ -27,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account Identifier",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"body": schema.ListNestedAttribute{

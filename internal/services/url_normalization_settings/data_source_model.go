@@ -17,14 +17,16 @@ type URLNormalizationSettingsResultDataSourceEnvelope struct {
 
 type URLNormalizationSettingsDataSourceModel struct {
 	ID     types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Scope  types.String `tfsdk:"scope" json:"scope,computed"`
 	Type   types.String `tfsdk:"type" json:"type,computed"`
 }
 
 func (m *URLNormalizationSettingsDataSourceModel) toReadParams(_ context.Context) (params url_normalization.URLNormalizationGetParams, diags diag.Diagnostics) {
-	params = url_normalization.URLNormalizationGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = url_normalization.URLNormalizationGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

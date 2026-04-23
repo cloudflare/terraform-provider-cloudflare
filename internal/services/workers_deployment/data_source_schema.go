@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -18,6 +19,13 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersDeploymentDataSource)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -25,13 +33,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"deployment_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
-			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"author_email": schema.StringAttribute{
 				Computed: true,
@@ -55,7 +63,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
-						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
+						Description: "Human-readable message about the deployment. Truncated to 1000 bytes if longer.",
 						Computed:    true,
 					},
 					"workers_triggered_by": schema.StringAttribute{

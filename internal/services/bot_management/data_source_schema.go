@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -16,6 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*BotManagementDataSource)(nil
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Bot Management Read",
+				"Bot Management Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier.",
@@ -23,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"ai_bots_protection": schema.StringAttribute{
 				Description: "Enable rule to block AI Scrapers and Crawlers. Please note the value `only_on_ad_pages` is currently not available for Enterprise customers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
@@ -49,6 +56,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("off", "policy_only"),
+				},
+			},
+			"content_bots_protection": schema.StringAttribute{
+				Description: "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
 				},
 			},
 			"crawler_protection": schema.StringAttribute{

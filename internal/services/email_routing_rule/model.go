@@ -13,7 +13,7 @@ type EmailRoutingRuleResultEnvelope struct {
 
 type EmailRoutingRuleModel struct {
 	ID       types.String                      `tfsdk:"id" json:"id,computed"`
-	ZoneID   types.String                      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Actions  *[]*EmailRoutingRuleActionsModel  `tfsdk:"actions" json:"actions,required"`
 	Matchers *[]*EmailRoutingRuleMatchersModel `tfsdk:"matchers" json:"matchers,required"`
 	Name     types.String                      `tfsdk:"name" json:"name,optional"`

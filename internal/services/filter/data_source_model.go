@@ -18,7 +18,7 @@ type FilterResultDataSourceEnvelope struct {
 type FilterDataSourceModel struct {
 	ID          types.String                    `tfsdk:"id" path:"filter_id,computed"`
 	FilterID    types.String                    `tfsdk:"filter_id" path:"filter_id,optional"`
-	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                    `tfsdk:"description" json:"description,computed"`
 	Expression  types.String                    `tfsdk:"expression" json:"expression,computed"`
 	Paused      types.Bool                      `tfsdk:"paused" json:"paused,computed"`
@@ -27,18 +27,21 @@ type FilterDataSourceModel struct {
 }
 
 func (m *FilterDataSourceModel) toReadParams(_ context.Context) (params filters.FilterGetParams, diags diag.Diagnostics) {
-	params = filters.FilterGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = filters.FilterGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *FilterDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
-	params = filters.FilterListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = filters.FilterListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

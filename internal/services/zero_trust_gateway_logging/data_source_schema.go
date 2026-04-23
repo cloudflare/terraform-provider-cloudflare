@@ -19,7 +19,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"redact_pii": schema.BoolAttribute{
 				Description: "Indicate whether to redact personally identifiable information from activity logging (PII fields include source IP, user email, user ID, device ID, URL, referrer, and user agent).",

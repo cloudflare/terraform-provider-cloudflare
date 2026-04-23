@@ -19,7 +19,7 @@ type ZeroTrustDevicePostureRuleResultDataSourceEnvelope struct {
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
 	ID          types.String                                                                 `tfsdk:"id" path:"rule_id,computed"`
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	Expiration  types.String                                                                 `tfsdk:"expiration" json:"expiration,computed"`
 	Name        types.String                                                                 `tfsdk:"name" json:"name,computed"`
@@ -30,8 +30,10 @@ type ZeroTrustDevicePostureRuleDataSourceModel struct {
 }
 
 func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePostureGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
@@ -68,6 +70,7 @@ type ZeroTrustDevicePostureRuleInputDataSourceModel struct {
 	SensorConfig            types.String                                                                      `tfsdk:"sensor_config" json:"sensor_config,computed"`
 	State                   types.String                                                                      `tfsdk:"state" json:"state,computed"`
 	VersionOperator         types.String                                                                      `tfsdk:"version_operator" json:"versionOperator,computed"`
+	AuthState               customfield.List[types.String]                                                    `tfsdk:"auth_state" json:"auth_state,computed"`
 	CountOperator           types.String                                                                      `tfsdk:"count_operator" json:"countOperator,computed"`
 	IssueCount              types.String                                                                      `tfsdk:"issue_count" json:"issue_count,computed"`
 	EidLastSeen             types.String                                                                      `tfsdk:"eid_last_seen" json:"eid_last_seen,computed"`

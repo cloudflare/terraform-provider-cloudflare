@@ -18,11 +18,12 @@ type BotManagementResultDataSourceEnvelope struct {
 
 type BotManagementDataSourceModel struct {
 	ID                           types.String                                                                 `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
 	AIBotsProtection             types.String                                                                 `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed"`
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
 	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`
 	CfRobotsVariant              types.String                                                                 `tfsdk:"cf_robots_variant" json:"cf_robots_variant,computed"`
+	ContentBotsProtection        types.String                                                                 `tfsdk:"content_bots_protection" json:"content_bots_protection,computed"`
 	CrawlerProtection            types.String                                                                 `tfsdk:"crawler_protection" json:"crawler_protection,computed"`
 	EnableJS                     types.Bool                                                                   `tfsdk:"enable_js" json:"enable_js,computed"`
 	FightMode                    types.Bool                                                                   `tfsdk:"fight_mode" json:"fight_mode,computed"`
@@ -38,8 +39,10 @@ type BotManagementDataSourceModel struct {
 }
 
 func (m *BotManagementDataSourceModel) toReadParams(_ context.Context) (params bot_management.BotManagementGetParams, diags diag.Diagnostics) {
-	params = bot_management.BotManagementGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = bot_management.BotManagementGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

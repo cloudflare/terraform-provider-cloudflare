@@ -17,7 +17,7 @@ type WorkersCustomDomainsResultListDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainsDataSourceModel struct {
-	AccountID   types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	Environment types.String                                                            `tfsdk:"environment" query:"environment,optional"`
 	Hostname    types.String                                                            `tfsdk:"hostname" query:"hostname,optional"`
 	Service     types.String                                                            `tfsdk:"service" query:"service,optional"`
@@ -28,10 +28,11 @@ type WorkersCustomDomainsDataSourceModel struct {
 }
 
 func (m *WorkersCustomDomainsDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
-	params = workers.DomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = workers.DomainListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Environment.IsNull() {
 		params.Environment = cloudflare.F(m.Environment.ValueString())
 	}

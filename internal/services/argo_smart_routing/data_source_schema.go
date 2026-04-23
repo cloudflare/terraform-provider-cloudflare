@@ -5,6 +5,7 @@ package argo_smart_routing
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -16,6 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*ArgoSmartRoutingDataSource)(
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Zone Settings Read",
+				"Zone Settings Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Specifies the zone associated with the API call.",
@@ -23,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Specifies the zone associated with the API call.",
-				Required:    true,
+				Optional:    true,
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Specifies if the setting is editable.",

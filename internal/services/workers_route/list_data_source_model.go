@@ -17,14 +17,16 @@ type WorkersRoutesResultListDataSourceEnvelope struct {
 }
 
 type WorkersRoutesDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[WorkersRoutesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersRoutesDataSourceModel) toListParams(_ context.Context) (params workers.RouteListParams, diags diag.Diagnostics) {
-	params = workers.RouteListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = workers.RouteListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

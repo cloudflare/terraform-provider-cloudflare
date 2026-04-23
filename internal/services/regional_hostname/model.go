@@ -15,7 +15,7 @@ type RegionalHostnameResultEnvelope struct {
 type RegionalHostnameModel struct {
 	ID        types.String      `tfsdk:"id" json:"-,computed"`
 	Hostname  types.String      `tfsdk:"hostname" json:"hostname,required"`
-	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Routing   types.String      `tfsdk:"routing" json:"routing,computed_optional"`
 	RegionKey types.String      `tfsdk:"region_key" json:"region_key,required"`
 	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

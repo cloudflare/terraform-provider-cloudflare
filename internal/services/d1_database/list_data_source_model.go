@@ -18,17 +18,18 @@ type D1DatabasesResultListDataSourceEnvelope struct {
 }
 
 type D1DatabasesDataSourceModel struct {
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	Name      types.String                                                   `tfsdk:"name" query:"name,optional"`
 	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[D1DatabasesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *D1DatabasesDataSourceModel) toListParams(_ context.Context) (params d1.DatabaseListParams, diags diag.Diagnostics) {
-	params = d1.DatabaseListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = d1.DatabaseListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}

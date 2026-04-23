@@ -64,6 +64,12 @@ func (r *SSOConnectorResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	params := iam.SSONewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *SSOConnectorResource) Create(ctx context.Context, req resource.CreateRe
 	env := SSOConnectorResultEnvelope{*data}
 	_, err = r.client.IAM.SSO.New(
 		ctx,
-		iam.SSONewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *SSOConnectorResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	params := iam.SSOUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *SSOConnectorResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.IAM.SSO.Update(
 		ctx,
 		data.ID.ValueString(),
-		iam.SSOUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *SSOConnectorResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	params := iam.SSOGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := SSOConnectorResultEnvelope{*data}
 	_, err := r.client.IAM.SSO.Get(
 		ctx,
 		data.ID.ValueString(),
-		iam.SSOGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *SSOConnectorResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	params := iam.SSODeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.IAM.SSO.Delete(
 		ctx,
 		data.ID.ValueString(),
-		iam.SSODeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

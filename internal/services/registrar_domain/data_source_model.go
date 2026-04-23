@@ -16,13 +16,15 @@ type RegistrarDomainResultDataSourceEnvelope struct {
 }
 
 type RegistrarDomainDataSourceModel struct {
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
 }
 
 func (m *RegistrarDomainDataSourceModel) toReadParams(_ context.Context) (params registrar.DomainGetParams, diags diag.Diagnostics) {
-	params = registrar.DomainGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = registrar.DomainGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

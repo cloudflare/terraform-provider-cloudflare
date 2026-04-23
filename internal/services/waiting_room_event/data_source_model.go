@@ -20,7 +20,7 @@ type WaitingRoomEventDataSourceModel struct {
 	ID                    types.String      `tfsdk:"id" path:"event_id,computed"`
 	EventID               types.String      `tfsdk:"event_id" path:"event_id,required"`
 	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn             timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML        types.String      `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
 	Description           types.String      `tfsdk:"description" json:"description,computed"`
@@ -41,8 +41,10 @@ type WaitingRoomEventDataSourceModel struct {
 }
 
 func (m *WaitingRoomEventDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.EventGetParams, diags diag.Diagnostics) {
-	params = waiting_rooms.EventGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = waiting_rooms.EventGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

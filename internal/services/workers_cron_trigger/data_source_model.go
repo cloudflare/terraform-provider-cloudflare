@@ -19,13 +19,15 @@ type WorkersCronTriggerResultDataSourceEnvelope struct {
 type WorkersCronTriggerDataSourceModel struct {
 	ID         types.String                                                             `tfsdk:"id" path:"script_name,computed"`
 	ScriptName types.String                                                             `tfsdk:"script_name" path:"script_name,required"`
-	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 func (m *WorkersCronTriggerDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptScheduleGetParams, diags diag.Diagnostics) {
-	params = workers.ScriptScheduleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.ScriptScheduleGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

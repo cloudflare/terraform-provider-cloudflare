@@ -19,7 +19,7 @@ type EmailRoutingAddressResultDataSourceEnvelope struct {
 type EmailRoutingAddressDataSourceModel struct {
 	ID                           types.String                                 `tfsdk:"id" path:"destination_address_identifier,computed"`
 	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier,optional"`
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Created                      timetypes.RFC3339                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Email                        types.String                                 `tfsdk:"email" json:"email,computed"`
 	Modified                     timetypes.RFC3339                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
@@ -29,18 +29,21 @@ type EmailRoutingAddressDataSourceModel struct {
 }
 
 func (m *EmailRoutingAddressDataSourceModel) toReadParams(_ context.Context) (params email_routing.AddressGetParams, diags diag.Diagnostics) {
-	params = email_routing.AddressGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = email_routing.AddressGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *EmailRoutingAddressDataSourceModel) toListParams(_ context.Context) (params email_routing.AddressListParams, diags diag.Diagnostics) {
-	params = email_routing.AddressListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = email_routing.AddressListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_routing.AddressListParamsDirection(m.Filter.Direction.ValueString()))
 	}

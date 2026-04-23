@@ -64,6 +64,12 @@ func (r *EmailRoutingCatchAllResource) Create(ctx context.Context, req resource.
 		return
 	}
 
+	params := email_routing.RuleCatchAllUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *EmailRoutingCatchAllResource) Create(ctx context.Context, req resource.
 	env := EmailRoutingCatchAllResultEnvelope{*data}
 	_, err = r.client.EmailRouting.Rules.CatchAlls.Update(
 		ctx,
-		email_routing.RuleCatchAllUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.
 		return
 	}
 
+	params := email_routing.RuleCatchAllUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.
 	env := EmailRoutingCatchAllResultEnvelope{*data}
 	_, err = r.client.EmailRouting.Rules.CatchAlls.Update(
 		ctx,
-		email_routing.RuleCatchAllUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,13 +162,17 @@ func (r *EmailRoutingCatchAllResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
+	params := email_routing.RuleCatchAllGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := EmailRoutingCatchAllResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Rules.CatchAlls.Get(
 		ctx,
-		email_routing.RuleCatchAllGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

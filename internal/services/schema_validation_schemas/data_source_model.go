@@ -19,7 +19,7 @@ type SchemaValidationSchemasResultDataSourceEnvelope struct {
 type SchemaValidationSchemasDataSourceModel struct {
 	ID                types.String                                     `tfsdk:"id" path:"schema_id,computed"`
 	SchemaID          types.String                                     `tfsdk:"schema_id" path:"schema_id,computed_optional"`
-	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	OmitSource        types.Bool                                       `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	CreatedAt         timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String                                     `tfsdk:"kind" json:"kind,computed"`
@@ -30,10 +30,11 @@ type SchemaValidationSchemasDataSourceModel struct {
 }
 
 func (m *SchemaValidationSchemasDataSourceModel) toReadParams(_ context.Context) (params schema_validation.SchemaGetParams, diags diag.Diagnostics) {
-	params = schema_validation.SchemaGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = schema_validation.SchemaGetParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.OmitSource.IsNull() {
 		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}
@@ -42,10 +43,11 @@ func (m *SchemaValidationSchemasDataSourceModel) toReadParams(_ context.Context)
 }
 
 func (m *SchemaValidationSchemasDataSourceModel) toListParams(_ context.Context) (params schema_validation.SchemaListParams, diags diag.Diagnostics) {
-	params = schema_validation.SchemaListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = schema_validation.SchemaListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.OmitSource.IsNull() {
 		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}

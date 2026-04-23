@@ -14,7 +14,7 @@ import (
 
 type EmailRoutingDNSDataSourceModel struct {
 	ID         types.String                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	Subdomain  types.String                                                         `tfsdk:"subdomain" query:"subdomain,optional"`
 	Success    types.Bool                                                           `tfsdk:"success" json:"success,computed"`
 	Errors     customfield.NestedObjectList[EmailRoutingDNSErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`
@@ -24,10 +24,11 @@ type EmailRoutingDNSDataSourceModel struct {
 }
 
 func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params email_routing.DNSGetParams, diags diag.Diagnostics) {
-	params = email_routing.DNSGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = email_routing.DNSGetParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Subdomain.IsNull() {
 		params.Subdomain = cloudflare.F(m.Subdomain.ValueString())
 	}

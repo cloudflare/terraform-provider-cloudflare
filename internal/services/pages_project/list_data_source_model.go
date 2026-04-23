@@ -18,14 +18,16 @@ type PagesProjectsResultListDataSourceEnvelope struct {
 }
 
 type PagesProjectsDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[PagesProjectsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PagesProjectsDataSourceModel) toListParams(_ context.Context) (params pages.ProjectListParams, diags diag.Diagnostics) {
-	params = pages.ProjectListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pages.ProjectListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

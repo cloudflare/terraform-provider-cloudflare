@@ -64,6 +64,12 @@ func (r *HealthcheckResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
+	params := healthchecks.HealthcheckNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *HealthcheckResource) Create(ctx context.Context, req resource.CreateReq
 	env := HealthcheckResultEnvelope{*data}
 	_, err = r.client.Healthchecks.New(
 		ctx,
-		healthchecks.HealthcheckNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *HealthcheckResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
+	params := healthchecks.HealthcheckUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *HealthcheckResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Healthchecks.Update(
 		ctx,
 		data.ID.ValueString(),
-		healthchecks.HealthcheckUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *HealthcheckResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	params := healthchecks.HealthcheckGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := HealthcheckResultEnvelope{*data}
 	_, err := r.client.Healthchecks.Get(
 		ctx,
 		data.ID.ValueString(),
-		healthchecks.HealthcheckGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *HealthcheckResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
+	params := healthchecks.HealthcheckDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Healthchecks.Delete(
 		ctx,
 		data.ID.ValueString(),
-		healthchecks.HealthcheckDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

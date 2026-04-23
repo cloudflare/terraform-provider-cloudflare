@@ -64,6 +64,12 @@ func (r *ZeroTrustDEXRuleResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := zero_trust.DEXRuleNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZeroTrustDEXRuleResource) Create(ctx context.Context, req resource.Crea
 	env := ZeroTrustDEXRuleResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DEX.Rules.New(
 		ctx,
-		zero_trust.DEXRuleNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *ZeroTrustDEXRuleResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := zero_trust.DEXRuleUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZeroTrustDEXRuleResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.ZeroTrust.DEX.Rules.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DEXRuleUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *ZeroTrustDEXRuleResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := zero_trust.DEXRuleGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustDEXRuleResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DEX.Rules.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DEXRuleGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *ZeroTrustDEXRuleResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	params := zero_trust.DEXRuleDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.DEX.Rules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.DEXRuleDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

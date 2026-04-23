@@ -20,13 +20,15 @@ type MagicWANGRETunnelResultDataSourceEnvelope struct {
 type MagicWANGRETunnelDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" path:"gre_tunnel_id,computed"`
 	GRETunnelID types.String                                                        `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,required"`
-	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	GRETunnel   customfield.NestedObject[MagicWANGRETunnelGRETunnelDataSourceModel] `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 
 func (m *MagicWANGRETunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.GRETunnelGetParams, diags diag.Diagnostics) {
-	params = magic_transit.GRETunnelGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = magic_transit.GRETunnelGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -13,7 +13,7 @@ type DNSZoneTransfersOutgoingResultEnvelope struct {
 
 type DNSZoneTransfersOutgoingModel struct {
 	ID                  types.String    `tfsdk:"id" json:"id,computed"`
-	ZoneID              types.String    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID              types.String    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name                types.String    `tfsdk:"name" json:"name,required"`
 	Peers               *[]types.String `tfsdk:"peers" json:"peers,required"`
 	CheckedTime         types.String    `tfsdk:"checked_time" json:"checked_time,computed"`

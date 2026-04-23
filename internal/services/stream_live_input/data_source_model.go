@@ -19,8 +19,8 @@ type StreamLiveInputResultDataSourceEnvelope struct {
 }
 
 type StreamLiveInputDataSourceModel struct {
-	AccountID                types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
 	LiveInputIdentifier      types.String                                                           `tfsdk:"live_input_identifier" path:"live_input_identifier,required"`
+	AccountID                types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Created                  timetypes.RFC3339                                                      `tfsdk:"created" json:"created,computed" format:"date-time"`
 	DeleteRecordingAfterDays types.Float64                                                          `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,computed"`
 	Enabled                  types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
@@ -38,8 +38,10 @@ type StreamLiveInputDataSourceModel struct {
 }
 
 func (m *StreamLiveInputDataSourceModel) toReadParams(_ context.Context) (params stream.LiveInputGetParams, diags diag.Diagnostics) {
-	params = stream.LiveInputGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = stream.LiveInputGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

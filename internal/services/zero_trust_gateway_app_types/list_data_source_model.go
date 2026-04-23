@@ -18,14 +18,16 @@ type ZeroTrustGatewayAppTypesListResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayAppTypesListDataSourceModel struct {
-	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustGatewayAppTypesListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustGatewayAppTypesListDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayAppTypeListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayAppTypeListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayAppTypeListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

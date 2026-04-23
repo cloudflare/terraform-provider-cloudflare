@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "tcp", "http".`,

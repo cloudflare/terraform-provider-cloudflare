@@ -64,6 +64,12 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Create(ctx context.Context, req 
 		return
 	}
 
+	params := zero_trust.NetworkHostnameRouteNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Create(ctx context.Context, req 
 	env := ZeroTrustNetworkHostnameRouteResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Networks.HostnameRoutes.New(
 		ctx,
-		zero_trust.NetworkHostnameRouteNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Update(ctx context.Context, req 
 		return
 	}
 
+	params := zero_trust.NetworkHostnameRouteEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Update(ctx context.Context, req 
 	_, err = r.client.ZeroTrust.Networks.HostnameRoutes.Edit(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.NetworkHostnameRouteEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Read(ctx context.Context, req re
 		return
 	}
 
+	params := zero_trust.NetworkHostnameRouteGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustNetworkHostnameRouteResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Networks.HostnameRoutes.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.NetworkHostnameRouteGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *ZeroTrustNetworkHostnameRouteResource) Delete(ctx context.Context, req 
 		return
 	}
 
+	params := zero_trust.NetworkHostnameRouteDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Networks.HostnameRoutes.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.NetworkHostnameRouteDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

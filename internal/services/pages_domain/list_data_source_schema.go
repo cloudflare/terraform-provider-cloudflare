@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -17,14 +18,20 @@ var _ datasource.DataSourceWithConfigValidators = (*PagesDomainsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Pages Read",
+				"Pages Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

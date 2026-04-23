@@ -33,6 +33,13 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams(_ context.
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
@@ -43,6 +50,12 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams(_ context.
 func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams(_ context.Context) (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.SCIMEnabled.IsNull() {
 		params.SCIMEnabled = cloudflare.F(m.Filter.SCIMEnabled.ValueString())
 	}

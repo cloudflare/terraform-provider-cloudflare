@@ -29,6 +29,13 @@ func (m *CustomPageAssetsDataSourceModel) toListParams(_ context.Context) (param
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}

@@ -35,6 +35,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	Default                    types.Bool                                                                      `tfsdk:"default" json:"default,computed"`
 	Enabled                    types.Bool                                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	GatewayUniqueID            types.String                                                                    `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
+	PolicyID                   types.String                                                                    `tfsdk:"policy_id" json:"policy_id,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileFallbackDomainsModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
 }
 

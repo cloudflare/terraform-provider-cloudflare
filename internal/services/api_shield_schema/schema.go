@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,14 +22,22 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldSchemaResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version:            500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account API Gateway",
+				"Account API Gateway Read",
+				"Domain API Gateway",
+				"Domain API Gateway Read",
+			},
+		}.String(),
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_schemas` resource instead",
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Required:      true,
+			"schema_id": schema.StringAttribute{
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"schema_id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

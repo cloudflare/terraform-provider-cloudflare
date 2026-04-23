@@ -16,8 +16,8 @@ type WorkflowResultEnvelope struct {
 type WorkflowModel struct {
 	ID                types.String                                     `tfsdk:"id" json:"-,computed"`
 	Name              types.String                                     `tfsdk:"name" json:"name,computed"`
-	AccountID         types.String                                     `tfsdk:"account_id" path:"account_id,required"`
 	WorkflowName      types.String                                     `tfsdk:"workflow_name" path:"workflow_name,required"`
+	AccountID         types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ClassName         types.String                                     `tfsdk:"class_name" json:"class_name,required"`
 	ScriptName        types.String                                     `tfsdk:"script_name" json:"script_name,required"`
 	Limits            *WorkflowLimitsModel                             `tfsdk:"limits" json:"limits,optional,no_refresh"`

@@ -20,7 +20,7 @@ type CertificatePackResultDataSourceEnvelope struct {
 type CertificatePackDataSourceModel struct {
 	ID                   types.String                                                                     `tfsdk:"id" path:"certificate_pack_id,computed"`
 	CertificatePackID    types.String                                                                     `tfsdk:"certificate_pack_id" path:"certificate_pack_id,optional"`
-	ZoneID               types.String                                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID               types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CertificateAuthority types.String                                                                     `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CloudflareBranding   types.Bool                                                                       `tfsdk:"cloudflare_branding" json:"cloudflare_branding,computed"`
 	PrimaryCertificate   types.String                                                                     `tfsdk:"primary_certificate" json:"primary_certificate,computed"`
@@ -37,18 +37,21 @@ type CertificatePackDataSourceModel struct {
 }
 
 func (m *CertificatePackDataSourceModel) toReadParams(_ context.Context) (params ssl.CertificatePackGetParams, diags diag.Diagnostics) {
-	params = ssl.CertificatePackGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = ssl.CertificatePackGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *CertificatePackDataSourceModel) toListParams(_ context.Context) (params ssl.CertificatePackListParams, diags diag.Diagnostics) {
-	params = ssl.CertificatePackListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = ssl.CertificatePackListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.Deploy.IsNull() {
 		params.Deploy = cloudflare.F(ssl.CertificatePackListParamsDeploy(m.Filter.Deploy.ValueString()))
 	}

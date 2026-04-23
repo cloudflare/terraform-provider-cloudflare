@@ -18,14 +18,16 @@ type ZeroTrustGatewayLoggingResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewayLoggingDataSourceModel struct {
 	ID                 types.String                                                                       `tfsdk:"id" path:"account_id,computed"`
-	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	RedactPii          types.Bool                                                                         `tfsdk:"redact_pii" json:"redact_pii,computed"`
 	SettingsByRuleType customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeDataSourceModel] `tfsdk:"settings_by_rule_type" json:"settings_by_rule_type,computed"`
 }
 
 func (m *ZeroTrustGatewayLoggingDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayLoggingGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLoggingGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayLoggingGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

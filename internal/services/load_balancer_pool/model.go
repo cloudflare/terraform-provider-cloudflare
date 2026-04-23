@@ -14,26 +14,26 @@ type LoadBalancerPoolResultEnvelope struct {
 }
 
 type LoadBalancerPoolModel struct {
-	ID                 types.String                             `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                             `tfsdk:"account_id" path:"account_id,required"`
-	Name               types.String                             `tfsdk:"name" json:"name,required"`
-	Origins            *[]*LoadBalancerPoolOriginsModel         `tfsdk:"origins" json:"origins,required"`
-	Latitude           types.Float64                            `tfsdk:"latitude" json:"latitude,optional"`
-	Longitude          types.Float64                            `tfsdk:"longitude" json:"longitude,optional"`
-	Monitor            types.String                             `tfsdk:"monitor" json:"monitor,optional"`
-	MonitorGroup       types.String                             `tfsdk:"monitor_group" json:"monitor_group,optional"`
-	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions,optional"`
-	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding,optional"`
-	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter,optional"`
-	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering,optional"`
-	Description        types.String                             `tfsdk:"description" json:"description,computed_optional"`
-	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
-	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
-	NotificationEmail  types.String                             `tfsdk:"notification_email" json:"notification_email,computed_optional"`
-	CreatedOn          types.String                             `tfsdk:"created_on" json:"created_on,computed"`
-	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
-	ModifiedOn         types.String                             `tfsdk:"modified_on" json:"modified_on,computed"`
-	Networks           customfield.List[types.String]           `tfsdk:"networks" json:"networks,computed"`
+	ID                 types.String                                                      `tfsdk:"id" json:"id,computed"`
+	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	Name               types.String                                                      `tfsdk:"name" json:"name,required"`
+	Origins            *[]*LoadBalancerPoolOriginsModel                                  `tfsdk:"origins" json:"origins,required"`
+	Latitude           types.Float64                                                     `tfsdk:"latitude" json:"latitude,optional"`
+	Longitude          types.Float64                                                     `tfsdk:"longitude" json:"longitude,optional"`
+	Monitor            types.String                                                      `tfsdk:"monitor" json:"monitor,optional"`
+	MonitorGroup       types.String                                                      `tfsdk:"monitor_group" json:"monitor_group,optional"`
+	CheckRegions       *[]types.String                                                   `tfsdk:"check_regions" json:"check_regions,optional"`
+	Description        types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
+	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	MinimumOrigins     types.Int64                                                       `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
+	NotificationEmail  types.String                                                      `tfsdk:"notification_email" json:"notification_email,computed_optional"`
+	LoadShedding       customfield.NestedObject[LoadBalancerPoolLoadSheddingModel]       `tfsdk:"load_shedding" json:"load_shedding,computed_optional"`
+	NotificationFilter customfield.NestedObject[LoadBalancerPoolNotificationFilterModel] `tfsdk:"notification_filter" json:"notification_filter,computed_optional"`
+	OriginSteering     customfield.NestedObject[LoadBalancerPoolOriginSteeringModel]     `tfsdk:"origin_steering" json:"origin_steering,computed_optional"`
+	CreatedOn          types.String                                                      `tfsdk:"created_on" json:"created_on,computed"`
+	DisabledAt         timetypes.RFC3339                                                 `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
+	ModifiedOn         types.String                                                      `tfsdk:"modified_on" json:"modified_on,computed"`
+	Networks           customfield.List[types.String]                                    `tfsdk:"networks" json:"networks,computed"`
 }
 
 func (m LoadBalancerPoolModel) MarshalJSON() (data []byte, err error) {
@@ -46,8 +46,9 @@ func (m LoadBalancerPoolModel) MarshalJSONForUpdate(state LoadBalancerPoolModel)
 
 type LoadBalancerPoolOriginsModel struct {
 	Address          types.String                        `tfsdk:"address" json:"address,optional"`
-	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed_optional" format:"date-time"`
+	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
+	FlattenCNAME     types.Bool                          `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header,optional"`
 	Name             types.String                        `tfsdk:"name" json:"name,optional"`
 	Port             types.Int64                         `tfsdk:"port" json:"port,computed_optional"`

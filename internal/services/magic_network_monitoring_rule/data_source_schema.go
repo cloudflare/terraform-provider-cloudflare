@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,6 +19,13 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicNetworkMonitoringRuleDa
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Magic Network Monitoring Admin",
+				"Magic Network Monitoring Config Read",
+				"Magic Network Monitoring Config Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The id of the rule. Must be unique.",
@@ -28,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"automatic_advertisement": schema.BoolAttribute{
 				Description: "Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.",

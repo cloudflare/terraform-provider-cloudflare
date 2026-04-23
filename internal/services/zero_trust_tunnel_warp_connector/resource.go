@@ -64,6 +64,12 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Create(ctx context.Context, req r
 		return
 	}
 
+	params := zero_trust.TunnelWARPConnectorNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Create(ctx context.Context, req r
 	env := ZeroTrustTunnelWARPConnectorResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Tunnels.WARPConnector.New(
 		ctx,
-		zero_trust.TunnelWARPConnectorNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Update(ctx context.Context, req r
 		return
 	}
 
+	params := zero_trust.TunnelWARPConnectorEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Update(ctx context.Context, req r
 	_, err = r.client.ZeroTrust.Tunnels.WARPConnector.Edit(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelWARPConnectorEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Read(ctx context.Context, req res
 		return
 	}
 
+	params := zero_trust.TunnelWARPConnectorGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustTunnelWARPConnectorResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Tunnels.WARPConnector.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelWARPConnectorGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Delete(ctx context.Context, req r
 		return
 	}
 
+	params := zero_trust.TunnelWARPConnectorDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Tunnels.WARPConnector.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelWARPConnectorDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

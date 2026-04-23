@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -16,14 +17,20 @@ var _ datasource.DataSourceWithConfigValidators = (*ListItemsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID for this resource.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Filter Lists Edit",
+				"Account Filter Lists Read",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID for this resource.",
+				Optional:    true,
 			},
 			"per_page": schema.Int64Attribute{
 				Description: "Amount of results to include in each paginated response. A non-negative 32 bit integer.",

@@ -64,6 +64,16 @@ func (r *ZeroTrustAccessGroupResource) Create(ctx context.Context, req resource.
 		return
 	}
 
+	params := zero_trust.AccessGroupNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,14 +81,6 @@ func (r *ZeroTrustAccessGroupResource) Create(ctx context.Context, req resource.
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessGroupResultEnvelope{*data}
-	params := zero_trust.AccessGroupNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.ZeroTrust.Access.Groups.New(
 		ctx,
 		params,
@@ -118,6 +120,16 @@ func (r *ZeroTrustAccessGroupResource) Update(ctx context.Context, req resource.
 		return
 	}
 
+	params := zero_trust.AccessGroupUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -125,14 +137,6 @@ func (r *ZeroTrustAccessGroupResource) Update(ctx context.Context, req resource.
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessGroupResultEnvelope{*data}
-	params := zero_trust.AccessGroupUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.ZeroTrust.Access.Groups.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -173,16 +177,18 @@ func (r *ZeroTrustAccessGroupResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessGroupResultEnvelope{*data}
 	params := zero_trust.AccessGroupGetParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessGroupResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Groups.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -231,7 +237,9 @@ func (r *ZeroTrustAccessGroupResource) Delete(ctx context.Context, req resource.
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
