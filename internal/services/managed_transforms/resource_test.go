@@ -146,7 +146,6 @@ func clearAllTransforms(ctx context.Context, client *cloudflare.Client, zoneID s
 		"add_true_client_ip_headers",
 		"remove_visitor_ip_headers",
 		"add_visitor_location_headers",
-		"remove_x_powered_by_headers",
 	}
 
 	// Build PATCH body with all known transforms disabled
