@@ -1338,6 +1338,12 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 			} else {
 				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
 			}
+
+			// Remove provider.tf after migration. See MigrationV2TestStep for details.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
+			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -1379,6 +1385,17 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 			WriteOutConfig(t, v4Config, tmpDir)
 			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
 			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+
+			// Remove provider.tf after tf-migrate has finished. WriteOutConfig creates it
+			// with a pinned version constraint (~> 4.52.7) for tf-migrate's benefit, but
+			// if it persists into the plan step, Terraform resolves the provider to the
+			// published registry binary instead of the local dev provider supplied via
+			// ProtoV6ProviderFactories, causing "does not support resource type" errors
+			// for resources that only exist in the dev provider.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
+			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
