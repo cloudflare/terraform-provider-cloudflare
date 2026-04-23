@@ -212,16 +212,21 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
       - name: Download tf-migrate
         run: |
-          gh release download v1.0.0-beta.10 --repo cloudflare/tf-migrate --pattern 'tf-migrate_*_linux_amd64.tar.gz' --output tf-migrate.tar.gz
+          gh release download v1.0.0-beta.11 --repo cloudflare/tf-migrate --pattern 'tf-migrate_*_linux_amd64.tar.gz' --output tf-migrate.tar.gz
           tar -xzf tf-migrate.tar.gz tf-migrate
           chmod +x tf-migrate
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Run ${{ matrix.test.display_name }} Tests
-        run: ./scripts/run-ci-tests ${{ matrix.test.name }} migration
+        run: TF_ACC_TERRAFORM_PATH=$(which terraform) ./scripts/run-ci-tests ${{ matrix.test.name }} migration
 
   check-results:
     name: Check Test Results

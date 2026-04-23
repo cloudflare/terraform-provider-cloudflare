@@ -175,6 +175,11 @@ grep -rn "MIGRATION WARNING" ./terraform
 
 - Renamed to `cloudflare_zero_trust_access_application`
 
+~> Depending on your configuration, Terraform may still plan a replacement for
+an Access application during migration. If replacement occurs, the application's
+`aud` changes. If your services validate Access JWT audiences, plan to update
+those allow-lists during the migration window.
+
 ## cloudflare_access_ca_certificate
 
 - Renamed to `cloudflare_zero_trust_access_short_lived_certificate`
@@ -211,18 +216,33 @@ grep -rn "MIGRATION WARNING" ./terraform
 
 - Renamed to `cloudflare_zero_trust_access_policy`
 
-~> **Application-scoped policies cannot be automatically migrated.** If your
+~> **Application-scoped policies require manual config migration.** If your
 `cloudflare_access_policy` resource has an `application_id` attribute, it
-cannot be migrated using `tf-migrate` or state upgraders. These policies use a
-different API endpoint (`/access/apps/{app_id}/policies/`) than account-level
-policies (`/access/policies/`).
+cannot be converted automatically into v5 inline application policies by
+`tf-migrate` or state upgraders. These policies use a different API endpoint
+(`/access/apps/{app_id}/policies/`) than account-level policies
+(`/access/policies/`).
 
 In v5, application-scoped policies are managed as inline `policies` attributes
 within the `cloudflare_zero_trust_access_application` resource. To migrate:
 
-1. Remove the policy from state: `terraform state rm cloudflare_access_policy.example`
-2. Add the policy configuration inline in your `cloudflare_zero_trust_access_application` resource's `policies` attribute
-3. Run `terraform apply`
+Do not add a `moved` block for this case. The old standalone policy resource
+must be removed from state, then rewritten inline on the application.
+
+1. Run `tf-migrate` and keep the generated `removed` block for the old
+   `cloudflare_access_policy` resource (this drops state tracking without
+   deleting the remote policy).
+2. Add the policy configuration inline in your
+   `cloudflare_zero_trust_access_application` resource's `policies` attribute.
+3. Run `terraform apply`.
+
+On the first plan/apply, Terraform may show that the old policy
+"will no longer be managed by Terraform". This is expected when using a
+`removed` block with `destroy = false`.
+
+If you are not using `tf-migrate`, you can do the equivalent state removal
+manually with `terraform state rm cloudflare_access_policy.example` before
+applying the inline policy configuration.
 
 See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
@@ -1182,26 +1202,42 @@ This has been removed. Users should instead use the:
 ## cloudflare_zero_trust_tunnel_cloudflared
 
 - `secret` is now `tunnel_secret`.
-- `cname` is no longer available.
+- `cname` is no longer available. The CNAME was previously computed by the provider as `<tunnel-id>.cfargotunnel.com`. To reference the tunnel CNAME in v5, construct it manually using the tunnel ID:
 
-  Before
+  Before (v4)
 
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
+  resource "cloudflare_tunnel" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
-    secret = "example-secret"
-    cname = "foo.example.com"
+    name       = "my-tunnel"
+    secret     = "example-secret"
+  }
+
+  resource "cloudflare_record" "tunnel_dns" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name    = "tunnel"
+    type    = "CNAME"
+    value   = cloudflare_tunnel.example.cname
   }
   ```
 
-  After
+  After (v5)
 
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
-    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
+    account_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+    name          = "my-tunnel"
     tunnel_secret = "example-secret"
   }
+
+  resource "cloudflare_dns_record" "tunnel_dns" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name    = "tunnel"
+    type    = "CNAME"
+    content = "${cloudflare_zero_trust_tunnel_cloudflared.example.id}.cfargotunnel.com"
+  }
   ```
+
 
 ## cloudflare_zone_cache_variants
 

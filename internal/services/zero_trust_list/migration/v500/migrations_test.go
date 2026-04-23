@@ -483,6 +483,341 @@ func TestMigrateZeroTrustList_SimpleItems(t *testing.T) {
 	}
 }
 
+// TestMigrateZeroTrustList_ItemsWithDescriptionContent verifies that description
+// values are faithfully preserved after migration, not just the item count.
+// Covers the Bug #001 scenario: items_with_description block syntax with concrete
+// description strings that must survive the v4→v5 state transform.
+// TestMigrateZeroTrustList_FromV4_ItemsWithDescriptionContent verifies that
+// description values are faithfully preserved after migration, not just the item
+// count. Covers the case where items_with_description carries non-empty strings.
+func TestMigrateZeroTrustList_FromV4_ItemsWithDescriptionContent(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id  = "%[2]s"
+  name        = "tf-acc-test-%[1]s"
+  type        = "DOMAIN"
+  description = "Test list with verified descriptions"
+
+  items_with_description {
+    value       = "example.com"
+    description = "Main domain"
+  }
+
+  items_with_description {
+    value       = "api.example.com"
+    description = "API subdomain"
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("DOMAIN")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Test list with verified descriptions")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(2)),
+				// Verify description content is preserved, not just the count.
+				statecheck.ExpectKnownValue(resourceName,
+					tfjsonpath.New("items").AtSliceIndex(0).AtMapKey("description"),
+					knownvalue.NotNull()),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustList_FromV4_MixedItemsAllPresent verifies that after
+// migration the merged items set contains entries from both v4 attributes.
+// Both the plain "items" entries (null description) and the
+// "items_with_description" entries (non-null description) must be present.
+func TestMigrateZeroTrustList_FromV4_MixedItemsAllPresent(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "tf-acc-test-%[1]s"
+  type       = "IP"
+  items      = ["192.0.2.10", "192.0.2.11"]
+
+  items_with_description {
+    value       = "192.0.2.1"
+    description = "Gateway"
+  }
+
+  items_with_description {
+    value       = "192.0.2.2"
+    description = "Secondary gateway"
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("IP")),
+				// All 4 items from both v4 attributes must appear in the unified set.
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(4)),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustList_FromV4_NullDescriptionOnPlainItems verifies that
+// plain "items" entries receive a null description in the v5 state, not an
+// empty string or missing field.
+func TestMigrateZeroTrustList_FromV4_NullDescriptionOnPlainItems(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "tf-acc-test-%[1]s"
+  type       = "IP"
+  items      = ["192.0.2.1"]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("IP")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(1)),
+				// Plain items must carry a null description, not empty string.
+				statecheck.ExpectKnownValue(resourceName,
+					tfjsonpath.New("items").AtSliceIndex(0).AtMapKey("description"),
+					knownvalue.Null()),
+				statecheck.ExpectKnownValue(resourceName,
+					tfjsonpath.New("items").AtSliceIndex(0).AtMapKey("value"),
+					knownvalue.StringExact("192.0.2.1")),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustList_FromV4_SerialListWithDescriptions verifies migration
+// of a SERIAL type list with both plain items and items_with_description.
+// SERIAL + items_with_description was not previously covered.
+func TestMigrateZeroTrustList_FromV4_SerialListWithDescriptions(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id  = "%[2]s"
+  name        = "tf-acc-test-%[1]s"
+  type        = "SERIAL"
+  description = "Certificate serial numbers"
+  items       = ["1A2B3C4D5E6F7890", "AABBCCDDEEFF0011"]
+
+  items_with_description {
+    value       = "DEADBEEF12345678"
+    description = "Compromised certificate"
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("SERIAL")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Certificate serial numbers")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(3)),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustList_FromV4_URLListWithDescriptions verifies migration of
+// a URL list where all items come from items_with_description blocks and verifies
+// the description field is non-null after migration.
+func TestMigrateZeroTrustList_FromV4_URLListWithDescriptions(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "tf-acc-test-%[1]s"
+  type       = "URL"
+
+  items_with_description {
+    value       = "https://example.com/admin"
+    description = "Admin panel"
+  }
+
+  items_with_description {
+    value       = "https://example.com/api/v1"
+    description = "API v1"
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("URL")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(2)),
+				// Description must be preserved for items_with_description entries.
+				statecheck.ExpectKnownValue(resourceName,
+					tfjsonpath.New("items").AtSliceIndex(0).AtMapKey("description"),
+					knownvalue.NotNull()),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustList_FromV4_EmailListMixed verifies migration of an EMAIL
+// list with both plain items and items_with_description, testing the EMAIL type
+// with the mixed pattern.
+func TestMigrateZeroTrustList_FromV4_EmailListMixed(t *testing.T) {
+	unsetAPIToken(t)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_list." + rnd
+	tmpDir := t.TempDir()
+	version := acctest.GetLastV4Version()
+	sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+  account_id  = "%[2]s"
+  name        = "tf-acc-test-%[1]s"
+  type        = "EMAIL"
+  description = "VIP email allowlist"
+  items       = ["user1@example.com", "user2@example.com"]
+
+  items_with_description {
+    value       = "ceo@example.com"
+    description = "CEO"
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: version,
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, version, sourceVer, targetVer, []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("EMAIL")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("VIP email allowlist")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("items"), knownvalue.SetSizeExact(3)),
+			}),
+		},
+	})
+}
+
 func TestMigrateZeroTrustList_EmptyList(t *testing.T) {
 	testCases := []struct {
 		name     string
