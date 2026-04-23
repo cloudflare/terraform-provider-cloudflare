@@ -50,7 +50,7 @@ var v5WithPoolsConfig string
 func TestMigrateLoadBalancer_V4ToV5_Basic(t *testing.T) {
 	legacyProviderVersion := os.Getenv("LAST_V4_VERSION")
 	if legacyProviderVersion == "" {
-		legacyProviderVersion = "4.52.7" // Default to last known v4
+		legacyProviderVersion = "4.52.5" // Default to last known v4
 	}
 
 	testCases := []struct {
@@ -165,7 +165,7 @@ func TestMigrateLoadBalancer_V4ToV5_Basic(t *testing.T) {
 func TestMigrateLoadBalancer_V4ToV5_WithNested(t *testing.T) {
 	legacyProviderVersion := os.Getenv("LAST_V4_VERSION")
 	if legacyProviderVersion == "" {
-		legacyProviderVersion = "4.52.7"
+		legacyProviderVersion = "4.52.5"
 	}
 
 	testCases := []struct {
@@ -277,7 +277,7 @@ func TestMigrateLoadBalancer_V4ToV5_WithNested(t *testing.T) {
 func TestMigrateLoadBalancer_V4ToV5_WithPools(t *testing.T) {
 	legacyProviderVersion := os.Getenv("LAST_V4_VERSION")
 	if legacyProviderVersion == "" {
-		legacyProviderVersion = "4.52.7"
+		legacyProviderVersion = "4.52.5"
 	}
 
 	testCases := []struct {

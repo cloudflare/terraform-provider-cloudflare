@@ -102,7 +102,6 @@ func TestMigrateRulesetBasic(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneRulesets(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -169,7 +168,6 @@ func TestMigrateRulesetSimpleRules(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneRulesets(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -237,7 +235,6 @@ func TestMigrateRulesetHeadersListToMap(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneRulesets(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -305,7 +302,6 @@ func TestMigrateRulesetLogCustomFields(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneRulesets(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{
@@ -375,7 +371,6 @@ func TestMigrateRulesetRateLimit(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneRulesets(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: []resource.TestStep{

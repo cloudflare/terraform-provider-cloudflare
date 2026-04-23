@@ -63,9 +63,4 @@ const (
 	R2JurisdictionHTTPHeaderName = "cf-r2-jurisdiction"
 
 	R2StorageClassHTTPHeaderName = "cf-r2-storage-class"
-
-	// Environment variable key for a pre-verified email routing destination address.
-	// The address must already be verified in the Cloudflare account under test before
-	// email routing rule acceptance tests can run.
-	EmailRoutingDestinationAddressEnvVarKey = "CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS"
 )

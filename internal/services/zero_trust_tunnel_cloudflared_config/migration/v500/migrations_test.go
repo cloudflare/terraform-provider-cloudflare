@@ -49,7 +49,7 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
 	// This causes a plan showing origin_request: {all-nil} → null, which is not a falsey-to-null change.
 	// MigrationV2TestStepWithStateNormalization allows that change to be applied (step 1),
 	// which removes origin_request from the API, and then verifies clean plan in step 3.
-	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", stateChecks)
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", stateChecks)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -64,7 +64,7 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_Basic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -100,13 +100,13 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_WithOriginRequest(t *testing.T)
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				// Verify origin_request fields migrated correctly
 				statecheck.ExpectKnownValue("cloudflare_zero_trust_tunnel_cloudflared_config."+rnd, tfjsonpath.New("config").AtMapKey("origin_request").AtMapKey("no_happy_eyeballs"), knownvalue.Bool(false)),
@@ -138,7 +138,7 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_DeprecatedName(t *testing.T) {
 
 	// Use MigrationV2TestStepWithStateNormalization for the same reason as Basic:
 	// the API returns origin_request={} even for minimal configs, causing non-falsey-to-null drift.
-	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", stateChecks)
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", stateChecks)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -153,7 +153,7 @@ func TestMigrateZeroTrustTunnelCloudflaredConfig_DeprecatedName(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,

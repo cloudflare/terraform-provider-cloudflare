@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -179,12 +178,6 @@ func TestAccCloudflareMTLSCertificate_CertificateNewlineNormalization(t *testing
 
 	name := "cloudflare_mtls_certificate." + rnd
 
-	expiry := time.Now().Add(time.Hour * 24 * 365)
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"example.com"}, expiry)
-	if err != nil {
-		t.Fatalf("Failed to generate certificate: %s", err)
-	}
-
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_Credentials(t)
@@ -194,16 +187,16 @@ func TestAccCloudflareMTLSCertificate_CertificateNewlineNormalization(t *testing
 		CheckDestroy:             testAccCheckCloudflareMTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				// Create with trimmed cert (no trailing newline) - normalized form
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, cert, key, false),
+				// Refresh with config trimmed
+				Config: testAccCheckCloudflareMTLSCertificateConfigNormalized(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				},
 			},
 			{
-				// Refresh with same normalized config - should not detect drift
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, cert, key, false),
+				// Refresh with config trimmed - should not detect drift
+				Config: testAccCheckCloudflareMTLSCertificateConfigNormalized(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -211,8 +204,8 @@ func TestAccCloudflareMTLSCertificate_CertificateNewlineNormalization(t *testing
 				PlanOnly: true,
 			},
 			{
-				// Switch to config with trailing newlines - should not detect drift
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, cert, key, true),
+				// Create with trailing newlines - should not detect drift
+				Config: testAccCheckCloudflareMTLSCertificateConfigWithNewline(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -228,16 +221,6 @@ func TestAccCloudflareMTLSCertificate_CertificateChainNewlineNormalization(t *te
 
 	name := "cloudflare_mtls_certificate." + rnd
 
-	expiry := time.Now().Add(time.Hour * 24 * 365)
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"example.com"}, expiry)
-	if err != nil {
-		t.Fatalf("Failed to generate certificate: %s", err)
-	}
-	// Duplicate the cert to simulate a multi-PEM chain; the API returns a single
-	// normalised PEM so we just need any multi-cert string to exercise newline
-	// normalization without relying on cert ordering by the backend.
-	chain := cert + cert
-
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_Credentials(t)
@@ -247,16 +230,16 @@ func TestAccCloudflareMTLSCertificate_CertificateChainNewlineNormalization(t *te
 		CheckDestroy:             testAccCheckCloudflareMTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				// Create with trimmed chain (no trailing newline) - normalized form
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, chain, key, false),
+				// Refresh with config trimmed - should not detect drift
+				Config: testAccCheckCloudflareMTLSCertificateChainConfigNormalized(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				},
 			},
 			{
-				// Refresh with same normalized config - should not detect drift
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, chain, key, false),
+				// Refresh with config trimmed - should not detect drift
+				Config: testAccCheckCloudflareMTLSCertificateChainConfigNormalized(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -264,8 +247,8 @@ func TestAccCloudflareMTLSCertificate_CertificateChainNewlineNormalization(t *te
 				PlanOnly: true,
 			},
 			{
-				// Switch to config with trailing newlines - should not detect drift
-				Config: testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, chain, key, true),
+				// Create with certificate chain with trailing newlines
+				Config: testAccCheckCloudflareMTLSCertificateChainConfigWithNewline(accountID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -275,25 +258,20 @@ func TestAccCloudflareMTLSCertificate_CertificateChainNewlineNormalization(t *te
 	})
 }
 
-// testAccMTLSCertificateNewlineNormalizationConfig generates a config with an
-// ephemeral certificate. When withTrailingNewline is true the cert and key values
-// have a trailing newline appended; when false they are trimmed. Both forms
-// represent the same certificate and should produce no plan diff.
-func testAccMTLSCertificateNewlineNormalizationConfig(accountID, rnd, certificates, privateKey string, withTrailingNewline bool) string {
-	certVal := strings.TrimRight(certificates, "\n")
-	keyVal := strings.TrimRight(privateKey, "\n")
-	if withTrailingNewline {
-		certVal += "\n"
-		keyVal += "\n"
-	}
-	return fmt.Sprintf(`
-resource "cloudflare_mtls_certificate" "%[2]s" {
-  account_id   = "%[1]s"
-  name         = "%[2]s"
-  certificates = %[3]q
-  private_key  = %[4]q
-  ca           = false
-}`, accountID, rnd, certVal, keyVal)
+func testAccCheckCloudflareMTLSCertificateConfigWithNewline(accountID, name string) string {
+	return acctest.LoadTestCase("mtlscertificateconfigwithnewline.tf", accountID, name)
+}
+
+func testAccCheckCloudflareMTLSCertificateConfigNormalized(accountID, name string) string {
+	return acctest.LoadTestCase("mtlscertificateconfignormalized.tf", accountID, name)
+}
+
+func testAccCheckCloudflareMTLSCertificateChainConfigWithNewline(accountID, name string) string {
+	return acctest.LoadTestCase("mtlscertificatechainwithnewline.tf", accountID, name)
+}
+
+func testAccCheckCloudflareMTLSCertificateChainConfigNormalized(accountID, name string) string {
+	return acctest.LoadTestCase("mtlscertificatechainnormalized.tf", accountID, name)
 }
 
 func TestAccUpgradeMtlsCertificate_FromPublishedV5(t *testing.T) {

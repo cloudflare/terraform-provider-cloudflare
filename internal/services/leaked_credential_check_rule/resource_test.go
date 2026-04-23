@@ -131,23 +131,23 @@ func TestAccCloudflareLeakedCredentialsCheckRule_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLeakedCredentialCheckRuleDestroy,
 		Steps: []resource.TestStep{
-		// Step 1: Create + Read
-		{
-			Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
-			ConfigStateChecks: []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_user\")")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_pass\")")),
+			// Step 1: Create + Read
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"pass\")")),
+				},
 			},
-		},
-		// Step 2: Update + Read
-		{
-			Config: testAccCloudflareLeakedCredentialsCheckModified(zoneID, rnd),
-			ConfigStateChecks: []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_user_modified\")")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_pass_modified\")")),
+			// Step 2: Update + Read
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckModified(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username_modified\")")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"pass_modified\")")),
+				},
 			},
-		},
 		},
 	})
 }
@@ -165,26 +165,26 @@ func TestAccCloudflareLeakedCredentialsCheckRule_StateConsistency(t *testing.T) 
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLeakedCredentialCheckRuleDestroy,
 		Steps: []resource.TestStep{
-		{
-			Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
-			ConfigStateChecks: []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_user\")")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_pass\")")),
-			},
-		},
-		{
-			Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
-			ConfigPlanChecks: resource.ConfigPlanChecks{
-				PreApply: []plancheck.PlanCheck{
-					plancheck.ExpectEmptyPlan(),
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"pass\")")),
 				},
 			},
-			ConfigStateChecks: []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_user\")")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_pass\")")),
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"pass\")")),
+				},
 			},
-		},
 		},
 	})
 }
@@ -202,15 +202,15 @@ func TestAccCloudflareLeakedCredentialsCheckRule_Import(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLeakedCredentialCheckRuleDestroy,
 		Steps: []resource.TestStep{
-		// Step 1: Create the resource
-		{
-			Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
-			ConfigStateChecks: []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_user\")")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \""+rnd+"_pass\")")),
+			// Step 1: Create the resource
+			{
+				Config: testAccCloudflareLeakedCredentialsCheckEnabled(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"pass\")")),
+				},
 			},
-		},
 			// Step 2: Import the resource using zone_id/detection_id format
 			{
 				ResourceName:      resourceName,

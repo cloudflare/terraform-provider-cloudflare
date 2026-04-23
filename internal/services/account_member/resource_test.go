@@ -151,64 +151,6 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 	})
 }
 
-// TestAccCloudflareAccountMember_StatusNoDrift verifies that when status is not
-// explicitly configured, the computed status value from the API does not cause
-// drift on subsequent plans. This validates the UseStateForUnknown plan modifier
-// on the status field.
-func TestAccCloudflareAccountMember_StatusNoDrift(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
-	// permission to manage account members.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	if os.Getenv("TF_ACC") == "" {
-		t.Skip("Acceptance tests skipped unless env 'TF_ACC' set")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	email := fmt.Sprintf("%s@example.com", rnd)
-	resourceName := "cloudflare_account_member.test_member"
-
-	adminRoleID := getRoleId(t, accountID, "Administrator")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create member with roles but WITHOUT status in config
-				Config: testCloudflareAccountMemberRolesNoStatusConfig(email, accountID, adminRoleID),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("pending")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("roles").AtSliceIndex(0), knownvalue.StringExact(adminRoleID)),
-				},
-			},
-			{
-				// Step 2: Re-apply same config — should be a Noop (no drift from computed status)
-				Config: testCloudflareAccountMemberRolesNoStatusConfig(email, accountID, adminRoleID),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
-					},
-				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status"), knownvalue.StringExact("pending")),
-				},
-			},
-		},
-	})
-}
-
-func testCloudflareAccountMemberRolesNoStatusConfig(emailAddress, accountID, roleID string) string {
-	return acctest.LoadTestCase("cloudflareaccountmemberrolesnostatus.tf", emailAddress, accountID, roleID)
-}
-
 func TestAccCloudflareAccountMember_Import(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.

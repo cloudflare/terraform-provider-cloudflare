@@ -32,7 +32,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T
 	}{
 		{
 			name:     "from_v4_52_1", // Last v4 release
-			version:  "4.52.7",
+			version:  "4.52.1",
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV4Basic,
 		},
 		{
@@ -137,7 +137,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVers
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.7",
+			version:  "4.52.1",
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV4AllOptional,
 		},
 		{
@@ -254,7 +254,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.7",
+			version:  "4.52.1",
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV4Geo,
 		},
 		{
@@ -342,7 +342,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.7",
+			version:  "4.52.1",
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV4Rules,
 		},
 	}
@@ -441,7 +441,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 				// Step 1: Create load balancer with v4 provider
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -454,7 +454,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 		}
 
 		// Step 2: Migrate to v5 provider
-		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{})
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
 		steps = append(steps, migrationSteps...)
 
 		// Step 3: Apply migrated config with v5 provider
@@ -509,7 +509,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *test
 				// Step 1: Create load balancer with v4 provider
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -521,7 +521,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *test
 		}
 
 		// Step 2: Migrate to v5 provider
-		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{})
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
 		steps = append(steps, migrationSteps...)
 
 		// Step 3: Apply migrated config with v5 provider
