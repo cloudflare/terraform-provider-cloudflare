@@ -56,14 +56,14 @@ resource "cloudflare_notification_policy" "%[3]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // v4 has UUID normalization quirk
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("test-%s", rnd))),
@@ -147,14 +147,14 @@ resource "cloudflare_notification_policy" "%[5]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // v4 has UUID normalization quirk
 			},
 			// Step 2: Run migration and verify multiple webhook integrations in array
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Multiple webhooks integration testing")),
 				// Verify all three webhook integrations preserved in array
@@ -212,14 +212,14 @@ resource "cloudflare_notification_policy" "%[3]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // v4 has UUID normalization quirk
 			},
 			// Step 2: Run migration and verify enabled=false is preserved
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Disabled policy testing (enabled=false preservation)")),
 				// CRITICAL: enabled=false must be preserved (v5 defaults to true)
@@ -276,14 +276,14 @@ resource "cloudflare_notification_policy" "%[3]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // v4 has UUID normalization quirk
 			},
 			// Step 2: Run migration and verify 'name' field is removed from integration
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Testing integration name field removal")),
 				// Verify webhooks_integration transformed to mechanisms.webhooks
@@ -346,14 +346,14 @@ resource "cloudflare_notification_policy" "%[3]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // v4 has UUID normalization quirk
 			},
 			// Step 2: Run migration and verify filters structure is properly transformed
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Testing filters block migration")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("alert_type"), knownvalue.StringExact("billing_usage_alert")),

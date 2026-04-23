@@ -175,11 +175,6 @@ grep -rn "MIGRATION WARNING" ./terraform
 
 - Renamed to `cloudflare_zero_trust_access_application`
 
-~> Depending on your configuration, Terraform may still plan a replacement for
-an Access application during migration. If replacement occurs, the application's
-`aud` changes. If your services validate Access JWT audiences, plan to update
-those allow-lists during the migration window.
-
 ## cloudflare_access_ca_certificate
 
 - Renamed to `cloudflare_zero_trust_access_short_lived_certificate`
@@ -216,33 +211,18 @@ those allow-lists during the migration window.
 
 - Renamed to `cloudflare_zero_trust_access_policy`
 
-~> **Application-scoped policies require manual config migration.** If your
+~> **Application-scoped policies cannot be automatically migrated.** If your
 `cloudflare_access_policy` resource has an `application_id` attribute, it
-cannot be converted automatically into v5 inline application policies by
-`tf-migrate` or state upgraders. These policies use a different API endpoint
-(`/access/apps/{app_id}/policies/`) than account-level policies
-(`/access/policies/`).
+cannot be migrated using `tf-migrate` or state upgraders. These policies use a
+different API endpoint (`/access/apps/{app_id}/policies/`) than account-level
+policies (`/access/policies/`).
 
 In v5, application-scoped policies are managed as inline `policies` attributes
 within the `cloudflare_zero_trust_access_application` resource. To migrate:
 
-Do not add a `moved` block for this case. The old standalone policy resource
-must be removed from state, then rewritten inline on the application.
-
-1. Run `tf-migrate` and keep the generated `removed` block for the old
-   `cloudflare_access_policy` resource (this drops state tracking without
-   deleting the remote policy).
-2. Add the policy configuration inline in your
-   `cloudflare_zero_trust_access_application` resource's `policies` attribute.
-3. Run `terraform apply`.
-
-On the first plan/apply, Terraform may show that the old policy
-"will no longer be managed by Terraform". This is expected when using a
-`removed` block with `destroy = false`.
-
-If you are not using `tf-migrate`, you can do the equivalent state removal
-manually with `terraform state rm cloudflare_access_policy.example` before
-applying the inline policy configuration.
+1. Remove the policy from state: `terraform state rm cloudflare_access_policy.example`
+2. Add the policy configuration inline in your `cloudflare_zero_trust_access_application` resource's `policies` attribute
+3. Run `terraform apply`
 
 See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
@@ -1202,42 +1182,26 @@ This has been removed. Users should instead use the:
 ## cloudflare_zero_trust_tunnel_cloudflared
 
 - `secret` is now `tunnel_secret`.
-- `cname` is no longer available. The CNAME was previously computed by the provider as `<tunnel-id>.cfargotunnel.com`. To reference the tunnel CNAME in v5, construct it manually using the tunnel ID:
+- `cname` is no longer available.
 
-  Before (v4)
+  Before
 
   ```hcl
-  resource "cloudflare_tunnel" "example" {
+  resource "zero_trust_tunnel_cloudflared" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
-    name       = "my-tunnel"
-    secret     = "example-secret"
-  }
-
-  resource "cloudflare_record" "tunnel_dns" {
-    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-    name    = "tunnel"
-    type    = "CNAME"
-    value   = cloudflare_tunnel.example.cname
+    secret = "example-secret"
+    cname = "foo.example.com"
   }
   ```
 
-  After (v5)
+  After
 
   ```hcl
-  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
-    account_id    = "0da42c8d2132a9ddaf714f9e7c920711"
-    name          = "my-tunnel"
+  resource "zero_trust_tunnel_cloudflared" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
     tunnel_secret = "example-secret"
   }
-
-  resource "cloudflare_dns_record" "tunnel_dns" {
-    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-    name    = "tunnel"
-    type    = "CNAME"
-    content = "${cloudflare_zero_trust_tunnel_cloudflared.example.id}.cfargotunnel.com"
-  }
   ```
-
 
 ## cloudflare_zone_cache_variants
 

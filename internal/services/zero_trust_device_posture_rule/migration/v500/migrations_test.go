@@ -206,7 +206,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.7",
+					VersionConstraint: "4.52.1",
 				},
 			},
 			Config: v4Config,
@@ -215,7 +215,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 	// Step 2: Migration adds name to config/state, v5 updates API with the name
 	// A plan diff is expected because the API resource needs to be updated with the name
-	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepAllowCreate(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 		// Name is null after migration (not set in v4 config, API returns "" which is normalized to null)
 		statecheck.ExpectKnownValue("cloudflare_zero_trust_device_posture_rule."+rnd, tfjsonpath.New("name"), knownvalue.Null()),

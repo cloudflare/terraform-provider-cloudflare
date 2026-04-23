@@ -16,23 +16,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-// setV4ProviderRetryEnv configures the v4 Cloudflare provider's retry and backoff
-// settings via environment variables for the duration of the test. The v4 provider
-// defaults to 4 retries (CLOUDFLARE_RETRIES=4) with a max backoff of 30s, which is
-// insufficient when multiple migration test packages run concurrently and hammer the
-// Lists API simultaneously. Bumping retries and max backoff makes the v4 provider
-// wait longer and retry more before giving up with "exceeded available rate limit retries".
-func setV4ProviderRetryEnv(t *testing.T) {
-	t.Helper()
-	// Only set if not already overridden by the caller's environment.
-	if os.Getenv("CLOUDFLARE_RETRIES") == "" {
-		t.Setenv("CLOUDFLARE_RETRIES", "8")
-	}
-	if os.Getenv("CLOUDFLARE_MAX_BACKOFF") == "" {
-		t.Setenv("CLOUDFLARE_MAX_BACKOFF", "60")
-	}
-}
-
 // Migration test version configuration.
 // - Last stable v4 release: read from LAST_V4_VERSION env var (set in CI)
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
@@ -100,7 +83,6 @@ func TestMigrateCloudflareListFromV4WithIPItems(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			setV4ProviderRetryEnv(t)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -168,7 +150,6 @@ func TestMigrateCloudflareListFromV4WithASNItems(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			setV4ProviderRetryEnv(t)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -235,7 +216,6 @@ func TestMigrateCloudflareListFromV4WithHostnameItems(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			setV4ProviderRetryEnv(t)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -310,7 +290,6 @@ func TestMigrateCloudflareListFromV4WithRedirectItems(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			setV4ProviderRetryEnv(t)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -411,7 +390,6 @@ func TestMigrateCloudflareListFromV4WithDynamicItems(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			setV4ProviderRetryEnv(t)
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			rnd := utils.GenerateRandomResourceName()
 			listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -458,7 +436,6 @@ func TestMigrateCloudflareListFromV4WithDynamicItems(t *testing.T) {
 // In v5, separate list_item resources remain as separate resources (they are NOT merged into the parent list).
 // The provider's StateUpgraders handle the state migration for both cloudflare_list and cloudflare_list_item.
 func TestMigrateCloudflareListFromV4WithSeparateListItems(t *testing.T) {
-	setV4ProviderRetryEnv(t)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)

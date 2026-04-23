@@ -80,7 +80,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_Basic(t *testing.T) {
 	}{
 		{
 			name:       "from_v4_52_1",
-			version:    "4.52.7",
+			version:    "4.52.1",
 			configFunc: accessGroupConfigV4Basic,
 		},
 	}
@@ -109,7 +109,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_Basic(t *testing.T) {
 
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
 			// Use helper that handles state normalization for resources with nil field removal
-			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
@@ -143,7 +143,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ComplexRules(t *testing.T) {
 	}{
 		{
 			name:       "from_v4_52_1",
-			version:    "4.52.7",
+			version:    "4.52.1",
 			configFunc: accessGroupConfigV4MultiValue,
 		},
 	}
@@ -171,7 +171,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ComplexRules(t *testing.T) {
 			})
 
 			// Step 2: Run migration and verify transformation
-			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				// Verify expansion: 2 emails + 2 IPs = 4 include objects
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(4)),
@@ -209,7 +209,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ZoneScoped(t *testing.T) {
 	}{
 		{
 			name:       "from_v4_52_1",
-			version:    "4.52.7",
+			version:    "4.52.1",
 			configFunc: accessGroupConfigV4ZoneScoped,
 		},
 	}
@@ -237,7 +237,7 @@ func TestMigrateZeroTrustAccessGroupMultiVersion_ZoneScoped(t *testing.T) {
 			})
 
 			// Step 2: Run migration and verify zone context preserved
-			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(2)),
@@ -273,7 +273,7 @@ func TestMigrateZeroTrustAccessGroup_EdgeCases(t *testing.T) {
 	}{
 		{
 			name:       "v4_single_email",
-			version:    "4.52.7",
+			version:    "4.52.1",
 			configFunc: accessGroupConfigV4Basic,
 			expectedChecks: func(resourceName, accountID, rnd string) []statecheck.StateCheck {
 				return []statecheck.StateCheck{
@@ -285,7 +285,7 @@ func TestMigrateZeroTrustAccessGroup_EdgeCases(t *testing.T) {
 		},
 		{
 			name:    "v4_multiple_emails_and_ips",
-			version: "4.52.7",
+			version: "4.52.1",
 			configFunc: func(rnd, accountID string) string {
 				return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
@@ -309,7 +309,7 @@ resource "cloudflare_access_group" "%[1]s" {
 		},
 		{
 			name:    "v4_all_rule_types",
-			version: "4.52.7",
+			version: "4.52.1",
 			configFunc: func(rnd, accountID string) string {
 				return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
@@ -368,7 +368,7 @@ resource "cloudflare_access_group" "%[1]s" {
 			})
 
 			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
-			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.7", "v4", "v5", expectedChecks)
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, config, tmpDir, "4.52.1", "v4", "v5", expectedChecks)
 			steps = append(steps, migrationSteps...)
 
 			resource.Test(t, resource.TestCase{

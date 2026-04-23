@@ -42,14 +42,14 @@ func TestMigrateQueue_Basic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 		},
 			// Step 2: Run tf-migrate and apply with v5 provider, verify state
-			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_name"), knownvalue.StringExact(fmt.Sprintf("tf-acc-test-queue-%s", rnd))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),
@@ -79,14 +79,14 @@ func TestMigrateQueue_WithSettings(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 		},
 			// Step 2: Run tf-migrate and apply with v5 provider, verify state
-			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_name"), knownvalue.StringExact(fmt.Sprintf("tf-acc-test-queue-settings-%s", rnd))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("queue_id"), knownvalue.NotNull()),

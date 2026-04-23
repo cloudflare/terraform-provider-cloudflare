@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token/migration/v500"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token/migration/v501"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -21,26 +20,22 @@ var _ resource.ResourceWithUpgradeState = (*APITokenResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// This handles three upgrade paths:
+// This handles two modes:
 //
-// 1. v0 state (schema_version=0) → v501: Full transformation via v500
-//   - Converts policy[] block to policies[] attribute
-//   - Converts permission_groups from strings to objects
-//   - Converts resources from map to JSON string
-//   - Converts condition/request_ip from arrays to single nested
+// for early v5 users who still have schema_version=0.
 //
-// 2. v1 state (schema_version=1) → v501: Deserialize/re-serialize via v500
-//   - Converts Set-typed state to List-compatible state
-//
-// 3. v500 state (schema_version=500) → v501: Set→List migration
-//   - Converts Set-typed policies and permission_groups to sorted Lists
+// Test mode: Version=500, two upgraders:
+//   - Slot 0: v4 SDKv2 (schema_version=0) → v500: Full transformation
+//   - Slot 1: v5 current (schema_version=1) → v500: No-op version bump
 func (r *APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	targetSchema := ResourceSchema(ctx)
+
 	v4Schema := v500.SourceCloudflareAPITokenSchema()
 
 	v5SchemaVersion1 := ResourceSchema(ctx)
 	v5SchemaVersion1.Version = 1
 
-	v500Schema := v501.SourceSchemaV500()
+	_ = targetSchema // used indirectly via ResourceSchema
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
@@ -52,11 +47,6 @@ func (r *APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.
 		1: {
 			PriorSchema:   &v5SchemaVersion1,
 			StateUpgrader: v500.UpgradeFromV1,
-		},
-		// Handle state from v500 (Set-based) → v501 (List-based with FastSetType)
-		500: {
-			PriorSchema:   &v500Schema,
-			StateUpgrader: v501.UpgradeFromV500,
 		},
 	}
 }

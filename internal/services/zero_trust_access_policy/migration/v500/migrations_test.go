@@ -87,13 +87,13 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
@@ -130,12 +130,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4Complex(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(true)),
@@ -177,12 +177,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4OAuthProviders(t *testing.T)
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify array explosion: email array (2 rules) = 2 include rules
@@ -232,12 +232,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4DecisionTypes(t *testing.T) 
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
-								VersionConstraint: "~> 4.52.7",
+								VersionConstraint: "~> 4.52.1",
 							},
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact(tc.decision)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
@@ -285,12 +285,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4OptionalBooleans(t *testing.
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
-								VersionConstraint: "~> 4.52.7",
+								VersionConstraint: "~> 4.52.1",
 							},
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+					acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 						// Verify boolean -> empty object transformation
@@ -327,12 +327,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4UnsupportedFeatures(t *testi
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify that basic migration works correctly:
@@ -369,12 +369,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4ServiceTokens(t *testing.T) 
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify any_valid_service_token transformation: boolean -> empty nested object
@@ -409,12 +409,12 @@ func TestMigrateZeroTrustAccessPolicyMigrationFromV4RemovedAttributes(t *testing
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
@@ -734,12 +734,12 @@ func TestMigrateZeroTrustAccessPolicyEmailDomainTransformation(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify email_domain transformation: list → object with domain field
@@ -785,7 +785,7 @@ func TestMigrateZeroTrustAccessPolicyConnectionRules(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -793,7 +793,7 @@ func TestMigrateZeroTrustAccessPolicyConnectionRules(t *testing.T) {
 			// Step 2: Run migration and verify state
 			// With the PriorSchema: nil fix, state upgrade succeeds
 			// The key success is that we don't get: "AttributeName("connection_rules"): invalid JSON, expected "{", got "["
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
@@ -859,7 +859,7 @@ func TestMigrateZeroTrustAccessPolicyStateMvScenario(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.52.7",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
