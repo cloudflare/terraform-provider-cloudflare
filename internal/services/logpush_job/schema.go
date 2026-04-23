@@ -51,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"dataset": schema.StringAttribute{
-				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"audit_logs_v2\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dex_application_tests\", \"dex_device_state_events\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"ipsec_logs\", \"magic_ids_detections\", \"mcp_portal_logs\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"warp_config_changes\", \"warp_toggle_changes\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
+				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"audit_logs_v2\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dex_application_tests\", \"dex_device_state_events\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"email_security_post_delivery_events\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"ipsec_logs\", \"magic_ids_detections\", \"mcp_portal_logs\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"warp_config_changes\", \"warp_toggle_changes\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -68,6 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"dns_firewall_logs",
 						"dns_logs",
 						"email_security_alerts",
+						"email_security_post_delivery_events",
 						"firewall_events",
 						"gateway_dns",
 						"gateway_http",
@@ -183,6 +184,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
 						Optional:    true,
 						ElementType: types.StringType,
+					},
+					"merge_subrequests": schema.BoolAttribute{
+						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.",
+						Optional:    true,
 					},
 					"output_type": schema.StringAttribute{
 						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.\nAvailable values: \"ndjson\", \"csv\".",

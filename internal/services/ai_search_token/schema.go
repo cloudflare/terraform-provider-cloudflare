@@ -36,6 +36,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Required: true,
 			},
+			"legacy": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
+				Default:  booldefault.StaticBool(true),
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -44,10 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"enabled": schema.BoolAttribute{
-				Computed: true,
-				Default:  booldefault.StaticBool(true),
-			},
-			"legacy": schema.BoolAttribute{
 				Computed: true,
 				Default:  booldefault.StaticBool(true),
 			},

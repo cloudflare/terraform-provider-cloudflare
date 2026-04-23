@@ -17,8 +17,9 @@ type AccountDNSSettingsResultDataSourceEnvelope struct {
 }
 
 type AccountDNSSettingsDataSourceModel struct {
-	AccountID    types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneDefaults customfield.NestedObject[AccountDNSSettingsZoneDefaultsDataSourceModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed"`
+	AccountID      types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	EnforceDNSOnly types.Bool                                                              `tfsdk:"enforce_dns_only" json:"enforce_dns_only,computed"`
+	ZoneDefaults   customfield.NestedObject[AccountDNSSettingsZoneDefaultsDataSourceModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed"`
 }
 
 func (m *AccountDNSSettingsDataSourceModel) toReadParams(_ context.Context) (params dns.SettingAccountGetParams, diags diag.Diagnostics) {

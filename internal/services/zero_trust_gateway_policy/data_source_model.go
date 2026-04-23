@@ -105,6 +105,7 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel struct {
 	Printing types.String `tfsdk:"printing" json:"printing,computed"`
 	Upload   types.String `tfsdk:"upload" json:"upload,computed"`
 	Version  types.String `tfsdk:"version" json:"version,computed"`
+	WmID     types.String `tfsdk:"wm_id" json:"wm_id,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel struct {

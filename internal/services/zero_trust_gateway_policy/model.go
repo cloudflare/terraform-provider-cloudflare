@@ -98,6 +98,7 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 	Printing types.String `tfsdk:"printing" json:"printing,optional"`
 	Upload   types.String `tfsdk:"upload" json:"upload,optional"`
 	Version  types.String `tfsdk:"version" json:"version,computed_optional"`
+	WmID     types.String `tfsdk:"wm_id" json:"wm_id,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBlockPageModel struct {

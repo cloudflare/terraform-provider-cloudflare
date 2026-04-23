@@ -9,7 +9,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     config = {
       html_handling = "auto-trailing-slash"
       not_found_handling = "404-page"
-      run_worker_first = ["string"]
+      run_worker_first = []
     }
     jwt = "jwt"
   }

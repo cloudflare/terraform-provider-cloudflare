@@ -172,6 +172,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_group_members"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential_set"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_target_environment"
@@ -228,6 +230,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_integration_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dns_location"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_categories"
@@ -603,6 +606,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_tunnel_warp_connector.NewResource,
 		zero_trust_dlp_dataset.NewResource,
+		zero_trust_dlp_settings.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
 		zero_trust_dlp_predefined_profile.NewResource,
 		zero_trust_dlp_entry.NewResource,
@@ -645,6 +649,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		ai_gateway.NewResource,
 		ai_gateway_dynamic_routing.NewResource,
+		user_group.NewResource,
+		user_group_members.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
@@ -780,6 +786,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
+		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
 		waiting_room_event.NewWaitingRoomEventsDataSource,
 		waiting_room_rules.NewWaitingRoomRulesDataSource,
@@ -947,6 +954,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
+		zero_trust_dlp_settings.NewZeroTrustDLPSettingsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
 		zero_trust_dlp_predefined_profile.NewZeroTrustDLPPredefinedProfileDataSource,
 		zero_trust_dlp_entry.NewZeroTrustDLPEntryDataSource,
@@ -1022,6 +1030,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
+		user_group.NewUserGroupDataSource,
+		user_group.NewUserGroupsDataSource,
+		user_group_members.NewUserGroupMembersDataSource,
 		sso_connector.NewSSOConnectorDataSource,
 		sso_connector.NewSSOConnectorsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,

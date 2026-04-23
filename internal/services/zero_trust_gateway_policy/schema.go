@@ -193,7 +193,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"download": schema.StringAttribute{
-								Description: "Configure download behavior. When set to remote_only, users can view downloads but cannot save them. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
+								Description: "Configure download behavior. When set to remote_only, users can view downloads but cannot save them. If this field is absent, downloading remains enabled. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -251,6 +251,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("v1", "v2"),
 								},
 								Default: stringdefault.StaticString("v1"),
+							},
+							"wm_id": schema.StringAttribute{
+								Description: "Specify the watermark ID (UUID) to apply to the isolated browser session. When present, enables watermark rendering in the isolated browser.",
+								Optional:    true,
 							},
 						},
 					},
