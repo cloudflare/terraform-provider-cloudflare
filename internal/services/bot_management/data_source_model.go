@@ -23,6 +23,7 @@ type BotManagementDataSourceModel struct {
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
 	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`
 	CfRobotsVariant              types.String                                                                 `tfsdk:"cf_robots_variant" json:"cf_robots_variant,computed"`
+	ContentBotsProtection        types.String                                                                 `tfsdk:"content_bots_protection" json:"content_bots_protection,computed"`
 	CrawlerProtection            types.String                                                                 `tfsdk:"crawler_protection" json:"crawler_protection,computed"`
 	EnableJS                     types.Bool                                                                   `tfsdk:"enable_js" json:"enable_js,computed"`
 	FightMode                    types.Bool                                                                   `tfsdk:"fight_mode" json:"fight_mode,computed"`

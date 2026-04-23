@@ -231,10 +231,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"sync_interval": schema.Float64Attribute{
-				Description: "Interval between automatic syncs, in seconds. Allowed values: 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).\nAvailable values: 3600, 7200, 14400, 21600, 43200, 86400.",
+				Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
 				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.OneOf(
+						900,
+						1800,
 						3600,
 						7200,
 						14400,

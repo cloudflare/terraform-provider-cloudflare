@@ -19,6 +19,7 @@ type BotManagementModel struct {
 	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,computed_optional"`
 	BmCookieEnabled              types.Bool                                                         `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed_optional"`
 	CfRobotsVariant              types.String                                                       `tfsdk:"cf_robots_variant" json:"cf_robots_variant,computed_optional"`
+	ContentBotsProtection        types.String                                                       `tfsdk:"content_bots_protection" json:"content_bots_protection,computed_optional"`
 	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection" json:"crawler_protection,computed_optional"`
 	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,computed_optional"`
 	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,computed_optional"`

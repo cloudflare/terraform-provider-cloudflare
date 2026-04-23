@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,21 +21,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"order_by": schema.StringAttribute{
-				Description: "Order By Column Name\nAvailable values: \"created_at\".",
-				Computed:    true,
+			"search": schema.StringAttribute{
+				Description: "Filter tokens whose name contains this string (case-insensitive).",
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("created_at"),
-				},
-			},
-			"order_by_direction": schema.StringAttribute{
-				Description: "Order By Direction\nAvailable values: \"asc\", \"desc\".",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

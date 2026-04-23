@@ -2,8 +2,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   decision = "allow"
   include = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   name = "Allow devs"
@@ -24,8 +24,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     }
   }
   exclude = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   isolation_required = false
@@ -37,8 +37,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   session_duration = "24h"

@@ -43,17 +43,13 @@ func (m *AISearchTokenDataSourceModel) toListParams(_ context.Context) (params a
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
-	if !m.Filter.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.TokenListParamsOrderBy(m.Filter.OrderBy.ValueString()))
-	}
-	if !m.Filter.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.TokenListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
 	return
 }
 
 type AISearchTokenFindOneByDataSourceModel struct {
-	OrderBy          types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
-	OrderByDirection types.String `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }

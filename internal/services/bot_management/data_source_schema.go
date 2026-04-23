@@ -58,6 +58,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("off", "policy_only"),
 				},
 			},
+			"content_bots_protection": schema.StringAttribute{
+				Description: "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
+				},
+			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
 				Computed:    true,

@@ -230,15 +230,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"read_only": schema.BoolAttribute{
 								Description: "Indicate that this setting was shared via the Orgs API and read only for the current account.",
-								Optional:    true,
+								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Indicate the account tag of the account that shared this setting.",
-								Optional:    true,
+								Computed:    true,
 							},
 							"version": schema.Int64Attribute{
 								Description: "Indicate the version number of the setting.",
-								Optional:    true,
+								Computed:    true,
 							},
 						},
 					},

@@ -18,11 +18,10 @@ type AISearchTokensResultListDataSourceEnvelope struct {
 }
 
 type AISearchTokensDataSourceModel struct {
-	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	OrderBy          types.String                                                      `tfsdk:"order_by" query:"order_by,computed_optional"`
-	OrderByDirection types.String                                                      `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
-	MaxItems         types.Int64                                                       `tfsdk:"max_items"`
-	Result           customfield.NestedObjectList[AISearchTokensResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	Search    types.String                                                      `tfsdk:"search" query:"search,optional"`
+	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[AISearchTokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AISearchTokensDataSourceModel) toListParams(_ context.Context) (params ai_search.TokenListParams, diags diag.Diagnostics) {
@@ -30,11 +29,8 @@ func (m *AISearchTokensDataSourceModel) toListParams(_ context.Context) (params 
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
-	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.TokenListParamsOrderBy(m.OrderBy.ValueString()))
-	}
-	if !m.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.TokenListParamsOrderByDirection(m.OrderByDirection.ValueString()))
+	if !m.Search.IsNull() {
+		params.Search = cloudflare.F(m.Search.ValueString())
 	}
 
 	return

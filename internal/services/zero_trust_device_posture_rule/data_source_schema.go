@@ -277,6 +277,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
+					"auth_state": schema.ListAttribute{
+						Description: "The set of Kolide device authentication states that pass the posture check. Device must match one of the specified states.",
+						Computed:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"Good",
+									"Notified",
+									"Will Block",
+									"Blocked",
+								),
+							),
+						},
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
 					"count_operator": schema.StringAttribute{
 						Description: "Count Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 						Computed:    true,
