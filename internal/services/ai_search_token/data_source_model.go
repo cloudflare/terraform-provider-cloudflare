@@ -42,14 +42,7 @@ func (m *AISearchTokenDataSourceModel) toListParams(_ context.Context) (params a
 	params = ai_search.TokenListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
-
-	if !m.Filter.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.TokenListParamsOrderBy(m.Filter.OrderBy.ValueString()))
-	}
-	if !m.Filter.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.TokenListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
-	}
-
+	
 	return
 }
 

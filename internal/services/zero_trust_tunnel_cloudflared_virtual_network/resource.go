@@ -128,7 +128,9 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 	_, err = r.client.ZeroTrust.Networks.VirtualNetworks.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.NetworkVirtualNetworkEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
