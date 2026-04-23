@@ -17,10 +17,10 @@ type R2CustomDomainModel struct {
 	BucketName   types.String                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
 	Jurisdiction types.String                                        `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
 	Domain       types.String                                        `tfsdk:"domain" json:"domain,required"`
-	ZoneID       types.String                                        `tfsdk:"zone_id" json:"zoneId,required"`
+	ZoneID       types.String                                        `tfsdk:"zone_id" json:"zoneId,required,no_refresh"`
 	Enabled      types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
 	MinTLS       types.String                                        `tfsdk:"min_tls" json:"minTLS,optional"`
-  Ciphers      *[]types.String                                     `tfsdk:"ciphers" json:"ciphers,optional"`
+	Ciphers      *[]types.String                                     `tfsdk:"ciphers" json:"ciphers,optional"`
 	ZoneName     types.String                                        `tfsdk:"zone_name" json:"zoneName,computed"`
 	Status       customfield.NestedObject[R2CustomDomainStatusModel] `tfsdk:"status" json:"status,computed"`
 }
