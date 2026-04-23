@@ -1087,12 +1087,17 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 	}
 	debugLogf(t, "Successfully wrote v4 config (%d bytes)", len(v4Config))
 
-	// Write provider.tf with required_providers block for tf-migrate
+	// Write provider.tf with required_providers block for tf-migrate.
+	// No version constraint is written here: pinning to "~> 4.52.7" would
+	// cause the framework to resolve the v4 registry binary from the lock
+	// file and apply its schema during the migration step, instead of using
+	// the in-process dev provider injected via ProtoV6ProviderFactories.
+	// tf-migrate only needs the source to detect the provider; it will update
+	// the version block itself if network access is available.
 	providerConfig := `terraform {
   required_providers {
     cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 4.52.7"
+      source = "cloudflare/cloudflare"
     }
   }
 }
