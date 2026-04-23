@@ -18,9 +18,8 @@ type AISearchTokensResultListDataSourceEnvelope struct {
 }
 
 type AISearchTokensDataSourceModel struct {
-	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	OrderBy          types.String                                                      `tfsdk:"order_by" query:"order_by,computed_optional"`
-	OrderByDirection types.String                                                      `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	Search    types.String                                                      `tfsdk:"search" query:"search,optional"`
 	MaxItems         types.Int64                                                       `tfsdk:"max_items"`
 	Result           customfield.NestedObjectList[AISearchTokensResultDataSourceModel] `tfsdk:"result"`
 }

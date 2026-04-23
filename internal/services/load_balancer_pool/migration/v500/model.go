@@ -46,6 +46,7 @@ type SourceOriginsModel struct {
 	VirtualNetworkID types.String       `tfsdk:"virtual_network_id"`
 	Weight           types.Float64      `tfsdk:"weight"`
 	Enabled          types.Bool         `tfsdk:"enabled"`
+	FlattenCNAME     types.Bool                                     `tfsdk:"flatten_cname"`
 	Header           []SourceHeaderModel `tfsdk:"header"` // TypeSet stored as array
 }
 
@@ -109,6 +110,7 @@ type TargetLoadBalancerPoolOriginsModel struct {
 	Address          types.String                                   `tfsdk:"address"`
 	DisabledAt       timetypes.RFC3339                              `tfsdk:"disabled_at"` // NEW in v5
 	Enabled          types.Bool                                     `tfsdk:"enabled"`
+	FlattenCNAME     types.Bool                                     `tfsdk:"flatten_cname"`
 	Header           *TargetLoadBalancerPoolOriginsHeaderModel      `tfsdk:"header"` // Structure changed
 	Name             types.String                                   `tfsdk:"name"`
 	Port             types.Int64                                    `tfsdk:"port"` // NEW in v5

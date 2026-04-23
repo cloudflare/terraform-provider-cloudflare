@@ -67,6 +67,7 @@ type SourceInputModel struct {
 	NetworkStatus           types.String             `tfsdk:"network_status"`
 	OperationalState        types.String             `tfsdk:"operational_state"`
 	Score                   types.Float64            `tfsdk:"score"`
+	AuthState               *[]types.String       `tfsdk:"auth_state"`
 	Running                 types.Bool               `tfsdk:"running"` // Removed in v5
 }
 
@@ -144,6 +145,7 @@ type TargetInputModel struct {
 	NetworkStatus           types.String          `tfsdk:"network_status"`
 	OperationalState        types.String          `tfsdk:"operational_state"`
 	Score                   types.Float64         `tfsdk:"score"`
+	AuthState               *[]types.String       `tfsdk:"auth_state"`
 	// Note: Running field from v4 is intentionally not included (removed in v5)
 }
 
