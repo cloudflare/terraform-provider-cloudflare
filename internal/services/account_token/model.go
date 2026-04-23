@@ -13,7 +13,7 @@ type AccountTokenResultEnvelope struct {
 
 type AccountTokenModel struct {
 	ID         types.String                  `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                  `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                  `tfsdk:"account_id" path:"account_id,required"`
 	Name       types.String                  `tfsdk:"name" json:"name,required"`
 	Policies   *[]*AccountTokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
 	ExpiresOn  timetypes.RFC3339             `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`

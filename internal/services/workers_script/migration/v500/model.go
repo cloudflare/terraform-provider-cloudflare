@@ -131,6 +131,7 @@ type TargetWorkersScriptModel struct {
 	NamedHandlers    customfield.NestedObjectList[TargetNamedHandlersModel] `tfsdk:"named_handlers"`
 
 	// Metadata fields (embedded in WorkersScriptModel)
+	Annotations        *TargetAnnotationsModel                                `tfsdk:"annotations"`
 	Assets             *TargetAssetsModel                                    `tfsdk:"assets"`
 	Bindings           customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
 	BodyPart           types.String                                          `tfsdk:"body_part"`
@@ -158,6 +159,7 @@ type TargetBindingsModel struct {
 	ID                          types.String                  `tfsdk:"id"`
 	Outbound                    *TargetBindingsOutboundModel  `tfsdk:"outbound"`
 	ClassName                   types.String                  `tfsdk:"class_name"`
+	DatabaseID                  types.String                  `tfsdk:"database_id"`
 	NamespaceID                 types.String                  `tfsdk:"namespace_id"`
 	ScriptName                  types.String                  `tfsdk:"script_name"`
 	Json                        types.String                  `tfsdk:"json"`
@@ -177,6 +179,7 @@ type TargetBindingsModel struct {
 	KeyBase64                   types.String                  `tfsdk:"key_base64"`
 	KeyJwk                      jsontypes.Normalized          `tfsdk:"key_jwk"`
 	WorkflowName                types.String                  `tfsdk:"workflow_name"`
+	AppID                       types.String                  `tfsdk:"app_id"`
 	VersionID                   types.String                  `tfsdk:"version_id"`
 	Part                        types.String                  `tfsdk:"part"`
 	Namespace                   types.String                  `tfsdk:"namespace"`
@@ -191,6 +194,12 @@ type TargetBindingsModel struct {
 	ServiceID                   types.String                  `tfsdk:"service_id"`
 	NetworkID                   types.String                  `tfsdk:"network_id"`
 	TunnelID                    types.String                  `tfsdk:"tunnel_id"`
+}
+
+// TargetAnnotationsModel represents the annotations nested attribute in v5.
+type TargetAnnotationsModel struct {
+	WorkersMessage types.String `tfsdk:"workers_message"`
+	WorkersTag     types.String `tfsdk:"workers_tag"`
 }
 
 type TargetBindingsOutboundModel struct {
@@ -225,7 +234,8 @@ type TargetAssetsConfigModel struct {
 }
 
 type TargetLimitsModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms"`
+	CPUMs       types.Int64 `tfsdk:"cpu_ms"`
+	Subrequests types.Int64 `tfsdk:"subrequests"`
 }
 
 type TargetMigrationsModel struct {

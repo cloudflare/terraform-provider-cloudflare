@@ -129,7 +129,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.TunnelCloudflaredEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

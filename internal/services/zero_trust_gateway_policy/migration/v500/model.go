@@ -81,6 +81,7 @@ type SourceL4overrideModel struct {
 // v1 fields will be REMOVED during transformation.
 type SourceBISOAdminControlsModel struct {
 	Version types.String `tfsdk:"version"` // "v1" or "v2"
+	WmID    types.String `tfsdk:"wm_id"`
 
 	// v1 fields (will be RENAMED to shortened versions in transformation)
 	// These map to: dp, dcp, dd, dk, du in v5
@@ -265,6 +266,7 @@ type TargetBISOAdminControlsModel struct {
 	DU  types.Bool `tfsdk:"du"`  // disable_upload → du (v1 only)
 
 	Version types.String `tfsdk:"version"` // "v1" or "v2"
+	WmID    types.String `tfsdk:"wm_id"`
 }
 
 // TargetBlockPageModel represents block_page settings (new in v5).

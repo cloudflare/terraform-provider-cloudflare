@@ -145,7 +145,9 @@ func (r *ZoneResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	env := ZoneResultEnvelope{*data}
 	_, err = r.client.Zones.Edit(
 		ctx,
-		zones.ZoneEditParams{},
+		zones.ZoneEditParams{
+			ZoneID: cloudflare.F(state.ID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -204,7 +206,9 @@ func (r *ZoneResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	env := ZoneResultEnvelope{*data}
 	_, err := r.client.Zones.Get(
 		ctx,
-		zones.ZoneGetParams{},
+		zones.ZoneGetParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
