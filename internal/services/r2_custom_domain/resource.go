@@ -92,6 +92,31 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
 	}
 	data = &env.Result
 
+	// If the create response is degraded (zone_name is null), do a follow-up GET
+	// to retrieve the complete data. This can happen if the SSL4SaaS backend is
+	// transiently unavailable during the create operation.
+	if data.ZoneName.IsNull() {
+		res = new(http.Response)
+		env = R2CustomDomainResultEnvelope{*data}
+		_, err = r.client.R2.Buckets.Domains.Custom.Get(
+			ctx,
+			data.BucketName.ValueString(),
+			data.Domain.ValueString(),
+			r2.BucketDomainCustomGetParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err == nil {
+			bytes, _ = io.ReadAll(res.Body)
+			_ = apijson.Unmarshal(bytes, &env)
+			data = &env.Result
+		}
+		// If the GET also fails or returns degraded data, we'll just use what we have
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -143,6 +168,31 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	}
 	data = &env.Result
 
+	// If the update response is degraded (zone_name is null), do a follow-up GET
+	// to retrieve the complete data. This can happen if the SSL4SaaS backend is
+	// transiently unavailable during the update operation.
+	if data.ZoneName.IsNull() {
+		res = new(http.Response)
+		env = R2CustomDomainResultEnvelope{*data}
+		_, err = r.client.R2.Buckets.Domains.Custom.Get(
+			ctx,
+			data.BucketName.ValueString(),
+			data.Domain.ValueString(),
+			r2.BucketDomainCustomGetParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err == nil {
+			bytes, _ = io.ReadAll(res.Body)
+			_ = apijson.Unmarshal(bytes, &env)
+			data = &env.Result
+		}
+		// If the GET also fails or returns degraded data, we'll just use what we have
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -154,6 +204,11 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Snapshot the current state before the API response overwrites it.
+	// This allows us to detect and recover from degraded API responses
+	// where the SSL4SaaS backend is transiently unavailable.
+	previousState := snapshotState(data)
 
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
@@ -184,6 +239,11 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 	data = &env.Result
+
+	// When the API returns a degraded response (status "unknown"/"unknown"),
+	// preserve the previous state values for status, zone_name, and min_tls
+	// to prevent false drift detection and unnecessary resource replacement.
+	preserveStateOnDegradedResponse(ctx, data, previousState)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
