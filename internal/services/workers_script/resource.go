@@ -258,6 +258,7 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	scriptName := data.ScriptName.ValueString()
 
 	// fetch the script resource
+
 	res := new(http.Response)
 	path := fmt.Sprintf("accounts/%s/workers/services/%s", accountId, scriptName)
 	err := r.client.Get(
@@ -400,12 +401,16 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	params := workers.ScriptDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Workers.Scripts.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

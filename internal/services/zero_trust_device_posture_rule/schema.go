@@ -5,6 +5,7 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -19,7 +20,11 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDevicePostureRuleResour
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Zero Trust Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",
@@ -27,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -270,6 +275,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"==",
 							),
 						},
+					},
+					"auth_state": schema.ListAttribute{
+						Description: "The set of Kolide device authentication states that pass the posture check. Device must match one of the specified states.",
+						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"Good",
+									"Notified",
+									"Will Block",
+									"Blocked",
+								),
+							),
+						},
+						ElementType: types.StringType,
 					},
 					"count_operator": schema.StringAttribute{
 						Description: "Count Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",

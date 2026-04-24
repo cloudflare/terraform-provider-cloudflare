@@ -18,17 +18,18 @@ type AccountTokensResultListDataSourceEnvelope struct {
 }
 
 type AccountTokensDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Direction types.String                                                     `tfsdk:"direction" query:"direction,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AccountTokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AccountTokensDataSourceModel) toListParams(_ context.Context) (params accounts.TokenListParams, diags diag.Diagnostics) {
-	params = accounts.TokenListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = accounts.TokenListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Direction.ValueString()))
 	}

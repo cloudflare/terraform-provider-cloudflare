@@ -172,6 +172,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_group_members"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_credential_set"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/vulnerability_scanner_target_environment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_event"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_rules"
@@ -225,6 +230,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_integration_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dns_location"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_categories"
@@ -284,6 +290,8 @@ type CloudflareProviderModel struct {
 	APIToken                types.String `tfsdk:"api_token" json:"api_token"`
 	UserAgentOperatorSuffix types.String `tfsdk:"user_agent_operator_suffix" json:"user_agent_operator_suffix"`
 	BaseURL                 types.String `tfsdk:"base_url" json:"base_url"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,optional"`
+	ZoneID         types.String `tfsdk:"zone_id" json:"zone_id,optional"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -341,6 +349,12 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 			consts.BaseURLSchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Value to override the default HTTP client base URL. Alternatively, can be configured using the `%s` environment variable.", consts.BaseURLSchemaKey),
+			},
+			"account_id": schema.StringAttribute{
+				Optional: true,
+			},
+			"zone_id": schema.StringAttribute{
+				Optional: true,
 			},
 		},
 	}
@@ -592,6 +606,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_tunnel_warp_connector.NewResource,
 		zero_trust_dlp_dataset.NewResource,
+		zero_trust_dlp_settings.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
 		zero_trust_dlp_predefined_profile.NewResource,
 		zero_trust_dlp_entry.NewResource,
@@ -617,6 +632,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
 		web_analytics_rule.NewResource,
+		vulnerability_scanner_credential_set.NewResource,
+		vulnerability_scanner_credential.NewResource,
+		vulnerability_scanner_target_environment.NewResource,
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
@@ -631,6 +649,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		ai_gateway.NewResource,
 		ai_gateway_dynamic_routing.NewResource,
+		user_group.NewResource,
+		user_group_members.NewResource,
 		sso_connector.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
@@ -934,6 +954,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
+		zero_trust_dlp_settings.NewZeroTrustDLPSettingsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
 		zero_trust_dlp_predefined_profile.NewZeroTrustDLPPredefinedProfileDataSource,
 		zero_trust_dlp_entry.NewZeroTrustDLPEntryDataSource,
@@ -978,6 +999,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		hyperdrive_config.NewHyperdriveConfigsDataSource,
 		web_analytics_site.NewWebAnalyticsSiteDataSource,
 		web_analytics_site.NewWebAnalyticsSitesDataSource,
+		vulnerability_scanner_credential_set.NewVulnerabilityScannerCredentialSetDataSource,
+		vulnerability_scanner_credential_set.NewVulnerabilityScannerCredentialSetsDataSource,
+		vulnerability_scanner_credential.NewVulnerabilityScannerCredentialDataSource,
+		vulnerability_scanner_credential.NewVulnerabilityScannerCredentialsDataSource,
+		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentDataSource,
+		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentsDataSource,
 		bot_management.NewBotManagementDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
@@ -1003,6 +1030,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
+		user_group.NewUserGroupDataSource,
+		user_group.NewUserGroupsDataSource,
+		user_group_members.NewUserGroupMembersDataSource,
 		sso_connector.NewSSOConnectorDataSource,
 		sso_connector.NewSSOConnectorsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,

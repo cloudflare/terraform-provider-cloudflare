@@ -5,6 +5,7 @@ package zero_trust_access_mtls_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -19,7 +20,12 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessMTLSCertificateRe
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Mutual TLS Certificates Read",
+				"Access: Mutual TLS Certificates Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The ID of the application that will use this certificate.",

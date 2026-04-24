@@ -16,13 +16,15 @@ type BotnetFeedConfigASNResultDataSourceEnvelope struct {
 }
 
 type BotnetFeedConfigASNDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ASN       types.Int64  `tfsdk:"asn" json:"asn,computed"`
 }
 
 func (m *BotnetFeedConfigASNDataSourceModel) toReadParams(_ context.Context) (params botnet_feed.ConfigASNGetParams, diags diag.Diagnostics) {
-	params = botnet_feed.ConfigASNGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = botnet_feed.ConfigASNGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

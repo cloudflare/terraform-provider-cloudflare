@@ -64,6 +64,12 @@ func (r *ZoneCacheReserveResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := cache.CacheReserveEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *ZoneCacheReserveResource) Create(ctx context.Context, req resource.Crea
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err = r.client.Cache.CacheReserve.Edit(
 		ctx,
-		cache.CacheReserveEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *ZoneCacheReserveResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := cache.CacheReserveEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *ZoneCacheReserveResource) Update(ctx context.Context, req resource.Upda
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err = r.client.Cache.CacheReserve.Edit(
 		ctx,
-		cache.CacheReserveEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,13 +162,17 @@ func (r *ZoneCacheReserveResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := cache.CacheReserveGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err := r.client.Cache.CacheReserve.Get(
 		ctx,
-		cache.CacheReserveGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

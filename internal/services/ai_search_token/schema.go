@@ -17,14 +17,13 @@ var _ resource.ResourceWithConfigValidators = (*AISearchTokenResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"cf_api_id": schema.StringAttribute{
@@ -37,6 +36,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Required: true,
 			},
+			"legacy": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
+				Default:  booldefault.StaticBool(true),
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -45,10 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"enabled": schema.BoolAttribute{
-				Computed: true,
-				Default:  booldefault.StaticBool(true),
-			},
-			"legacy": schema.BoolAttribute{
 				Computed: true,
 				Default:  booldefault.StaticBool(true),
 			},

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,7 +22,39 @@ var _ resource.ResourceWithConfigValidators = (*AccountResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Firewall Access Rules Read",
+				"Account Firewall Access Rules Write",
+				"Account Settings Read",
+				"Account Settings Write",
+				"Billing Read",
+				"Billing Write",
+				"DDoS Botnet Feed Read",
+				"DDoS Botnet Feed Write",
+				"DDoS Protection Read",
+				"DDoS Protection Write",
+				"DNS Firewall Read",
+				"DNS Firewall Write",
+				"DNS View Read",
+				"DNS View Write",
+				"Load Balancers Account Read",
+				"Load Balancers Account Write",
+				"Load Balancing: Monitors and Pools Read",
+				"Load Balancing: Monitors and Pools Write",
+				"SCIM Provisioning",
+				"Trust and Safety Read",
+				"Trust and Safety Write",
+				"Workers KV Storage Read",
+				"Workers KV Storage Write",
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+				"Zero Trust: PII Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",

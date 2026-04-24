@@ -18,7 +18,7 @@ type ZeroTrustAccessInfrastructureTargetsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessInfrastructureTargetsDataSourceModel struct {
-	AccountID        types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAfter     timetypes.RFC3339                                                                       `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
 	CreatedBefore    timetypes.RFC3339                                                                       `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
 	Direction        types.String                                                                            `tfsdk:"direction" query:"direction,optional"`
@@ -64,11 +64,13 @@ func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ con
 	diags.Append(errs...)
 
 	params = zero_trust.AccessInfrastructureTargetListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mIPs),
 		TargetIDs: cloudflare.F(mTargetIDs),
 	}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.CreatedAfter.IsNull() {
 		params.CreatedAfter = cloudflare.F(mCreatedAfter)
 	}

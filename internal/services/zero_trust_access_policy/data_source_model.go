@@ -20,7 +20,7 @@ type ZeroTrustAccessPolicyResultDataSourceEnvelope struct {
 type ZeroTrustAccessPolicyDataSourceModel struct {
 	ID                           types.String                                                                    `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID                     types.String                                                                    `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID                    types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	AppCount                     types.Int64                                                                     `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalRequired             types.Bool                                                                      `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -41,8 +41,10 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessPolicyGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessPolicyGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.AccessPolicyGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -1,6 +1,6 @@
 resource "cloudflare_workers_kv_namespace" "%[1]s_kv_namespace" {
   account_id = "%[2]s"
-  title = "tfacctest-pages-project-kv-namespace"
+  title = "tfacctest-pages-project-kv-namespace-%[1]s"
 }
 
 resource "cloudflare_pages_project" "%[1]s" {

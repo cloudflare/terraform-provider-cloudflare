@@ -14,7 +14,7 @@ type EmailSecurityBlockSenderResultEnvelope struct {
 
 type EmailSecurityBlockSenderModel struct {
 	ID           types.Int64       `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	IsRegex      types.Bool        `tfsdk:"is_regex" json:"is_regex,required"`
 	Pattern      types.String      `tfsdk:"pattern" json:"pattern,required"`
 	PatternType  types.String      `tfsdk:"pattern_type" json:"pattern_type,required"`

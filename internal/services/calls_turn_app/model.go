@@ -13,7 +13,7 @@ type CallsTURNAppResultEnvelope struct {
 }
 
 type CallsTURNAppModel struct {
-	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	KeyID     types.String      `tfsdk:"key_id" path:"key_id,optional"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`

@@ -66,6 +66,12 @@ func (r *WorkersCustomDomainResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+	params := workers.DomainUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -75,9 +81,7 @@ func (r *WorkersCustomDomainResource) Create(ctx context.Context, req resource.C
 	env := WorkersCustomDomainResultEnvelope{*data}
 	_, err = r.client.Workers.Domains.Update(
 		ctx,
-		workers.DomainUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -110,14 +114,18 @@ func (r *WorkersCustomDomainResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	params := workers.DomainGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := WorkersCustomDomainResultEnvelope{*data}
 	_, err := r.client.Workers.Domains.Get(
 		ctx,
 		data.ID.ValueString(),
-		workers.DomainGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -150,12 +158,16 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := workers.DomainDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Workers.Domains.Delete(
 		ctx,
 		data.ID.ValueString(),
-		workers.DomainDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

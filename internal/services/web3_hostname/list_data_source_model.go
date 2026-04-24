@@ -18,14 +18,16 @@ type Web3HostnamesResultListDataSourceEnvelope struct {
 }
 
 type Web3HostnamesDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[Web3HostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *Web3HostnamesDataSourceModel) toListParams(_ context.Context) (params web3.HostnameListParams, diags diag.Diagnostics) {
-	params = web3.HostnameListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = web3.HostnameListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

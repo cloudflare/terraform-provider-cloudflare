@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,7 +20,12 @@ var _ resource.ResourceWithConfigValidators = (*BotManagementResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Bot Management Read",
+				"Bot Management Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -59,6 +65,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("off", "policy_only"),
+				},
+			},
+			"content_bots_protection": schema.StringAttribute{
+				Description:   "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
 				},
 			},
 			"crawler_protection": schema.StringAttribute{

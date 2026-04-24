@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,11 +19,13 @@ var _ datasource.DataSourceWithConfigValidators = (*R2BucketEventNotificationDat
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"bucket_name": schema.StringAttribute{
 				Description: "Name of the bucket.",
 				Required:    true,
@@ -30,6 +33,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"queue_id": schema.StringAttribute{
 				Description: "Queue ID.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account ID.",
+				Optional:    true,
 			},
 			"queue_name": schema.StringAttribute{
 				Description: "Name of the queue.",

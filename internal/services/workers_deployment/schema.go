@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -22,20 +23,26 @@ var _ resource.ResourceWithConfigValidators = (*WorkersDeploymentResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"strategy": schema.StringAttribute{
@@ -69,7 +76,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
-						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
+						Description: "Human-readable message about the deployment. Truncated to 1000 bytes if longer.",
 						Optional:    true,
 					},
 					"workers_triggered_by": schema.StringAttribute{

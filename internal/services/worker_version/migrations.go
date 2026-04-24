@@ -57,6 +57,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 		WorkerID:           priorStateData.WorkerID,
 		CompatibilityDate:  priorStateData.CompatibilityDate,
 		MainModule:         priorStateData.MainModule,
+		Containers:         priorStateData.Containers,
 		Migrations:         priorStateData.Migrations,
 		Modules:            priorStateData.Modules,
 		Placement:          priorStateData.Placement,
@@ -123,6 +124,7 @@ type resourceModelV0 struct {
 	MigrationTag       types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	MainScriptBase64   types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
 	StartupTimeMs      types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
 	URLs               customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
 }
 

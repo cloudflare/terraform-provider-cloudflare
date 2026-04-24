@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -22,6 +23,12 @@ var _ datasource.DataSourceWithConfigValidators = (*LoadBalancerPoolDataSource)(
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Load Balancing: Monitors and Pools Read",
+				"Load Balancing: Monitors and Pools Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -31,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
@@ -220,6 +227,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",
+							Computed:    true,
+						},
+						"flatten_cname": schema.BoolAttribute{
+							Description: "Whether to flatten CNAME records for this origin, resolving them to A/AAAA records before returning to the client. When true (the default), the director resolves CNAME addresses to their underlying A/AAAA records. When false, the origin address is returned as a raw CNAME record without resolution. This setting mirrors the DNS API record flatten_cname setting.",
 							Computed:    true,
 						},
 						"header": schema.SingleNestedAttribute{

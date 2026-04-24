@@ -64,6 +64,12 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 		return
 	}
 
+	params := email_routing.EmailRoutingEnableParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err = r.client.EmailRouting.Enable(
 		ctx,
-		email_routing.EmailRoutingEnableParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -108,13 +112,17 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
+	params := email_routing.EmailRoutingGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Get(
 		ctx,
-		email_routing.EmailRoutingGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -147,11 +155,15 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
+	params := email_routing.EmailRoutingDisableParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.EmailRouting.Disable(
 		ctx,
-		email_routing.EmailRoutingDisableParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

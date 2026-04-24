@@ -15,7 +15,7 @@ type TurnstileWidgetResultEnvelope struct {
 type TurnstileWidgetModel struct {
 	ID             types.String      `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String      `tfsdk:"sitekey" json:"sitekey,computed"`
-	AccountID      types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Mode           types.String      `tfsdk:"mode" json:"mode,required"`
 	Name           types.String      `tfsdk:"name" json:"name,required"`
 	Domains        *[]types.String   `tfsdk:"domains" json:"domains,required"`

@@ -17,7 +17,7 @@ type APIShieldOperationResultEnvelope struct {
 type APIShieldOperationModel struct {
 	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
 	OperationID types.String                                              `tfsdk:"operation_id" json:"operation_id,computed"`
-	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Endpoint    types.String                                              `tfsdk:"endpoint" json:"endpoint,required"`
 	Host        types.String                                              `tfsdk:"host" json:"host,required"`
 	Method      types.String                                              `tfsdk:"method" json:"method,required"`

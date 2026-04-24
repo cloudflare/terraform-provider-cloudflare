@@ -15,7 +15,7 @@ type D1DatabaseResultEnvelope struct {
 type D1DatabaseModel struct {
 	ID                  types.String                    `tfsdk:"id" json:"-,computed"`
 	UUID                types.String                    `tfsdk:"uuid" json:"uuid,computed"`
-	AccountID           types.String                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID           types.String                    `tfsdk:"account_id" path:"account_id,optional"`
 	Name                types.String                    `tfsdk:"name" json:"name,required"`
 	Jurisdiction        types.String                    `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
 	PrimaryLocationHint types.String                    `tfsdk:"primary_location_hint" json:"primary_location_hint,optional,no_refresh"`

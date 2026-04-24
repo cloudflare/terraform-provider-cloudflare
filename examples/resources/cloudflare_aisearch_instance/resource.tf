@@ -14,6 +14,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   }]
   embedding_model = "@cf/qwen/qwen3-embedding-0.6b"
   fusion_method = "max"
+  hybrid_search_enabled = true
   index_method = {
     keyword = true
     vector = true
@@ -24,6 +25,11 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   max_num_results = 1
   metadata = {
     created_from_aisearch_wizard = true
+    search_for_agents = {
+      hostname = "hostname"
+      zone_id = "zone_id"
+      zone_name = "zone_name"
+    }
     worker_domain = "worker_domain"
   }
   public_endpoint_params = {
@@ -91,6 +97,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
       }
     }
   }
+  sync_interval = 900
   token_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
   type = "r2"
 }

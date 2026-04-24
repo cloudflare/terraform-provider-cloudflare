@@ -15,7 +15,7 @@ type SchemaValidationSchemasResultEnvelope struct {
 type SchemaValidationSchemasModel struct {
 	ID                types.String      `tfsdk:"id" json:"-,computed"`
 	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`
-	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Kind              types.String      `tfsdk:"kind" json:"kind,required"`
 	Name              types.String      `tfsdk:"name" json:"name,required"`
 	Source            types.String      `tfsdk:"source" json:"source,required"`

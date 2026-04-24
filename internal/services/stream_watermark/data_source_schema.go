@@ -5,6 +5,7 @@ package stream_watermark
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -16,14 +17,20 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamWatermarkDataSource)(n
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The account identifier tag.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
 				Description: "The unique identifier for a watermark profile.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The account identifier tag.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and a time a watermark profile was created.",

@@ -5,6 +5,7 @@ package snippet
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,7 +18,12 @@ var _ resource.ResourceWithConfigValidators = (*SnippetResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Snippets Read",
+				"Snippets Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"snippet_name": schema.StringAttribute{
 				Description:   "Identify the snippet.",
@@ -26,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Use this field to specify the unique ID of the zone.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"files": schema.ListAttribute{

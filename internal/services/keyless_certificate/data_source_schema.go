@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,6 +19,46 @@ var _ datasource.DataSourceWithConfigValidators = (*KeylessCertificateDataSource
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Apps and Policies Read",
+				"Access: Apps and Policies Revoke",
+				"Access: Apps and Policies Write",
+				"Access: Mutual TLS Certificates Write",
+				"Access: Organizations, Identity Providers, and Groups Write",
+				"Analytics Read",
+				"Apps Write",
+				"Cache Purge",
+				"DNS Read",
+				"DNS Write",
+				"Firewall Services Read",
+				"Firewall Services Write",
+				"Load Balancers Read",
+				"Load Balancers Write",
+				"Logs Read",
+				"Logs Write",
+				"Page Rules Read",
+				"Page Rules Write",
+				"SSL and Certificates Read",
+				"SSL and Certificates Write",
+				"Stream Read",
+				"Stream Write",
+				"Trust and Safety Read",
+				"Trust and Safety Write",
+				"Workers Routes Read",
+				"Workers Routes Write",
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Zaraz Admin",
+				"Zaraz Edit",
+				"Zaraz Read",
+				"Zero Trust: PII Read",
+				"Zone Read",
+				"Zone Settings Read",
+				"Zone Settings Write",
+				"Zone Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier.",
@@ -29,7 +70,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",

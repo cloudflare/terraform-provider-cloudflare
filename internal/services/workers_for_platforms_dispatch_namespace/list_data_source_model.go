@@ -18,14 +18,16 @@ type WorkersForPlatformsDispatchNamespacesResultListDataSourceEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespacesDataSourceModel struct {
-	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers_for_platforms.DispatchNamespaceListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

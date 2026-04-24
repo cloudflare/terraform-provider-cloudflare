@@ -65,6 +65,12 @@ func (r *ZoneSubscriptionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := zones.SubscriptionNewParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *ZoneSubscriptionResource) Create(ctx context.Context, req resource.Crea
 	env := ZoneSubscriptionResultEnvelope{*data}
 	_, err = r.client.Zones.Subscriptions.New(
 		ctx,
-		zones.SubscriptionNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +118,12 @@ func (r *ZoneSubscriptionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := zones.SubscriptionUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *ZoneSubscriptionResource) Update(ctx context.Context, req resource.Upda
 	env := ZoneSubscriptionResultEnvelope{*data}
 	_, err = r.client.Zones.Subscriptions.Update(
 		ctx,
-		zones.SubscriptionUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,6 +163,12 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := zones.SubscriptionGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	ratePlanModel := &ZoneSubscriptionRatePlanModel{
 		Sets: customfield.NullList[types.String](ctx),
@@ -172,9 +186,7 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
-		zones.SubscriptionGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -190,6 +190,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/custom_hostname"
     "resource=./internal/services/custom_hostname_fallback_origin"
     "resource=./internal/services/custom_pages"
+    "resource=./internal/services/custom_page_asset"
     "resource=./internal/services/custom_ssl"
     "resource=./internal/services/dns_record"
     "resource=./internal/services/dns_settings_internal_view"

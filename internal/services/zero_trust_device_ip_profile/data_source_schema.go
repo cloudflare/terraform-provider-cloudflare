@@ -5,6 +5,7 @@ package zero_trust_device_ip_profile
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -17,6 +18,12 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceIPProfileData
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Zero Trust Read",
+				"Zero Trust Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -25,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "The RFC3339Nano timestamp when the Device IP profile was created.",

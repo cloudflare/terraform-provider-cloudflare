@@ -16,7 +16,7 @@ type ZeroTrustDLPPredefinedEntryResultEnvelope struct {
 
 type ZeroTrustDLPPredefinedEntryModel struct {
 	ID            types.String                                                           `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	EntryID       types.String                                                           `tfsdk:"entry_id" json:"entry_id,required,no_refresh"`
 	ProfileID     types.String                                                           `tfsdk:"profile_id" json:"profile_id,computed_optional"`
 	Enabled       types.Bool                                                             `tfsdk:"enabled" json:"enabled,required"`

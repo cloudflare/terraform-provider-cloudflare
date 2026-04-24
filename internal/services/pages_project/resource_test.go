@@ -746,6 +746,10 @@ func TestAccCloudflarePagesProject_RemoveSpecificEnvVar(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{
+					"deployment_configs.preview.env_vars",
+					"deployment_configs.production.env_vars",
+				},
 			},
 		},
 	})

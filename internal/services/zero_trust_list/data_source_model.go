@@ -20,7 +20,7 @@ type ZeroTrustListResultDataSourceEnvelope struct {
 type ZeroTrustListDataSourceModel struct {
 	ID          types.String                                                   `tfsdk:"id" path:"list_id,computed"`
 	ListID      types.String                                                   `tfsdk:"list_id" path:"list_id,optional"`
-	AccountID   types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt   timetypes.RFC3339                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String                                                   `tfsdk:"description" json:"description,computed"`
 	ListCount   types.Float64                                                  `tfsdk:"list_count" json:"count,computed"`
@@ -32,18 +32,21 @@ type ZeroTrustListDataSourceModel struct {
 }
 
 func (m *ZeroTrustListDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayListGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayListGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayListGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *ZeroTrustListDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayListListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.GatewayListListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Type.IsNull() {
 		params.Type = cloudflare.F(zero_trust.GatewayListListParamsType(m.Filter.Type.ValueString()))
 	}

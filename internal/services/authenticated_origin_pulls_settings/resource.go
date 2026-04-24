@@ -64,6 +64,12 @@ func (r *AuthenticatedOriginPullsSettingsResource) Create(ctx context.Context, r
 		return
 	}
 
+	params := origin_tls_client_auth.SettingUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) Create(ctx context.Context, r
 	env := AuthenticatedOriginPullsSettingsResultEnvelope{*data}
 	_, err = r.client.OriginTLSClientAuth.Settings.Update(
 		ctx,
-		origin_tls_client_auth.SettingUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *AuthenticatedOriginPullsSettingsResource) Update(ctx context.Context, r
 		return
 	}
 
+	params := origin_tls_client_auth.SettingUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) Update(ctx context.Context, r
 	env := AuthenticatedOriginPullsSettingsResultEnvelope{*data}
 	_, err = r.client.OriginTLSClientAuth.Settings.Update(
 		ctx,
-		origin_tls_client_auth.SettingUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,13 +162,17 @@ func (r *AuthenticatedOriginPullsSettingsResource) Read(ctx context.Context, req
 		return
 	}
 
+	params := origin_tls_client_auth.SettingGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsSettingsResultEnvelope{*data}
 	_, err := r.client.OriginTLSClientAuth.Settings.Get(
 		ctx,
-		origin_tls_client_auth.SettingGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

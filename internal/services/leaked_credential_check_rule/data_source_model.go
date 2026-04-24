@@ -18,14 +18,16 @@ type LeakedCredentialCheckRuleResultDataSourceEnvelope struct {
 type LeakedCredentialCheckRuleDataSourceModel struct {
 	ID          types.String `tfsdk:"id" path:"detection_id,computed"`
 	DetectionID types.String `tfsdk:"detection_id" path:"detection_id,required"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Password    types.String `tfsdk:"password" json:"password,computed"`
 	Username    types.String `tfsdk:"username" json:"username,computed"`
 }
 
 func (m *LeakedCredentialCheckRuleDataSourceModel) toReadParams(_ context.Context) (params leaked_credential_checks.DetectionGetParams, diags diag.Diagnostics) {
-	params = leaked_credential_checks.DetectionGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = leaked_credential_checks.DetectionGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

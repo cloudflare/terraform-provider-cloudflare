@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -18,10 +19,16 @@ var _ datasource.DataSourceWithConfigValidators = (*HyperdriveConfigsDataSource)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Hyperdrive Read",
+				"Hyperdrive Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -89,6 +96,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 									Sensitive:   true,
 								},
+								"service_id": schema.StringAttribute{
+									Description: "The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.",
+									Computed:    true,
+								},
 							},
 						},
 						"caching": schema.SingleNestedAttribute{
@@ -120,8 +131,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"mtls": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsMTLSDataSourceModel](ctx),
+							Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[HyperdriveConfigsMTLSDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"ca_certificate_id": schema.StringAttribute{
 									Description: "Define CA certificate ID obtained after uploading CA cert.",

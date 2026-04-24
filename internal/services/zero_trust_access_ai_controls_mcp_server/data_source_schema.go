@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"auth_type": schema.StringAttribute{
 				Description: `Available values: "oauth", "bearer", "unauthenticated".`,
@@ -90,6 +90,46 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
 				ElementType: types.MapType{
 					ElemType: jsontypes.NormalizedType{},
+				},
+			},
+			"updated_prompts": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServerUpdatedPromptsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Computed: true,
+						},
+						"alias": schema.StringAttribute{
+							Computed: true,
+						},
+						"description": schema.StringAttribute{
+							Computed: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
+			"updated_tools": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServerUpdatedToolsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Computed: true,
+						},
+						"alias": schema.StringAttribute{
+							Computed: true,
+						},
+						"description": schema.StringAttribute{
+							Computed: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Computed: true,
+						},
+					},
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -5,6 +5,7 @@ package api_shield_discovery_operation
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -18,6 +19,12 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldDiscoveryOperationResou
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version:            500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account API Gateway",
+				"Domain API Gateway",
+			},
+		}.String(),
 		DeprecationMessage: "This resource is no longer supported. It cannot be imported.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -32,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"state": schema.StringAttribute{

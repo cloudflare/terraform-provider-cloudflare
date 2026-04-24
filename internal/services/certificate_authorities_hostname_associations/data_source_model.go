@@ -18,16 +18,17 @@ type CertificateAuthoritiesHostnameAssociationsResultDataSourceEnvelope struct {
 
 type CertificateAuthoritiesHostnameAssociationsDataSourceModel struct {
 	ID                types.String                   `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	MTLSCertificateID types.String                   `tfsdk:"mtls_certificate_id" query:"mtls_certificate_id,optional"`
 	Hostnames         customfield.List[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
 }
 
 func (m *CertificateAuthoritiesHostnameAssociationsDataSourceModel) toReadParams(_ context.Context) (params certificate_authorities.HostnameAssociationGetParams, diags diag.Diagnostics) {
-	params = certificate_authorities.HostnameAssociationGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = certificate_authorities.HostnameAssociationGetParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.MTLSCertificateID.IsNull() {
 		params.MTLSCertificateID = cloudflare.F(m.MTLSCertificateID.ValueString())
 	}

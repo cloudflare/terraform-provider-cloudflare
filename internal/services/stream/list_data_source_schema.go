@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -21,10 +22,26 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Required:    true,
+				Optional:    true,
+			},
+			"after": schema.StringAttribute{
+				Description: "Alias for 'start'. Returns videos created after this date/time (RFC 3339 format).",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"before": schema.StringAttribute{
+				Description: "Alias for 'end'. Returns videos created before this date/time (RFC 3339 format).",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"creator": schema.StringAttribute{
 				Description: "A user-defined identifier for the media creator.",
@@ -34,6 +51,25 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Lists videos created before the specified date.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Filter by video ID(s). Can be a single ID or a comma-separated list of IDs.",
+				Optional:    true,
+			},
+			"limit": schema.Int64Attribute{
+				Description: "Maximum number of videos to return (default 1000, max 1000).",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000),
+				},
+			},
+			"live_input_id": schema.StringAttribute{
+				Description: "Filter by live input ID to find videos associated with a specific live stream.",
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "Filter by video name/UID(s). Can be a single name or a comma-separated list.",
+				Optional:    true,
 			},
 			"search": schema.StringAttribute{
 				Description: "Provides a partial word match of the `name` key in the `meta` field. Slow for medium to large video libraries. May be unavailable for very large libraries.",
@@ -96,6 +132,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+						"clipped_from": schema.StringAttribute{
+							Description: "The unique identifier of the source video this video was clipped from.",
+							Computed:    true,
+						},
 						"created": schema.StringAttribute{
 							Description: "The date and time the media item was created.",
 							Computed:    true,
@@ -134,6 +174,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								int64validator.Between(1, 36000),
 							},
 						},
+						"max_size_bytes": schema.Int64Attribute{
+							Description: "The maximum size in bytes for the video upload.",
+							Computed:    true,
+						},
 						"meta": schema.StringAttribute{
 							Description: "A user modifiable key-value store used to reference other systems of record for managing videos.",
 							Computed:    true,
@@ -161,6 +205,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"preview": schema.StringAttribute{
 							Description: "The video's preview page URI. This field is omitted until encoding is complete.",
 							Computed:    true,
+						},
+						"public_details": schema.SingleNestedAttribute{
+							Description: "Public details for the video including title, share link, channel link, and logo.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[StreamsPublicDetailsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"channel_link": schema.StringAttribute{
+									Computed: true,
+								},
+								"logo": schema.StringAttribute{
+									Computed: true,
+								},
+								"media_id": schema.Int64Attribute{
+									Computed: true,
+								},
+								"share_link": schema.StringAttribute{
+									Computed: true,
+								},
+								"title": schema.StringAttribute{
+									Computed: true,
+								},
+							},
 						},
 						"ready_to_stream": schema.BoolAttribute{
 							Description: "Indicates whether the video is playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.",

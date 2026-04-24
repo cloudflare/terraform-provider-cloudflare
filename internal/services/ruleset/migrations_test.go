@@ -37,7 +37,7 @@ func TestMigrateCloudflareRulesetBasic(t *testing.T) {
 	// V4 config with basic ruleset (no rules)
 	v4Config := acctest.LoadTestCase("migrations/basic_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("My ruleset %s", rnd))),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_firewall_custom")),
@@ -54,7 +54,7 @@ func TestMigrateCloudflareRulesetBasic(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -73,7 +73,7 @@ func TestMigrateCloudflareRulesetSimpleRules(t *testing.T) {
 	// V4 config with simple rules using block syntax
 	v4Config := acctest.LoadTestCase("migrations/simple_rules_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(2)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("expression"), knownvalue.StringExact("ip.src eq 1.1.1.1")),
@@ -91,7 +91,7 @@ func TestMigrateCloudflareRulesetSimpleRules(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -109,7 +109,7 @@ func TestMigrateCloudflareRulesetRewriteRules(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/rewrite_rules_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("rewrite")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("uri").AtMapKey("path").AtMapKey("value"), knownvalue.StringExact("/new-path")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("uri").AtMapKey("query").AtMapKey("value"), knownvalue.StringExact("foo=bar")),
@@ -124,7 +124,7 @@ func TestMigrateCloudflareRulesetRewriteRules(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -143,7 +143,7 @@ func TestMigrateCloudflareRulesetDynamicRules(t *testing.T) {
 	// V4 config with dynamic rules blocks
 	v4Config := acctest.LoadTestCase("migrations/dynamic_rules_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("expression"), knownvalue.StringExact("ip.src eq 1.1.1.1")),
@@ -163,7 +163,7 @@ func TestMigrateCloudflareRulesetDynamicRules(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -183,7 +183,7 @@ func TestMigrateCloudflareRulesetRedirectFromValue(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/redirect_from_value_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_dynamic_redirect")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(2)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("redirect")),
@@ -203,7 +203,7 @@ func TestMigrateCloudflareRulesetRedirectFromValue(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -221,7 +221,7 @@ func TestMigrateCloudflareRulesetHeadersListToMap(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/headers_list_to_map_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_response_headers_transform")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(2)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("rewrite")),
@@ -239,7 +239,7 @@ func TestMigrateCloudflareRulesetHeadersListToMap(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -259,7 +259,7 @@ func TestMigrateCloudflareRulesetCacheKeyQueryString(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/cache_key_query_string_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(2)),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"), knownvalue.StringExact("set_cache_settings")),
@@ -277,7 +277,7 @@ func TestMigrateCloudflareRulesetCacheKeyQueryString(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -295,7 +295,7 @@ func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/log_custom_fields_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_log_custom_fields")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -328,7 +328,7 @@ func TestMigrateCloudflareRulesetLogCustomFields(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -348,7 +348,7 @@ func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/edge_ttl_status_code_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_cache_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -385,7 +385,7 @@ func TestMigrateCloudflareRulesetEdgeTTLStatusCode(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -403,7 +403,7 @@ func TestMigrateCloudflareRulesetWAFManagedOverrides(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/waf_managed_overrides_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_firewall_managed")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(1)),
 
@@ -425,7 +425,7 @@ func TestMigrateCloudflareRulesetWAFManagedOverrides(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -443,7 +443,7 @@ func TestMigrateCloudflareRulesetRateLimit(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/ratelimit_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_ratelimit")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -477,7 +477,7 @@ func TestMigrateCloudflareRulesetRateLimit(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -495,7 +495,7 @@ func TestMigrateCloudflareRulesetOriginRoute(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/origin_route_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_origin")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -521,7 +521,7 @@ func TestMigrateCloudflareRulesetOriginRoute(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -541,7 +541,7 @@ func TestMigrateCloudflareRulesetLateTransform(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/late_transform_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_late_transform")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -567,7 +567,7 @@ func TestMigrateCloudflareRulesetLateTransform(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -587,7 +587,7 @@ func TestMigrateCloudflareRulesetRedirectFromList(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/redirect_from_list_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_dynamic_redirect")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -619,7 +619,7 @@ func TestMigrateCloudflareRulesetRedirectFromList(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -639,7 +639,7 @@ func TestMigrateCloudflareRulesetSanitize(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/sanitize_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_late_transform")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -667,7 +667,7 @@ func TestMigrateCloudflareRulesetSanitize(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -685,7 +685,7 @@ func TestMigrateCloudflareRulesetConfigSettings(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/config_settings_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_config_settings")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -717,7 +717,7 @@ func TestMigrateCloudflareRulesetConfigSettings(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -735,7 +735,7 @@ func TestMigrateCloudflareRulesetCustomErrors(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/custom_errors_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_custom_errors")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -764,7 +764,7 @@ func TestMigrateCloudflareRulesetCustomErrors(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -782,7 +782,7 @@ func TestMigrateCloudflareRulesetResponseCompression(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/response_compression_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_response_compression")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -810,7 +810,7 @@ func TestMigrateCloudflareRulesetResponseCompression(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -828,7 +828,7 @@ func TestMigrateCloudflareRulesetResponseFirewall(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/response_firewall_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_response_firewall_managed")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(2)),
 
@@ -852,7 +852,7 @@ func TestMigrateCloudflareRulesetResponseFirewall(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,
@@ -872,7 +872,7 @@ func TestMigrateCloudflareRulesetSBFM(t *testing.T) {
 
 	v4Config := acctest.LoadTestCase("migrations/sbfm_v4.tf", zoneID, rnd)
 
-	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+	migrationSteps := acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("phase"), knownvalue.StringExact("http_request_firewall_custom")),
 		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(3)),
 
@@ -898,7 +898,7 @@ func TestMigrateCloudflareRulesetSBFM(t *testing.T) {
 			ExternalProviders: map[string]resource.ExternalProvider{
 				"cloudflare": {
 					Source:            "cloudflare/cloudflare",
-					VersionConstraint: "4.52.1",
+					VersionConstraint: "4.52.7",
 				},
 			},
 			Config: v4Config,

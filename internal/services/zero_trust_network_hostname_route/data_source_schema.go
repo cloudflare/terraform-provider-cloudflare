@@ -5,6 +5,7 @@ package zero_trust_network_hostname_route
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -16,6 +17,14 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustNetworkHostnameRout
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloudflare One Networks Read",
+				"Cloudflare One Networks Write",
+				"Cloudflare Tunnel Read",
+				"Cloudflare Tunnel Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The hostname route ID.",
@@ -27,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID",
-				Required:    true,
+				Optional:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "An optional description of the hostname route.",

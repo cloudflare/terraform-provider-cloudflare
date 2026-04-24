@@ -18,14 +18,16 @@ type TokenValidationConfigsResultListDataSourceEnvelope struct {
 }
 
 type TokenValidationConfigsDataSourceModel struct {
-	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems types.Int64                                                               `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[TokenValidationConfigsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *TokenValidationConfigsDataSourceModel) toListParams(_ context.Context) (params token_validation.ConfigurationListParams, diags diag.Diagnostics) {
-	params = token_validation.ConfigurationListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = token_validation.ConfigurationListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

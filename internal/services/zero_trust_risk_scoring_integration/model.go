@@ -14,7 +14,7 @@ type ZeroTrustRiskScoringIntegrationResultEnvelope struct {
 
 type ZeroTrustRiskScoringIntegrationModel struct {
 	ID              types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	IntegrationType types.String      `tfsdk:"integration_type" json:"integration_type,required"`
 	TenantURL       types.String      `tfsdk:"tenant_url" json:"tenant_url,required"`
 	Active          types.Bool        `tfsdk:"active" json:"active,optional"`

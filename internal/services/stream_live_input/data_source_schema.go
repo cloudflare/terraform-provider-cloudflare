@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -20,14 +21,20 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamLiveInputDataSource)(n
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"live_input_identifier": schema.StringAttribute{
 				Description: "A unique identifier for a live input.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the live input was created.",
