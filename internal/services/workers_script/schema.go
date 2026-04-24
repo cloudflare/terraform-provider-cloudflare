@@ -220,10 +220,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -874,7 +874,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"annotations": schema.SingleNestedAttribute{
 				Description: "Annotations for the version created by this upload.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
 						Description: "Human-readable message about the version. Truncated to 1000 bytes if longer.",
@@ -883,6 +885,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"workers_tag": schema.StringAttribute{
 						Description: "User-provided identifier for the version. Maximum 100 bytes.",
 						Optional:    true,
+					},
+					"workers_triggered_by": schema.StringAttribute{
+						Description: "Indicates the trigger that created this version. Server-set value.",
+						Computed:    true,
 					},
 				},
 			},

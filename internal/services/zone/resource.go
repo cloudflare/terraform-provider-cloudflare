@@ -269,7 +269,9 @@ func (r *ZoneResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 
 	_, err := r.client.Zones.Delete(
 		ctx,
-		zones.ZoneDeleteParams{},
+		zones.ZoneDeleteParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
