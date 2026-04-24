@@ -1,5 +1,77 @@
 # Changelog
 
+## 5.19.0 (2026-04-24)
+
+Full Changelog: [v5.19.0-beta.5...v5.19.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.5...v5.19.0)
+
+### Features
+
+* chore: bump go sdk version ([070ea0b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/070ea0b08cd0c1dad4a5f8d35e030480e06aebe3))
+* chore: skip failing tests from TypeScript CI run 24427365644 ([e430106](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e430106e937dcab50edc4786977e0d563234fe5e))
+* feat: BRAPI-1051 add browser rendering devtools methods ([7f83203](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7f83203672e22fcaea93df4d38da7198f248306d))
+* feat: enable treeshaking and client options for setting zone and account IDs ([43b90cb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/43b90cb66b95e1bec092d9a0fa720fd9586374f9))
+* feat: enable treeshaking and client options for setting zone and account IDs ([8b732ad](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8b732ade3bf900f0d5847a6f2b9fd2922939a31c))
+
+
+### Bug Fixes
+
+* acceptance and migration tests ([44b5522](https://github.com/cloudflare/terraform-provider-cloudflare/commit/44b55229113dc795ac4150c453cabbbe70d2cb76))
+* account_member migration tests - status injection and cleanup reliability ([ad34dc3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ad34dc33968385fce5f306dd6360bad1ee16b757))
+* **account_member:** add UseStateForUnknown to status field to prevent drift ([841d6f9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/841d6f9d5407b14378a2f72f6e0c9567d27bd4fb))
+* add missing closing paren in TestMigrateManagedHeaders_Basic ([8fd387a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8fd387ab423a68d30ab7f0f13f014e6e60f61d70))
+* build ([4519840](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4519840c8a9ed3993a775b1cd515acc753fee9a0))
+* clean up global account and zone id, account resource path param ([0f55796](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0f557967c9571024d21c769ec04fbf75bc91d41d))
+* disable all managed header transforms before each migration test ([25c3a99](https://github.com/cloudflare/terraform-provider-cloudflare/commit/25c3a9919a64cbbb5c39983688d7353c20343761))
+* **logpush_job:** fix acceptance tests failing due to destination re-validation on PUT ([87243a1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/87243a1d088b5e5aa841ed99a6b24bcf19aa09a3))
+* managed_transforms and ruleset acceptance test fixes ([27ca788](https://github.com/cloudflare/terraform-provider-cloudflare/commit/27ca788847955c97e4971f1fd958061f1c327513))
+* **managed_transforms:** remove unavailable rule and fix nil pointer in state upgrade ([d14644e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d14644e80f92156e2e11601c157778685e635d7c))
+* migration test failures for list, list_item and api_token ([e6c5921](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e6c5921a6e13bd7add954c4f7ce678ada82e9a6f))
+* MigrationV2TestStepForManagedTransforms must not remove managed_headers state ([a258b2d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a258b2d0191aecb37d0556f4f0c99f63d98f8989))
+* **pages_project:** fix acceptance test failures ([b2a08bc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b2a08bcd4940cd4ba5c6506bd08519a60df1b0c7))
+* **r2:** Add degraded-response handling to the R2 custom domain resource ([c8d0e0f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c8d0e0f96e9edc4ccf4611376a349623bdd426a0))
+* remove ExpectNonEmptyPlan from managed_transforms step 1 ([a1cb0fc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a1cb0fc95a35878a7d0ddc4566ec6110870f13fe))
+* remove obsolete state entries without requiring terraform binary ([7969064](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7969064c4fa2a3377d3db0a372ededf5e36d769c))
+* **ruleset:** restore phase-entrypoint fallbacks and fix acceptance tests ([b92500b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b92500b854743dddda3ba14de7ac40f4358a88a4))
+* schema update drift, zone_id ([5b71d70](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5b71d706d8d72b08a9f00e58eb57860f807dcde8))
+* schema version ([aee4133](https://github.com/cloudflare/terraform-provider-cloudflare/commit/aee4133550a2f0ac88160f4176026091603326e3))
+* schema version and client opts leftover ([bccf27f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bccf27f302420e85ec9b20a123b75ec0554b1feb))
+* stabilize rules-and-policies migration tests ([230f607](https://github.com/cloudflare/terraform-provider-cloudflare/commit/230f607036427ddf61dc1974e93ef321a8331814))
+* **tests:** fix flaky leaked_credential_check_rule acceptance tests ([9805128](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9805128a15d16cd489fee74503425a5275f05899))
+* **tests:** fix flaky mtls_certificate and queue_consumer acceptance tests ([fe7184f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/fe7184fc6ee40ccac5ddd710b753732b851611f6))
+* **tokens:** Change from set to list for token policies ([9937847](https://github.com/cloudflare/terraform-provider-cloudflare/commit/99378479e6942549ebcee9fa78ed5f6d19158def))
+* unit tests ([d6e9f4d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d6e9f4dbaf47003e528300976f6866328c22b92f))
+* UpgradeFromV0 handles both v4 and early-v5 state formats ([b09f658](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b09f658974dc2a171f5296d535224a7c857c9099))
+* use Config instead of ConfigDirectory for zero_trust_organization import step ([e7a4463](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e7a446354b6abfccb97189b65fc15a441b80278a))
+* use MigrationV2TestStepAllowCreate for CacheKeyFields migration test ([0140adc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0140adc56d96e1c85a54236ee93f4e873ea2d271))
+
+
+### Chores
+
+* all migrations should use latest v4 provider ([3059f1a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3059f1ab3678b90585c8bea358818aea9ae89cd5))
+* **api:** update composite API spec ([1c7e90a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1c7e90a0aff3a9f5d1771beabe63a92e5ef68a32))
+* **api:** update composite API spec ([f68be5c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f68be5cc3985670e160643478eaad9286d73e1c0))
+* **api:** update composite API spec ([cc381dc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cc381dc61f0f39cdecadcbc5d6e748e507e6d605))
+* **api:** update composite API spec ([f5d14a3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f5d14a3beef25c400c30bb1219973575d435f25a))
+* **api:** update composite API spec ([f43d408](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f43d408e24bf04b35feb526e9ea020de3241dcae))
+* **api:** update composite API spec ([9c8bce1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9c8bce1a078d7ab6f079a8eb62a04431ab461d95))
+* **api:** update composite API spec ([f69aa5b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f69aa5ba46e5be1d586f112ef91c6b9034720a7c))
+* **api:** update composite API spec ([db5b37e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/db5b37ead1f962ecfc1ac45d8ceae2d3719a3b67))
+* bump hc-install to v0.9.3 to fix expired PGP key ([519ad60](https://github.com/cloudflare/terraform-provider-cloudflare/commit/519ad6014ae263b41ce233adef59bd7d6df73deb))
+* **docs:** caveats and callouts ([31c0d88](https://github.com/cloudflare/terraform-provider-cloudflare/commit/31c0d8868ea9c68c66c98544634897d29e880a20))
+* **internal:** codegen related update ([4cf8755](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4cf87559008f8405516875008a269110f10ab114))
+* **internal:** codegen related update ([53d484b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/53d484b589b1a7679197da5347891272aad710bb))
+* **internal:** codegen related update ([ac80cc0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ac80cc0420d770de36792b380303e9717e023ac4))
+* **internal:** codegen related update ([ec674ae](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ec674aeff76d978d7ef2799eb0be3f028b0824fd))
+* skip rate limited test ([f43218f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f43218f9fd71202619cc21cc71fd1a1d5913d66e))
+* update docs ([6ad55fb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6ad55fba20735f42a27e325cef873a78a968eec7))
+* update tf-migrate version ([d023e25](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d023e255df901616b8e1f0be3283cab37ed1db33))
+* update tf-migrate version and skip cloud connector rules ([bb5c2ba](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bb5c2ba93e31266a58dddb12e5f8665beb5825e9))
+
+
+### Documentation
+
+* remove TBD wording from deprecation timeline ([bce670f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bce670f579ac8295d37d4d843b20d6d8ca1cd338))
+
 ## 5.19.0-beta.5 (2026-04-07)
 
 Full Changelog: [v5.19.0-beta.4...v5.19.0-beta.5](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0-beta.4...v5.19.0-beta.5)
