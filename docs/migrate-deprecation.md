@@ -24,7 +24,7 @@ All users should migrate to `tf-migrate` for any Terraform v4 → v5 (or future)
 ### Timeline
 
 - `cmd/migrate` is deprecated as of this release
-- It will be removed in a future release (date TBD)
+- It will be removed in a future release
 
 ### Notes
 
