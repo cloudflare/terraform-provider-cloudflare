@@ -2,12 +2,19 @@
 page_title: "cloudflare_custom_pages Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Custom Pages ReadAccount Custom Pages WriteAccount Settings ReadAccount Settings WriteZero Trust: PII Read
 ---
 
 # cloudflare_custom_pages (Resource)
 
+Accepted Permissions
 
+- `Account Custom Pages Read`
+- `Account Custom Pages Write`
+- `Account Settings Read`
+- `Account Settings Write`
+- `Zero Trust: PII Read`
 
 ## Example Usage
 

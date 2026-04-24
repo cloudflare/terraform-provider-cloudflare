@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_security_block_sender Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloud Email Security: ReadCloud Email Security: Write
 ---
 
 # cloudflare_email_security_block_sender (Resource)
 
+Accepted Permissions
 
+- `Cloud Email Security: Read`
+- `Cloud Email Security: Write`
 
 ## Example Usage
 
@@ -26,13 +30,13 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 
 ### Required
 
-- `account_id` (String) Account Identifier
 - `is_regex` (Boolean)
 - `pattern` (String)
 - `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 ### Optional
 
+- `account_id` (String) Account Identifier
 - `comments` (String)
 
 ### Read-Only

@@ -2,12 +2,16 @@
 page_title: "cloudflare_d1_database Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  D1 ReadD1 Write
 ---
 
 # cloudflare_d1_database (Resource)
 
+Accepted Permissions
 
+- `D1 Read`
+- `D1 Write`
 
 !> When a D1 Database is replaced all the data is lost. Please ensure you have a
    backup of your data before replacing a D1 Database.
@@ -28,11 +32,11 @@ resource "cloudflare_d1_database" "example_d1_database" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `name` (String) D1 database name.
 
 ### Optional
 
+- `account_id` (String) Account identifier tag.
 - `jurisdiction` (String) Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.
 Available values: "eu", "fedramp".
 - `primary_location_hint` (String) Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.

@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -23,22 +27,28 @@ data "cloudflare_stream" "example_stream" {
 
 ### Required
 
-- `account_id` (String) The account identifier tag.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
+
+### Optional
+
+- `account_id` (String) The account identifier tag.
 
 ### Read-Only
 
 - `allowed_origins` (List of String) Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.
+- `clipped_from` (String) The unique identifier of the source video this video was clipped from.
 - `created` (String) The date and time the media item was created.
 - `creator` (String) A user-defined identifier for the media creator.
 - `duration` (Number) The duration of the video in seconds. A value of `-1` means the duration is unknown. The duration becomes available after the upload and before the video is ready.
 - `input` (Attributes) (see [below for nested schema](#nestedatt--input))
 - `live_input` (String) The live input ID used to upload a video with Stream Live.
 - `max_duration_seconds` (Number) The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.
+- `max_size_bytes` (Number) The maximum size in bytes for the video upload.
 - `meta` (String) A user modifiable key-value store used to reference other systems of record for managing videos.
 - `modified` (String) The date and time the media item was last modified.
 - `playback` (Attributes) (see [below for nested schema](#nestedatt--playback))
 - `preview` (String) The video's preview page URI. This field is omitted until encoding is complete.
+- `public_details` (Attributes) Public details for the video including title, share link, channel link, and logo. (see [below for nested schema](#nestedatt--public_details))
 - `ready_to_stream` (Boolean) Indicates whether the video is playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.
 - `ready_to_stream_at` (String) Indicates the time at which the video became playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.
 - `require_signed_urls` (Boolean) Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.
@@ -68,6 +78,18 @@ Read-Only:
 
 - `dash` (String) DASH Media Presentation Description for the video.
 - `hls` (String) The HLS manifest for the video.
+
+
+<a id="nestedatt--public_details"></a>
+### Nested Schema for `public_details`
+
+Read-Only:
+
+- `channel_link` (String)
+- `logo` (String)
+- `media_id` (Number)
+- `share_link` (String)
+- `title` (String)
 
 
 <a id="nestedatt--status"></a>

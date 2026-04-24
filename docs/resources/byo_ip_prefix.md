@@ -2,12 +2,20 @@
 page_title: "cloudflare_byo_ip_prefix Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  IP Prefixes: BGP On Demand ReadIP Prefixes: BGP On Demand WriteIP Prefixes: ReadIP Prefixes: WriteMagic Transit ReadMagic Transit Write
 ---
 
 # cloudflare_byo_ip_prefix (Resource)
 
+Accepted Permissions
 
+- `IP Prefixes: BGP On Demand Read`
+- `IP Prefixes: BGP On Demand Write`
+- `IP Prefixes: Read`
+- `IP Prefixes: Write`
+- `Magic Transit Read`
+- `Magic Transit Write`
 
 ## Example Usage
 
@@ -27,12 +35,12 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Required
 
-- `account_id` (String) Identifier of a Cloudflare account.
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
 
 ### Optional
 
+- `account_id` (String) Identifier of a Cloudflare account.
 - `delegate_loa_creation` (Boolean) Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.
 - `description` (String) Description of the prefix.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.

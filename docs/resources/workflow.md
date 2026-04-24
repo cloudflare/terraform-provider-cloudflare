@@ -2,12 +2,17 @@
 page_title: "cloudflare_workflow Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workflow (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -28,13 +33,13 @@ resource "cloudflare_workflow" "example_workflow" {
 
 ### Required
 
-- `account_id` (String)
 - `class_name` (String)
 - `script_name` (String)
 - `workflow_name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
 
 ### Read-Only

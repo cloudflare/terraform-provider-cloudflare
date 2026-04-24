@@ -2,12 +2,16 @@
 page_title: "cloudflare_logpull_retention Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Logs ReadLogs Write
 ---
 
 # cloudflare_logpull_retention (Resource)
 
+Accepted Permissions
 
+- `Logs Read`
+- `Logs Write`
 
 ## Example Usage
 

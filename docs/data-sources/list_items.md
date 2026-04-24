@@ -2,12 +2,16 @@
 page_title: "cloudflare_list_items Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Filter Lists EditAccount Filter Lists Read
 ---
 
 # cloudflare_list_items (Data Source)
 
+Accepted Permissions
 
+- `Account Filter Lists Edit`
+- `Account Filter Lists Read`
 
 ## Example Usage
 
@@ -25,11 +29,11 @@ data "cloudflare_list_items" "example_list_items" {
 
 ### Required
 
-- `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
 ### Optional
 
+- `account_id` (String) The Account ID for this resource.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `per_page` (Number) Amount of results to include in each paginated response. A non-negative 32 bit integer.
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.

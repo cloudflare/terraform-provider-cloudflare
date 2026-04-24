@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_setting Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_zone_setting (Data Source)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ data "cloudflare_zone_setting" "example_zone_setting" {
 ### Required
 
 - `setting_id` (String) Setting name
+
+### Optional
+
 - `zone_id` (String) Identifier
 
 ### Read-Only

@@ -2,12 +2,17 @@
 page_title: "cloudflare_resource_group Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteSCIM Provisioning
 ---
 
 # cloudflare_resource_group (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `SCIM Provisioning`
 
 ## Example Usage
 
@@ -23,8 +28,11 @@ data "cloudflare_resource_group" "example_resource_group" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `resource_group_id` (String) Resource Group identifier tag.
+
+### Optional
+
+- `account_id` (String) Account identifier tag.
 
 ### Read-Only
 

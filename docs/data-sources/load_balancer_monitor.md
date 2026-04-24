@@ -2,12 +2,16 @@
 page_title: "cloudflare_load_balancer_monitor Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Load Balancing: Monitors and Pools ReadLoad Balancing: Monitors and Pools Write
 ---
 
 # cloudflare_load_balancer_monitor (Data Source)
 
+Accepted Permissions
 
+- `Load Balancing: Monitors and Pools Read`
+- `Load Balancing: Monitors and Pools Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_load_balancer_monitor" "example_load_balancer_monitor" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `monitor_id` (String)
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

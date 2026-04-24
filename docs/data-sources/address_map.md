@@ -2,12 +2,16 @@
 page_title: "cloudflare_address_map Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Address Maps ReadAddress Maps Write
 ---
 
 # cloudflare_address_map (Data Source)
 
+Accepted Permissions
 
+- `Address Maps Read`
+- `Address Maps Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_address_map" "example_address_map" {
 
 ### Required
 
-- `account_id` (String) Identifier of a Cloudflare account.
 - `address_map_id` (String) Identifier of an Address Map.
+
+### Optional
+
+- `account_id` (String) Identifier of a Cloudflare account.
 
 ### Read-Only
 

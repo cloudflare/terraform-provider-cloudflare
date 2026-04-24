@@ -45,13 +45,13 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 
 ### Required
 
-- `account_id` (String)
 - `hostname` (String)
 - `id` (String) portal id
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
 - `description` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway

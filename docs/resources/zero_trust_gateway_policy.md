@@ -48,6 +48,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       printing = "enabled"
       upload = "enabled"
       version = "v1"
+      wm_id = "475345dc-5299-4b6e-8f6a-3d3e4c8e9f1a"
     }
     block_page = {
       target_uri = "https://example.com"
@@ -137,13 +138,13 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 
 ### Required
 
-- `account_id` (String)
 - `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) Specify the rule name.
 
 ### Optional
 
+- `account_id` (String)
 - `description` (String) Specify the rule description.
 - `device_posture` (String) Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `enabled` (Boolean) Specify whether the rule is enabled.
@@ -233,7 +234,7 @@ Available values: "enabled", "disabled", "remote_only".
 - `dcp` (Boolean) Set to false to enable copy-pasting. Only applies when `version == "v1"`.
 - `dd` (Boolean) Set to false to enable downloading. Only applies when `version == "v1"`.
 - `dk` (Boolean) Set to false to enable keyboard usage. Only applies when `version == "v1"`.
-- `download` (String) Configure download behavior. When set to remote_only, users can view downloads but cannot save them. Applies only when version == "v2".
+- `download` (String) Configure download behavior. When set to remote_only, users can view downloads but cannot save them. If this field is absent, downloading remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled", "remote_only".
 - `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
 - `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
@@ -247,6 +248,7 @@ Available values: "enabled", "disabled".
 Available values: "enabled", "disabled".
 - `version` (String) Indicate which version of the browser isolation controls should apply.
 Available values: "v1", "v2".
+- `wm_id` (String) Specify the watermark ID (UUID) to apply to the isolated browser session. When present, enables watermark rendering in the isolated browser.
 
 
 <a id="nestedatt--rule_settings--block_page"></a>

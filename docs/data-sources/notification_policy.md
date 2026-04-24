@@ -2,12 +2,19 @@
 page_title: "cloudflare_notification_policy Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteNotifications ReadNotifications WriteZero Trust: PII Read
 ---
 
 # cloudflare_notification_policy (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `Notifications Read`
+- `Notifications Write`
+- `Zero Trust: PII Read`
 
 ## Example Usage
 
@@ -23,8 +30,11 @@ data "cloudflare_notification_policy" "example_notification_policy" {
 
 ### Required
 
-- `account_id` (String) The account id
 - `policy_id` (String) The unique identifier of a notification policy
+
+### Optional
+
+- `account_id` (String) The account id
 
 ### Read-Only
 

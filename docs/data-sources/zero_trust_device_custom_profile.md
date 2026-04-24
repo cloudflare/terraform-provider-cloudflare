@@ -23,8 +23,11 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 
 ### Required
 
-- `account_id` (String)
 - `policy_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

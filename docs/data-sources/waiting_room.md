@@ -2,12 +2,16 @@
 page_title: "cloudflare_waiting_room Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Waiting Rooms ReadWaiting Rooms Write
 ---
 
 # cloudflare_waiting_room (Data Source)
 
+Accepted Permissions
 
+- `Waiting Rooms Read`
+- `Waiting Rooms Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ data "cloudflare_waiting_room" "example_waiting_room" {
 ### Required
 
 - `waiting_room_id` (String)
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

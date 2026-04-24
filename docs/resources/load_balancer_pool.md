@@ -2,12 +2,16 @@
 page_title: "cloudflare_load_balancer_pool Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Load Balancing: Monitors and Pools ReadLoad Balancing: Monitors and Pools Write
 ---
 
 # cloudflare_load_balancer_pool (Resource)
 
+Accepted Permissions
 
+- `Load Balancing: Monitors and Pools Read`
+- `Load Balancing: Monitors and Pools Write`
 
 ## Example Usage
 
@@ -18,6 +22,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   origins = [{
     address = "0.0.0.0"
     enabled = true
+    flatten_cname = true
     header = {
       host = ["example.com"]
     }
@@ -61,12 +66,12 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
 - `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
 - `description` (String) A human-readable description of the pool.
 - `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
@@ -94,8 +99,8 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 Optional:
 
 - `address` (String) The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.
-- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
 - `enabled` (Boolean) Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
+- `flatten_cname` (Boolean) Whether to flatten CNAME records for this origin, resolving them to A/AAAA records before returning to the client. When true (the default), the director resolves CNAME addresses to their underlying A/AAAA records. When false, the origin address is returned as a raw CNAME record without resolution. This setting mirrors the DNS API record flatten_cname setting.
 - `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--origins--header))
 - `name` (String) A human-identifiable name for the origin.
 - `port` (Number) The port for upstream connections. A value of 0 means the default port for the protocol will be used.
@@ -103,6 +108,10 @@ Optional:
 - `weight` (Number) The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.
 - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin's outstanding requests.
 - `origin_steering.policy="least_connections"`: Use weight to scale the origin's open connections.
+
+Read-Only:
+
+- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
 
 <a id="nestedatt--origins--header"></a>
 ### Nested Schema for `origins.header`

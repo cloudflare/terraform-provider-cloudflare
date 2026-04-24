@@ -2,12 +2,16 @@
 page_title: "cloudflare_rate_limit Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_rate_limit (Data Source)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ data "cloudflare_rate_limit" "example_rate_limit" {
 ### Required
 
 - `rate_limit_id` (String) Defines the unique identifier of the rate limit.
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

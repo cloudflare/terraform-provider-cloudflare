@@ -2,12 +2,16 @@
 page_title: "cloudflare_user_agent_blocking_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_user_agent_blocking_rule (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 
@@ -32,12 +36,12 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
 - `configuration` (Attributes) (see [below for nested schema](#nestedatt--configuration))
 - `mode` (String) The action to apply to a matched request.
 Available values: "block", "challenge", "whitelist", "js_challenge", "managed_challenge".
-- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
 - `description` (String) An informative summary of the rule. This value is sanitized and any tags will be removed.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 
