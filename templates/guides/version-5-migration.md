@@ -53,8 +53,8 @@ Before starting the migration:
 
   ```bash
   # Example for macOS (ARM64)
-  curl -LO https://github.com/cloudflare/tf-migrate/releases/download/v1.0.0-beta.2/tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
-  tar -xzf tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
+  curl -LO https://github.com/cloudflare/tf-migrate/releases/download/v1.0.0/tf-migrate_1.0.0_darwin_arm64.tar.gz
+  tar -xzf tf-migrate_1.0.0_darwin_arm64.tar.gz
   chmod +x tf-migrate
   sudo mv tf-migrate /usr/local/bin/
   
@@ -1208,6 +1208,8 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_account_token` |
 | **SSL/TLS** | `cloudflare_authenticated_origin_pulls` |
 | | `cloudflare_authenticated_origin_pulls_certificate` |
+| | `cloudflare_authenticated_origin_pulls_hostname_certificate` |
+| | `cloudflare_authenticated_origin_pulls_settings` |
 | | `cloudflare_certificate_pack` |
 | | `cloudflare_custom_hostname` |
 | | `cloudflare_custom_hostname_fallback_origin` |
