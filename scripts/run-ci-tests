@@ -186,7 +186,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/bot_management"
     "resource=./internal/services/byo_ip_prefix"
     "resource=./internal/services/certificate_pack"
-    "resource=./internal/services/cloud_connector_rules"
+    #"resource=./internal/services/cloud_connector_rules" 403: The request was blocked by a Cloudflare firewall rule configured by the site owner
     "resource=./internal/services/custom_hostname"
     "resource=./internal/services/custom_hostname_fallback_origin"
     "resource=./internal/services/custom_pages"
@@ -209,7 +209,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/list_item parallel=1"
     "resource=./internal/services/load_balancer"
     "resource=./internal/services/load_balancer_monitor"
-    "resource=./internal/services/load_balancer_pool"
+    "resource=./internal/services/load_balancer_pool parallel=1"
     "resource=./internal/services/logpull_retention"
     "resource=./internal/services/logpush_job"
     "resource=./internal/services/logpush_ownership_challenge"
