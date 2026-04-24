@@ -136,6 +136,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 			Observability:      priorStateData.Observability,
 			Placement:          priorStateData.Placement,
 			TailConsumers:      priorStateData.TailConsumers,
+			Annotations:        priorStateData.Annotations,
 			UsageModel:         priorStateData.UsageModel,
 		},
 	}
@@ -199,6 +200,7 @@ type resourceModelV0 struct {
 	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]        `tfsdk:"placement" json:"placement,computed_optional"`
 	TailConsumers      customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	UsageModel         types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	Annotations        customfield.NestedObject[WorkersScriptMetadataAnnotationsModel]       `tfsdk:"annotations" json:"annotations,computed_optional"`
 
 	// Old assets type definition
 	Assets *struct {
