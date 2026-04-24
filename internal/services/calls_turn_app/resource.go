@@ -61,12 +61,6 @@ func (r *CallsTURNAppResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	params := calls.TURNNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *CallsTURNAppResource) Create(ctx context.Context, req resource.CreateRe
 	env := CallsTURNAppResultEnvelope{*data}
 	_, err = r.client.Calls.TURN.New(
 		ctx,
-		params,
+		calls.TURNNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	params := calls.TURNUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -129,7 +119,9 @@ func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Calls.TURN.Update(
 		ctx,
 		data.KeyID.ValueString(),
-		params,
+		calls.TURNUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,18 +150,14 @@ func (r *CallsTURNAppResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	params := calls.TURNGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CallsTURNAppResultEnvelope{*data}
 	_, err := r.client.Calls.TURN.Get(
 		ctx,
 		data.KeyID.ValueString(),
-		params,
+		calls.TURNGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,16 +190,12 @@ func (r *CallsTURNAppResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	params := calls.TURNDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Calls.TURN.Delete(
 		ctx,
 		data.KeyID.ValueString(),
-		params,
+		calls.TURNDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

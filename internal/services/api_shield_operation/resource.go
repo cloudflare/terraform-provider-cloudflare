@@ -64,12 +64,6 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := api_gateway.OperationNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 	env := APIShieldOperationResultEnvelope{*data}
 	_, err = r.client.APIGateway.Operations.New(
 		ctx,
-		params,
+		api_gateway.OperationNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,18 +109,14 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := api_gateway.OperationGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := APIShieldOperationResultEnvelope{*data}
 	_, err := r.client.APIGateway.Operations.Get(
 		ctx,
 		data.OperationID.ValueString(),
-		params,
+		api_gateway.OperationGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -158,16 +150,12 @@ func (r *APIShieldOperationResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	params := api_gateway.OperationDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.APIGateway.Operations.Delete(
 		ctx,
 		data.OperationID.ValueString(),
-		params,
+		api_gateway.OperationDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

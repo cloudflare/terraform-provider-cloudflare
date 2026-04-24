@@ -64,11 +64,6 @@ func (r *TotalTLSResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	params := acm.TotalTLSUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *TotalTLSResource) Create(ctx context.Context, req resource.CreateReques
 	env := TotalTLSResultEnvelope{*data}
 	_, err = r.client.ACM.TotalTLS.Update(
 		ctx,
-		params,
+		acm.TotalTLSUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *TotalTLSResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	params := acm.TotalTLSUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *TotalTLSResource) Update(ctx context.Context, req resource.UpdateReques
 	env := TotalTLSResultEnvelope{*data}
 	_, err = r.client.ACM.TotalTLS.Update(
 		ctx,
-		params,
+		acm.TotalTLSUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *TotalTLSResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	params := acm.TotalTLSGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := TotalTLSResultEnvelope{*data}
 	_, err := r.client.ACM.TotalTLS.Get(
 		ctx,
-		params,
+		acm.TotalTLSGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

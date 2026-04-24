@@ -64,11 +64,6 @@ func (r *ZoneCacheReserveResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	params := cache.CacheReserveEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *ZoneCacheReserveResource) Create(ctx context.Context, req resource.Crea
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err = r.client.Cache.CacheReserve.Edit(
 		ctx,
-		params,
+		cache.CacheReserveEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *ZoneCacheReserveResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	params := cache.CacheReserveEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *ZoneCacheReserveResource) Update(ctx context.Context, req resource.Upda
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err = r.client.Cache.CacheReserve.Edit(
 		ctx,
-		params,
+		cache.CacheReserveEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *ZoneCacheReserveResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	params := cache.CacheReserveGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := ZoneCacheReserveResultEnvelope{*data}
 	_, err := r.client.Cache.CacheReserve.Get(
 		ctx,
-		params,
+		cache.CacheReserveGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

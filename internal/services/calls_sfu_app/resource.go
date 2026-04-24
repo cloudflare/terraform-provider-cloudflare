@@ -61,12 +61,6 @@ func (r *CallsSFUAppResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	params := calls.SFUNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *CallsSFUAppResource) Create(ctx context.Context, req resource.CreateReq
 	env := CallsSFUAppResultEnvelope{*data}
 	_, err = r.client.Calls.SFU.New(
 		ctx,
-		params,
+		calls.SFUNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *CallsSFUAppResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	params := calls.SFUUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -129,7 +119,9 @@ func (r *CallsSFUAppResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Calls.SFU.Update(
 		ctx,
 		data.AppID.ValueString(),
-		params,
+		calls.SFUUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,18 +150,14 @@ func (r *CallsSFUAppResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	params := calls.SFUGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CallsSFUAppResultEnvelope{*data}
 	_, err := r.client.Calls.SFU.Get(
 		ctx,
 		data.AppID.ValueString(),
-		params,
+		calls.SFUGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,16 +190,12 @@ func (r *CallsSFUAppResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	params := calls.SFUDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Calls.SFU.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		params,
+		calls.SFUDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

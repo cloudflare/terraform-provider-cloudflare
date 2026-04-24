@@ -64,12 +64,6 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := turnstile.WidgetNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 	env := TurnstileWidgetResultEnvelope{*data}
 	_, err = r.client.Turnstile.Widgets.New(
 		ctx,
-		params,
+		turnstile.WidgetNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	params := turnstile.WidgetUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 	_, err = r.client.Turnstile.Widgets.Update(
 		ctx,
 		data.Sitekey.ValueString(),
-		params,
+		turnstile.WidgetUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := turnstile.WidgetGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
 	_, err := r.client.Turnstile.Widgets.Get(
 		ctx,
 		data.Sitekey.ValueString(),
-		params,
+		turnstile.WidgetGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -208,16 +196,12 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	params := turnstile.WidgetDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Turnstile.Widgets.Delete(
 		ctx,
 		data.Sitekey.ValueString(),
-		params,
+		turnstile.WidgetDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

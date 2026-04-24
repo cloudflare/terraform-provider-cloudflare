@@ -16,6 +16,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessMTLSHostnameSetti
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Mutual TLS Certificates Read",

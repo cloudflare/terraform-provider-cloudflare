@@ -64,12 +64,6 @@ func (r *ImageVariantResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	params := images.V1VariantNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ImageVariantResource) Create(ctx context.Context, req resource.CreateRe
 	env := ImageVariantResultEnvelope{*data}
 	_, err = r.client.Images.V1.Variants.New(
 		ctx,
-		params,
+		images.V1VariantNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ImageVariantResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	params := images.V1VariantEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ImageVariantResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Images.V1.Variants.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1VariantEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ImageVariantResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	params := images.V1VariantGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ImageVariantResultEnvelope{*data}
 	_, err := r.client.Images.V1.Variants.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1VariantGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ImageVariantResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	params := images.V1VariantDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Images.V1.Variants.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1VariantDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

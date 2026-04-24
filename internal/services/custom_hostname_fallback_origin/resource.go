@@ -64,11 +64,6 @@ func (r *CustomHostnameFallbackOriginResource) Create(ctx context.Context, req r
 		return
 	}
 
-	params := custom_hostnames.FallbackOriginUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *CustomHostnameFallbackOriginResource) Create(ctx context.Context, req r
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
 	_, err = r.client.CustomHostnames.FallbackOrigin.Update(
 		ctx,
-		params,
+		custom_hostnames.FallbackOriginUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *CustomHostnameFallbackOriginResource) Update(ctx context.Context, req r
 		return
 	}
 
-	params := custom_hostnames.FallbackOriginUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *CustomHostnameFallbackOriginResource) Update(ctx context.Context, req r
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
 	_, err = r.client.CustomHostnames.FallbackOrigin.Update(
 		ctx,
-		params,
+		custom_hostnames.FallbackOriginUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *CustomHostnameFallbackOriginResource) Read(ctx context.Context, req res
 		return
 	}
 
-	params := custom_hostnames.FallbackOriginGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
 	_, err := r.client.CustomHostnames.FallbackOrigin.Get(
 		ctx,
-		params,
+		custom_hostnames.FallbackOriginGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -206,15 +197,12 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 		return
 	}
 
-	params := custom_hostnames.FallbackOriginDeleteParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	_, err := r.client.CustomHostnames.FallbackOrigin.Delete(
 		ctx,
-		params,
+		custom_hostnames.FallbackOriginDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,12 +64,6 @@ func (r *ZoneLockdownResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	params := firewall.LockdownNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZoneLockdownResource) Create(ctx context.Context, req resource.CreateRe
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err = r.client.Firewall.Lockdowns.New(
 		ctx,
-		params,
+		firewall.LockdownNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZoneLockdownResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	params := firewall.LockdownUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZoneLockdownResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Firewall.Lockdowns.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZoneLockdownResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	params := firewall.LockdownGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err := r.client.Firewall.Lockdowns.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	params := firewall.LockdownDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.Firewall.Lockdowns.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

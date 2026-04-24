@@ -64,12 +64,6 @@ func (r *EmailSecurityBlockSenderResource) Create(ctx context.Context, req resou
 		return
 	}
 
-	params := email_security.SettingBlockSenderNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *EmailSecurityBlockSenderResource) Create(ctx context.Context, req resou
 	env := EmailSecurityBlockSenderResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.BlockSenders.New(
 		ctx,
-		params,
+		email_security.SettingBlockSenderNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *EmailSecurityBlockSenderResource) Update(ctx context.Context, req resou
 		return
 	}
 
-	params := email_security.SettingBlockSenderEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *EmailSecurityBlockSenderResource) Update(ctx context.Context, req resou
 	_, err = r.client.EmailSecurity.Settings.BlockSenders.Edit(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingBlockSenderEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *EmailSecurityBlockSenderResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-	params := email_security.SettingBlockSenderGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := EmailSecurityBlockSenderResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingBlockSenderGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *EmailSecurityBlockSenderResource) Delete(ctx context.Context, req resou
 		return
 	}
 
-	params := email_security.SettingBlockSenderDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Delete(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingBlockSenderDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

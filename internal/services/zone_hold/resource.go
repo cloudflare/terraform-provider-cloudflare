@@ -64,11 +64,6 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	params := zones.HoldNewParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 	env := ZoneHoldResultEnvelope{*data}
 	_, err = r.client.Zones.Holds.New(
 		ctx,
-		params,
+		zones.HoldNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *ZoneHoldResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	params := zones.HoldEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *ZoneHoldResource) Update(ctx context.Context, req resource.UpdateReques
 	env := ZoneHoldResultEnvelope{*data}
 	_, err = r.client.Zones.Holds.Edit(
 		ctx,
-		params,
+		zones.HoldEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *ZoneHoldResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	params := zones.HoldGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
 	_, err := r.client.Zones.Holds.Get(
 		ctx,
-		params,
+		zones.HoldGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -206,15 +197,12 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	params := zones.HoldDeleteParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	_, err := r.client.Zones.Holds.Delete(
 		ctx,
-		params,
+		zones.HoldDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

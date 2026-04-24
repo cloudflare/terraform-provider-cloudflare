@@ -64,12 +64,6 @@ func (r *TokenValidationRulesResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	params := token_validation.RuleNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *TokenValidationRulesResource) Create(ctx context.Context, req resource.
 	env := TokenValidationRulesResultEnvelope{*data}
 	_, err = r.client.TokenValidation.Rules.New(
 		ctx,
-		params,
+		token_validation.RuleNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *TokenValidationRulesResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	params := token_validation.RuleEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *TokenValidationRulesResource) Update(ctx context.Context, req resource.
 	_, err = r.client.TokenValidation.Rules.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		token_validation.RuleEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *TokenValidationRulesResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	params := token_validation.RuleGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := TokenValidationRulesResultEnvelope{*data}
 	_, err := r.client.TokenValidation.Rules.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		token_validation.RuleGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *TokenValidationRulesResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	params := token_validation.RuleDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.TokenValidation.Rules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		token_validation.RuleDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

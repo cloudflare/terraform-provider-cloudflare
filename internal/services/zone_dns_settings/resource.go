@@ -61,12 +61,6 @@ func (r *ZoneDNSSettingsResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := dns.SettingZoneEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *ZoneDNSSettingsResource) Create(ctx context.Context, req resource.Creat
 	env := ZoneDNSSettingsResultEnvelope{*data}
 	_, err = r.client.DNS.Settings.Zone.Edit(
 		ctx,
-		params,
+		dns.SettingZoneEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *ZoneDNSSettingsResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	params := dns.SettingZoneEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,7 +118,9 @@ func (r *ZoneDNSSettingsResource) Update(ctx context.Context, req resource.Updat
 	env := ZoneDNSSettingsResultEnvelope{*data}
 	_, err = r.client.DNS.Settings.Zone.Edit(
 		ctx,
-		params,
+		dns.SettingZoneEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,17 +149,13 @@ func (r *ZoneDNSSettingsResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := dns.SettingZoneGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZoneDNSSettingsResultEnvelope{*data}
 	_, err := r.client.DNS.Settings.Zone.Get(
 		ctx,
-		params,
+		dns.SettingZoneGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

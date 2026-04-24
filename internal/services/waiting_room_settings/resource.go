@@ -64,11 +64,6 @@ func (r *WaitingRoomSettingsResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := waiting_rooms.SettingUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *WaitingRoomSettingsResource) Create(ctx context.Context, req resource.C
 	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err = r.client.WaitingRooms.Settings.Update(
 		ctx,
-		params,
+		waiting_rooms.SettingUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *WaitingRoomSettingsResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := waiting_rooms.SettingUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *WaitingRoomSettingsResource) Update(ctx context.Context, req resource.U
 	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err = r.client.WaitingRooms.Settings.Update(
 		ctx,
-		params,
+		waiting_rooms.SettingUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *WaitingRoomSettingsResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := waiting_rooms.SettingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err := r.client.WaitingRooms.Settings.Get(
 		ctx,
-		params,
+		waiting_rooms.SettingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

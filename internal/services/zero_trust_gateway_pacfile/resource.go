@@ -64,12 +64,6 @@ func (r *ZeroTrustGatewayPacfileResource) Create(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.GatewayPacfileNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustGatewayPacfileResource) Create(ctx context.Context, req resour
 	env := ZeroTrustGatewayPacfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Pacfiles.New(
 		ctx,
-		params,
+		zero_trust.GatewayPacfileNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustGatewayPacfileResource) Update(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.GatewayPacfileUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustGatewayPacfileResource) Update(ctx context.Context, req resour
 	_, err = r.client.ZeroTrust.Gateway.Pacfiles.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayPacfileUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustGatewayPacfileResource) Read(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.GatewayPacfileGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustGatewayPacfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Pacfiles.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayPacfileGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustGatewayPacfileResource) Delete(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.GatewayPacfileDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Gateway.Pacfiles.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayPacfileDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

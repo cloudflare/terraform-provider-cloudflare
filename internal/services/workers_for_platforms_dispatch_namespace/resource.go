@@ -64,12 +64,6 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Create(ctx context.Contex
 		return
 	}
 
-	params := workers_for_platforms.DispatchNamespaceNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Create(ctx context.Contex
 	env := WorkersForPlatformsDispatchNamespaceResultEnvelope{*data}
 	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.New(
 		ctx,
-		params,
+		workers_for_platforms.DispatchNamespaceNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,18 +109,14 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Read(ctx context.Context,
 		return
 	}
 
-	params := workers_for_platforms.DispatchNamespaceGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkersForPlatformsDispatchNamespaceResultEnvelope{*data}
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 		ctx,
 		data.NamespaceName.ValueString(),
-		params,
+		workers_for_platforms.DispatchNamespaceGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -158,16 +150,12 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Contex
 		return
 	}
 
-	params := workers_for_platforms.DispatchNamespaceDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Delete(
 		ctx,
 		data.NamespaceName.ValueString(),
-		params,
+		workers_for_platforms.DispatchNamespaceDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -65,16 +65,6 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.OrganizationUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -82,6 +72,14 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := ZeroTrustOrganizationResultEnvelope{*data}
+	params := zero_trust.OrganizationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Organizations.Update(
 		ctx,
 		params,
@@ -128,16 +126,6 @@ func (r *ZeroTrustOrganizationResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.OrganizationUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -145,6 +133,14 @@ func (r *ZeroTrustOrganizationResource) Update(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := ZeroTrustOrganizationResultEnvelope{*data}
+	params := zero_trust.OrganizationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Organizations.Update(
 		ctx,
 		params,
@@ -183,18 +179,16 @@ func (r *ZeroTrustOrganizationResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustOrganizationResultEnvelope{*data}
 	params := zero_trust.OrganizationListParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
+	} else {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustOrganizationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Organizations.List(
 		ctx,
 		params,

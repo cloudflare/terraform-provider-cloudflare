@@ -64,12 +64,6 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 		return
 	}
 
-	params := email_security.SettingImpersonationRegistryNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.New(
 		ctx,
-		params,
+		email_security.SettingImpersonationRegistryNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 		return
 	}
 
-	params := email_security.SettingImpersonationRegistryEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.Edit(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingImpersonationRegistryEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 		return
 	}
 
-	params := email_security.SettingImpersonationRegistryGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingImpersonationRegistryGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *EmailSecurityImpersonationRegistryResource) Delete(ctx context.Context,
 		return
 	}
 
-	params := email_security.SettingImpersonationRegistryDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Delete(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingImpersonationRegistryDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

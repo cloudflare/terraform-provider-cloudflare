@@ -64,12 +64,6 @@ func (r *WorkersKVNamespaceResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := kv.NamespaceNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *WorkersKVNamespaceResource) Create(ctx context.Context, req resource.Cr
 	env := WorkersKVNamespaceResultEnvelope{*data}
 	_, err = r.client.KV.Namespaces.New(
 		ctx,
-		params,
+		kv.NamespaceNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *WorkersKVNamespaceResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	params := kv.NamespaceUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *WorkersKVNamespaceResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.KV.Namespaces.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		kv.NamespaceUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *WorkersKVNamespaceResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := kv.NamespaceGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkersKVNamespaceResultEnvelope{*data}
 	_, err := r.client.KV.Namespaces.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		kv.NamespaceGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *WorkersKVNamespaceResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	params := kv.NamespaceDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.KV.Namespaces.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		kv.NamespaceDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

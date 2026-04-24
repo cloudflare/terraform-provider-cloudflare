@@ -65,12 +65,6 @@ func (r *CustomOriginTrustStoreResource) Create(ctx context.Context, req resourc
 		return
 	}
 
-	params := acm.CustomTrustStoreNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *CustomOriginTrustStoreResource) Create(ctx context.Context, req resourc
 	env := CustomOriginTrustStoreResultEnvelope{*data}
 	_, err = r.client.ACM.CustomTrustStore.New(
 		ctx,
-		params,
+		acm.CustomTrustStoreNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -125,18 +121,14 @@ func (r *CustomOriginTrustStoreResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	params := acm.CustomTrustStoreGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CustomOriginTrustStoreResultEnvelope{*data}
 	_, err := r.client.ACM.CustomTrustStore.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		acm.CustomTrustStoreGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -180,16 +172,12 @@ func (r *CustomOriginTrustStoreResource) Delete(ctx context.Context, req resourc
 		return
 	}
 
-	params := acm.CustomTrustStoreDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.ACM.CustomTrustStore.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		acm.CustomTrustStoreDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

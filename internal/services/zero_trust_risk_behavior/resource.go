@@ -61,12 +61,6 @@ func (r *ZeroTrustRiskBehaviorResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.RiskScoringBehaviourUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *ZeroTrustRiskBehaviorResource) Create(ctx context.Context, req resource
 	env := ZeroTrustRiskBehaviorResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.RiskScoring.Behaviours.Update(
 		ctx,
-		params,
+		zero_trust.RiskScoringBehaviourUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *ZeroTrustRiskBehaviorResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.RiskScoringBehaviourUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,7 +118,9 @@ func (r *ZeroTrustRiskBehaviorResource) Update(ctx context.Context, req resource
 	env := ZeroTrustRiskBehaviorResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.RiskScoring.Behaviours.Update(
 		ctx,
-		params,
+		zero_trust.RiskScoringBehaviourUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,17 +149,13 @@ func (r *ZeroTrustRiskBehaviorResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	params := zero_trust.RiskScoringBehaviourGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustRiskBehaviorResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.RiskScoring.Behaviours.Get(
 		ctx,
-		params,
+		zero_trust.RiskScoringBehaviourGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

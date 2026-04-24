@@ -61,12 +61,6 @@ func (r *StreamLiveInputResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := stream.LiveInputNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *StreamLiveInputResource) Create(ctx context.Context, req resource.Creat
 	env := StreamLiveInputResultEnvelope{*data}
 	_, err = r.client.Stream.LiveInputs.New(
 		ctx,
-		params,
+		stream.LiveInputNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *StreamLiveInputResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	params := stream.LiveInputUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -129,7 +119,9 @@ func (r *StreamLiveInputResource) Update(ctx context.Context, req resource.Updat
 	_, err = r.client.Stream.LiveInputs.Update(
 		ctx,
 		data.LiveInputIdentifier.ValueString(),
-		params,
+		stream.LiveInputUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,18 +150,14 @@ func (r *StreamLiveInputResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := stream.LiveInputGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := StreamLiveInputResultEnvelope{*data}
 	_, err := r.client.Stream.LiveInputs.Get(
 		ctx,
 		data.LiveInputIdentifier.ValueString(),
-		params,
+		stream.LiveInputGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,16 +190,12 @@ func (r *StreamLiveInputResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	params := stream.LiveInputDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	err := r.client.Stream.LiveInputs.Delete(
 		ctx,
 		data.LiveInputIdentifier.ValueString(),
-		params,
+		stream.LiveInputDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

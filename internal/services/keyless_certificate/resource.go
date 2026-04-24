@@ -64,12 +64,6 @@ func (r *KeylessCertificateResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := keyless_certificates.KeylessCertificateNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *KeylessCertificateResource) Create(ctx context.Context, req resource.Cr
 	env := KeylessCertificateResultEnvelope{*data}
 	_, err = r.client.KeylessCertificates.New(
 		ctx,
-		params,
+		keyless_certificates.KeylessCertificateNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *KeylessCertificateResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	params := keyless_certificates.KeylessCertificateEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *KeylessCertificateResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.KeylessCertificates.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		keyless_certificates.KeylessCertificateEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *KeylessCertificateResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := keyless_certificates.KeylessCertificateGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := KeylessCertificateResultEnvelope{*data}
 	_, err := r.client.KeylessCertificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		keyless_certificates.KeylessCertificateGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *KeylessCertificateResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	params := keyless_certificates.KeylessCertificateDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.KeylessCertificates.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		keyless_certificates.KeylessCertificateDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

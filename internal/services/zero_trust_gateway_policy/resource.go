@@ -66,12 +66,6 @@ func (r *ZeroTrustGatewayPolicyResource) Create(ctx context.Context, req resourc
 		return
 	}
 
-	params := zero_trust.GatewayRuleNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -81,7 +75,9 @@ func (r *ZeroTrustGatewayPolicyResource) Create(ctx context.Context, req resourc
 	env := ZeroTrustGatewayPolicyResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Rules.New(
 		ctx,
-		params,
+		zero_trust.GatewayRuleNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,12 +114,6 @@ func (r *ZeroTrustGatewayPolicyResource) Update(ctx context.Context, req resourc
 		return
 	}
 
-	params := zero_trust.GatewayRuleUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -134,7 +124,9 @@ func (r *ZeroTrustGatewayPolicyResource) Update(ctx context.Context, req resourc
 	_, err = r.client.ZeroTrust.Gateway.Rules.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayRuleUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *ZeroTrustGatewayPolicyResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	params := zero_trust.GatewayRuleGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustGatewayPolicyResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Rules.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayRuleGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -210,16 +198,12 @@ func (r *ZeroTrustGatewayPolicyResource) Delete(ctx context.Context, req resourc
 		return
 	}
 
-	params := zero_trust.GatewayRuleDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Gateway.Rules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayRuleDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

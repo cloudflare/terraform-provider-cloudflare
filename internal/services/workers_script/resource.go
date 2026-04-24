@@ -401,16 +401,12 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := workers.ScriptDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Workers.Scripts.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

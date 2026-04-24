@@ -64,12 +64,6 @@ func (r *DNSZoneTransfersIncomingResource) Create(ctx context.Context, req resou
 		return
 	}
 
-	params := dns.ZoneTransferIncomingNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *DNSZoneTransfersIncomingResource) Create(ctx context.Context, req resou
 	env := DNSZoneTransfersIncomingResultEnvelope{*data}
 	_, err = r.client.DNS.ZoneTransfers.Incoming.New(
 		ctx,
-		params,
+		dns.ZoneTransferIncomingNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,11 +112,6 @@ func (r *DNSZoneTransfersIncomingResource) Update(ctx context.Context, req resou
 		return
 	}
 
-	params := dns.ZoneTransferIncomingUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -131,7 +122,9 @@ func (r *DNSZoneTransfersIncomingResource) Update(ctx context.Context, req resou
 	env := DNSZoneTransfersIncomingResultEnvelope{*data}
 	_, err = r.client.DNS.ZoneTransfers.Incoming.Update(
 		ctx,
-		params,
+		dns.ZoneTransferIncomingUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -160,17 +153,14 @@ func (r *DNSZoneTransfersIncomingResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-	params := dns.ZoneTransferIncomingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := DNSZoneTransfersIncomingResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.Incoming.Get(
 		ctx,
-		params,
+		dns.ZoneTransferIncomingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -203,15 +193,12 @@ func (r *DNSZoneTransfersIncomingResource) Delete(ctx context.Context, req resou
 		return
 	}
 
-	params := dns.ZoneTransferIncomingDeleteParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	_, err := r.client.DNS.ZoneTransfers.Incoming.Delete(
 		ctx,
-		params,
+		dns.ZoneTransferIncomingDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

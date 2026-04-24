@@ -64,11 +64,6 @@ func (r *RegionalTieredCacheResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := cache.RegionalTieredCacheEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *RegionalTieredCacheResource) Create(ctx context.Context, req resource.C
 	env := RegionalTieredCacheResultEnvelope{*data}
 	_, err = r.client.Cache.RegionalTieredCache.Edit(
 		ctx,
-		params,
+		cache.RegionalTieredCacheEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *RegionalTieredCacheResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := cache.RegionalTieredCacheEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *RegionalTieredCacheResource) Update(ctx context.Context, req resource.U
 	env := RegionalTieredCacheResultEnvelope{*data}
 	_, err = r.client.Cache.RegionalTieredCache.Edit(
 		ctx,
-		params,
+		cache.RegionalTieredCacheEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *RegionalTieredCacheResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := cache.RegionalTieredCacheGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := RegionalTieredCacheResultEnvelope{*data}
 	_, err := r.client.Cache.RegionalTieredCache.Get(
 		ctx,
-		params,
+		cache.RegionalTieredCacheGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

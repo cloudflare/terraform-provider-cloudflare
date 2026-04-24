@@ -64,12 +64,6 @@ func (r *AISearchInstanceResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	params := ai_search.InstanceNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *AISearchInstanceResource) Create(ctx context.Context, req resource.Crea
 	env := AISearchInstanceResultEnvelope{*data}
 	_, err = r.client.AISearch.Instances.New(
 		ctx,
-		params,
+		ai_search.InstanceNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *AISearchInstanceResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	params := ai_search.InstanceUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *AISearchInstanceResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.AISearch.Instances.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.InstanceUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *AISearchInstanceResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	params := ai_search.InstanceReadParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := AISearchInstanceResultEnvelope{*data}
 	_, err := r.client.AISearch.Instances.Read(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.InstanceReadParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *AISearchInstanceResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	params := ai_search.InstanceDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.AISearch.Instances.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.InstanceDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

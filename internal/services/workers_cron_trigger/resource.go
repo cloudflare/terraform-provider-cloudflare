@@ -64,12 +64,6 @@ func (r *WorkersCronTriggerResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := workers.ScriptScheduleUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *WorkersCronTriggerResource) Create(ctx context.Context, req resource.Cr
 	_, err = r.client.Workers.Scripts.Schedules.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptScheduleUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,12 +114,6 @@ func (r *WorkersCronTriggerResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	params := workers.ScriptScheduleUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -134,7 +124,9 @@ func (r *WorkersCronTriggerResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.Workers.Scripts.Schedules.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptScheduleUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -164,18 +156,14 @@ func (r *WorkersCronTriggerResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := workers.ScriptScheduleGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkersCronTriggerResultEnvelope{data}
 	_, err := r.client.Workers.Scripts.Schedules.Get(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptScheduleGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

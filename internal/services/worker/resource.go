@@ -65,12 +65,6 @@ func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	params := workers.BetaWorkerNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest,
 	env := WorkerResultEnvelope{*data}
 	_, err = r.client.Workers.Beta.Workers.New(
 		ctx,
-		params,
+		workers.BetaWorkerNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *WorkerResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	params := workers.BetaWorkerUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *WorkerResource) Update(ctx context.Context, req resource.UpdateRequest,
 	_, err = r.client.Workers.Beta.Workers.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		workers.BetaWorkerUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,18 +154,14 @@ func (r *WorkerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	params := workers.BetaWorkerGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkerResultEnvelope{*data}
 	_, err := r.client.Workers.Beta.Workers.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		workers.BetaWorkerGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -206,16 +194,12 @@ func (r *WorkerResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	params := workers.BetaWorkerDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Workers.Beta.Workers.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		workers.BetaWorkerDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
