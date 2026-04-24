@@ -2,12 +2,16 @@
 page_title: "cloudflare_regional_hostname Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS ReadDNS Write
 ---
 
 # cloudflare_regional_hostname (Data Source)
 
+Accepted Permissions
 
+- `DNS Read`
+- `DNS Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ data "cloudflare_regional_hostname" "example_regional_hostname" {
 ### Required
 
 - `hostname` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

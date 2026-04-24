@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_dex_rule Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare DEX ReadCloudflare DEX WriteZero Trust ReadZero Trust Report
 ---
 
 # cloudflare_zero_trust_dex_rule (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare DEX Read`
+- `Cloudflare DEX Write`
+- `Zero Trust Read`
+- `Zero Trust Report`
 
 ## Example Usage
 
@@ -23,8 +29,11 @@ data "cloudflare_zero_trust_dex_rule" "example_zero_trust_dex_rule" {
 
 ### Required
 
-- `account_id` (String)
 - `rule_id` (String) API Resource UUID tag.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

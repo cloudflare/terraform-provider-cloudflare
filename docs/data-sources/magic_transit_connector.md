@@ -2,12 +2,16 @@
 page_title: "cloudflare_magic_transit_connector Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_connector (Data Source)
 
+Accepted Permissions
 
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 
 ### Required
 
-- `account_id` (String) Account identifier
 - `connector_id` (String)
+
+### Optional
+
+- `account_id` (String) Account identifier
 
 ### Read-Only
 

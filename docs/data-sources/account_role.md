@@ -2,12 +2,17 @@
 page_title: "cloudflare_account_role Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteSCIM Provisioning
 ---
 
 # cloudflare_account_role (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `SCIM Provisioning`
 
 ## Example Usage
 
@@ -23,8 +28,11 @@ data "cloudflare_account_role" "example_account_role" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `role_id` (String) Role identifier tag.
+
+### Optional
+
+- `account_id` (String) Account identifier tag.
 
 ### Read-Only
 

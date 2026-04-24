@@ -16,10 +16,14 @@ description: |-
 
 ### Required
 
-- `account_id` (String)
 - `cf_api_id` (String)
 - `cf_api_key` (String, Sensitive)
 - `name` (String)
+
+### Optional
+
+- `account_id` (String)
+- `legacy` (Boolean)
 
 ### Read-Only
 
@@ -27,7 +31,6 @@ description: |-
 - `created_by` (String)
 - `enabled` (Boolean)
 - `id` (String) The ID of this resource.
-- `legacy` (Boolean)
 - `modified_at` (String)
 - `modified_by` (String)
 

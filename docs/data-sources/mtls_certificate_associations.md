@@ -2,12 +2,16 @@
 page_title: "cloudflare_mtls_certificate_associations Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account: SSL and Certificates ReadAccount: SSL and Certificates Write
 ---
 
 # cloudflare_mtls_certificate_associations (Data Source)
 
+Accepted Permissions
 
+- `Account: SSL and Certificates Read`
+- `Account: SSL and Certificates Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_mtls_certificate_associations" "example_mtls_certificate_associ
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `mtls_certificate_id` (String) Identifier.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

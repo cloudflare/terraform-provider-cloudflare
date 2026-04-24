@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_dlp_custom_profile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dlp_custom_profile (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -44,11 +48,11 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_custom_entry" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)

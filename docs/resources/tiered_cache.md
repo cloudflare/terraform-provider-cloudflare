@@ -2,12 +2,18 @@
 page_title: "cloudflare_tiered_cache Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone ReadZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_tiered_cache (Resource)
 
+Accepted Permissions
 
+- `Zone Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 

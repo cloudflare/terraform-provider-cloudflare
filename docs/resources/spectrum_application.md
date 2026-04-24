@@ -2,12 +2,16 @@
 page_title: "cloudflare_spectrum_application Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_spectrum_application (Resource)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 
@@ -45,7 +49,6 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
 
 - `dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--dns))
 - `protocol` (String) The port configuration at Cloudflare's edge. May specify a single port, for example `"tcp/1000"`, or a range of ports, for example `"tcp/1000-2000"`.
-- `zone_id` (String) Zone identifier.
 
 ### Optional
 
@@ -64,6 +67,7 @@ Available values: "off", "v1", "v2", "simple".
 Available values: "off", "flexible", "full", "strict".
 - `traffic_type` (String) Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.
 Available values: "direct", "http", "https".
+- `zone_id` (String) Zone identifier.
 
 ### Read-Only
 

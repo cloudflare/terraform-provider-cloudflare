@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_group Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Organizations, Identity Providers, and Groups ReadAccess: Organizations, Identity Providers, and Groups Write
 ---
 
 # cloudflare_zero_trust_access_group (Data Source)
 
+Accepted Permissions
 
+- `Access: Organizations, Identity Providers, and Groups Read`
+- `Access: Organizations, Identity Providers, and Groups Write`
 
 ## Example Usage
 

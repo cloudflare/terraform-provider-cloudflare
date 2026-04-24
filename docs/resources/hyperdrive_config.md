@@ -2,12 +2,16 @@
 page_title: "cloudflare_hyperdrive_config Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Hyperdrive ReadHyperdrive Write
 ---
 
 # cloudflare_hyperdrive_config (Resource)
 
+Accepted Permissions
 
+- `Hyperdrive Read`
+- `Hyperdrive Write`
 
 ## Example Usage
 
@@ -40,14 +44,14 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 ### Required
 
-- `account_id` (String) Define configurations using a unique string identifier.
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 
 ### Optional
 
+- `account_id` (String) Define configurations using a unique string identifier.
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
-- `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
+- `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--mtls))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 Maximum allowed: 20 for free tier accounts, 100 for paid tier accounts.
@@ -66,7 +70,6 @@ Contact Cloudflare if you need a higher limit.
 Required:
 
 - `database` (String) Set the name of your origin database.
-- `host` (String) Defines the host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) Set the password needed to access your origin database. The API never returns this write-only value.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 Available values: "postgres", "postgresql", "mysql".
@@ -76,7 +79,9 @@ Optional:
 
 - `access_client_id` (String) Defines the Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
+- `host` (String) Defines the host (hostname or IP) of your origin database.
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
+- `service_id` (String) The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
 
 
 <a id="nestedatt--caching"></a>

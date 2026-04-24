@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_short_lived_certificate Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_short_lived_certificate (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 

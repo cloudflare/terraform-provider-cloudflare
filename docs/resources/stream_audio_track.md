@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_audio_track Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_audio_track (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -26,17 +30,29 @@ resource "cloudflare_stream_audio_track" "example_stream_audio_track" {
 
 ### Required
 
-- `account_id` (String) The account identifier tag.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
 ### Optional
 
+- `account_id` (String) The account identifier tag.
 - `audio_identifier` (String) The unique identifier for an additional audio track.
 - `default` (Boolean) Denotes whether the audio track will be played by default in a player.
 - `label` (String) A string to uniquely identify the track amongst other audio track labels for the specified video.
 
 ### Read-Only
 
+- `audio` (Attributes List) Array of audio tracks for the video. (see [below for nested schema](#nestedatt--audio))
+- `status` (String) Specifies the processing status of the video.
+Available values: "queued", "ready", "error".
+- `uid` (String) A Cloudflare-generated unique identifier for a media item.
+
+<a id="nestedatt--audio"></a>
+### Nested Schema for `audio`
+
+Read-Only:
+
+- `default` (Boolean) Denotes whether the audio track will be played by default in a player.
+- `label` (String) A string to uniquely identify the track amongst other audio track labels for the specified video.
 - `status` (String) Specifies the processing status of the video.
 Available values: "queued", "ready", "error".
 - `uid` (String) A Cloudflare-generated unique identifier for a media item.

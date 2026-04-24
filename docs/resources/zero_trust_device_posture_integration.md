@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_posture_integration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_posture_integration (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -31,12 +34,15 @@ resource "cloudflare_zero_trust_device_posture_integration" "example_zero_trust_
 
 ### Required
 
-- `account_id` (String)
 - `config` (Attributes) The configuration object containing third-party integration information. (see [below for nested schema](#nestedatt--config))
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.
 - `type` (String) The type of device posture integration.
 Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium_s2s", "sentinelone_s2s", "custom_s2s".
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

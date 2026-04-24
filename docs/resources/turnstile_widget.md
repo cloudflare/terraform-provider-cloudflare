@@ -2,12 +2,18 @@
 page_title: "cloudflare_turnstile_widget Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteTurnstile Sites ReadTurnstile Sites Write
 ---
 
 # cloudflare_turnstile_widget (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `Turnstile Sites Read`
+- `Turnstile Sites Write`
 
 ## Example Usage
 
@@ -30,7 +36,6 @@ resource "cloudflare_turnstile_widget" "example_turnstile_widget" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `domains` (List of String)
 - `mode` (String) Widget Mode
 Available values: "non-interactive", "invisible", "managed".
@@ -40,6 +45,7 @@ widget, and where it is used.
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `bot_fight_mode` (Boolean) If bot_fight_mode is set to `true`, Cloudflare issues computationally
 expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,

@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_zone_transfers_tsig Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings Write
 ---
 
 # cloudflare_dns_zone_transfers_tsig (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
 
 ## Example Usage
 
@@ -25,10 +29,13 @@ resource "cloudflare_dns_zone_transfers_tsig" "example_dns_zone_transfers_tsig" 
 
 ### Required
 
-- `account_id` (String)
 - `algo` (String) TSIG algorithm.
 - `name` (String) TSIG key name.
 - `secret` (String, Sensitive) TSIG secret.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

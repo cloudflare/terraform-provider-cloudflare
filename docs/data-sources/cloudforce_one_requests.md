@@ -2,12 +2,15 @@
 page_title: "cloudflare_cloudforce_one_requests Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_requests (Data Source)
 
+Accepted Permissions
 
+- `Cloudforce One Write`
 
 ## Example Usage
 
@@ -32,12 +35,12 @@ data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `page` (Number) Page number of results.
 - `per_page` (Number) Number of results per page.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `completed_after` (String) Retrieve requests completed after this time.
 - `completed_before` (String) Retrieve requests completed before this time.
 - `created_after` (String) Retrieve requests created after this time.

@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_lan Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_lan (Data Source)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -24,9 +30,12 @@ data "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `lan_id` (String) Identifier
 - `site_id` (String) Identifier
+
+### Optional
+
+- `account_id` (String) Identifier
 
 ### Read-Only
 

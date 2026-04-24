@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_lan Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_lan (Resource)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -58,11 +64,11 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
 - `is_breakout` (Boolean) mark true to use this LAN for source-based breakout traffic

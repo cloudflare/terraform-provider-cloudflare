@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_custom_domain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_custom_domain (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -27,12 +31,12 @@ resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `hostname` (String) Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.
 - `service` (String) Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `environment` (String, Deprecated) Worker environment associated with the domain.
 - `zone_id` (String) ID of the zone containing the domain hostname.
 - `zone_name` (String) Name of the zone containing the domain hostname.

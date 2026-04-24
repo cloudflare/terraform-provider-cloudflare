@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_setting Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_zone_setting (Resource)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 -> If using the `ssl_recommender` zone setting, use the `enabled` attribute instead of `value`.
 
@@ -228,11 +232,11 @@ resource "cloudflare_zone_setting" "browser_cache" {
 
 - `setting_id` (String) Setting name
 - `value` (Dynamic) Current value of the zone setting.
-- `zone_id` (String) Identifier
 
 ### Optional
 
 - `enabled` (Boolean) ssl-recommender enrollment setting.
+- `zone_id` (String) Identifier
 
 ### Read-Only
 

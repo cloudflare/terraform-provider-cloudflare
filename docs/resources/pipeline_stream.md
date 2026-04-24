@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline_stream Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline_stream (Resource)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -55,11 +59,11 @@ resource "cloudflare_pipeline_stream" "example_pipeline_stream" {
 
 ### Required
 
-- `account_id` (String) Specifies the public ID of the account.
 - `name` (String) Specifies the name of the Stream.
 
 ### Optional
 
+- `account_id` (String) Specifies the public ID of the account.
 - `format` (Attributes) (see [below for nested schema](#nestedatt--format))
 - `http` (Attributes) (see [below for nested schema](#nestedatt--http))
 - `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))

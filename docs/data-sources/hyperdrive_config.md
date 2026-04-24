@@ -2,12 +2,16 @@
 page_title: "cloudflare_hyperdrive_config Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Hyperdrive ReadHyperdrive Write
 ---
 
 # cloudflare_hyperdrive_config (Data Source)
 
+Accepted Permissions
 
+- `Hyperdrive Read`
+- `Hyperdrive Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 ### Required
 
-- `account_id` (String) Define configurations using a unique string identifier.
 - `hyperdrive_id` (String) Define configurations using a unique string identifier.
+
+### Optional
+
+- `account_id` (String) Define configurations using a unique string identifier.
 
 ### Read-Only
 
@@ -32,7 +39,7 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 - `created_on` (String) Defines the creation time of the Hyperdrive configuration.
 - `id` (String) Define configurations using a unique string identifier.
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
-- `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
+- `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--mtls))
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
@@ -74,6 +81,7 @@ Read-Only:
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 Available values: "postgres", "postgresql", "mysql".
+- `service_id` (String) The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
 - `user` (String) Set the user of your origin database.
 
 

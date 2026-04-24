@@ -2,12 +2,18 @@
 page_title: "cloudflare_content_scanning Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account WAF ReadAccount WAF WriteZone WAF ReadZone WAF Write
 ---
 
 # cloudflare_content_scanning (Resource)
 
+Accepted Permissions
 
+- `Account WAF Read`
+- `Account WAF Write`
+- `Zone WAF Read`
+- `Zone WAF Write`
 
 ## Example Usage
 
@@ -25,6 +31,9 @@ resource "cloudflare_content_scanning" "example_content_scanning" {
 
 - `value` (String) The status value for Content Scanning.
 Available values: "enabled", "disabled".
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only
