@@ -64,12 +64,6 @@ func (r *AccountDNSSettingsInternalViewResource) Create(ctx context.Context, req
 		return
 	}
 
-	params := dns.SettingAccountViewNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *AccountDNSSettingsInternalViewResource) Create(ctx context.Context, req
 	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
 	_, err = r.client.DNS.Settings.Account.Views.New(
 		ctx,
-		params,
+		dns.SettingAccountViewNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *AccountDNSSettingsInternalViewResource) Update(ctx context.Context, req
 		return
 	}
 
-	params := dns.SettingAccountViewEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *AccountDNSSettingsInternalViewResource) Update(ctx context.Context, req
 	_, err = r.client.DNS.Settings.Account.Views.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.SettingAccountViewEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *AccountDNSSettingsInternalViewResource) Read(ctx context.Context, req r
 		return
 	}
 
-	params := dns.SettingAccountViewGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
 	_, err := r.client.DNS.Settings.Account.Views.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.SettingAccountViewGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *AccountDNSSettingsInternalViewResource) Delete(ctx context.Context, req
 		return
 	}
 
-	params := dns.SettingAccountViewDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.DNS.Settings.Account.Views.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.SettingAccountViewDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

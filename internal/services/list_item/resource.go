@@ -68,11 +68,6 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	params := rules.ListItemNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -187,11 +182,6 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	params := rules.ListItemGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := ListItemResultEnvelope{*data}

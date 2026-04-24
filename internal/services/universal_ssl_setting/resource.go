@@ -64,11 +64,6 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := ssl.UniversalSettingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err = r.client.SSL.Universal.Settings.Edit(
 		ctx,
-		params,
+		ssl.UniversalSettingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := ssl.UniversalSettingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err = r.client.SSL.Universal.Settings.Edit(
 		ctx,
-		params,
+		ssl.UniversalSettingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := ssl.UniversalSettingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err := r.client.SSL.Universal.Settings.Get(
 		ctx,
-		params,
+		ssl.UniversalSettingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

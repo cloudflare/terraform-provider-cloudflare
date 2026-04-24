@@ -64,11 +64,6 @@ func (r *ZeroTrustGatewayLoggingResource) Create(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.GatewayLoggingUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -79,7 +74,9 @@ func (r *ZeroTrustGatewayLoggingResource) Create(ctx context.Context, req resour
 	env := ZeroTrustGatewayLoggingResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Logging.Update(
 		ctx,
-		params,
+		zero_trust.GatewayLoggingUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,11 +114,6 @@ func (r *ZeroTrustGatewayLoggingResource) Update(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.GatewayLoggingUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -132,7 +124,9 @@ func (r *ZeroTrustGatewayLoggingResource) Update(ctx context.Context, req resour
 	env := ZeroTrustGatewayLoggingResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Logging.Update(
 		ctx,
-		params,
+		zero_trust.GatewayLoggingUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +156,14 @@ func (r *ZeroTrustGatewayLoggingResource) Read(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.GatewayLoggingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
 
 	res := new(http.Response)
 	env := ZeroTrustGatewayLoggingResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Logging.Get(
 		ctx,
-		params,
+		zero_trust.GatewayLoggingGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

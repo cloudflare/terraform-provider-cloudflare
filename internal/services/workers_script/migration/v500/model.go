@@ -199,7 +199,8 @@ type TargetBindingsModel struct {
 // TargetAnnotationsModel represents the annotations nested attribute in v5.
 type TargetAnnotationsModel struct {
 	WorkersMessage types.String `tfsdk:"workers_message"`
-	WorkersTag     types.String `tfsdk:"workers_tag"`
+	WorkersTag         types.String `tfsdk:"workers_tag"`
+	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by"`
 }
 
 type TargetBindingsOutboundModel struct {

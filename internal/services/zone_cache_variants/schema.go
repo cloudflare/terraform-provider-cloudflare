@@ -18,6 +18,7 @@ var _ resource.ResourceWithConfigValidators = (*ZoneCacheVariantsResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zone Read",

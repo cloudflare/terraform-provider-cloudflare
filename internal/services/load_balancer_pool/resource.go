@@ -64,12 +64,6 @@ func (r *LoadBalancerPoolResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	params := load_balancers.PoolNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *LoadBalancerPoolResource) Create(ctx context.Context, req resource.Crea
 	env := LoadBalancerPoolResultEnvelope{*data}
 	_, err = r.client.LoadBalancers.Pools.New(
 		ctx,
-		params,
+		load_balancers.PoolNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	params := load_balancers.PoolUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.LoadBalancers.Pools.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		load_balancers.PoolUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -165,18 +157,14 @@ func (r *LoadBalancerPoolResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	params := load_balancers.PoolGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := LoadBalancerPoolResultEnvelope{*data}
 	_, err := r.client.LoadBalancers.Pools.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		load_balancers.PoolGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -209,16 +197,12 @@ func (r *LoadBalancerPoolResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	params := load_balancers.PoolDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.LoadBalancers.Pools.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		load_balancers.PoolDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

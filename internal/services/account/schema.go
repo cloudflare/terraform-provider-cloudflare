@@ -22,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*AccountResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Firewall Access Rules Read",

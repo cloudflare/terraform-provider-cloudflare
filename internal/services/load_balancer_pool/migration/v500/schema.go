@@ -52,6 +52,10 @@ func SourceCloudflareLoadBalancerPoolSchema() schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
+						"flatten_cname": schema.BoolAttribute{
+							Optional: true,
+							Computed: true,
+						},
 						"header": schema.ListNestedAttribute{
 							Optional: true,
 							NestedObject: schema.NestedAttributeObject{

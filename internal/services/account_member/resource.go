@@ -66,12 +66,6 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := accounts.MemberNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.marshalCustom()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -81,7 +75,9 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 	env := AccountMemberResultEnvelope{*data}
 	_, err = r.client.Accounts.Members.New(
 		ctx,
-		params,
+		accounts.MemberNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -200,17 +196,13 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := accounts.MemberGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	_, err := r.client.Accounts.Members.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		accounts.MemberGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -242,16 +234,12 @@ func (r *AccountMemberResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := accounts.MemberDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Accounts.Members.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		accounts.MemberDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

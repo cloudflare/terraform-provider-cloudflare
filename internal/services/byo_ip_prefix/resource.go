@@ -64,12 +64,6 @@ func (r *ByoIPPrefixResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	params := addressing.PrefixNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ByoIPPrefixResource) Create(ctx context.Context, req resource.CreateReq
 	env := ByoIPPrefixResultEnvelope{*data}
 	_, err = r.client.Addressing.Prefixes.New(
 		ctx,
-		params,
+		addressing.PrefixNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ByoIPPrefixResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	params := addressing.PrefixEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ByoIPPrefixResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Addressing.Prefixes.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		addressing.PrefixEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ByoIPPrefixResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	params := addressing.PrefixGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ByoIPPrefixResultEnvelope{*data}
 	_, err := r.client.Addressing.Prefixes.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		addressing.PrefixGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ByoIPPrefixResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	params := addressing.PrefixDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Addressing.Prefixes.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		addressing.PrefixDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,12 +64,6 @@ func (r *SpectrumApplicationResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := spectrum.AppNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *SpectrumApplicationResource) Create(ctx context.Context, req resource.C
 	env := SpectrumApplicationResultEnvelope{*data}
 	_, err = r.client.Spectrum.Apps.New(
 		ctx,
-		params,
+		spectrum.AppNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *SpectrumApplicationResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := spectrum.AppUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *SpectrumApplicationResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.Spectrum.Apps.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		spectrum.AppUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *SpectrumApplicationResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := spectrum.AppGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := SpectrumApplicationResultEnvelope{*data}
 	_, err := r.client.Spectrum.Apps.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		spectrum.AppGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *SpectrumApplicationResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	params := spectrum.AppDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.Spectrum.Apps.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		spectrum.AppDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

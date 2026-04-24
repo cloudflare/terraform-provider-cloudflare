@@ -64,12 +64,6 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 		return
 	}
 
-	params := email_security.SettingTrustedDomainNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.New(
 		ctx,
-		params,
+		email_security.SettingTrustedDomainNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 		return
 	}
 
-	params := email_security.SettingTrustedDomainEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.Edit(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingTrustedDomainEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *EmailSecurityTrustedDomainsResource) Read(ctx context.Context, req reso
 		return
 	}
 
-	params := email_security.SettingTrustedDomainGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingTrustedDomainGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *EmailSecurityTrustedDomainsResource) Delete(ctx context.Context, req re
 		return
 	}
 
-	params := email_security.SettingTrustedDomainDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Delete(
 		ctx,
 		data.ID.ValueInt64(),
-		params,
+		email_security.SettingTrustedDomainDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

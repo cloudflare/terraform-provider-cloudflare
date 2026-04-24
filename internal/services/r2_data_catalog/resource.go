@@ -64,12 +64,6 @@ func (r *R2DataCatalogResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := r2_data_catalog.R2DataCatalogEnableParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *R2DataCatalogResource) Create(ctx context.Context, req resource.CreateR
 	_, err = r.client.R2DataCatalog.Enable(
 		ctx,
 		data.BucketName.ValueString(),
-		params,
+		r2_data_catalog.R2DataCatalogEnableParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,18 +109,14 @@ func (r *R2DataCatalogResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := r2_data_catalog.R2DataCatalogGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := R2DataCatalogResultEnvelope{*data}
 	_, err := r.client.R2DataCatalog.Get(
 		ctx,
 		data.BucketName.ValueString(),
-		params,
+		r2_data_catalog.R2DataCatalogGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -157,16 +149,12 @@ func (r *R2DataCatalogResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := r2_data_catalog.R2DataCatalogDisableParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	err := r.client.R2DataCatalog.Disable(
 		ctx,
 		data.BucketName.ValueString(),
-		params,
+		r2_data_catalog.R2DataCatalogDisableParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

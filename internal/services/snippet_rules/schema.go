@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*SnippetRulesResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Snippets Write",

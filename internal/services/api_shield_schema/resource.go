@@ -61,12 +61,6 @@ func (r *APIShieldSchemaResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := api_gateway.UserSchemaNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -76,7 +70,9 @@ func (r *APIShieldSchemaResource) Create(ctx context.Context, req resource.Creat
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err = r.client.APIGateway.UserSchemas.New(
 		ctx,
-		params,
+		api_gateway.UserSchemaNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *APIShieldSchemaResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	params := api_gateway.UserSchemaEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -129,7 +119,9 @@ func (r *APIShieldSchemaResource) Update(ctx context.Context, req resource.Updat
 	_, err = r.client.APIGateway.UserSchemas.Edit(
 		ctx,
 		data.SchemaID.ValueString(),
-		params,
+		api_gateway.UserSchemaEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,18 +150,14 @@ func (r *APIShieldSchemaResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := api_gateway.UserSchemaGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err := r.client.APIGateway.UserSchemas.Get(
 		ctx,
 		data.SchemaID.ValueString(),
-		params,
+		api_gateway.UserSchemaGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,16 +190,12 @@ func (r *APIShieldSchemaResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	params := api_gateway.UserSchemaDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.APIGateway.UserSchemas.Delete(
 		ctx,
 		data.SchemaID.ValueString(),
-		params,
+		api_gateway.UserSchemaDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

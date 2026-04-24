@@ -329,6 +329,13 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		data.Migrations = state.Migrations
 	}
 
+	// The copier cannot properly map annotations from the API response because
+	// the API uses slash-separated keys (e.g. "workers/triggered_by") that don't
+	// match Go struct field names. Preserve annotations from prior state to avoid
+	// drift. For the initial Read after Create, the Create response already set
+	// annotations correctly via apijson deserialization.
+	data.Annotations = state.Annotations
+
 	// fetch the script content
 	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(
 		ctx,
@@ -401,16 +408,12 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := workers.ScriptDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Workers.Scripts.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

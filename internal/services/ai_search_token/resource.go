@@ -64,12 +64,6 @@ func (r *AISearchTokenResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := ai_search.TokenNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *AISearchTokenResource) Create(ctx context.Context, req resource.CreateR
 	env := AISearchTokenResultEnvelope{*data}
 	_, err = r.client.AISearch.Tokens.New(
 		ctx,
-		params,
+		ai_search.TokenNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *AISearchTokenResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	params := ai_search.TokenUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *AISearchTokenResource) Update(ctx context.Context, req resource.UpdateR
 	_, err = r.client.AISearch.Tokens.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.TokenUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *AISearchTokenResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := ai_search.TokenReadParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := AISearchTokenResultEnvelope{*data}
 	_, err := r.client.AISearch.Tokens.Read(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.TokenReadParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *AISearchTokenResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := ai_search.TokenDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.AISearch.Tokens.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		ai_search.TokenDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

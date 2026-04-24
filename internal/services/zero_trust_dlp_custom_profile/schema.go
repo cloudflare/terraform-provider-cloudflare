@@ -26,6 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPCustomProfileResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Read",

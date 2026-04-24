@@ -25,7 +25,6 @@ type SourceCloudflareBotManagementModel struct {
 	SBFMStaticResourceProtection types.Bool   `tfsdk:"sbfm_static_resource_protection"`
 	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots"`
 	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score"`
-	ContentBotsProtection        types.String                                                       `tfsdk:"content_bots_protection"`
 	UsingLatestModel             types.Bool   `tfsdk:"using_latest_model"`
 }
 
@@ -66,6 +65,5 @@ type TargetBotManagementStaleZoneConfigModel struct {
 	SBFMStaticResourceProtection types.String `tfsdk:"sbfm_static_resource_protection"`
 	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots"`
 	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score"`
-	ContentBotsProtection        types.String                                                       `tfsdk:"content_bots_protection"`
 	FightMode                    types.Bool   `tfsdk:"fight_mode"`
 }

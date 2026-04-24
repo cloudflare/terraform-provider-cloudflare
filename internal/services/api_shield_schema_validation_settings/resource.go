@@ -64,11 +64,6 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 		return
 	}
 
-	params := api_gateway.SettingSchemaValidationUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -78,7 +73,9 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 	res := new(http.Response)
 	_, err = r.client.APIGateway.Settings.SchemaValidation.Update(
 		ctx,
-		params,
+		api_gateway.SettingSchemaValidationUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -115,11 +112,6 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 		return
 	}
 
-	params := api_gateway.SettingSchemaValidationUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -129,7 +121,9 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 	res := new(http.Response)
 	_, err = r.client.APIGateway.Settings.SchemaValidation.Update(
 		ctx,
-		params,
+		api_gateway.SettingSchemaValidationUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,16 +152,13 @@ func (r *APIShieldSchemaValidationSettingsResource) Read(ctx context.Context, re
 		return
 	}
 
-	params := api_gateway.SettingSchemaValidationGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
 
 	res := new(http.Response)
 	_, err := r.client.APIGateway.Settings.SchemaValidation.Get(
 		ctx,
-		params,
+		api_gateway.SettingSchemaValidationGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
