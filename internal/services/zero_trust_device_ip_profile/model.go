@@ -13,7 +13,7 @@ type ZeroTrustDeviceIPProfileResultEnvelope struct {
 
 type ZeroTrustDeviceIPProfileModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Match       types.String `tfsdk:"match" json:"match,required"`
 	Name        types.String `tfsdk:"name" json:"name,required"`
 	Precedence  types.Int64  `tfsdk:"precedence" json:"precedence,required"`

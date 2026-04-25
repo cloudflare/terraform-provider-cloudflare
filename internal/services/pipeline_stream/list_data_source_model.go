@@ -18,17 +18,18 @@ type PipelineStreamsResultListDataSourceEnvelope struct {
 }
 
 type PipelineStreamsDataSourceModel struct {
-	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	PipelineID types.String                                                       `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 	MaxItems   types.Int64                                                        `tfsdk:"max_items"`
 	Result     customfield.NestedObjectList[PipelineStreamsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PipelineStreamsDataSourceModel) toListParams(_ context.Context) (params pipelines.StreamListParams, diags diag.Diagnostics) {
-	params = pipelines.StreamListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = pipelines.StreamListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.PipelineID.ValueString())
 	}

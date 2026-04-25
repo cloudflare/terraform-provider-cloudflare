@@ -37,10 +37,18 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 
 // UpgradeFromV1 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
 //
-// This is a no-op upgrade since the schema is compatible — just bumps the version.
-// This handler is only triggered.
+// v1 is the "dormant" state version before migration activation.
+// The v1 schema uses Set types which must be deserialized and re-serialized
+// to produce state compatible with the target schema (which may use List types).
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading api_token state from version=1 to version=500 (no-op)")
-	resp.State.Raw = req.State.Raw
+	tflog.Info(ctx, "Upgrading api_token state from version=1 to version=500")
+
+	var state TargetAPITokenModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
 	tflog.Info(ctx, "State version bump from 1 to 500 completed")
 }

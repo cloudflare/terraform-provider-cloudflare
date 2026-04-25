@@ -19,7 +19,7 @@ type EmailRoutingRuleResultDataSourceEnvelope struct {
 type EmailRoutingRuleDataSourceModel struct {
 	ID             types.String                                                          `tfsdk:"id" path:"rule_identifier,computed"`
 	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`
-	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
 	Priority       types.Float64                                                         `tfsdk:"priority" json:"priority,computed"`
@@ -30,18 +30,21 @@ type EmailRoutingRuleDataSourceModel struct {
 }
 
 func (m *EmailRoutingRuleDataSourceModel) toReadParams(_ context.Context) (params email_routing.RuleGetParams, diags diag.Diagnostics) {
-	params = email_routing.RuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = email_routing.RuleGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *EmailRoutingRuleDataSourceModel) toListParams(_ context.Context) (params email_routing.RuleListParams, diags diag.Diagnostics) {
-	params = email_routing.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = email_routing.RuleListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.Enabled.IsNull() {
 		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Filter.Enabled.ValueBool()))
 	}

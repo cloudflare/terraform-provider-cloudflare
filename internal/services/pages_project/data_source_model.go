@@ -20,7 +20,7 @@ type PagesProjectResultDataSourceEnvelope struct {
 type PagesProjectDataSourceModel struct {
 	ID                   types.String                                                             `tfsdk:"id" path:"project_name,computed"`
 	ProjectName          types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
-	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn            timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Framework            types.String                                                             `tfsdk:"framework" json:"framework,computed"`
 	FrameworkVersion     types.String                                                             `tfsdk:"framework_version" json:"framework_version,computed"`
@@ -39,8 +39,10 @@ type PagesProjectDataSourceModel struct {
 }
 
 func (m *PagesProjectDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectGetParams, diags diag.Diagnostics) {
-	params = pages.ProjectGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pages.ProjectGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

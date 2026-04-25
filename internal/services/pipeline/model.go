@@ -14,7 +14,7 @@ type PipelineResultEnvelope struct {
 
 type PipelineModel struct {
 	ID            types.String                                      `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Name          types.String                                      `tfsdk:"name" json:"name,required"`
 	Sql           types.String                                      `tfsdk:"sql" json:"sql,required"`
 	CreatedAt     types.String                                      `tfsdk:"created_at" json:"created_at,computed"`

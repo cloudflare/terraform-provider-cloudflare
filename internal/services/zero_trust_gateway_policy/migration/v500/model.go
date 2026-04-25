@@ -40,16 +40,16 @@ type SourceCloudflareTeamsRuleModel struct {
 // In v5, this becomes SingleNestedAttribute (object).
 type SourceRuleSettingsModel struct {
 	// Simple scalar fields
-	BlockPageEnabled                types.Bool              `tfsdk:"block_page_enabled"`
-	BlockPageReason                 types.String            `tfsdk:"block_page_reason"` // Renamed to block_reason in v5
-	OverrideIPs                     types.List              `tfsdk:"override_ips"`      // List of strings
-	OverrideHost                    types.String            `tfsdk:"override_host"`
-	IPCategories                    types.Bool              `tfsdk:"ip_categories"`
-	IgnoreCNAMECategoryMatches      types.Bool              `tfsdk:"ignore_cname_category_matches"`
-	AllowChildBypass                types.Bool              `tfsdk:"allow_child_bypass"`
-	BypassParentRule                types.Bool              `tfsdk:"bypass_parent_rule"`
-	InsecureDisableDNSSECValidation types.Bool              `tfsdk:"insecure_disable_dnssec_validation"`
-	ResolveDNSThroughCloudflare     types.Bool              `tfsdk:"resolve_dns_through_cloudflare"`
+	BlockPageEnabled                types.Bool               `tfsdk:"block_page_enabled"`
+	BlockPageReason                 types.String             `tfsdk:"block_page_reason"` // Renamed to block_reason in v5
+	OverrideIPs                     types.List               `tfsdk:"override_ips"`      // List of strings
+	OverrideHost                    types.String             `tfsdk:"override_host"`
+	IPCategories                    types.Bool               `tfsdk:"ip_categories"`
+	IgnoreCNAMECategoryMatches      types.Bool               `tfsdk:"ignore_cname_category_matches"`
+	AllowChildBypass                types.Bool               `tfsdk:"allow_child_bypass"`
+	BypassParentRule                types.Bool               `tfsdk:"bypass_parent_rule"`
+	InsecureDisableDNSSECValidation types.Bool               `tfsdk:"insecure_disable_dnssec_validation"`
+	ResolveDNSThroughCloudflare     types.Bool               `tfsdk:"resolve_dns_through_cloudflare"`
 	AddHeaders                      *map[string]types.String `tfsdk:"add_headers"` // v4: Map[string]string
 
 	// All nested structures as arrays (TypeList MaxItems:1 in SDKv2)
@@ -81,6 +81,8 @@ type SourceL4overrideModel struct {
 // v1 fields will be REMOVED during transformation.
 type SourceBISOAdminControlsModel struct {
 	Version types.String `tfsdk:"version"` // "v1" or "v2"
+	// Note: wm_id is NOT included here — it was added to the v5 schema via codegen
+	// but never existed in v4, so v4 state objects don't contain it.
 
 	// v1 fields (will be RENAMED to shortened versions in transformation)
 	// These map to: dp, dcp, dd, dk, du in v5
@@ -178,28 +180,28 @@ type SourceResolveDNSInternallyModel struct {
 // TargetZeroTrustGatewayPolicyModel is an alias to the actual v5 model.
 // This matches ZeroTrustGatewayPolicyModel from the parent package.
 type TargetZeroTrustGatewayPolicyModel struct {
-	ID            types.String                                                      `tfsdk:"id"`
-	AccountID     types.String                                                      `tfsdk:"account_id"`
-	Action        types.String                                                      `tfsdk:"action"`
-	Name          types.String                                                      `tfsdk:"name"`
-	Description   types.String                                                      `tfsdk:"description"`
-	Filters       *[]types.String                                                   `tfsdk:"filters"`
-	DevicePosture types.String                                                      `tfsdk:"device_posture"`
-	Enabled       types.Bool                                                        `tfsdk:"enabled"`
-	Identity      types.String                                                      `tfsdk:"identity"`
-	Precedence    types.Int64                                                       `tfsdk:"precedence"`
-	Traffic       types.String                                                      `tfsdk:"traffic"`
-	Expiration    customfield.NestedObject[TargetExpirationModel]                   `tfsdk:"expiration"`    // New in v5
-	RuleSettings  customfield.NestedObject[TargetRuleSettingsModel]                 `tfsdk:"rule_settings"` // Changed from array to object
-	Schedule      customfield.NestedObject[TargetScheduleModel]                     `tfsdk:"schedule"`      // New in v5
-	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at"`    // New in v5
-	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at"`    // New in v5
-	ReadOnly      types.Bool                                                        `tfsdk:"read_only"`     // New in v5
-	Sharable      types.Bool                                                        `tfsdk:"sharable"`      // New in v5
-	SourceAccount types.String                                                      `tfsdk:"source_account"` // New in v5
-	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at"`    // New in v5
-	Version       types.Int64                                                       `tfsdk:"version"`       // Computed
-	WarningStatus types.String                                                      `tfsdk:"warning_status"` // New in v5
+	ID            types.String                                      `tfsdk:"id"`
+	AccountID     types.String                                      `tfsdk:"account_id"`
+	Action        types.String                                      `tfsdk:"action"`
+	Name          types.String                                      `tfsdk:"name"`
+	Description   types.String                                      `tfsdk:"description"`
+	Filters       *[]types.String                                   `tfsdk:"filters"`
+	DevicePosture types.String                                      `tfsdk:"device_posture"`
+	Enabled       types.Bool                                        `tfsdk:"enabled"`
+	Identity      types.String                                      `tfsdk:"identity"`
+	Precedence    types.Int64                                       `tfsdk:"precedence"`
+	Traffic       types.String                                      `tfsdk:"traffic"`
+	Expiration    customfield.NestedObject[TargetExpirationModel]   `tfsdk:"expiration"`     // New in v5
+	RuleSettings  customfield.NestedObject[TargetRuleSettingsModel] `tfsdk:"rule_settings"`  // Changed from array to object
+	Schedule      customfield.NestedObject[TargetScheduleModel]     `tfsdk:"schedule"`       // New in v5
+	CreatedAt     timetypes.RFC3339                                 `tfsdk:"created_at"`     // New in v5
+	DeletedAt     timetypes.RFC3339                                 `tfsdk:"deleted_at"`     // New in v5
+	ReadOnly      types.Bool                                        `tfsdk:"read_only"`      // New in v5
+	Sharable      types.Bool                                        `tfsdk:"sharable"`       // New in v5
+	SourceAccount types.String                                      `tfsdk:"source_account"` // New in v5
+	UpdatedAt     timetypes.RFC3339                                 `tfsdk:"updated_at"`     // New in v5
+	Version       types.Int64                                       `tfsdk:"version"`        // Computed
+	WarningStatus types.String                                      `tfsdk:"warning_status"` // New in v5
 }
 
 // TargetExpirationModel represents expiration settings (new in v5).
@@ -212,32 +214,32 @@ type TargetExpirationModel struct {
 // TargetRuleSettingsModel represents rule_settings in v5.
 // This matches ZeroTrustGatewayPolicyRuleSettingsModel from the parent package.
 type TargetRuleSettingsModel struct {
-	AddHeaders                      *map[string]*[]types.String             `tfsdk:"add_headers"` // v5: Map[string][]string
-	AllowChildBypass                types.Bool                              `tfsdk:"allow_child_bypass"`
-	AuditSSH                        *TargetAuditSSHModel                    `tfsdk:"audit_ssh"`
-	BISOAdminControls               *TargetBISOAdminControlsModel           `tfsdk:"biso_admin_controls"`
-	BlockPage                       *TargetBlockPageModel                   `tfsdk:"block_page"`        // New in v5
-	BlockPageEnabled                types.Bool                              `tfsdk:"block_page_enabled"`
-	BlockReason                     types.String                            `tfsdk:"block_reason"`      // Renamed from block_page_reason
-	BypassParentRule                types.Bool                              `tfsdk:"bypass_parent_rule"`
-	CheckSession                    *TargetCheckSessionModel                `tfsdk:"check_session"`
-	DNSResolvers                    *TargetDNSResolversModel                `tfsdk:"dns_resolvers"`
-	Egress                          *TargetEgressModel                      `tfsdk:"egress"`
-	ForensicCopy                    *TargetForensicCopyModel                `tfsdk:"forensic_copy"` // New in v5
-	IgnoreCNAMECategoryMatches      types.Bool                              `tfsdk:"ignore_cname_category_matches"`
-	InsecureDisableDNSSECValidation types.Bool                              `tfsdk:"insecure_disable_dnssec_validation"`
-	IPCategories                    types.Bool                              `tfsdk:"ip_categories"`
-	IPIndicatorFeeds                types.Bool                              `tfsdk:"ip_indicator_feeds"` // New in v5
-	L4override                      *TargetL4overrideModel                  `tfsdk:"l4override"`
-	NotificationSettings            *TargetNotificationSettingsModel        `tfsdk:"notification_settings"`
-	OverrideHost                    types.String                            `tfsdk:"override_host"`
-	OverrideIPs                     customfield.List[types.String]          `tfsdk:"override_ips"`
-	PayloadLog                      *TargetPayloadLogModel                  `tfsdk:"payload_log"`
-	Quarantine                      *TargetQuarantineModel                  `tfsdk:"quarantine"`        // New in v5
-	Redirect                        *TargetRedirectModel                    `tfsdk:"redirect"`          // New in v5
-	ResolveDNSInternally            *TargetResolveDNSInternallyModel        `tfsdk:"resolve_dns_internally"`
-	ResolveDNSThroughCloudflare     types.Bool                              `tfsdk:"resolve_dns_through_cloudflare"`
-	UntrustedCERT                   *TargetUntrustedCERTModel               `tfsdk:"untrusted_cert"`
+	AddHeaders                      *map[string]*[]types.String      `tfsdk:"add_headers"` // v5: Map[string][]string
+	AllowChildBypass                types.Bool                       `tfsdk:"allow_child_bypass"`
+	AuditSSH                        *TargetAuditSSHModel             `tfsdk:"audit_ssh"`
+	BISOAdminControls               *TargetBISOAdminControlsModel    `tfsdk:"biso_admin_controls"`
+	BlockPage                       *TargetBlockPageModel            `tfsdk:"block_page"` // New in v5
+	BlockPageEnabled                types.Bool                       `tfsdk:"block_page_enabled"`
+	BlockReason                     types.String                     `tfsdk:"block_reason"` // Renamed from block_page_reason
+	BypassParentRule                types.Bool                       `tfsdk:"bypass_parent_rule"`
+	CheckSession                    *TargetCheckSessionModel         `tfsdk:"check_session"`
+	DNSResolvers                    *TargetDNSResolversModel         `tfsdk:"dns_resolvers"`
+	Egress                          *TargetEgressModel               `tfsdk:"egress"`
+	ForensicCopy                    *TargetForensicCopyModel         `tfsdk:"forensic_copy"` // New in v5
+	IgnoreCNAMECategoryMatches      types.Bool                       `tfsdk:"ignore_cname_category_matches"`
+	InsecureDisableDNSSECValidation types.Bool                       `tfsdk:"insecure_disable_dnssec_validation"`
+	IPCategories                    types.Bool                       `tfsdk:"ip_categories"`
+	IPIndicatorFeeds                types.Bool                       `tfsdk:"ip_indicator_feeds"` // New in v5
+	L4override                      *TargetL4overrideModel           `tfsdk:"l4override"`
+	NotificationSettings            *TargetNotificationSettingsModel `tfsdk:"notification_settings"`
+	OverrideHost                    types.String                     `tfsdk:"override_host"`
+	OverrideIPs                     customfield.List[types.String]   `tfsdk:"override_ips"`
+	PayloadLog                      *TargetPayloadLogModel           `tfsdk:"payload_log"`
+	Quarantine                      *TargetQuarantineModel           `tfsdk:"quarantine"` // New in v5
+	Redirect                        *TargetRedirectModel             `tfsdk:"redirect"`   // New in v5
+	ResolveDNSInternally            *TargetResolveDNSInternallyModel `tfsdk:"resolve_dns_internally"`
+	ResolveDNSThroughCloudflare     types.Bool                       `tfsdk:"resolve_dns_through_cloudflare"`
+	UntrustedCERT                   *TargetUntrustedCERTModel        `tfsdk:"untrusted_cert"`
 }
 
 // TargetAuditSSHModel represents audit_ssh in v5.
@@ -265,6 +267,7 @@ type TargetBISOAdminControlsModel struct {
 	DU  types.Bool `tfsdk:"du"`  // disable_upload → du (v1 only)
 
 	Version types.String `tfsdk:"version"` // "v1" or "v2"
+	WmID    types.String `tfsdk:"wm_id"`
 }
 
 // TargetBlockPageModel represents block_page settings (new in v5).

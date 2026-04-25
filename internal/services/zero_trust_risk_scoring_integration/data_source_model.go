@@ -19,7 +19,7 @@ type ZeroTrustRiskScoringIntegrationResultDataSourceEnvelope struct {
 type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
 	ID              types.String      `tfsdk:"id" path:"integration_id,computed"`
 	IntegrationID   types.String      `tfsdk:"integration_id" path:"integration_id,required"`
-	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	AccountTag      types.String      `tfsdk:"account_tag" json:"account_tag,computed"`
 	Active          types.Bool        `tfsdk:"active" json:"active,computed"`
 	CreatedAt       timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -30,8 +30,10 @@ type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
 }
 
 func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.RiskScoringIntegrationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.RiskScoringIntegrationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.RiskScoringIntegrationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

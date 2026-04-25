@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_caption_language Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_caption_language (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -24,12 +28,12 @@ resource "cloudflare_stream_caption_language" "example_stream_caption_language" 
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 - `language` (String) The language tag in BCP 47 format.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `file` (String) The WebVTT file containing the caption or subtitle content.
 
 ### Read-Only

@@ -108,6 +108,7 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
+
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Get(
@@ -146,6 +147,7 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.EmailRouting.Disable(
 		ctx,

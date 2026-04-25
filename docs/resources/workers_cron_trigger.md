@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_cron_trigger Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_cron_trigger (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -26,9 +30,12 @@ resource "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 - `script_name` (String) Name of the script, used in URLs and route configuration.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

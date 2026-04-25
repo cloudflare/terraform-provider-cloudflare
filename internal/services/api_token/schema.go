@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -44,7 +45,13 @@ func (v ResourcesValidator) MarkdownDescription(context.Context) string {
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: 501,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"API Tokens Read",
+				"API Tokens Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Token identifier tag.",
@@ -55,7 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token name.",
 				Required:    true,
 			},
-			"policies": schema.SetNestedAttribute{
+			"policies": schema.ListNestedAttribute{
 				Description: "Set of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -67,7 +74,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 							},
 						},
-						"permission_groups": schema.SetNestedAttribute{
+						"permission_groups": schema.ListNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
 							NestedObject: schema.NestedAttributeObject{

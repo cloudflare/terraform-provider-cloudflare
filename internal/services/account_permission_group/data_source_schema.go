@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -14,14 +15,47 @@ var _ datasource.DataSourceWithConfigValidators = (*AccountPermissionGroupDataSo
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier tag.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Firewall Access Rules Read",
+				"Account Firewall Access Rules Write",
+				"Account Settings Read",
+				"Account Settings Write",
+				"Billing Read",
+				"Billing Write",
+				"DDoS Botnet Feed Read",
+				"DDoS Botnet Feed Write",
+				"DDoS Protection Read",
+				"DDoS Protection Write",
+				"DNS Firewall Read",
+				"DNS Firewall Write",
+				"DNS View Read",
+				"DNS View Write",
+				"Load Balancers Account Read",
+				"Load Balancers Account Write",
+				"Load Balancing: Monitors and Pools Read",
+				"Load Balancing: Monitors and Pools Write",
+				"SCIM Provisioning",
+				"Trust and Safety Read",
+				"Trust and Safety Write",
+				"Workers KV Storage Read",
+				"Workers KV Storage Write",
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
+				"Zero Trust: PII Read",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"permission_group_id": schema.StringAttribute{
 				Description: "Permission Group identifier tag.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Optional:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier of the permission group.",

@@ -15,7 +15,7 @@ type MagicWANGRETunnelResultEnvelope struct {
 
 type MagicWANGRETunnelModel struct {
 	ID                     types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID              types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID              types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	BGP                    *MagicWANGRETunnelBGPModel                                        `tfsdk:"bgp" json:"bgp,optional,no_refresh"`
 	CloudflareGREEndpoint  types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required,no_refresh"`
 	CustomerGREEndpoint    types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required,no_refresh"`

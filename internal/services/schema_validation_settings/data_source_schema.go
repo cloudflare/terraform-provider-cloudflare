@@ -5,6 +5,7 @@ package schema_validation_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,10 +16,18 @@ var _ datasource.DataSourceWithConfigValidators = (*SchemaValidationSettingsData
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account API Gateway",
+				"Account API Gateway Read",
+				"Domain API Gateway",
+				"Domain API Gateway Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"validation_default_mitigation_action": schema.StringAttribute{
 				Description: "The default mitigation action used\n\nMitigation actions are as follows:\n\n  - `log` - log request when request does not conform to schema\n  - `block` - deny access to the site when request does not conform to schema\n  - `none` - skip running schema validation\nAvailable values: \"none\", \"log\", \"block\".",

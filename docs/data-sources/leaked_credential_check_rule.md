@@ -2,12 +2,18 @@
 page_title: "cloudflare_leaked_credential_check_rule Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account WAF ReadAccount WAF WriteZone WAF ReadZone WAF Write
 ---
 
 # cloudflare_leaked_credential_check_rule (Data Source)
 
+Accepted Permissions
 
+- `Account WAF Read`
+- `Account WAF Write`
+- `Zone WAF Read`
+- `Zone WAF Write`
 
 ## Example Usage
 
@@ -24,6 +30,9 @@ data "cloudflare_leaked_credential_check_rule" "example_leaked_credential_check_
 ### Required
 
 - `detection_id` (String) Defines the unique ID for this custom detection.
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

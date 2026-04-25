@@ -15,7 +15,7 @@ type AccountSubscriptionResultEnvelope struct {
 
 type AccountSubscriptionModel struct {
 	ID                 types.String                                               `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	Frequency          types.String                                               `tfsdk:"frequency" json:"frequency,computed_optional"`
 	RatePlan           customfield.NestedObject[AccountSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
 	Currency           types.String                                               `tfsdk:"currency" json:"currency,computed"`

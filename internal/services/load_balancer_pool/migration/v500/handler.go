@@ -31,9 +31,13 @@ func UpgradeFromV0(
 // 1. v4 (SDKv2) provider - needs transformation (load_shedding/origin_steering as arrays)
 // 2. Early v5 (5.0.0-5.15.x) releases - already in correct format (as objects)
 //
-// We detect the format at runtime:
-// - If load_shedding is an array (or missing), it's v4 format → transform
-// - If load_shedding is an object, it's v5 format → no-op (copy state through)
+// Detection strategy:
+// We try to unmarshal the raw state using the TARGET (current v5) schema type first.
+// - If it succeeds → state is already v5 format → no-op (copy through)
+// - If it fails (e.g., load_shedding is array not object) → v4 format → transform
+//
+// This approach avoids relying on req.State (decoded with v4 PriorSchema) for v5 state,
+// which would strip fields that only exist in v5 (e.g. disabled_at, networks).
 //
 // Key transformations (v4 only):
 // - load_shedding: Array[0] → NestedObject (SDK v2 TypeList MaxItems:1)
@@ -44,27 +48,32 @@ func UpgradeFromV0(
 func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Info(ctx, "Upgrading load_balancer_pool state from schema_version=0")
 
-	// Try to parse with v4 schema
-	// If it succeeds, it's v4 format and needs transformation
-	// If it fails (e.g., "expected '[', got '{'"), it's v5 format and needs no-op
-	var sourceState SourceCloudflareLoadBalancerPoolModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
-
-	if resp.Diagnostics.HasError() {
-		// Parsing failed - likely v5 format (Plugin Framework) where load_shedding/origin_steering are objects
-		tflog.Info(ctx, "Failed to parse as v4 format, assuming v5 format - performing no-op upgrade")
-		tflog.Debug(ctx, "Parse error details", map[string]interface{}{
-			"diagnostics": resp.Diagnostics,
-		})
-
-		// Clear diagnostics and do no-op
-		resp.Diagnostics = nil
-		resp.State.Raw = req.State.Raw
+	// First, try to unmarshal raw state with the TARGET schema type.
+	// This succeeds for v5 state (load_shedding/origin_steering are objects)
+	// and fails for v4 state (they are arrays).
+	targetType := resp.State.Schema.Type().TerraformType(ctx)
+	val, err := req.RawState.Unmarshal(targetType)
+	if err == nil {
+		// v5 format detected - state is already compatible with current schema.
+		// Fields absent from the JSON (e.g. newly added fields) become null.
+		tflog.Info(ctx, "State is v5 format - performing no-op upgrade via RawState")
+		resp.State.Raw = val
 		return
 	}
 
-	// Successfully parsed as v4 - perform transformation
-	tflog.Info(ctx, "Successfully parsed as v4 format (SDKv2) - performing transformation")
+	// Target schema unmarshal failed - this is v4 format (arrays for load_shedding etc.)
+	tflog.Info(ctx, "State is v4 format (SDKv2) - performing transformation",
+		map[string]interface{}{"unmarshal_err": err.Error()})
+
+	// Parse with v4 PriorSchema (req.State was decoded using v4 source schema)
+	var sourceState SourceCloudflareLoadBalancerPoolModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &sourceState)...)
+	if resp.Diagnostics.HasError() {
+		tflog.Error(ctx, "Failed to parse v4 state", map[string]interface{}{
+			"diagnostics": resp.Diagnostics,
+		})
+		return
+	}
 
 	tflog.Debug(ctx, "Parsed v4 source state successfully", map[string]interface{}{
 		"id":         sourceState.ID.ValueString(),

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_service_tokens Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Service Tokens ReadAccess: Service Tokens Write
 ---
 
 # cloudflare_zero_trust_access_service_tokens (Data Source)
 
+Accepted Permissions
 
+- `Access: Service Tokens Read`
+- `Access: Service Tokens Write`
 
 ## Example Usage
 

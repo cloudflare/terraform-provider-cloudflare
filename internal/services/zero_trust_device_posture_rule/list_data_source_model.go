@@ -17,14 +17,16 @@ type ZeroTrustDevicePostureRulesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureRulesDataSourceModel struct {
-	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDevicePostureRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDevicePostureRulesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePostureListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
@@ -72,6 +74,7 @@ type ZeroTrustDevicePostureRulesInputDataSourceModel struct {
 	SensorConfig            types.String                                                                       `tfsdk:"sensor_config" json:"sensor_config,computed"`
 	State                   types.String                                                                       `tfsdk:"state" json:"state,computed"`
 	VersionOperator         types.String                                                                       `tfsdk:"version_operator" json:"versionOperator,computed"`
+	AuthState               customfield.List[types.String]                                                     `tfsdk:"auth_state" json:"auth_state,computed"`
 	CountOperator           types.String                                                                       `tfsdk:"count_operator" json:"countOperator,computed"`
 	IssueCount              types.String                                                                       `tfsdk:"issue_count" json:"issue_count,computed"`
 	EidLastSeen             types.String                                                                       `tfsdk:"eid_last_seen" json:"eid_last_seen,computed"`

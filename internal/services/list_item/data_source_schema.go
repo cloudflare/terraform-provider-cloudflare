@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -16,10 +17,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ListItemDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Filter Lists Edit",
+				"Account Filter Lists Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID for this resource.",
-				Required:    true,
+				Optional:    true,
 			},
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
@@ -29,7 +36,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Defines the unique ID of the item in the List.",
 				Required:    true,
 			},
-
 			"id": schema.StringAttribute{
 				Description: "Defines the unique ID of the item in the List.",
 				Computed:    true,

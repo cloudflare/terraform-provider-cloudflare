@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_dex_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare DEX ReadCloudflare DEX WriteZero Trust ReadZero Trust Report
 ---
 
 # cloudflare_zero_trust_dex_rule (Resource)
 
+Accepted Permissions
 
+- `Cloudflare DEX Read`
+- `Cloudflare DEX Write`
+- `Zero Trust Read`
+- `Zero Trust Report`
 
 ## Example Usage
 
@@ -25,12 +31,12 @@ resource "cloudflare_zero_trust_dex_rule" "example_zero_trust_dex_rule" {
 
 ### Required
 
-- `account_id` (String)
 - `match` (String) The wirefilter expression to match.
 - `name` (String) The name of the Rule.
 
 ### Optional
 
+- `account_id` (String)
 - `description` (String)
 
 ### Read-Only

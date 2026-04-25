@@ -2,12 +2,17 @@
 page_title: "cloudflare_magic_network_monitoring_rule Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Network Monitoring AdminMagic Network Monitoring Config ReadMagic Network Monitoring Config Write
 ---
 
 # cloudflare_magic_network_monitoring_rule (Data Source)
 
+Accepted Permissions
 
+- `Magic Network Monitoring Admin`
+- `Magic Network Monitoring Config Read`
+- `Magic Network Monitoring Config Write`
 
 ## Example Usage
 
@@ -23,8 +28,11 @@ data "cloudflare_magic_network_monitoring_rule" "example_magic_network_monitorin
 
 ### Required
 
-- `account_id` (String)
 - `rule_id` (String) The id of the rule. Must be unique.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

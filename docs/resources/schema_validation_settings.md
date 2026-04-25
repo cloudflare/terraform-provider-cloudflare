@@ -2,12 +2,18 @@
 page_title: "cloudflare_schema_validation_settings Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_schema_validation_settings (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -31,7 +37,6 @@ Mitigation actions are as follows:
   - `"block"` - deny access to the site when request does not conform to schema
   - `"none"` - skip running schema validation
 Available values: "none", "log", "block".
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -40,6 +45,7 @@ Available values: "none", "log", "block".
   - `"none"` - skip running schema validation entirely for the request
   - `null` - clears any existing override
 Available values: "none".
+- `zone_id` (String) Identifier.
 
 ## Import
 

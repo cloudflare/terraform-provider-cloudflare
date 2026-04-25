@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_default_profile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_default_profile (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -77,6 +80,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
 - `id` (String) The ID of this resource.
+- `policy_id` (String)
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`

@@ -5,6 +5,7 @@ package stream_key
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -16,7 +17,12 @@ var _ resource.ResourceWithConfigValidators = (*StreamKeyResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -25,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created": schema.StringAttribute{
@@ -37,6 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The signing key in JWK format.",
 				Computed:    true,
 				Sensitive:   true,
+			},
+			"key_id": schema.StringAttribute{
+				Description: "The unique identifier for the signing key.",
+				Computed:    true,
 			},
 			"pem": schema.StringAttribute{
 				Description: "The signing key in PEM format.",

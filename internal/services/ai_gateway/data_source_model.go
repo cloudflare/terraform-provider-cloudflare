@@ -19,7 +19,7 @@ type AIGatewayResultDataSourceEnvelope struct {
 
 type AIGatewayDataSourceModel struct {
 	ID                      types.String                                               `tfsdk:"id" path:"id,computed_optional"`
-	AccountID               types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID               types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	Authentication          types.Bool                                                 `tfsdk:"authentication" json:"authentication,computed"`
 	CacheInvalidateOnUpdate types.Bool                                                 `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
 	CacheTTL                types.Int64                                                `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
@@ -47,18 +47,21 @@ type AIGatewayDataSourceModel struct {
 }
 
 func (m *AIGatewayDataSourceModel) toReadParams(_ context.Context) (params ai_gateway.AIGatewayGetParams, diags diag.Diagnostics) {
-	params = ai_gateway.AIGatewayGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = ai_gateway.AIGatewayGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *AIGatewayDataSourceModel) toListParams(_ context.Context) (params ai_gateway.AIGatewayListParams, diags diag.Diagnostics) {
-	params = ai_gateway.AIGatewayListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_gateway.AIGatewayListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}

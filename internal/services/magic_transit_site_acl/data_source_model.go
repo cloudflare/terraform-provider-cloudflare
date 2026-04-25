@@ -19,8 +19,8 @@ type MagicTransitSiteACLResultDataSourceEnvelope struct {
 type MagicTransitSiteACLDataSourceModel struct {
 	ID             types.String                                                     `tfsdk:"id" path:"acl_id,computed"`
 	ACLID          types.String                                                     `tfsdk:"acl_id" path:"acl_id,required"`
-	AccountID      types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	SiteID         types.String                                                     `tfsdk:"site_id" path:"site_id,required"`
+	AccountID      types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Description    types.String                                                     `tfsdk:"description" json:"description,computed"`
 	ForwardLocally types.Bool                                                       `tfsdk:"forward_locally" json:"forward_locally,computed"`
 	Name           types.String                                                     `tfsdk:"name" json:"name,computed"`
@@ -31,8 +31,10 @@ type MagicTransitSiteACLDataSourceModel struct {
 }
 
 func (m *MagicTransitSiteACLDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteACLGetParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteACLGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = magic_transit.SiteACLGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

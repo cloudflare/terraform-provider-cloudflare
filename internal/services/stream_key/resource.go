@@ -108,6 +108,7 @@ func (r *StreamKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+
 	res := new(http.Response)
 	env := StreamKeyResultEnvelope{*data}
 	_, err := r.client.Stream.Keys.Get(

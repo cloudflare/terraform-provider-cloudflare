@@ -27,7 +27,7 @@ var (
 // Migration Test Configuration
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.5
+// - Last stable v4 release: default 4.52.7
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 //
 // Based on breaking changes analysis:
@@ -79,10 +79,10 @@ func getTestZoneDomain(t *testing.T, accountID string) string {
 // Migrates domain field to name field
 func TestMigratePagesDomain_Basic(t *testing.T) {
 	testCases := []struct {
-		name                 string
-		version              string
-		projectResourceName  string
-		configFn             func(rnd, accountID, projectName, domainName, projectResourceName string) string
+		name                string
+		version             string
+		projectResourceName string
+		configFn            func(rnd, accountID, projectName, domainName, projectResourceName string) string
 	}{
 		{
 			name:                "from_v4_latest",

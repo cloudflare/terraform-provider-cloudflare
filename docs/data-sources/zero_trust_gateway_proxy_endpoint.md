@@ -23,8 +23,11 @@ data "cloudflare_zero_trust_gateway_proxy_endpoint" "example_zero_trust_gateway_
 
 ### Required
 
-- `account_id` (String)
 - `proxy_endpoint_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

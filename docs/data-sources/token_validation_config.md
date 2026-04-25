@@ -2,12 +2,18 @@
 page_title: "cloudflare_token_validation_config Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_token_validation_config (Data Source)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -24,6 +30,9 @@ data "cloudflare_token_validation_config" "example_token_validation_config" {
 ### Required
 
 - `config_id` (String) UUID.
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

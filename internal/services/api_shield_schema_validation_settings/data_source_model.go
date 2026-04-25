@@ -13,14 +13,16 @@ import (
 
 type APIShieldSchemaValidationSettingsDataSourceModel struct {
 	ID                                 types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action,computed"`
 	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action,computed"`
 }
 
 func (m *APIShieldSchemaValidationSettingsDataSourceModel) toReadParams(_ context.Context) (params api_gateway.SettingSchemaValidationGetParams, diags diag.Diagnostics) {
-	params = api_gateway.SettingSchemaValidationGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = api_gateway.SettingSchemaValidationGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

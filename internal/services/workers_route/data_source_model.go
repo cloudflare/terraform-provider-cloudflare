@@ -18,14 +18,16 @@ type WorkersRouteResultDataSourceEnvelope struct {
 type WorkersRouteDataSourceModel struct {
 	ID      types.String `tfsdk:"id" path:"route_id,computed"`
 	RouteID types.String `tfsdk:"route_id" path:"route_id,required"`
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Pattern types.String `tfsdk:"pattern" json:"pattern,computed"`
 	Script  types.String `tfsdk:"script" json:"script,computed"`
 }
 
 func (m *WorkersRouteDataSourceModel) toReadParams(_ context.Context) (params workers.RouteGetParams, diags diag.Diagnostics) {
-	params = workers.RouteGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = workers.RouteGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

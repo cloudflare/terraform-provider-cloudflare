@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"search": schema.StringAttribute{
 				Description: "Search by id, name, hostname",
@@ -91,14 +91,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											ElemType: jsontypes.NormalizedType{},
 										},
 									},
-									"updated_prompts": schema.DynamicAttribute{
-										Computed:   true,
-										CustomType: customfield.NormalizedDynamicType{},
-									},
-									"updated_tools": schema.DynamicAttribute{
-										Computed:   true,
-										CustomType: customfield.NormalizedDynamicType{},
-									},
 									"created_at": schema.StringAttribute{
 										Computed:   true,
 										CustomType: timetypes.RFC3339Type{},
@@ -135,6 +127,52 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"status": schema.StringAttribute{
 										Computed: true,
+									},
+									"updated_prompts": schema.ListNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalsServersUpdatedPromptsDataSourceModel](ctx),
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"description": schema.StringAttribute{
+													Computed: true,
+												},
+												"enabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"portal_alias": schema.StringAttribute{
+													Computed: true,
+												},
+												"server_alias": schema.StringAttribute{
+													Computed: true,
+												},
+											},
+										},
+									},
+									"updated_tools": schema.ListNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalsServersUpdatedToolsDataSourceModel](ctx),
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"description": schema.StringAttribute{
+													Computed: true,
+												},
+												"enabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"portal_alias": schema.StringAttribute{
+													Computed: true,
+												},
+												"server_alias": schema.StringAttribute{
+													Computed: true,
+												},
+											},
+										},
 									},
 								},
 							},

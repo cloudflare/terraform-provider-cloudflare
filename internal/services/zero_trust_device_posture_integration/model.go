@@ -13,7 +13,7 @@ type ZeroTrustDevicePostureIntegrationResultEnvelope struct {
 
 type ZeroTrustDevicePostureIntegrationModel struct {
 	ID        types.String                                  `tfsdk:"id" json:"id,computed"`
-	AccountID types.String                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
 	Interval  types.String                                  `tfsdk:"interval" json:"interval,required"`
 	Name      types.String                                  `tfsdk:"name" json:"name,required"`
 	Type      types.String                                  `tfsdk:"type" json:"type,required"`

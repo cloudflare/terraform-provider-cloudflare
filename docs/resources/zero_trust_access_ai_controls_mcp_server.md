@@ -20,6 +20,18 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
   name = "My MCP Server"
   auth_credentials = "auth_credentials"
   description = "This is one remote mcp server"
+  updated_prompts = [{
+    name = "name"
+    alias = "my-custom-alias"
+    description = "description"
+    enabled = true
+  }]
+  updated_tools = [{
+    name = "name"
+    alias = "my-custom-alias"
+    description = "description"
+    enabled = true
+  }]
 }
 ```
 
@@ -28,7 +40,6 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 
 ### Required
 
-- `account_id` (String)
 - `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
 - `hostname` (String)
 - `id` (String) server id
@@ -36,8 +47,11 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 
 ### Optional
 
-- `auth_credentials` (String)
+- `account_id` (String)
+- `auth_credentials` (String, Sensitive)
 - `description` (String)
+- `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--updated_prompts))
+- `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--updated_tools))
 
 ### Read-Only
 
@@ -51,6 +65,33 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 - `prompts` (List of Map of String)
 - `status` (String)
 - `tools` (List of Map of String)
+
+<a id="nestedatt--updated_prompts"></a>
+### Nested Schema for `updated_prompts`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `alias` (String)
+- `description` (String)
+- `enabled` (Boolean)
+
+
+<a id="nestedatt--updated_tools"></a>
+### Nested Schema for `updated_tools`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `alias` (String)
+- `description` (String)
+- `enabled` (Boolean)
 
 ## Import
 

@@ -18,7 +18,7 @@ type EmailSecurityBlockSendersResultListDataSourceEnvelope struct {
 }
 
 type EmailSecurityBlockSendersDataSourceModel struct {
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Direction   types.String                                                                 `tfsdk:"direction" query:"direction,optional"`
 	Order       types.String                                                                 `tfsdk:"order" query:"order,optional"`
 	Pattern     types.String                                                                 `tfsdk:"pattern" query:"pattern,optional"`
@@ -29,10 +29,11 @@ type EmailSecurityBlockSendersDataSourceModel struct {
 }
 
 func (m *EmailSecurityBlockSendersDataSourceModel) toListParams(_ context.Context) (params email_security.SettingBlockSenderListParams, diags diag.Diagnostics) {
-	params = email_security.SettingBlockSenderListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = email_security.SettingBlockSenderListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingBlockSenderListParamsDirection(m.Direction.ValueString()))
 	}

@@ -18,7 +18,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksResultListDataSourceEnvelope struc
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
-	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	ID               types.String                                                                                 `tfsdk:"id" query:"id,optional"`
 	IsDefault        types.Bool                                                                                   `tfsdk:"is_default" query:"is_default,optional"`
 	IsDefaultNetwork types.Bool                                                                                   `tfsdk:"is_default_network" query:"is_default_network,optional"`
@@ -29,10 +29,11 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkVirtualNetworkListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.NetworkVirtualNetworkListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

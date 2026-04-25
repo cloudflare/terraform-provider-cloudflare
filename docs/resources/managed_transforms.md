@@ -2,12 +2,54 @@
 page_title: "cloudflare_managed_transforms Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Rulesets ReadAccount Rulesets WriteAccount WAF ReadAccount WAF WriteBot Management ReadBot Management WriteCache Settings ReadCache Settings WriteConfig Settings ReadConfig Settings WriteCustom Errors ReadCustom Errors WriteDynamic URL Redirects ReadDynamic URL Redirects WriteHTTP DDoS Managed Ruleset ReadHTTP DDoS Managed Ruleset WriteL4 DDoS Managed Ruleset ReadL4 DDoS Managed Ruleset WriteLogs ReadLogs WriteMagic Firewall ReadMagic Firewall WriteManaged headers ReadManaged headers WriteMass URL Redirects ReadMass URL Redirects WriteOrigin ReadOrigin WriteResponse Compression ReadResponse Compression WriteSanitize ReadSanitize WriteSelect Configuration ReadSelect Configuration WriteTransform Rules ReadTransform Rules WriteZone Transform Rules ReadZone Transform Rules WriteZone WAF ReadZone WAF Write
 ---
 
 # cloudflare_managed_transforms (Resource)
 
+Accepted Permissions
 
+- `Account Rulesets Read`
+- `Account Rulesets Write`
+- `Account WAF Read`
+- `Account WAF Write`
+- `Bot Management Read`
+- `Bot Management Write`
+- `Cache Settings Read`
+- `Cache Settings Write`
+- `Config Settings Read`
+- `Config Settings Write`
+- `Custom Errors Read`
+- `Custom Errors Write`
+- `Dynamic URL Redirects Read`
+- `Dynamic URL Redirects Write`
+- `HTTP DDoS Managed Ruleset Read`
+- `HTTP DDoS Managed Ruleset Write`
+- `L4 DDoS Managed Ruleset Read`
+- `L4 DDoS Managed Ruleset Write`
+- `Logs Read`
+- `Logs Write`
+- `Magic Firewall Read`
+- `Magic Firewall Write`
+- `Managed headers Read`
+- `Managed headers Write`
+- `Mass URL Redirects Read`
+- `Mass URL Redirects Write`
+- `Origin Read`
+- `Origin Write`
+- `Response Compression Read`
+- `Response Compression Write`
+- `Sanitize Read`
+- `Sanitize Write`
+- `Select Configuration Read`
+- `Select Configuration Write`
+- `Transform Rules Read`
+- `Transform Rules Write`
+- `Zone Transform Rules Read`
+- `Zone Transform Rules Write`
+- `Zone WAF Read`
+- `Zone WAF Write`
 
 ## Example Usage
 

@@ -249,6 +249,77 @@ func TestAccCloudflareR2CustomDomain_Minimal(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareR2CustomDomain_NoDrift verifies that zone_id, zone_name,
+// min_tls, and status fields remain stable across multiple plan/apply cycles.
+// This is a regression test for the bug where a transient SSL4SaaS failure
+// caused the API to return degraded data (zone_id=null, status=unknown/unknown),
+// which made Terraform detect false drift and trigger resource replacement.
+func TestAccCloudflareR2CustomDomain_NoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_r2_custom_domain." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Step 1: Create the resource with min_tls set
+			{
+				Config: testAccR2CustomDomainNoDriftConfig(rnd, accountID, zoneID, domainName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.2")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.2")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
+				},
+			},
+			// Step 2: Re-plan with identical config — must be Noop with zone_id stable
+			{
+				Config: testAccR2CustomDomainNoDriftConfig(rnd, accountID, zoneID, domainName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.2")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
+				},
+			},
+			// Step 3: Re-plan again — still Noop, no accumulated drift
+			{
+				Config: testAccR2CustomDomainNoDriftConfig(rnd, accountID, zoneID, domainName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.StringExact("1.2")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
+}
+
+func testAccR2CustomDomainNoDriftConfig(rnd, accountID, zoneID, domainName string) string {
+	return acctest.LoadTestCase("r2custom_nodrift.tf", rnd, accountID, zoneID, domainName)
+}
+
 func testAccR2CustomDomainConfig(rnd, accountID, zoneID, domainName string) string {
 	return acctest.LoadTestCase("r2custom_basic.tf", rnd, accountID, zoneID, domainName)
 }

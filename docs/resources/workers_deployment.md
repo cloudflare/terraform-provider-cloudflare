@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_deployment Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_deployment (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -31,13 +36,13 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 - `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `annotations` (Attributes) (see [below for nested schema](#nestedatt--annotations))
 
 ### Read-Only
@@ -61,7 +66,7 @@ Required:
 
 Optional:
 
-- `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
+- `workers_message` (String) Human-readable message about the deployment. Truncated to 1000 bytes if longer.
 
 Read-Only:
 

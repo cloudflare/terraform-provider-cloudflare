@@ -2,12 +2,43 @@
 page_title: "cloudflare_account Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Firewall Access Rules ReadAccount Firewall Access Rules WriteAccount Settings ReadAccount Settings WriteBilling ReadBilling WriteDDoS Botnet Feed ReadDDoS Botnet Feed WriteDDoS Protection ReadDDoS Protection WriteDNS Firewall ReadDNS Firewall WriteDNS View ReadDNS View WriteLoad Balancers Account ReadLoad Balancers Account WriteLoad Balancing: Monitors and Pools ReadLoad Balancing: Monitors and Pools WriteSCIM ProvisioningTrust and Safety ReadTrust and Safety WriteWorkers KV Storage ReadWorkers KV Storage WriteWorkers R2 Storage ReadWorkers R2 Storage WriteWorkers Scripts ReadWorkers Scripts WriteWorkers Tail ReadZero Trust: PII Read
 ---
 
 # cloudflare_account (Data Source)
 
+Accepted Permissions
 
+- `Account Firewall Access Rules Read`
+- `Account Firewall Access Rules Write`
+- `Account Settings Read`
+- `Account Settings Write`
+- `Billing Read`
+- `Billing Write`
+- `DDoS Botnet Feed Read`
+- `DDoS Botnet Feed Write`
+- `DDoS Protection Read`
+- `DDoS Protection Write`
+- `DNS Firewall Read`
+- `DNS Firewall Write`
+- `DNS View Read`
+- `DNS View Write`
+- `Load Balancers Account Read`
+- `Load Balancers Account Write`
+- `Load Balancing: Monitors and Pools Read`
+- `Load Balancing: Monitors and Pools Write`
+- `SCIM Provisioning`
+- `Trust and Safety Read`
+- `Trust and Safety Write`
+- `Workers KV Storage Read`
+- `Workers KV Storage Write`
+- `Workers R2 Storage Read`
+- `Workers R2 Storage Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
+- `Zero Trust: PII Read`
 
 ## Example Usage
 

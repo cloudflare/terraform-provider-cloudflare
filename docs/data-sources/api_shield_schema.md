@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_schema Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_schema (Data Source)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -25,11 +31,11 @@ data "cloudflare_api_shield_schema" "example_api_shield_schema" {
 ### Required
 
 - `schema_id` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

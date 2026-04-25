@@ -2,12 +2,20 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflared_config Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: cloudflared ReadCloudflare One Connector: cloudflared WriteCloudflare One Connectors ReadCloudflare One Connectors WriteCloudflare Tunnel ReadCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflared_config (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: cloudflared Read`
+- `Cloudflare One Connector: cloudflared Write`
+- `Cloudflare One Connectors Read`
+- `Cloudflare One Connectors Write`
+- `Cloudflare Tunnel Read`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 
@@ -23,8 +31,11 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `tunnel_id` (String) UUID of the tunnel.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

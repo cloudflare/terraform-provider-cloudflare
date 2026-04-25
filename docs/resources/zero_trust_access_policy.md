@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_policy (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 
@@ -16,8 +20,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   decision = "allow"
   include = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   name = "Allow devs"
@@ -38,8 +42,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     }
   }
   exclude = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   isolation_required = false
@@ -51,8 +55,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   session_duration = "24h"
@@ -64,13 +68,13 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
 - `name` (String) The name of the Access policy.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `connection_rules` (Attributes) The rules that define how users may connect to targets secured by your application. (see [below for nested schema](#nestedatt--connection_rules))

@@ -41,16 +41,18 @@ func UpgradeFromV0(ctx context.Context, req resource.UpgradeStateRequest, resp *
 
 // UpgradeFromV1 handles state upgrades from schema version 1 to version 500.
 //
-// This is a no-op upgrade — v1 schema is compatible with v500.
 // v1 is the "dormant" state version before migration activation.
-// When migrations are activated (schema version → 500), this handler
-// copies the state as-is.
+// The v1 schema uses Set types which must be deserialized and re-serialized
+// to produce state compatible with the target schema (which may use List types).
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading account_token state from v1 to v500 (no-op)")
+	tflog.Info(ctx, "Upgrading account_token state from v1 to v500")
 
-	// CRITICAL: For no-op upgrades, copy raw state directly.
-	// This preserves all state data without any transformation.
-	resp.State.Raw = req.State.Raw
+	var state TargetAccountTokenModelV500
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 
 	tflog.Info(ctx, "State version bump from 1 to 500 completed")
 }

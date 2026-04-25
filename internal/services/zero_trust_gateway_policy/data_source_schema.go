@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"action": schema.StringAttribute{
 				Description: "Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
@@ -214,7 +214,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"download": schema.StringAttribute{
-								Description: "Configure download behavior. When set to remote_only, users can view downloads but cannot save them. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
+								Description: "Configure download behavior. When set to remote_only, users can view downloads but cannot save them. If this field is absent, downloading remains enabled. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -270,6 +270,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("v1", "v2"),
 								},
+							},
+							"wm_id": schema.StringAttribute{
+								Description: "Specify the watermark ID (UUID) to apply to the isolated browser session. When present, enables watermark rendering in the isolated browser.",
+								Computed:    true,
 							},
 						},
 					},

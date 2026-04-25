@@ -5,6 +5,7 @@ package calls_turn_app
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -14,14 +15,20 @@ var _ datasource.DataSourceWithConfigValidators = (*CallsTURNAppDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The account identifier tag.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Calls Read",
+				"Calls Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"key_id": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a item.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The account identifier tag.",
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the item was created.",

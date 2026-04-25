@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline_sink Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline_sink (Resource)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -69,13 +73,13 @@ resource "cloudflare_pipeline_sink" "example_pipeline_sink" {
 
 ### Required
 
-- `account_id` (String) Specifies the public ID of the account.
 - `name` (String) Defines the name of the Sink.
 - `type` (String) Specifies the type of sink.
 Available values: "r2", "r2_data_catalog".
 
 ### Optional
 
+- `account_id` (String) Specifies the public ID of the account.
 - `config` (Attributes) Defines the configuration of the R2 Sink. (see [below for nested schema](#nestedatt--config))
 - `format` (Attributes) (see [below for nested schema](#nestedatt--format))
 - `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))

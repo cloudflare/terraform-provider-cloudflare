@@ -20,7 +20,7 @@ type ZeroTrustGatewayPolicyResultDataSourceEnvelope struct {
 type ZeroTrustGatewayPolicyDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"rule_id,computed"`
 	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                           `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -44,8 +44,10 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayRuleGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayRuleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayRuleGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
@@ -103,6 +105,7 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel struct {
 	Printing types.String `tfsdk:"printing" json:"printing,computed"`
 	Upload   types.String `tfsdk:"upload" json:"upload,computed"`
 	Version  types.String `tfsdk:"version" json:"version,computed"`
+	WmID     types.String `tfsdk:"wm_id" json:"wm_id,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel struct {

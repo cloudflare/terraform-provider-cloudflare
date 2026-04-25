@@ -65,6 +65,7 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -114,6 +115,7 @@ func (r *TieredCacheResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -155,6 +157,7 @@ func (r *TieredCacheResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+
 	res := new(http.Response)
 	env := TieredCacheResultEnvelope{*data}
 	_, err := r.client.Cache.SmartTieredCache.Get(
@@ -194,6 +197,7 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.Cache.SmartTieredCache.Delete(
 		ctx,

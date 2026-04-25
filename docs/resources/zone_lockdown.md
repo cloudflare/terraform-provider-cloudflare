@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_lockdown Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_zone_lockdown (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 
@@ -32,13 +36,13 @@ resource "cloudflare_zone_lockdown" "example_zone_lockdown" {
 
 - `configurations` (Attributes List) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--configurations))
 - `urls` (List of String) The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
-- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
 - `description` (String) An informative summary of the rule. This value is sanitized and any tags will be removed.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
 - `priority` (Number) The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 

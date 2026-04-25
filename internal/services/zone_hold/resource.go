@@ -64,6 +64,7 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *ZoneHoldResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -154,6 +156,7 @@ func (r *ZoneHoldResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
 	_, err := r.client.Zones.Holds.Get(
@@ -193,6 +196,7 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.Zones.Holds.Delete(
 		ctx,

@@ -2,12 +2,16 @@
 page_title: "cloudflare_healthcheck Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Health Checks ReadHealth Checks Write
 ---
 
 # cloudflare_healthcheck (Resource)
 
+Accepted Permissions
 
+- `Health Checks Read`
+- `Health Checks Write`
 
 ## Example Usage
 
@@ -52,7 +56,6 @@ resource "cloudflare_healthcheck" "example_healthcheck" {
 
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
-- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -67,6 +70,7 @@ resource "cloudflare_healthcheck" "example_healthcheck" {
 - `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--tcp_config))
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.
+- `zone_id` (String) Identifier
 
 ### Read-Only
 

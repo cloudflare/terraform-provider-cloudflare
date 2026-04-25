@@ -5,6 +5,7 @@ package api_shield_operation_schema_validation_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -18,6 +19,14 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldOperationSchemaValidati
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version:            500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account API Gateway",
+				"Account API Gateway Read",
+				"Domain API Gateway",
+				"Domain API Gateway Read",
+			},
+		}.String(),
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_operation_settings` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -32,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"mitigation_action": schema.StringAttribute{

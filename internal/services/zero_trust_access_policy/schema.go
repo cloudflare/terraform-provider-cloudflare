@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -25,6 +26,12 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessPolicyResource)(n
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Apps and Policies Read",
+				"Access: Apps and Policies Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the policy",
@@ -33,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"decision": schema.StringAttribute{

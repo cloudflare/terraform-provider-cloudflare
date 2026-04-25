@@ -20,8 +20,8 @@ type WorkersDeploymentResultDataSourceEnvelope struct {
 type WorkersDeploymentDataSourceModel struct {
 	ID           types.String                                                           `tfsdk:"id" path:"deployment_id,computed"`
 	DeploymentID types.String                                                           `tfsdk:"deployment_id" path:"deployment_id,required"`
-	AccountID    types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
 	ScriptName   types.String                                                           `tfsdk:"script_name" path:"script_name,required"`
+	AccountID    types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	AuthorEmail  types.String                                                           `tfsdk:"author_email" json:"author_email,computed"`
 	CreatedOn    timetypes.RFC3339                                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Source       types.String                                                           `tfsdk:"source" json:"source,computed"`
@@ -31,8 +31,10 @@ type WorkersDeploymentDataSourceModel struct {
 }
 
 func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptDeploymentGetParams, diags diag.Diagnostics) {
-	params = workers.ScriptDeploymentGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.ScriptDeploymentGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

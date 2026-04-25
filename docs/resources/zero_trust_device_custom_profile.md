@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_custom_profile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_custom_profile (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -53,12 +56,12 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 
 ### Required
 
-- `account_id` (String)
 - `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
 - `name` (String) The name of the device settings profile.
 
 ### Optional
 
+- `account_id` (String)
 - `allow_mode_switch` (Boolean) Whether to allow the user to switch WARP between modes.
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization.

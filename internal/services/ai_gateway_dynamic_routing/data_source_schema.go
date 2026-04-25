@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -18,15 +19,21 @@ var _ datasource.DataSourceWithConfigValidators = (*AIGatewayDynamicRoutingDataS
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"AI Gateway Read",
+				"AI Gateway Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"gateway_id": schema.StringAttribute{
 				Required: true,
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+			},
+			"account_id": schema.StringAttribute{
+				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

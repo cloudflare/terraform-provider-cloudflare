@@ -17,17 +17,18 @@ type ZeroTrustDeviceIPProfilesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceIPProfilesDataSourceModel struct {
-	AccountID types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	PerPage   types.Int64                                                                  `tfsdk:"per_page" query:"per_page,computed_optional"`
 	MaxItems  types.Int64                                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDeviceIPProfilesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDeviceIPProfilesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceIPProfileListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceIPProfileListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.DeviceIPProfileListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.PerPage.IsNull() {
 		params.PerPage = cloudflare.F(m.PerPage.ValueInt64())
 	}

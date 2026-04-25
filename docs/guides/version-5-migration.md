@@ -53,8 +53,8 @@ Before starting the migration:
 
   ```bash
   # Example for macOS (ARM64)
-  curl -LO https://github.com/cloudflare/tf-migrate/releases/download/v1.0.0-beta.2/tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
-  tar -xzf tf-migrate_1.0.0-beta.2_darwin_arm64.tar.gz
+  curl -LO https://github.com/cloudflare/tf-migrate/releases/download/v1.0.0/tf-migrate_1.0.0_darwin_arm64.tar.gz
+  tar -xzf tf-migrate_1.0.0_darwin_arm64.tar.gz
   chmod +x tf-migrate
   sudo mv tf-migrate /usr/local/bin/
   
@@ -687,9 +687,10 @@ additional manual steps after running `tf-migrate` or updating your HCL.
 
 ### Application-Scoped Access Policies
 
-~> **`cloudflare_access_policy` resources with `application_id` cannot be
-automatically migrated.** `tf-migrate` will skip these resources and print a
-warning.
+~> **`cloudflare_access_policy` resources with `application_id` require manual
+config migration.** `tf-migrate` can automatically generate a `removed` block
+to drop the old state entry without destroying the remote policy, but you still
+must rewrite the policy as inline `policies` on the application resource.
 
 In v4, `cloudflare_access_policy` could be used for both account-level policies
 and application-scoped policies (when `application_id` was set). These two types
@@ -701,6 +702,9 @@ use different API endpoints:
 In v5, application-scoped policies are no longer standalone resources. Instead,
 they are defined inline within the `cloudflare_zero_trust_access_application`
 resource using the `policies` attribute.
+
+Do not use a `moved` block for this scenario. Application-scoped policies must
+be dropped from standalone state and rewritten as inline application policies.
 
 #### Migration Steps
 
@@ -721,7 +725,21 @@ resource "cloudflare_access_policy" "app_policy" {
 }
 ```
 
-**2.** Remove the policy from Terraform state:
+**2.** Drop the old standalone policy from Terraform state without destroying
+the remote policy.
+
+If you use `tf-migrate`, this is generated automatically:
+
+```hcl
+removed {
+  from = cloudflare_access_policy.app_policy
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+If you are not using `tf-migrate` (or are on an older migration output), run:
 
 ```bash
 terraform state rm cloudflare_access_policy.app_policy
@@ -1190,6 +1208,8 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_account_token` |
 | **SSL/TLS** | `cloudflare_authenticated_origin_pulls` |
 | | `cloudflare_authenticated_origin_pulls_certificate` |
+| | `cloudflare_authenticated_origin_pulls_hostname_certificate` |
+| | `cloudflare_authenticated_origin_pulls_settings` |
 | | `cloudflare_certificate_pack` |
 | | `cloudflare_custom_hostname` |
 | | `cloudflare_custom_hostname_fallback_origin` |
@@ -1404,6 +1424,30 @@ Terraform does not know the new resource is the same as the old one. Add the
 appropriate `moved` block. For resources marked **Manual** in the rename
 table, use `terraform state rm` + `terraform import` instead.
 
+### "Error: no schema available for cloudflare_access_policy.<name> while reading state"
+
+This usually means Terraform is still trying to decode v4
+`cloudflare_access_policy` state with a v5 provider before the migration flow
+is complete.
+
+Most common causes:
+
+- The workspace was upgraded to v5 before applying on v4.52.5.
+- Config/state rename steps were partially applied (for example, stale state
+  still references `cloudflare_access_policy`).
+- Application-scoped policies (`application_id` set) were treated like normal
+  renamed resources.
+
+Fix:
+
+1. Pin to v4.52.5 and run `terraform init -upgrade && terraform apply`.
+2. Run `tf-migrate` and apply generated changes.
+3. For `cloudflare_access_policy` with `application_id`, keep the generated
+   `removed` block and migrate policy config inline to
+   `cloudflare_zero_trust_access_application.policies`.
+4. Upgrade provider to v5 and run `terraform plan` again.
+
+
 ### Unexpected plan diff after migration
 
 Some computed attributes may show a diff on the first plan after migration.
@@ -1458,6 +1502,18 @@ state upgraders handle state automatically. Do not use Grit for new migrations.
 No. State upgraders handle all state transformations automatically when you
 run `terraform plan` or `terraform apply`.
 
+**Why does Terraform say an object "will no longer be managed" after migration?**
+
+This is expected when `tf-migrate` generates a `removed` block (for example,
+`cloudflare_access_policy` resources with `application_id`). A `removed` block
+drops Terraform state tracking without deleting the remote object
+(`destroy = false`).
+
+Apply once to clear the old state entry, then continue with the manual config
+migration steps for that resource (for application-scoped access policies,
+rewrite the policy as inline `policies` on
+`cloudflare_zero_trust_access_application`).
+
 **Can I skip from v4 directly to v5.19?**
 
 Yes, as long as you are on v4.52.5 first. The state upgraders handle the full
@@ -1494,6 +1550,19 @@ This resource has been removed in v5. Each zone setting is now managed by an
 individual `cloudflare_zone_setting` resource. See the
 [`cloudflare_zone_settings_override`](#cloudflare_zone_settings_override)
 section under Resources Requiring Manual Migration.
+
+**What if my Access application is replaced and JWT audience (`aud`) changes?**
+
+Some Access application migrations may require replacement depending on your
+configuration and API-managed values. If replacement occurs, the application's
+`aud` value changes, which can affect JWT audience checks in downstream
+services.
+
+Plan for this during migration:
+
+- schedule a maintenance window for Access app replacements,
+- update downstream audience allow-lists to include the new `aud`, and
+- validate auth flows immediately after apply.
 
 **What if I use Terraform Cloud or remote state?**
 

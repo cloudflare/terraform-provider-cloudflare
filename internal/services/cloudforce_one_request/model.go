@@ -14,7 +14,7 @@ type CloudforceOneRequestResultEnvelope struct {
 
 type CloudforceOneRequestModel struct {
 	ID            types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Content       types.String      `tfsdk:"content" json:"content,optional"`
 	Priority      types.String      `tfsdk:"priority" json:"priority,optional,no_refresh"`
 	RequestType   types.String      `tfsdk:"request_type" json:"request_type,optional,no_refresh"`

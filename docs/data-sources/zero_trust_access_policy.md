@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_policy Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_policy (Data Source)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `policy_id` (String) The UUID of the policy
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

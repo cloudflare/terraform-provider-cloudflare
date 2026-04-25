@@ -13,8 +13,8 @@ type MagicTransitSiteACLResultEnvelope struct {
 
 type MagicTransitSiteACLModel struct {
 	ID             types.String                  `tfsdk:"id" json:"id,computed"`
-	AccountID      types.String                  `tfsdk:"account_id" path:"account_id,required"`
 	SiteID         types.String                  `tfsdk:"site_id" path:"site_id,required"`
+	AccountID      types.String                  `tfsdk:"account_id" path:"account_id,optional"`
 	Name           types.String                  `tfsdk:"name" json:"name,required"`
 	LAN1           *MagicTransitSiteACLLAN1Model `tfsdk:"lan_1" json:"lan_1,required"`
 	LAN2           *MagicTransitSiteACLLAN2Model `tfsdk:"lan_2" json:"lan_2,required"`

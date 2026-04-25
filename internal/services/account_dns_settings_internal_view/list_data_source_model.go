@@ -18,7 +18,7 @@ type AccountDNSSettingsInternalViewsResultListDataSourceEnvelope struct {
 }
 
 type AccountDNSSettingsInternalViewsDataSourceModel struct {
-	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Order     types.String                                                                       `tfsdk:"order" query:"order,optional"`
 	ZoneID    types.String                                                                       `tfsdk:"zone_id" query:"zone_id,optional"`
 	ZoneName  types.String                                                                       `tfsdk:"zone_name" query:"zone_name,optional"`
@@ -30,10 +30,11 @@ type AccountDNSSettingsInternalViewsDataSourceModel struct {
 }
 
 func (m *AccountDNSSettingsInternalViewsDataSourceModel) toListParams(_ context.Context) (params dns.SettingAccountViewListParams, diags diag.Diagnostics) {
-	params = dns.SettingAccountViewListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = dns.SettingAccountViewListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(dns.SettingAccountViewListParamsDirection(m.Direction.ValueString()))
 	}

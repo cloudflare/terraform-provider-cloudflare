@@ -2,12 +2,16 @@
 page_title: "cloudflare_ai_gateway_dynamic_routing Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  AI Gateway ReadAI Gateway Write
 ---
 
 # cloudflare_ai_gateway_dynamic_routing (Data Source)
 
+Accepted Permissions
 
+- `AI Gateway Read`
+- `AI Gateway Write`
 
 ## Example Usage
 
@@ -24,8 +28,11 @@ data "cloudflare_ai_gateway_dynamic_routing" "example_ai_gateway_dynamic_routing
 
 ### Required
 
-- `account_id` (String)
 - `gateway_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

@@ -17,9 +17,9 @@ type R2CustomDomainResultDataSourceEnvelope struct {
 }
 
 type R2CustomDomainDataSourceModel struct {
-	AccountID  types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                  `tfsdk:"bucket_name" path:"bucket_name,required"`
 	Domain     types.String                                                  `tfsdk:"domain" path:"domain,required"`
+	AccountID  types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	Enabled    types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
 	MinTLS     types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
 	ZoneID     types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`
@@ -29,8 +29,10 @@ type R2CustomDomainDataSourceModel struct {
 }
 
 func (m *R2CustomDomainDataSourceModel) toReadParams(_ context.Context) (params r2.BucketDomainCustomGetParams, diags diag.Diagnostics) {
-	params = r2.BucketDomainCustomGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2.BucketDomainCustomGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

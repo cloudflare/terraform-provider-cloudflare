@@ -18,7 +18,7 @@ type WorkersCustomDomainResultDataSourceEnvelope struct {
 type WorkersCustomDomainDataSourceModel struct {
 	ID          types.String                                 `tfsdk:"id" path:"domain_id,computed"`
 	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
-	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
 	CERTID      types.String                                 `tfsdk:"cert_id" json:"cert_id,computed"`
 	Environment types.String                                 `tfsdk:"environment" json:"environment,computed"`
 	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname,computed"`
@@ -29,18 +29,21 @@ type WorkersCustomDomainDataSourceModel struct {
 }
 
 func (m *WorkersCustomDomainDataSourceModel) toReadParams(_ context.Context) (params workers.DomainGetParams, diags diag.Diagnostics) {
-	params = workers.DomainGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.DomainGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
-	params = workers.DomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = workers.DomainListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Environment.IsNull() {
 		params.Environment = cloudflare.F(m.Filter.Environment.ValueString())
 	}

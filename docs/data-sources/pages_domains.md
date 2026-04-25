@@ -2,12 +2,16 @@
 page_title: "cloudflare_pages_domains Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pages ReadPages Write
 ---
 
 # cloudflare_pages_domains (Data Source)
 
+Accepted Permissions
 
+- `Pages Read`
+- `Pages Write`
 
 ## Example Usage
 
@@ -23,11 +27,11 @@ data "cloudflare_pages_domains" "example_pages_domains" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `project_name` (String) Name of the project.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

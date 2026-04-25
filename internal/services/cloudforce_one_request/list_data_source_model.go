@@ -18,7 +18,7 @@ type CloudforceOneRequestsResultListDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestsDataSourceModel struct {
-	AccountID       types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	Page            types.Int64                                                              `tfsdk:"page" json:"page,required"`
 	PerPage         types.Int64                                                              `tfsdk:"per_page" json:"per_page,required"`
 	CompletedAfter  timetypes.RFC3339                                                        `tfsdk:"completed_after" json:"completed_after,optional" format:"date-time"`
@@ -34,8 +34,10 @@ type CloudforceOneRequestsDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestsDataSourceModel) toListParams(_ context.Context) (params cloudforce_one.RequestListParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = cloudforce_one.RequestListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

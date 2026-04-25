@@ -112,6 +112,7 @@ func (r *MagicNetworkMonitoringRuleResource) Update(ctx context.Context, req res
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())

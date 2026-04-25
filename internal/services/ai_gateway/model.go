@@ -15,7 +15,7 @@ type AIGatewayResultEnvelope struct {
 
 type AIGatewayModel struct {
 	ID                      types.String                                     `tfsdk:"id" json:"id,required"`
-	AccountID               types.String                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID               types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
 	CacheInvalidateOnUpdate types.Bool                                       `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,required"`
 	CacheTTL                types.Int64                                      `tfsdk:"cache_ttl" json:"cache_ttl,required"`
 	CollectLogs             types.Bool                                       `tfsdk:"collect_logs" json:"collect_logs,required"`

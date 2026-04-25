@@ -5,6 +5,8 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,6 +23,13 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustOrganizationResource)(n
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Organizations, Identity Providers, and Groups Read",
+				"Access: Organizations, Identity Providers, and Groups Revoke",
+				"Access: Organizations, Identity Providers, and Groups Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -112,14 +121,86 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"totp",
 									"biometrics",
 									"security_key",
+									"ssh_piv_key",
 								),
 							),
 						},
 						ElementType: types.StringType,
 					},
+					"amr_matching_session_duration": schema.StringAttribute{
+						Description: `Allows a user to skip MFA via Authentication Method Reference (AMR) matching when the AMR claim provided by the IdP the user used to authenticate contains "mfa". Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days).`,
+						Optional:    true,
+					},
+					"required_aaguids": schema.StringAttribute{
+						Description: "Specifies a Cloudflare List of required FIDO2 authenticator device AAGUIDs.",
+						Optional:    true,
+					},
 					"session_duration": schema.StringAttribute{
 						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
 						Optional:    true,
+					},
+				},
+			},
+			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"pin_policy": schema.StringAttribute{
+						Description: "Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).\nAvailable values: \"never\", \"once\", \"always\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"never",
+								"once",
+								"always",
+							),
+						},
+					},
+					"require_fips_device": schema.BoolAttribute{
+						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Optional:    true,
+					},
+					"ssh_key_size": schema.ListAttribute{
+						Description: "Specifies the allowed SSH key sizes in bits. Valid sizes depend on key type. Ed25519 has a fixed key size and does not accept this parameter.",
+						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueInt64sAre(
+								int64validator.OneOf(
+									256,
+									384,
+									521,
+									2048,
+									3072,
+									4096,
+								),
+							),
+						},
+						ElementType: types.Int64Type,
+					},
+					"ssh_key_type": schema.ListAttribute{
+						Description: "Specifies the allowed SSH key types. Valid values are `ecdsa`, `ed25519`, and `rsa`.",
+						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"ecdsa",
+									"ed25519",
+									"rsa",
+								),
+							),
+						},
+						ElementType: types.StringType,
+					},
+					"touch_policy": schema.StringAttribute{
+						Description: "Defines when physical touch is required to use the SSH key. Valid values: `never` (no touch required), `always` (touch required for each use), `cached` (touch cached for 15 seconds).\nAvailable values: \"never\", \"always\", \"cached\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"never",
+								"always",
+								"cached",
+							),
+						},
 					},
 				},
 			},

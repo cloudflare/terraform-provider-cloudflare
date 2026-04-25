@@ -112,6 +112,7 @@ func (r *DNSZoneTransfersOutgoingResource) Update(ctx context.Context, req resou
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -152,6 +153,7 @@ func (r *DNSZoneTransfersOutgoingResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+
 	res := new(http.Response)
 	env := DNSZoneTransfersOutgoingResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.Outgoing.Get(
@@ -190,6 +192,7 @@ func (r *DNSZoneTransfersOutgoingResource) Delete(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.DNS.ZoneTransfers.Outgoing.Delete(
 		ctx,

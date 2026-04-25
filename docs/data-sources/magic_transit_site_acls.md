@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_acls Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_acls (Data Source)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -23,11 +29,11 @@ data "cloudflare_magic_transit_site_acls" "example_magic_transit_site_acls" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

@@ -13,8 +13,8 @@ type MagicTransitSiteWANResultEnvelope struct {
 
 type MagicTransitSiteWANModel struct {
 	ID               types.String                              `tfsdk:"id" json:"id,computed"`
-	AccountID        types.String                              `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                              `tfsdk:"site_id" path:"site_id,required"`
+	AccountID        types.String                              `tfsdk:"account_id" path:"account_id,optional"`
 	Physport         types.Int64                               `tfsdk:"physport" json:"physport,required"`
 	Name             types.String                              `tfsdk:"name" json:"name,optional"`
 	Priority         types.Int64                               `tfsdk:"priority" json:"priority,optional"`

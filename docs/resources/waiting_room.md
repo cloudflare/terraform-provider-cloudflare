@@ -2,12 +2,16 @@
 page_title: "cloudflare_waiting_room Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Waiting Rooms ReadWaiting Rooms Write
 ---
 
 # cloudflare_waiting_room (Resource)
 
+Accepted Permissions
 
+- `Waiting Rooms Read`
+- `Waiting Rooms Write`
 
 ## Example Usage
 
@@ -53,7 +57,6 @@ resource "cloudflare_waiting_room" "example_waiting_room" {
 - `name` (String) A unique name to identify the waiting room. Only alphanumeric characters, hyphens and underscores are allowed.
 - `new_users_per_minute` (Number) Sets the number of new users that will be let into the route every minute. This value is used as baseline for the number of users that are let in per minute. So it is possible that there is a little more or little less traffic coming to the route based on the traffic patterns at that time around the world.
 - `total_active_users` (Number) Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -189,6 +192,7 @@ for the definitions of these widget types. Set to `off` to disable the
 Turnstile integration entirely. Setting this to anything other than
 `off` or `invisible` requires Advanced Waiting Room.
 Available values: "off", "invisible", "visible_non_interactive", "visible_managed".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

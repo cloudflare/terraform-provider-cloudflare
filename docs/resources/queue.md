@@ -2,12 +2,18 @@
 page_title: "cloudflare_queue Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Queues ReadQueues WriteWorkers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_queue (Resource)
 
+Accepted Permissions
 
+- `Queues Read`
+- `Queues Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -23,11 +29,11 @@ resource "cloudflare_queue" "example_queue" {
 
 ### Required
 
-- `account_id` (String) A Resource identifier.
 - `queue_name` (String)
 
 ### Optional
 
+- `account_id` (String) A Resource identifier.
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 
 ### Read-Only

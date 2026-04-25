@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -25,15 +26,21 @@ var _ resource.ResourceWithConfigValidators = (*ListItemResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version: 500,
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "The Account ID for this resource.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account Filter Lists Edit",
+				"Account Filter Lists Read",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"list_id": schema.StringAttribute{
 				Description:   "The unique ID of the list.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "The Account ID for this resource.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"id": schema.StringAttribute{

@@ -20,7 +20,7 @@ type TurnstileWidgetResultDataSourceEnvelope struct {
 type TurnstileWidgetDataSourceModel struct {
 	ID             types.String                             `tfsdk:"id" path:"sitekey,computed"`
 	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
-	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,optional"`
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -36,18 +36,21 @@ type TurnstileWidgetDataSourceModel struct {
 }
 
 func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params turnstile.WidgetGetParams, diags diag.Diagnostics) {
-	params = turnstile.WidgetGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = turnstile.WidgetGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params turnstile.WidgetListParams, diags diag.Diagnostics) {
-	params = turnstile.WidgetListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = turnstile.WidgetListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Filter.Direction.ValueString()))
 	}

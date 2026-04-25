@@ -19,7 +19,7 @@ type PageRuleResultDataSourceEnvelope struct {
 type PageRuleDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"pagerule_id,computed"`
 	PageruleID types.String      `tfsdk:"pagerule_id" path:"pagerule_id,required"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn  timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Priority   types.Int64       `tfsdk:"priority" json:"priority,computed"`
@@ -27,8 +27,10 @@ type PageRuleDataSourceModel struct {
 }
 
 func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params page_rules.PageRuleGetParams, diags diag.Diagnostics) {
-	params = page_rules.PageRuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = page_rules.PageRuleGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

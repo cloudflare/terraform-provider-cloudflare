@@ -18,14 +18,16 @@ type SnippetResultDataSourceEnvelope struct {
 
 type SnippetDataSourceModel struct {
 	SnippetName types.String      `tfsdk:"snippet_name" path:"snippet_name,required"`
-	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 func (m *SnippetDataSourceModel) toReadParams(_ context.Context) (params snippets.SnippetGetParams, diags diag.Diagnostics) {
-	params = snippets.SnippetGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = snippets.SnippetGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

@@ -64,6 +64,7 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -154,6 +156,7 @@ func (r *URLNormalizationSettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+
 	res := new(http.Response)
 	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err := r.client.URLNormalization.Get(
@@ -193,6 +196,7 @@ func (r *URLNormalizationSettingsResource) Delete(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	err := r.client.URLNormalization.Delete(
 		ctx,

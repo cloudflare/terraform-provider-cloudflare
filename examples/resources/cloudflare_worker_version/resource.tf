@@ -9,7 +9,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     config = {
       html_handling = "auto-trailing-slash"
       not_found_handling = "404-page"
-      run_worker_first = ["string"]
+      run_worker_first = []
     }
     jwt = "jwt"
   }
@@ -20,8 +20,12 @@ resource "cloudflare_worker_version" "example_worker_version" {
   }]
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
+  containers = [{
+    class_name = "MyDurableObject"
+  }]
   limits = {
     cpu_ms = 50
+    subrequests = 1000
   }
   main_module = "index.js"
   migrations = {

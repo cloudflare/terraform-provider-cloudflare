@@ -12,8 +12,9 @@ type AccountDNSSettingsResultEnvelope struct {
 }
 
 type AccountDNSSettingsModel struct {
-	AccountID    types.String                         `tfsdk:"account_id" path:"account_id,required"`
-	ZoneDefaults *AccountDNSSettingsZoneDefaultsModel `tfsdk:"zone_defaults" json:"zone_defaults,optional"`
+	AccountID      types.String                         `tfsdk:"account_id" path:"account_id,optional"`
+	EnforceDNSOnly types.Bool                           `tfsdk:"enforce_dns_only" json:"enforce_dns_only,optional"`
+	ZoneDefaults   *AccountDNSSettingsZoneDefaultsModel `tfsdk:"zone_defaults" json:"zone_defaults,optional"`
 }
 
 func (m AccountDNSSettingsModel) MarshalJSON() (data []byte, err error) {

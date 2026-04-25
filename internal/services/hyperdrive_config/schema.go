@@ -5,6 +5,7 @@ package hyperdrive_config
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -20,7 +21,12 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Hyperdrive Read",
+				"Hyperdrive Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Define configurations using a unique string identifier.",
@@ -29,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Define configurations using a unique string identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -45,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"host": schema.StringAttribute{
 						Description: "Defines the host (hostname or IP) of your origin database.",
-						Required:    true,
+						Optional:    true,
 					},
 					"password": schema.StringAttribute{
 						Description: "Set the password needed to access your origin database. The API never returns this write-only value.",
@@ -80,6 +86,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Sensitive:   true,
 					},
+					"service_id": schema.StringAttribute{
+						Description: "The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.",
+						Optional:    true,
+					},
 				},
 			},
 			"origin_connection_limit": schema.Int64Attribute{
@@ -109,7 +119,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"mtls": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"ca_certificate_id": schema.StringAttribute{
 						Description: "Define CA certificate ID obtained after uploading CA cert.",
