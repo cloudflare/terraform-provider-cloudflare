@@ -3,5 +3,5 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
   is_regex = false
   pattern = "test@example.com"
   pattern_type = "EMAIL"
-  comments = "block sender with email test@example.com"
+  comments = "Block sender with email test@example.com"
 }

@@ -660,7 +660,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
-		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistriesDataSource,
 		email_security_trusted_domains.NewEmailSecurityTrustedDomainsDataSource,
 		email_security_trusted_domains.NewEmailSecurityTrustedDomainsListDataSource,

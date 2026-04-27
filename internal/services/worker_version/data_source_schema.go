@@ -350,6 +350,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The period in seconds.",
 									Computed:    true,
 								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
+									Computed:    true,
+								},
 							},
 						},
 						"bucket_name": schema.StringAttribute{

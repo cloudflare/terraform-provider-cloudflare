@@ -17,8 +17,8 @@ type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityTrustedDomainsDataSourceModel struct {
-	ID              types.Int64                                          `tfsdk:"id" path:"trusted_domain_id,computed"`
-	TrustedDomainID types.Int64                                          `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
+	ID              types.String                                         `tfsdk:"id" path:"trusted_domain_id,computed"`
+	TrustedDomainID types.String                                         `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
 	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
 	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt       timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -26,6 +26,7 @@ type EmailSecurityTrustedDomainsDataSourceModel struct {
 	IsRegex         types.Bool                                           `tfsdk:"is_regex" json:"is_regex,computed"`
 	IsSimilarity    types.Bool                                           `tfsdk:"is_similarity" json:"is_similarity,computed"`
 	LastModified    timetypes.RFC3339                                    `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt      timetypes.RFC3339                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern         types.String                                         `tfsdk:"pattern" json:"pattern,computed"`
 	Filter          *EmailSecurityTrustedDomainsFindOneByDataSourceModel `tfsdk:"filter"`
 }
