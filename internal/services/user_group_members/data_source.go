@@ -64,7 +64,7 @@ func (d *UserGroupMembersDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	res := new(http.Response)
-	env := UserGroupMembersResultDataSourceEnvelope{*data}
+	env := UserGroupMembersResultDataSourceEnvelope{data.Members}
 	_, err := d.client.IAM.UserGroups.Members.List(
 		ctx,
 		data.UserGroupID.ValueString(),
@@ -82,7 +82,7 @@ func (d *UserGroupMembersDataSource) Read(ctx context.Context, req datasource.Re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Members = env.Result
 	data.ID = data.UserGroupID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
