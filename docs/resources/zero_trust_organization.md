@@ -109,7 +109,7 @@ Optional:
 
 Optional:
 
-- `allowed_authenticators` (List of String) Lists the MFA methods that users can authenticate with.
+- `allowed_authenticators` (List of String) Lists the MFA methods that users can authenticate with. `ssh_piv_key` is only relevant for infrastructure applications.
 - `amr_matching_session_duration` (String) Allows a user to skip MFA via Authentication Method Reference (AMR) matching when the AMR claim provided by the IdP the user used to authenticate contains "mfa". Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days).
 - `required_aaguids` (String) Specifies a Cloudflare List of required FIDO2 authenticator device AAGUIDs.
 - `session_duration` (String) Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.
