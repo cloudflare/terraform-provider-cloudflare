@@ -121,6 +121,18 @@ func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, state
 	} else if data.ConnectionRules != nil {
 		normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(ctx, data.ConnectionRules, stateData.ConnectionRules)
 	}
+
+	// mfa_config is a pointer, same pattern as connection_rules.
+	// If the user didn't configure mfa_config (nil in state), preserve nil even if the API
+	// expands the reusable policy and returns mfa_config in the response.
+	// Otherwise, for legacy/inline policies where the user explicitly configured mfa_config,
+	// normalize inner fields to avoid null-vs-empty / null-vs-false diffs.
+	if stateData.MFAConfig == nil {
+		data.MFAConfig = nil
+	} else if data.MFAConfig != nil {
+		normalizeEmptyAndNullSlice(&data.MFAConfig.AllowedAuthenticators, stateData.MFAConfig.AllowedAuthenticators)
+		normalizeFalseAndNullBool(&data.MFAConfig.MFADisabled, stateData.MFAConfig.MFADisabled)
+	}
 }
 
 // Normalizing function to ensure consistency between the state and the meaning of the API response.
@@ -184,6 +196,14 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 			// requires AllowedOrigins list to be present, and these fields are mutually exclusive.
 			normalizeFalseAndNullBool(&data.CORSHeaders.AllowCredentials, stateData.CORSHeaders.AllowCredentials)
 		}
+	}
+
+	// Normalize application-level mfa_config inner fields — when users configure mfa_config
+	// without mfa_disabled, the API returns mfa_disabled: false which would otherwise drift
+	// against null in state. Same for an empty allowed_authenticators list.
+	if data.MFAConfig != nil && stateData.MFAConfig != nil {
+		normalizeEmptyAndNullSlice(&data.MFAConfig.AllowedAuthenticators, stateData.MFAConfig.AllowedAuthenticators)
+		normalizeFalseAndNullBool(&data.MFAConfig.MFADisabled, stateData.MFAConfig.MFADisabled)
 	}
 
 	if data.SaaSApp != nil && stateData.SaaSApp != nil {
@@ -290,6 +310,9 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 				// We strip it here so the imported state only contains the policy ID, matching what a user would
 				// write in their config when referencing a reusable policy.
 				policy.ConnectionRules = nil
+				// Same treatment for mfa_config: API expands it from the reusable policy on import;
+				// we strip it so imported state matches the user's intended config (policy ID only).
+				policy.MFAConfig = nil
 			} else {
 				if !policy.Include.IsNull() && len(policy.Include.Elements()) == 0 {
 					policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
