@@ -113,7 +113,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"allowed_authenticators": schema.ListAttribute{
-						Description: "Lists the MFA methods that users can authenticate with.",
+						Description: "Lists the MFA methods that users can authenticate with. `ssh_piv_key` is only relevant for infrastructure applications.",
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(

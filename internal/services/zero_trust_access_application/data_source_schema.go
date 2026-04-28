@@ -334,6 +334,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationMFAConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\".",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"mfa_disabled": schema.BoolAttribute{
+						Description: "Whether MFA is disabled for this application.",
+						Computed:    true,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "How often a user will be forced to re-authenticate with MFA.",
+						Computed:    true,
+					},
+				},
+			},
 			"policies": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesDataSourceModel](ctx),
@@ -1290,6 +1311,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 									},
+								},
+							},
+						},
+						"mfa_config": schema.SingleNestedAttribute{
+							Description: "Configures multi-factor authentication (MFA) settings for this policy.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesMFAConfigDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"allowed_authenticators": schema.ListAttribute{
+									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"ssh_piv_key\".",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+								"mfa_disabled": schema.BoolAttribute{
+									Description: "Whether MFA is disabled for this policy.",
+									Computed:    true,
+								},
+								"session_duration": schema.StringAttribute{
+									Description: "How often a user will be forced to re-authenticate with MFA.",
+									Computed:    true,
 								},
 							},
 						},
