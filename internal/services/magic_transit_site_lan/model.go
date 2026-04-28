@@ -62,9 +62,16 @@ type MagicTransitSiteLANStaticAddressingDHCPRelayModel struct {
 }
 
 type MagicTransitSiteLANStaticAddressingDHCPServerModel struct {
-	DHCPPoolEnd   types.String             `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,optional"`
-	DHCPPoolStart types.String             `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,optional"`
-	DNSServer     types.String             `tfsdk:"dns_server" json:"dns_server,optional"`
-	DNSServers    *[]types.String          `tfsdk:"dns_servers" json:"dns_servers,optional"`
-	Reservations  *map[string]types.String `tfsdk:"reservations" json:"reservations,optional"`
+	DHCPOptions   *[]*MagicTransitSiteLANStaticAddressingDHCPServerDHCPOptionsModel `tfsdk:"dhcp_options" json:"dhcp_options,optional"`
+	DHCPPoolEnd   types.String                                                      `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,optional"`
+	DHCPPoolStart types.String                                                      `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,optional"`
+	DNSServer     types.String                                                      `tfsdk:"dns_server" json:"dns_server,optional"`
+	DNSServers    *[]types.String                                                   `tfsdk:"dns_servers" json:"dns_servers,optional"`
+	Reservations  *map[string]types.String                                          `tfsdk:"reservations" json:"reservations,optional"`
+}
+
+type MagicTransitSiteLANStaticAddressingDHCPServerDHCPOptionsModel struct {
+	Code  types.Int64  `tfsdk:"code" json:"code,required"`
+	Type  types.String `tfsdk:"type" json:"type,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
 }

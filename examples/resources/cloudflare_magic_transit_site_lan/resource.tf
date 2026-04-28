@@ -23,6 +23,11 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
       server_addresses = ["192.0.2.1"]
     }
     dhcp_server = {
+      dhcp_options = [{
+        code = 66
+        type = "ip"
+        value = "10.20.30.40"
+      }]
       dhcp_pool_end = "192.0.2.1"
       dhcp_pool_start = "192.0.2.1"
       dns_server = "192.0.2.1"

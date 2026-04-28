@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -138,6 +139,40 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:   true,
 									CustomType: customfield.NewNestedObjectType[MagicTransitSiteLANsStaticAddressingDHCPServerDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
+										"dhcp_options": schema.ListNestedAttribute{
+											Description: "Optional list of custom DHCP options to include in DHCP responses. Only valid when DHCP server is enabled.",
+											Computed:    true,
+											CustomType:  customfield.NewNestedObjectListType[MagicTransitSiteLANsStaticAddressingDHCPServerDHCPOptionsDataSourceModel](ctx),
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"code": schema.Int64Attribute{
+														Description: "DHCP option number (1-254). Options 0 and 255 are reserved by RFC 2132. Options 3, 6, and 51 are not allowed because they conflict with connector-managed configuration.",
+														Computed:    true,
+														Validators: []validator.Int64{
+															int64validator.Between(1, 254),
+														},
+													},
+													"type": schema.StringAttribute{
+														Description: "The type of the option value. text: a string (max 255 bytes). hex: colon-separated hex bytes (e.g. \"01:04:aa:bb:cc\", max 255 bytes). ip: an IPv4 address (e.g. \"10.20.30.40\"). byte: an unsigned integer 0-255 (1 byte). short: an unsigned integer 0-65535 (2 bytes). integer: an unsigned integer 0-4294967295 (4 bytes).\nAvailable values: \"text\", \"hex\", \"ip\", \"byte\", \"short\", \"integer\".",
+														Computed:    true,
+														Validators: []validator.String{
+															stringvalidator.OneOfCaseInsensitive(
+																"text",
+																"hex",
+																"ip",
+																"byte",
+																"short",
+																"integer",
+															),
+														},
+													},
+													"value": schema.StringAttribute{
+														Description: "The option value, interpreted according to the type field.",
+														Computed:    true,
+													},
+												},
+											},
+										},
 										"dhcp_pool_end": schema.StringAttribute{
 											Description: "A valid IPv4 address.",
 											Computed:    true,
