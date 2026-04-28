@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.20.0 (2026-04-28)
+
+Full Changelog: [v5.19.0...v5.20.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0...v5.20.0)
+
+### Features
+
+* add user_group and user_group_members acceptance tests + custom delete ([7f2420e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7f2420e4ff30913fbccd781daec2fefe81d58153))
+
+
+### Bug Fixes
+
+* **list_item:** ambigous schema while upgrade ([8d75670](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8d756709f38ebe663fc803f60d9a62ac6c56c022))
+
+
+### Chores
+
+* unskip rate limited test for future ([5f785f9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5f785f9d60dacd889e2b8ab904b714c994971fef))
+
 ## 5.19.0 (2026-04-24)
 
 Full Changelog: [v5.18.0...v5.19.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.18.0...v5.19.0)
