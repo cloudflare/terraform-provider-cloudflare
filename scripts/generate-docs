@@ -9,6 +9,9 @@ cat << EOT > examples/resources/cloudflare_list_item/import.sh
 $ terraform import cloudflare_list_item.example '<account_id>/<list_id>/<item_id>'
 EOT
 
+echo "==> Generating zone setting IDs from OpenAPI spec"
+python3 "$(dirname "$0")/generate-zone-setting-ids"
+
 echo "==> Generating Terraform provider documentation"
 
 EXEC='tfplugindocs'

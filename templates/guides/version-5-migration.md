@@ -1096,34 +1096,63 @@ Other predefined profile changes handled by `tf-migrate`:
 
 ## Resources Requiring Stepping-Stone Upgrades
 
-The following 21 resources require users on v5.16 or earlier to upgrade to
+The following resources require users on v5.16 or earlier to upgrade to
 v5.17 or v5.18 before upgrading to v5.19+. This is because these resources
 have a two-phase state upgrade: version 0 to 1 (applied in v5.17/v5.18), then
 version 1 to 500 (applied in v5.19+).
 
 | Resource |
 |---|
-| `cloudflare_api_token` |
+| `cloudflare_account` |
+| `cloudflare_api_shield` |
+| `cloudflare_argo_smart_routing` |
 | `cloudflare_argo_tiered_caching` |
+| `cloudflare_authenticated_origin_pulls` |
+| `cloudflare_authenticated_origin_pulls_certificate` |
 | `cloudflare_certificate_pack` |
 | `cloudflare_custom_hostname_fallback_origin` |
+| `cloudflare_healthcheck` |
+| `cloudflare_list` |
+| `cloudflare_list_item` |
+| `cloudflare_load_balancer_monitor` |
 | `cloudflare_load_balancer_pool` |
 | `cloudflare_logpull_retention` |
 | `cloudflare_logpush_job` |
+| `cloudflare_logpush_ownership_challenge` |
 | `cloudflare_managed_transforms` |
+| `cloudflare_mtls_certificate` |
+| `cloudflare_notification_policy` |
 | `cloudflare_notification_policy_webhooks` |
 | `cloudflare_page_rule` |
 | `cloudflare_pages_domain` |
 | `cloudflare_pages_project` |
+| `cloudflare_queue` |
+| `cloudflare_r2_bucket` |
 | `cloudflare_regional_hostname` |
 | `cloudflare_spectrum_application` |
 | `cloudflare_tiered_cache` |
+| `cloudflare_turnstile_widget` |
 | `cloudflare_url_normalization_settings` |
+| `cloudflare_workers_custom_domain` |
 | `cloudflare_workers_kv` |
+| `cloudflare_workers_kv_namespace` |
+| `cloudflare_zero_trust_access_mtls_certificate` |
+| `cloudflare_zero_trust_access_service_token` |
+| `cloudflare_zero_trust_device_custom_profile` |
+| `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` |
+| `cloudflare_zero_trust_device_default_profile` |
+| `cloudflare_zero_trust_device_default_profile_local_domain_fallback` |
+| `cloudflare_zero_trust_device_managed_networks` |
 | `cloudflare_zero_trust_device_posture_rule` |
 | `cloudflare_zero_trust_dlp_custom_profile` |
 | `cloudflare_zero_trust_dlp_predefined_profile` |
 | `cloudflare_zero_trust_gateway_policy` |
+| `cloudflare_zero_trust_list` |
+| `cloudflare_zero_trust_tunnel_cloudflared` |
+| `cloudflare_zero_trust_tunnel_cloudflared_config` |
+| `cloudflare_zero_trust_tunnel_cloudflared_virtual_network` |
+| `cloudflare_zone` |
+| `cloudflare_zone_dnssec` |
 
 **If you do not use any of these resources**, you can upgrade directly from any
 v5 version to v5.19+.

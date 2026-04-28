@@ -1,0 +1,262 @@
+#!/usr/bin/env python3
+"""
+Extracts valid zone setting IDs from the Cloudflare OpenAPI spec and injects
+a markdown table into Terraform documentation templates.
+
+Usage:
+    ./scripts/generate-zone-setting-ids [OPENAPI_SPEC_URL]
+
+If no URL is provided, reads it from .stats.yml in the project root.
+
+The script looks for template files containing the markers:
+    <!-- BEGIN_ZONE_SETTING_IDS -->
+    ...
+    <!-- END_ZONE_SETTING_IDS -->
+
+and replaces the content between them with an auto-generated table.
+"""
+
+import json
+import os
+import re
+import sys
+import urllib.request
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+
+# Template files to inject the setting IDs table into
+TEMPLATE_FILES = [
+    os.path.join(PROJECT_ROOT, "templates", "resources", "zone_setting.md.tmpl"),
+    os.path.join(
+        PROJECT_ROOT, "templates", "data-sources", "zone_setting.md.tmpl"
+    ),
+]
+
+BEGIN_MARKER = "<!-- BEGIN_ZONE_SETTING_IDS -->"
+END_MARKER = "<!-- END_ZONE_SETTING_IDS -->"
+
+
+def get_spec_url():
+    """Read the OpenAPI spec URL from .stats.yml."""
+    stats_path = os.path.join(PROJECT_ROOT, ".stats.yml")
+    with open(stats_path) as f:
+        for line in f:
+            if "openapi_spec_url" in line:
+                return line.split(":", 1)[1].strip()
+    raise RuntimeError("openapi_spec_url not found in .stats.yml")
+
+
+def fetch_spec(url):
+    """Download and parse the OpenAPI spec."""
+    print(f"  Fetching OpenAPI spec from {url[:80]}...")
+    req = urllib.request.Request(url)
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return json.loads(resp.read())
+
+
+def resolve_ref(spec, ref_str):
+    """Resolve a $ref string to the actual schema object."""
+    parts = ref_str.lstrip("#/").split("/")
+    obj = spec
+    for p in parts:
+        obj = obj[p]
+    return obj
+
+
+def get_value_info(spec, value_prop):
+    """Extract human-readable value type info from a value property schema."""
+    if "$ref" in value_prop:
+        resolved = resolve_ref(spec, value_prop["$ref"])
+        return get_value_info(spec, resolved)
+
+    vtype = value_prop.get("type", "")
+    venum = value_prop.get("enum", [])
+
+    # Handle oneOf/anyOf
+    oneof = value_prop.get("oneOf", value_prop.get("anyOf", []))
+    if oneof:
+        all_enums = []
+        all_types = []
+        for item in oneof:
+            if "$ref" in item:
+                item = resolve_ref(spec, item["$ref"])
+            if "enum" in item:
+                all_enums.extend(item["enum"])
+            elif "type" in item:
+                all_types.append(item["type"])
+        if all_enums:
+            return format_enum(all_enums)
+        return ", ".join(all_types) if all_types else "Special"
+
+    if venum:
+        return format_enum(venum)
+
+    if vtype == "array":
+        items = value_prop.get("items", {})
+        if "$ref" in items:
+            items = resolve_ref(spec, items["$ref"])
+        return f"Array of {items.get('type', 'strings')}"
+
+    if vtype == "object":
+        return "Object"
+
+    if vtype in ("integer", "number"):
+        return "Number"
+
+    if vtype == "string":
+        return "String"
+
+    return "Special"
+
+
+def format_enum(values):
+    """Format enum values for display in a markdown table."""
+    str_vals = [str(v) for v in values]
+    # For on/off toggles, use a compact format
+    if sorted(str_vals) == ["off", "on"]:
+        return '`"on"` / `"off"`'
+    # For short lists, show inline
+    if len(str_vals) <= 6:
+        return ", ".join(f'`"{v}"`' for v in str_vals)
+    # For long numeric lists, summarize
+    if all(v.isdigit() for v in str_vals):
+        return f"Number ({len(str_vals)} values)"
+    return ", ".join(f'`"{v}"`' for v in str_vals)
+
+
+def truncate(s, max_len=80):
+    """Truncate a string and add ellipsis if needed."""
+    if len(s) <= max_len:
+        return s
+    return s[: max_len - 3] + "..."
+
+
+def extract_settings(spec):
+    """Extract all zone setting IDs and their metadata from the spec."""
+    collection = spec["components"]["schemas"][
+        "zones_zone_settings_response_collection"
+    ]
+    any_of = collection["properties"]["result"]["items"]["anyOf"]
+
+    settings = []
+    for ref_obj in any_of:
+        ref = ref_obj["$ref"]
+        schema_name = ref.split("/")[-1]
+        schema = spec["components"]["schemas"][schema_name]
+
+        props = schema.get("properties", {})
+        id_prop = props.get("id", {})
+        value_prop = props.get("value", {})
+
+        # Extract setting ID
+        setting_id = (
+            id_prop.get("enum", ["?"])[0]
+            if "enum" in id_prop
+            else id_prop.get("example", "?")
+        )
+
+        # Extract description
+        description = schema.get("description", "")
+        # Clean up markdown links and whitespace for the table
+        description = description.replace("\n", " ").strip()
+
+        # Extract value type
+        if value_prop:
+            value_type = get_value_info(spec, value_prop)
+        else:
+            # Special case: ssl_recommender has no value, uses 'enabled' attr
+            if setting_id == "ssl_recommender":
+                value_type = "Uses `enabled` attr"
+            else:
+                value_type = "Special"
+
+        settings.append(
+            {
+                "id": setting_id,
+                "value_type": value_type,
+                "description": truncate(description),
+            }
+        )
+
+    # Sort alphabetically by setting ID
+    settings.sort(key=lambda s: s["id"])
+    return settings
+
+
+def generate_markdown_table(settings):
+    """Generate a markdown table from the settings list."""
+    lines = []
+    lines.append(BEGIN_MARKER)
+    lines.append(
+        "<!-- This table is auto-generated by scripts/generate-zone-setting-ids "
+        "from the OpenAPI spec. Do not edit manually. -->"
+    )
+    lines.append("")
+    lines.append(
+        "The following table lists all valid `setting_id` values. "
+        "Some settings may require a specific Cloudflare plan level. "
+        "For more details, see the "
+        "[API documentation](https://developers.cloudflare.com/api/resources/zones/subresources/settings/methods/list/)."
+    )
+    lines.append("")
+    lines.append("| Setting ID | Value Type | Description |")
+    lines.append("|---|---|---|")
+
+    for s in settings:
+        lines.append(f"| `{s['id']}` | {s['value_type']} | {s['description']} |")
+
+    lines.append("")
+    lines.append(END_MARKER)
+    return "\n".join(lines)
+
+
+def inject_into_template(template_path, table_content):
+    """Replace content between BEGIN/END markers in a template file."""
+    if not os.path.exists(template_path):
+        print(f"  Warning: Template not found: {template_path}")
+        return False
+
+    with open(template_path) as f:
+        content = f.read()
+
+    # Match everything between BEGIN and END markers (inclusive)
+    pattern = re.compile(
+        re.escape(BEGIN_MARKER) + r".*?" + re.escape(END_MARKER),
+        re.DOTALL,
+    )
+
+    if not pattern.search(content):
+        print(f"  Warning: Markers not found in {template_path}")
+        return False
+
+    new_content = pattern.sub(table_content, content)
+
+    with open(template_path, "w") as f:
+        f.write(new_content)
+
+    return True
+
+
+def main():
+    if len(sys.argv) > 1:
+        url = sys.argv[1]
+    else:
+        url = get_spec_url()
+
+    spec = fetch_spec(url)
+    settings = extract_settings(spec)
+    table = generate_markdown_table(settings)
+
+    updated = 0
+    for template_path in TEMPLATE_FILES:
+        rel_path = os.path.relpath(template_path, PROJECT_ROOT)
+        if inject_into_template(template_path, table):
+            print(f"  Updated {rel_path}")
+            updated += 1
+
+    print(f"  Injected {len(settings)} setting IDs into {updated} template(s)")
+
+
+if __name__ == "__main__":
+    main()
