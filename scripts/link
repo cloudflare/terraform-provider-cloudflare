@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Mark the necessary Go modules as private to avoid Go's proxy
-export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go,github.com/stainless-sdks/cloudflare-go"
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6"
 
 REPLACEMENT="${1:-"../cloudflare-go"}"
 echo "==> Replacing Go SDK with $REPLACEMENT"
