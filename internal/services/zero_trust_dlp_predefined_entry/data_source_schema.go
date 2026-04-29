@@ -136,8 +136,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPPredefinedEntryVariantDataSourceModel](ctx),
+				Description: "A Predefined AI prompt classification topic entry.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPPredefinedEntryVariantDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"topic_type": schema.StringAttribute{
 						Description: `Available values: "Intent", "Content".`,
@@ -147,14 +148,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: `Available values: "PromptTopic".`,
+						Description: `Available values: "PromptTopic", "General".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+							stringvalidator.OneOfCaseInsensitive("PromptTopic", "General"),
 						},
 					},
 					"description": schema.StringAttribute{
-						Computed: true,
+						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Computed:    true,
 					},
 				},
 			},
