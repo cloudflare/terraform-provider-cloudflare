@@ -131,7 +131,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.Edit(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -171,7 +171,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -213,7 +213,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Delete(ctx context.Context,
 
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Delete(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -229,12 +229,12 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	var data = new(EmailSecurityImpersonationRegistryModel)
 
 	path_account_id := ""
-	path_display_name_id := int64(0)
+	path_impersonation_registry_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<display_name_id>",
+		"<account_id>/<impersonation_registry_id>",
 		&path_account_id,
-		&path_display_name_id,
+		&path_impersonation_registry_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -242,13 +242,13 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.Int64Value(path_display_name_id)
+	data.ID = types.StringValue(path_impersonation_registry_id)
 
 	res := new(http.Response)
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		path_display_name_id,
+		path_impersonation_registry_id,
 		email_security.SettingImpersonationRegistryGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},

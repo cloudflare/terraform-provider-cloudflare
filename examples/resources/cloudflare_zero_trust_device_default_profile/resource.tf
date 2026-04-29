@@ -26,4 +26,8 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   support_url = "https://1.1.1.1/help"
   switch_locked = true
   tunnel_protocol = "wireguard"
+  virtual_networks = {
+    allowed = ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"]
+    default = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  }
 }

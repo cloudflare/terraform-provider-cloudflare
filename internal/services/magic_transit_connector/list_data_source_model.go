@@ -17,9 +17,10 @@ type MagicTransitConnectorsResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitConnectorsDataSourceModel struct {
-	AccountID types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
-	MaxItems  types.Int64                                                               `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[MagicTransitConnectorsResultDataSourceModel] `tfsdk:"result"`
+	AccountID  types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
+	DeviceType types.String                                                              `tfsdk:"device_type" query:"device_type,optional"`
+	MaxItems   types.Int64                                                               `tfsdk:"max_items"`
+	Result     customfield.NestedObjectList[MagicTransitConnectorsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicTransitConnectorsDataSourceModel) toListParams(_ context.Context) (params magic_transit.ConnectorListParams, diags diag.Diagnostics) {
@@ -27,6 +28,10 @@ func (m *MagicTransitConnectorsDataSourceModel) toListParams(_ context.Context) 
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+
+	if !m.DeviceType.IsNull() {
+		params.DeviceType = cloudflare.F(magic_transit.ConnectorListParamsDeviceType(m.DeviceType.ValueString()))
 	}
 
 	return
@@ -51,4 +56,5 @@ type MagicTransitConnectorsResultDataSourceModel struct {
 type MagicTransitConnectorsDeviceDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed"`
+	Type         types.String `tfsdk:"type" json:"type,computed"`
 }

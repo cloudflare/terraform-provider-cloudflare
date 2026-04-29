@@ -117,6 +117,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"virtual_networks": schema.SingleNestedAttribute{
+				Description: "Virtual network access settings for the device.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.ListAttribute{
+						Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"default": schema.StringAttribute{
+						Description: "The default virtual network ID. Must be included in the `allowed` list.",
+						Required:    true,
+					},
+				},
+			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
 				Computed:    true,
@@ -202,9 +217,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"gateway_unique_id": schema.StringAttribute{
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
-			"policy_id": schema.StringAttribute{
-				Computed: true,
 			},
 			"policy_id": schema.StringAttribute{
 				Computed: true,

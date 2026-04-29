@@ -61,6 +61,7 @@ type ZeroTrustDeviceCustomProfilesResultDataSourceModel struct {
 	SwitchLocked               types.Bool                                                                                `tfsdk:"switch_locked" json:"switch_locked,computed"`
 	TargetTests                customfield.NestedObjectList[ZeroTrustDeviceCustomProfilesTargetTestsDataSourceModel]     `tfsdk:"target_tests" json:"target_tests,computed"`
 	TunnelProtocol             types.String                                                                              `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
+	VirtualNetworks            customfield.NestedObject[ZeroTrustDeviceCustomProfilesVirtualNetworksDataSourceModel]     `tfsdk:"virtual_networks" json:"virtual_networks,computed"`
 }
 
 type ZeroTrustDeviceCustomProfilesExcludeDataSourceModel struct {
@@ -89,4 +90,9 @@ type ZeroTrustDeviceCustomProfilesServiceModeV2DataSourceModel struct {
 type ZeroTrustDeviceCustomProfilesTargetTestsDataSourceModel struct {
 	ID   types.String `tfsdk:"id" json:"id,computed"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
+}
+
+type ZeroTrustDeviceCustomProfilesVirtualNetworksDataSourceModel struct {
+	Allowed customfield.List[types.String] `tfsdk:"allowed" json:"allowed,computed"`
+	Default types.String                   `tfsdk:"default" json:"default,computed"`
 }

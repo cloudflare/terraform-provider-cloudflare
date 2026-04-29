@@ -26,6 +26,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_gateway_dynamic_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_instance"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ai_search_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_discovery_operation"
@@ -658,6 +659,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
+		ai_search_namespace.NewResource,
 		ai_search_instance.NewResource,
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
@@ -1044,6 +1046,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning.NewContentScanningDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
+		ai_search_namespace.NewAISearchNamespaceDataSource,
+		ai_search_namespace.NewAISearchNamespacesDataSource,
 		ai_search_instance.NewAISearchInstanceDataSource,
 		ai_search_instance.NewAISearchInstancesDataSource,
 		ai_search_token.NewAISearchTokenDataSource,
