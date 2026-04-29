@@ -64,6 +64,12 @@ func (r *D1DatabaseResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
+	params := d1.DatabaseNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *D1DatabaseResource) Create(ctx context.Context, req resource.CreateRequ
 	env := D1DatabaseResultEnvelope{*data}
 	_, err = r.client.D1.Database.New(
 		ctx,
-		d1.DatabaseNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *D1DatabaseResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
+	params := d1.DatabaseUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *D1DatabaseResource) Update(ctx context.Context, req resource.UpdateRequ
 	_, err = r.client.D1.Database.Update(
 		ctx,
 		data.UUID.ValueString(),
-		d1.DatabaseUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
+	params := d1.DatabaseGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := D1DatabaseResultEnvelope{*data}
 	_, err := r.client.D1.Database.Get(
 		ctx,
 		data.UUID.ValueString(),
-		d1.DatabaseGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,12 +208,16 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
+	params := d1.DatabaseDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.D1.Database.Delete(
 		ctx,
 		data.UUID.ValueString(),
-		d1.DatabaseDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -2,16 +2,12 @@
 page_title: "cloudflare_web3_hostname Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Web3 Hostnames ReadWeb3 Hostnames Write
+  
 ---
 
 # cloudflare_web3_hostname (Data Source)
 
-Accepted Permissions
 
-- `Web3 Hostnames Read`
-- `Web3 Hostnames Write`
 
 ## Example Usage
 
@@ -28,9 +24,6 @@ data "cloudflare_web3_hostname" "example_web3_hostname" {
 ### Required
 
 - `identifier` (String) Specify the identifier of the hostname.
-
-### Optional
-
 - `zone_id` (String) Specify the identifier of the hostname.
 
 ### Read-Only

@@ -64,6 +64,12 @@ func (r *RegionalHostnameResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := addressing.RegionalHostnameNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *RegionalHostnameResource) Create(ctx context.Context, req resource.Crea
 	env := RegionalHostnameResultEnvelope{*data}
 	_, err = r.client.Addressing.RegionalHostnames.New(
 		ctx,
-		addressing.RegionalHostnameNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *RegionalHostnameResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := addressing.RegionalHostnameEditParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *RegionalHostnameResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.Addressing.RegionalHostnames.Edit(
 		ctx,
 		data.Hostname.ValueString(),
-		addressing.RegionalHostnameEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *RegionalHostnameResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := addressing.RegionalHostnameGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := RegionalHostnameResultEnvelope{*data}
 	_, err := r.client.Addressing.RegionalHostnames.Get(
 		ctx,
 		data.Hostname.ValueString(),
-		addressing.RegionalHostnameGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,12 +208,16 @@ func (r *RegionalHostnameResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	params := addressing.RegionalHostnameDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Addressing.RegionalHostnames.Delete(
 		ctx,
 		data.Hostname.ValueString(),
-		addressing.RegionalHostnameDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

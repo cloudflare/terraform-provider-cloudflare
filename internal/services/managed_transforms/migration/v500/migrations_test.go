@@ -79,7 +79,6 @@ func TestMigrateManagedHeaders_Basic(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -93,7 +92,7 @@ func TestMigrateManagedHeaders_Basic(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
 							knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -153,7 +152,6 @@ func TestMigrateManagedHeaders_RequestOnly(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -167,7 +165,7 @@ func TestMigrateManagedHeaders_RequestOnly(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
 							knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -218,7 +216,6 @@ func TestMigrateManagedHeaders_ResponseOnly(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -232,7 +229,7 @@ func TestMigrateManagedHeaders_ResponseOnly(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{
@@ -283,7 +280,6 @@ func TestMigrateManagedHeaders_Empty(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -297,7 +293,7 @@ func TestMigrateManagedHeaders_Empty(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{})),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers"), knownvalue.SetExact([]knownvalue.Check{})),
@@ -350,7 +346,6 @@ func TestMigrateManagedHeaders_MultiVersion(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -364,7 +359,7 @@ func TestMigrateManagedHeaders_MultiVersion(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.SetExact([]knownvalue.Check{
 							knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -515,7 +510,6 @@ func TestMigrateManagedHeaders_EdgeCases(t *testing.T) {
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
-					acctest.TestAccPreCheck_CleanZoneManagedTransforms(t)
 				},
 				WorkingDir: tmpDir,
 				Steps: append([]resource.TestStep{
@@ -529,7 +523,7 @@ func TestMigrateManagedHeaders_EdgeCases(t *testing.T) {
 						Config: testConfig,
 					},
 				},
-					acctest.MigrationV2TestStepForManagedTransforms(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, tc.checks(resourceName, zoneID))...),
+					acctest.MigrationV2TestStepWithPlan(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, tc.checks(resourceName, zoneID))...),
 			})
 		})
 	}

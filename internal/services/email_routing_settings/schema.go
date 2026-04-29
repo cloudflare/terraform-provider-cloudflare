@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingSettingsResource)(ni
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zone Settings Read",

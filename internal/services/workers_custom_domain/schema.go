@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkersCustomDomainResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",

@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_dlp_dataset Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_dlp_dataset (Data Source)
 
-Accepted Permissions
 
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
 
 ### Required
 
-- `dataset_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `dataset_id` (String)
 
 ### Read-Only
 

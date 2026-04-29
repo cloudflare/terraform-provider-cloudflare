@@ -2,16 +2,12 @@
 page_title: "cloudflare_workers_route Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Workers Routes ReadWorkers Routes Write
+  
 ---
 
 # cloudflare_workers_route (Data Source)
 
-Accepted Permissions
 
-- `Workers Routes Read`
-- `Workers Routes Write`
 
 ## Example Usage
 
@@ -28,9 +24,6 @@ data "cloudflare_workers_route" "example_workers_route" {
 ### Required
 
 - `route_id` (String) Identifier.
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

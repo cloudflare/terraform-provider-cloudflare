@@ -65,6 +65,11 @@ func (r *ArgoTieredCachingResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
+	params := argo.TieredCachingEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -75,9 +80,7 @@ func (r *ArgoTieredCachingResource) Create(ctx context.Context, req resource.Cre
 	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err = r.client.Argo.TieredCaching.Edit(
 		ctx,
-		argo.TieredCachingEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -115,6 +118,11 @@ func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
+	params := argo.TieredCachingEditParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -125,9 +133,7 @@ func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.Upd
 	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err = r.client.Argo.TieredCaching.Edit(
 		ctx,
-		argo.TieredCachingEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,14 +163,17 @@ func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
+	params := argo.TieredCachingGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	res := new(http.Response)
 	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err := r.client.Argo.TieredCaching.Get(
 		ctx,
-		argo.TieredCachingGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -2,16 +2,12 @@
 page_title: "cloudflare_pipeline Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Pipelines ReadPipelines Write
+  
 ---
 
 # cloudflare_pipeline (Resource)
 
-Accepted Permissions
 
-- `Pipelines Read`
-- `Pipelines Write`
 
 ## Example Usage
 
@@ -28,12 +24,9 @@ resource "cloudflare_pipeline" "example_pipeline" {
 
 ### Required
 
+- `account_id` (String) Specifies the public ID of the account.
 - `name` (String) Specifies the name of the Pipeline.
 - `sql` (String) Specifies SQL for the Pipeline processing flow.
-
-### Optional
-
-- `account_id` (String) Specifies the public ID of the account.
 
 ### Read-Only
 

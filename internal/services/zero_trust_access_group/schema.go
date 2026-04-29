@@ -21,7 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessGroupResource)(ni
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Organizations, Identity Providers, and Groups Read",

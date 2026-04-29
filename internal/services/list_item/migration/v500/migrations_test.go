@@ -15,22 +15,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-// setV4ProviderRetryEnv configures the v4 Cloudflare provider's retry and backoff
-// settings via environment variables for the duration of the test. The v4 provider
-// defaults to 4 retries (CLOUDFLARE_RETRIES=4) with a max backoff of 30s, which is
-// insufficient when multiple migration test packages run concurrently and hammer the
-// Lists API simultaneously. Bumping retries and max backoff makes the v4 provider
-// wait longer and retry more before giving up with "exceeded available rate limit retries".
-func setV4ProviderRetryEnv(t *testing.T) {
-	t.Helper()
-	if os.Getenv("CLOUDFLARE_RETRIES") == "" {
-		t.Setenv("CLOUDFLARE_RETRIES", "8")
-	}
-	if os.Getenv("CLOUDFLARE_MAX_BACKOFF") == "" {
-		t.Setenv("CLOUDFLARE_MAX_BACKOFF", "60")
-	}
-}
-
 // Embed migration test configuration files
 //
 //go:embed testdata/v4_ip_item.tf
@@ -48,7 +32,6 @@ const listTestPrefix = "tf_test_list_"
 // In v5, separate list_item resources remain as separate resources (they are NOT merged into the parent list).
 // The provider's StateUpgraders handle the state migration for both cloudflare_list and cloudflare_list_item.
 func TestMigrateCloudflareListItemFromV4WithIP(t *testing.T) {
-	setV4ProviderRetryEnv(t)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -90,7 +73,6 @@ func TestMigrateCloudflareListItemFromV4WithIP(t *testing.T) {
 // In v5, separate list_item resources remain as separate resources.
 // tf-migrate converts the hostname block to a hostname attribute (block → SingleNestedAttribute).
 func TestMigrateCloudflareListItemFromV4WithHostname(t *testing.T) {
-	setV4ProviderRetryEnv(t)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)
@@ -136,9 +118,8 @@ func TestMigrateCloudflareListItemFromV4WithHostname(t *testing.T) {
 // In v5, separate list_item resources remain as separate resources.
 // tf-migrate converts the redirect block to a redirect attribute (block → SingleNestedAttribute)
 // and converts "enabled"/"disabled" strings to true/false booleans.
-// Note: The v4 test config uses true/false (not "enabled"/"disabled") because v4.52.7 already uses BoolAttribute.
+// Note: The v4 test config uses true/false (not "enabled"/"disabled") because v4.52.5 already uses BoolAttribute.
 func TestMigrateCloudflareListItemFromV4WithRedirect(t *testing.T) {
-	setV4ProviderRetryEnv(t)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	listName := fmt.Sprintf("%s%s", listTestPrefix, rnd)

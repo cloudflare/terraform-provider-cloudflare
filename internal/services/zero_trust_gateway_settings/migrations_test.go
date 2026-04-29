@@ -65,14 +65,14 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config:             v4Config,
 				ExpectNonEmptyPlan: true, // Account has deprecated fields not in user config
 			},
 			// Step 2: Run migration and verify state transformation
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists with new type
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
@@ -151,14 +151,14 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 				// Account already has gateway settings with deprecated fields
 				ExpectNonEmptyPlan: true,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// Verify boolean fields are nested under settings
@@ -215,7 +215,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -319,7 +319,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -403,14 +403,14 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 				// Account already has gateway settings with deprecated fields
 				ExpectNonEmptyPlan: true,
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// Verify browser isolation fields are grouped and renamed
@@ -472,7 +472,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -588,7 +588,7 @@ resource "cloudflare_teams_account" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,

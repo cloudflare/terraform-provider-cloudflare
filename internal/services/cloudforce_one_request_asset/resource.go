@@ -65,6 +65,12 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 		return
 	}
 
+	params := cloudforce_one.RequestAssetNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -75,9 +81,7 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 	_, err = r.client.CloudforceOne.Requests.Assets.New(
 		ctx,
 		data.RequestID.ValueString(),
-		cloudforce_one.RequestAssetNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +118,12 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		return
 	}
 
+	params := cloudforce_one.RequestAssetUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -125,9 +135,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		ctx,
 		data.RequestID.ValueString(),
 		strconv.FormatInt(data.ID.ValueInt64(), 10),
-		cloudforce_one.RequestAssetUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,15 +164,19 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 		return
 	}
 
+	params := cloudforce_one.RequestAssetGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := CloudforceOneRequestAssetResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
 		data.RequestID.ValueString(),
 		strconv.FormatInt(data.ID.ValueInt64(), 10),
-		cloudforce_one.RequestAssetGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -197,13 +209,17 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 		return
 	}
 
+	params := cloudforce_one.RequestAssetDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
 		ctx,
 		data.RequestID.ValueString(),
 		strconv.FormatInt(data.ID.ValueInt64(), 10),
-		cloudforce_one.RequestAssetDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

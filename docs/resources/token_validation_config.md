@@ -2,18 +2,12 @@
 page_title: "cloudflare_token_validation_config Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
+  
 ---
 
 # cloudflare_token_validation_config (Resource)
 
-Accepted Permissions
 
-- `Account API Gateway`
-- `Account API Gateway Read`
-- `Domain API Gateway`
-- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -47,9 +41,6 @@ resource "cloudflare_token_validation_config" "example_token_validation_config" 
 - `title` (String)
 - `token_sources` (List of String)
 - `token_type` (String) Available values: "JWT".
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

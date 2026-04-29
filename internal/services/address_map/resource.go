@@ -64,6 +64,12 @@ func (r *AddressMapResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
+	params := addressing.AddressMapNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *AddressMapResource) Create(ctx context.Context, req resource.CreateRequ
 	env := AddressMapResultEnvelope{*data}
 	_, err = r.client.Addressing.AddressMaps.New(
 		ctx,
-		addressing.AddressMapNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *AddressMapResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
+	params := addressing.AddressMapEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *AddressMapResource) Update(ctx context.Context, req resource.UpdateRequ
 	_, err = r.client.Addressing.AddressMaps.Edit(
 		ctx,
 		data.ID.ValueString(),
-		addressing.AddressMapEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *AddressMapResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
+	params := addressing.AddressMapGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := AddressMapResultEnvelope{*data}
 	_, err := r.client.Addressing.AddressMaps.Get(
 		ctx,
 		data.ID.ValueString(),
-		addressing.AddressMapGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *AddressMapResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
+	params := addressing.AddressMapDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Addressing.AddressMaps.Delete(
 		ctx,
 		data.ID.ValueString(),
-		addressing.AddressMapDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

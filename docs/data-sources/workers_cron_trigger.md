@@ -2,16 +2,12 @@
 page_title: "cloudflare_workers_cron_trigger Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Workers Scripts ReadWorkers Scripts Write
+  
 ---
 
 # cloudflare_workers_cron_trigger (Data Source)
 
-Accepted Permissions
 
-- `Workers Scripts Read`
-- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 ### Required
 
-- `script_name` (String) Name of the script, used in URLs and route configuration.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Read-Only
 

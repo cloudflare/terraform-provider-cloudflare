@@ -104,7 +104,6 @@ func testAccCheckCloudflareCertificatePackDestroy(s *terraform.State) error {
 // TestAccCertificatePack_Basic tests the basic CRUD lifecycle of a certificate pack.
 // This validates that the resource can be created, read, imported, and deleted.
 func TestAccCertificatePack_Basic(t *testing.T) {
-	t.Skip("The authority has rate limited these domains. Please wait for the rate limit to expire (25 Apr 26 13:38 UTC) or try another authority.")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

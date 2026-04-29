@@ -64,6 +64,12 @@ func (r *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	params := firewall.RuleNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 	env := FirewallRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.Rules.New(
 		ctx,
-		firewall.RuleNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	params := firewall.RuleUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Firewall.Rules.Update(
 		ctx,
 		data.ID.ValueString(),
-		firewall.RuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	params := firewall.RuleGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := FirewallRuleResultEnvelope{*data}
 	_, err := r.client.Firewall.Rules.Get(
 		ctx,
 		data.ID.ValueString(),
-		firewall.RuleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	params := firewall.RuleDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Firewall.Rules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		firewall.RuleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -2,16 +2,12 @@
 page_title: "cloudflare_api_token Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  API Tokens ReadAPI Tokens Write
+  
 ---
 
 # cloudflare_api_token (Resource)
 
-Accepted Permissions
 
-- `API Tokens Read`
-- `API Tokens Write`
 
 ## Example Usage
 
@@ -49,7 +45,7 @@ resource "cloudflare_api_token" "example_api_token" {
 ### Required
 
 - `name` (String) Token name.
-- `policies` (Attributes List) Set of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes Set) Set of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 
 ### Optional
 
@@ -74,7 +70,7 @@ Required:
 
 - `effect` (String) Allow or deny operations against the resources.
 Available values: "allow", "deny".
-- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
+- `permission_groups` (Attributes Set) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resources` (String) A json object representing the resources that are specified to the policy.
 
 <a id="nestedatt--policies--permission_groups"></a>

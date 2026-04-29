@@ -61,6 +61,12 @@ func (r *StreamDownloadResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
+	params := stream.DownloadNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,9 +77,7 @@ func (r *StreamDownloadResource) Create(ctx context.Context, req resource.Create
 	_, err = r.client.Stream.Downloads.New(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.DownloadNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -106,13 +110,17 @@ func (r *StreamDownloadResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
+	params := stream.DownloadGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	_, err := r.client.Stream.Downloads.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.DownloadGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -138,12 +146,16 @@ func (r *StreamDownloadResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
+	params := stream.DownloadDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Stream.Downloads.Delete(
 		ctx,
 		data.Identifier.ValueString(),
-		stream.DownloadDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

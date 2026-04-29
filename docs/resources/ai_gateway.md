@@ -2,16 +2,12 @@
 page_title: "cloudflare_ai_gateway Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  AI Gateway ReadAI Gateway Write
+  
 ---
 
 # cloudflare_ai_gateway (Resource)
 
-Accepted Permissions
 
-- `AI Gateway Read`
-- `AI Gateway Write`
 
 ## Example Usage
 
@@ -43,6 +39,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 
 ### Required
 
+- `account_id` (String)
 - `cache_invalidate_on_update` (Boolean)
 - `cache_ttl` (Number)
 - `collect_logs` (Boolean)
@@ -52,7 +49,6 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 
 ### Optional
 
-- `account_id` (String)
 - `authentication` (Boolean)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--dlp))
 - `log_management` (Number)

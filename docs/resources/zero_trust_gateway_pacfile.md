@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_gateway_pacfile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_gateway_pacfile (Resource)
 
-Accepted Permissions
 
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -30,12 +26,12 @@ resource "cloudflare_zero_trust_gateway_pacfile" "example_zero_trust_gateway_pac
 
 ### Required
 
+- `account_id` (String)
 - `contents` (String) Actual contents of the PAC file
 - `name` (String) Name of the PAC file.
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String) Detailed description of the PAC file.
 - `slug` (String) URL-friendly version of the PAC file name. If not provided, it will be auto-generated
 

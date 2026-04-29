@@ -23,11 +23,8 @@ data "cloudflare_zero_trust_device_posture_integration" "example_zero_trust_devi
 
 ### Required
 
-- `integration_id` (String) API UUID.
-
-### Optional
-
 - `account_id` (String)
+- `integration_id` (String) API UUID.
 
 ### Read-Only
 

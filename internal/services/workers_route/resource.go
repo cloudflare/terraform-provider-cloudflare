@@ -64,6 +64,12 @@ func (r *WorkersRouteResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	params := workers.RouteNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *WorkersRouteResource) Create(ctx context.Context, req resource.CreateRe
 	env := WorkersRouteResultEnvelope{*data}
 	_, err = r.client.Workers.Routes.New(
 		ctx,
-		workers.RouteNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *WorkersRouteResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	params := workers.RouteUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *WorkersRouteResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Workers.Routes.Update(
 		ctx,
 		data.ID.ValueString(),
-		workers.RouteUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *WorkersRouteResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	params := workers.RouteGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := WorkersRouteResultEnvelope{*data}
 	_, err := r.client.Workers.Routes.Get(
 		ctx,
 		data.ID.ValueString(),
-		workers.RouteGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *WorkersRouteResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	params := workers.RouteDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Workers.Routes.Delete(
 		ctx,
 		data.ID.ValueString(),
-		workers.RouteDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

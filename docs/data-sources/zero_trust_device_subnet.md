@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_device_subnet Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Cloudflare One Networks ReadCloudflare One Networks Write
+  
 ---
 
 # cloudflare_zero_trust_device_subnet (Data Source)
 
-Accepted Permissions
 
-- `Cloudflare One Networks Read`
-- `Cloudflare One Networks Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_zero_trust_device_subnet" "example_zero_trust_device_subnet" {
 
 ### Required
 
-- `subnet_id` (String) The UUID of the subnet.
-
-### Optional
-
 - `account_id` (String) Cloudflare account ID
+- `subnet_id` (String) The UUID of the subnet.
 
 ### Read-Only
 

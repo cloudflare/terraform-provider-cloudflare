@@ -2,18 +2,12 @@
 page_title: "cloudflare_magic_transit_site Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
+  
 ---
 
 # cloudflare_magic_transit_site (Resource)
 
-Accepted Permissions
 
-- `Magic Transit Read`
-- `Magic Transit Write`
-- `Magic WAN Read`
-- `Magic WAN Write`
 
 ## Example Usage
 
@@ -37,11 +31,11 @@ resource "cloudflare_magic_transit_site" "example_magic_transit_site" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `name` (String) The name of the site.
 
 ### Optional
 
-- `account_id` (String) Identifier
 - `connector_id` (String) Magic Connector identifier tag.
 - `description` (String)
 - `ha_mode` (Boolean) Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.

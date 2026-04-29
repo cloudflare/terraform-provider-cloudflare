@@ -2,16 +2,12 @@
 page_title: "cloudflare_stream_watermark Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Stream ReadStream Write
+  
 ---
 
 # cloudflare_stream_watermark (Data Source)
 
-Accepted Permissions
 
-- `Stream Read`
-- `Stream Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_stream_watermark" "example_stream_watermark" {
 
 ### Required
 
-- `identifier` (String) The unique identifier for a watermark profile.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `identifier` (String) The unique identifier for a watermark profile.
 
 ### Read-Only
 

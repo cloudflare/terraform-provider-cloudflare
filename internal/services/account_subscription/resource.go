@@ -64,6 +64,12 @@ func (r *AccountSubscriptionResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+	params := accounts.SubscriptionNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *AccountSubscriptionResource) Create(ctx context.Context, req resource.C
 	env := AccountSubscriptionResultEnvelope{*data}
 	_, err = r.client.Accounts.Subscriptions.New(
 		ctx,
-		accounts.SubscriptionNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *AccountSubscriptionResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
+	params := accounts.SubscriptionUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *AccountSubscriptionResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.Accounts.Subscriptions.Update(
 		ctx,
 		data.ID.ValueString(),
-		accounts.SubscriptionUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -167,9 +175,7 @@ func (r *AccountSubscriptionResource) Read(ctx context.Context, req resource.Rea
 	listResponse := &SubscriptionListResponse{}
 	_, err := r.client.Accounts.Subscriptions.Get(
 		ctx,
-		accounts.SubscriptionGetParams{
-			AccountID: cloudflare.F(accountID),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -222,12 +228,16 @@ func (r *AccountSubscriptionResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := accounts.SubscriptionDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Accounts.Subscriptions.Delete(
 		ctx,
 		data.ID.ValueString(),
-		accounts.SubscriptionDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

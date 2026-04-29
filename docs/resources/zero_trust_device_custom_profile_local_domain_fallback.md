@@ -2,15 +2,12 @@
 page_title: "cloudflare_zero_trust_device_custom_profile_local_domain_fallback Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_device_custom_profile_local_domain_fallback (Resource)
 
-Accepted Permissions
 
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -31,12 +28,9 @@ resource "cloudflare_zero_trust_device_custom_profile_local_domain_fallback" "ex
 
 ### Required
 
+- `account_id` (String)
 - `domains` (Attributes Set) (see [below for nested schema](#nestedatt--domains))
 - `policy_id` (String)
-
-### Optional
-
-- `account_id` (String)
 
 ### Read-Only
 

@@ -64,6 +64,16 @@ func (r *CustomPageAssetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+	params := custom_pages.AssetNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,14 +81,6 @@ func (r *CustomPageAssetResource) Create(ctx context.Context, req resource.Creat
 	}
 	res := new(http.Response)
 	env := CustomPageAssetResultEnvelope{*data}
-	params := custom_pages.AssetNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.CustomPages.Assets.New(
 		ctx,
 		params,
@@ -119,6 +121,16 @@ func (r *CustomPageAssetResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
+	params := custom_pages.AssetUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -126,14 +138,6 @@ func (r *CustomPageAssetResource) Update(ctx context.Context, req resource.Updat
 	}
 	res := new(http.Response)
 	env := CustomPageAssetResultEnvelope{*data}
-	params := custom_pages.AssetUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.CustomPages.Assets.Update(
 		ctx,
 		data.Name.ValueString(),
@@ -167,16 +171,18 @@ func (r *CustomPageAssetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	res := new(http.Response)
-	env := CustomPageAssetResultEnvelope{*data}
 	params := custom_pages.AssetGetParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
+	res := new(http.Response)
+	env := CustomPageAssetResultEnvelope{*data}
 	_, err := r.client.CustomPages.Assets.Get(
 		ctx,
 		data.Name.ValueString(),
@@ -218,7 +224,9 @@ func (r *CustomPageAssetResource) Delete(ctx context.Context, req resource.Delet
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 

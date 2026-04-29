@@ -2,15 +2,12 @@
 page_title: "cloudflare_sso_connector Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  SSO Connector Read
+  
 ---
 
 # cloudflare_sso_connector (Data Source)
 
-Accepted Permissions
 
-- `SSO Connector Read`
 
 ## Example Usage
 
@@ -26,11 +23,8 @@ data "cloudflare_sso_connector" "example_sso_connector" {
 
 ### Required
 
-- `sso_connector_id` (String) SSO Connector identifier tag.
-
-### Optional
-
 - `account_id` (String) Account identifier tag.
+- `sso_connector_id` (String) SSO Connector identifier tag.
 
 ### Read-Only
 

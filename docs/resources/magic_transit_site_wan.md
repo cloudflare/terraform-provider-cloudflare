@@ -2,18 +2,12 @@
 page_title: "cloudflare_magic_transit_site_wan Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
+  
 ---
 
 # cloudflare_magic_transit_site_wan (Resource)
 
-Accepted Permissions
 
-- `Magic Transit Read`
-- `Magic Transit Write`
-- `Magic WAN Read`
-- `Magic WAN Write`
 
 ## Example Usage
 
@@ -38,12 +32,12 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `physport` (Number)
 - `site_id` (String) Identifier
 
 ### Optional
 
-- `account_id` (String) Identifier
 - `name` (String)
 - `priority` (Number)
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))

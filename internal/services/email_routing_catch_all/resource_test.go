@@ -78,25 +78,21 @@ func init() {
 	})
 }
 
-func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool, destinationEmail string) string {
-	return acctest.LoadTestCase("emailroutingrulecatchallconfig.tf", resourceID, zoneID, enabled, destinationEmail)
+func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool) string {
+	return acctest.LoadTestCase("emailroutingrulecatchallconfig.tf", resourceID, zoneID, enabled)
 }
 
 func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_email_routing_catch_all." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	destinationEmail := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_EmailRoutingDestinationAddress(t)
-		},
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true, destinationEmail),
+				Config: testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
@@ -106,7 +102,7 @@ func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 
 					resource.TestCheckResourceAttr(name, "actions.0.type", "forward"),
 					resource.TestCheckResourceAttr(name, "actions.0.value.#", "1"),
-					resource.TestCheckResourceAttr(name, "actions.0.value.0", destinationEmail),
+					resource.TestCheckResourceAttr(name, "actions.0.value.0", "destinationaddress@example.net"),
 				),
 			},
 		},
@@ -116,15 +112,11 @@ func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 func TestAccUpgradeEmailRoutingCatchAll_FromPublishedV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	destinationEmail := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey)
 
-	config := testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true, destinationEmail)
+	config := testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_EmailRoutingDestinationAddress(t)
-		},
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{

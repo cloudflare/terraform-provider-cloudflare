@@ -64,6 +64,12 @@ func (r *CloudforceOneRequestPriorityResource) Create(ctx context.Context, req r
 		return
 	}
 
+	params := cloudforce_one.RequestPriorityNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *CloudforceOneRequestPriorityResource) Create(ctx context.Context, req r
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Priority.New(
 		ctx,
-		cloudforce_one.RequestPriorityNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *CloudforceOneRequestPriorityResource) Update(ctx context.Context, req r
 		return
 	}
 
+	params := cloudforce_one.RequestPriorityUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *CloudforceOneRequestPriorityResource) Update(ctx context.Context, req r
 	_, err = r.client.CloudforceOne.Requests.Priority.Update(
 		ctx,
 		data.ID.ValueString(),
-		cloudforce_one.RequestPriorityUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *CloudforceOneRequestPriorityResource) Read(ctx context.Context, req res
 		return
 	}
 
+	params := cloudforce_one.RequestPriorityGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Priority.Get(
 		ctx,
 		data.ID.ValueString(),
-		cloudforce_one.RequestPriorityGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *CloudforceOneRequestPriorityResource) Delete(ctx context.Context, req r
 		return
 	}
 
+	params := cloudforce_one.RequestPriorityDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.CloudforceOne.Requests.Priority.Delete(
 		ctx,
 		data.ID.ValueString(),
-		cloudforce_one.RequestPriorityDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

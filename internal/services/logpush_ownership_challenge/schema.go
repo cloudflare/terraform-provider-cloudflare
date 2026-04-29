@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*LogpushOwnershipChallengeResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Logs Write",

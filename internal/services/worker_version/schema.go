@@ -26,7 +26,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkerVersionResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -455,7 +454,6 @@ Version: 500,
 						},
 						"database_id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"id": schema.StringAttribute{
