@@ -32,6 +32,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account identifier",
 				Required:    true,
 			},
+			"device_type": schema.StringAttribute{
+				Description: "Filter connectors by device type.\nAvailable values: \"MANAGED\", \"LICENSED\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("MANAGED", "LICENSED"),
+				},
+			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
@@ -103,6 +110,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"serial_number": schema.StringAttribute{
 									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Description: `Available values: "MANAGED", "LICENSED".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("MANAGED", "LICENSED"),
+									},
 								},
 							},
 						},

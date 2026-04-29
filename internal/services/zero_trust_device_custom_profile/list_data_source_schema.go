@@ -217,6 +217,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Determines which tunnel protocol to use.",
 							Computed:    true,
 						},
+						"virtual_networks": schema.SingleNestedAttribute{
+							Description: "Virtual network access settings for the device.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfilesVirtualNetworksDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"allowed": schema.ListAttribute{
+									Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+								"default": schema.StringAttribute{
+									Description: "The default virtual network ID. Must be included in the `allowed` list.",
+									Computed:    true,
+								},
+							},
+						},
 					},
 				},
 			},

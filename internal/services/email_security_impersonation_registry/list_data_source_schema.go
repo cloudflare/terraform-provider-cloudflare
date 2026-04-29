@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
@@ -38,7 +38,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "The field to sort by.\nAvailable values: \"name\", \"email\", \"created_at\".",
+				Description: "Field to sort by.\nAvailable values: \"name\", \"email\", \"created_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -61,7 +61,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"search": schema.StringAttribute{
-				Description: "Allows searching in multiple properties of a record simultaneously.\nThis parameter is intended for human users, not automation. Its exact\nbehavior is intentionally left unspecified and is subject to change\nin the future.",
+				Description: "Search term for filtering records. Behavior may change.",
 				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -77,28 +77,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[EmailSecurityImpersonationRegistriesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.Int64Attribute{
+						"id": schema.StringAttribute{
+							Description: "Impersonation registry entry identifier",
+							Computed:    true,
+						},
+						"comments": schema.StringAttribute{
 							Computed: true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
-						},
-						"email": schema.StringAttribute{
-							Computed: true,
-						},
-						"is_email_regex": schema.BoolAttribute{
-							Computed: true,
-						},
-						"last_modified": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
-						"name": schema.StringAttribute{
-							Computed: true,
-						},
-						"comments": schema.StringAttribute{
-							Computed: true,
 						},
 						"directory_id": schema.Int64Attribute{
 							Computed: true,
@@ -106,12 +94,40 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"directory_node_id": schema.Int64Attribute{
 							Computed: true,
 						},
+						"email": schema.StringAttribute{
+							Computed: true,
+						},
 						"external_directory_node_id": schema.StringAttribute{
 							Computed:           true,
 							DeprecationMessage: "This attribute is deprecated.",
 						},
-						"provenance": schema.StringAttribute{
+						"is_email_regex": schema.BoolAttribute{
 							Computed: true,
+						},
+						"last_modified": schema.StringAttribute{
+							Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+							CustomType:         timetypes.RFC3339Type{},
+						},
+						"modified_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"name": schema.StringAttribute{
+							Computed: true,
+						},
+						"provenance": schema.StringAttribute{
+							Description: `Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".`,
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"A1S_INTERNAL",
+									"SNOOPY-CASB_OFFICE_365",
+									"SNOOPY-OFFICE_365",
+									"SNOOPY-GOOGLE_DIRECTORY",
+								),
+							},
 						},
 					},
 				},

@@ -9,8 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -26,56 +24,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				Description:   "The unique identifier for the trusted domain.",
+			"id": schema.StringAttribute{
+				Description:   "Trusted domain identifier",
 				Computed:      true,
-				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Account Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"body": schema.ListNestedAttribute{
-				Optional: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"is_recent": schema.BoolAttribute{
-							Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
-							Required:    true,
-						},
-						"is_regex": schema.BoolAttribute{
-							Required: true,
-						},
-						"is_similarity": schema.BoolAttribute{
-							Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
-							Required:    true,
-						},
-						"pattern": schema.StringAttribute{
-							Required: true,
-						},
-						"comments": schema.StringAttribute{
-							Optional: true,
-						},
-					},
-				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
-			},
-			"comments": schema.StringAttribute{
-				Optional: true,
-			},
 			"is_recent": schema.BoolAttribute{
-				Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
-				Optional:    true,
+				Description: "Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.",
+				Required:    true,
 			},
 			"is_regex": schema.BoolAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"is_similarity": schema.BoolAttribute{
-				Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
-				Optional:    true,
+				Description: "Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.",
+				Required:    true,
 			},
 			"pattern": schema.StringAttribute{
+				Required: true,
+			},
+			"comments": schema.StringAttribute{
 				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
@@ -83,6 +56,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"last_modified": schema.StringAttribute{
+				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         timetypes.RFC3339Type{},
+			},
+			"modified_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},

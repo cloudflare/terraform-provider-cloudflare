@@ -134,8 +134,9 @@ type WorkerVersionBindingsOutboundWorkerDataSourceModel struct {
 }
 
 type WorkerVersionBindingsSimpleDataSourceModel struct {
-	Limit  types.Float64 `tfsdk:"limit" json:"limit,computed"`
-	Period types.Int64   `tfsdk:"period" json:"period,computed"`
+	Limit             types.Float64 `tfsdk:"limit" json:"limit,computed"`
+	Period            types.Int64   `tfsdk:"period" json:"period,computed"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,computed"`
 }
 
 type WorkerVersionContainersDataSourceModel struct {

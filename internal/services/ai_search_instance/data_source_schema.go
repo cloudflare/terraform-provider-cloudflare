@@ -24,9 +24,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -583,10 +582,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"namespace": schema.StringAttribute{
-						Optional: true,
+						Description: "Filter by namespace.",
+						Optional:    true,
 					},
 					"order_by": schema.StringAttribute{
-						Description: "Order By Column Name\nAvailable values: \"created_at\".",
+						Description: "Field to order results by.\nAvailable values: \"created_at\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -594,7 +594,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order_by_direction": schema.StringAttribute{
-						Description: "Order By Direction\nAvailable values: \"asc\", \"desc\".",
+						Description: "Order direction.\nAvailable values: \"asc\", \"desc\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -602,7 +602,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"search": schema.StringAttribute{
-						Description: "Search by id",
+						Description: "Filter instances whose id contains this string (case-insensitive).",
 						Optional:    true,
 					},
 				},

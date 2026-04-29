@@ -189,8 +189,9 @@ type WorkerVersionBindingsOutboundWorkerModel struct {
 }
 
 type WorkerVersionBindingsSimpleModel struct {
-	Limit  types.Float64 `tfsdk:"limit" json:"limit,required"`
-	Period types.Int64   `tfsdk:"period" json:"period,required"`
+	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
+	Period            types.Int64   `tfsdk:"period" json:"period,required"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
 }
 
 type WorkerVersionLimitsModel struct {

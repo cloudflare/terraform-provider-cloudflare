@@ -66,7 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 						Computed:    true,
 					},
 					"bgp": schema.SingleNestedAttribute{

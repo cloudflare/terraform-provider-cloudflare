@@ -23,11 +23,13 @@ type APIShieldOperationDataSourceModel struct {
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
 	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
+	WithSchemas types.Bool                                                          `tfsdk:"with_schemas" query:"with_schemas,computed_optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
 	LastUpdated timetypes.RFC3339                                                   `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Method      types.String                                                        `tfsdk:"method" json:"method,computed"`
 	Features    customfield.NestedObject[APIShieldOperationFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
+	Schemas     customfield.NestedObject[APIShieldOperationSchemasDataSourceModel]  `tfsdk:"schemas" json:"schemas,computed"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
@@ -42,6 +44,10 @@ func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (par
 	params = api_gateway.OperationGetParams{
 		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
 		Feature: cloudflare.F(mFeature),
+	}
+
+	if !m.WithSchemas.IsNull() {
+		params.WithSchemas = cloudflare.F(m.WithSchemas.ValueBool())
 	}
 
 	return
@@ -164,6 +170,21 @@ type APIShieldOperationFeaturesSchemaInfoActiveSchemaDataSourceModel struct {
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsLearned types.Bool        `tfsdk:"is_learned" json:"is_learned,computed"`
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
+}
+
+type APIShieldOperationSchemasDataSourceModel struct {
+	Learned  customfield.NestedObject[APIShieldOperationSchemasLearnedDataSourceModel]  `tfsdk:"learned" json:"learned,computed"`
+	Uploaded customfield.NestedObject[APIShieldOperationSchemasUploadedDataSourceModel] `tfsdk:"uploaded" json:"uploaded,computed"`
+}
+
+type APIShieldOperationSchemasLearnedDataSourceModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters" json:"parameters,computed"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body" json:"requestBody,computed"`
+}
+
+type APIShieldOperationSchemasUploadedDataSourceModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters" json:"parameters,computed"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body" json:"requestBody,computed"`
 }
 
 type APIShieldOperationFindOneByDataSourceModel struct {

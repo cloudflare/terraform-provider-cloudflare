@@ -121,7 +121,7 @@ func (r *EmailSecurityBlockSenderResource) Update(ctx context.Context, req resou
 	env := EmailSecurityBlockSenderResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.BlockSenders.Edit(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingBlockSenderEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +157,7 @@ func (r *EmailSecurityBlockSenderResource) Read(ctx context.Context, req resourc
 	env := EmailSecurityBlockSenderResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingBlockSenderGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,7 +195,7 @@ func (r *EmailSecurityBlockSenderResource) Delete(ctx context.Context, req resou
 
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Delete(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingBlockSenderDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -213,7 +213,7 @@ func (r *EmailSecurityBlockSenderResource) ImportState(ctx context.Context, req 
 	var data = new(EmailSecurityBlockSenderModel)
 
 	path_account_id := ""
-	path_pattern_id := int64(0)
+	path_pattern_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
 		"<account_id>/<pattern_id>",
@@ -226,7 +226,7 @@ func (r *EmailSecurityBlockSenderResource) ImportState(ctx context.Context, req 
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.Int64Value(path_pattern_id)
+	data.ID = types.StringValue(path_pattern_id)
 
 	res := new(http.Response)
 	env := EmailSecurityBlockSenderResultEnvelope{*data}

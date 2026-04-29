@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*APIShieldOperationResource)(nil)
@@ -278,6 +279,55 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"block",
 									),
 								},
+							},
+						},
+					},
+				},
+			},
+			"schemas": schema.SingleNestedAttribute{
+				Description: "OpenAPI JSON schemas for an operation, including both user-uploaded and Cloudflare-learned schemas.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"learned": schema.SingleNestedAttribute{
+						Description: "An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasLearnedModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"parameters": schema.ListAttribute{
+								Description: "OpenAPI parameter objects describing path, query, header, or cookie parameters.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+								ElementType: types.MapType{
+									ElemType: jsontypes.NormalizedType{},
+								},
+							},
+							"request_body": schema.MapAttribute{
+								Description: "OpenAPI request body object describing the expected request payload.",
+								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
+								ElementType: jsontypes.NormalizedType{},
+							},
+						},
+					},
+					"uploaded": schema.SingleNestedAttribute{
+						Description: "An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasUploadedModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"parameters": schema.ListAttribute{
+								Description: "OpenAPI parameter objects describing path, query, header, or cookie parameters.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+								ElementType: types.MapType{
+									ElemType: jsontypes.NormalizedType{},
+								},
+							},
+							"request_body": schema.MapAttribute{
+								Description: "OpenAPI request body object describing the expected request payload.",
+								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
+								ElementType: jsontypes.NormalizedType{},
 							},
 						},
 					},

@@ -25,14 +25,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"namespace": schema.StringAttribute{
-				Optional: true,
+				Description: "Filter by namespace.",
+				Optional:    true,
 			},
 			"search": schema.StringAttribute{
-				Description: "Search by id",
+				Description: "Filter instances whose id contains this string (case-insensitive).",
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "Order By Column Name\nAvailable values: \"created_at\".",
+				Description: "Field to order results by.\nAvailable values: \"created_at\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -40,7 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order_by_direction": schema.StringAttribute{
-				Description: "Order By Direction\nAvailable values: \"asc\", \"desc\".",
+				Description: "Order direction.\nAvailable values: \"asc\", \"desc\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

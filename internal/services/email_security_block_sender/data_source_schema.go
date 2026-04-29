@@ -26,16 +26,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				Description: "The unique identifier for the allow policy.",
+			"id": schema.StringAttribute{
+				Description: "Blocked sender pattern identifier",
 				Computed:    true,
 			},
-			"pattern_id": schema.Int64Attribute{
-				Description: "The unique identifier for the allow policy.",
+			"pattern_id": schema.StringAttribute{
+				Description: "Blocked sender pattern identifier",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"comments": schema.StringAttribute{
@@ -49,6 +49,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"last_modified": schema.StringAttribute{
+				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         timetypes.RFC3339Type{},
+			},
+			"modified_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
@@ -56,7 +62,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"pattern_type": schema.StringAttribute{
-				Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
+				Description: "Type of pattern matching.\nNote: UNKNOWN is deprecated and cannot be used when creating or updating policies, but may be returned for existing entries.\nAvailable values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -78,17 +84,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "The field to sort by.\nAvailable values: \"pattern\", \"created_at\".",
+						Description: "Field to sort by.\nAvailable values: \"pattern\", \"created_at\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("pattern", "created_at"),
 						},
 					},
 					"pattern": schema.StringAttribute{
-						Optional: true,
+						Description: "Filter by pattern value.",
+						Optional:    true,
 					},
 					"pattern_type": schema.StringAttribute{
-						Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
+						Description: "Filter by pattern type.\nAvailable values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -100,7 +107,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"search": schema.StringAttribute{
-						Description: "Allows searching in multiple properties of a record simultaneously.\nThis parameter is intended for human users, not automation. Its exact\nbehavior is intentionally left unspecified and is subject to change\nin the future.",
+						Description: "Search term for filtering records. Behavior may change.",
 						Optional:    true,
 					},
 				},

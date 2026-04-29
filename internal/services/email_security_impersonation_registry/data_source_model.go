@@ -17,8 +17,8 @@ type EmailSecurityImpersonationRegistryResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityImpersonationRegistryDataSourceModel struct {
-	ID                      types.Int64                                                 `tfsdk:"id" path:"display_name_id,computed"`
-	DisplayNameID           types.Int64                                                 `tfsdk:"display_name_id" path:"display_name_id,optional"`
+	ID                      types.String                                                `tfsdk:"id" path:"impersonation_registry_id,computed"`
+	ImpersonationRegistryID types.String                                                `tfsdk:"impersonation_registry_id" path:"impersonation_registry_id,optional"`
 	AccountID               types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	Comments                types.String                                                `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt               timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -28,6 +28,7 @@ type EmailSecurityImpersonationRegistryDataSourceModel struct {
 	ExternalDirectoryNodeID types.String                                                `tfsdk:"external_directory_node_id" json:"external_directory_node_id,computed"`
 	IsEmailRegex            types.Bool                                                  `tfsdk:"is_email_regex" json:"is_email_regex,computed"`
 	LastModified            timetypes.RFC3339                                           `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt              timetypes.RFC3339                                           `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Name                    types.String                                                `tfsdk:"name" json:"name,computed"`
 	Provenance              types.String                                                `tfsdk:"provenance" json:"provenance,computed"`
 	Filter                  *EmailSecurityImpersonationRegistryFindOneByDataSourceModel `tfsdk:"filter"`

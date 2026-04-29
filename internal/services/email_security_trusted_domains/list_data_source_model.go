@@ -57,12 +57,13 @@ func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.
 }
 
 type EmailSecurityTrustedDomainsListResultDataSourceModel struct {
-	ID           types.Int64       `tfsdk:"id" json:"id,computed"`
+	ID           types.String      `tfsdk:"id" json:"id,computed"`
+	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRecent     types.Bool        `tfsdk:"is_recent" json:"is_recent,computed"`
 	IsRegex      types.Bool        `tfsdk:"is_regex" json:"is_regex,computed"`
 	IsSimilarity types.Bool        `tfsdk:"is_similarity" json:"is_similarity,computed"`
 	LastModified timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern      types.String      `tfsdk:"pattern" json:"pattern,computed"`
-	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 }

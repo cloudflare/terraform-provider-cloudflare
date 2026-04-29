@@ -53,11 +53,12 @@ func (m *EmailSecurityBlockSendersDataSourceModel) toListParams(_ context.Contex
 }
 
 type EmailSecurityBlockSendersResultDataSourceModel struct {
-	ID           types.Int64       `tfsdk:"id" json:"id,computed"`
+	ID           types.String      `tfsdk:"id" json:"id,computed"`
+	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRegex      types.Bool        `tfsdk:"is_regex" json:"is_regex,computed"`
 	LastModified timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern      types.String      `tfsdk:"pattern" json:"pattern,computed"`
 	PatternType  types.String      `tfsdk:"pattern_type" json:"pattern_type,computed"`
-	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 }

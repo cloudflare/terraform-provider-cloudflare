@@ -92,7 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"automatic_return_routing": schema.BoolAttribute{
-				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
@@ -252,7 +252,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 					},
@@ -433,7 +433,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 					},

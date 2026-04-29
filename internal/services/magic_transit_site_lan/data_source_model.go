@@ -68,9 +68,16 @@ type MagicTransitSiteLANStaticAddressingDHCPRelayDataSourceModel struct {
 }
 
 type MagicTransitSiteLANStaticAddressingDHCPServerDataSourceModel struct {
-	DHCPPoolEnd   types.String                   `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,computed"`
-	DHCPPoolStart types.String                   `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed"`
-	DNSServer     types.String                   `tfsdk:"dns_server" json:"dns_server,computed"`
-	DNSServers    customfield.List[types.String] `tfsdk:"dns_servers" json:"dns_servers,computed"`
-	Reservations  customfield.Map[types.String]  `tfsdk:"reservations" json:"reservations,computed"`
+	DHCPOptions   customfield.NestedObjectList[MagicTransitSiteLANStaticAddressingDHCPServerDHCPOptionsDataSourceModel] `tfsdk:"dhcp_options" json:"dhcp_options,computed"`
+	DHCPPoolEnd   types.String                                                                                          `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,computed"`
+	DHCPPoolStart types.String                                                                                          `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed"`
+	DNSServer     types.String                                                                                          `tfsdk:"dns_server" json:"dns_server,computed"`
+	DNSServers    customfield.List[types.String]                                                                        `tfsdk:"dns_servers" json:"dns_servers,computed"`
+	Reservations  customfield.Map[types.String]                                                                         `tfsdk:"reservations" json:"reservations,computed"`
+}
+
+type MagicTransitSiteLANStaticAddressingDHCPServerDHCPOptionsDataSourceModel struct {
+	Code  types.Int64  `tfsdk:"code" json:"code,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
