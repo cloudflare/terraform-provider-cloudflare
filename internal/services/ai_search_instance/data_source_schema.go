@@ -313,21 +313,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Computed: true,
 					},
-					"search_for_agents": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[AISearchInstanceMetadataSearchForAgentsDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"hostname": schema.StringAttribute{
-								Computed: true,
-							},
-							"zone_id": schema.StringAttribute{
-								Computed: true,
-							},
-							"zone_name": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-					},
 					"worker_domain": schema.StringAttribute{
 						Computed: true,
 					},

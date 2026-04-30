@@ -250,20 +250,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Optional: true,
 					},
-					"search_for_agents": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"hostname": schema.StringAttribute{
-								Required: true,
-							},
-							"zone_id": schema.StringAttribute{
-								Required: true,
-							},
-							"zone_name": schema.StringAttribute{
-								Required: true,
-							},
-						},
-					},
 					"worker_domain": schema.StringAttribute{
 						Optional: true,
 					},
