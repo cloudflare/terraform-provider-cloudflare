@@ -499,6 +499,7 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 
 func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 	acctest.TestAccSkipForDefaultZone(t, "Pending automating setup from https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/.")
+	t.Skip("Requires a zone with multi-provider DNSSEC enabled; skipping until dedicated test zone is available.")
 
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1127,6 +1128,65 @@ func testAccCheckCloudflareRecordConfigSimpleDrift(zoneID, rnd, domain string) s
 
 func testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain string) string {
 	return acctest.LoadTestCase("dns_record_fqdn_normalize.tf", rnd, zoneID, domain)
+}
+
+// Test that shortening a DNS record name (removing subdomain parts) actually takes effect.
+// Regression test for https://github.com/cloudflare/terraform-provider-cloudflare/issues/6566
+// The old FQDN normalization logic incorrectly suppressed name changes when the new name
+// was a prefix of the old FQDN (e.g., changing "resend._domainkey.app" to "resend._domainkey").
+func TestAccCloudflareRecord_FQDNNameShortenChange(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with a multi-level subdomain name
+				Config: testAccCloudflareRecordFQDNNameChange(zoneID, rnd, domain, "resend-test._domainkey.app"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "type", "CNAME"),
+					resource.TestCheckResourceAttr(resourceName, "content", "example.com"),
+				),
+			},
+			{
+				// Step 2: Shorten the name — this MUST produce a plan change and update the record.
+				// The state will have the subdomain form because UnmarshalComputed only writes
+				// computed fields, and name is tagged as required.
+				Config: testAccCloudflareRecordFQDNNameChange(zoneID, rnd, domain, "resend-test._domainkey"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "type", "CNAME"),
+					resource.TestCheckResourceAttr(resourceName, "content", "example.com"),
+				),
+			},
+			{
+				// Step 3: Re-apply the same shortened name — must produce an empty plan.
+				// This verifies the rename actually took effect on the server:
+				// Read() will fetch the FQDN from the API, and ModifyPlan's zone-aware
+				// check will correctly suppress the subdomain-vs-FQDN drift.
+				Config:             testAccCloudflareRecordFQDNNameChange(zoneID, rnd, domain, "resend-test._domainkey"),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func testAccCloudflareRecordFQDNNameChange(zoneID, rnd, domain, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s" {
+  zone_id = "%[2]s"
+  name    = "%[4]s"
+  content = "example.com"
+  type    = "CNAME"
+  proxied = false
+  ttl     = 3600
+}
+`, rnd, zoneID, domain, name)
 }
 
 func testAccCheckCloudflareRecordConfigComputedDrift(zoneID, rnd, domain string) string {
