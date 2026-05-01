@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -61,6 +62,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"moved",
 					),
 				},
+			},
+			"type": schema.ListAttribute{
+				Description: `Zone types to filter by. Multiple types can be specified as a comma-separated list (e.g., ?type=full,partial,secondary). When this parameter is not provided, zones with type "internal" are excluded from the results.`,
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"full",
+							"partial",
+							"secondary",
+							"internal",
+						),
+					),
+				},
+				ElementType: types.StringType,
 			},
 			"account": schema.SingleNestedAttribute{
 				Optional: true,
