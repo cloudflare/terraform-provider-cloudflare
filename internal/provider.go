@@ -216,6 +216,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_local_domain_fallback"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_deployment_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_ip_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
@@ -578,6 +579,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workers_for_platforms_dispatch_namespace.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_ip_profile.NewResource,
+		zero_trust_device_deployment_groups.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
@@ -905,6 +907,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_ip_profile.NewZeroTrustDeviceIPProfileDataSource,
 		zero_trust_device_ip_profile.NewZeroTrustDeviceIPProfilesDataSource,
+		zero_trust_device_deployment_groups.NewZeroTrustDeviceDeploymentGroupsDataSource,
+		zero_trust_device_deployment_groups.NewZeroTrustDeviceDeploymentGroupsListDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
