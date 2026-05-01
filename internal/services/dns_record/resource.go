@@ -102,8 +102,6 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 
 	normalizeSettings(ctx, data, &resp.Diagnostics)
 
-	saveZoneNameToPrivateState(ctx, bytes, resp.Private)
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -155,8 +153,6 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 
 	normalizeSettings(ctx, data, &resp.Diagnostics)
 
-	saveZoneNameToPrivateState(ctx, bytes, resp.Private)
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -168,6 +164,10 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Save the prior state name before the API call so we can derive the zone
+	// suffix by comparing it with the FQDN the API returns.
+	priorName := data.Name.ValueString()
 
 	res := new(http.Response)
 	env := DNSRecordResultEnvelope{*data}
@@ -202,7 +202,9 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	// with false defaults so state is stable against a config of settings = { flatten_cname = false }.
 	normalizeSettings(ctx, data, &resp.Diagnostics)
 
-	saveZoneNameToPrivateState(ctx, bytes, resp.Private)
+	// Derive the zone name by comparing the prior state name with the API's FQDN
+	// and store it in private state for ModifyPlan's FQDN normalization.
+	deriveAndSaveZoneName(ctx, priorName, data.Name.ValueString(), resp.Private)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

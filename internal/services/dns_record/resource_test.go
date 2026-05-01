@@ -1155,12 +1155,14 @@ func TestAccCloudflareRecord_FQDNNameShortenChange(t *testing.T) {
 			},
 			{
 				// Step 2: Shorten the name — this MUST produce a plan change and update the record.
-				// The state will have the subdomain form because UnmarshalComputed only writes
-				// computed fields, and name is tagged as required.
+				// After Update, state.name has the subdomain form (UnmarshalComputed
+				// only writes computed fields and name is tagged required).
+				// We verify the old ".app" segment is gone to confirm the rename fired.
 				Config: testAccCloudflareRecordFQDNNameChange(zoneID, rnd, domain, "resend-test._domainkey"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "CNAME"),
 					resource.TestCheckResourceAttr(resourceName, "content", "example.com"),
+					resource.TestCheckResourceAttr(resourceName, "name", "resend-test._domainkey"),
 				),
 			},
 			{

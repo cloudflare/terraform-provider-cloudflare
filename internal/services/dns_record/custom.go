@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // ---------------------------------------------------------------------------
@@ -23,40 +24,56 @@ import (
 // Terraform private state.
 const privateStateKeyZoneName = "zone_name"
 
-// dnsRecordZoneName is a minimal struct used solely to extract the zone_name
-// field from the raw Cloudflare DNS record API JSON response.
-type dnsRecordZoneName struct {
-	Result struct {
-		ZoneName string `json:"zone_name"`
-	} `json:"result"`
-}
-
-// privateStateSetter is the subset of the private state API needed by
-// saveZoneNameToPrivateState.
-type privateStateSetter interface {
+// privateStateReadWriter combines the Get/Set capabilities needed for private
+// state operations.
+type privateStateReadWriter interface {
+	GetKey(ctx context.Context, key string) ([]byte, diag.Diagnostics)
 	SetKey(ctx context.Context, key string, value []byte) diag.Diagnostics
 }
 
-// privateStateGetter is the subset of the private state API needed to
-// retrieve previously-stored values.
-type privateStateGetter interface {
-	GetKey(ctx context.Context, key string) ([]byte, diag.Diagnostics)
-}
+// deriveAndSaveZoneName compares the prior state name with the FQDN returned
+// by the API to derive the zone suffix, then stores it in private state.
+//
+// Example: priorName="sub.app", apiFQDN="sub.app.zone.com" → zone="zone.com"
+//
+// This is called from Read (and ImportState) where we have both the prior
+// state name and the fresh API response name.  Create/Update use
+// UnmarshalComputed which does not overwrite the name field, so the FQDN
+// is only available in Read.
+func deriveAndSaveZoneName(ctx context.Context, priorName, apiFQDN string, private privateStateReadWriter) {
+	priorNorm := strings.TrimSuffix(priorName, ".")
+	fqdnNorm := strings.TrimSuffix(apiFQDN, ".")
 
-// saveZoneNameToPrivateState extracts zone_name from a raw DNS record API
-// response and persists it in the Terraform private state for later use by
-// ModifyPlan.  Called from Create, Update, and Read.
-func saveZoneNameToPrivateState(ctx context.Context, rawBody []byte, private privateStateSetter) {
-	var zn dnsRecordZoneName
-	if err := json.Unmarshal(rawBody, &zn); err == nil && zn.Result.ZoneName != "" {
-		jsonVal, _ := json.Marshal(zn.Result.ZoneName)
-		private.SetKey(ctx, privateStateKeyZoneName, jsonVal)
+	var zoneName string
+	if priorNorm != "" && fqdnNorm != priorNorm && strings.HasPrefix(fqdnNorm, priorNorm+".") {
+		// Prior state had subdomain form, API returned FQDN → derive zone suffix.
+		zoneName = fqdnNorm[len(priorNorm)+1:]
+	} else if priorNorm == fqdnNorm && strings.Contains(fqdnNorm, ".") {
+		// Prior state was already the FQDN (e.g. after import or previous Read).
+		// Try to recover zone name from private state; if present, keep it.
+		existing := getZoneNameFromPrivateState(ctx, private)
+		if existing != "" {
+			return // already stored, nothing to update
+		}
+		// Can't derive zone name when prior == FQDN and no prior zone stored.
+		return
+	} else {
+		return
+	}
+
+	if zoneName != "" {
+		jsonVal, _ := json.Marshal(zoneName)
+		if diags := private.SetKey(ctx, privateStateKeyZoneName, jsonVal); diags.HasError() {
+			tflog.Warn(ctx, "failed to save zone_name to private state", map[string]interface{}{
+				"error": diags.Errors()[0].Detail(),
+			})
+		}
 	}
 }
 
 // getZoneNameFromPrivateState reads the zone name that was previously stored
 // in private state.  Returns "" if unavailable.
-func getZoneNameFromPrivateState(ctx context.Context, private privateStateGetter) string {
+func getZoneNameFromPrivateState(ctx context.Context, private privateStateReadWriter) string {
 	if private == nil {
 		return ""
 	}
@@ -118,7 +135,7 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			//
 			// To distinguish, read the zone name (previously saved from the DNS record
 			// API response) and verify the suffix matches exactly.
-			zoneName := getZoneNameFromPrivateState(ctx, req.Private)
+			zoneName := strings.TrimSuffix(getZoneNameFromPrivateState(ctx, req.Private), ".")
 			suffix := stateNameNorm[len(planNameNorm)+1:]
 			if zoneName != "" && suffix == zoneName {
 				// The plan name + zone name == state FQDN: this is just FQDN drift, suppress it
