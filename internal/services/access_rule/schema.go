@@ -83,6 +83,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							ipv6Validator(),
 							cidrValidator(),
 						},
+						PlanModifiers: []planmodifier.String{
+							ipv6CanonicalValue(),
+						},
 					},
 				},
 			},
