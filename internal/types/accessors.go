@@ -18,7 +18,11 @@ func floatValue(value attr.Value) (bool, *big.Float) {
 	case basetypes.Float64Value:
 		return true, big.NewFloat(v.ValueFloat64())
 	case basetypes.NumberValue:
-		return true, v.ValueBigFloat()
+		f := v.ValueBigFloat()
+		if f == nil {
+			return false, nil
+		}
+		return true, f
 	default:
 		return false, nil
 	}
@@ -35,7 +39,11 @@ func intValue(value attr.Value) (bool, *big.Int) {
 	case basetypes.Int64Value:
 		return true, big.NewInt((v.ValueInt64()))
 	case basetypes.NumberValue:
-		if i, a := v.ValueBigFloat().Int(nil); a == big.Exact {
+		f := v.ValueBigFloat()
+		if f == nil {
+			return false, nil
+		}
+		if i, a := f.Int(nil); a == big.Exact {
 			return true, i
 		}
 		return false, nil
@@ -48,7 +56,7 @@ func IntValue(value attr.Value) (bool, *big.Int) {
 	if ok, i := intValue(value); ok {
 		return ok, i
 	}
-	if ok, f := floatValue(value); ok {
+	if ok, f := floatValue(value); ok && f != nil {
 		if i, a := f.Int(nil); a == big.Exact {
 			return true, i
 		}
