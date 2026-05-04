@@ -5,6 +5,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   aisearch_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
   cache = true
   cache_threshold = "super_strict_match"
+  cache_ttl = 600
   chunk = true
   chunk_overlap = 0
   chunk_size = 64
