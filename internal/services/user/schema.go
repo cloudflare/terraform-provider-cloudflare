@@ -53,6 +53,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The zipcode or postal code where the user lives.",
 				Optional:    true,
 			},
+			"email": schema.StringAttribute{
+				Description: "Current email address of the user.",
+				Computed:    true,
+			},
 			"has_business_zones": schema.BoolAttribute{
 				Description: "Indicates whether user has any business zones",
 				Computed:    true,
