@@ -189,8 +189,9 @@ type RulesetRulesActionParametersHeadersModel struct {
 }
 
 type RulesetRulesActionParametersURIModel struct {
-	Path  customfield.NestedObject[RulesetRulesActionParametersURIPathModel]  `tfsdk:"path" json:"path,optional"`
-	Query customfield.NestedObject[RulesetRulesActionParametersURIQueryModel] `tfsdk:"query" json:"query,optional"`
+	Origin types.Bool                                                          `tfsdk:"origin" json:"origin,optional"`
+	Path   customfield.NestedObject[RulesetRulesActionParametersURIPathModel]  `tfsdk:"path" json:"path,optional"`
+	Query  customfield.NestedObject[RulesetRulesActionParametersURIQueryModel] `tfsdk:"query" json:"query,optional"`
 }
 
 type RulesetRulesActionParametersURIPathModel struct {

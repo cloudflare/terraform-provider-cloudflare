@@ -824,6 +824,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_shield_cookies.NewPageShieldCookiesListDataSource,
 		ruleset.NewRulesetDataSource,
 		ruleset.NewRulesetsDataSource,
+		ruleset.NewRulesetRuleDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
