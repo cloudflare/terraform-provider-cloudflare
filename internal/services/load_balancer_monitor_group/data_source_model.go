@@ -21,9 +21,9 @@ type LoadBalancerMonitorGroupDataSourceModel struct {
 	ID             types.String                                                                 `tfsdk:"id" path:"monitor_group_id,computed"`
 	MonitorGroupID types.String                                                                 `tfsdk:"monitor_group_id" path:"monitor_group_id,required"`
 	AccountID      types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	CreatedAt      timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedOn      timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
-	UpdatedAt      timetypes.RFC3339                                                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ModifiedOn     timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Members        customfield.NestedObjectList[LoadBalancerMonitorGroupMembersDataSourceModel] `tfsdk:"members" json:"members,computed"`
 }
 
