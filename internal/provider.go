@@ -115,6 +115,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_cloud_region"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
@@ -387,6 +388,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		tiered_cache.NewResource,
 		zone_cache_variants.NewResource,
 		regional_tiered_cache.NewResource,
+		origin_cloud_region.NewResource,
 		certificate_pack.NewResource,
 		universal_ssl_setting.NewResource,
 		total_tls.NewResource,
@@ -637,6 +639,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		tiered_cache.NewTieredCacheDataSource,
 		zone_cache_variants.NewZoneCacheVariantsDataSource,
 		regional_tiered_cache.NewRegionalTieredCacheDataSource,
+		origin_cloud_region.NewOriginCloudRegionDataSource,
+		origin_cloud_region.NewOriginCloudRegionsDataSource,
 		certificate_pack.NewCertificatePackDataSource,
 		certificate_pack.NewCertificatePacksDataSource,
 		universal_ssl_setting.NewUniversalSSLSettingDataSource,
