@@ -19,8 +19,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The ID of the Monitor Group to use for checking the health of origins within this pool.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -65,12 +65,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"created_at": schema.StringAttribute{
+			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the monitor group was created",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"updated_at": schema.StringAttribute{
+			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the monitor group was last updated",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
