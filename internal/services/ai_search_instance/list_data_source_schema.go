@@ -518,7 +518,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"content_selector": schema.ListNestedAttribute{
-													Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+													Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
 													Computed:    true,
 													CustomType:  customfield.NewNestedObjectListType[AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
 													NestedObject: schema.NestedAttributeObject{
@@ -528,13 +528,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 																Computed:    true,
 															},
 															"selector": schema.StringAttribute{
-																Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+																Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
 																Computed:    true,
 															},
 														},
 													},
 												},
 												"include_headers": schema.MapAttribute{
+													Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
 													Computed:    true,
 													CustomType:  customfield.NewMapType[types.String](ctx),
 													ElementType: types.StringType,

@@ -76,10 +76,13 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
       parse_options = {
         content_selector = [{
           path = "**/blog/**"
-          selector = "article .post-body"
+          selector = "article div.post-body"
+        }, {
+          path = "**/docs/**"
+          selector = "main"
         }]
         include_headers = {
-          foo = "string"
+          cache-control = "no-cache, no-store"
         }
         include_images = true
         specific_sitemaps = ["https://example.com/sitemap.xml", "https://example.com/blog-sitemap.xml"]
