@@ -76,6 +76,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/google_tag_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
@@ -89,6 +90,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_field"
@@ -379,6 +381,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_subscription.NewResource,
 		load_balancer.NewResource,
 		load_balancer_monitor.NewResource,
+		load_balancer_monitor_group.NewResource,
 		load_balancer_pool.NewResource,
 		zone_cache_reserve.NewResource,
 		tiered_cache.NewResource,
@@ -556,6 +559,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		vulnerability_scanner_credential.NewResource,
 		vulnerability_scanner_target_environment.NewResource,
 		bot_management.NewResource,
+		google_tag_gateway.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
 		snippet.NewResource,
@@ -625,6 +629,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		load_balancer.NewLoadBalancersDataSource,
 		load_balancer_monitor.NewLoadBalancerMonitorDataSource,
 		load_balancer_monitor.NewLoadBalancerMonitorsDataSource,
+		load_balancer_monitor_group.NewLoadBalancerMonitorGroupDataSource,
+		load_balancer_monitor_group.NewLoadBalancerMonitorGroupsDataSource,
 		load_balancer_pool.NewLoadBalancerPoolDataSource,
 		load_balancer_pool.NewLoadBalancerPoolsDataSource,
 		zone_cache_reserve.NewZoneCacheReserveDataSource,
@@ -921,6 +927,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentDataSource,
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentsDataSource,
 		bot_management.NewBotManagementDataSource,
+		google_tag_gateway.NewGoogleTagGatewayDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
