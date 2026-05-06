@@ -170,7 +170,9 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 	_, err = r.client.Accounts.Members.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		accounts.MemberUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

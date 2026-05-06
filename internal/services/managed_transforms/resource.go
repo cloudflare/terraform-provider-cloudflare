@@ -114,12 +114,6 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	params := managed_transforms.ManagedTransformEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -246,7 +240,7 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 
 		for _, t := range res.ManagedRequestHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedRequestHeadersModel{
-				ID: types.StringValue(t.ID),
+				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),
 			})
 		}
@@ -263,7 +257,7 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 
 		for _, t := range res.ManagedResponseHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedResponseHeadersModel{
-				ID: types.StringValue(t.ID),
+				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),
 			})
 		}

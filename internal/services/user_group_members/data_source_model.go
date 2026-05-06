@@ -12,17 +12,22 @@ import (
 )
 
 type UserGroupMembersResultDataSourceEnvelope struct {
-	Result UserGroupMembersDataSourceModel `json:"result,computed"`
+	Result *[]*UserGroupMembersDataSourceMembersModel `json:"result,computed"`
 }
 
 type UserGroupMembersDataSourceModel struct {
-	ID          types.String `tfsdk:"id" path:"user_group_id,computed"`
-	UserGroupID types.String `tfsdk:"user_group_id" path:"user_group_id,required"`
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
-	FuzzyEmail  types.String `tfsdk:"fuzzy_email" query:"fuzzyEmail,optional"`
-	Direction   types.String `tfsdk:"direction" query:"direction,computed_optional"`
-	Email       types.String `tfsdk:"email" json:"email,computed"`
-	Status      types.String `tfsdk:"status" json:"status,computed"`
+	ID          types.String                               `tfsdk:"id" json:"id,computed"`
+	UserGroupID types.String                               `tfsdk:"user_group_id" path:"user_group_id,required"`
+	AccountID   types.String                               `tfsdk:"account_id" path:"account_id,required"`
+	FuzzyEmail  types.String                               `tfsdk:"fuzzy_email" query:"fuzzyEmail,optional"`
+	Direction   types.String                               `tfsdk:"direction" query:"direction,computed_optional"`
+	Members     *[]*UserGroupMembersDataSourceMembersModel `tfsdk:"members" json:"members,computed,no_refresh"`
+}
+
+type UserGroupMembersDataSourceMembersModel struct {
+	ID     types.String `tfsdk:"id" json:"id,computed"`
+	Email  types.String `tfsdk:"email" json:"email,computed"`
+	Status types.String `tfsdk:"status" json:"status,computed"`
 }
 
 func (m *UserGroupMembersDataSourceModel) toReadParams(_ context.Context) (params iam.UserGroupMemberListParams, diags diag.Diagnostics) {

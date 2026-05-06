@@ -211,7 +211,9 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

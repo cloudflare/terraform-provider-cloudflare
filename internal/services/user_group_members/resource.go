@@ -92,6 +92,8 @@ func (r *UserGroupMembersResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	data.Members = env.Result
+	// Ensure null vs empty list consistency. See custom.go for details.
+	normalizeMembers(data)
 	data.ID = data.UserGroupID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -142,6 +144,8 @@ func (r *UserGroupMembersResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	data.Members = env.Result
+	// Ensure null vs empty list consistency. See custom.go for details.
+	normalizeMembers(data)
 	data.ID = data.UserGroupID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -157,7 +161,6 @@ func (r *UserGroupMembersResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
-	env := UserGroupMembersResultEnvelope{data.Members}
 	_, err := r.client.IAM.UserGroups.Members.List(
 		ctx,
 		data.UserGroupID.ValueString(),
@@ -177,19 +180,30 @@ func (r *UserGroupMembersResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	// Custom unmarshal to handle null vs empty list case for members.
+	// See custom.go for details.
+	data, err = unmarshalMembersCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Members = env.Result
 	data.ID = data.UserGroupID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *UserGroupMembersResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *UserGroupMembersModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Custom delete implementation: removes all members from the user group.
+	// See custom.go for details.
+	removeAllMembers(ctx, r, data.AccountID.ValueString(), data.UserGroupID.ValueString(), resp)
 }
 
 func (r *UserGroupMembersResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -238,20 +252,5 @@ func (r *UserGroupMembersResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *UserGroupMembersResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *UserGroupMembersResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 }

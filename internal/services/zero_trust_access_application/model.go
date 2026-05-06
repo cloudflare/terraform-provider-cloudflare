@@ -52,6 +52,7 @@ type ZeroTrustAccessApplicationModel struct {
 	Tags                        customfield.Set[types.String]                                              `tfsdk:"tags" json:"tags,optional"`
 	Destinations                customfield.NestedObjectList[ZeroTrustAccessApplicationDestinationsModel]  `tfsdk:"destinations" json:"destinations,computed_optional"`
 	LandingPageDesign           customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel] `tfsdk:"landing_page_design" json:"landing_page_design,optional"`
+	MFAConfig                   *ZeroTrustAccessApplicationMFAConfigModel                                  `tfsdk:"mfa_config" json:"mfa_config,optional"`
 	Policies                    *[]ZeroTrustAccessApplicationPoliciesModel                                 `tfsdk:"policies" json:"policies,optional"`
 	AUD                         types.String                                                               `tfsdk:"aud" json:"aud,computed"`
 	SaaSApp                     *ZeroTrustAccessApplicationSaaSAppModel                                    `tfsdk:"saas_app" json:"saas_app,optional"`
@@ -225,6 +226,12 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 	Title           types.String `tfsdk:"title" json:"title,computed_optional"`
 }
 
+type ZeroTrustAccessApplicationMFAConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators" json:"allowed_authenticators,optional"`
+	MFADisabled           types.Bool      `tfsdk:"mfa_disabled" json:"mfa_disabled,optional"`
+	SessionDuration       types.String    `tfsdk:"session_duration" json:"session_duration,optional"`
+}
+
 type ZeroTrustAccessApplicationPoliciesModel struct {
 	ID              types.String                                                                `tfsdk:"id" json:"id,optional"`
 	Precedence      types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed_optional"`
@@ -233,7 +240,14 @@ type ZeroTrustAccessApplicationPoliciesModel struct {
 	Name            types.String                                                                `tfsdk:"name" json:"name,optional"`
 	ConnectionRules *ZeroTrustAccessApplicationPoliciesConnectionRulesModel                     `tfsdk:"connection_rules" json:"connection_rules,optional"`
 	Exclude         customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
+	MFAConfig       *ZeroTrustAccessApplicationPoliciesMFAConfigModel                           `tfsdk:"mfa_config" json:"mfa_config,optional"`
 	Require         customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,optional"`
+}
+
+type ZeroTrustAccessApplicationPoliciesMFAConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators" json:"allowed_authenticators,optional"`
+	MFADisabled           types.Bool      `tfsdk:"mfa_disabled" json:"mfa_disabled,optional"`
+	SessionDuration       types.String    `tfsdk:"session_duration" json:"session_duration,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
