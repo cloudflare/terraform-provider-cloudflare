@@ -33,6 +33,7 @@ type AISearchInstanceModel struct {
 	Metadata                       *AISearchInstanceMetadataModel                                      `tfsdk:"metadata" json:"metadata,optional"`
 	Cache                          types.Bool                                                          `tfsdk:"cache" json:"cache,computed_optional"`
 	CacheThreshold                 types.String                                                        `tfsdk:"cache_threshold" json:"cache_threshold,computed_optional"`
+	CacheTTL                       types.Float64                                                       `tfsdk:"cache_ttl" json:"cache_ttl,computed_optional"`
 	Chunk                          types.Bool                                                          `tfsdk:"chunk" json:"chunk,computed_optional,no_refresh"`
 	ChunkOverlap                   types.Int64                                                         `tfsdk:"chunk_overlap" json:"chunk_overlap,computed_optional"`
 	FusionMethod                   types.String                                                        `tfsdk:"fusion_method" json:"fusion_method,computed_optional"`

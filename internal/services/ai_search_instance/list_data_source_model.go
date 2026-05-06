@@ -57,6 +57,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	AISearchModel        types.String                                                                   `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                     `tfsdk:"cache" json:"cache,computed"`
 	CacheThreshold       types.String                                                                   `tfsdk:"cache_threshold" json:"cache_threshold,computed"`
+	CacheTTL             types.Float64                                                                  `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
 	ChunkOverlap         types.Int64                                                                    `tfsdk:"chunk_overlap" json:"chunk_overlap,computed"`
 	ChunkSize            types.Int64                                                                    `tfsdk:"chunk_size" json:"chunk_size,computed"`
 	CreatedBy            types.String                                                                   `tfsdk:"created_by" json:"created_by,computed"`

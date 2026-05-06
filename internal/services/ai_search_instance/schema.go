@@ -275,6 +275,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("close_enough"),
 			},
+			"cache_ttl": schema.Float64Attribute{
+				Description: "Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).\nAvailable values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.OneOf(
+						600,
+						1800,
+						3600,
+						7200,
+						21600,
+						43200,
+						86400,
+						172800,
+						259200,
+						518400,
+					),
+				},
+				Default: float64default.StaticFloat64(172800),
+			},
 			"chunk": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
