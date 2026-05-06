@@ -21,6 +21,7 @@ type ZeroTrustResourceLibraryApplicationsDataSourceModel struct {
 	AccountID types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
 	Filter    types.String                                                                            `tfsdk:"filter" query:"filter,optional"`
 	OrderBy   types.String                                                                            `tfsdk:"order_by" query:"order_by,optional"`
+	Search    types.String                                                                            `tfsdk:"search" query:"search,optional"`
 	Limit     types.Int64                                                                             `tfsdk:"limit" query:"limit,computed_optional"`
 	Offset    types.Int64                                                                             `tfsdk:"offset" query:"offset,computed_optional"`
 	MaxItems  types.Int64                                                                             `tfsdk:"max_items"`
@@ -44,6 +45,9 @@ func (m *ZeroTrustResourceLibraryApplicationsDataSourceModel) toListParams(_ con
 	if !m.OrderBy.IsNull() {
 		params.OrderBy = cloudflare.F(m.OrderBy.ValueString())
 	}
+	if !m.Search.IsNull() {
+		params.Search = cloudflare.F(m.Search.ValueString())
+	}
 
 	return
 }
@@ -62,6 +66,7 @@ type ZeroTrustResourceLibraryApplicationsResultDataSourceModel struct {
 	Name                        types.String                   `tfsdk:"name" json:"name,computed"`
 	PortProtocols               customfield.List[types.String] `tfsdk:"port_protocols" json:"port_protocols,computed"`
 	SupportDomains              customfield.List[types.String] `tfsdk:"support_domains" json:"support_domains,computed"`
+	Supported                   customfield.List[types.String] `tfsdk:"supported" json:"supported,computed"`
 	UpdatedAt                   types.String                   `tfsdk:"updated_at" json:"updated_at,computed"`
 	Version                     types.String                   `tfsdk:"version" json:"version,computed"`
 	ApplicationScoreComposition jsontypes.Normalized           `tfsdk:"application_score_composition" json:"application_score_composition,computed"`

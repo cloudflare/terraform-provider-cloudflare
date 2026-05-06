@@ -8,6 +8,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -23,11 +25,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"filter": schema.StringAttribute{
-				Description: "Filter applications using key:value format. Supported filter keys:\n- name: Filter by application name (e.g., name:HR)\n- id: Filter by application ID (e.g., id:0b63249c-95bf-4cc0-a7cc-d7faaaf1dac0)\n- human_id: Filter by human-readable ID (e.g., human_id:HR)\n- hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)\n- source: Filter by application source name (e.g., source:cloudflare)\n- ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)\n- intel_id: Filter by Intel API ID (e.g., intel_id:498).\n.",
+				Description: "Filter applications using key:value format. Supported filter keys:\n- name: Filter by application name (e.g., name:HR)\n- id: Filter by application ID (e.g., id:0b63249c-95bf-4cc0-a7cc-d7faaaf1dac0)\n- human_id: Filter by human-readable ID (e.g., human_id:HR)\n- hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)\n- source: Filter by application source name (e.g., source:cloudflare)\n- ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)\n- intel_id: Filter by Intel API ID (e.g., intel_id:498). also supports multiple values (e.g., intel_id:498,1001)\n- category_id: Filter by category ID (e.g., category_id:37f8ec03-8766-49d4-9a15-369b044c842c).\n- category_name: Filter by category name (e.g., category_name:HR).\n- supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.\n.",
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "Order by result by field name and order (e.g., name:asc).",
+				Description: "Order results by field name and direction (e.g., name:asc). Ignored when search is provided; results are ranked by relevance instead.",
+				Optional:    true,
+			},
+			"search": schema.StringAttribute{
+				Description: "Fuzzy search across application name and hostnames. Results are ranked by relevance. Must be between 2 and 200 characters. Can be combined with filter parameters.",
 				Optional:    true,
 			},
 			"limit": schema.Int64Attribute{
@@ -110,6 +116,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"support_domains": schema.ListAttribute{
 							Description: "Returns the list of support domains for the application.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"supported": schema.ListAttribute{
+							Description: "Cloudflare products that support this application.",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"GATEWAY",
+										"ACCESS",
+										"CASB",
+									),
+								),
+							},
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},

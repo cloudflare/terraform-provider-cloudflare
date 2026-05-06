@@ -35,6 +35,7 @@ type ZeroTrustResourceLibraryApplicationDataSourceModel struct {
 	IPSubnets                   customfield.List[types.String] `tfsdk:"ip_subnets" json:"ip_subnets,computed"`
 	PortProtocols               customfield.List[types.String] `tfsdk:"port_protocols" json:"port_protocols,computed"`
 	SupportDomains              customfield.List[types.String] `tfsdk:"support_domains" json:"support_domains,computed"`
+	Supported                   customfield.List[types.String] `tfsdk:"supported" json:"supported,computed"`
 	ApplicationScoreComposition jsontypes.Normalized           `tfsdk:"application_score_composition" json:"application_score_composition,computed"`
 }
 
