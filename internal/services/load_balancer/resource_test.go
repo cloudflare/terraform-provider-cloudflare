@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -117,6 +118,45 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "ttl", "30"),
 					resource.TestCheckResourceAttr(name, "steering_policy", "off"),
 				),
+			},
+		},
+	})
+}
+
+// TestAccCloudflareLoadBalancer_NoDrift verifies that a basic load balancer
+// config with no explicit values for adaptive_routing, location_strategy,
+// random_steering, session_affinity_attributes, country_pools, pop_pools,
+// region_pools, networks, ttl, session_affinity_ttl, or description does NOT
+// produce drift on a no-op re-apply. This validates the UseStateForUnknown
+// plan modifiers added to those Computed attributes.
+func TestAccCloudflareLoadBalancer_NoDrift(t *testing.T) {
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create resource. Computed fields like created_on,
+				// modified_on, zone_name, networks, adaptive_routing, etc. get
+				// populated by the API.
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
+			},
+			{
+				// Step 2: re-apply identical config. Without UseStateForUnknown
+				// on the Computed attributes, terraform marks them as
+				// (known after apply) and the plan would be a non-empty update.
+				// With the modifier, this step must be a no-op.
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+					},
+				},
 			},
 		},
 	})
