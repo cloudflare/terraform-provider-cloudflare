@@ -14,6 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -58,9 +61,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"disabled_at": schema.StringAttribute{
-							Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
+							Description:   "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
+							Computed:      true,
+							CustomType:    timetypes.RFC3339Type{},
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",
@@ -90,9 +94,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"port": schema.Int64Attribute{
-							Description: "The port for upstream connections. A value of 0 means the default port for the protocol will be used.",
-							Computed:    true,
-							Optional:    true,
+							Description:   "The port for upstream connections. A value of 0 means the default port for the protocol will be used.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 							// Default:     int64default.StaticInt64(0),
 						},
 						"virtual_network_id": schema.StringAttribute{
@@ -219,6 +224,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("hash"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",
@@ -255,6 +261,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"origin_steering": schema.SingleNestedAttribute{
 				Description: "Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.",
@@ -277,6 +284,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("random"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
@@ -285,18 +293,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"disabled_at": schema.StringAttribute{
-				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"networks": schema.ListAttribute{
-				Description: "List of networks where Load Balancer or Pool is enabled.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:   "List of networks where Load Balancer or Pool is enabled.",
+				Computed:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

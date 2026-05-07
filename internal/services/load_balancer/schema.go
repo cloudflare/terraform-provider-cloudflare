@@ -14,7 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -56,19 +60,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"description": schema.StringAttribute{
-				Description: "Object description.",
-				Optional:    true,
-				Computed:    true,
+				Description:   "Object description.",
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"session_affinity_ttl": schema.Float64Attribute{
-				Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are: - `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800]. - `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are: - `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800]. - `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseStateForUnknown()},
 			},
 			"ttl": schema.Float64Attribute{
-				Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
-				Optional:    true,
-				Computed:    true,
+				Description:   "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseStateForUnknown()},
 			},
 			"country_pools": schema.MapAttribute{
 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
@@ -79,13 +86,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
+				PlanModifiers: []planmodifier.Map{mapplanmodifier.UseStateForUnknown()},
 			},
 			"networks": schema.ListAttribute{
-				Description: "List of networks where Load Balancer or Pool is enabled.",
-				Optional:    true,
-				Computed:    true,
-				ElementType: types.StringType,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				Description:   "List of networks where Load Balancer or Pool is enabled.",
+				Optional:      true,
+				Computed:      true,
+				ElementType:   types.StringType,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 			"pop_pools": schema.MapAttribute{
 				Description: "Enterprise only: A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
@@ -96,6 +105,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
+				PlanModifiers: []planmodifier.Map{mapplanmodifier.UseStateForUnknown()},
 			},
 			"region_pools": schema.MapAttribute{
 				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
@@ -106,6 +116,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
+				PlanModifiers: []planmodifier.Map{mapplanmodifier.UseStateForUnknown()},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable (the default) this load balancer.",
@@ -164,6 +175,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"location_strategy": schema.SingleNestedAttribute{
 				Description: "Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected.",
@@ -195,6 +207,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("proximity"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"random_steering": schema.SingleNestedAttribute{
 				Description: "Configures pool weights.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
@@ -217,6 +230,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.Float64Type,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "BETA Field Not General Access: A list of rules for this load balancer to execute.",
@@ -558,15 +572,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						// Default: stringdefault.StaticString("none"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_name": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

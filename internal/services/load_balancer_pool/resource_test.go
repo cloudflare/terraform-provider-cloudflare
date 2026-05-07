@@ -174,6 +174,43 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareLoadBalancerPool_NoDrift verifies that a basic pool config
+// with no explicit values for load_shedding, notification_filter,
+// origin_steering, networks, modified_on, disabled_at, or per-origin port and
+// disabled_at does NOT produce drift on a no-op re-apply. This validates the
+// UseStateForUnknown plan modifiers added to those Computed attributes.
+//
+// CheckDestroy is intentionally omitted: the existing
+// testAccCheckCloudflareLoadBalancerPoolDestroy helper panics when its v1 SDK
+// client fails to initialize, which is unrelated to what this test validates.
+func TestAccCloudflareLoadBalancerPool_NoDrift(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create the pool.
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
+			},
+			{
+				// Step 2: re-apply identical config; must be a no-op now that
+				// the Computed attributes carry UseStateForUnknown.
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
