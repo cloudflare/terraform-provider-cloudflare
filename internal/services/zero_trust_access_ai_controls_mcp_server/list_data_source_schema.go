@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"search": schema.StringAttribute{
 				Description: "Search by id, name",
@@ -106,6 +106,46 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"status": schema.StringAttribute{
 							Computed: true,
+						},
+						"updated_prompts": schema.ListNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedPromptsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"name": schema.StringAttribute{
+										Computed: true,
+									},
+									"alias": schema.StringAttribute{
+										Computed: true,
+									},
+									"description": schema.StringAttribute{
+										Computed: true,
+									},
+									"enabled": schema.BoolAttribute{
+										Computed: true,
+									},
+								},
+							},
+						},
+						"updated_tools": schema.ListNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedToolsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"name": schema.StringAttribute{
+										Computed: true,
+									},
+									"alias": schema.StringAttribute{
+										Computed: true,
+									},
+									"description": schema.StringAttribute{
+										Computed: true,
+									},
+									"enabled": schema.BoolAttribute{
+										Computed: true,
+									},
+								},
+							},
 						},
 					},
 				},

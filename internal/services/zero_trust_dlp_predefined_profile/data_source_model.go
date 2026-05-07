@@ -21,7 +21,7 @@ type ZeroTrustDLPPredefinedProfileResultDataSourceEnvelope struct {
 type ZeroTrustDLPPredefinedProfileDataSourceModel struct {
 	ID                  types.String                                                                      `tfsdk:"id" path:"profile_id,computed"`
 	ProfileID           types.String                                                                      `tfsdk:"profile_id" path:"profile_id,required"`
-	AccountID           types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID           types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	AIContextEnabled    types.Bool                                                                        `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed"`
 	AllowedMatchCount   types.Int64                                                                       `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
 	ConfidenceThreshold types.String                                                                      `tfsdk:"confidence_threshold" json:"confidence_threshold,computed"`
@@ -33,8 +33,10 @@ type ZeroTrustDLPPredefinedProfileDataSourceModel struct {
 }
 
 func (m *ZeroTrustDLPPredefinedProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPProfilePredefinedGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPProfilePredefinedGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DLPProfilePredefinedGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

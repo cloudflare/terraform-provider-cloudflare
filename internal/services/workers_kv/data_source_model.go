@@ -15,14 +15,16 @@ import (
 type WorkersKVDataSourceModel struct {
 	ID          types.String         `tfsdk:"id" path:"key_name,computed"`
 	KeyName     types.String         `tfsdk:"key_name" path:"key_name,required"`
-	AccountID   types.String         `tfsdk:"account_id" path:"account_id,required"`
 	NamespaceID types.String         `tfsdk:"namespace_id" path:"namespace_id,required"`
+	AccountID   types.String         `tfsdk:"account_id" path:"account_id,optional"`
 	Value       jsontypes.Normalized `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *WorkersKVDataSourceModel) toReadParams(_ context.Context) (params kv.NamespaceValueGetParams, diags diag.Diagnostics) {
-	params = kv.NamespaceValueGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = kv.NamespaceValueGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

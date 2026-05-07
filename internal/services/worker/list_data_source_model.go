@@ -18,7 +18,7 @@ type WorkersResultListDataSourceEnvelope struct {
 }
 
 type WorkersDataSourceModel struct {
-	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	Order     types.String                                               `tfsdk:"order" query:"order,computed_optional"`
 	OrderBy   types.String                                               `tfsdk:"order_by" query:"order_by,computed_optional"`
 	MaxItems  types.Int64                                                `tfsdk:"max_items"`
@@ -26,10 +26,11 @@ type WorkersDataSourceModel struct {
 }
 
 func (m *WorkersDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerListParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = workers.BetaWorkerListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(workers.BetaWorkerListParamsOrder(m.Order.ValueString()))
 	}

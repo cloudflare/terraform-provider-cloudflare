@@ -2,12 +2,16 @@
 page_title: "cloudflare_healthcheck Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Health Checks ReadHealth Checks Write
 ---
 
 # cloudflare_healthcheck (Data Source)
 
+Accepted Permissions
 
+- `Health Checks Read`
+- `Health Checks Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ data "cloudflare_healthcheck" "example_healthcheck" {
 ### Required
 
 - `healthcheck_id` (String) Identifier
+
+### Optional
+
 - `zone_id` (String) Identifier
 
 ### Read-Only

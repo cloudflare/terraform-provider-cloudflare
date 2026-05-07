@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_for_platforms_dispatch_namespace Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_for_platforms_dispatch_namespace (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -23,8 +28,11 @@ data "cloudflare_workers_for_platforms_dispatch_namespace" "example_workers_for_
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

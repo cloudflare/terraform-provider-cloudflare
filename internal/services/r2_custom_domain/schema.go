@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -20,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*R2CustomDomainResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"bucket_name": schema.StringAttribute{
 				Description:   "Name of the bucket.",
 				Required:      true,
@@ -44,6 +45,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"fedramp",
 					),
 				},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Account ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"domain": schema.StringAttribute{
 				Description:   "Name of the custom domain to be added.",

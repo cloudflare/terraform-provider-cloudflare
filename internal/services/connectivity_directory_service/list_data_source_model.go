@@ -18,17 +18,18 @@ type ConnectivityDirectoryServicesResultListDataSourceEnvelope struct {
 }
 
 type ConnectivityDirectoryServicesDataSourceModel struct {
-	AccountID types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Type      types.String                                                                     `tfsdk:"type" query:"type,optional"`
 	MaxItems  types.Int64                                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ConnectivityDirectoryServicesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ConnectivityDirectoryServicesDataSourceModel) toListParams(_ context.Context) (params connectivity.DirectoryServiceListParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = connectivity.DirectoryServiceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(connectivity.DirectoryServiceListParamsType(m.Type.ValueString()))
 	}

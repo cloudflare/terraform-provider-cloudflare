@@ -18,7 +18,7 @@ type R2BucketResultDataSourceEnvelope struct {
 type R2BucketDataSourceModel struct {
 	ID           types.String `tfsdk:"id" path:"bucket_name,computed"`
 	BucketName   types.String `tfsdk:"bucket_name" path:"bucket_name,required"`
-	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,optional"`
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
 	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction,computed,no_refresh"`
 	Location     types.String `tfsdk:"location" json:"location,computed"`
@@ -27,8 +27,10 @@ type R2BucketDataSourceModel struct {
 }
 
 func (m *R2BucketDataSourceModel) toReadParams(_ context.Context) (params r2.BucketGetParams, diags diag.Diagnostics) {
-	params = r2.BucketGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2.BucketGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

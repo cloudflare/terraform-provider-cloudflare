@@ -20,7 +20,7 @@ type SSOConnectorResultDataSourceEnvelope struct {
 type SSOConnectorDataSourceModel struct {
 	ID                 types.String                                                      `tfsdk:"id" path:"sso_connector_id,computed"`
 	SSOConnectorID     types.String                                                      `tfsdk:"sso_connector_id" path:"sso_connector_id,required"`
-	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn          timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	EmailDomain        types.String                                                      `tfsdk:"email_domain" json:"email_domain,computed"`
 	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed"`
@@ -30,8 +30,10 @@ type SSOConnectorDataSourceModel struct {
 }
 
 func (m *SSOConnectorDataSourceModel) toReadParams(_ context.Context) (params iam.SSOGetParams, diags diag.Diagnostics) {
-	params = iam.SSOGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = iam.SSOGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

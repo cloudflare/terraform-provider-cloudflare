@@ -2,12 +2,16 @@
 page_title: "cloudflare_hostname_tls_setting Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_hostname_tls_setting (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -28,6 +32,9 @@ data "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
 - `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`)
 - `http2`: value is `"on"` or `"off"`
 Available values: "ciphers", "min_tls_version", "http2".
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

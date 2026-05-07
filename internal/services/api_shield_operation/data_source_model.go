@@ -21,7 +21,7 @@ type APIShieldOperationResultDataSourceEnvelope struct {
 type APIShieldOperationDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" path:"operation_id,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
-	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
@@ -40,8 +40,11 @@ func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (par
 	}
 
 	params = api_gateway.OperationGetParams{
-		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
 		Feature: cloudflare.F(mFeature),
+	}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -68,12 +71,14 @@ func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (par
 	}
 
 	params = api_gateway.OperationListParams{
-		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
 		Feature: cloudflare.F(mFilterFeature),
 		Host:    cloudflare.F(mFilterHost),
 		Method:  cloudflare.F(mFilterMethod),
 	}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(api_gateway.OperationListParamsDirection(m.Filter.Direction.ValueString()))
 	}

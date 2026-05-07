@@ -33,6 +33,12 @@ type AccessRulesDataSourceModel struct {
 func (m *AccessRulesDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if m.Configuration != nil {
 		paramsConfiguration := firewall.AccessRuleListParamsConfiguration{}
 		if !m.Configuration.Target.IsNull() {

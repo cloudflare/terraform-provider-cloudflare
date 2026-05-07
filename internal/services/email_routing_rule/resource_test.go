@@ -93,13 +93,17 @@ func TestAccCloudflareEmailRoutingRule_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_email_routing_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	destinationEmail := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_EmailRoutingDestinationAddress(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingRuleConfig(rnd, zoneID, true, 10),
+				Config: testEmailRoutingRuleConfig(rnd, zoneID, true, 10, destinationEmail),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
@@ -112,7 +116,7 @@ func TestAccCloudflareEmailRoutingRule_Basic(t *testing.T) {
 
 					resource.TestCheckResourceAttr(name, "actions.0.type", "forward"),
 					resource.TestCheckResourceAttr(name, "actions.0.value.#", "1"),
-					resource.TestCheckResourceAttr(name, "actions.0.value.0", "destinationaddress@example.net"),
+					resource.TestCheckResourceAttr(name, "actions.0.value.0", destinationEmail),
 				),
 			},
 		},
@@ -147,8 +151,8 @@ func TestAccCloudflareEmailRoutingRule_Drop(t *testing.T) {
 	})
 }
 
-func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priority int) string {
-	return acctest.LoadTestCase("emailroutingruleconfig.tf", resourceID, zoneID, enabled, priority)
+func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priority int, destinationEmail string) string {
+	return acctest.LoadTestCase("emailroutingruleconfig.tf", resourceID, zoneID, enabled, priority, destinationEmail)
 }
 
 func testEmailRoutingRuleConfigDrop(resourceID, zoneID string, enabled bool, priority int) string {
@@ -158,11 +162,15 @@ func testEmailRoutingRuleConfigDrop(resourceID, zoneID string, enabled bool, pri
 func TestAccUpgradeEmailRoutingRule_FromPublishedV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	destinationEmail := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey)
 
-	config := testEmailRoutingRuleConfig(rnd, zoneID, true, 10)
+	config := testEmailRoutingRuleConfig(rnd, zoneID, true, 10, destinationEmail)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_EmailRoutingDestinationAddress(t)
+		},
 		Steps: []resource.TestStep{
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{

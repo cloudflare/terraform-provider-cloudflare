@@ -19,7 +19,7 @@ type UserAgentBlockingRuleResultDataSourceEnvelope struct {
 type UserAgentBlockingRuleDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"ua_rule_id,computed"`
 	UARuleID      types.String                                                                `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
-	ZoneID        types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String                                                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description   types.String                                                                `tfsdk:"description" json:"description,computed"`
 	Mode          types.String                                                                `tfsdk:"mode" json:"mode,computed"`
 	Paused        types.Bool                                                                  `tfsdk:"paused" json:"paused,computed"`
@@ -28,18 +28,21 @@ type UserAgentBlockingRuleDataSourceModel struct {
 }
 
 func (m *UserAgentBlockingRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.UARuleGetParams, diags diag.Diagnostics) {
-	params = firewall.UARuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = firewall.UARuleGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *UserAgentBlockingRuleDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = firewall.UARuleListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.Description.IsNull() {
 		params.Description = cloudflare.F(m.Filter.Description.ValueString())
 	}

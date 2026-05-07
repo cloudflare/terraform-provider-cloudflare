@@ -20,7 +20,7 @@ type ConnectivityDirectoryServiceResultDataSourceEnvelope struct {
 type ConnectivityDirectoryServiceDataSourceModel struct {
 	ID          types.String                                                                     `tfsdk:"id" path:"service_id,computed"`
 	ServiceID   types.String                                                                     `tfsdk:"service_id" path:"service_id,computed_optional"`
-	AccountID   types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	AppProtocol types.String                                                                     `tfsdk:"app_protocol" json:"app_protocol,computed"`
 	CreatedAt   timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	HTTPPort    types.Int64                                                                      `tfsdk:"http_port" json:"http_port,computed"`
@@ -35,18 +35,21 @@ type ConnectivityDirectoryServiceDataSourceModel struct {
 }
 
 func (m *ConnectivityDirectoryServiceDataSourceModel) toReadParams(_ context.Context) (params connectivity.DirectoryServiceGetParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = connectivity.DirectoryServiceGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *ConnectivityDirectoryServiceDataSourceModel) toListParams(_ context.Context) (params connectivity.DirectoryServiceListParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = connectivity.DirectoryServiceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Type.IsNull() {
 		params.Type = cloudflare.F(connectivity.DirectoryServiceListParamsType(m.Filter.Type.ValueString()))
 	}

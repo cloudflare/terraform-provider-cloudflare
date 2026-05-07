@@ -2,12 +2,15 @@
 page_title: "cloudflare_organization Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  User Details Write
 ---
 
 # cloudflare_organization (Resource)
 
+Accepted Permissions
 
+- `User Details Write`
 
 ## Example Usage
 

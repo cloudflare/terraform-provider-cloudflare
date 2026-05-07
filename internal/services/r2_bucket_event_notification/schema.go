@@ -5,6 +5,7 @@ package r2_bucket_event_notification
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*R2BucketEventNotificationResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"bucket_name": schema.StringAttribute{
 				Description:   "Name of the bucket.",
 				Required:      true,
@@ -48,6 +49,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"queue_id": schema.StringAttribute{
 				Description:   "Queue ID.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Account ID.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{

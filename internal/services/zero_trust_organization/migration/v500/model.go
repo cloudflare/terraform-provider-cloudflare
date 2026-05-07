@@ -62,7 +62,8 @@ type TargetZeroTrustOrganizationModel struct {
 	DenyUnmatchedRequestsExemptedZoneNames *[]types.String         `tfsdk:"deny_unmatched_requests_exempted_zone_names"`
 	CustomPages                            *TargetCustomPagesModel `tfsdk:"custom_pages"`
 	LoginDesign                            *TargetLoginDesignModel `tfsdk:"login_design"`
-	MfaConfig                              *TargetMfaConfigModel   `tfsdk:"mfa_config"`
+	MfaConfig                              *TargetMfaConfigModel                `tfsdk:"mfa_config"`
+	MfaSSHPivKeyRequirements               *TargetMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements"`
 	AllowAuthenticateViaWARP               types.Bool              `tfsdk:"allow_authenticate_via_warp"`
 	AutoRedirectToIdentity                 types.Bool              `tfsdk:"auto_redirect_to_identity"`
 	IsUIReadOnly                           types.Bool              `tfsdk:"is_ui_read_only"`
@@ -91,6 +92,17 @@ type TargetLoginDesignModel struct {
 // TargetMfaConfigModel represents the mfa_config nested structure in v5.
 // This is a new field in v5, not present in v4.
 type TargetMfaConfigModel struct {
-	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators"`
-	SessionDuration       types.String    `tfsdk:"session_duration"`
+	AllowedAuthenticators      *[]types.String `tfsdk:"allowed_authenticators"`
+	AmrMatchingSessionDuration types.String    `tfsdk:"amr_matching_session_duration"`
+	RequiredAaguids            types.String    `tfsdk:"required_aaguids"`
+	SessionDuration            types.String    `tfsdk:"session_duration"`
+}
+
+// TargetMfaSSHPivKeyRequirementsModel represents the mfa_ssh_piv_key_requirements nested structure in v5.
+type TargetMfaSSHPivKeyRequirementsModel struct {
+	PinPolicy         types.String    `tfsdk:"pin_policy"`
+	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device"`
+	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size"`
+	SSHKeyType        *[]types.String `tfsdk:"ssh_key_type"`
+	TouchPolicy       types.String    `tfsdk:"touch_policy"`
 }

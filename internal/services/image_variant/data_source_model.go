@@ -19,13 +19,15 @@ type ImageVariantResultDataSourceEnvelope struct {
 type ImageVariantDataSourceModel struct {
 	ID        types.String                                                 `tfsdk:"id" path:"variant_id,computed"`
 	VariantID types.String                                                 `tfsdk:"variant_id" path:"variant_id,required"`
-	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Variant   customfield.NestedObject[ImageVariantVariantDataSourceModel] `tfsdk:"variant" json:"variant,computed"`
 }
 
 func (m *ImageVariantDataSourceModel) toReadParams(_ context.Context) (params images.V1VariantGetParams, diags diag.Diagnostics) {
-	params = images.V1VariantGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = images.V1VariantGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

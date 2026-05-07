@@ -18,14 +18,16 @@ type SSOConnectorsResultListDataSourceEnvelope struct {
 }
 
 type SSOConnectorsDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[SSOConnectorsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *SSOConnectorsDataSourceModel) toListParams(_ context.Context) (params iam.SSOListParams, diags diag.Diagnostics) {
-	params = iam.SSOListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = iam.SSOListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

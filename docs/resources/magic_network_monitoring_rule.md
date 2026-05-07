@@ -2,24 +2,33 @@
 page_title: "cloudflare_magic_network_monitoring_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Network Monitoring AdminMagic Network Monitoring Config ReadMagic Network Monitoring Config Write
 ---
 
 # cloudflare_magic_network_monitoring_rule (Resource)
 
+Accepted Permissions
 
+- `Magic Network Monitoring Admin`
+- `Magic Network Monitoring Config Read`
+- `Magic Network Monitoring Config Write`
 
 ## Example Usage
 
 ```terraform
 resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monitoring_rule" {
   account_id = "6f91088a406011ed95aed352566e8d4c"
-  duration = "1m"
-  name = "my_rule_1"
   automatic_advertisement = true
-  bandwidth = 1000
-  packet_threshold = 10000
+  name = "my_rule_1"
   prefixes = ["203.0.113.1/32"]
+  type = "zscore"
+  bandwidth_threshold = 1000
+  duration = "1m"
+  packet_threshold = 10000
+  prefix_match = "exact"
+  zscore_sensitivity = "high"
+  zscore_target = "bits"
 }
 ```
 
@@ -28,30 +37,29 @@ resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monit
 
 ### Required
 
-- `account_id` (String)
+- `automatic_advertisement` (Boolean) Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.
 - `name` (String) The name of the rule. Must be unique. Supports characters A-Z, a-z, 0-9, underscore (_), dash (-), period (.), and tilde (~). You can’t have a space in the rule name. Max 256 characters.
+- `prefixes` (List of String)
+- `type` (String) MNM rule type.
+Available values: "threshold", "zscore", "advanced_ddos".
 
 ### Optional
 
-- `automatic_advertisement` (Boolean) Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.
-- `bandwidth` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
+- `account_id` (String)
+- `bandwidth_threshold` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
 - `duration` (String) The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values ["1m","5m","10m","15m","20m","30m","45m","60m"].
 Available values: "1m", "5m", "10m", "15m", "20m", "30m", "45m", "60m".
 - `packet_threshold` (Number) The number of packets per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
-- `prefixes` (List of String)
-
-### Read-Only
-
-- `bandwidth_threshold` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
-- `id` (String) The id of the rule. Must be unique.
 - `prefix_match` (String) Prefix match type to be applied for a prefix auto advertisement when using an advanced_ddos rule.
 Available values: "exact", "subnet", "supernet".
-- `type` (String) MNM rule type.
-Available values: "threshold", "zscore", "advanced_ddos".
 - `zscore_sensitivity` (String) Level of sensitivity set for zscore rules.
 Available values: "low", "medium", "high".
 - `zscore_target` (String) Target of the zscore rule analysis.
 Available values: "bits", "packets".
+
+### Read-Only
+
+- `id` (String) The id of the rule. Must be unique.
 
 ## Import
 

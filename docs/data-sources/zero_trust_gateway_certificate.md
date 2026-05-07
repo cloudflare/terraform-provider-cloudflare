@@ -23,8 +23,11 @@ data "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway_cer
 
 ### Required
 
-- `account_id` (String)
 - `certificate_id` (String) Identify the certificate with a UUID.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

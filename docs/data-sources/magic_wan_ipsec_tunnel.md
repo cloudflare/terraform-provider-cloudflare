@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_wan_ipsec_tunnel Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_wan_ipsec_tunnel (Data Source)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -23,8 +29,11 @@ data "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `ipsec_tunnel_id` (String) Identifier
+
+### Optional
+
+- `account_id` (String) Identifier
 
 ### Read-Only
 

@@ -29,13 +29,13 @@ resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String) Specify the list name.
 - `type` (String) Specify the list type.
-Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP", "CATEGORY", "LOCATION", "DEVICE".
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP", "CATEGORY", "LOCATION", "DEVICE", "AAGUID".
 
 ### Optional
 
+- `account_id` (String)
 - `description` (String) Provide the list description.
 - `items` (Attributes Set) Add items to the list. (see [below for nested schema](#nestedatt--items))
 

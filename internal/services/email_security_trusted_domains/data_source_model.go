@@ -19,7 +19,7 @@ type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 type EmailSecurityTrustedDomainsDataSourceModel struct {
 	ID              types.Int64                                          `tfsdk:"id" path:"trusted_domain_id,computed"`
 	TrustedDomainID types.Int64                                          `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
-	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt       timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRecent        types.Bool                                           `tfsdk:"is_recent" json:"is_recent,computed"`
@@ -31,18 +31,21 @@ type EmailSecurityTrustedDomainsDataSourceModel struct {
 }
 
 func (m *EmailSecurityTrustedDomainsDataSourceModel) toReadParams(_ context.Context) (params email_security.SettingTrustedDomainGetParams, diags diag.Diagnostics) {
-	params = email_security.SettingTrustedDomainGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = email_security.SettingTrustedDomainGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *EmailSecurityTrustedDomainsDataSourceModel) toListParams(_ context.Context) (params email_security.SettingTrustedDomainListParams, diags diag.Diagnostics) {
-	params = email_security.SettingTrustedDomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = email_security.SettingTrustedDomainListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingTrustedDomainListParamsDirection(m.Filter.Direction.ValueString()))
 	}

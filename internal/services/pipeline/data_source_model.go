@@ -19,7 +19,7 @@ type PipelineResultDataSourceEnvelope struct {
 type PipelineDataSourceModel struct {
 	ID            types.String                                                `tfsdk:"id" path:"pipeline_id,computed"`
 	PipelineID    types.String                                                `tfsdk:"pipeline_id" path:"pipeline_id,required"`
-	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt     types.String                                                `tfsdk:"created_at" json:"created_at,computed"`
 	FailureReason types.String                                                `tfsdk:"failure_reason" json:"failure_reason,computed"`
 	ModifiedAt    types.String                                                `tfsdk:"modified_at" json:"modified_at,computed"`
@@ -30,8 +30,10 @@ type PipelineDataSourceModel struct {
 }
 
 func (m *PipelineDataSourceModel) toReadParams(_ context.Context) (params pipelines.PipelineGetV1Params, diags diag.Diagnostics) {
-	params = pipelines.PipelineGetV1Params{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pipelines.PipelineGetV1Params{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

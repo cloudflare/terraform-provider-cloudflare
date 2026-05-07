@@ -17,6 +17,7 @@ func TestAccCloudflareR2CustomDomainDataSource_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domainName := rnd + "." + os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	dataSourceName := "data.cloudflare_r2_custom_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -31,7 +32,7 @@ func TestAccCloudflareR2CustomDomainDataSource_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("domain"), knownvalue.StringExact(domainName)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_name"), knownvalue.StringExact(domainName)),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_name"), knownvalue.StringExact(zoneName)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("status"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("status").AtMapKey("ownership"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("status").AtMapKey("ssl"), knownvalue.NotNull()),

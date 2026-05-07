@@ -175,6 +175,11 @@ grep -rn "MIGRATION WARNING" ./terraform
 
 - Renamed to `cloudflare_zero_trust_access_application`
 
+~> Depending on your configuration, Terraform may still plan a replacement for
+an Access application during migration. If replacement occurs, the application's
+`aud` changes. If your services validate Access JWT audiences, plan to update
+those allow-lists during the migration window.
+
 ## cloudflare_access_ca_certificate
 
 - Renamed to `cloudflare_zero_trust_access_short_lived_certificate`
@@ -211,21 +216,64 @@ grep -rn "MIGRATION WARNING" ./terraform
 
 - Renamed to `cloudflare_zero_trust_access_policy`
 
-~> **Application-scoped policies cannot be automatically migrated.** If your
+~> **Application-scoped policies require manual config migration.** If your
 `cloudflare_access_policy` resource has an `application_id` attribute, it
-cannot be migrated using `tf-migrate` or state upgraders. These policies use a
-different API endpoint (`/access/apps/{app_id}/policies/`) than account-level
-policies (`/access/policies/`).
+cannot be converted automatically into v5 inline application policies by
+`tf-migrate` or state upgraders. These policies use a different API endpoint
+(`/access/apps/{app_id}/policies/`) than account-level policies
+(`/access/policies/`).
 
 In v5, application-scoped policies are managed as inline `policies` attributes
 within the `cloudflare_zero_trust_access_application` resource. To migrate:
 
-1. Remove the policy from state: `terraform state rm cloudflare_access_policy.example`
-2. Add the policy configuration inline in your `cloudflare_zero_trust_access_application` resource's `policies` attribute
-3. Run `terraform apply`
+Do not add a `moved` block for this case. The old standalone policy resource
+must be removed from state, then rewritten inline on the application.
+
+1. Run `tf-migrate` and keep the generated `removed` block for the old
+   `cloudflare_access_policy` resource (this drops state tracking without
+   deleting the remote policy).
+2. Add the policy configuration inline in your
+   `cloudflare_zero_trust_access_application` resource's `policies` attribute.
+3. Run `terraform apply`.
+
+On the first plan/apply, Terraform may show that the old policy
+"will no longer be managed by Terraform". This is expected when using a
+`removed` block with `destroy = false`.
+
+If you are not using `tf-migrate`, you can do the equivalent state removal
+manually with `terraform state rm cloudflare_access_policy.example` before
+applying the inline policy configuration.
 
 See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
+
+## cloudflare_access_rule
+
+- `configuration` is now a single nested attribute (`configuration = { ... }`) instead of a block (`configuration { ... }`).
+
+  Before
+
+  ```hcl
+  resource "cloudflare_access_rule" "example" {
+    mode = "block"
+    configuration {
+      target = "ip"
+      value  = "1.2.3.4"
+    }
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_access_rule" "example" {
+    mode = "block"
+    configuration = {
+      target = "ip"
+      value  = "1.2.3.4"
+    }
+  }
+  ```
 
 ## cloudflare_access_service_token
 
@@ -1182,26 +1230,42 @@ This has been removed. Users should instead use the:
 ## cloudflare_zero_trust_tunnel_cloudflared
 
 - `secret` is now `tunnel_secret`.
-- `cname` is no longer available.
+- `cname` is no longer available. The CNAME was previously computed by the provider as `<tunnel-id>.cfargotunnel.com`. To reference the tunnel CNAME in v5, construct it manually using the tunnel ID:
 
-  Before
+  Before (v4)
 
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
+  resource "cloudflare_tunnel" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
-    secret = "example-secret"
-    cname = "foo.example.com"
+    name       = "my-tunnel"
+    secret     = "example-secret"
+  }
+
+  resource "cloudflare_record" "tunnel_dns" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name    = "tunnel"
+    type    = "CNAME"
+    value   = cloudflare_tunnel.example.cname
   }
   ```
 
-  After
+  After (v5)
 
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
-    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
+    account_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+    name          = "my-tunnel"
     tunnel_secret = "example-secret"
   }
+
+  resource "cloudflare_dns_record" "tunnel_dns" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name    = "tunnel"
+    type    = "CNAME"
+    content = "${cloudflare_zero_trust_tunnel_cloudflared.example.id}.cfargotunnel.com"
+  }
   ```
+
 
 ## cloudflare_zone_cache_variants
 
@@ -1549,6 +1613,34 @@ resource "cloudflare_list_item" "example" {
 - `pagerduty_integration` is now a list of objects (`pagerduty_integration = [{ ... }]`) instead of multiple block attribute (`pagerduty_integration { ... }`).
 - `webhooks_integration` is now a list of objects (`webhooks_integration = [{ ... }]`) instead of multiple block attribute (`webhooks_integration { ... }`).
 
+## cloudflare_origin_ca_certificate
+
+- `min_days_for_renewal` has been removed. Certificate renewal should be managed through external automation or lifecycle rules.
+
+## cloudflare_pages_domain
+
+- `domain` is now `name`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_pages_domain" "example" {
+    account_id   = "f037e56e89293a057740de681ac9abbe"
+    project_name = "my-project"
+    domain       = "example.com"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_pages_domain" "example" {
+    account_id   = "f037e56e89293a057740de681ac9abbe"
+    project_name = "my-project"
+    name         = "example.com"
+  }
+  ```
+
 ## cloudflare_pages_project
 
 - `build_config` is now a single nested attribute (`build_config = { ... }`) instead of a block (`build_config { ... }`).
@@ -1559,6 +1651,51 @@ resource "cloudflare_list_item" "example" {
 - `production` is now a single nested attribute (`production = { ... }`) instead of a block (`production { ... }`).
 - `service_binding` is now a list of objects (`service_binding = [{ ... }]`) instead of multiple block attribute (`service_binding { ... }`).
 - `source` is now a list of objects (`source = [{ ... }]`) instead of multiple block attribute (`source { ... }`).
+
+## cloudflare_regional_hostname
+
+- `timeouts` block has been removed.
+
+## cloudflare_snippet
+
+- `name` is now `snippet_name`.
+- `main_module` is now `metadata.main_module`.
+- `files` is now a list of objects (`files = [{ ... }]`) instead of multiple blocks (`files { ... }`).
+
+  Before
+
+  ```hcl
+  resource "cloudflare_snippet" "example" {
+    zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+    name        = "my-snippet"
+    main_module = "main.js"
+
+    files {
+      name    = "main.js"
+      content = "export default { async fetch(request) { return new Response('hello') } }"
+    }
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_snippet" "example" {
+    zone_id      = "0da42c8d2132a9ddaf714f9e7c920711"
+    snippet_name = "my-snippet"
+
+    metadata = {
+      main_module = "main.js"
+    }
+
+    files = [
+      {
+        name    = "main.js"
+        content = "export default { async fetch(request) { return new Response('hello') } }"
+      }
+    ]
+  }
+  ```
 
 ## cloudflare_dns_record
 
@@ -1688,6 +1825,58 @@ resource "cloudflare_list_item" "example" {
 - `secret_text_binding` is now a list of objects (`secret_text_binding = [{ ... }]`) instead of multiple block attribute (`secret_text_binding { ... }`).
 - `service_binding` is now a list of objects (`service_binding = [{ ... }]`) instead of multiple block attribute (`service_binding { ... }`).
 - `webassembly_binding` is now a list of objects (`webassembly_binding = [{ ... }]`) instead of multiple block attribute (`webassembly_binding { ... }`).
+
+## cloudflare_turnstile_widget
+
+- `domains` is now a list (`domains = [...]`) instead of a set (`domains = toset([...])`). Domains must be listed in alphabetical order to prevent drift.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_turnstile_widget" "example" {
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    name       = "my-widget"
+    domains    = toset(["test.example.com", "example.com"])
+    mode       = "managed"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_turnstile_widget" "example" {
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    name       = "my-widget"
+    domains    = ["example.com", "test.example.com"]
+    mode       = "managed"
+  }
+  ```
+
+## cloudflare_worker_route / cloudflare_workers_route
+
+- Renamed from `cloudflare_worker_route` to `cloudflare_workers_route`.
+- `script_name` is now `script`.
+- References to `cloudflare_workers_script.<name>.name` must be updated to `cloudflare_workers_script.<name>.id`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_worker_route" "example" {
+    zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+    pattern     = "example.com/*"
+    script_name = cloudflare_workers_script.my_script.name
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_workers_route" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    pattern = "example.com/*"
+    script  = cloudflare_workers_script.my_script.id
+  }
+  ```
 
 ## cloudflare_magic_wan_static_route
 

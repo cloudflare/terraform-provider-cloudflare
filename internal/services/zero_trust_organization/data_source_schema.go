@@ -6,7 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -20,6 +22,13 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustOrganizationDataSou
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Access: Organizations, Identity Providers, and Groups Read",
+				"Access: Organizations, Identity Providers, and Groups Revoke",
+				"Access: Organizations, Identity Providers, and Groups Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -133,15 +142,90 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"totp",
 									"biometrics",
 									"security_key",
+									"ssh_piv_key",
 								),
 							),
 						},
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
+					"amr_matching_session_duration": schema.StringAttribute{
+						Description: `Allows a user to skip MFA via Authentication Method Reference (AMR) matching when the AMR claim provided by the IdP the user used to authenticate contains "mfa". Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days).`,
+						Computed:    true,
+					},
+					"required_aaguids": schema.StringAttribute{
+						Description: "Specifies a Cloudflare List of required FIDO2 authenticator device AAGUIDs.",
+						Computed:    true,
+					},
 					"session_duration": schema.StringAttribute{
 						Description: "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
 						Computed:    true,
+					},
+				},
+			},
+			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"pin_policy": schema.StringAttribute{
+						Description: "Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).\nAvailable values: \"never\", \"once\", \"always\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"never",
+								"once",
+								"always",
+							),
+						},
+					},
+					"require_fips_device": schema.BoolAttribute{
+						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Computed:    true,
+					},
+					"ssh_key_size": schema.ListAttribute{
+						Description: "Specifies the allowed SSH key sizes in bits. Valid sizes depend on key type. Ed25519 has a fixed key size and does not accept this parameter.",
+						Computed:    true,
+						Validators: []validator.List{
+							listvalidator.ValueInt64sAre(
+								int64validator.OneOf(
+									256,
+									384,
+									521,
+									2048,
+									3072,
+									4096,
+								),
+							),
+						},
+						CustomType:  customfield.NewListType[types.Int64](ctx),
+						ElementType: types.Int64Type,
+					},
+					"ssh_key_type": schema.ListAttribute{
+						Description: "Specifies the allowed SSH key types. Valid values are `ecdsa`, `ed25519`, and `rsa`.",
+						Computed:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"ecdsa",
+									"ed25519",
+									"rsa",
+								),
+							),
+						},
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"touch_policy": schema.StringAttribute{
+						Description: "Defines when physical touch is required to use the SSH key. Valid values: `never` (no touch required), `always` (touch required for each use), `cached` (touch cached for 15 seconds).\nAvailable values: \"never\", \"always\", \"cached\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"never",
+								"always",
+								"cached",
+							),
+						},
 					},
 				},
 			},

@@ -2298,3 +2298,115 @@ func testAccCloudflareAccessApplicationWithOAuthConfigurationUpdated(rnd, accoun
 func testAccCloudflareAccessApplicationWithOAuthConfigurationMinimal(rnd, accountID, domain string) string {
 	return acctest.LoadTestCase("accessapplicationwithoauthconfigurationminimal.tf", rnd, accountID, domain)
 }
+
+// accessAppMFATestAuthDomain returns the Zero Trust auth domain to use in tests that need to
+// configure cloudflare_zero_trust_organization (org-level mfa_config is a prerequisite for
+// app-level mfa_config). Mirrors the helper in the zero_trust_organization package.
+func accessAppMFATestAuthDomain() string {
+	if v := os.Getenv("CLOUDFLARE_ZERO_TRUST_ORGANIZATION_AUTH_DOMAIN"); v != "" {
+		return v
+	}
+	return "terraform-cfapi.cloudflareaccess.com"
+}
+
+func TestAccCloudflareAccessApplication_WithMFAConfig(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	resourceName := name
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithMFAConfig(rnd, domain, accountID, accessAppMFATestAuthDomain()),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("allowed_authenticators"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("totp"),
+						knownvalue.StringExact("security_key"),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("12h")),
+				},
+			},
+			{
+				// Ensures no diff on replan
+				Config:   testAccCloudflareAccessApplicationWithMFAConfig(rnd, domain, accountID, accessAppMFATestAuthDomain()),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_MFAConfigInvalidType(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareAccessApplicationMFAConfigInvalidType(rnd, accountID),
+				ExpectError: regexp.MustCompile(`"mfa_config" can only be set if "type" is one of:\s+"self_hosted",\s+"ssh",\s+"vnc",\s+"rdp"`),
+			},
+		},
+	})
+}
+
+func testAccCloudflareAccessApplicationWithMFAConfig(rnd, domain, accountID, authDomain string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithmfaconfig.tf", rnd, domain, accountID, authDomain)
+}
+
+func testAccCloudflareAccessApplicationMFAConfigInvalidType(rnd, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigmfaconfiginvalidtype.tf", rnd, accountID)
+}
+
+func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	resourceName := name
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationInfrastructureWithPolicyMFAConfig(rnd, accountID, accessAppMFATestAuthDomain()),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("infrastructure")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("allowed_authenticators"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("ssh_piv_key"),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("12h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("connection_rules").AtMapKey("ssh").AtMapKey("usernames"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("root"),
+					})),
+				},
+			},
+			{
+				// Ensures no diff on replan
+				Config:   testAccCloudflareAccessApplicationInfrastructureWithPolicyMFAConfig(rnd, accountID, accessAppMFATestAuthDomain()),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func testAccCloudflareAccessApplicationInfrastructureWithPolicyMFAConfig(rnd, accID, authDomain string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginfrastructurewithmfa.tf", rnd, accID, authDomain)
+}

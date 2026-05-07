@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_lans Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_lans (Data Source)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -23,11 +29,11 @@ data "cloudflare_magic_transit_site_lans" "example_magic_transit_site_lans" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -42,6 +48,8 @@ Read-Only:
 - `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
 - `id` (String) Identifier
+- `is_breakout` (Boolean) mark true to use this LAN for source-based breakout traffic
+- `is_prioritized` (Boolean) mark true to use this LAN for source-based prioritized traffic
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--result--nat))
 - `physport` (Number)

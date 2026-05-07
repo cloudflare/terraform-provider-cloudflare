@@ -2,12 +2,16 @@
 page_title: "cloudflare_r2_bucket_event_notification Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers R2 Storage ReadWorkers R2 Storage Write
 ---
 
 # cloudflare_r2_bucket_event_notification (Resource)
 
+Accepted Permissions
 
+- `Workers R2 Storage Read`
+- `Workers R2 Storage Write`
 
 ## Example Usage
 
@@ -30,13 +34,13 @@ resource "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_noti
 
 ### Required
 
-- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 - `queue_id` (String) Queue ID.
 - `rules` (Attributes List) Array of rules to drive notifications. (see [below for nested schema](#nestedatt--rules))
 
 ### Optional
 
+- `account_id` (String) Account ID.
 - `jurisdiction` (String) Jurisdiction of the bucket
 
 ### Read-Only

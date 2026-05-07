@@ -20,7 +20,7 @@ type PipelineSinkResultDataSourceEnvelope struct {
 type PipelineSinkDataSourceModel struct {
 	ID         types.String                                                `tfsdk:"id" path:"sink_id,computed"`
 	SinkID     types.String                                                `tfsdk:"sink_id" path:"sink_id,optional"`
-	AccountID  types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt  timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt timetypes.RFC3339                                           `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Name       types.String                                                `tfsdk:"name" json:"name,computed"`
@@ -32,18 +32,21 @@ type PipelineSinkDataSourceModel struct {
 }
 
 func (m *PipelineSinkDataSourceModel) toReadParams(_ context.Context) (params pipelines.SinkGetParams, diags diag.Diagnostics) {
-	params = pipelines.SinkGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pipelines.SinkGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *PipelineSinkDataSourceModel) toListParams(_ context.Context) (params pipelines.SinkListParams, diags diag.Diagnostics) {
-	params = pipelines.SinkListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = pipelines.SinkListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.Filter.PipelineID.ValueString())
 	}

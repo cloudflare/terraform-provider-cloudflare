@@ -2,12 +2,18 @@
 page_title: "cloudflare_schema_validation_schemas Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_schema_validation_schemas (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -31,6 +37,9 @@ Available values: "openapi_v3".
 - `name` (String) A human-readable name for the schema
 - `source` (String) The raw schema, e.g., the OpenAPI schema, either as JSON or YAML
 - `validation_enabled` (Boolean) An indicator if this schema is enabled
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

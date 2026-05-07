@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline (Data Source)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_pipeline" "example_pipeline" {
 
 ### Required
 
-- `account_id` (String) Specifies the public ID of the account.
 - `pipeline_id` (String) Specifies the public ID of the pipeline.
+
+### Optional
+
+- `account_id` (String) Specifies the public ID of the account.
 
 ### Read-Only
 

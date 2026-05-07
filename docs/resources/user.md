@@ -2,12 +2,16 @@
 page_title: "cloudflare_user Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  User Details ReadUser Details Write
 ---
 
 # cloudflare_user (Resource)
 
+Accepted Permissions
 
+- `User Details Read`
+- `User Details Write`
 
 ## Example Usage
 

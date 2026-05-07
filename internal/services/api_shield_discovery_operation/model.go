@@ -14,7 +14,7 @@ type APIShieldDiscoveryOperationResultEnvelope struct {
 type APIShieldDiscoveryOperationModel struct {
 	ID          types.String `tfsdk:"id" json:"-,computed"`
 	OperationID types.String `tfsdk:"operation_id" path:"operation_id,required"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	State       types.String `tfsdk:"state" json:"state,optional"`
 }
 

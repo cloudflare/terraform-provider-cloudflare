@@ -18,14 +18,16 @@ type ZeroTrustGatewayPacfilesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayPacfilesDataSourceModel struct {
-	AccountID types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                 `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustGatewayPacfilesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustGatewayPacfilesDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayPacfileListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayPacfileListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayPacfileListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

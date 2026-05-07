@@ -17,7 +17,7 @@ type ZeroTrustDEXRulesItemsListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDEXRulesDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Name      types.String                                                         `tfsdk:"name" query:"name,optional"`
 	SortBy    types.String                                                         `tfsdk:"sort_by" query:"sort_by,computed_optional"`
 	SortOrder types.String                                                         `tfsdk:"sort_order" query:"sort_order,computed_optional"`
@@ -26,10 +26,11 @@ type ZeroTrustDEXRulesDataSourceModel struct {
 }
 
 func (m *ZeroTrustDEXRulesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DEXRuleListParams, diags diag.Diagnostics) {
-	params = zero_trust.DEXRuleListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.DEXRuleListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}

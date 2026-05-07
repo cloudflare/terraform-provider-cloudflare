@@ -18,7 +18,7 @@ type SpectrumApplicationsResultListDataSourceEnvelope struct {
 }
 
 type SpectrumApplicationsDataSourceModel struct {
-	ZoneID    types.String                                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                                                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	Direction types.String                                                            `tfsdk:"direction" query:"direction,computed_optional"`
 	Order     types.String                                                            `tfsdk:"order" query:"order,computed_optional"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
@@ -26,10 +26,11 @@ type SpectrumApplicationsDataSourceModel struct {
 }
 
 func (m *SpectrumApplicationsDataSourceModel) toListParams(_ context.Context) (params spectrum.AppListParams, diags diag.Diagnostics) {
-	params = spectrum.AppListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = spectrum.AppListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(spectrum.AppListParamsDirection(m.Direction.ValueString()))
 	}

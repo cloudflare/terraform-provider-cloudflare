@@ -20,7 +20,7 @@ type ZeroTrustDNSLocationResultDataSourceEnvelope struct {
 type ZeroTrustDNSLocationDataSourceModel struct {
 	ID                        types.String                                                              `tfsdk:"id" path:"location_id,computed"`
 	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,required"`
-	AccountID                 types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                 types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ClientDefault             types.Bool                                                                `tfsdk:"client_default" json:"client_default,computed"`
 	CreatedAt                 timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DNSDestinationIPsID       types.String                                                              `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
@@ -37,8 +37,10 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 }
 
 func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayLocationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLocationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayLocationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

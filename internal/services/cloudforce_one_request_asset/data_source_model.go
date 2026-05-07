@@ -19,8 +19,8 @@ type CloudforceOneRequestAssetResultDataSourceEnvelope struct {
 type CloudforceOneRequestAssetDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" path:"asset_id,computed"`
 	AssetID     types.String      `tfsdk:"asset_id" path:"asset_id,required"`
-	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
 	RequestID   types.String      `tfsdk:"request_id" path:"request_id,required"`
+	AccountID   types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Created     timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description types.String      `tfsdk:"description" json:"description,computed"`
 	FileType    types.String      `tfsdk:"file_type" json:"file_type,computed"`
@@ -28,8 +28,10 @@ type CloudforceOneRequestAssetDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestAssetDataSourceModel) toReadParams(_ context.Context) (params cloudforce_one.RequestAssetGetParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestAssetGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = cloudforce_one.RequestAssetGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -2,12 +2,17 @@
 page_title: "cloudflare_account_member Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteSCIM Provisioning
 ---
 
 # cloudflare_account_member (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `SCIM Provisioning`
 
 ## Example Usage
 
@@ -25,11 +30,11 @@ resource "cloudflare_account_member" "example_account_member" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `email` (String) The contact email address of the user.
 
 ### Optional
 
+- `account_id` (String) Account identifier tag.
 - `policies` (Attributes Set) Array of policies associated with this member. (see [below for nested schema](#nestedatt--policies))
 - `roles` (Set of String) Set of roles associated with this member.
 - `status` (String) Status of the member invitation. If not provided during creation, defaults to 'pending'.

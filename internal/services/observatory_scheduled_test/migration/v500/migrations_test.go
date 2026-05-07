@@ -31,7 +31,7 @@ var (
 // Migration Test Configuration
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.5
+// - Last stable v4 release: default 4.52.7
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 
 // Embed migration test configuration files
@@ -126,7 +126,7 @@ func getLastV4Version() string {
 	if v := os.Getenv("LAST_V4_VERSION"); v != "" {
 		return v
 	}
-	return "4.52.5" // Default last v4 release
+	return "4.52.7" // Default last v4 release
 }
 
 func normalizeObservatoryURL(input string) string {

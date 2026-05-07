@@ -2,12 +2,16 @@
 page_title: "cloudflare_load_balancer Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Load Balancers ReadLoad Balancers Write
 ---
 
 # cloudflare_load_balancer (Resource)
 
+Accepted Permissions
 
+- `Load Balancers Read`
+- `Load Balancers Write`
 
 ## Example Usage
 
@@ -126,7 +130,6 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `name` (String) The DNS hostname to associate with your Load Balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the Load Balancer will take precedence and the DNS record will not be used.
-- `zone_id` (String)
 
 ### Optional
 
@@ -159,6 +162,7 @@ Available values: "none", "cookie", "ip_cookie", "header".
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
 Available values: "off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", "".
 - `ttl` (Number) Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.
+- `zone_id` (String)
 
 ### Read-Only
 

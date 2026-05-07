@@ -18,14 +18,16 @@ type StreamWatermarksResultListDataSourceEnvelope struct {
 }
 
 type StreamWatermarksDataSourceModel struct {
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[StreamWatermarksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *StreamWatermarksDataSourceModel) toListParams(_ context.Context) (params stream.WatermarkListParams, diags diag.Diagnostics) {
-	params = stream.WatermarkListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = stream.WatermarkListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

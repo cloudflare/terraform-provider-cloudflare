@@ -148,7 +148,7 @@ func (r *PipelineResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	err := r.client.Pipelines.DeleteV1(
+	_, err := r.client.Pipelines.DeleteV1(
 		ctx,
 		data.ID.ValueString(),
 		pipelines.PipelineDeleteV1Params{

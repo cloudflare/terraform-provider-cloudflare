@@ -14,8 +14,8 @@ type CloudforceOneRequestMessageResultEnvelope struct {
 
 type CloudforceOneRequestMessageModel struct {
 	ID                types.Int64       `tfsdk:"id" json:"id,computed"`
-	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
 	RequestID         types.String      `tfsdk:"request_id" path:"request_id,required"`
+	AccountID         types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Content           types.String      `tfsdk:"content" json:"content,optional"`
 	Author            types.String      `tfsdk:"author" json:"author,computed"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`

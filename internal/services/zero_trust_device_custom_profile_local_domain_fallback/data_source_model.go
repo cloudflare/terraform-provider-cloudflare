@@ -19,15 +19,17 @@ type ZeroTrustDeviceCustomProfileLocalDomainFallbackResultDataSourceEnvelope str
 type ZeroTrustDeviceCustomProfileLocalDomainFallbackDataSourceModel struct {
 	ID          types.String                   `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID    types.String                   `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID   types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	Description types.String                   `tfsdk:"description" json:"description,computed"`
 	Suffix      types.String                   `tfsdk:"suffix" json:"suffix,computed"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`
 }
 
 func (m *ZeroTrustDeviceCustomProfileLocalDomainFallbackDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyCustomFallbackDomainGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePolicyCustomFallbackDomainGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePolicyCustomFallbackDomainGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

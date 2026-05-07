@@ -20,7 +20,7 @@ type ZoneLockdownResultDataSourceEnvelope struct {
 type ZoneLockdownDataSourceModel struct {
 	ID             types.String                                                            `tfsdk:"id" path:"lock_downs_id,computed"`
 	LockDownsID    types.String                                                            `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`
-	ZoneID         types.String                                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID         types.String                                                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn      timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                                                            `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -31,8 +31,10 @@ type ZoneLockdownDataSourceModel struct {
 }
 
 func (m *ZoneLockdownDataSourceModel) toReadParams(_ context.Context) (params firewall.LockdownGetParams, diags diag.Diagnostics) {
-	params = firewall.LockdownGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = firewall.LockdownGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -44,10 +46,11 @@ func (m *ZoneLockdownDataSourceModel) toListParams(_ context.Context) (params fi
 	mFilterModifiedOn, errs := m.Filter.ModifiedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = firewall.LockdownListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = firewall.LockdownListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.CreatedOn.IsNull() {
 		params.CreatedOn = cloudflare.F(mFilterCreatedOn)
 	}

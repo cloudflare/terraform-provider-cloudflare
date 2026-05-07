@@ -16,15 +16,17 @@ type MTLSCertificateAssociationsResultDataSourceEnvelope struct {
 }
 
 type MTLSCertificateAssociationsDataSourceModel struct {
-	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
 	MTLSCertificateID types.String `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id,required"`
+	AccountID         types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Service           types.String `tfsdk:"service" json:"service,computed"`
 	Status            types.String `tfsdk:"status" json:"status,computed"`
 }
 
 func (m *MTLSCertificateAssociationsDataSourceModel) toReadParams(_ context.Context) (params mtls_certificates.AssociationGetParams, diags diag.Diagnostics) {
-	params = mtls_certificates.AssociationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = mtls_certificates.AssociationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

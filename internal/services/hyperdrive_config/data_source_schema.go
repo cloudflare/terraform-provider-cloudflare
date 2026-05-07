@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -18,6 +19,12 @@ var _ datasource.DataSourceWithConfigValidators = (*HyperdriveConfigDataSource)(
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Hyperdrive Read",
+				"Hyperdrive Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",
@@ -29,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "Defines the creation time of the Hyperdrive configuration.",
@@ -71,8 +78,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"mtls": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigMTLSDataSourceModel](ctx),
+				Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[HyperdriveConfigMTLSDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ca_certificate_id": schema.StringAttribute{
 						Description: "Define CA certificate ID obtained after uploading CA cert.",
@@ -132,6 +140,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.",
 						Computed:    true,
 						Sensitive:   true,
+					},
+					"service_id": schema.StringAttribute{
+						Description: "The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.",
+						Computed:    true,
 					},
 				},
 			},

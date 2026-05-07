@@ -29,8 +29,10 @@ type AccountDataSourceModel struct {
 }
 
 func (m *AccountDataSourceModel) toReadParams(_ context.Context) (params accounts.AccountGetParams, diags diag.Diagnostics) {
-	params = accounts.AccountGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = accounts.AccountGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

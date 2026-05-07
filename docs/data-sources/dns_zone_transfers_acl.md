@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_zone_transfers_acl Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings Write
 ---
 
 # cloudflare_dns_zone_transfers_acl (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_dns_zone_transfers_acl" "example_dns_zone_transfers_acl" {
 
 ### Required
 
-- `account_id` (String)
 - `acl_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

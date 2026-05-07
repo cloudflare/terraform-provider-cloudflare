@@ -17,13 +17,15 @@ type WaitingRoomSettingsResultDataSourceEnvelope struct {
 
 type WaitingRoomSettingsDataSourceModel struct {
 	ID                        types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                    types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass,computed"`
 }
 
 func (m *WaitingRoomSettingsDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.SettingGetParams, diags diag.Diagnostics) {
-	params = waiting_rooms.SettingGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = waiting_rooms.SettingGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

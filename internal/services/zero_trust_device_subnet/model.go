@@ -14,7 +14,7 @@ type ZeroTrustDeviceSubnetResultEnvelope struct {
 
 type ZeroTrustDeviceSubnetModel struct {
 	ID               types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Name             types.String      `tfsdk:"name" json:"name,required"`
 	Network          types.String      `tfsdk:"network" json:"network,required"`
 	Comment          types.String      `tfsdk:"comment" json:"comment,computed_optional"`

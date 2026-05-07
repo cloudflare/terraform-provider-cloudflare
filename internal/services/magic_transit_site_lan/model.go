@@ -13,8 +13,8 @@ type MagicTransitSiteLANResultEnvelope struct {
 
 type MagicTransitSiteLANModel struct {
 	ID               types.String                              `tfsdk:"id" json:"id,computed"`
-	AccountID        types.String                              `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                              `tfsdk:"site_id" path:"site_id,required"`
+	AccountID        types.String                              `tfsdk:"account_id" path:"account_id,optional"`
 	HaLink           types.Bool                                `tfsdk:"ha_link" json:"ha_link,optional"`
 	BondID           types.Int64                               `tfsdk:"bond_id" json:"bond_id,optional"`
 	IsBreakout       types.Bool                                `tfsdk:"is_breakout" json:"is_breakout,optional"`

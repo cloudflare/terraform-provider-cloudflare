@@ -41,13 +41,13 @@ resource "cloudflare_url_normalization_settings" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("cloudflare")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scope"), knownvalue.StringExact("incoming")),
@@ -82,13 +82,13 @@ resource "cloudflare_url_normalization_settings" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("rfc3986")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scope"), knownvalue.StringExact("both")),
@@ -123,13 +123,13 @@ resource "cloudflare_url_normalization_settings" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 		}, // Step 2: Run migration and verify state
-			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithPlan(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("cloudflare")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scope"), knownvalue.StringExact("none")),

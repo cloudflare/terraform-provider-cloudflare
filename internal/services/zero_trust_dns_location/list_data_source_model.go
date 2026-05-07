@@ -18,14 +18,16 @@ type ZeroTrustDNSLocationsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDNSLocationsDataSourceModel struct {
-	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDNSLocationsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLocationListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.GatewayLocationListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -14,7 +14,7 @@ type ZeroTrustListResultEnvelope struct {
 
 type ZeroTrustListModel struct {
 	ID          types.String                `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                `tfsdk:"account_id" path:"account_id,optional"`
 	Type        types.String                `tfsdk:"type" json:"type,required"`
 	Name        types.String                `tfsdk:"name" json:"name,required"`
 	Items       *[]*ZeroTrustListItemsModel `tfsdk:"items" json:"items,optional"`

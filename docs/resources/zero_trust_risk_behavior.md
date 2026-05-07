@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_risk_behavior Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_risk_behavior (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -28,8 +32,11 @@ resource "cloudflare_zero_trust_risk_behavior" "example_zero_trust_risk_behavior
 
 ### Required
 
-- `account_id` (String)
 - `behaviors` (Attributes Map) (see [below for nested schema](#nestedatt--behaviors))
+
+### Optional
+
+- `account_id` (String)
 
 <a id="nestedatt--behaviors"></a>
 ### Nested Schema for `behaviors`

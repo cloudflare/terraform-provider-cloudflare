@@ -19,14 +19,16 @@ type ZeroTrustDLPEntriesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPEntriesDataSourceModel struct {
-	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDLPEntriesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDLPEntriesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPEntryListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DLPEntryListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

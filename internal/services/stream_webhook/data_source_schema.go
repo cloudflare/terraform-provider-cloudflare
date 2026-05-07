@@ -5,6 +5,8 @@ package stream_webhook
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -13,10 +15,30 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamWebhookDataSource)(nil
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Required:    true,
+				Optional:    true,
+			},
+			"modified": schema.StringAttribute{
+				Description: "The date and time the webhook was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"notification_url": schema.StringAttribute{
+				Description: "The URL where webhooks will be sent.",
+				Computed:    true,
+			},
+			"secret": schema.StringAttribute{
+				Description: "The secret used to verify webhook signatures.",
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

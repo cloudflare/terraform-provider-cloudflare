@@ -64,6 +64,7 @@ func (r *WaitingRoomSettingsResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *WaitingRoomSettingsResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -153,6 +155,7 @@ func (r *WaitingRoomSettingsResource) Read(ctx context.Context, req resource.Rea
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	res := new(http.Response)
 	env := WaitingRoomSettingsResultEnvelope{*data}

@@ -18,14 +18,16 @@ type AddressMapsResultListDataSourceEnvelope struct {
 }
 
 type AddressMapsDataSourceModel struct {
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AddressMapsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AddressMapsDataSourceModel) toListParams(_ context.Context) (params addressing.AddressMapListParams, diags diag.Diagnostics) {
-	params = addressing.AddressMapListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = addressing.AddressMapListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

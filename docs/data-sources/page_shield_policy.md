@@ -2,12 +2,20 @@
 page_title: "cloudflare_page_shield_policy Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Domain Page ShieldDomain Page Shield ReadPage ShieldPage Shield ReadZone Settings ReadZone Settings Write
 ---
 
 # cloudflare_page_shield_policy (Data Source)
 
+Accepted Permissions
 
+- `Domain Page Shield`
+- `Domain Page Shield Read`
+- `Page Shield`
+- `Page Shield Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 
@@ -24,6 +32,9 @@ data "cloudflare_page_shield_policy" "example_page_shield_policy" {
 ### Required
 
 - `policy_id` (String) Identifier
+
+### Optional
+
 - `zone_id` (String) Identifier
 
 ### Read-Only

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_dlp_dataset Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dlp_dataset (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -27,11 +31,11 @@ resource "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `case_sensitive` (Boolean) Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if `secret` is true or undefined

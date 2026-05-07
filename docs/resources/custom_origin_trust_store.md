@@ -2,12 +2,16 @@
 page_title: "cloudflare_custom_origin_trust_store Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_custom_origin_trust_store (Resource)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -29,6 +33,9 @@ resource "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_sto
 ### Required
 
 - `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

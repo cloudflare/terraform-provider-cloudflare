@@ -20,7 +20,7 @@ type QueueResultDataSourceEnvelope struct {
 type QueueDataSourceModel struct {
 	ID                  types.String                                                `tfsdk:"id" path:"queue_id,computed"`
 	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,required"`
-	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String                                                `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -32,8 +32,10 @@ type QueueDataSourceModel struct {
 }
 
 func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.QueueGetParams, diags diag.Diagnostics) {
-	params = queues.QueueGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = queues.QueueGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

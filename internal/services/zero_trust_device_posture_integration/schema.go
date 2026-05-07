@@ -5,6 +5,7 @@ package zero_trust_device_posture_integration
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -18,6 +19,11 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDevicePostureIntegratio
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Zero Trust Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",
@@ -25,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"interval": schema.StringAttribute{

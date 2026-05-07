@@ -17,7 +17,7 @@ type ZoneDNSSettingsResultDataSourceEnvelope struct {
 }
 
 type ZoneDNSSettingsDataSourceModel struct {
-	ZoneID             types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID             types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	FlattenAllCNAMEs   types.Bool                                                          `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,computed"`
 	FoundationDNS      types.Bool                                                          `tfsdk:"foundation_dns" json:"foundation_dns,computed"`
 	MultiProvider      types.Bool                                                          `tfsdk:"multi_provider" json:"multi_provider,computed"`
@@ -30,8 +30,10 @@ type ZoneDNSSettingsDataSourceModel struct {
 }
 
 func (m *ZoneDNSSettingsDataSourceModel) toReadParams(_ context.Context) (params dns.SettingZoneGetParams, diags diag.Diagnostics) {
-	params = dns.SettingZoneGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = dns.SettingZoneGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

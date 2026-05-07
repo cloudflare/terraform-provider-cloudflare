@@ -2,12 +2,15 @@
 page_title: "cloudflare_cloudforce_one_request_message Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_request_message (Data Source)
 
+Accepted Permissions
 
+- `Cloudforce One Write`
 
 ## Example Usage
 
@@ -29,13 +32,13 @@ data "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_request
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `page` (Number) Page number of results.
 - `per_page` (Number) Number of results per page.
 - `request_id` (String) UUID.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `after` (String) Retrieve mes  ges created after this time.
 - `before` (String) Retrieve messages created before this time.
 - `sort_by` (String) Field to sort results by.

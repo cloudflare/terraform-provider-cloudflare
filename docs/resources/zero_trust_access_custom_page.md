@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_custom_page Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Custom Pages ReadAccess: Custom Pages Write
 ---
 
 # cloudflare_zero_trust_access_custom_page (Resource)
 
+Accepted Permissions
 
+- `Access: Custom Pages Read`
+- `Access: Custom Pages Write`
 
 ## Example Usage
 
@@ -25,11 +29,14 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
 Available values: "identity_denied", "forbidden".
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

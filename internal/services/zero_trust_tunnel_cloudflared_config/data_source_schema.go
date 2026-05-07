@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,14 +19,24 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredCo
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Cloudflare One Connector: cloudflared Read",
+				"Cloudflare One Connector: cloudflared Write",
+				"Cloudflare One Connectors Read",
+				"Cloudflare One Connectors Write",
+				"Cloudflare Tunnel Read",
+				"Cloudflare Tunnel Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

@@ -64,6 +64,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) Create(ctx context.Context, r
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) Update(ctx context.Context, r
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -153,6 +155,7 @@ func (r *AuthenticatedOriginPullsSettingsResource) Read(ctx context.Context, req
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsSettingsResultEnvelope{*data}

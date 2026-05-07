@@ -19,8 +19,8 @@ type PagesDomainResultDataSourceEnvelope struct {
 type PagesDomainDataSourceModel struct {
 	ID                   types.String                                                         `tfsdk:"id" path:"domain_name,computed"`
 	DomainName           types.String                                                         `tfsdk:"domain_name" path:"domain_name,required"`
-	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	ProjectName          types.String                                                         `tfsdk:"project_name" path:"project_name,required"`
+	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	CertificateAuthority types.String                                                         `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CreatedOn            types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	DomainID             types.String                                                         `tfsdk:"domain_id" json:"domain_id,computed"`
@@ -32,8 +32,10 @@ type PagesDomainDataSourceModel struct {
 }
 
 func (m *PagesDomainDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectDomainGetParams, diags diag.Diagnostics) {
-	params = pages.ProjectDomainGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pages.ProjectDomainGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

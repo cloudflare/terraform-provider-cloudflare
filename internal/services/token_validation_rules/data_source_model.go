@@ -20,7 +20,7 @@ type TokenValidationRulesResultDataSourceEnvelope struct {
 type TokenValidationRulesDataSourceModel struct {
 	ID          types.String                                                          `tfsdk:"id" path:"rule_id,computed"`
 	RuleID      types.String                                                          `tfsdk:"rule_id" path:"rule_id,optional"`
-	ZoneID      types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action      types.String                                                          `tfsdk:"action" json:"action,computed"`
 	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String                                                          `tfsdk:"description" json:"description,computed"`
@@ -33,8 +33,10 @@ type TokenValidationRulesDataSourceModel struct {
 }
 
 func (m *TokenValidationRulesDataSourceModel) toReadParams(_ context.Context) (params token_validation.RuleGetParams, diags diag.Diagnostics) {
-	params = token_validation.RuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = token_validation.RuleGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -49,10 +51,12 @@ func (m *TokenValidationRulesDataSourceModel) toListParams(_ context.Context) (p
 	}
 
 	params = token_validation.RuleListParams{
-		ZoneID:             cloudflare.F(m.ZoneID.ValueString()),
 		TokenConfiguration: cloudflare.F(mFilterTokenConfiguration),
 	}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

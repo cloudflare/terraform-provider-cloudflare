@@ -18,7 +18,7 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 }
 
 type AISearchInstancesDataSourceModel struct {
-	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Namespace        types.String                                                         `tfsdk:"namespace" query:"namespace,optional"`
 	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
 	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`
@@ -28,10 +28,11 @@ type AISearchInstancesDataSourceModel struct {
 }
 
 func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = ai_search.InstanceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Namespace.IsNull() {
 		params.Namespace = cloudflare.F(m.Namespace.ValueString())
 	}
@@ -84,6 +85,7 @@ type AISearchInstancesResultDataSourceModel struct {
 	Source               types.String                                                                   `tfsdk:"source" json:"source,computed"`
 	SourceParams         customfield.NestedObject[AISearchInstancesSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
 	Status               types.String                                                                   `tfsdk:"status" json:"status,computed"`
+	SyncInterval         types.Float64                                                                  `tfsdk:"sync_interval" json:"sync_interval,computed"`
 	TokenID              types.String                                                                   `tfsdk:"token_id" json:"token_id,computed"`
 	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
 }
@@ -103,8 +105,15 @@ type AISearchInstancesIndexingOptionsDataSourceModel struct {
 }
 
 type AISearchInstancesMetadataDataSourceModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,computed"`
+	CreatedFromAISearchWizard types.Bool                                                                        `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
+	SearchForAgents           customfield.NestedObject[AISearchInstancesMetadataSearchForAgentsDataSourceModel] `tfsdk:"search_for_agents" json:"search_for_agents,computed"`
+	WorkerDomain              types.String                                                                      `tfsdk:"worker_domain" json:"worker_domain,computed"`
+}
+
+type AISearchInstancesMetadataSearchForAgentsDataSourceModel struct {
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
+	ZoneID   types.String `tfsdk:"zone_id" json:"zone_id,computed"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed"`
 }
 
 type AISearchInstancesPublicEndpointParamsDataSourceModel struct {

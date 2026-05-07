@@ -48,7 +48,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
@@ -60,7 +60,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 				},
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("tf-test-%s", rnd))),
@@ -116,7 +116,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
@@ -129,7 +129,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 				},
 			},
 			// Step 2: Run migration
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("invisible")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region"), knownvalue.StringExact("world")),
@@ -180,7 +180,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
@@ -188,7 +188,7 @@ resource "cloudflare_turnstile_widget" "%[1]s" {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("non-interactive")),
 				},
 			},
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mode"), knownvalue.StringExact("non-interactive")),
 			}),

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -17,11 +18,13 @@ var _ datasource.DataSourceWithConfigValidators = (*R2CustomDomainDataSource)(ni
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers R2 Storage Read",
+				"Workers R2 Storage Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"bucket_name": schema.StringAttribute{
 				Description: "Name of the bucket.",
 				Required:    true,
@@ -29,6 +32,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"domain": schema.StringAttribute{
 				Description: "Name of the custom domain.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account ID.",
+				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether this bucket is publicly accessible at the specified custom domain.",

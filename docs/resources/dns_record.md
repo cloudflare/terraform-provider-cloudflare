@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_record Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS ReadDNS Write
 ---
 
 # cloudflare_dns_record (Resource)
 
+Accepted Permissions
 
+- `DNS Read`
+- `DNS Write`
 
 ## Example Usage
 
@@ -19,6 +23,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
   type = "A"
   comment = "Domain verification record"
   content = "198.51.100.4"
+  private_routing = true
   proxied = true
   settings = {
     ipv4_only = true
@@ -37,7 +42,6 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
 Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", "CAA", "CERT", "DNSKEY", "DS", "HTTPS", "LOC", "NAPTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "URI".
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -45,9 +49,11 @@ Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", 
 - `content` (String) A valid IPv4 address.
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
+- `private_routing` (Boolean) Enables private network routing to the origin.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--settings))
 - `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

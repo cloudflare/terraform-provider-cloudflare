@@ -2,12 +2,16 @@
 page_title: "cloudflare_snippet Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Snippets ReadSnippets Write
 ---
 
 # cloudflare_snippet (Resource)
 
+Accepted Permissions
 
+- `Snippets Read`
+- `Snippets Write`
 
 ## Example Usage
 
@@ -41,6 +45,9 @@ resource "cloudflare_snippet" "example_snippet" {
 - `files` (List of Object) The list of files belonging to the snippet. (see [below for nested schema](#nestedatt--files))
 - `metadata` (Attributes) Provide metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
 - `snippet_name` (String) Identify the snippet.
+
+### Optional
+
 - `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Read-Only

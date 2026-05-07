@@ -17,15 +17,17 @@ type PagesDomainsResultListDataSourceEnvelope struct {
 }
 
 type PagesDomainsDataSourceModel struct {
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name,required"`
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems    types.Int64                                                     `tfsdk:"max_items"`
 	Result      customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PagesDomainsDataSourceModel) toListParams(_ context.Context) (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
-	params = pages.ProjectDomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pages.ProjectDomainListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

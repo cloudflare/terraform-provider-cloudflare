@@ -2,12 +2,15 @@
 page_title: "cloudflare_r2_bucket Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers R2 Storage Write
 ---
 
 # cloudflare_r2_bucket (Resource)
 
+Accepted Permissions
 
+- `Workers R2 Storage Write`
 
 ## Example Usage
 
@@ -25,11 +28,11 @@ resource "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Required
 
-- `account_id` (String) Account ID.
 - `name` (String) Name of the bucket.
 
 ### Optional
 
+- `account_id` (String) Account ID.
 - `jurisdiction` (String) Jurisdiction where objects in this bucket are guaranteed to be stored.
 Available values: "default", "eu", "fedramp".
 - `location` (String) Location of the bucket.

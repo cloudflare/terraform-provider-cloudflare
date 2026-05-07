@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_live_input Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_live_input (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_stream_live_input" "example_stream_live_input" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `live_input_identifier` (String) A unique identifier for a live input.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

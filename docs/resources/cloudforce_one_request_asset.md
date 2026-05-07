@@ -2,12 +2,16 @@
 page_title: "cloudflare_cloudforce_one_request_asset Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One ReadCloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_request_asset (Resource)
 
+Accepted Permissions
 
+- `Cloudforce One Read`
+- `Cloudforce One Write`
 
 ## Example Usage
 
@@ -25,13 +29,13 @@ resource "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_reque
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `page` (Number) Page number of results.
 - `per_page` (Number) Number of results per page.
 - `request_id` (String) UUID.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `source` (String) Asset file to upload.
 
 ### Read-Only

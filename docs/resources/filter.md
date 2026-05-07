@@ -2,12 +2,16 @@
 page_title: "cloudflare_filter Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_filter (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ~> `cloudflare_filter` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still fully
@@ -35,7 +39,6 @@ resource "cloudflare_filter" "example_filter" {
 ### Required
 
 - `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
-- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
@@ -43,6 +46,7 @@ resource "cloudflare_filter" "example_filter" {
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 

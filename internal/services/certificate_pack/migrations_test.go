@@ -46,13 +46,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists with correct type (no rename)
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify required fields migrated correctly
@@ -102,13 +102,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify all fields migrated correctly
@@ -160,13 +160,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify wait_for_active_status is removed
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify standard fields migrated
@@ -212,13 +212,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify Google CA
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify certificate authority
@@ -264,13 +264,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify SSL.com CA
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify certificate authority
@@ -316,13 +316,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify HTTP validation
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify validation method
@@ -367,13 +367,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify Int to Int64 conversion
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify validity_days conversion (Int to Int64)
@@ -418,13 +418,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify Int to Int64 conversion
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify validity_days conversion (Int to Int64)
@@ -468,13 +468,13 @@ resource "cloudflare_certificate_pack" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: "4.52.7",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify Int to Int64 conversion
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
 				// Verify resource exists
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				// Verify validity_days conversion (Int to Int64) for max value

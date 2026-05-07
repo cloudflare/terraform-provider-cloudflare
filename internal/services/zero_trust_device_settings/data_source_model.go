@@ -16,7 +16,7 @@ type ZeroTrustDeviceSettingsResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceSettingsDataSourceModel struct {
-	AccountID                          types.String  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                          types.String  `tfsdk:"account_id" path:"account_id,optional"`
 	DisableForTime                     types.Float64 `tfsdk:"disable_for_time" json:"disable_for_time,computed"`
 	ExternalEmergencySignalEnabled     types.Bool    `tfsdk:"external_emergency_signal_enabled" json:"external_emergency_signal_enabled,computed"`
 	ExternalEmergencySignalFingerprint types.String  `tfsdk:"external_emergency_signal_fingerprint" json:"external_emergency_signal_fingerprint,computed"`
@@ -29,8 +29,10 @@ type ZeroTrustDeviceSettingsDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceSettingsDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceSettingGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceSettingGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DeviceSettingGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

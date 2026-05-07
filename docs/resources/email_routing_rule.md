@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_routing_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Email Routing Rules ReadEmail Routing Rules Write
 ---
 
 # cloudflare_email_routing_rule (Resource)
 
+Accepted Permissions
 
+- `Email Routing Rules Read`
+- `Email Routing Rules Write`
 
 ## Example Usage
 
@@ -36,13 +40,13 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `enabled` (Boolean) Routing rule status.
 - `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

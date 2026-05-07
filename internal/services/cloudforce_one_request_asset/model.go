@@ -14,8 +14,8 @@ type CloudforceOneRequestAssetResultEnvelope struct {
 
 type CloudforceOneRequestAssetModel struct {
 	ID          types.Int64       `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
 	RequestID   types.String      `tfsdk:"request_id" path:"request_id,required"`
+	AccountID   types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Page        types.Int64       `tfsdk:"page" json:"page,required,no_refresh"`
 	PerPage     types.Int64       `tfsdk:"per_page" json:"per_page,required,no_refresh"`
 	Source      types.String      `tfsdk:"source" json:"source,optional,no_refresh"`

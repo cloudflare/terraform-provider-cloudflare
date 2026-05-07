@@ -35,19 +35,18 @@ type SourceCloudflareLogpushJobModel struct {
 // SourceLogpushJobOutputOptionsModel represents the source output_options nested structure.
 // In the legacy provider, this is stored as a TypeList with MaxItems: 1, hence the array in parent model.
 type SourceLogpushJobOutputOptionsModel struct {
-	BatchPrefix      types.String    `tfsdk:"batch_prefix"`
-	BatchSuffix      types.String    `tfsdk:"batch_suffix"`
-	Cve20214428      types.Bool      `tfsdk:"cve20214428"` // Renamed to cve_2021_44228 in target
-	FieldDelimiter   types.String    `tfsdk:"field_delimiter"`
-	FieldNames       *[]types.String `tfsdk:"field_names"`
-	MergeSubrequests types.Bool      `tfsdk:"merge_subrequests"`
-	OutputType       types.String    `tfsdk:"output_type"`
-	RecordDelimiter  types.String    `tfsdk:"record_delimiter"`
-	RecordPrefix     types.String    `tfsdk:"record_prefix"`
-	RecordSuffix     types.String    `tfsdk:"record_suffix"`
-	RecordTemplate   types.String    `tfsdk:"record_template"`
-	SampleRate       types.Float64   `tfsdk:"sample_rate"`
-	TimestampFormat  types.String    `tfsdk:"timestamp_format"`
+	BatchPrefix     types.String    `tfsdk:"batch_prefix"`
+	BatchSuffix     types.String    `tfsdk:"batch_suffix"`
+	Cve20214428     types.Bool      `tfsdk:"cve20214428"` // Renamed to cve_2021_44228 in target
+	FieldDelimiter  types.String    `tfsdk:"field_delimiter"`
+	FieldNames      *[]types.String `tfsdk:"field_names"`
+	OutputType      types.String    `tfsdk:"output_type"`
+	RecordDelimiter types.String    `tfsdk:"record_delimiter"`
+	RecordPrefix    types.String    `tfsdk:"record_prefix"`
+	RecordSuffix    types.String    `tfsdk:"record_suffix"`
+	RecordTemplate  types.String    `tfsdk:"record_template"`
+	SampleRate      types.Float64   `tfsdk:"sample_rate"`
+	TimestampFormat types.String    `tfsdk:"timestamp_format"`
 }
 
 // ============================================================================

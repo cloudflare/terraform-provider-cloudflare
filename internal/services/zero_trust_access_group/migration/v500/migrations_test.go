@@ -43,6 +43,12 @@ var v4BooleanConfig string
 //go:embed testdata/v5_boolean.tf
 var v5BooleanConfig string
 
+//go:embed testdata/v4_service_token_boolean.tf
+var v4ServiceTokenBooleanConfig string
+
+//go:embed testdata/v5_service_token_boolean.tf
+var v5ServiceTokenBooleanConfig string
+
 //go:embed testdata/v4_multi_list.tf
 var v4MultiListConfig string
 
@@ -300,6 +306,63 @@ func TestMigrateZeroTrustAccessGroup_V4ToV5_Boolean(t *testing.T) {
 
 		// Use MigrationV2TestStepWithStateNormalization because the v5 provider's schema
 		// returns nil selector fields (like common_name) that need to be normalized away
+		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, version, sourceVer, targetVer, stateChecks)
+
+		resource.Test(t, resource.TestCase{
+			WorkingDir: tmpDir,
+			Steps: append([]resource.TestStep{
+				{
+					// Step 1: Create with v4 external provider
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							Source:            "cloudflare/cloudflare",
+							VersionConstraint: version,
+						},
+					},
+					Config: testConfig,
+				},
+			}, migrationSteps...),
+		})
+	})
+}
+
+// TestMigrateZeroTrustAccessGroup_V4ToV5_ServiceTokenBoolean tests the any_valid_service_token
+// boolean-to-object transformation that was reported as broken in APIX-741.
+//
+// This is the exact scenario that fails without the UpgradeState fix:
+//   - v4 state has any_valid_service_token = true (boolean) in include block
+//   - v5 expects any_valid_service_token = {} (SingleNestedAttribute, empty object)
+//   - Without the fix, UpgradeState fails with:
+//     "invalid JSON, expected "{", got false"
+func TestMigrateZeroTrustAccessGroup_V4ToV5_ServiceTokenBoolean(t *testing.T) {
+	t.Run("from_v4_latest", func(t *testing.T) {
+		// Test setup
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+		rnd := utils.GenerateRandomResourceName()
+		name := "tf-test-" + rnd
+		tmpDir := t.TempDir()
+		testConfig := fmt.Sprintf(v4ServiceTokenBooleanConfig, rnd, accountID, name)
+		version := acctest.GetLastV4Version()
+		sourceVer, targetVer := acctest.InferMigrationVersions(version)
+
+		stateChecks := []statecheck.StateCheck{
+			// CRITICAL: Verify any_valid_service_token boolean → empty object transformation
+			// This is the exact field that causes the APIX-741 error
+			statecheck.ExpectKnownValue(
+				"cloudflare_zero_trust_access_group."+rnd,
+				tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("any_valid_service_token"),
+				knownvalue.MapExact(map[string]knownvalue.Check{}),
+			),
+			// Verify exclude block email is preserved
+			statecheck.ExpectKnownValue(
+				"cloudflare_zero_trust_access_group."+rnd,
+				tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"),
+				knownvalue.StringExact("blocked@example.com"),
+			),
+		}
+
+		// Use MigrationV2TestStepWithStateNormalization because the v5 provider's schema
+		// returns nil selector fields that need to be normalized away
 		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, version, sourceVer, targetVer, stateChecks)
 
 		resource.Test(t, resource.TestCase{

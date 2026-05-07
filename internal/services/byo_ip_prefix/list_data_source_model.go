@@ -18,14 +18,16 @@ type ByoIPPrefixesResultListDataSourceEnvelope struct {
 }
 
 type ByoIPPrefixesDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ByoIPPrefixesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ByoIPPrefixesDataSourceModel) toListParams(_ context.Context) (params addressing.PrefixListParams, diags diag.Diagnostics) {
-	params = addressing.PrefixListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = addressing.PrefixListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

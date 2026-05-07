@@ -645,6 +645,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"mfa_config": schema.SingleNestedAttribute{
+				Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types.",
+				Optional:    true,
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), mfaConfigCompatibleAppTypes...),
+				},
+				Attributes: map[string]schema.Attribute{
+					"allowed_authenticators": schema.ListAttribute{
+						Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\".",
+						Optional:    true,
+						ElementType: types.StringType,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key"),
+							),
+						},
+					},
+					"mfa_disabled": schema.BoolAttribute{
+						Description: "Whether MFA is disabled for this application.",
+						Optional:    true,
+					},
+					"session_duration": schema.StringAttribute{
+						Description: "How often a user will be forced to re-authenticate with MFA.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.RegexMatches(durationRegex, `"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`),
+						},
+					},
+				},
+			},
 			"policies": schema.ListNestedAttribute{
 				Description: "The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application.",
 				Optional:    true,
@@ -998,6 +1028,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											ElementType: types.StringType,
 										},
+									},
+								},
+							},
+						},
+						"mfa_config": schema.SingleNestedAttribute{
+							Description: "Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications only `ssh_piv_key` is a supported authenticator; for other application types use `totp`, `biometrics`, or `security_key`.",
+							Optional:    true,
+							Validators: []validator.Object{
+								objectvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							},
+							Attributes: map[string]schema.Attribute{
+								"allowed_authenticators": schema.ListAttribute{
+									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"ssh_piv_key\".",
+									Optional:    true,
+									ElementType: types.StringType,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key", "ssh_piv_key"),
+										),
+									},
+								},
+								"mfa_disabled": schema.BoolAttribute{
+									Description: "Whether MFA is disabled for this policy.",
+									Optional:    true,
+								},
+								"session_duration": schema.StringAttribute{
+									Description: "How often a user will be forced to re-authenticate with MFA.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.RegexMatches(durationRegex, `"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`),
 									},
 								},
 							},

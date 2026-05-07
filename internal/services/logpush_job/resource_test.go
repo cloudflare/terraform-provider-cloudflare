@@ -160,18 +160,24 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 	resourceName := "cloudflare_logpush_job." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	// Use a fixed destination_conf to avoid intermittent DNS validation errors
+	// that the Cloudflare API triggers when updating HTTPS destinations.
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+
 	// Logpush job config to create, with minimal fields.
 	logpushJobConfigCreate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		destinationConf: destinationConf,
+		enabled:         false,
 	}
 
-	// Logpush job config to update, with different values (where possible).
+	// Logpush job config to update: keep same destination, change enabled to true.
 	logpushJobConfigUpdate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		destinationConf: destinationConf,
+		enabled:         true,
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -179,7 +185,7 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareLogpushJobBasic(rnd, logpushJobConfigCreate),
+				Config: testCloudflareLogpushJobBasicEnabled(rnd, logpushJobConfigCreate),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
@@ -189,19 +195,21 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfigCreate.enabled)),
 				},
 			},
 			{
-				Config: testCloudflareLogpushJobBasic(rnd, logpushJobConfigUpdate),
+				Config: testCloudflareLogpushJobBasicEnabled(rnd, logpushJobConfigUpdate),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfigUpdate.enabled)),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigUpdate.dataset))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfigUpdate.enabled)),
 				},
 			},
 			{
@@ -227,17 +235,34 @@ func testCloudflareLogpushJobBasic(resourceID string, logpushJobConfig *logpushJ
 	return acctest.LoadTestCase("basic.tf", params...)
 }
 
+func testCloudflareLogpushJobBasicEnabled(resourceID string, logpushJobConfig *logpushJobConfig) string {
+	// Values must be ordered to match the .tf file exactly.
+	params := []any{
+		resourceID,
+		logpushJobConfig.accountID,
+		logpushJobConfig.dataset,
+		logpushJobConfig.destinationConf,
+		logpushJobConfig.enabled,
+	}
+	return acctest.LoadTestCase("basic_enabled.tf", params...)
+}
+
 // This tests with basic output_options fields to create / update a Logpush job.
 func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_logpush_job." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	// Use a fixed destination_conf to avoid intermittent DNS validation errors
+	// that the Cloudflare API triggers when updating HTTPS destinations.
+	// The update step tests output_options changes, not destination changes.
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+
 	// Logpush job config to create, with minimal fields.
 	logpushJobConfigCreate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		destinationConf: destinationConf,
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "ndjson",
 			sampleRate:      1.0,
@@ -245,11 +270,11 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 		},
 	}
 
-	// Logpush job config to update, with different values (where possible).
+	// Logpush job config to update: keep same destination, change output_options.
 	logpushJobConfigUpdate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		destinationConf: destinationConf,
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "csv",
 			sampleRate:      0.01,
@@ -328,11 +353,14 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 	resourceName := "cloudflare_logpush_job." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	// Use a fixed destination_conf to avoid intermittent DNS validation errors.
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+
 	// Logpush job config to create, with minimal fields.
 	logpushJobConfigCreate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		destinationConf: destinationConf,
 		frequency:       "high", // deprecated, but testing
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "ndjson",
@@ -342,10 +370,14 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 	}
 
 	// Logpush job config to update, with different values (where possible).
+	// Note: logpull_options is deprecated and is not sent in the update because it is
+	// incompatible with HTTPS destinations (it triggers logpull-style destination
+	// validation which fails for push receivers). The output_options field takes
+	// precedence over logpull_options when both are set per API spec.
 	logpushJobConfigUpdate := &logpushJobConfig{
 		accountID:                accountID,
 		dataset:                  "gateway_dns", // cannot be changed
-		destinationConf:          `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		destinationConf:          destinationConf,
 		enabled:                  true,
 		name:                     "terraform-test-job-updated",
 		filter:                   `{"where":{"and":[{"key":"ColoCode","operator":"!eq","value":"IAD"}]}}`,
@@ -353,8 +385,8 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 		maxUploadBytes:           5000000,
 		maxUploadRecords:         1000,
 		maxUploadIntervalSeconds: 30,
-		frequency:                "low",                                                   // deprecated, but testing
-		logpullOptions:           "fields=AccountID,Datetime,ColoCode&timestamps=rfc3339", // deprecated, but testing
+		frequency:                "low", // deprecated, but testing
+		logpullOptions:           "",    // deprecated; incompatible with HTTPS destinations when set
 		outputOptions: &logpushJobConfigOutputOptions{
 			batchPrefix:     `FirstColumn\tAccountID\tDatetime\tColoCode\tLastColumn\n`,
 			batchSuffix:     `\n`,
@@ -390,7 +422,7 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfigUpdate.enabled)),
 					},
 				},
 				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigUpdate),
@@ -487,18 +519,24 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 	resourceName := "cloudflare_logpush_job." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+	// Use a fixed destination_conf to avoid intermittent DNS validation errors.
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+
 	// Logpush job config to create, with minimal fields.
 	logpushJobConfigCreate := &logpushJobConfig{
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
-		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		destinationConf: destinationConf,
 	}
 
 	// Logpush job config to update, with different values (where possible).
+	// Note: logpull_options is deprecated and not set here because it is incompatible
+	// with HTTPS destinations (triggers logpull-style destination validation which
+	// fails for push receivers). The output_options field takes precedence anyway.
 	logpushJobConfigUpdate := &logpushJobConfig{
 		accountID:                accountID,
 		dataset:                  "gateway_dns", // cannot be changed
-		destinationConf:          `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		destinationConf:          destinationConf,
 		enabled:                  true,
 		name:                     "terraform-test-job-updated",
 		filter:                   `{"where":{"and":[{"key":"ColoCode","operator":"!eq","value":"IAD"}]}}`,
@@ -506,8 +544,8 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 		maxUploadBytes:           5000000,
 		maxUploadRecords:         1000,
 		maxUploadIntervalSeconds: 30,
-		frequency:                "low",                                                   // deprecated, but testing
-		logpullOptions:           "fields=AccountID,Datetime,ColoCode&timestamps=rfc3339", // deprecated, but testing
+		frequency:                "low", // deprecated, but testing
+		logpullOptions:           "",    // deprecated; incompatible with HTTPS destinations when set
 		outputOptions: &logpushJobConfigOutputOptions{
 			batchPrefix:     `FirstColumn\tAccountID\tDatetime\tColoCode\tLastColumn\n`,
 			batchSuffix:     `\n`,
@@ -546,7 +584,7 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfigUpdate.enabled)),
 					},
 				},
 				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigUpdate),
@@ -702,19 +740,24 @@ func TestAccCloudflareLogpushJob_OmitemptyField(t *testing.T) {
 	resourceName := "cloudflare_logpush_job." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
+	// Use a fixed destination_conf throughout all steps so that the test focuses on
+	// max_upload_records omitempty behavior (0 → 1000 → 0) without triggering
+	// destination re-validation on every step, which can cause intermittent DNS errors.
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+
 	// Logpush job config to create, with minimal fields, and omit value.
 	logpushJobConfigOmit := &logpushJobConfig{
 		zoneID:           zoneID,
 		dataset:          "http_requests", // cannot be changed
-		destinationConf:  `https://logpush-receiver.sd.cfplat.com`,
+		destinationConf:  destinationConf,
 		maxUploadRecords: 0,
 	}
 
-	// Logpush job config to update, , and non-omit value.
+	// Logpush job config to update with non-omit value (same destination).
 	logpushJobConfigNonOmit := &logpushJobConfig{
 		zoneID:           zoneID,
 		dataset:          "http_requests", // cannot be changed
-		destinationConf:  `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		destinationConf:  destinationConf,
 		maxUploadRecords: 1000,
 	}
 

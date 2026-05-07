@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_route Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Routes ReadWorkers Routes Write
 ---
 
 # cloudflare_workers_route (Resource)
 
+Accepted Permissions
 
+- `Workers Routes Read`
+- `Workers Routes Write`
 
 ## Example Usage
 
@@ -25,11 +29,11 @@ resource "cloudflare_workers_route" "example_workers_route" {
 ### Required
 
 - `pattern` (String) Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `script` (String) Name of the script to run if the route matches.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

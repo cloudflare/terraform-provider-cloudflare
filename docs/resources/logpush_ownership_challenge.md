@@ -2,12 +2,15 @@
 page_title: "cloudflare_logpush_ownership_challenge Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Logs Write
 ---
 
 # cloudflare_logpush_ownership_challenge (Resource)
 
+Accepted Permissions
 
+- `Logs Write`
 
 ## Example Usage
 
@@ -23,7 +26,7 @@ resource "cloudflare_logpush_ownership_challenge" "example_logpush_ownership_cha
 
 ### Required
 
-- `destination_conf` (String) Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.
+- `destination_conf` (String, Sensitive) Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.
 
 ### Optional
 

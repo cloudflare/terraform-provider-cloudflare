@@ -2,12 +2,18 @@
 page_title: "cloudflare_queue_consumer Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Queues ReadQueues WriteWorkers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_queue_consumer (Resource)
 
+Accepted Permissions
 
+- `Queues Read`
+- `Queues Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -33,12 +39,12 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Required
 
-- `account_id` (String) A Resource identifier.
 - `queue_id` (String) A Resource identifier.
 - `type` (String) Available values: "worker", "http_pull".
 
 ### Optional
 
+- `account_id` (String) A Resource identifier.
 - `dead_letter_queue` (String)
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))

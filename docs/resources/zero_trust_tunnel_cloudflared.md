@@ -2,12 +2,20 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflared Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: cloudflared ReadCloudflare One Connector: cloudflared WriteCloudflare One Connectors ReadCloudflare One Connectors WriteCloudflare Tunnel ReadCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflared (Resource)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: cloudflared Read`
+- `Cloudflare One Connector: cloudflared Write`
+- `Cloudflare One Connectors Read`
+- `Cloudflare One Connectors Write`
+- `Cloudflare Tunnel Read`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 
@@ -25,11 +33,11 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "example_zero_trust_tunnel_c
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID
 - `name` (String) A user-friendly name for a tunnel.
 
 ### Optional
 
+- `account_id` (String) Cloudflare account ID
 - `config_src` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel on the Zero Trust dashboard.
 Available values: "local", "cloudflare".
 - `tunnel_secret` (String, Sensitive) Sets the password required to run a locally-managed tunnel. Must be at least 32 bytes and encoded as a base64 string.

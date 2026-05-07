@@ -64,6 +64,7 @@ func (r *ZoneCacheVariantsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -154,6 +156,7 @@ func (r *ZoneCacheVariantsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
+
 	res := new(http.Response)
 	env := ZoneCacheVariantsResultEnvelope{*data}
 	_, err := r.client.Cache.Variants.Get(
@@ -193,6 +196,7 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.Cache.Variants.Delete(
 		ctx,

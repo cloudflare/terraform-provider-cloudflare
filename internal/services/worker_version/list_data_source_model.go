@@ -19,40 +19,43 @@ type WorkerVersionsResultListDataSourceEnvelope struct {
 }
 
 type WorkerVersionsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID  types.String                                                      `tfsdk:"worker_id" path:"worker_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkerVersionsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkerVersionsDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerVersionListParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerVersionListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.BetaWorkerVersionListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 type WorkerVersionsResultDataSourceModel struct {
-	ID                 types.String                                                        `tfsdk:"id" json:"id,computed"`
-	CreatedOn          timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Number             types.Int64                                                         `tfsdk:"number" json:"number,computed"`
-	URLs               customfield.List[types.String]                                      `tfsdk:"urls" json:"urls,computed"`
-	Annotations        customfield.NestedObject[WorkerVersionsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
-	Assets             customfield.NestedObject[WorkerVersionsAssetsDataSourceModel]       `tfsdk:"assets" json:"assets,computed"`
-	Bindings           customfield.NestedObjectList[WorkerVersionsBindingsDataSourceModel] `tfsdk:"bindings" json:"bindings,computed"`
-	CompatibilityDate  types.String                                                        `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
-	CompatibilityFlags customfield.Set[types.String]                                       `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
-	Limits             customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]       `tfsdk:"limits" json:"limits,computed"`
-	MainModule         types.String                                                        `tfsdk:"main_module" json:"main_module,computed"`
+	ID                 types.String                                                         `tfsdk:"id" json:"id,computed"`
+	CreatedOn          timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Number             types.Int64                                                          `tfsdk:"number" json:"number,computed"`
+	URLs               customfield.List[types.String]                                       `tfsdk:"urls" json:"urls,computed"`
+	Annotations        customfield.NestedObject[WorkerVersionsAnnotationsDataSourceModel]   `tfsdk:"annotations" json:"annotations,computed"`
+	Assets             customfield.NestedObject[WorkerVersionsAssetsDataSourceModel]        `tfsdk:"assets" json:"assets,computed"`
+	Bindings           customfield.NestedObjectList[WorkerVersionsBindingsDataSourceModel]  `tfsdk:"bindings" json:"bindings,computed"`
+	CompatibilityDate  types.String                                                         `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
+	CompatibilityFlags customfield.Set[types.String]                                        `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
+	Containers         customfield.NestedObjectSet[WorkerVersionsContainersDataSourceModel] `tfsdk:"containers" json:"containers,computed"`
+	Limits             customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]        `tfsdk:"limits" json:"limits,computed"`
+	MainModule         types.String                                                         `tfsdk:"main_module" json:"main_module,computed"`
 	MainScriptBase64   types.String                                                        `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
-	MigrationTag       types.String                                                        `tfsdk:"migration_tag" json:"migration_tag,computed"`
-	Migrations         customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]   `tfsdk:"migrations" json:"migrations,computed"`
-	Modules            customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]   `tfsdk:"modules" json:"modules,computed"`
-	Placement          customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]    `tfsdk:"placement" json:"placement,computed"`
-	Source             types.String                                                        `tfsdk:"source" json:"source,computed"`
-	StartupTimeMs      types.Int64                                                         `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel         types.String                                                        `tfsdk:"usage_model" json:"usage_model,computed"`
+	MigrationTag       types.String                                                         `tfsdk:"migration_tag" json:"migration_tag,computed"`
+	Migrations         customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]    `tfsdk:"migrations" json:"migrations,computed"`
+	Modules            customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]    `tfsdk:"modules" json:"modules,computed"`
+	Placement          customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]     `tfsdk:"placement" json:"placement,computed"`
+	Source             types.String                                                         `tfsdk:"source" json:"source,computed"`
+	StartupTimeMs      types.Int64                                                          `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	UsageModel         types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed"`
 }
 
 type WorkerVersionsAnnotationsDataSourceModel struct {
@@ -78,6 +81,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	InstanceName                types.String                                                            `tfsdk:"instance_name" json:"instance_name,computed"`
 	Namespace                   types.String                                                            `tfsdk:"namespace" json:"namespace,computed"`
 	Dataset                     types.String                                                            `tfsdk:"dataset" json:"dataset,computed"`
+	DatabaseID                  types.String                                                            `tfsdk:"database_id" json:"database_id,computed"`
 	ID                          types.String                                                            `tfsdk:"id" json:"id,computed"`
 	Part                        types.String                                                            `tfsdk:"part" json:"part,computed"`
 	Outbound                    customfield.NestedObject[WorkerVersionsBindingsOutboundDataSourceModel] `tfsdk:"outbound" json:"outbound,computed"`
@@ -104,6 +108,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	IndexName                   types.String                                                            `tfsdk:"index_name" json:"index_name,computed"`
 	SecretName                  types.String                                                            `tfsdk:"secret_name" json:"secret_name,computed"`
 	StoreID                     types.String                                                            `tfsdk:"store_id" json:"store_id,computed"`
+	AppID                       types.String                                                            `tfsdk:"app_id" json:"app_id,computed"`
 	Algorithm                   jsontypes.Normalized                                                    `tfsdk:"algorithm" json:"algorithm,computed"`
 	Format                      types.String                                                            `tfsdk:"format" json:"format,computed"`
 	Usages                      customfield.Set[types.String]                                           `tfsdk:"usages" json:"usages,computed"`
@@ -135,8 +140,13 @@ type WorkerVersionsBindingsSimpleDataSourceModel struct {
 	Period types.Int64   `tfsdk:"period" json:"period,computed"`
 }
 
+type WorkerVersionsContainersDataSourceModel struct {
+	ClassName types.String `tfsdk:"class_name" json:"class_name,computed"`
+}
+
 type WorkerVersionsLimitsDataSourceModel struct {
-	CPUMs types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,computed"`
+	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,computed"`
+	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,computed"`
 }
 
 type WorkerVersionsMigrationsDataSourceModel struct {

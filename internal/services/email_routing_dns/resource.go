@@ -64,6 +64,7 @@ func (r *EmailRoutingDNSResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *EmailRoutingDNSResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -154,6 +156,7 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+
 	res := new(http.Response)
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
@@ -191,6 +194,7 @@ func (r *EmailRoutingDNSResource) Delete(ctx context.Context, req resource.Delet
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.EmailRouting.DNS.Delete(
 		ctx,

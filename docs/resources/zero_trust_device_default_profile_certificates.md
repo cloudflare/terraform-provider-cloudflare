@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_device_default_profile_certificates Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_zero_trust_device_default_profile_certificates (Resource)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -24,6 +28,9 @@ resource "cloudflare_zero_trust_device_default_profile_certificates" "example_ze
 ### Required
 
 - `enabled` (Boolean) The current status of the device policy certificate provisioning feature for WARP clients.
+
+### Optional
+
 - `zone_id` (String)
 
 ## Import

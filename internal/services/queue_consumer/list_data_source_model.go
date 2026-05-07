@@ -18,15 +18,17 @@ type QueueConsumersResultListDataSourceEnvelope struct {
 }
 
 type QueueConsumersDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	QueueID   types.String                                                      `tfsdk:"queue_id" path:"queue_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[QueueConsumersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *QueueConsumersDataSourceModel) toListParams(_ context.Context) (params queues.ConsumerListParams, diags diag.Diagnostics) {
-	params = queues.ConsumerListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = queues.ConsumerListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

@@ -14,7 +14,7 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                   `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	Decision                     types.String                                                   `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                   `tfsdk:"name" json:"name,required"`
 	ApprovalRequired             types.Bool                                                     `tfsdk:"approval_required" json:"approval_required,optional"`

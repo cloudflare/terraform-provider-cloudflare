@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -26,11 +27,16 @@ var _ resource.ResourceWithConfigValidators = (*StreamResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The account identifier tag.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{
@@ -54,6 +60,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"uid": schema.StringAttribute{
+				Description: "The unique identifier for the video. Can be used to verify the video being updated.",
+				Optional:    true,
+			},
 			"upload_expiry": schema.StringAttribute{
 				Description: "The date and time when the video upload URL is no longer valid for direct user uploads.",
 				Optional:    true,
@@ -63,6 +73,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.",
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"public_details": schema.SingleNestedAttribute{
+				Description: "Public details for the video including title, share link, channel link, and logo.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"channel_link": schema.StringAttribute{
+						Optional: true,
+					},
+					"logo": schema.StringAttribute{
+						Optional: true,
+					},
+					"share_link": schema.StringAttribute{
+						Optional: true,
+					},
+					"title": schema.StringAttribute{
+						Optional: true,
+					},
+				},
 			},
 			"meta": schema.StringAttribute{
 				Description: "A user modifiable key-value store used to reference other systems of record for managing videos.",
@@ -84,6 +112,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: float64default.StaticFloat64(0),
 			},
+			"clipped_from": schema.StringAttribute{
+				Description: "The unique identifier of the source video this video was clipped from.",
+				Computed:    true,
+			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the media item was created.",
 				Computed:    true,
@@ -95,6 +127,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"live_input": schema.StringAttribute{
 				Description: "The live input ID used to upload a video with Stream Live.",
+				Computed:    true,
+			},
+			"max_size_bytes": schema.Int64Attribute{
+				Description: "The maximum size in bytes for the video upload.",
 				Computed:    true,
 			},
 			"modified": schema.StringAttribute{
@@ -121,10 +157,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"thumbnail": schema.StringAttribute{
 				Description: "The media item's thumbnail URI. This field is omitted until encoding is complete.",
-				Computed:    true,
-			},
-			"uid": schema.StringAttribute{
-				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Computed:    true,
 			},
 			"uploaded": schema.StringAttribute{

@@ -14,7 +14,7 @@ type MagicTransitConnectorResultEnvelope struct {
 
 type MagicTransitConnectorModel struct {
 	ID                           types.String                      `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                      `tfsdk:"account_id" path:"account_id,optional"`
 	Device                       *MagicTransitConnectorDeviceModel `tfsdk:"device" json:"device,required"`
 	ProvisionLicense             types.Bool                        `tfsdk:"provision_license" json:"provision_license,optional,no_refresh"`
 	Activated                    types.Bool                        `tfsdk:"activated" json:"activated,computed_optional"`

@@ -146,7 +146,7 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "startup_time_ms"},
 			},
 		},
 	})
@@ -205,7 +205,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.2", "bindings.#", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "bindings.2", "bindings.#", "main_module", "startup_time_ms"},
 			},
 		},
 	})
@@ -316,7 +316,7 @@ Content-Type: application/json
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"content", "content_file", "content_sha256", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "content", "content_file", "content_sha256", "main_module", "startup_time_ms"},
 			},
 		},
 	})
@@ -391,7 +391,7 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"content_type", "has_modules", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "content_type", "has_modules", "main_module", "startup_time_ms"},
 			},
 		},
 	})
@@ -469,7 +469,7 @@ func TestAcc_WorkerScriptWithAssets(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"assets.%", "assets.directory", "assets.asset_manifest_sha256", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "assets.%", "assets.directory", "assets.asset_manifest_sha256", "startup_time_ms"},
 			},
 		},
 	})
@@ -502,7 +502,7 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "migrations", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "bindings.0.namespace_id", "has_modules", "main_module", "migrations", "startup_time_ms"},
 			},
 		},
 	})
@@ -897,7 +897,7 @@ func TestAccCloudflareWorkerScript_RatelimitBinding(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"annotations.workers_triggered_by", "main_module", "startup_time_ms"},
 			},
 		},
 	})

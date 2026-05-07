@@ -17,14 +17,16 @@ type DNSZoneTransfersPeersResultListDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersPeersDataSourceModel struct {
-	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[DNSZoneTransfersPeersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *DNSZoneTransfersPeersDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferPeerListParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferPeerListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = dns.ZoneTransferPeerListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

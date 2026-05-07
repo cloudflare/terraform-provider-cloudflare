@@ -2,12 +2,16 @@
 page_title: "cloudflare_rate_limit Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_rate_limit (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ~> `cloudflare_rate_limit` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still
@@ -57,6 +61,9 @@ resource "cloudflare_rate_limit" "example_rate_limit" {
 - `match` (Attributes) Determines which traffic the rate limit counts towards the threshold. (see [below for nested schema](#nestedatt--match))
 - `period` (Number) The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.
 - `threshold` (Number) The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

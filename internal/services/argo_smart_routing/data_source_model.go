@@ -18,15 +18,17 @@ type ArgoSmartRoutingResultDataSourceEnvelope struct {
 
 type ArgoSmartRoutingDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *ArgoSmartRoutingDataSourceModel) toReadParams(_ context.Context) (params argo.SmartRoutingGetParams, diags diag.Diagnostics) {
-	params = argo.SmartRoutingGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = argo.SmartRoutingGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

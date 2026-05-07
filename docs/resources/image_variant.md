@@ -2,12 +2,16 @@
 page_title: "cloudflare_image_variant Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Images ReadImages Write
 ---
 
 # cloudflare_image_variant (Resource)
 
+Accepted Permissions
 
+- `Images Read`
+- `Images Write`
 
 ## Example Usage
 
@@ -30,11 +34,11 @@ resource "cloudflare_image_variant" "example_image_variant" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `options` (Attributes) Allows you to define image resizing sizes for different use cases. (see [below for nested schema](#nestedatt--options))
 
 ### Optional
 
+- `account_id` (String) Account identifier tag.
 - `never_require_signed_urls` (Boolean) Indicates whether the variant can access an image without a signature, regardless of image access control.
 
 ### Read-Only

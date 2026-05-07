@@ -64,6 +64,7 @@ func (r *ArgoSmartRoutingResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *ArgoSmartRoutingResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -153,6 +155,7 @@ func (r *ArgoSmartRoutingResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	res := new(http.Response)
 	env := ArgoSmartRoutingResultEnvelope{*data}

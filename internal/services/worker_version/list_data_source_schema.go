@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -20,14 +21,21 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkerVersionsDataSource)(ni
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Workers Scripts Read",
+				"Workers Scripts Write",
+				"Workers Tail Read",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -67,11 +75,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[WorkerVersionsAnnotationsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"workers_message": schema.StringAttribute{
-									Description: "Human-readable message about the version.",
+									Description: "Human-readable message about the version. Truncated to 1000 bytes if longer.",
 									Computed:    true,
 								},
 								"workers_tag": schema.StringAttribute{
-									Description: "User-provided identifier for the version.",
+									Description: "User-provided identifier for the version. Maximum 100 bytes.",
 									Computed:    true,
 								},
 								"workers_triggered_by": schema.StringAttribute{
@@ -139,7 +147,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"type": schema.StringAttribute{
-										Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+										Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -172,6 +180,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												"vectorize",
 												"version_metadata",
 												"secrets_store_secret",
+												"flagship",
 												"secret_key",
 												"workflow",
 												"wasm_module",
@@ -190,6 +199,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"dataset": schema.StringAttribute{
 										Description: "The name of the dataset to bind to.",
+										Computed:    true,
+									},
+									"database_id": schema.StringAttribute{
+										Description: "Identifier of the D1 database to bind to.",
 										Computed:    true,
 									},
 									"id": schema.StringAttribute{
@@ -355,6 +368,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "ID of the store containing the secret.",
 										Computed:    true,
 									},
+									"app_id": schema.StringAttribute{
+										Description: "ID of the Flagship app to bind to for feature flag evaluation.",
+										Computed:    true,
+									},
 									"algorithm": schema.StringAttribute{
 										Description: "Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
 										Computed:    true,
@@ -418,6 +435,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+						"containers": schema.SetNestedAttribute{
+							Description: "List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectSetType[WorkerVersionsContainersDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"class_name": schema.StringAttribute{
+										Description: "Select which Durable Object class should get this container attached.",
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"limits": schema.SingleNestedAttribute{
 							Description: "Resource limits enforced at runtime.",
 							Computed:    true,
@@ -425,6 +455,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"cpu_ms": schema.Int64Attribute{
 									Description: "CPU time limit in milliseconds.",
+									Computed:    true,
+								},
+								"subrequests": schema.Int64Attribute{
+									Description: "Subrequest limit per request.",
 									Computed:    true,
 								},
 							},

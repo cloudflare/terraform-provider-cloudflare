@@ -4,6 +4,12 @@ inputs:
   stainless-api-key:
     required: false
     description: the value of the STAINLESS_API_KEY secret
+  go-version:
+    required: false
+    description: version or version range of Go to use
+  cache-dependency-path:
+    required: false
+    description: path to dependency files for caching
 runs:
   using: composite
   steps:
@@ -22,7 +28,9 @@ runs:
     - name: Setup go
       uses: actions/setup-go@v5
       with:
+        go-version: ${{ inputs.go-version }}
         go-version-file: ./go.mod
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
 
     - name: Bootstrap
       shell: bash

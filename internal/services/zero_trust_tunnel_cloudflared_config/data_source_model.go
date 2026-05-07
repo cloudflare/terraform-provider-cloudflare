@@ -18,8 +18,8 @@ type ZeroTrustTunnelCloudflaredConfigResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
-	AccountID          types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
 	TunnelID           types.String                                                                    `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt          timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source             types.String                                                                    `tfsdk:"source" json:"source,computed"`
 	Version            types.Int64                                                                     `tfsdk:"version" json:"version,computed"`
@@ -27,8 +27,10 @@ type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredConfigurationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelCloudflaredConfigurationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.TunnelCloudflaredConfigurationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

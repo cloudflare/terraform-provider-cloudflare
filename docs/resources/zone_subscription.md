@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_subscription Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Billing ReadBilling Write
 ---
 
 # cloudflare_zone_subscription (Resource)
 
+Accepted Permissions
 
+- `Billing Read`
+- `Billing Write`
 
 ## Example Usage
 

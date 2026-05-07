@@ -27,6 +27,12 @@ type ZeroTrustAccessIdentityProvidersDataSourceModel struct {
 func (m *ZeroTrustAccessIdentityProvidersDataSourceModel) toListParams(_ context.Context) (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.SCIMEnabled.IsNull() {
 		params.SCIMEnabled = cloudflare.F(m.SCIMEnabled.ValueString())
 	}

@@ -20,7 +20,7 @@ type ZeroTrustAccessInfrastructureTargetResultDataSourceEnvelope struct {
 type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 	ID         types.String                                                                   `tfsdk:"id" path:"target_id,computed"`
 	TargetID   types.String                                                                   `tfsdk:"target_id" path:"target_id,optional"`
-	AccountID  types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt  timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Hostname   types.String                                                                   `tfsdk:"hostname" json:"hostname,computed"`
 	ModifiedAt timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
@@ -29,8 +29,10 @@ type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessInfrastructureTargetGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.AccessInfrastructureTargetGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
@@ -59,11 +61,13 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	diags.Append(errs...)
 
 	params = zero_trust.AccessInfrastructureTargetListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mFilterIPs),
 		TargetIDs: cloudflare.F(mFilterTargetIDs),
 	}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.CreatedAfter.IsNull() {
 		params.CreatedAfter = cloudflare.F(mFilterCreatedAfter)
 	}

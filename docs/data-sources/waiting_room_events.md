@@ -2,12 +2,16 @@
 page_title: "cloudflare_waiting_room_events Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Waiting Rooms ReadWaiting Rooms Write
 ---
 
 # cloudflare_waiting_room_events (Data Source)
 
+Accepted Permissions
 
+- `Waiting Rooms Read`
+- `Waiting Rooms Write`
 
 ## Example Usage
 
@@ -24,11 +28,11 @@ data "cloudflare_waiting_room_events" "example_waiting_room_events" {
 ### Required
 
 - `waiting_room_id` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

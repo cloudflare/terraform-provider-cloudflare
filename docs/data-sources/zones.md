@@ -2,12 +2,15 @@
 page_title: "cloudflare_zones Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Zone Read
 ---
 
 # cloudflare_zones (Data Source)
 
+Accepted Permissions
 
+- `Zone Zone Read`
 
 ## Example Usage
 

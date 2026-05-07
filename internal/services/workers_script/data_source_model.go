@@ -14,24 +14,27 @@ import (
 type WorkersScriptDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" path:"script_name,computed"`
 	ScriptName types.String                           `tfsdk:"script_name" path:"script_name,optional"`
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,optional"`
 	Script     types.String                           `tfsdk:"script" json:"script,computed"`
 	Filter     *WorkersScriptFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *WorkersScriptDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptGetParams, diags diag.Diagnostics) {
-	params = workers.ScriptGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = workers.ScriptGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *WorkersScriptDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
-	params = workers.ScriptListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = workers.ScriptListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Tags.IsNull() {
 		params.Tags = cloudflare.F(m.Filter.Tags.ValueString())
 	}

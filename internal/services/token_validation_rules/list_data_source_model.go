@@ -18,7 +18,7 @@ type TokenValidationRulesListResultListDataSourceEnvelope struct {
 }
 
 type TokenValidationRulesListDataSourceModel struct {
-	ZoneID             types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID             types.String                                                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action             types.String                                                                `tfsdk:"action" query:"action,optional"`
 	Enabled            types.Bool                                                                  `tfsdk:"enabled" query:"enabled,optional"`
 	Host               types.String                                                                `tfsdk:"host" query:"host,optional"`
@@ -39,10 +39,12 @@ func (m *TokenValidationRulesListDataSourceModel) toListParams(_ context.Context
 	}
 
 	params = token_validation.RuleListParams{
-		ZoneID:             cloudflare.F(m.ZoneID.ValueString()),
 		TokenConfiguration: cloudflare.F(mTokenConfiguration),
 	}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

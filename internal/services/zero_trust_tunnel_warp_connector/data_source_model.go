@@ -21,7 +21,7 @@ type ZeroTrustTunnelWARPConnectorResultDataSourceEnvelope struct {
 type ZeroTrustTunnelWARPConnectorDataSourceModel struct {
 	ID              types.String                                                                         `tfsdk:"id" path:"tunnel_id,computed"`
 	TunnelID        types.String                                                                         `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
-	AccountID       types.String                                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	AccountTag      types.String                                                                         `tfsdk:"account_tag" json:"account_tag,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                    `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                    `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
@@ -36,8 +36,10 @@ type ZeroTrustTunnelWARPConnectorDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelWARPConnectorDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelWARPConnectorGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelWARPConnectorGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.TunnelWARPConnectorGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
@@ -49,10 +51,11 @@ func (m *ZeroTrustTunnelWARPConnectorDataSourceModel) toListParams(_ context.Con
 	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelWARPConnectorListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.TunnelWARPConnectorListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.ExcludePrefix.IsNull() {
 		params.ExcludePrefix = cloudflare.F(m.Filter.ExcludePrefix.ValueString())
 	}

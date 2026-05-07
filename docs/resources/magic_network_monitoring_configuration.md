@@ -2,12 +2,17 @@
 page_title: "cloudflare_magic_network_monitoring_configuration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Network Monitoring AdminMagic Network Monitoring Config ReadMagic Network Monitoring Config Write
 ---
 
 # cloudflare_magic_network_monitoring_configuration (Resource)
 
+Accepted Permissions
 
+- `Magic Network Monitoring Admin`
+- `Magic Network Monitoring Config Read`
+- `Magic Network Monitoring Config Write`
 
 ## Example Usage
 
@@ -30,11 +35,11 @@ resource "cloudflare_magic_network_monitoring_configuration" "example_magic_netw
 
 ### Required
 
-- `account_id` (String)
 - `name` (String) The account name.
 
 ### Optional
 
+- `account_id` (String)
 - `default_sampling` (Number) Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.
 - `router_ips` (List of String)
 - `warp_devices` (Attributes List) (see [below for nested schema](#nestedatt--warp_devices))

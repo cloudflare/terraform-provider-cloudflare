@@ -17,7 +17,7 @@ type AccountMembersResultListDataSourceEnvelope struct {
 }
 
 type AccountMembersDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Direction types.String                                                      `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String                                                      `tfsdk:"order" query:"order,optional"`
 	Status    types.String                                                      `tfsdk:"status" query:"status,optional"`
@@ -26,10 +26,11 @@ type AccountMembersDataSourceModel struct {
 }
 
 func (m *AccountMembersDataSourceModel) toListParams(_ context.Context) (params accounts.MemberListParams, diags diag.Diagnostics) {
-	params = accounts.MemberListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = accounts.MemberListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Direction.ValueString()))
 	}

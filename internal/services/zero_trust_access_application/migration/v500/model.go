@@ -257,6 +257,7 @@ type TargetAccessApplicationModel struct {
 	Tags                        customfield.Set[types.String]                          `tfsdk:"tags"`
 	Destinations                customfield.NestedObjectList[TargetDestinationsModel]  `tfsdk:"destinations"`
 	LandingPageDesign           customfield.NestedObject[TargetLandingPageDesignModel] `tfsdk:"landing_page_design"`
+	MFAConfig                   *TargetMFAConfigModel                                  `tfsdk:"mfa_config"`
 	Policies                    *[]TargetPoliciesModel                                 `tfsdk:"policies"`
 	AUD                         types.String                                           `tfsdk:"aud"`
 	SaaSApp                     *TargetSaaSAppModel                                    `tfsdk:"saas_app"`
@@ -432,7 +433,20 @@ type TargetPoliciesModel struct {
 	Name            types.String                                            `tfsdk:"name"`
 	ConnectionRules *TargetPoliciesConnectionRulesModel                     `tfsdk:"connection_rules"`
 	Exclude         customfield.NestedObjectSet[TargetPoliciesExcludeModel] `tfsdk:"exclude"`
+	MFAConfig       *TargetPoliciesMFAConfigModel                           `tfsdk:"mfa_config"`
 	Require         customfield.NestedObjectSet[TargetPoliciesRequireModel] `tfsdk:"require"`
+}
+
+type TargetMFAConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators"`
+	MFADisabled           types.Bool      `tfsdk:"mfa_disabled"`
+	SessionDuration       types.String    `tfsdk:"session_duration"`
+}
+
+type TargetPoliciesMFAConfigModel struct {
+	AllowedAuthenticators *[]types.String `tfsdk:"allowed_authenticators"`
+	MFADisabled           types.Bool      `tfsdk:"mfa_disabled"`
+	SessionDuration       types.String    `tfsdk:"session_duration"`
 }
 
 type TargetPoliciesIncludeModel struct {

@@ -19,7 +19,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
 	ID               types.String                                                      `tfsdk:"id" path:"virtual_network_id,computed"`
 	VirtualNetworkID types.String                                                      `tfsdk:"virtual_network_id" path:"virtual_network_id,optional"`
-	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Comment          types.String                                                      `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt        timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt        timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -29,18 +29,21 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkGetParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkVirtualNetworkGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.NetworkVirtualNetworkGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkVirtualNetworkListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.NetworkVirtualNetworkListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

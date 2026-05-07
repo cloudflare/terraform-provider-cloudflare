@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_download Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_download (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -23,8 +27,37 @@ resource "cloudflare_stream_download" "example_stream_download" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
+
+### Optional
+
+- `account_id` (String) Identifier.
+
+### Read-Only
+
+- `audio` (Attributes) The audio-only download. Only present if this download type has been created. (see [below for nested schema](#nestedatt--audio))
+- `default` (Attributes) The default video download. Only present if this download type has been created. (see [below for nested schema](#nestedatt--default))
+
+<a id="nestedatt--audio"></a>
+### Nested Schema for `audio`
+
+Read-Only:
+
+- `percent_complete` (Number) Indicates the progress as a percentage between 0 and 100.
+- `status` (String) The status of a generated download.
+Available values: "ready", "inprogress", "error".
+- `url` (String) The URL to access the generated download.
+
+
+<a id="nestedatt--default"></a>
+### Nested Schema for `default`
+
+Read-Only:
+
+- `percent_complete` (Number) Indicates the progress as a percentage between 0 and 100.
+- `status` (String) The status of a generated download.
+Available values: "ready", "inprogress", "error".
+- `url` (String) The URL to access the generated download.
 
 ## Import
 

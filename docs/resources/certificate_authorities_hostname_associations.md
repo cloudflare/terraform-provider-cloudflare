@@ -2,12 +2,16 @@
 page_title: "cloudflare_certificate_authorities_hostname_associations Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_certificate_authorities_hostname_associations (Resource)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 

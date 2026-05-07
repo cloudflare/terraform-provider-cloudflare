@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflared_virtual_network Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Networks WriteCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflared_virtual_network (Resource)
 
+Accepted Permissions
 
+- `Cloudflare One Networks Write`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 
@@ -26,11 +30,11 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "example_zer
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID
 - `name` (String) A user-friendly name for the virtual network.
 
 ### Optional
 
+- `account_id` (String) Cloudflare account ID
 - `comment` (String) Optional remark describing the virtual network.
 - `is_default` (Boolean, Deprecated) If `true`, this virtual network is the default for the account.
 - `is_default_network` (Boolean) If `true`, this virtual network is the default for the account.

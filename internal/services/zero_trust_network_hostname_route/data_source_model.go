@@ -19,7 +19,7 @@ type ZeroTrustNetworkHostnameRouteResultDataSourceEnvelope struct {
 type ZeroTrustNetworkHostnameRouteDataSourceModel struct {
 	ID              types.String                                           `tfsdk:"id" path:"hostname_route_id,computed"`
 	HostnameRouteID types.String                                           `tfsdk:"hostname_route_id" path:"hostname_route_id,optional"`
-	AccountID       types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Comment         types.String                                           `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt       timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt       timetypes.RFC3339                                      `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -30,18 +30,21 @@ type ZeroTrustNetworkHostnameRouteDataSourceModel struct {
 }
 
 func (m *ZeroTrustNetworkHostnameRouteDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkHostnameRouteGetParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkHostnameRouteGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.NetworkHostnameRouteGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *ZeroTrustNetworkHostnameRouteDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkHostnameRouteListParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkHostnameRouteListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = zero_trust.NetworkHostnameRouteListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

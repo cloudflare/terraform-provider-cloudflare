@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_posture_integration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_posture_integration (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -31,12 +34,15 @@ resource "cloudflare_zero_trust_device_posture_integration" "example_zero_trust_
 
 ### Required
 
-- `account_id` (String)
 - `config` (Attributes) The configuration object containing third-party integration information. (see [below for nested schema](#nestedatt--config))
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.
 - `type` (String) The type of device posture integration.
 Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium_s2s", "sentinelone_s2s", "custom_s2s".
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 
@@ -52,7 +58,7 @@ Optional:
 - `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
 - `auth_url` (String) The Workspace One Authorization URL depending on your region.
 - `client_id` (String) The Workspace One client ID provided in the Workspace One Admin Dashboard.
-- `client_key` (String) The Uptycs client secret.
+- `client_key` (String, Sensitive) The Uptycs client secret.
 - `client_secret` (String, Sensitive) The Workspace One client secret provided in the Workspace One Admin Dashboard.
 - `customer_id` (String) The Crowdstrike customer ID.
 

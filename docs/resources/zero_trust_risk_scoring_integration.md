@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_risk_scoring_integration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_risk_scoring_integration (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -25,12 +29,12 @@ resource "cloudflare_zero_trust_risk_scoring_integration" "example_zero_trust_ri
 
 ### Required
 
-- `account_id` (String)
 - `integration_type` (String) Available values: "Okta".
 - `tenant_url` (String) The base url of the tenant, e.g. "https://tenant.okta.com".
 
 ### Optional
 
+- `account_id` (String)
 - `active` (Boolean) Whether this integration is enabled. If disabled, no risk changes will be exported to the third-party.
 - `reference_id` (String) A reference id that can be supplied by the client. Currently this should be set to the Access-Okta IDP ID (a UUIDv4).
 https://developers.cloudflare.com/api/operations/access-identity-providers-get-an-access-identity-provider

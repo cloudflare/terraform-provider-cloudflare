@@ -17,7 +17,7 @@ type FiltersResultListDataSourceEnvelope struct {
 }
 
 type FiltersDataSourceModel struct {
-	ZoneID      types.String                                               `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                                               `tfsdk:"description" query:"description,optional"`
 	Expression  types.String                                               `tfsdk:"expression" query:"expression,optional"`
 	ID          types.String                                               `tfsdk:"id" query:"id,optional"`
@@ -28,10 +28,11 @@ type FiltersDataSourceModel struct {
 }
 
 func (m *FiltersDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
-	params = filters.FilterListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = filters.FilterListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

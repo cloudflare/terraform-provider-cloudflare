@@ -19,7 +19,7 @@ type CustomHostnameFallbackOriginResultDataSourceEnvelope struct {
 
 type CustomHostnameFallbackOriginDataSourceModel struct {
 	ID        types.String                   `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID    types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Origin    types.String                   `tfsdk:"origin" json:"origin,computed"`
 	Status    types.String                   `tfsdk:"status" json:"status,computed"`
@@ -28,8 +28,10 @@ type CustomHostnameFallbackOriginDataSourceModel struct {
 }
 
 func (m *CustomHostnameFallbackOriginDataSourceModel) toReadParams(_ context.Context) (params custom_hostnames.FallbackOriginGetParams, diags diag.Diagnostics) {
-	params = custom_hostnames.FallbackOriginGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = custom_hostnames.FallbackOriginGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

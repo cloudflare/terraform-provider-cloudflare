@@ -2,12 +2,20 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflared_config Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: cloudflared ReadCloudflare One Connector: cloudflared WriteCloudflare One Connectors ReadCloudflare One Connectors WriteCloudflare Tunnel ReadCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflared_config (Resource)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: cloudflared Read`
+- `Cloudflare One Connector: cloudflared Write`
+- `Cloudflare One Connectors Read`
+- `Cloudflare One Connectors Write`
+- `Cloudflare Tunnel Read`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 
@@ -72,11 +80,11 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_t
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `tunnel_id` (String) UUID of the tunnel.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `config` (Attributes) The tunnel configuration and ingress rules. (see [below for nested schema](#nestedatt--config))
 - `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 Available values: "local", "cloudflare".

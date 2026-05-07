@@ -182,6 +182,21 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+
+	// If the token is expired or revoked-exposed, treat it as if the resource
+	// no longer exists. Terraform will plan a Create to replace it with a fresh
+	// token. This avoids mutating the token during Read (which runs during plan)
+	// and ensures the user explicitly approves the recreation via apply.
+	status := data.Status.ValueString()
+	if status == "expired" || status == "revoked (exposed)" {
+		resp.Diagnostics.AddWarning(
+			"Token expired or revoked",
+			fmt.Sprintf("Token %q is in %q status and is no longer usable. It will be removed from state and recreated on the next apply.", data.Name.ValueString(), status),
+		)
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
 	data.Value = tokenValue
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

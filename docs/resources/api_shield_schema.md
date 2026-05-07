@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_schema Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_schema (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ~> `cloudflare_api_shield_schema` is in a deprecation phase and will be removed in the future.
   Instead, please utilize the [cloudflare_schema_validation_schemas](./schema_validation_schemas) resource instead.
@@ -17,7 +23,7 @@ description: |-
 ```terraform
 resource "cloudflare_api_shield_schema" "example_api_shield_schema" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  file = null
+  file = "Example data"
   kind = "openapi_v3"
   name = "petstore schema"
   validation_enabled = "true"
@@ -32,7 +38,6 @@ resource "cloudflare_api_shield_schema" "example_api_shield_schema" {
 - `file` (String) Schema file bytes
 - `kind` (String) Kind of schema
 Available values: "openapi_v3".
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -40,6 +45,7 @@ Available values: "openapi_v3".
 - `schema_id` (String)
 - `validation_enabled` (String) Flag whether schema is enabled for validation.
 Available values: "true", "false".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_r2_custom_domain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers R2 Storage ReadWorkers R2 Storage Write
 ---
 
 # cloudflare_r2_custom_domain (Resource)
 
+Accepted Permissions
 
+- `Workers R2 Storage Read`
+- `Workers R2 Storage Write`
 
 ## Example Usage
 
@@ -28,7 +32,6 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 - `domain` (String) Name of the custom domain to be added.
 - `enabled` (Boolean) Whether to enable public bucket access at the custom domain. If undefined, the domain will be enabled.
@@ -36,6 +39,7 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Optional
 
+- `account_id` (String) Account ID.
 - `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `jurisdiction` (String) Jurisdiction of the bucket
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.

@@ -2,12 +2,15 @@
 page_title: "cloudflare_waiting_rooms Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Waiting Rooms Read
 ---
 
 # cloudflare_waiting_rooms (Data Source)
 
+Accepted Permissions
 
+- `Account Waiting Rooms Read`
 
 ## Example Usage
 

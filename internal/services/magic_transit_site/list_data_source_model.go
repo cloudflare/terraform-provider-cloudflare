@@ -17,17 +17,18 @@ type MagicTransitSitesResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitSitesDataSourceModel struct {
-	AccountID   types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Connectorid types.String                                                         `tfsdk:"connectorid" query:"connectorid,optional"`
 	MaxItems    types.Int64                                                          `tfsdk:"max_items"`
 	Result      customfield.NestedObjectList[MagicTransitSitesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicTransitSitesDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = magic_transit.SiteListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Connectorid.IsNull() {
 		params.Connectorid = cloudflare.F(m.Connectorid.ValueString())
 	}

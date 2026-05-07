@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_zone_transfers_peer Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings Write
 ---
 
 # cloudflare_dns_zone_transfers_peer (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
 
 ## Example Usage
 
@@ -23,11 +27,11 @@ resource "cloudflare_dns_zone_transfers_peer" "example_dns_zone_transfers_peer" 
 
 ### Required
 
-- `account_id` (String)
 - `name` (String) The name of the peer.
 
 ### Optional
 
+- `account_id` (String)
 - `ip` (String) IPv4/IPv6 address of primary or secondary nameserver, depending on what zone this peer is linked to. For primary zones this IP defines the IP of the secondary nameserver Cloudflare will NOTIFY upon zone changes. For secondary zones this IP defines the IP of the primary nameserver Cloudflare will send AXFR/IXFR requests to.
 - `ixfr_enable` (Boolean) Enable IXFR transfer protocol, default is AXFR. Only applicable to secondary zones.
 - `port` (Number) DNS port of primary or secondary nameserver, depending on what zone this peer is linked to.

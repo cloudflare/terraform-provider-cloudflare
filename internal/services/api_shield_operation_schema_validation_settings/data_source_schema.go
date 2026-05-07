@@ -5,6 +5,7 @@ package api_shield_operation_schema_validation_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -15,6 +16,14 @@ var _ datasource.DataSourceWithConfigValidators = (*APIShieldOperationSchemaVali
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Account API Gateway",
+				"Account API Gateway Read",
+				"Domain API Gateway",
+				"Domain API Gateway Read",
+			},
+		}.String(),
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_operation_settings` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"operation_id": schema.StringAttribute{
@@ -23,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"mitigation_action": schema.StringAttribute{
 				Description: "When set, this applies a mitigation action to this operation\n\n  - `log` log request when request does not conform to schema for this operation\n  - `block` deny access to the site when request does not conform to schema for this operation\n  - `none` will skip mitigation for this operation\n  - `null` indicates that no operation level mitigation is in place, see Zone Level Schema Validation Settings for mitigation action that will be applied\nAvailable values: \"log\", \"block\", \"none\".",

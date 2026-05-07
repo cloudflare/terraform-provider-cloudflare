@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_policy Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_policy (Data Source)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `policy_id` (String) The UUID of the policy
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 
@@ -104,6 +111,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--exclude--user_risk_score))
 
 <a id="nestedatt--exclude--any_valid_service_token"></a>
 ### Nested Schema for `exclude.any_valid_service_token`
@@ -297,6 +305,14 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--exclude--user_risk_score"></a>
+### Nested Schema for `exclude.user_risk_score`
+
+Read-Only:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
+
+
 
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
@@ -327,6 +343,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--include--user_risk_score))
 
 <a id="nestedatt--include--any_valid_service_token"></a>
 ### Nested Schema for `include.any_valid_service_token`
@@ -520,6 +537,14 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--include--user_risk_score"></a>
+### Nested Schema for `include.user_risk_score`
+
+Read-Only:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
+
+
 
 <a id="nestedatt--mfa_config"></a>
 ### Nested Schema for `mfa_config`
@@ -527,7 +552,7 @@ Read-Only:
 Read-Only:
 
 - `allowed_authenticators` (List of String) Lists the MFA methods that users can authenticate with.
-- `mfa_bypass` (Boolean) Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.
+- `mfa_disabled` (Boolean) Indicates whether to disable MFA for this resource. This option is available at the application and policy level.
 - `session_duration` (String) Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.
 
 
@@ -560,6 +585,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--require--user_risk_score))
 
 <a id="nestedatt--require--any_valid_service_token"></a>
 ### Nested Schema for `require.any_valid_service_token`
@@ -751,5 +777,13 @@ Read-Only:
 Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--require--user_risk_score"></a>
+### Nested Schema for `require.user_risk_score`
+
+Read-Only:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
 
 

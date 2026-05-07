@@ -2,12 +2,15 @@
 page_title: "cloudflare_cloudforce_one_request_message Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_request_message (Resource)
 
+Accepted Permissions
 
+- `Cloudforce One Write`
 
 ## Example Usage
 
@@ -24,11 +27,11 @@ resource "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_req
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `request_id` (String) UUID.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `content` (String) Content of message.
 
 ### Read-Only

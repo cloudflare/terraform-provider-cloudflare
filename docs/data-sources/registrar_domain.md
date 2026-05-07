@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_registrar_domain" "example_registrar_domain" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  domain_name = "cloudflare.com"
+  domain_name = "example.com"
 }
 ```
 
@@ -23,7 +23,13 @@ data "cloudflare_registrar_domain" "example_registrar_domain" {
 
 ### Required
 
+- `domain_name` (String) Fully qualified domain name (FQDN) including the extension
+(e.g., `example.com`, `mybrand.app`). The domain name uniquely
+identifies a registration — the same domain cannot be registered
+twice, making it a natural idempotency key for registration requests.
+
+### Optional
+
 - `account_id` (String) Identifier
-- `domain_name` (String) Domain name.
 
 

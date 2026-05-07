@@ -5,6 +5,7 @@ package zero_trust_device_default_profile_certificates
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -13,9 +14,15 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceDefaultProfil
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"SSL and Certificates Read",
+				"SSL and Certificates Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "The current status of the device policy certificate provisioning feature for WARP clients.",

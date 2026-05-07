@@ -64,6 +64,7 @@ func (r *CustomHostnameFallbackOriginResource) Create(ctx context.Context, req r
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *CustomHostnameFallbackOriginResource) Update(ctx context.Context, req r
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -154,6 +156,7 @@ func (r *CustomHostnameFallbackOriginResource) Read(ctx context.Context, req res
 		return
 	}
 
+
 	res := new(http.Response)
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
 	_, err := r.client.CustomHostnames.FallbackOrigin.Get(
@@ -193,6 +196,7 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	_, err := r.client.CustomHostnames.FallbackOrigin.Delete(
 		ctx,

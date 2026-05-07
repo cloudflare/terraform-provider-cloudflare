@@ -18,15 +18,17 @@ type DNSZoneTransfersTSIGResultDataSourceEnvelope struct {
 type DNSZoneTransfersTSIGDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"tsig_id,computed"`
 	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,required"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Algo      types.String `tfsdk:"algo" json:"algo,computed"`
 	Name      types.String `tfsdk:"name" json:"name,computed"`
 	Secret    types.String `tfsdk:"secret" json:"secret,computed"`
 }
 
 func (m *DNSZoneTransfersTSIGDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferTSIGGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferTSIGGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = dns.ZoneTransferTSIGGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

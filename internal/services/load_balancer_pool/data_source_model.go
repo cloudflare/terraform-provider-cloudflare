@@ -20,7 +20,7 @@ type LoadBalancerPoolResultDataSourceEnvelope struct {
 type LoadBalancerPoolDataSourceModel struct {
 	ID                 types.String                                                                `tfsdk:"id" path:"pool_id,computed"`
 	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id,optional"`
-	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn          types.String                                                                `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                           `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
@@ -43,18 +43,21 @@ type LoadBalancerPoolDataSourceModel struct {
 }
 
 func (m *LoadBalancerPoolDataSourceModel) toReadParams(_ context.Context) (params load_balancers.PoolGetParams, diags diag.Diagnostics) {
-	params = load_balancers.PoolGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = load_balancers.PoolGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *LoadBalancerPoolDataSourceModel) toListParams(_ context.Context) (params load_balancers.PoolListParams, diags diag.Diagnostics) {
-	params = load_balancers.PoolListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = load_balancers.PoolListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.Monitor.IsNull() {
 		params.Monitor = cloudflare.F(m.Filter.Monitor.ValueString())
 	}
@@ -92,6 +95,7 @@ type LoadBalancerPoolOriginsDataSourceModel struct {
 	Address          types.String                                                           `tfsdk:"address" json:"address,computed"`
 	DisabledAt       timetypes.RFC3339                                                      `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled          types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	FlattenCNAME     types.Bool                                                             `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
 	Header           customfield.NestedObject[LoadBalancerPoolOriginsHeaderDataSourceModel] `tfsdk:"header" json:"header,computed"`
 	Name             types.String                                                           `tfsdk:"name" json:"name,computed"`
 	Port             types.Int64                                                            `tfsdk:"port" json:"port,computed"`

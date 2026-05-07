@@ -18,17 +18,18 @@ type WebAnalyticsSitesResultListDataSourceEnvelope struct {
 }
 
 type WebAnalyticsSitesDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	OrderBy   types.String                                                         `tfsdk:"order_by" query:"order_by,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WebAnalyticsSitesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WebAnalyticsSitesDataSourceModel) toListParams(_ context.Context) (params rum.SiteInfoListParams, diags diag.Diagnostics) {
-	params = rum.SiteInfoListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = rum.SiteInfoListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.OrderBy.IsNull() {
 		params.OrderBy = cloudflare.F(rum.SiteInfoListParamsOrderBy(m.OrderBy.ValueString()))
 	}

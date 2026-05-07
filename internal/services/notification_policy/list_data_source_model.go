@@ -18,14 +18,16 @@ type NotificationPoliciesResultListDataSourceEnvelope struct {
 }
 
 type NotificationPoliciesDataSourceModel struct {
-	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[NotificationPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *NotificationPoliciesDataSourceModel) toListParams(_ context.Context) (params alerting.PolicyListParams, diags diag.Diagnostics) {
-	params = alerting.PolicyListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = alerting.PolicyListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

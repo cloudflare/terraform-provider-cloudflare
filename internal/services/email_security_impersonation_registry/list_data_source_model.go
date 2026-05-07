@@ -18,7 +18,7 @@ type EmailSecurityImpersonationRegistriesResultListDataSourceEnvelope struct {
 }
 
 type EmailSecurityImpersonationRegistriesDataSourceModel struct {
-	AccountID  types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	Direction  types.String                                                                            `tfsdk:"direction" query:"direction,optional"`
 	Order      types.String                                                                            `tfsdk:"order" query:"order,optional"`
 	Provenance types.String                                                                            `tfsdk:"provenance" query:"provenance,optional"`
@@ -28,10 +28,11 @@ type EmailSecurityImpersonationRegistriesDataSourceModel struct {
 }
 
 func (m *EmailSecurityImpersonationRegistriesDataSourceModel) toListParams(_ context.Context) (params email_security.SettingImpersonationRegistryListParams, diags diag.Diagnostics) {
-	params = email_security.SettingImpersonationRegistryListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = email_security.SettingImpersonationRegistryListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingImpersonationRegistryListParamsDirection(m.Direction.ValueString()))
 	}

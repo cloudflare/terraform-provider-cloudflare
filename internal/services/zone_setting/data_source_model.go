@@ -19,7 +19,7 @@ type ZoneSettingResultDataSourceEnvelope struct {
 type ZoneSettingDataSourceModel struct {
 	ID            types.String      `tfsdk:"id" path:"setting_id,computed"`
 	SettingID     types.String      `tfsdk:"setting_id" path:"setting_id,required"`
-	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Editable      types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -28,8 +28,10 @@ type ZoneSettingDataSourceModel struct {
 }
 
 func (m *ZoneSettingDataSourceModel) toReadParams(_ context.Context) (params zones.SettingGetParams, diags diag.Diagnostics) {
-	params = zones.SettingGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = zones.SettingGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_custom_page Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Custom Pages ReadAccess: Custom Pages Write
 ---
 
 # cloudflare_zero_trust_access_custom_page (Data Source)
 
+Accepted Permissions
 
+- `Access: Custom Pages Read`
+- `Access: Custom Pages Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custo
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `custom_page_id` (String) UUID.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

@@ -73,9 +73,11 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_ENV
       - name: Create archive
         run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          BINARY_NAME="terraform-provider-cloudflare_v${VERSION}${{ matrix.extension }}"
           cd dist
           ARCHIVE_NAME="terraform-provider-cloudflare_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
-          zip "$ARCHIVE_NAME" "${BINARY_NAME}" ../CHANGELOG.md ../LICENSE ../README.md
+          zip "$ARCHIVE_NAME" "$BINARY_NAME"
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

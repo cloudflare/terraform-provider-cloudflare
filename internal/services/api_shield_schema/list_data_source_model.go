@@ -18,7 +18,7 @@ type APIShieldSchemasResultListDataSourceEnvelope struct {
 }
 
 type APIShieldSchemasDataSourceModel struct {
-	ZoneID            types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	ValidationEnabled types.Bool                                                          `tfsdk:"validation_enabled" query:"validation_enabled,optional"`
 	OmitSource        types.Bool                                                          `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	MaxItems          types.Int64                                                         `tfsdk:"max_items"`
@@ -26,10 +26,11 @@ type APIShieldSchemasDataSourceModel struct {
 }
 
 func (m *APIShieldSchemasDataSourceModel) toListParams(_ context.Context) (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {
-	params = api_gateway.UserSchemaListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = api_gateway.UserSchemaListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.OmitSource.IsNull() {
 		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}

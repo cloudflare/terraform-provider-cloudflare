@@ -14,7 +14,9 @@ import (
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
 	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/rulesets"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -74,6 +76,91 @@ func TestAccPreCheck_ZoneID(t *testing.T) {
 	}
 }
 
+// TestAccPreCheck_CleanZoneRulesets deletes all non-managed rulesets from the test zone.
+// Call this from PreCheck in migration tests for resources that use per-phase singleton
+// rulesets (e.g., http_request_firewall_custom) to ensure a clean starting state across
+// retries — the sweeper only runs once before the first attempt.
+func TestAccPreCheck_CleanZoneRulesets(t *testing.T) {
+	t.Helper()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
+
+	ctx := context.Background()
+	client := SharedClient()
+
+	iter := client.Rulesets.ListAutoPaging(ctx, rulesets.RulesetListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	for iter.Next() {
+		rs := iter.Current()
+		// Only delete zone-kind and custom rulesets; skip managed.
+		if rs.Kind == rulesets.KindManaged {
+			continue
+		}
+		if err := client.Rulesets.Delete(ctx, rs.ID, rulesets.RulesetDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		}); err != nil {
+			// Log but don't fail — a 404 means it's already gone.
+			t.Logf("TestAccPreCheck_CleanZoneRulesets: failed to delete ruleset %s: %v", rs.ID, err)
+		}
+	}
+	if err := iter.Err(); err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneRulesets: failed to list rulesets: %v", err)
+	}
+}
+
+// TestAccPreCheck_CleanZoneManagedTransforms disables all managed header transforms on the test
+// zone. Because cloudflare_managed_transforms is a singleton per zone, tests that run in sequence
+// can see stale enabled/disabled state from previous tests. Call this from PreCheck in migration
+// tests for managed_transforms to ensure a clean starting state.
+func TestAccPreCheck_CleanZoneManagedTransforms(t *testing.T) {
+	t.Helper()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return
+	}
+
+	ctx := context.Background()
+	client := SharedClient()
+
+	res, err := client.ManagedTransforms.List(ctx, managed_transforms.ManagedTransformListParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneManagedTransforms: failed to list managed transforms: %v", err)
+		return
+	}
+
+	// Build lists with all headers disabled.
+	reqHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedRequestHeader, 0, len(res.ManagedRequestHeaders))
+	for _, h := range res.ManagedRequestHeaders {
+		reqHeaders = append(reqHeaders, managed_transforms.ManagedTransformEditParamsManagedRequestHeader{
+			ID:      cloudflare.F(h.ID),
+			Enabled: cloudflare.F(false),
+		})
+	}
+	respHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedResponseHeader, 0, len(res.ManagedResponseHeaders))
+	for _, h := range res.ManagedResponseHeaders {
+		respHeaders = append(respHeaders, managed_transforms.ManagedTransformEditParamsManagedResponseHeader{
+			ID:      cloudflare.F(h.ID),
+			Enabled: cloudflare.F(false),
+		})
+	}
+
+	_, err = client.ManagedTransforms.Edit(ctx, managed_transforms.ManagedTransformEditParams{
+		ZoneID:                 cloudflare.F(zoneID),
+		ManagedRequestHeaders:  cloudflare.F(reqHeaders),
+		ManagedResponseHeaders: cloudflare.F(respHeaders),
+	})
+	if err != nil {
+		t.Logf("TestAccPreCheck_CleanZoneManagedTransforms: failed to disable managed transforms: %v", err)
+	}
+}
+
 // Test helper method checking `CLOUDFLARE_ACCOUNT_ID` is present.
 func TestAccPreCheck_AccountID(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ACCOUNT_ID"); v == "" {
@@ -106,6 +193,14 @@ func TestAccPreCheck_AlternateZoneID(t *testing.T) {
 func TestAccPreCheck_Email(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
 		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS` is present.
+// This address must already be verified in the Cloudflare account under test.
+func TestAccPreCheck_EmailRoutingDestinationAddress(t *testing.T) {
+	if v := os.Getenv(consts.EmailRoutingDestinationAddressEnvVarKey); v == "" {
+		t.Skipf("%s must be set for this acceptance test. The address must be pre-verified as an email routing destination in the account.", consts.EmailRoutingDestinationAddressEnvVarKey)
 	}
 }
 
@@ -153,11 +248,11 @@ func TestAccPreCheck_CrowdStrike(t *testing.T) {
 // are present.
 func TestAccPreCheck_Pages(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
-		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test.")
+		t.Skip("Skipping acceptance test as CLOUDFLARE_PAGES_OWNER is not set.")
 	}
 
 	if v := os.Getenv("CLOUDFLARE_PAGES_REPO"); v == "" {
-		t.Fatal("CLOUDFLARE_PAGES_REPO must be set for this acceptance test.")
+		t.Skip("Skipping acceptance test as CLOUDFLARE_PAGES_REPO is not set.")
 	}
 }
 
@@ -992,6 +1087,31 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 	}
 	debugLogf(t, "Successfully wrote v4 config (%d bytes)", len(v4Config))
 
+	// Write provider.tf with required_providers block for tf-migrate.
+	// No version constraint is written here: pinning to "~> 4.52.7" would
+	// cause the framework to resolve the v4 registry binary from the lock
+	// file and apply its schema during the migration step, instead of using
+	// the in-process dev provider injected via ProtoV6ProviderFactories.
+	// tf-migrate only needs the source to detect the provider; it will update
+	// the version block itself if network access is available.
+	providerConfig := `terraform {
+  required_providers {
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
+  }
+}
+
+provider "cloudflare" {}
+`
+	providerConfigPath := filepath.Join(tmpDir, "provider.tf")
+	debugLogf(t, "Writing provider config to: %s", providerConfigPath)
+
+	err = os.WriteFile(providerConfigPath, []byte(providerConfig), 0644)
+	if err != nil {
+		t.Fatalf("Failed to write provider config file: %v", err)
+	}
+	debugLogf(t, "Successfully wrote provider config")
 }
 
 // RunMigrationV2Command runs the new tf-migrate binary to transform config and state
@@ -1022,7 +1142,8 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 		"--config-dir", tmpDir,
 		"--source-version", sourceVersion,
 		"--target-version", targetVersion,
-		"--skip-phase-check", // skip phased migration prompts — state cleanup is handled by the test harness
+		"--skip-phase-check",   // skip phased migration prompts — state cleanup is handled by the test harness
+		"--skip-version-check", // skip version check — we know the provider version in tests
 	}
 
 	// Add debug logging if TF_LOG is set
@@ -1176,6 +1297,15 @@ func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, e
 	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 
+// MigrationV2TestStepForManagedTransforms creates multiple test steps for cloudflare_managed_headers
+// migration to cloudflare_managed_transforms. tf-migrate produces a moved block that triggers the
+// v5 provider's MoveState handler on apply, converting the cloudflare_managed_headers state entry
+// to cloudflare_managed_transforms. This is identical to MigrationV2TestStepWithPlan — the helper
+// exists as a named alias so tests can signal their intent clearly.
+func MigrationV2TestStepForManagedTransforms(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	return MigrationV2TestStepWithPlan(t, v4Config, tmpDir, exactVersion, sourceVersion, targetVersion, stateChecks)
+}
+
 // InferMigrationVersions determines source and target versions from test provider version.
 // Returns ("v4", "v5") for v4.x versions, ("v5", "v5") for v5.x versions.
 func InferMigrationVersions(testVersion string) (source, target string) {
@@ -1212,6 +1342,12 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 				RunMigrationCommand(t, v4Config, tmpDir)
 			} else {
 				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
+			}
+
+			// Remove provider.tf after migration. See MigrationV2TestStep for details.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
 			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
@@ -1254,6 +1390,17 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 			WriteOutConfig(t, v4Config, tmpDir)
 			debugLogf(t, "Running migration command for version: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
 			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+
+			// Remove provider.tf after tf-migrate has finished. WriteOutConfig creates it
+			// with a pinned version constraint (~> 4.52.7) for tf-migrate's benefit, but
+			// if it persists into the plan step, Terraform resolves the provider to the
+			// published registry binary instead of the local dev provider supplied via
+			// ProtoV6ProviderFactories, causing "does not support resource type" errors
+			// for resources that only exist in the dev provider.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
+			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -1269,11 +1416,10 @@ func MigrationV2TestStep(t *testing.T, v4Config string, tmpDir string, exactVers
 // subdirectories inside tmpDir (created by the terraform-plugin-testing framework).
 // This is the test equivalent of the e2e runner's removeObsoleteStateEntries step.
 //
-// Implementation note: we read the state JSON directly to discover addresses (bypassing
-// "terraform state list", which requires provider schema and fails after tf-migrate
-// rewrites the config to v5 syntax with a stale .terraform directory). We then call
-// "terraform state rm -state=<path> <addr>" for each match, which does not need
-// provider schema — it only manipulates the state file by address.
+// Implementation note: we read the state JSON directly, filter out obsolete resource
+// entries, and write the modified state back. This avoids a dependency on the
+// "terraform" binary (which is not available in all CI environments). The serial is
+// incremented so Terraform accepts the modified state file.
 func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []string) {
 	t.Helper()
 
@@ -1292,16 +1438,9 @@ func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []str
 		return
 	}
 
-	// Parse just enough of the state to enumerate resource addresses.
-	var state struct {
-		Resources []struct {
-			Module string `json:"module,omitempty"`
-			Mode   string `json:"mode"`
-			Type   string `json:"type"`
-			Name   string `json:"name"`
-		} `json:"resources"`
-	}
-	if err := json.Unmarshal(data, &state); err != nil {
+	// Parse the full state so we can filter and rewrite it.
+	var rawState map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawState); err != nil {
 		debugLogf(t, "RunStateRmForObsoleteTypes: cannot parse state file: %v", err)
 		return
 	}
@@ -1312,42 +1451,70 @@ func RunStateRmForObsoleteTypes(t *testing.T, tmpDir string, obsoleteTypes []str
 		obsoleteSet[typ] = true
 	}
 
-	// Collect addresses of resources whose type is obsolete.
-	var addrs []string
-	for _, r := range state.Resources {
-		if !obsoleteSet[r.Type] {
+	// Decode just the resources array to filter it.
+	var resources []json.RawMessage
+	if err := json.Unmarshal(rawState["resources"], &resources); err != nil {
+		debugLogf(t, "RunStateRmForObsoleteTypes: cannot parse resources array: %v", err)
+		return
+	}
+
+	var kept []json.RawMessage
+	var removedAddrs []string
+	for _, res := range resources {
+		var r struct {
+			Module string `json:"module,omitempty"`
+			Mode   string `json:"mode"`
+			Type   string `json:"type"`
+			Name   string `json:"name"`
+		}
+		if err := json.Unmarshal(res, &r); err != nil {
+			kept = append(kept, res)
 			continue
 		}
-		addr := r.Type + "." + r.Name
-		if r.Module != "" {
-			addr = r.Module + "." + addr
+		if obsoleteSet[r.Type] {
+			addr := r.Type + "." + r.Name
+			if r.Module != "" {
+				addr = r.Module + "." + addr
+			}
+			removedAddrs = append(removedAddrs, addr)
+		} else {
+			kept = append(kept, res)
 		}
-		addrs = append(addrs, addr)
 	}
-	if len(addrs) == 0 {
+
+	if len(removedAddrs) == 0 {
 		debugLogf(t, "RunStateRmForObsoleteTypes: no obsolete entries found in state")
 		return
 	}
 
-	// Find the terraform binary.
-	tfBin, err := exec.LookPath("terraform")
+	// Rebuild the resources JSON array with only the kept entries.
+	keptJSON, err := json.Marshal(kept)
 	if err != nil {
-		t.Errorf("RunStateRmForObsoleteTypes: terraform binary not found: %v", err)
+		t.Errorf("RunStateRmForObsoleteTypes: failed to marshal kept resources: %v", err)
+		return
+	}
+	rawState["resources"] = keptJSON
+
+	// Increment the serial so Terraform accepts the modified state.
+	var serial int64
+	if err := json.Unmarshal(rawState["serial"], &serial); err == nil {
+		serialJSON, _ := json.Marshal(serial + 1)
+		rawState["serial"] = serialJSON
+	}
+
+	// Write the modified state back to disk.
+	out, err := json.MarshalIndent(rawState, "", "  ")
+	if err != nil {
+		t.Errorf("RunStateRmForObsoleteTypes: failed to marshal modified state: %v", err)
+		return
+	}
+	if err := os.WriteFile(stateFile, out, 0600); err != nil {
+		t.Errorf("RunStateRmForObsoleteTypes: failed to write state file: %v", err)
 		return
 	}
 
-	// Run "terraform state rm -state=<path> <addr>" for each obsolete address.
-	// The -state flag means Terraform reads/writes the file directly without
-	// needing to initialise providers, so this works even with a stale .terraform dir.
-	for _, addr := range addrs {
-		args := []string{"state", "rm", "-state=" + stateFile, addr}
-		cmd := exec.Command(tfBin, args...)
-		cmd.Dir = workDir
-		if out, err := cmd.CombinedOutput(); err != nil {
-			t.Errorf("RunStateRmForObsoleteTypes: failed to remove %s: %v\n%s", addr, err, out)
-		} else {
-			debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
-		}
+	for _, addr := range removedAddrs {
+		debugLogf(t, "RunStateRmForObsoleteTypes: removed obsolete state entry %s", addr)
 	}
 }
 

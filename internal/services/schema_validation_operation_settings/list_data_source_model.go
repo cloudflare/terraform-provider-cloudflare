@@ -17,14 +17,16 @@ type SchemaValidationOperationSettingsListResultListDataSourceEnvelope struct {
 }
 
 type SchemaValidationOperationSettingsListDataSourceModel struct {
-	ZoneID   types.String                                                                             `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems types.Int64                                                                              `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[SchemaValidationOperationSettingsListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *SchemaValidationOperationSettingsListDataSourceModel) toListParams(_ context.Context) (params schema_validation.SettingOperationListParams, diags diag.Diagnostics) {
-	params = schema_validation.SettingOperationListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = schema_validation.SettingOperationListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

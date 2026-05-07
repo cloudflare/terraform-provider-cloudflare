@@ -3103,6 +3103,7 @@ func TestAccCloudflareRuleset_CompressResponseRules(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_ExecuteRules(t *testing.T) {
+	t.Skip("FIXME: skip test; WAF enrollment is required for http_request_firewall_managed phase but is not available in the test environment")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -4821,7 +4822,10 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 
 func TestAccCloudflareRuleset_RouteRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

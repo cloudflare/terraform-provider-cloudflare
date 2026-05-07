@@ -64,6 +64,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -111,6 +112,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -149,6 +151,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Read(ctx context.Context, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	res := new(http.Response)
 	_, err := r.client.APIGateway.Settings.SchemaValidation.Get(

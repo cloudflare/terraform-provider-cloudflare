@@ -20,7 +20,7 @@ type PipelineStreamResultDataSourceEnvelope struct {
 type PipelineStreamDataSourceModel struct {
 	ID            types.String                                                         `tfsdk:"id" path:"stream_id,computed"`
 	StreamID      types.String                                                         `tfsdk:"stream_id" path:"stream_id,optional"`
-	AccountID     types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt     timetypes.RFC3339                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Endpoint      types.String                                                         `tfsdk:"endpoint" json:"endpoint,computed"`
 	ModifiedAt    timetypes.RFC3339                                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
@@ -34,18 +34,21 @@ type PipelineStreamDataSourceModel struct {
 }
 
 func (m *PipelineStreamDataSourceModel) toReadParams(_ context.Context) (params pipelines.StreamGetParams, diags diag.Diagnostics) {
-	params = pipelines.StreamGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = pipelines.StreamGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return
 }
 
 func (m *PipelineStreamDataSourceModel) toListParams(_ context.Context) (params pipelines.StreamListParams, diags diag.Diagnostics) {
-	params = pipelines.StreamListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = pipelines.StreamListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Filter.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.Filter.PipelineID.ValueString())
 	}

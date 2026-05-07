@@ -32,11 +32,11 @@ resource "cloudflare_r2_bucket_lock" "example_r2_bucket_lock" {
 
 ### Required
 
-- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 
 ### Optional
 
+- `account_id` (String) Account ID.
 - `jurisdiction` (String) Jurisdiction of the bucket
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 

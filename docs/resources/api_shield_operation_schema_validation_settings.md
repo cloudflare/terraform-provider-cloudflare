@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_operation_schema_validation_settings Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_operation_schema_validation_settings (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ~> `cloudflare_api_shield_operation_schema_validation_settings` is in a deprecation phase and will be removed in the future.
   Instead, please utilize the [cloudflare_schema_validation_operation_settings](./schema_validation_operation_settings) resource instead.
@@ -28,7 +34,6 @@ resource "cloudflare_api_shield_operation_schema_validation_settings" "example_a
 ### Required
 
 - `operation_id` (String) UUID.
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -39,6 +44,7 @@ resource "cloudflare_api_shield_operation_schema_validation_settings" "example_a
   - `none` will skip mitigation for this operation
   - `null` indicates that no operation level mitigation is in place, see Zone Level Schema Validation Settings for mitigation action that will be applied
 Available values: "log", "block", "none".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

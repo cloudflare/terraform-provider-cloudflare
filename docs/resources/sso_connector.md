@@ -2,12 +2,16 @@
 page_title: "cloudflare_sso_connector Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSO Connector ReadSSO Connector Write
 ---
 
 # cloudflare_sso_connector (Resource)
 
+Accepted Permissions
 
+- `SSO Connector Read`
+- `SSO Connector Write`
 
 ## Example Usage
 
@@ -25,11 +29,11 @@ resource "cloudflare_sso_connector" "example_sso_connector" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `email_domain` (String) Email domain of the new SSO connector
 
 ### Optional
 
+- `account_id` (String) Account identifier tag.
 - `begin_verification` (Boolean) Begin the verification process after creation
 - `enabled` (Boolean) SSO Connector enabled state
 - `use_fedramp_language` (Boolean) Controls the display of FedRAMP language to the user during SSO login

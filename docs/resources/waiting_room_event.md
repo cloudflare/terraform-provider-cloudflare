@@ -2,12 +2,16 @@
 page_title: "cloudflare_waiting_room_event Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Waiting Rooms ReadWaiting Rooms Write
 ---
 
 # cloudflare_waiting_room_event (Resource)
 
+Accepted Permissions
 
+- `Waiting Rooms Read`
+- `Waiting Rooms Write`
 
 ## Example Usage
 
@@ -42,7 +46,6 @@ resource "cloudflare_waiting_room_event" "example_waiting_room_event" {
 - `event_start_time` (String) An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.
 - `name` (String) A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.
 - `waiting_room_id` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -60,6 +63,7 @@ resource "cloudflare_waiting_room_event" "example_waiting_room_event" {
 Available values: "log", "infinite_queue".
 - `turnstile_mode` (String) If set, the event will override the waiting room's `turnstile_mode` property while it is active. If null, the event will inherit it.
 Available values: "off", "invisible", "visible_non_interactive", "visible_managed".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

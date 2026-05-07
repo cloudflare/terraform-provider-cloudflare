@@ -21,7 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpServ
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "server id",
@@ -29,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"auth_type": schema.StringAttribute{
@@ -52,10 +51,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"auth_credentials": schema.StringAttribute{
-				Optional: true,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"description": schema.StringAttribute{
 				Optional: true,
+			},
+			"updated_prompts": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Required: true,
+						},
+						"alias": schema.StringAttribute{
+							Optional: true,
+						},
+						"description": schema.StringAttribute{
+							Optional: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Optional: true,
+						},
+					},
+				},
+			},
+			"updated_tools": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Required: true,
+						},
+						"alias": schema.StringAttribute{
+							Optional: true,
+						},
+						"description": schema.StringAttribute{
+							Optional: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Optional: true,
+						},
+					},
+				},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,

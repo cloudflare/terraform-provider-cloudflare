@@ -2,12 +2,16 @@
 page_title: "cloudflare_calls_turn_app Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Calls ReadCalls Write
 ---
 
 # cloudflare_calls_turn_app (Data Source)
 
+Accepted Permissions
 
+- `Calls Read`
+- `Calls Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_calls_turn_app" "example_calls_turn_app" {
 
 ### Required
 
-- `account_id` (String) The account identifier tag.
 - `key_id` (String) A Cloudflare-generated unique identifier for a item.
+
+### Optional
+
+- `account_id` (String) The account identifier tag.
 
 ### Read-Only
 

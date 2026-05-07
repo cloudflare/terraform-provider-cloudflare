@@ -2,12 +2,16 @@
 page_title: "cloudflare_image Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Images ReadImages Write
 ---
 
 # cloudflare_image (Resource)
 
+Accepted Permissions
 
+- `Images Read`
+- `Images Write`
 
 ## Example Usage
 
@@ -16,7 +20,7 @@ resource "cloudflare_image" "example_image" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   id = "id"
   creator = "creator"
-  file = null
+  file = "Example data"
   metadata = {
 
   }
@@ -30,11 +34,11 @@ resource "cloudflare_image" "example_image" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `id` (String) An optional custom unique identifier for your image.
 
 ### Optional
 
+- `account_id` (String) Account identifier tag.
 - `creator` (String) Can set the creator field with an internal user ID.
 - `file` (String) An image binary data. Only needed when type is uploading a file.
 - `metadata` (String) User modifiable key-value store. Can use used for keeping references to another system of record for managing images.

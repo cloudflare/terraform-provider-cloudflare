@@ -17,14 +17,16 @@ type AccountRolesResultListDataSourceEnvelope struct {
 }
 
 type AccountRolesDataSourceModel struct {
-	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AccountRolesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AccountRolesDataSourceModel) toListParams(_ context.Context) (params accounts.RoleListParams, diags diag.Diagnostics) {
-	params = accounts.RoleListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = accounts.RoleListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

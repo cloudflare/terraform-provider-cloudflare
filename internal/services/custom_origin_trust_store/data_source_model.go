@@ -19,7 +19,7 @@ type CustomOriginTrustStoreResultDataSourceEnvelope struct {
 type CustomOriginTrustStoreDataSourceModel struct {
 	ID                       types.String                                    `tfsdk:"id" path:"custom_origin_trust_store_id,computed"`
 	CustomOriginTrustStoreID types.String                                    `tfsdk:"custom_origin_trust_store_id" path:"custom_origin_trust_store_id,optional"`
-	ZoneID                   types.String                                    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                   types.String                                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Certificate              types.String                                    `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn                timetypes.RFC3339                               `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer                   types.String                                    `tfsdk:"issuer" json:"issuer,computed"`
@@ -31,18 +31,21 @@ type CustomOriginTrustStoreDataSourceModel struct {
 }
 
 func (m *CustomOriginTrustStoreDataSourceModel) toReadParams(_ context.Context) (params acm.CustomTrustStoreGetParams, diags diag.Diagnostics) {
-	params = acm.CustomTrustStoreGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = acm.CustomTrustStoreGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 func (m *CustomOriginTrustStoreDataSourceModel) toListParams(_ context.Context) (params acm.CustomTrustStoreListParams, diags diag.Diagnostics) {
-	params = acm.CustomTrustStoreListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = acm.CustomTrustStoreListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.Filter.Limit.IsNull() {
 		params.Limit = cloudflare.F(m.Filter.Limit.ValueInt64())
 	}

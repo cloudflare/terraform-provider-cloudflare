@@ -18,7 +18,7 @@ type EmailRoutingCatchAllResultDataSourceEnvelope struct {
 
 type EmailRoutingCatchAllDataSourceModel struct {
 	ID       types.String                                                              `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled  types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	Name     types.String                                                              `tfsdk:"name" json:"name,computed"`
 	Tag      types.String                                                              `tfsdk:"tag" json:"tag,computed"`
@@ -27,8 +27,10 @@ type EmailRoutingCatchAllDataSourceModel struct {
 }
 
 func (m *EmailRoutingCatchAllDataSourceModel) toReadParams(_ context.Context) (params email_routing.RuleCatchAllGetParams, diags diag.Diagnostics) {
-	params = email_routing.RuleCatchAllGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = email_routing.RuleCatchAllGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

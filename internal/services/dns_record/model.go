@@ -16,14 +16,14 @@ type DNSRecordResultEnvelope struct {
 
 type DNSRecordModel struct {
 	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
-	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name              types.String                                     `tfsdk:"name" json:"name,required"`
 	Type              types.String                                     `tfsdk:"type" json:"type,required"`
 	Comment           types.String                                     `tfsdk:"comment" json:"comment,optional"`
 	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
 	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
 	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
-	PrivateRouting    types.Bool                                       `tfsdk:"private_routing" json:"private_routing,computed_optional"`
+	PrivateRouting    types.Bool                                       `tfsdk:"private_routing" json:"private_routing,optional"`
 	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
 	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,required"`
 	Tags              customfield.Set[types.String]                    `tfsdk:"tags" json:"tags,computed_optional"`

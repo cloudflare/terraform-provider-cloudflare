@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_policy (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 
@@ -16,8 +20,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   decision = "allow"
   include = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   name = "Allow devs"
@@ -38,21 +42,21 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     }
   }
   exclude = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   isolation_required = false
   mfa_config = {
     allowed_authenticators = ["totp", "biometrics", "security_key"]
-    mfa_bypass = false
+    mfa_disabled = false
     session_duration = "24h"
   }
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   session_duration = "24h"
@@ -64,13 +68,13 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
 - `name` (String) The name of the Access policy.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `connection_rules` (Attributes) The rules that define how users may connect to targets secured by your application. (see [below for nested schema](#nestedatt--connection_rules))
@@ -146,6 +150,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--exclude--user_risk_score))
 
 <a id="nestedatt--exclude--any_valid_service_token"></a>
 ### Nested Schema for `exclude.any_valid_service_token`
@@ -342,6 +347,14 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--exclude--user_risk_score"></a>
+### Nested Schema for `exclude.user_risk_score`
+
+Required:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
+
+
 
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
@@ -372,6 +385,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--include--user_risk_score))
 
 <a id="nestedatt--include--any_valid_service_token"></a>
 ### Nested Schema for `include.any_valid_service_token`
@@ -568,6 +582,14 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--include--user_risk_score"></a>
+### Nested Schema for `include.user_risk_score`
+
+Required:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
+
+
 
 <a id="nestedatt--mfa_config"></a>
 ### Nested Schema for `mfa_config`
@@ -575,7 +597,7 @@ Required:
 Optional:
 
 - `allowed_authenticators` (List of String) Lists the MFA methods that users can authenticate with.
-- `mfa_bypass` (Boolean) Indicates whether to bypass MFA for this resource. This option is available at the application and policy level.
+- `mfa_disabled` (Boolean) Indicates whether to disable MFA for this resource. This option is available at the application and policy level.
 - `session_duration` (String) Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.
 
 
@@ -608,6 +630,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
+- `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--require--user_risk_score))
 
 <a id="nestedatt--require--any_valid_service_token"></a>
 ### Nested Schema for `require.any_valid_service_token`
@@ -802,6 +825,14 @@ Required:
 Required:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--require--user_risk_score"></a>
+### Nested Schema for `require.user_risk_score`
+
+Required:
+
+- `user_risk_score` (List of String) A list of risk score levels to match. Values can be low, medium, high, or unscored.
 
 ## Import
 

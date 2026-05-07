@@ -2,12 +2,50 @@
 page_title: "cloudflare_page_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies RevokeAccess: Apps and Policies WriteAccess: Mutual TLS Certificates WriteAccess: Organizations, Identity Providers, and Groups WriteAnalytics ReadApps WriteCache PurgeDNS ReadDNS WriteFirewall Services ReadFirewall Services WriteLoad Balancers ReadLoad Balancers WriteLogs ReadLogs WritePage Rules ReadPage Rules WriteSSL and Certificates ReadSSL and Certificates WriteStream ReadStream WriteTrust and Safety ReadTrust and Safety WriteWorkers Routes ReadWorkers Routes WriteWorkers Scripts ReadWorkers Scripts WriteZaraz AdminZaraz EditZaraz ReadZero Trust: PII ReadZone ReadZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_page_rule (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Revoke`
+- `Access: Apps and Policies Write`
+- `Access: Mutual TLS Certificates Write`
+- `Access: Organizations, Identity Providers, and Groups Write`
+- `Analytics Read`
+- `Apps Write`
+- `Cache Purge`
+- `DNS Read`
+- `DNS Write`
+- `Firewall Services Read`
+- `Firewall Services Write`
+- `Load Balancers Read`
+- `Load Balancers Write`
+- `Logs Read`
+- `Logs Write`
+- `Page Rules Read`
+- `Page Rules Write`
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
+- `Stream Read`
+- `Stream Write`
+- `Trust and Safety Read`
+- `Trust and Safety Write`
+- `Workers Routes Read`
+- `Workers Routes Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Zaraz Admin`
+- `Zaraz Edit`
+- `Zaraz Read`
+- `Zero Trust: PII Read`
+- `Zone Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 
@@ -33,7 +71,6 @@ resource "cloudflare_page_rule" "example_page_rule" {
 
 - `actions` (Attributes) (see [below for nested schema](#nestedatt--actions))
 - `target` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -44,6 +81,7 @@ specific Page Rule to take precedence (rule B: `/images/special/*`),
 specify a higher priority for rule B so it overrides rule A.
 - `status` (String) The status of the Page Rule.
 Available values: "active", "disabled".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

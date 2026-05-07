@@ -18,15 +18,17 @@ type RegionalTieredCacheResultDataSourceEnvelope struct {
 
 type RegionalTieredCacheDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *RegionalTieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {
-	params = cache.RegionalTieredCacheGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = cache.RegionalTieredCacheGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

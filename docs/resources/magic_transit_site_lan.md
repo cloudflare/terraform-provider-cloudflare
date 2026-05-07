@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_lan Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_lan (Resource)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -17,6 +23,8 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
   site_id = "023e105f4ecef8ad9ca31a8372d0c353"
   bond_id = 2
   ha_link = true
+  is_breakout = true
+  is_prioritized = true
   name = "name"
   nat = {
     static_prefix = "192.0.2.0/24"
@@ -56,13 +64,15 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `bond_id` (Number)
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
+- `is_breakout` (Boolean) mark true to use this LAN for source-based breakout traffic
+- `is_prioritized` (Boolean) mark true to use this LAN for source-based prioritized traffic
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--nat))
 - `physport` (Number)

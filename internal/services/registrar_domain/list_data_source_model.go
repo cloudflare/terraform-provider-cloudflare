@@ -18,14 +18,16 @@ type RegistrarDomainsResultListDataSourceEnvelope struct {
 }
 
 type RegistrarDomainsDataSourceModel struct {
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[RegistrarDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RegistrarDomainsDataSourceModel) toListParams(_ context.Context) (params registrar.DomainListParams, diags diag.Diagnostics) {
-	params = registrar.DomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = registrar.DomainListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

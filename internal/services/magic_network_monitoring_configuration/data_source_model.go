@@ -17,7 +17,7 @@ type MagicNetworkMonitoringConfigurationResultDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringConfigurationDataSourceModel struct {
-	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	DefaultSampling types.Float64                                                                               `tfsdk:"default_sampling" json:"default_sampling,computed"`
 	Name            types.String                                                                                `tfsdk:"name" json:"name,computed"`
 	RouterIPs       customfield.List[types.String]                                                              `tfsdk:"router_ips" json:"router_ips,computed"`
@@ -25,8 +25,10 @@ type MagicNetworkMonitoringConfigurationDataSourceModel struct {
 }
 
 func (m *MagicNetworkMonitoringConfigurationDataSourceModel) toReadParams(_ context.Context) (params magic_network_monitoring.ConfigGetParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.ConfigGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = magic_network_monitoring.ConfigGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

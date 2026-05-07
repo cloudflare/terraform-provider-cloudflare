@@ -14,7 +14,7 @@ type ClientCertificateResultEnvelope struct {
 
 type ClientCertificateModel struct {
 	ID                   types.String                                                         `tfsdk:"id" json:"id,computed"`
-	ZoneID               types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID               types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	Csr                  types.String                                                         `tfsdk:"csr" json:"csr,required"`
 	ValidityDays         types.Int64                                                          `tfsdk:"validity_days" json:"validity_days,required"`
 	Reactivate           types.Bool                                                           `tfsdk:"reactivate" json:"reactivate,optional,no_refresh"`

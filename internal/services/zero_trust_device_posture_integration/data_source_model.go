@@ -19,7 +19,7 @@ type ZeroTrustDevicePostureIntegrationResultDataSourceEnvelope struct {
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
 	ID            types.String                                                                     `tfsdk:"id" path:"integration_id,computed"`
 	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,required"`
-	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`
 	Name          types.String                                                                     `tfsdk:"name" json:"name,computed"`
 	Type          types.String                                                                     `tfsdk:"type" json:"type,computed"`
@@ -27,8 +27,10 @@ type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
 }
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureIntegrationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureIntegrationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DevicePostureIntegrationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

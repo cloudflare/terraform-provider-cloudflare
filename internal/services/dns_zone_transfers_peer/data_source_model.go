@@ -18,7 +18,7 @@ type DNSZoneTransfersPeerResultDataSourceEnvelope struct {
 type DNSZoneTransfersPeerDataSourceModel struct {
 	ID         types.String  `tfsdk:"id" path:"peer_id,computed"`
 	PeerID     types.String  `tfsdk:"peer_id" path:"peer_id,required"`
-	AccountID  types.String  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String  `tfsdk:"account_id" path:"account_id,optional"`
 	IP         types.String  `tfsdk:"ip" json:"ip,computed"`
 	IxfrEnable types.Bool    `tfsdk:"ixfr_enable" json:"ixfr_enable,computed"`
 	Name       types.String  `tfsdk:"name" json:"name,computed"`
@@ -27,8 +27,10 @@ type DNSZoneTransfersPeerDataSourceModel struct {
 }
 
 func (m *DNSZoneTransfersPeerDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferPeerGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferPeerGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = dns.ZoneTransferPeerGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

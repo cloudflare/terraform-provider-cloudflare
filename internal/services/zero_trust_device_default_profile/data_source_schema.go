@@ -20,7 +20,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
@@ -59,6 +59,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"gateway_unique_id": schema.StringAttribute{
+				Computed: true,
+			},
+			"policy_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{

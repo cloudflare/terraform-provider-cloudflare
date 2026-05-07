@@ -146,7 +146,7 @@ func (r *ZoneResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	_, err = r.client.Zones.Edit(
 		ctx,
 		zones.ZoneEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(state.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),

@@ -13,7 +13,7 @@ type ZeroTrustDevicePostureRuleResultEnvelope struct {
 
 type ZeroTrustDevicePostureRuleModel struct {
 	ID          types.String                             `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                             `tfsdk:"account_id" path:"account_id,optional"`
 	Name        types.String                             `tfsdk:"name" json:"name,optional"`
 	Type        types.String                             `tfsdk:"type" json:"type,required"`
 	Description types.String                             `tfsdk:"description" json:"description,computed_optional"`
@@ -62,6 +62,7 @@ type ZeroTrustDevicePostureRuleInputModel struct {
 	SensorConfig            types.String                                   `tfsdk:"sensor_config" json:"sensor_config,optional"`
 	State                   types.String                                   `tfsdk:"state" json:"state,optional"`
 	VersionOperator         types.String                                   `tfsdk:"version_operator" json:"versionOperator,optional"`
+	AuthState               *[]types.String                                `tfsdk:"auth_state" json:"auth_state,optional"`
 	CountOperator           types.String                                   `tfsdk:"count_operator" json:"countOperator,optional"`
 	IssueCount              types.String                                   `tfsdk:"issue_count" json:"issue_count,optional"`
 	EidLastSeen             types.String                                   `tfsdk:"eid_last_seen" json:"eid_last_seen,optional"`

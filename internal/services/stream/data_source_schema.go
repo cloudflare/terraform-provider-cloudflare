@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -21,14 +22,24 @@ var _ datasource.DataSourceWithConfigValidators = (*StreamDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The account identifier tag.",
-				Required:    true,
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Stream Read",
+				"Stream Write",
 			},
+		}.String(),
+		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Required:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The account identifier tag.",
+				Optional:    true,
+			},
+			"clipped_from": schema.StringAttribute{
+				Description: "The unique identifier of the source video this video was clipped from.",
+				Computed:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the media item was created.",
@@ -53,6 +64,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Int64{
 					int64validator.Between(1, 36000),
 				},
+			},
+			"max_size_bytes": schema.Int64Attribute{
+				Description: "The maximum size in bytes for the video upload.",
+				Computed:    true,
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the media item was last modified.",
@@ -141,6 +156,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"hls": schema.StringAttribute{
 						Description: "The HLS manifest for the video.",
 						Computed:    true,
+					},
+				},
+			},
+			"public_details": schema.SingleNestedAttribute{
+				Description: "Public details for the video including title, share link, channel link, and logo.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamPublicDetailsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"channel_link": schema.StringAttribute{
+						Computed: true,
+					},
+					"logo": schema.StringAttribute{
+						Computed: true,
+					},
+					"media_id": schema.Int64Attribute{
+						Computed: true,
+					},
+					"share_link": schema.StringAttribute{
+						Computed: true,
+					},
+					"title": schema.StringAttribute{
+						Computed: true,
 					},
 				},
 			},

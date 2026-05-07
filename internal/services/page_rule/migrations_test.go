@@ -30,7 +30,7 @@ func TestMigrateCloudflarePageRule_Basic(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1", // Last v4 release
-			version:  "4.52.1",
+			version:  "4.52.7",
 			configFn: testAccCloudflarePageRuleMigrationConfigV4Basic,
 		},
 	}
@@ -107,7 +107,7 @@ func TestMigrateCloudflarePageRule_CacheDeceptionArmor(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.1",
+			version:  "4.52.7",
 			configFn: testAccCloudflarePageRuleMigrationConfigV4CacheDeceptionArmor,
 		},
 	}
@@ -179,7 +179,7 @@ func TestMigrateCloudflarePageRule_CacheKeyFields(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.1",
+			version:  "4.52.7",
 			configFn: testAccCloudflarePageRuleMigrationConfigV4CacheKeyFields,
 		},
 	}
@@ -292,7 +292,7 @@ func TestMigrateCloudflarePageRule_ForwardingURL(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.1",
+			version:  "4.52.7",
 			configFn: testAccCloudflarePageRuleMigrationConfigV4ForwardingURL,
 		},
 	}
@@ -369,7 +369,7 @@ func TestMigrateCloudflarePageRule_CompleteSettings(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.1",
+			version:  "4.52.7",
 			configFn: testAccCloudflarePageRuleMigrationConfigV4Complete,
 		},
 	}

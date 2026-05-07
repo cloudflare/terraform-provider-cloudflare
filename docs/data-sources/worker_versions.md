@@ -2,12 +2,17 @@
 page_title: "cloudflare_worker_versions Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_worker_versions (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -23,11 +28,11 @@ data "cloudflare_worker_versions" "example_worker_versions" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -48,11 +53,13 @@ included as modules named `_headers` and `_redirects` with content type `text/pl
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--result--bindings))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+- `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--result--containers))
 - `created_on` (String) When the version was created.
 - `id` (String) Version identifier.
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--result--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
 - `main_script_base64` (String) The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules).
+- `migration_tag` (String) Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.
 - `migrations` (Attributes) Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed. (see [below for nested schema](#nestedatt--result--migrations))
 - `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime.
 
@@ -64,6 +71,7 @@ included as modules named `_headers` and `_redirects` with content type `text/pl
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--result--placement))
 - `source` (String) The client used to create the version.
 - `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
+- `urls` (List of String) All routable URLs that always point to this version. Does not include alias URLs, since aliases can be updated to point to a different version.
 - `usage_model` (String, Deprecated) Usage model for the version.
 Available values: "standard", "bundled", "unbound".
 
@@ -72,8 +80,8 @@ Available values: "standard", "bundled", "unbound".
 
 Read-Only:
 
-- `workers_message` (String) Human-readable message about the version.
-- `workers_tag` (String) User-provided identifier for the version.
+- `workers_message` (String) Human-readable message about the version. Truncated to 1000 bytes if longer.
+- `workers_tag` (String) User-provided identifier for the version. Maximum 100 bytes.
 - `workers_triggered_by` (String) Operation that triggered the creation of the version.
 
 
@@ -106,24 +114,30 @@ Read-Only:
 - `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
 - `allowed_destination_addresses` (List of String) List of allowed destination addresses.
 - `allowed_sender_addresses` (List of String) List of allowed sender addresses.
+- `app_id` (String) ID of the Flagship app to bind to for feature flag evaluation.
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
+- `database_id` (String) Identifier of the D1 database to bind to.
 - `dataset` (String) The name of the dataset to bind to.
 - `destination_address` (String) Destination address for the email.
+- `dispatch_namespace` (String) The dispatch namespace the Durable Object script belongs to.
+- `entrypoint` (String) Entrypoint to invoke on the target Worker.
 - `environment` (String) The environment of the script_name to bind to.
 - `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
 - `index_name` (String) Name of the Vectorize index to bind to.
+- `instance_name` (String) The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
 - `json` (String) JSON data to use.
 - `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
-Available values: "eu", "fedramp".
+Available values: "eu", "fedramp", "fedramp-high".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `name` (String) A JavaScript variable name for the binding.
-- `namespace` (String) The name of the dispatch namespace.
+- `namespace` (String) The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
 - `namespace_id` (String) Namespace identifier tag.
+- `network_id` (String) Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.
 - `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--result--bindings--outbound))
 - `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
@@ -132,11 +146,13 @@ Available values: "eu", "fedramp".
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
+- `service_id` (String) Identifier of the VPC service to bind to.
 - `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--result--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
+- `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module".
+Available values: "ai", "ai_search", "ai_search_namespace", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 - `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
 - `workflow_name` (String) Name of the Workflow to bind to.
@@ -178,12 +194,21 @@ Read-Only:
 
 
 
+<a id="nestedatt--result--containers"></a>
+### Nested Schema for `result.containers`
+
+Read-Only:
+
+- `class_name` (String) Select which Durable Object class should get this container attached.
+
+
 <a id="nestedatt--result--limits"></a>
 ### Nested Schema for `result.limits`
 
 Read-Only:
 
 - `cpu_ms` (Number) CPU time limit in milliseconds.
+- `subrequests` (Number) Subrequest limit per request.
 
 
 <a id="nestedatt--result--migrations"></a>

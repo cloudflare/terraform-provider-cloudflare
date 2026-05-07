@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_kv Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers KV Storage ReadWorkers KV Storage Write
 ---
 
 # cloudflare_workers_kv (Data Source)
 
+Accepted Permissions
 
+- `Workers KV Storage Read`
+- `Workers KV Storage Write`
 
 ## Example Usage
 
@@ -24,9 +28,12 @@ data "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `key_name` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
 - `namespace_id` (String) Namespace identifier tag.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

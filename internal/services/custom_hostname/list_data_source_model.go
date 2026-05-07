@@ -18,7 +18,7 @@ type CustomHostnamesResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnamesDataSourceModel struct {
-	ZoneID               types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID               types.String                                                       `tfsdk:"zone_id" path:"zone_id,optional"`
 	CertificateAuthority types.String                                                       `tfsdk:"certificate_authority" query:"certificate_authority,optional"`
 	CustomOriginServer   types.String                                                       `tfsdk:"custom_origin_server" query:"custom_origin_server,optional"`
 	Direction            types.String                                                       `tfsdk:"direction" query:"direction,optional"`
@@ -34,10 +34,11 @@ type CustomHostnamesDataSourceModel struct {
 }
 
 func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
-	params = custom_hostnames.CustomHostnameListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = custom_hostnames.CustomHostnameListParams{}
 
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

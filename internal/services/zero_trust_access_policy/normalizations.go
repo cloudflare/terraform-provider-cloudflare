@@ -89,6 +89,14 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 		}
 	}
 
+	// Normalize mfa_config inner fields — when users configure mfa_config without mfa_disabled,
+	// the API returns mfa_disabled: false which would otherwise drift against null in state.
+	// Same for an empty allowed_authenticators list.
+	if data.MfaConfig != nil && sourceData.MfaConfig != nil {
+		normalizeEmptyAndNullSlice(&data.MfaConfig.AllowedAuthenticators, sourceData.MfaConfig.AllowedAuthenticators)
+		normalizeFalseAndNullBool(&data.MfaConfig.MfaDisabled, sourceData.MfaConfig.MfaDisabled)
+	}
+
 	return diags
 }
 

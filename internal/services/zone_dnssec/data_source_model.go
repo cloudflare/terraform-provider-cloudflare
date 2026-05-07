@@ -18,7 +18,7 @@ type ZoneDNSSECResultDataSourceEnvelope struct {
 
 type ZoneDNSSECDataSourceModel struct {
 	ID                types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,computed"`
 	Digest            types.String      `tfsdk:"digest" json:"digest,computed"`
 	DigestAlgorithm   types.String      `tfsdk:"digest_algorithm" json:"digest_algorithm,computed"`
@@ -36,8 +36,10 @@ type ZoneDNSSECDataSourceModel struct {
 }
 
 func (m *ZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dns.DNSSECGetParams, diags diag.Diagnostics) {
-	params = dns.DNSSECGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = dns.DNSSECGetParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

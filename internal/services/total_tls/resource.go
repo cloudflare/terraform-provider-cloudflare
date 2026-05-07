@@ -64,6 +64,7 @@ func (r *TotalTLSResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -113,6 +114,7 @@ func (r *TotalTLSResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -153,6 +155,7 @@ func (r *TotalTLSResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 
 	res := new(http.Response)
 	env := TotalTLSResultEnvelope{*data}

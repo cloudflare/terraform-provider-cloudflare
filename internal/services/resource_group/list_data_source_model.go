@@ -17,7 +17,7 @@ type ResourceGroupsResultListDataSourceEnvelope struct {
 }
 
 type ResourceGroupsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	ID        types.String                                                      `tfsdk:"id" query:"id,optional"`
 	Name      types.String                                                      `tfsdk:"name" query:"name,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
@@ -25,10 +25,11 @@ type ResourceGroupsDataSourceModel struct {
 }
 
 func (m *ResourceGroupsDataSourceModel) toListParams(_ context.Context) (params iam.ResourceGroupListParams, diags diag.Diagnostics) {
-	params = iam.ResourceGroupListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = iam.ResourceGroupListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

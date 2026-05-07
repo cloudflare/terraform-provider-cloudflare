@@ -17,16 +17,18 @@ type R2BucketEventNotificationResultDataSourceEnvelope struct {
 }
 
 type R2BucketEventNotificationDataSourceModel struct {
-	AccountID  types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                                `tfsdk:"bucket_name" path:"bucket_name,required"`
 	QueueID    types.String                                                                `tfsdk:"queue_id" path:"queue_id,required"`
+	AccountID  types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	QueueName  types.String                                                                `tfsdk:"queue_name" json:"queueName,computed"`
 	Rules      customfield.NestedObjectList[R2BucketEventNotificationRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketEventNotificationDataSourceModel) toReadParams(_ context.Context) (params r2.BucketEventNotificationGetParams, diags diag.Diagnostics) {
-	params = r2.BucketEventNotificationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = r2.BucketEventNotificationGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

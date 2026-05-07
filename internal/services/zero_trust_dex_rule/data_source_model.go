@@ -19,7 +19,7 @@ type ZeroTrustDEXRuleResultDataSourceEnvelope struct {
 type ZeroTrustDEXRuleDataSourceModel struct {
 	ID            types.String                                                               `tfsdk:"id" path:"rule_id,computed"`
 	RuleID        types.String                                                               `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID     types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt     types.String                                                               `tfsdk:"created_at" json:"created_at,computed"`
 	Description   types.String                                                               `tfsdk:"description" json:"description,computed"`
 	Match         types.String                                                               `tfsdk:"match" json:"match,computed"`
@@ -29,8 +29,10 @@ type ZeroTrustDEXRuleDataSourceModel struct {
 }
 
 func (m *ZeroTrustDEXRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DEXRuleGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DEXRuleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	params = zero_trust.DEXRuleGetParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	}
 
 	return

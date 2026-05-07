@@ -17,7 +17,7 @@ type WorkersKVNamespacesResultListDataSourceEnvelope struct {
 }
 
 type WorkersKVNamespacesDataSourceModel struct {
-	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Direction types.String                                                           `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String                                                           `tfsdk:"order" query:"order,optional"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
@@ -25,10 +25,11 @@ type WorkersKVNamespacesDataSourceModel struct {
 }
 
 func (m *WorkersKVNamespacesDataSourceModel) toListParams(_ context.Context) (params kv.NamespaceListParams, diags diag.Diagnostics) {
-	params = kv.NamespaceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	params = kv.NamespaceListParams{}
 
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(kv.NamespaceListParamsDirection(m.Direction.ValueString()))
 	}

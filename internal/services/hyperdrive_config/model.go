@@ -14,7 +14,7 @@ type HyperdriveConfigResultEnvelope struct {
 
 type HyperdriveConfigModel struct {
 	ID                    types.String                  `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID             types.String                  `tfsdk:"account_id" path:"account_id,optional"`
 	Name                  types.String                  `tfsdk:"name" json:"name,required"`
 	Origin                *HyperdriveConfigOriginModel  `tfsdk:"origin" json:"origin,required"`
 	OriginConnectionLimit types.Int64                   `tfsdk:"origin_connection_limit" json:"origin_connection_limit,optional"`
@@ -34,13 +34,14 @@ func (m HyperdriveConfigModel) MarshalJSONForUpdate(state HyperdriveConfigModel)
 
 type HyperdriveConfigOriginModel struct {
 	Database           types.String `tfsdk:"database" json:"database,required"`
-	Host               types.String `tfsdk:"host" json:"host,required"`
+	Host               types.String `tfsdk:"host" json:"host,optional"`
 	Password           types.String `tfsdk:"password" json:"password,required"`
 	Port               types.Int64  `tfsdk:"port" json:"port,optional"`
 	Scheme             types.String `tfsdk:"scheme" json:"scheme,required"`
 	User               types.String `tfsdk:"user" json:"user,required"`
 	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
 	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,optional"`
+	ServiceID          types.String `tfsdk:"service_id" json:"service_id,optional"`
 }
 
 type HyperdriveConfigCachingModel struct {
