@@ -616,7 +616,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"content_selector": schema.ListNestedAttribute{
-										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
 										Optional:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -625,13 +625,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													Required:    true,
 												},
 												"selector": schema.StringAttribute{
-													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
 													Required:    true,
 												},
 											},
 										},
 									},
 									"include_headers": schema.MapAttribute{
+										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
 										Optional:    true,
 										ElementType: types.StringType,
 									},
