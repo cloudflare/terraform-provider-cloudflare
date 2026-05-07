@@ -245,6 +245,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_network_hostname_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_resource_library_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_resource_library_category"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_scoring_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
@@ -997,6 +999,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_risk_behavior.NewZeroTrustRiskBehaviorDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationDataSource,
 		zero_trust_risk_scoring_integration.NewZeroTrustRiskScoringIntegrationsDataSource,
+		zero_trust_resource_library_application.NewZeroTrustResourceLibraryApplicationDataSource,
+		zero_trust_resource_library_application.NewZeroTrustResourceLibraryApplicationsDataSource,
+		zero_trust_resource_library_category.NewZeroTrustResourceLibraryCategoryDataSource,
+		zero_trust_resource_library_category.NewZeroTrustResourceLibraryCategoriesDataSource,
 		turnstile_widget.NewTurnstileWidgetDataSource,
 		turnstile_widget.NewTurnstileWidgetsDataSource,
 		connectivity_directory_service.NewConnectivityDirectoryServiceDataSource,
