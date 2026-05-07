@@ -2,6 +2,7 @@ package v500_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings/migration/v500"
@@ -9,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -130,7 +132,9 @@ func TestUpgradeFromLegacyV0(t *testing.T) {
 func TestUpgradeFromV1(t *testing.T) {
 	ctx := context.Background()
 
-	// V1 and V500 have identical schemas, so this is a no-op
+	// V1 and V500 have identical schemas, so this is a no-op.
+	// IMPORTANT: In production, PriorSchema=nil so req.State is nil.
+	// The upgrader must use req.RawState instead.
 	targetSchema := schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -172,24 +176,30 @@ func TestUpgradeFromV1(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create source state
+			// Create source state value for RawState
 			sourceStateValue := createTerraformValue(t, targetSchema, tt.sourceState)
-			sourceState := tfsdk.State{
-				Raw:    sourceStateValue,
-				Schema: targetSchema,
-			}
 
-			// Create request and response
+			// Simulate production: PriorSchema=nil means req.State is nil.
+			// Only req.RawState is populated.
+			rawStateBytes, err := sourceStateValue.MarshalMsgPack(sourceStateValue.Type())
+			require.NoError(t, err, "Failed to marshal source state to msgpack")
+
 			req := resource.UpgradeStateRequest{
-				State: &sourceState,
+				State: nil, // PriorSchema=nil in production → State is nil
+				RawState: &tfprotov6.RawState{
+					Flatmap: nil,
+					JSON:    marshalJSON(t, tt.sourceState),
+				},
 			}
+			_ = rawStateBytes // msgpack not needed; JSON path is used
+
 			resp := &resource.UpgradeStateResponse{
 				State: tfsdk.State{
 					Schema: targetSchema,
 				},
 			}
 
-			// Run upgrade
+			// Run upgrade — must NOT panic even with nil req.State
 			v500.UpgradeFromV1(ctx, req, resp)
 
 			if tt.expectError {
@@ -241,4 +251,12 @@ func createTerraformValue(t *testing.T, s schema.Schema, values map[string]inter
 	}
 
 	return tftypes.NewValue(objectType, valueMap)
+}
+
+// marshalJSON is a test helper that marshals a map to JSON bytes.
+func marshalJSON(t *testing.T, v interface{}) []byte {
+	t.Helper()
+	b, err := json.Marshal(v)
+	require.NoError(t, err)
+	return b
 }
