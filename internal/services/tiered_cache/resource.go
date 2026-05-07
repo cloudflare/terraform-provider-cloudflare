@@ -65,7 +65,7 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	params := cache.SmartTieredCacheEditParams{}
+	params := cache.SmartTieredCacheNewParams{}
 
 	if !data.ID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
@@ -78,7 +78,7 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	res := new(http.Response)
 	env := TieredCacheResultEnvelope{*data}
-	_, err = r.client.Cache.SmartTieredCache.Edit(
+	_, err = r.client.Cache.SmartTieredCache.New(
 		ctx,
 		params,
 		option.WithRequestBody("application/json", dataBytes),
