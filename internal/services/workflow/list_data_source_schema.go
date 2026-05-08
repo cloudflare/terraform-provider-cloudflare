@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"search": schema.StringAttribute{
 				Description: "Allows filtering workflows` name.",

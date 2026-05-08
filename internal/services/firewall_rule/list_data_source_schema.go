@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to search for. Must be an exact match.",

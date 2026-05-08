@@ -61,12 +61,6 @@ func (r *APIShieldDiscoveryOperationResource) Create(ctx context.Context, req re
 		return
 	}
 
-	params := api_gateway.DiscoveryOperationEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -77,7 +71,9 @@ func (r *APIShieldDiscoveryOperationResource) Create(ctx context.Context, req re
 	_, err = r.client.APIGateway.Discovery.Operations.Edit(
 		ctx,
 		data.OperationID.ValueString(),
-		params,
+		api_gateway.DiscoveryOperationEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -115,12 +111,6 @@ func (r *APIShieldDiscoveryOperationResource) Update(ctx context.Context, req re
 		return
 	}
 
-	params := api_gateway.DiscoveryOperationEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -131,7 +121,9 @@ func (r *APIShieldDiscoveryOperationResource) Update(ctx context.Context, req re
 	_, err = r.client.APIGateway.Discovery.Operations.Edit(
 		ctx,
 		data.OperationID.ValueString(),
-		params,
+		api_gateway.DiscoveryOperationEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

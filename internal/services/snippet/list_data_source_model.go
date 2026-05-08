@@ -18,16 +18,14 @@ type SnippetsResultListDataSourceEnvelope struct {
 }
 
 type SnippetsDataSourceModel struct {
-	ZoneID   types.String                                                `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                 `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[SnippetsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *SnippetsDataSourceModel) toListParams(_ context.Context) (params snippets.SnippetListParams, diags diag.Diagnostics) {
-	params = snippets.SnippetListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = snippets.SnippetListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

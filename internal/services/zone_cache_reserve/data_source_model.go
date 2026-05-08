@@ -18,17 +18,15 @@ type ZoneCacheReserveResultDataSourceEnvelope struct {
 
 type ZoneCacheReserveDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *ZoneCacheReserveDataSourceModel) toReadParams(_ context.Context) (params cache.CacheReserveGetParams, diags diag.Diagnostics) {
-	params = cache.CacheReserveGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = cache.CacheReserveGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

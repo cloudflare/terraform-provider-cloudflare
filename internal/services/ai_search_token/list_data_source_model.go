@@ -18,10 +18,10 @@ type AISearchTokensResultListDataSourceEnvelope struct {
 }
 
 type AISearchTokensDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Search    types.String                                                      `tfsdk:"search" query:"search,optional"`
-	MaxItems         types.Int64                                                       `tfsdk:"max_items"`
-	Result           customfield.NestedObjectList[AISearchTokensResultDataSourceModel] `tfsdk:"result"`
+	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[AISearchTokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AISearchTokensDataSourceModel) toListParams(_ context.Context) (params ai_search.TokenListParams, diags diag.Diagnostics) {

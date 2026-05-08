@@ -64,12 +64,6 @@ func (r *CustomHostnameResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	params := custom_hostnames.CustomHostnameNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *CustomHostnameResource) Create(ctx context.Context, req resource.Create
 	env := CustomHostnameResultEnvelope{*data}
 	_, err = r.client.CustomHostnames.New(
 		ctx,
-		params,
+		custom_hostnames.CustomHostnameNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *CustomHostnameResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	params := custom_hostnames.CustomHostnameEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *CustomHostnameResource) Update(ctx context.Context, req resource.Update
 	_, err = r.client.CustomHostnames.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		custom_hostnames.CustomHostnameEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *CustomHostnameResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	params := custom_hostnames.CustomHostnameGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CustomHostnameResultEnvelope{*data}
 	_, err := r.client.CustomHostnames.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		custom_hostnames.CustomHostnameGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *CustomHostnameResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	params := custom_hostnames.CustomHostnameDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.CustomHostnames.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		custom_hostnames.CustomHostnameDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

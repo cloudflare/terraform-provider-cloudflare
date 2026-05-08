@@ -64,12 +64,6 @@ func (r *ZeroTrustListResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := zero_trust.GatewayListNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustListResource) Create(ctx context.Context, req resource.CreateR
 	env := ZeroTrustListResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.Lists.New(
 		ctx,
-		params,
+		zero_trust.GatewayListNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustListResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	params := zero_trust.GatewayListUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustListResource) Update(ctx context.Context, req resource.UpdateR
 	_, err = r.client.ZeroTrust.Gateway.Lists.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayListUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := zero_trust.GatewayListGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustListResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.Lists.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayListGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustListResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := zero_trust.GatewayListDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Gateway.Lists.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayListDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

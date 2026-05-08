@@ -25,6 +25,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"identifier": schema.StringAttribute{
 				Description:   "A Cloudflare-generated unique identifier for a media item.",
 				Required:      true,
@@ -33,11 +38,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"language": schema.StringAttribute{
 				Description:   "The language tag in BCP 47 format.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"file": schema.StringAttribute{

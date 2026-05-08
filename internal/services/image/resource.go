@@ -64,12 +64,6 @@ func (r *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	params := images.V1NewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 	env := ImageResultEnvelope{*data}
 	_, err = r.client.Images.V1.New(
 		ctx,
-		params,
+		images.V1NewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	params := images.V1EditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	_, err = r.client.Images.V1.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1EditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	params := images.V1GetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ImageResultEnvelope{*data}
 	_, err := r.client.Images.V1.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1GetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		return
 	}
 
-	params := images.V1DeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Images.V1.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		images.V1DeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

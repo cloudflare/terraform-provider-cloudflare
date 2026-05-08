@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"normalize": schema.BoolAttribute{
 				Description: "Ensures that the configuration is written or retrieved in normalized fashion",

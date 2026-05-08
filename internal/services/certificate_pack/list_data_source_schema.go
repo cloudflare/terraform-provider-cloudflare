@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"deploy": schema.StringAttribute{
 				Description: "Specify the deployment environment for the certificate packs.\nAvailable values: \"staging\", \"production\".",

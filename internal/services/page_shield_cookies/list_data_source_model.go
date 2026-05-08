@@ -18,7 +18,7 @@ type PageShieldCookiesListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldCookiesListDataSourceModel struct {
-	ZoneID    types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID    types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	Direction types.String                                                             `tfsdk:"direction" query:"direction,optional"`
 	Domain    types.String                                                             `tfsdk:"domain" query:"domain,optional"`
 	Export    types.String                                                             `tfsdk:"export" query:"export,optional"`
@@ -38,11 +38,10 @@ type PageShieldCookiesListDataSourceModel struct {
 }
 
 func (m *PageShieldCookiesListDataSourceModel) toListParams(_ context.Context) (params page_shield.CookieListParams, diags diag.Diagnostics) {
-	params = page_shield.CookieListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.CookieListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(page_shield.CookieListParamsDirection(m.Direction.ValueString()))
 	}

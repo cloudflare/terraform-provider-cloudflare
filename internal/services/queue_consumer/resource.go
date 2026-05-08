@@ -61,12 +61,6 @@ func (r *QueueConsumerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := queues.ConsumerNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -77,7 +71,9 @@ func (r *QueueConsumerResource) Create(ctx context.Context, req resource.CreateR
 	_, err = r.client.Queues.Consumers.New(
 		ctx,
 		data.QueueID.ValueString(),
-		params,
+		queues.ConsumerNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,12 +110,6 @@ func (r *QueueConsumerResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	params := queues.ConsumerUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -131,7 +121,9 @@ func (r *QueueConsumerResource) Update(ctx context.Context, req resource.UpdateR
 		ctx,
 		data.QueueID.ValueString(),
 		data.ConsumerID.ValueString(),
-		params,
+		queues.ConsumerUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,19 +153,15 @@ func (r *QueueConsumerResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := queues.ConsumerGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := QueueConsumerResultEnvelope{*data}
 	_, err := r.client.Queues.Consumers.Get(
 		ctx,
 		data.QueueID.ValueString(),
 		data.ConsumerID.ValueString(),
-		params,
+		queues.ConsumerGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -206,17 +194,13 @@ func (r *QueueConsumerResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	params := queues.ConsumerDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Queues.Consumers.Delete(
 		ctx,
 		data.QueueID.ValueString(),
 		data.ConsumerID.ValueString(),
-		params,
+		queues.ConsumerDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

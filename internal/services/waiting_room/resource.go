@@ -64,12 +64,6 @@ func (r *WaitingRoomResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	params := waiting_rooms.WaitingRoomNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *WaitingRoomResource) Create(ctx context.Context, req resource.CreateReq
 	env := WaitingRoomResultEnvelope{*data}
 	_, err = r.client.WaitingRooms.New(
 		ctx,
-		params,
+		waiting_rooms.WaitingRoomNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *WaitingRoomResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	params := waiting_rooms.WaitingRoomUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *WaitingRoomResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.WaitingRooms.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		waiting_rooms.WaitingRoomUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *WaitingRoomResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	params := waiting_rooms.WaitingRoomGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WaitingRoomResultEnvelope{*data}
 	_, err := r.client.WaitingRooms.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		waiting_rooms.WaitingRoomGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *WaitingRoomResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	params := waiting_rooms.WaitingRoomDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.WaitingRooms.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		waiting_rooms.WaitingRoomDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

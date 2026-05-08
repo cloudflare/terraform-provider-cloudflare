@@ -64,12 +64,6 @@ func (r *WorkersScriptSubdomainResource) Create(ctx context.Context, req resourc
 		return
 	}
 
-	params := workers.ScriptSubdomainNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *WorkersScriptSubdomainResource) Create(ctx context.Context, req resourc
 	_, err = r.client.Workers.Scripts.Subdomain.New(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptSubdomainNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,12 +114,6 @@ func (r *WorkersScriptSubdomainResource) Update(ctx context.Context, req resourc
 		return
 	}
 
-	params := workers.ScriptSubdomainNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -134,7 +124,9 @@ func (r *WorkersScriptSubdomainResource) Update(ctx context.Context, req resourc
 	_, err = r.client.Workers.Scripts.Subdomain.New(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptSubdomainNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -164,18 +156,14 @@ func (r *WorkersScriptSubdomainResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	params := workers.ScriptSubdomainGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkersScriptSubdomainResultEnvelope{*data}
 	_, err := r.client.Workers.Scripts.Subdomain.Get(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptSubdomainGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -209,16 +197,12 @@ func (r *WorkersScriptSubdomainResource) Delete(ctx context.Context, req resourc
 		return
 	}
 
-	params := workers.ScriptSubdomainDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Workers.Scripts.Subdomain.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptSubdomainDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

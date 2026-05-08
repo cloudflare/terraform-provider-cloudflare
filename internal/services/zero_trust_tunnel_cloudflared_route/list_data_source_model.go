@@ -18,7 +18,7 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
-	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
 	ExistedAt        types.String                                                                        `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset,optional"`
@@ -41,12 +41,10 @@ func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context
 	}
 
 	params = zero_trust.NetworkRouteListParams{
-		TunTypes: cloudflare.F(mTunTypes),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		TunTypes:  cloudflare.F(mTunTypes),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
 	if !m.Comment.IsNull() {
 		params.Comment = cloudflare.F(m.Comment.ValueString())
 	}

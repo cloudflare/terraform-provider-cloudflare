@@ -18,16 +18,14 @@ type NotificationPolicyWebhooksListResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyWebhooksListDataSourceModel struct {
-	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[NotificationPolicyWebhooksListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *NotificationPolicyWebhooksListDataSourceModel) toListParams(_ context.Context) (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
-	params = alerting.DestinationWebhookListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = alerting.DestinationWebhookListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

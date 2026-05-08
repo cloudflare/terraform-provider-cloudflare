@@ -64,16 +64,6 @@ func (r *CustomPagesResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	params := custom_pages.CustomPageUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -81,6 +71,14 @@ func (r *CustomPagesResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	res := new(http.Response)
 	env := CustomPagesResultEnvelope{*data}
+	params := custom_pages.CustomPageUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.CustomPages.Update(
 		ctx,
 		custom_pages.CustomPageUpdateParamsIdentifier(data.Identifier.ValueString()),
@@ -125,16 +123,6 @@ func (r *CustomPagesResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	params := custom_pages.CustomPageUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -142,6 +130,14 @@ func (r *CustomPagesResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	res := new(http.Response)
 	env := CustomPagesResultEnvelope{*data}
+	params := custom_pages.CustomPageUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.CustomPages.Update(
 		ctx,
 		custom_pages.CustomPageUpdateParamsIdentifier(data.Identifier.ValueString()),
@@ -178,18 +174,16 @@ func (r *CustomPagesResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	res := new(http.Response)
+	env := CustomPagesResultEnvelope{*data}
 	params := custom_pages.CustomPageGetParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
+	} else {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	res := new(http.Response)
-	env := CustomPagesResultEnvelope{*data}
 	_, err := r.client.CustomPages.Get(
 		ctx,
 		custom_pages.CustomPageGetParamsIdentifier(data.Identifier.ValueString()),

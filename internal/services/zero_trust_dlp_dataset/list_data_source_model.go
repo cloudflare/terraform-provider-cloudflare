@@ -18,16 +18,14 @@ type ZeroTrustDLPDatasetsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPDatasetsDataSourceModel struct {
-	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDLPDatasetsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDLPDatasetsDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPDatasetListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPDatasetListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DLPDatasetListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

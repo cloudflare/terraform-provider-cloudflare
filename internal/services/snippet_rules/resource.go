@@ -61,12 +61,6 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	params := snippets.RuleUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 	env := SnippetRulesResultEnvelope{*data}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
-		params,
+		snippets.RuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	params := snippets.RuleUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,7 +118,9 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 	env := SnippetRulesResultEnvelope{*data}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
-		params,
+		snippets.RuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,15 +153,11 @@ func (r *SnippetRulesResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	params := snippets.RuleDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.Snippets.Rules.Delete(
 		ctx,
-		params,
+		snippets.RuleDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

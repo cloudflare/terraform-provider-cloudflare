@@ -64,12 +64,6 @@ func (r *DNSZoneTransfersPeerResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferPeerNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *DNSZoneTransfersPeerResource) Create(ctx context.Context, req resource.
 	env := DNSZoneTransfersPeerResultEnvelope{*data}
 	_, err = r.client.DNS.ZoneTransfers.Peers.New(
 		ctx,
-		params,
+		dns.ZoneTransferPeerNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *DNSZoneTransfersPeerResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferPeerUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *DNSZoneTransfersPeerResource) Update(ctx context.Context, req resource.
 	_, err = r.client.DNS.ZoneTransfers.Peers.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferPeerUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *DNSZoneTransfersPeerResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	params := dns.ZoneTransferPeerGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := DNSZoneTransfersPeerResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.Peers.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferPeerGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *DNSZoneTransfersPeerResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferPeerDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.DNS.ZoneTransfers.Peers.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferPeerDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

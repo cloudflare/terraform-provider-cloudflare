@@ -18,7 +18,7 @@ type ZeroTrustNetworkHostnameRoutesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustNetworkHostnameRoutesDataSourceModel struct {
-	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comment   types.String                                                                      `tfsdk:"comment" query:"comment,optional"`
 	ExistedAt types.String                                                                      `tfsdk:"existed_at" query:"existed_at,optional"`
 	Hostname  types.String                                                                      `tfsdk:"hostname" query:"hostname,optional"`
@@ -30,11 +30,10 @@ type ZeroTrustNetworkHostnameRoutesDataSourceModel struct {
 }
 
 func (m *ZeroTrustNetworkHostnameRoutesDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkHostnameRouteListParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkHostnameRouteListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.NetworkHostnameRouteListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}

@@ -61,12 +61,6 @@ func (r *ContentScanningResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := content_scanning.ContentScanningNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *ContentScanningResource) Create(ctx context.Context, req resource.Creat
 	env := ContentScanningResultEnvelope{*data}
 	_, err = r.client.ContentScanning.New(
 		ctx,
-		params,
+		content_scanning.ContentScanningNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *ContentScanningResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	params := content_scanning.ContentScanningUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,7 +118,9 @@ func (r *ContentScanningResource) Update(ctx context.Context, req resource.Updat
 	env := ContentScanningResultEnvelope{*data}
 	_, err = r.client.ContentScanning.Update(
 		ctx,
-		params,
+		content_scanning.ContentScanningUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,17 +149,13 @@ func (r *ContentScanningResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := content_scanning.ContentScanningGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ContentScanningResultEnvelope{*data}
 	_, err := r.client.ContentScanning.Get(
 		ctx,
-		params,
+		content_scanning.ContentScanningGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

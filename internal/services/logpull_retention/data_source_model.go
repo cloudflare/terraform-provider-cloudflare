@@ -17,15 +17,13 @@ type LogpullRetentionResultDataSourceEnvelope struct {
 
 type LogpullRetentionDataSourceModel struct {
 	ID     types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Flag   types.Bool   `tfsdk:"flag" json:"flag,computed"`
 }
 
 func (m *LogpullRetentionDataSourceModel) toReadParams(_ context.Context) (params logs.ControlRetentionGetParams, diags diag.Diagnostics) {
-	params = logs.ControlRetentionGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = logs.ControlRetentionGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -17,16 +17,14 @@ type RateLimitsResultListDataSourceEnvelope struct {
 }
 
 type RateLimitsDataSourceModel struct {
-	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[RateLimitsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RateLimitsDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = rate_limits.RateLimitListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

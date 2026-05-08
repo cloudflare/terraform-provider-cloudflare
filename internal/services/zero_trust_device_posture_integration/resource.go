@@ -64,12 +64,6 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Create(ctx context.Context, 
 		return
 	}
 
-	params := zero_trust.DevicePostureIntegrationNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Create(ctx context.Context, 
 	env := ZeroTrustDevicePostureIntegrationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Devices.Posture.Integrations.New(
 		ctx,
-		params,
+		zero_trust.DevicePostureIntegrationNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Update(ctx context.Context, 
 		return
 	}
 
-	params := zero_trust.DevicePostureIntegrationEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Update(ctx context.Context, 
 	_, err = r.client.ZeroTrust.Devices.Posture.Integrations.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DevicePostureIntegrationEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Read(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.DevicePostureIntegrationGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDevicePostureIntegrationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.Posture.Integrations.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DevicePostureIntegrationGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Delete(ctx context.Context, 
 		return
 	}
 
-	params := zero_trust.DevicePostureIntegrationDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Devices.Posture.Integrations.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DevicePostureIntegrationDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

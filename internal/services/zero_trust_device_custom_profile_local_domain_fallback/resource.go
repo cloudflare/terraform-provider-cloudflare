@@ -64,12 +64,6 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Create(ctx con
 		return
 	}
 
-	params := zero_trust.DevicePolicyCustomFallbackDomainUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Create(ctx con
 	_, err = r.client.ZeroTrust.Devices.Policies.Custom.FallbackDomains.Update(
 		ctx,
 		data.PolicyID.ValueString(),
-		params,
+		zero_trust.DevicePolicyCustomFallbackDomainUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,12 +114,6 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Update(ctx con
 		return
 	}
 
-	params := zero_trust.DevicePolicyCustomFallbackDomainUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -134,7 +124,9 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Update(ctx con
 	_, err = r.client.ZeroTrust.Devices.Policies.Custom.FallbackDomains.Update(
 		ctx,
 		data.PolicyID.ValueString(),
-		params,
+		zero_trust.DevicePolicyCustomFallbackDomainUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -164,18 +156,14 @@ func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) Read(ctx conte
 		return
 	}
 
-	params := zero_trust.DevicePolicyCustomFallbackDomainGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDeviceCustomProfileLocalDomainFallbackResultEnvelope{data.Domains}
 	_, err := r.client.ZeroTrust.Devices.Policies.Custom.FallbackDomains.Get(
 		ctx,
 		data.PolicyID.ValueString(),
-		params,
+		zero_trust.DevicePolicyCustomFallbackDomainGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

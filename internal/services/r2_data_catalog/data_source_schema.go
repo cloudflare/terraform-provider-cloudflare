@@ -35,7 +35,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Use this to identify the account.",
-				Optional:    true,
+				Required:    true,
 			},
 			"bucket": schema.StringAttribute{
 				Description: "Specifies the associated R2 bucket name.",

@@ -64,12 +64,6 @@ func (r *CloudConnectorRulesResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := cloud_connector.RuleUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *CloudConnectorRulesResource) Create(ctx context.Context, req resource.C
 	env := CloudConnectorRulesResultEnvelope{data.Rules}
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
-		params,
+		cloud_connector.RuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := cloud_connector.RuleUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 	env := CloudConnectorRulesResultEnvelope{data.Rules}
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
-		params,
+		cloud_connector.RuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +154,13 @@ func (r *CloudConnectorRulesResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := cloud_connector.RuleListParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CloudConnectorRulesResultEnvelope{data.Rules}
 	_, err := r.client.CloudConnector.Rules.List(
 		ctx,
-		params,
+		cloud_connector.RuleListParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

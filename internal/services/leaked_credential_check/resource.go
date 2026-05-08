@@ -64,12 +64,6 @@ func (r *LeakedCredentialCheckResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	params := leaked_credential_checks.LeakedCredentialCheckNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *LeakedCredentialCheckResource) Create(ctx context.Context, req resource
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err = r.client.LeakedCredentialChecks.New(
 		ctx,
-		params,
+		leaked_credential_checks.LeakedCredentialCheckNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *LeakedCredentialCheckResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	params := leaked_credential_checks.LeakedCredentialCheckNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -131,7 +121,9 @@ func (r *LeakedCredentialCheckResource) Update(ctx context.Context, req resource
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err = r.client.LeakedCredentialChecks.New(
 		ctx,
-		params,
+		leaked_credential_checks.LeakedCredentialCheckNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -160,17 +152,13 @@ func (r *LeakedCredentialCheckResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	params := leaked_credential_checks.LeakedCredentialCheckGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err := r.client.LeakedCredentialChecks.Get(
 		ctx,
-		params,
+		leaked_credential_checks.LeakedCredentialCheckGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

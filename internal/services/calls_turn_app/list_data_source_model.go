@@ -18,16 +18,14 @@ type CallsTURNAppsResultListDataSourceEnvelope struct {
 }
 
 type CallsTURNAppsDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[CallsTURNAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CallsTURNAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNListParams, diags diag.Diagnostics) {
-	params = calls.TURNListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = calls.TURNListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

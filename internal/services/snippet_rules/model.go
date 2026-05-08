@@ -13,7 +13,7 @@ type SnippetRulesResultEnvelope struct {
 }
 
 type SnippetRulesModel struct {
-	ZoneID types.String               `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID types.String               `tfsdk:"zone_id" path:"zone_id,required"`
 	Rules  *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,required"`
 }
 

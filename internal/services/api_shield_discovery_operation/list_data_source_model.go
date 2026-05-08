@@ -18,7 +18,7 @@ type APIShieldDiscoveryOperationsResultListDataSourceEnvelope struct {
 }
 
 type APIShieldDiscoveryOperationsDataSourceModel struct {
-	ZoneID    types.String                                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID    types.String                                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Diff      types.Bool                                                                      `tfsdk:"diff" query:"diff,optional"`
 	Direction types.String                                                                    `tfsdk:"direction" query:"direction,optional"`
 	Endpoint  types.String                                                                    `tfsdk:"endpoint" query:"endpoint,optional"`
@@ -46,13 +46,11 @@ func (m *APIShieldDiscoveryOperationsDataSourceModel) toListParams(_ context.Con
 	}
 
 	params = api_gateway.DiscoveryOperationListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 		Host:   cloudflare.F(mHost),
 		Method: cloudflare.F(mMethod),
 	}
 
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 	if !m.Diff.IsNull() {
 		params.Diff = cloudflare.F(m.Diff.ValueBool())
 	}

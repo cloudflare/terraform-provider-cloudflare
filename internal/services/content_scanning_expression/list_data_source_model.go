@@ -17,16 +17,14 @@ type ContentScanningExpressionsResultListDataSourceEnvelope struct {
 }
 
 type ContentScanningExpressionsDataSourceModel struct {
-	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[ContentScanningExpressionsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ContentScanningExpressionsDataSourceModel) toListParams(_ context.Context) (params content_scanning.PayloadListParams, diags diag.Diagnostics) {
-	params = content_scanning.PayloadListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = content_scanning.PayloadListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -64,12 +64,6 @@ func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := magic_transit.RouteNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.C
 	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Routes.New(
 		ctx,
-		params,
+		magic_transit.RouteNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := magic_transit.RouteUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.MagicTransit.Routes.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.RouteUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := magic_transit.RouteGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Routes.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.RouteGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *MagicWANStaticRouteResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	params := magic_transit.RouteDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.MagicTransit.Routes.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.RouteDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,12 +64,6 @@ func (r *ZeroTrustAccessCustomPageResource) Create(ctx context.Context, req reso
 		return
 	}
 
-	params := zero_trust.AccessCustomPageNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustAccessCustomPageResource) Create(ctx context.Context, req reso
 	env := ZeroTrustAccessCustomPageResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.CustomPages.New(
 		ctx,
-		params,
+		zero_trust.AccessCustomPageNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *ZeroTrustAccessCustomPageResource) Update(ctx context.Context, req reso
 		return
 	}
 
-	params := zero_trust.AccessCustomPageUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *ZeroTrustAccessCustomPageResource) Update(ctx context.Context, req reso
 	_, err = r.client.ZeroTrust.Access.CustomPages.Update(
 		ctx,
 		data.UID.ValueString(),
-		params,
+		zero_trust.AccessCustomPageUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *ZeroTrustAccessCustomPageResource) Read(ctx context.Context, req resour
 		return
 	}
 
-	params := zero_trust.AccessCustomPageGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustAccessCustomPageResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.CustomPages.Get(
 		ctx,
 		data.UID.ValueString(),
-		params,
+		zero_trust.AccessCustomPageGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -208,16 +196,12 @@ func (r *ZeroTrustAccessCustomPageResource) Delete(ctx context.Context, req reso
 		return
 	}
 
-	params := zero_trust.AccessCustomPageDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Access.CustomPages.Delete(
 		ctx,
 		data.UID.ValueString(),
-		params,
+		zero_trust.AccessCustomPageDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

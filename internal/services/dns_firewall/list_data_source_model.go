@@ -18,16 +18,14 @@ type DNSFirewallsResultListDataSourceEnvelope struct {
 }
 
 type DNSFirewallsDataSourceModel struct {
-	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[DNSFirewallsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *DNSFirewallsDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
-	params = dns_firewall.DNSFirewallListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns_firewall.DNSFirewallListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

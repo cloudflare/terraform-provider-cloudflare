@@ -17,15 +17,13 @@ type AuthenticatedOriginPullsSettingsResultDataSourceEnvelope struct {
 
 type AuthenticatedOriginPullsSettingsDataSourceModel struct {
 	ID      types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m *AuthenticatedOriginPullsSettingsDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.SettingGetParams, diags diag.Diagnostics) {
-	params = origin_tls_client_auth.SettingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = origin_tls_client_auth.SettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
