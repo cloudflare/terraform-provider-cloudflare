@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -172,6 +173,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 							},
+						},
+					},
+				},
+			},
+			"guardrails": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"prompt": schema.MapAttribute{
+						Description: `Map of hazard codes (e.g. "S1", "P1") to actions. Available values: "BLOCK", "FLAG".`,
+						Optional:    true,
+						ElementType: types.StringType,
+						Validators: []validator.Map{
+							mapvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive("BLOCK", "FLAG"),
+							),
+						},
+					},
+					"response": schema.MapAttribute{
+						Description: `Map of hazard codes (e.g. "S1", "P1") to actions. Available values: "BLOCK", "FLAG".`,
+						Optional:    true,
+						ElementType: types.StringType,
+						Validators: []validator.Map{
+							mapvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive("BLOCK", "FLAG"),
+							),
 						},
 					},
 				},

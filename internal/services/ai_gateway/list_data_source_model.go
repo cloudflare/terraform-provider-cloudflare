@@ -38,30 +38,31 @@ func (m *AIGatewaysDataSourceModel) toListParams(_ context.Context) (params ai_g
 }
 
 type AIGatewaysResultDataSourceModel struct {
-	ID                      types.String                                                `tfsdk:"id" json:"id,computed"`
-	CacheInvalidateOnUpdate types.Bool                                                  `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
-	CacheTTL                types.Int64                                                 `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
-	CollectLogs             types.Bool                                                  `tfsdk:"collect_logs" json:"collect_logs,computed"`
-	CreatedAt               timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ModifiedAt              timetypes.RFC3339                                           `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	RateLimitingInterval    types.Int64                                                 `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
-	RateLimitingLimit       types.Int64                                                 `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
-	Authentication          types.Bool                                                  `tfsdk:"authentication" json:"authentication,computed"`
-	DLP                     customfield.NestedObject[AIGatewaysDLPDataSourceModel]      `tfsdk:"dlp" json:"dlp,computed"`
-	IsDefault               types.Bool                                                  `tfsdk:"is_default" json:"is_default,computed"`
-	LogManagement           types.Int64                                                 `tfsdk:"log_management" json:"log_management,computed"`
-	LogManagementStrategy   types.String                                                `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
-	Logpush                 types.Bool                                                  `tfsdk:"logpush" json:"logpush,computed"`
-	LogpushPublicKey        types.String                                                `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
-	Otel                    customfield.NestedObjectList[AIGatewaysOtelDataSourceModel] `tfsdk:"otel" json:"otel,computed"`
-	RateLimitingTechnique   types.String                                                `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
-	RetryBackoff            types.String                                                `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
-	RetryDelay              types.Int64                                                 `tfsdk:"retry_delay" json:"retry_delay,computed"`
-	RetryMaxAttempts        types.Int64                                                 `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
-	StoreID                 types.String                                                `tfsdk:"store_id" json:"store_id,computed"`
-	Stripe                  customfield.NestedObject[AIGatewaysStripeDataSourceModel]   `tfsdk:"stripe" json:"stripe,computed"`
-	WorkersAIBillingMode    types.String                                                `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
-	Zdr                     types.Bool                                                  `tfsdk:"zdr" json:"zdr,computed"`
+	ID                      types.String                                                  `tfsdk:"id" json:"id,computed"`
+	CacheInvalidateOnUpdate types.Bool                                                    `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
+	CacheTTL                types.Int64                                                   `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
+	CollectLogs             types.Bool                                                    `tfsdk:"collect_logs" json:"collect_logs,computed"`
+	CreatedAt               timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ModifiedAt              timetypes.RFC3339                                             `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	RateLimitingInterval    types.Int64                                                   `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
+	RateLimitingLimit       types.Int64                                                   `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
+	Authentication          types.Bool                                                    `tfsdk:"authentication" json:"authentication,computed"`
+	DLP                     customfield.NestedObject[AIGatewaysDLPDataSourceModel]        `tfsdk:"dlp" json:"dlp,computed"`
+	Guardrails              customfield.NestedObject[AIGatewaysGuardrailsDataSourceModel] `tfsdk:"guardrails" json:"guardrails,computed"`
+	IsDefault               types.Bool                                                    `tfsdk:"is_default" json:"is_default,computed"`
+	LogManagement           types.Int64                                                   `tfsdk:"log_management" json:"log_management,computed"`
+	LogManagementStrategy   types.String                                                  `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
+	Logpush                 types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
+	LogpushPublicKey        types.String                                                  `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
+	Otel                    customfield.NestedObjectList[AIGatewaysOtelDataSourceModel]   `tfsdk:"otel" json:"otel,computed"`
+	RateLimitingTechnique   types.String                                                  `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
+	RetryBackoff            types.String                                                  `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
+	RetryDelay              types.Int64                                                   `tfsdk:"retry_delay" json:"retry_delay,computed"`
+	RetryMaxAttempts        types.Int64                                                   `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
+	StoreID                 types.String                                                  `tfsdk:"store_id" json:"store_id,computed"`
+	Stripe                  customfield.NestedObject[AIGatewaysStripeDataSourceModel]     `tfsdk:"stripe" json:"stripe,computed"`
+	WorkersAIBillingMode    types.String                                                  `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
+	Zdr                     types.Bool                                                    `tfsdk:"zdr" json:"zdr,computed"`
 }
 
 type AIGatewaysDLPDataSourceModel struct {
@@ -77,6 +78,11 @@ type AIGatewaysDLPPoliciesDataSourceModel struct {
 	Check    customfield.List[types.String] `tfsdk:"check" json:"check,computed"`
 	Enabled  types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	Profiles customfield.List[types.String] `tfsdk:"profiles" json:"profiles,computed"`
+}
+
+type AIGatewaysGuardrailsDataSourceModel struct {
+	Prompt   customfield.Map[types.String] `tfsdk:"prompt" json:"prompt,computed"`
+	Response customfield.Map[types.String] `tfsdk:"response" json:"response,computed"`
 }
 
 type AIGatewaysOtelDataSourceModel struct {

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -140,6 +141,34 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												ElementType: types.StringType,
 											},
 										},
+									},
+								},
+							},
+						},
+						"guardrails": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[AIGatewaysGuardrailsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"prompt": schema.MapAttribute{
+									Description: `Map of hazard codes (e.g. "S1", "P1") to actions. Available values: "BLOCK", "FLAG".`,
+									Computed:    true,
+									CustomType:  customfield.NewMapType[types.String](ctx),
+									ElementType: types.StringType,
+									Validators: []validator.Map{
+										mapvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive("BLOCK", "FLAG"),
+										),
+									},
+								},
+								"response": schema.MapAttribute{
+									Description: `Map of hazard codes (e.g. "S1", "P1") to actions. Available values: "BLOCK", "FLAG".`,
+									Computed:    true,
+									CustomType:  customfield.NewMapType[types.String](ctx),
+									ElementType: types.StringType,
+									Validators: []validator.Map{
+										mapvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive("BLOCK", "FLAG"),
+										),
 									},
 								},
 							},

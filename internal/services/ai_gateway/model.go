@@ -33,6 +33,7 @@ type AIGatewayModel struct {
 	StoreID                 types.String                                     `tfsdk:"store_id" json:"store_id,optional"`
 	Zdr                     types.Bool                                       `tfsdk:"zdr" json:"zdr,optional"`
 	DLP                     *AIGatewayDLPModel                               `tfsdk:"dlp" json:"dlp,optional"`
+	Guardrails              *AIGatewayGuardrailsModel                        `tfsdk:"guardrails" json:"guardrails,optional"`
 	Stripe                  *AIGatewayStripeModel                            `tfsdk:"stripe" json:"stripe,optional"`
 	WorkersAIBillingMode    types.String                                     `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed_optional"`
 	Otel                    customfield.NestedObjectList[AIGatewayOtelModel] `tfsdk:"otel" json:"otel,computed_optional"`
@@ -62,6 +63,11 @@ type AIGatewayDLPPoliciesModel struct {
 	Check    *[]types.String `tfsdk:"check" json:"check,required"`
 	Enabled  types.Bool      `tfsdk:"enabled" json:"enabled,required"`
 	Profiles *[]types.String `tfsdk:"profiles" json:"profiles,required"`
+}
+
+type AIGatewayGuardrailsModel struct {
+	Prompt   *map[string]types.String `tfsdk:"prompt" json:"prompt,optional"`
+	Response *map[string]types.String `tfsdk:"response" json:"response,optional"`
 }
 
 type AIGatewayStripeModel struct {
