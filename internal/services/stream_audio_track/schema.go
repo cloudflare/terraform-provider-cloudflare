@@ -27,14 +27,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"identifier": schema.StringAttribute{
-				Description:   "A Cloudflare-generated unique identifier for a media item.",
+			"account_id": schema.StringAttribute{
+				Description:   "The account identifier tag.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "The account identifier tag.",
-				Optional:      true,
+			"identifier": schema.StringAttribute{
+				Description:   "A Cloudflare-generated unique identifier for a media item.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"audio_identifier": schema.StringAttribute{

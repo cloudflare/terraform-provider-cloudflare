@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"class_name": schema.StringAttribute{
 				Computed: true,

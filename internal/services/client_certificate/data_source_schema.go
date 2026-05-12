@@ -36,7 +36,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"certificate": schema.StringAttribute{
 				Description: "The Client Certificate PEM",

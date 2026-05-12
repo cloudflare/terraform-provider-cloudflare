@@ -64,12 +64,6 @@ func (r *RateLimitResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	params := rate_limits.RateLimitNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *RateLimitResource) Create(ctx context.Context, req resource.CreateReque
 	env := RateLimitResultEnvelope{*data}
 	_, err = r.client.RateLimits.New(
 		ctx,
-		params,
+		rate_limits.RateLimitNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *RateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	params := rate_limits.RateLimitEditParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *RateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 	_, err = r.client.RateLimits.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		rate_limits.RateLimitEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *RateLimitResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	params := rate_limits.RateLimitGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := RateLimitResultEnvelope{*data}
 	_, err := r.client.RateLimits.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		rate_limits.RateLimitGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *RateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	params := rate_limits.RateLimitDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.RateLimits.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		rate_limits.RateLimitDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

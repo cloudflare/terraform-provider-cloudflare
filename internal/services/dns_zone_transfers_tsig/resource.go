@@ -64,12 +64,6 @@ func (r *DNSZoneTransfersTSIGResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferTSIGNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *DNSZoneTransfersTSIGResource) Create(ctx context.Context, req resource.
 	env := DNSZoneTransfersTSIGResultEnvelope{*data}
 	_, err = r.client.DNS.ZoneTransfers.TSIGs.New(
 		ctx,
-		params,
+		dns.ZoneTransferTSIGNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *DNSZoneTransfersTSIGResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferTSIGUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *DNSZoneTransfersTSIGResource) Update(ctx context.Context, req resource.
 	_, err = r.client.DNS.ZoneTransfers.TSIGs.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferTSIGUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *DNSZoneTransfersTSIGResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	params := dns.ZoneTransferTSIGGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := DNSZoneTransfersTSIGResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.TSIGs.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferTSIGGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *DNSZoneTransfersTSIGResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	params := dns.ZoneTransferTSIGDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.DNS.ZoneTransfers.TSIGs.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferTSIGDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

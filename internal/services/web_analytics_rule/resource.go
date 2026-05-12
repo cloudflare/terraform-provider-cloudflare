@@ -61,12 +61,6 @@ func (r *WebAnalyticsRuleResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	params := rum.RuleNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -77,7 +71,9 @@ func (r *WebAnalyticsRuleResource) Create(ctx context.Context, req resource.Crea
 	_, err = r.client.RUM.Rules.New(
 		ctx,
 		data.RulesetID.ValueString(),
-		params,
+		rum.RuleNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,12 +110,6 @@ func (r *WebAnalyticsRuleResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	params := rum.RuleUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -131,7 +121,9 @@ func (r *WebAnalyticsRuleResource) Update(ctx context.Context, req resource.Upda
 		ctx,
 		data.RulesetID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		rum.RuleUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -164,17 +156,13 @@ func (r *WebAnalyticsRuleResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	params := rum.RuleDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.RUM.Rules.Delete(
 		ctx,
 		data.RulesetID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		rum.RuleDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

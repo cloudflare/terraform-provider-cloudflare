@@ -18,16 +18,14 @@ type ZeroTrustGatewayPoliciesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayPoliciesDataSourceModel struct {
-	AccountID types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                 `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustGatewayPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustGatewayPoliciesDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayRuleListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayRuleListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

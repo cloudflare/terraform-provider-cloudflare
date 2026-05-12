@@ -61,12 +61,6 @@ func (r *ZeroTrustDLPDatasetResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := zero_trust.DLPDatasetNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *ZeroTrustDLPDatasetResource) Create(ctx context.Context, req resource.C
 	env := ZeroTrustDLPDatasetResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Datasets.New(
 		ctx,
-		params,
+		zero_trust.DLPDatasetNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *ZeroTrustDLPDatasetResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := zero_trust.DLPDatasetUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -129,7 +119,9 @@ func (r *ZeroTrustDLPDatasetResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.ZeroTrust.DLP.Datasets.Update(
 		ctx,
 		data.DatasetID.ValueString(),
-		params,
+		zero_trust.DLPDatasetUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,18 +150,14 @@ func (r *ZeroTrustDLPDatasetResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := zero_trust.DLPDatasetGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDLPDatasetResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Datasets.Get(
 		ctx,
 		data.DatasetID.ValueString(),
-		params,
+		zero_trust.DLPDatasetGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,16 +190,12 @@ func (r *ZeroTrustDLPDatasetResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	params := zero_trust.DLPDatasetDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	err := r.client.ZeroTrust.DLP.Datasets.Delete(
 		ctx,
 		data.DatasetID.ValueString(),
-		params,
+		zero_trust.DLPDatasetDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

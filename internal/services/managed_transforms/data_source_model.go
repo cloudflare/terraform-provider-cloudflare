@@ -18,16 +18,14 @@ type ManagedTransformsResultDataSourceEnvelope struct {
 
 type ManagedTransformsDataSourceModel struct {
 	ID                     types.String                                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                 types.String                                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                 types.String                                                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	ManagedRequestHeaders  customfield.NestedObjectList[ManagedTransformsManagedRequestHeadersDataSourceModel]  `tfsdk:"managed_request_headers" json:"managed_request_headers,computed"`
 	ManagedResponseHeaders customfield.NestedObjectList[ManagedTransformsManagedResponseHeadersDataSourceModel] `tfsdk:"managed_response_headers" json:"managed_response_headers,computed"`
 }
 
 func (m *ManagedTransformsDataSourceModel) toReadParams(_ context.Context) (params managed_transforms.ManagedTransformListParams, diags diag.Diagnostics) {
-	params = managed_transforms.ManagedTransformListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = managed_transforms.ManagedTransformListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

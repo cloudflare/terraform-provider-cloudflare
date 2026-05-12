@@ -64,12 +64,6 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Create(ctx context.Context, req
 		return
 	}
 
-	params := zero_trust.DeviceNetworkNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Create(ctx context.Context, req
 	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Devices.Networks.New(
 		ctx,
-		params,
+		zero_trust.DeviceNetworkNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Update(ctx context.Context, req
 		return
 	}
 
-	params := zero_trust.DeviceNetworkUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Update(ctx context.Context, req
 	_, err = r.client.ZeroTrust.Devices.Networks.Update(
 		ctx,
 		data.NetworkID.ValueString(),
-		params,
+		zero_trust.DeviceNetworkUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Read(ctx context.Context, req r
 		return
 	}
 
-	params := zero_trust.DeviceNetworkGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.Networks.Get(
 		ctx,
 		data.NetworkID.ValueString(),
-		params,
+		zero_trust.DeviceNetworkGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -208,16 +196,12 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Delete(ctx context.Context, req
 		return
 	}
 
-	params := zero_trust.DeviceNetworkDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Devices.Networks.Delete(
 		ctx,
 		data.NetworkID.ValueString(),
-		params,
+		zero_trust.DeviceNetworkDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

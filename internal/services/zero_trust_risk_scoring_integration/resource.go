@@ -64,12 +64,6 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Create(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.RiskScoringIntegrationNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Create(ctx context.Context, re
 	env := ZeroTrustRiskScoringIntegrationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.RiskScoring.Integrations.New(
 		ctx,
-		params,
+		zero_trust.RiskScoringIntegrationNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Update(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.RiskScoringIntegrationUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Update(ctx context.Context, re
 	_, err = r.client.ZeroTrust.RiskScoring.Integrations.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.RiskScoringIntegrationUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Read(ctx context.Context, req 
 		return
 	}
 
-	params := zero_trust.RiskScoringIntegrationGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustRiskScoringIntegrationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.RiskScoring.Integrations.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.RiskScoringIntegrationGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustRiskScoringIntegrationResource) Delete(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.RiskScoringIntegrationDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.RiskScoring.Integrations.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.RiskScoringIntegrationDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

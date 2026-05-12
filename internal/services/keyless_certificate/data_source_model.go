@@ -20,7 +20,7 @@ type KeylessCertificateResultDataSourceEnvelope struct {
 type KeylessCertificateDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" path:"keyless_certificate_id,computed"`
 	KeylessCertificateID types.String                                                      `tfsdk:"keyless_certificate_id" path:"keyless_certificate_id,required"`
-	ZoneID               types.String                                                      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID               types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn            timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Enabled              types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed"`
 	Host                 types.String                                                      `tfsdk:"host" json:"host,computed"`
@@ -33,10 +33,8 @@ type KeylessCertificateDataSourceModel struct {
 }
 
 func (m *KeylessCertificateDataSourceModel) toReadParams(_ context.Context) (params keyless_certificates.KeylessCertificateGetParams, diags diag.Diagnostics) {
-	params = keyless_certificates.KeylessCertificateGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = keyless_certificates.KeylessCertificateGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

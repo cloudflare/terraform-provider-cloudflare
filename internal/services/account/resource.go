@@ -115,7 +115,9 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 	res := new(http.Response)
 	_, err = r.client.Accounts.Update(
 		ctx,
-		accounts.AccountUpdateParams{},
+		accounts.AccountUpdateParams{
+			AccountID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -146,7 +148,9 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 	res := new(http.Response)
 	_, err := r.client.Accounts.Get(
 		ctx,
-		accounts.AccountGetParams{},
+		accounts.AccountGetParams{
+			AccountID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -180,7 +184,9 @@ func (r *AccountResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	_, err := r.client.Accounts.Delete(
 		ctx,
-		accounts.AccountDeleteParams{},
+		accounts.AccountDeleteParams{
+			AccountID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,12 +64,6 @@ func (r *NotificationPolicyWebhooksResource) Create(ctx context.Context, req res
 		return
 	}
 
-	params := alerting.DestinationWebhookNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *NotificationPolicyWebhooksResource) Create(ctx context.Context, req res
 	env := NotificationPolicyWebhooksResultEnvelope{*data}
 	_, err = r.client.Alerting.Destinations.Webhooks.New(
 		ctx,
-		params,
+		alerting.DestinationWebhookNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *NotificationPolicyWebhooksResource) Update(ctx context.Context, req res
 		return
 	}
 
-	params := alerting.DestinationWebhookUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *NotificationPolicyWebhooksResource) Update(ctx context.Context, req res
 	_, err = r.client.Alerting.Destinations.Webhooks.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		alerting.DestinationWebhookUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *NotificationPolicyWebhooksResource) Read(ctx context.Context, req resou
 		return
 	}
 
-	params := alerting.DestinationWebhookGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := NotificationPolicyWebhooksResultEnvelope{*data}
 	_, err := r.client.Alerting.Destinations.Webhooks.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		alerting.DestinationWebhookGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *NotificationPolicyWebhooksResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	params := alerting.DestinationWebhookDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Alerting.Destinations.Webhooks.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		alerting.DestinationWebhookDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

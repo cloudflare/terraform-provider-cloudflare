@@ -64,12 +64,6 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	params := filters.FilterNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 	env := FilterResultEnvelope{data.Body}
 	_, err = r.client.Filters.New(
 		ctx,
-		params,
+		filters.FilterNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	params := filters.FilterUpdateParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 	_, err = r.client.Filters.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		filters.FilterUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	params := filters.FilterGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := FilterResultEnvelope{data.Body}
 	_, err := r.client.Filters.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		filters.FilterGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	params := filters.FilterDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.Filters.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		filters.FilterDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

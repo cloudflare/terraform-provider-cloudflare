@@ -64,12 +64,6 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Create(ctx context.Context, req 
 		return
 	}
 
-	params := zero_trust.GatewayProxyEndpointNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Create(ctx context.Context, req 
 	env := ZeroTrustGatewayProxyEndpointResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Gateway.ProxyEndpoints.New(
 		ctx,
-		params,
+		zero_trust.GatewayProxyEndpointNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Update(ctx context.Context, req 
 		return
 	}
 
-	params := zero_trust.GatewayProxyEndpointEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Update(ctx context.Context, req 
 	_, err = r.client.ZeroTrust.Gateway.ProxyEndpoints.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayProxyEndpointEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Read(ctx context.Context, req re
 		return
 	}
 
-	params := zero_trust.GatewayProxyEndpointGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustGatewayProxyEndpointResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Gateway.ProxyEndpoints.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayProxyEndpointGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustGatewayProxyEndpointResource) Delete(ctx context.Context, req 
 		return
 	}
 
-	params := zero_trust.GatewayProxyEndpointDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Gateway.ProxyEndpoints.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.GatewayProxyEndpointDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -18,16 +18,14 @@ type KeylessCertificatesResultListDataSourceEnvelope struct {
 }
 
 type KeylessCertificatesDataSourceModel struct {
-	ZoneID   types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                            `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[KeylessCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *KeylessCertificatesDataSourceModel) toListParams(_ context.Context) (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
-	params = keyless_certificates.KeylessCertificateListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = keyless_certificates.KeylessCertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

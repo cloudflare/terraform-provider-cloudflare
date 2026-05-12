@@ -17,15 +17,13 @@ type UniversalSSLSettingResultDataSourceEnvelope struct {
 
 type UniversalSSLSettingDataSourceModel struct {
 	ID      types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m *UniversalSSLSettingDataSourceModel) toReadParams(_ context.Context) (params ssl.UniversalSettingGetParams, diags diag.Diagnostics) {
-	params = ssl.UniversalSettingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = ssl.UniversalSettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

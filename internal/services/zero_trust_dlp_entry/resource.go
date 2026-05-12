@@ -64,12 +64,6 @@ func (r *ZeroTrustDLPEntryResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	params := zero_trust.DLPEntryNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustDLPEntryResource) Create(ctx context.Context, req resource.Cre
 	env := ZeroTrustDLPEntryResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Entries.New(
 		ctx,
-		params,
+		zero_trust.DLPEntryNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustDLPEntryResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	params := zero_trust.DLPEntryUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustDLPEntryResource) Update(ctx context.Context, req resource.Upd
 	_, err = r.client.ZeroTrust.DLP.Entries.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DLPEntryUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustDLPEntryResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	params := zero_trust.DLPEntryGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDLPEntryResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Entries.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DLPEntryGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustDLPEntryResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	params := zero_trust.DLPEntryDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.DLP.Entries.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.DLPEntryDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,12 +64,6 @@ func (r *ZeroTrustDeviceSubnetResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.NetworkSubnetWARPNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustDeviceSubnetResource) Create(ctx context.Context, req resource
 	env := ZeroTrustDeviceSubnetResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Networks.Subnets.WARP.New(
 		ctx,
-		params,
+		zero_trust.NetworkSubnetWARPNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *ZeroTrustDeviceSubnetResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.NetworkSubnetWARPEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustDeviceSubnetResource) Update(ctx context.Context, req resource
 	_, err = r.client.ZeroTrust.Networks.Subnets.WARP.Edit(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.NetworkSubnetWARPEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *ZeroTrustDeviceSubnetResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	params := zero_trust.NetworkSubnetWARPGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustDeviceSubnetResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Networks.Subnets.WARP.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.NetworkSubnetWARPGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *ZeroTrustDeviceSubnetResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.NetworkSubnetWARPDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Networks.Subnets.WARP.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.NetworkSubnetWARPDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

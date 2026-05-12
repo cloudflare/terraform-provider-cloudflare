@@ -19,7 +19,7 @@ type ZeroTrustTunnelCloudflaredRouteResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 	ID               types.String                                             `tfsdk:"id" path:"route_id,computed"`
 	RouteID          types.String                                             `tfsdk:"route_id" path:"route_id,optional"`
-	AccountID        types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	Comment          types.String                                             `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt        timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt        timetypes.RFC3339                                        `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -30,10 +30,8 @@ type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkRouteGetParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkRouteGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.NetworkRouteGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -48,12 +46,10 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 	}
 
 	params = zero_trust.NetworkRouteListParams{
-		TunTypes: cloudflare.F(mFilterTunTypes),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		TunTypes:  cloudflare.F(mFilterTunTypes),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
 	if !m.Filter.Comment.IsNull() {
 		params.Comment = cloudflare.F(m.Filter.Comment.ValueString())
 	}

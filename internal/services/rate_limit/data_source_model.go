@@ -19,7 +19,7 @@ type RateLimitResultDataSourceEnvelope struct {
 type RateLimitDataSourceModel struct {
 	ID          types.String                                                 `tfsdk:"id" path:"rate_limit_id,computed"`
 	RateLimitID types.String                                                 `tfsdk:"rate_limit_id" path:"rate_limit_id,required"`
-	ZoneID      types.String                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID      types.String                                                 `tfsdk:"zone_id" path:"zone_id,required"`
 	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
 	Disabled    types.Bool                                                   `tfsdk:"disabled" json:"disabled,computed"`
 	Period      types.Float64                                                `tfsdk:"period" json:"period,computed"`
@@ -30,10 +30,8 @@ type RateLimitDataSourceModel struct {
 }
 
 func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitGetParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = rate_limits.RateLimitGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

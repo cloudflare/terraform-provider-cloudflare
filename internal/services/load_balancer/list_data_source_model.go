@@ -17,16 +17,14 @@ type LoadBalancersResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancersDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[LoadBalancersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LoadBalancersDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
-	params = load_balancers.LoadBalancerListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = load_balancers.LoadBalancerListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

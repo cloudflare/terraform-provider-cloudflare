@@ -64,12 +64,6 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	params := magic_transit.GRETunnelNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.GRETunnels.New(
 		ctx,
-		params,
+		magic_transit.GRETunnelNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	params := magic_transit.GRETunnelUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 	_, err = r.client.MagicTransit.GRETunnels.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.GRETunnelUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	params := magic_transit.GRETunnelGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.GRETunnels.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.GRETunnelGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithHeader("x-magic-new-hc-target", "true"),
@@ -214,16 +202,12 @@ func (r *MagicWANGRETunnelResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	params := magic_transit.GRETunnelDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.MagicTransit.GRETunnels.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		magic_transit.GRETunnelDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

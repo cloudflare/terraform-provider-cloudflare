@@ -64,12 +64,6 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Create(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.AccessKeyUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Create(ctx context.Context, re
 	env := ZeroTrustAccessKeyConfigurationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Keys.Update(
 		ctx,
-		params,
+		zero_trust.AccessKeyUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Update(ctx context.Context, re
 		return
 	}
 
-	params := zero_trust.AccessKeyUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Update(ctx context.Context, re
 	env := ZeroTrustAccessKeyConfigurationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Keys.Update(
 		ctx,
-		params,
+		zero_trust.AccessKeyUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +154,13 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Read(ctx context.Context, req 
 		return
 	}
 
-	params := zero_trust.AccessKeyGetParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustAccessKeyConfigurationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Keys.Get(
 		ctx,
-		params,
+		zero_trust.AccessKeyGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

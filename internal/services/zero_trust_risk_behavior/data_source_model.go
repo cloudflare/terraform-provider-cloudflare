@@ -17,15 +17,13 @@ type ZeroTrustRiskBehaviorResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustRiskBehaviorDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
 	Behaviors customfield.NestedObjectMap[ZeroTrustRiskBehaviorBehaviorsDataSourceModel] `tfsdk:"behaviors" json:"behaviors,computed"`
 }
 
 func (m *ZeroTrustRiskBehaviorDataSourceModel) toReadParams(_ context.Context) (params zero_trust.RiskScoringBehaviourGetParams, diags diag.Diagnostics) {
-	params = zero_trust.RiskScoringBehaviourGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.RiskScoringBehaviourGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

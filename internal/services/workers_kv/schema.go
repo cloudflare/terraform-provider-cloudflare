@@ -34,14 +34,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"namespace_id": schema.StringAttribute{
-				Description:   "Namespace identifier tag.",
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Optional:      true,
+			"namespace_id": schema.StringAttribute{
+				Description:   "Namespace identifier tag.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{

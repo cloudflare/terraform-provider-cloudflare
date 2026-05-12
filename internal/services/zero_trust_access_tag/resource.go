@@ -64,12 +64,6 @@ func (r *ZeroTrustAccessTagResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := zero_trust.AccessTagNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ZeroTrustAccessTagResource) Create(ctx context.Context, req resource.Cr
 	env := ZeroTrustAccessTagResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Tags.New(
 		ctx,
-		params,
+		zero_trust.AccessTagNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *ZeroTrustAccessTagResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	params := zero_trust.AccessTagUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -133,7 +123,9 @@ func (r *ZeroTrustAccessTagResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.ZeroTrust.Access.Tags.Update(
 		ctx,
 		data.Name.ValueString(),
-		params,
+		zero_trust.AccessTagUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -163,18 +155,14 @@ func (r *ZeroTrustAccessTagResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := zero_trust.AccessTagGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ZeroTrustAccessTagResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Tags.Get(
 		ctx,
 		data.Name.ValueString(),
-		params,
+		zero_trust.AccessTagGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -208,16 +196,12 @@ func (r *ZeroTrustAccessTagResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	params := zero_trust.AccessTagDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.ZeroTrust.Access.Tags.Delete(
 		ctx,
 		data.Name.ValueString(),
-		params,
+		zero_trust.AccessTagDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

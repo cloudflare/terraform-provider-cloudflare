@@ -35,14 +35,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Optional:      true,
+			"script_name": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"strategy": schema.StringAttribute{

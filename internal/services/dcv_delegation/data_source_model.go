@@ -16,15 +16,13 @@ type DCVDelegationResultDataSourceEnvelope struct {
 }
 
 type DCVDelegationDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	UUID   types.String `tfsdk:"uuid" json:"uuid,computed"`
 }
 
 func (m *DCVDelegationDataSourceModel) toReadParams(_ context.Context) (params dcv_delegation.DCVDelegationGetParams, diags diag.Diagnostics) {
-	params = dcv_delegation.DCVDelegationGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = dcv_delegation.DCVDelegationGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
