@@ -17,6 +17,9 @@ on:
 env:
   GOPRIVATE: github.com/cloudflare/cloudflare-go/v6,github.com/stainless-sdks/cloudflare-go/v6
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}

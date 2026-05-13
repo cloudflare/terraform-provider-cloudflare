@@ -2,6 +2,9 @@ name: Trigger Terraform Registry sync
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   trigger-terraform-registry-sync:
     runs-on: ubuntu-latest
