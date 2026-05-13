@@ -5,6 +5,10 @@ on:
     types:
       - opened
 
+# The project mutation uses secrets.ADD_TO_PROJECT_PAT (a separate PAT),
+# not GITHUB_TOKEN. Deny everything for the default token.
+permissions: {}
+
 jobs:
   add-to-project:
     name: Add issue to project
