@@ -39,7 +39,7 @@ get_product_group_services() {
             echo "dns_record dns_settings_internal_view dns_zone_transfers_acl dns_zone_transfers_tsig"
             ;;
         load-balancing)
-            echo "load_balancer load_balancer_monitor load_balancer_pool healthcheck"
+            echo "load_balancer load_balancer_monitor load_balancer_monitor_group load_balancer_pool healthcheck"
             ;;
         workers-core)
             echo "workers_script workers_route workers_kv_namespace workers_kv"
@@ -209,6 +209,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/list_item parallel=1"
     "resource=./internal/services/load_balancer"
     "resource=./internal/services/load_balancer_monitor"
+    "resource=./internal/services/load_balancer_monitor_group"
     "resource=./internal/services/load_balancer_pool parallel=1"
     "resource=./internal/services/logpull_retention"
     "resource=./internal/services/logpush_job"
