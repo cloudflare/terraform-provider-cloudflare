@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.19.2 (2026-05-13)
+
+Full Changelog: [v5.19.1...v5.19.2](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.1...v5.19.2)
+
+### Bug Fixes
+
+* **account_member:** missing upgrade path from v5.0-v5.15 ([d5c2a93](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d5c2a937869fca45806cf2852e81d7a0936b0bd5))
+* **authenticated_origin_pulls_settings:** nil pointer panic ([cf8099b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cf8099bb0f00b77f025102645e7fd8ebde8dfb0a))
+* derive zone name from Read instead of missing API field ([0d5feef](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0d5feef2076b43177d489841dfb95c6f380a6e19))
+* **dns_record:** prevent FQDN normalization from swallowing name shortening changes ([2131622](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2131622f77333dc4d650e59b6f5007b5963007f7))
+* **workers_custom_domain:** Missing CertId field in state migration ([17d852f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/17d852f3e02aed1aa614f40f901763afbc390dab))
+* **zero_trust_access_policy:** Missing common_names transform in migration ([ce95d8c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ce95d8cb58d044e288f655b0a6a5d2bdfe5348c4))
+
 ## 5.19.1 (2026-04-30)
 
 Full Changelog: [v5.19.0...v5.19.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.0...v5.19.1)
