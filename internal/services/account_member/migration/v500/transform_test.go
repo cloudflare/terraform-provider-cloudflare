@@ -2,11 +2,14 @@ package v500
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 )
 
 func TestTransformV4toV500(t *testing.T) {
@@ -157,4 +160,83 @@ func mustCreateStringSet(ctx context.Context, values []string) types.Set {
 		panic("failed to create set: " + diags.Errors()[0].Summary())
 	}
 	return set
+}
+
+// TestDetectV4AccountMemberState tests the v4/v5 format detection logic.
+func TestDetectV4AccountMemberState(t *testing.T) {
+	tests := []struct {
+		name     string
+		rawJSON  map[string]interface{}
+		expected bool
+	}{
+		{
+			name: "v4 state with email_address",
+			rawJSON: map[string]interface{}{
+				"id":            "member-123",
+				"account_id":    "account-123",
+				"email_address": "user@example.com",
+				"role_ids":      []interface{}{"role-1", "role-2"},
+				"status":        "accepted",
+			},
+			expected: true,
+		},
+		{
+			name: "v5 state with email",
+			rawJSON: map[string]interface{}{
+				"id":         "member-123",
+				"account_id": "account-123",
+				"email":      "user@example.com",
+				"roles":      []interface{}{"role-1", "role-2"},
+				"status":     "accepted",
+				"policies":   nil,
+				"user":       nil,
+			},
+			expected: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			jsonBytes, err := json.Marshal(tc.rawJSON)
+			if err != nil {
+				t.Fatalf("Failed to marshal JSON: %v", err)
+			}
+
+			req := resource.UpgradeStateRequest{
+				RawState: &tfprotov6.RawState{JSON: jsonBytes},
+			}
+
+			isV4, err := detectV4AccountMemberState(req)
+			if err != nil {
+				t.Fatalf("detectV4AccountMemberState returned error: %v", err)
+			}
+
+			if isV4 != tc.expected {
+				t.Errorf("detectV4AccountMemberState: got %v, want %v", isV4, tc.expected)
+			}
+		})
+	}
+}
+
+// TestDetectV4AccountMemberState_NilRawState tests that detection handles nil/empty RawState gracefully.
+func TestDetectV4AccountMemberState_NilRawState(t *testing.T) {
+	// nil RawState
+	req := resource.UpgradeStateRequest{RawState: nil}
+	isV4, err := detectV4AccountMemberState(req)
+	if err != nil {
+		t.Errorf("Expected no error for nil RawState, got: %v", err)
+	}
+	if isV4 {
+		t.Errorf("Expected false for nil RawState, got true")
+	}
+
+	// empty JSON
+	req = resource.UpgradeStateRequest{RawState: &tfprotov6.RawState{JSON: []byte{}}}
+	isV4, err = detectV4AccountMemberState(req)
+	if err != nil {
+		t.Errorf("Expected no error for empty JSON, got: %v", err)
+	}
+	if isV4 {
+		t.Errorf("Expected false for empty JSON, got true")
+	}
 }
