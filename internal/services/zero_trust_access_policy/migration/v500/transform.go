@@ -200,6 +200,22 @@ func transformConditions(ctx context.Context, v4Conditions []SourceConditionGrou
 			}
 		}
 
+		// Common names (plural list — overflow field from v4, each element becomes a separate common_name)
+		if !condGroup.CommonNames.IsNull() && !condGroup.CommonNames.IsUnknown() {
+			var commonNames []string
+			diags.Append(condGroup.CommonNames.ElementsAs(ctx, &commonNames, false)...)
+			for _, cn := range commonNames {
+				cn = strings.TrimSpace(cn)
+				if cn != "" {
+					v5Conditions = append(v5Conditions, TargetConditionModel{
+						CommonName: &TargetCommonNameModel{
+							CommonName: types.StringValue(cn),
+						},
+					})
+				}
+			}
+		}
+
 		// Auth method (single value)
 		if !condGroup.AuthMethod.IsNull() && !condGroup.AuthMethod.IsUnknown() {
 			authMethod := strings.TrimSpace(condGroup.AuthMethod.ValueString())

@@ -17,5 +17,6 @@ func TransformV4toV500(_ context.Context, source SourceV4WorkersCustomDomainMode
 		ZoneID:      source.ZoneID,
 		Environment: source.Environment,
 		ZoneName:    source.ZoneName,
+		CertId:      source.CertId,
 	}, nil
 }
