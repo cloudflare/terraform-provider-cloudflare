@@ -2,16 +2,12 @@
 page_title: "cloudflare_email_routing_catch_all Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Email Routing Rules ReadEmail Routing Rules Write
+  
 ---
 
 # cloudflare_email_routing_catch_all (Resource)
 
-Accepted Permissions
 
-- `Email Routing Rules Read`
-- `Email Routing Rules Write`
 
 ## Example Usage
 

@@ -64,6 +64,11 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 
+	params := url_normalization.URLNormalizationUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -74,9 +79,7 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err = r.client.URLNormalization.Update(
 		ctx,
-		url_normalization.URLNormalizationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +117,11 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 
+	params := url_normalization.URLNormalizationUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -124,9 +132,7 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err = r.client.URLNormalization.Update(
 		ctx,
-		url_normalization.URLNormalizationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,14 +162,17 @@ func (r *URLNormalizationSettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+	params := url_normalization.URLNormalizationGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	res := new(http.Response)
 	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err := r.client.URLNormalization.Get(
 		ctx,
-		url_normalization.URLNormalizationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -197,12 +206,15 @@ func (r *URLNormalizationSettingsResource) Delete(ctx context.Context, req resou
 		return
 	}
 
+	params := url_normalization.URLNormalizationDeleteParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	err := r.client.URLNormalization.Delete(
 		ctx,
-		url_normalization.URLNormalizationDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -49,7 +49,6 @@ func (m *locationNormalizer) PlanModifyString(ctx context.Context, req planmodif
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers R2 Storage Write",

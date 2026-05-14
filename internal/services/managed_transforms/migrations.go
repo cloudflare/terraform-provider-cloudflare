@@ -39,14 +39,12 @@ func (r *ManagedTransformsResource) MoveState(ctx context.Context) []resource.St
 func (r *ManagedTransformsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
+	sourceSchema := v500.SourceManagedHeadersSchema()
+
 	return map[int64]resource.StateUpgrader{
-		// Handle schema_version=0 state from two sources:
-		// 1. v4 cloudflare_managed_headers moved via `terraform state mv` (uses sourceSchema)
-		// 2. Early v5 cloudflare_managed_transforms (5.0.0–5.x.y) before version was bumped
-		// PriorSchema is omitted (nil) so Terraform passes raw state without pre-validation,
-		// allowing UpgradeFromV0 to detect and handle both formats.
+		// Handle state from v4 managed_headers (schema_version=0, via `terraform state mv`)
 		0: {
-			PriorSchema:   nil,
+			PriorSchema:   &sourceSchema,
 			StateUpgrader: v500.UpgradeFromV0,
 		},
 

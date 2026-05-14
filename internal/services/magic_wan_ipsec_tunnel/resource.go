@@ -64,6 +64,12 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+	params := magic_transit.IPSECTunnelNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.IPSECTunnels.New(
 		ctx,
-		magic_transit.IPSECTunnelNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
+	params := magic_transit.IPSECTunnelUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.MagicTransit.IPSECTunnels.Update(
 		ctx,
 		data.ID.ValueString(),
-		magic_transit.IPSECTunnelUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	params := magic_transit.IPSECTunnelGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
 		data.ID.ValueString(),
-		magic_transit.IPSECTunnelGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithHeader("x-magic-new-hc-target", "true"),
@@ -205,12 +217,16 @@ func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := magic_transit.IPSECTunnelDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.MagicTransit.IPSECTunnels.Delete(
 		ctx,
 		data.ID.ValueString(),
-		magic_transit.IPSECTunnelDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

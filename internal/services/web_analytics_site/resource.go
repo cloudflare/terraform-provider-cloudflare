@@ -64,6 +64,12 @@ func (r *WebAnalyticsSiteResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	params := rum.SiteInfoNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *WebAnalyticsSiteResource) Create(ctx context.Context, req resource.Crea
 	env := WebAnalyticsSiteResultEnvelope{*data}
 	_, err = r.client.RUM.SiteInfo.New(
 		ctx,
-		rum.SiteInfoNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *WebAnalyticsSiteResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	params := rum.SiteInfoUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,9 +133,7 @@ func (r *WebAnalyticsSiteResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.RUM.SiteInfo.Update(
 		ctx,
 		data.SiteTag.ValueString(),
-		rum.SiteInfoUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,14 +163,18 @@ func (r *WebAnalyticsSiteResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	params := rum.SiteInfoGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := WebAnalyticsSiteResultEnvelope{*data}
 	_, err := r.client.RUM.SiteInfo.Get(
 		ctx,
 		data.SiteTag.ValueString(),
-		rum.SiteInfoGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,12 +208,16 @@ func (r *WebAnalyticsSiteResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	params := rum.SiteInfoDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.RUM.SiteInfo.Delete(
 		ctx,
 		data.SiteTag.ValueString(),
-		rum.SiteInfoDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

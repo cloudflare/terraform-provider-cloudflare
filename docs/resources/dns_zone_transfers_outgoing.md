@@ -2,19 +2,12 @@
 page_title: "cloudflare_dns_zone_transfers_outgoing Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  DNS ReadDNS WriteZone Settings ReadZone Settings WriteZone Write
+  
 ---
 
 # cloudflare_dns_zone_transfers_outgoing (Resource)
 
-Accepted Permissions
 
-- `DNS Read`
-- `DNS Write`
-- `Zone Settings Read`
-- `Zone Settings Write`
-- `Zone Write`
 
 ## Example Usage
 
@@ -33,9 +26,6 @@ resource "cloudflare_dns_zone_transfers_outgoing" "example_dns_zone_transfers_ou
 
 - `name` (String) Zone name.
 - `peers` (Set of String) A list of peer tags.
-
-### Optional
-
 - `zone_id` (String)
 
 ### Read-Only

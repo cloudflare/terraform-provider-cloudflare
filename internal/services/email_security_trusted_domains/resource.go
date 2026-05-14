@@ -64,18 +64,22 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 		return
 	}
 
+	params := email_security.SettingTrustedDomainNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
+	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.New(
 		ctx,
-		email_security.SettingTrustedDomainNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -90,7 +94,7 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -112,19 +116,23 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 		return
 	}
 
+	params := email_security.SettingTrustedDomainEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
+	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.Edit(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingTrustedDomainEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -139,7 +147,7 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -153,14 +161,18 @@ func (r *EmailSecurityTrustedDomainsResource) Read(ctx context.Context, req reso
 		return
 	}
 
+	params := email_security.SettingTrustedDomainGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
+	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingTrustedDomainGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -179,7 +191,7 @@ func (r *EmailSecurityTrustedDomainsResource) Read(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -193,12 +205,16 @@ func (r *EmailSecurityTrustedDomainsResource) Delete(ctx context.Context, req re
 		return
 	}
 
+	params := email_security.SettingTrustedDomainDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Delete(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingTrustedDomainDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -213,7 +229,7 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 	var data = new(EmailSecurityTrustedDomainsModel)
 
 	path_account_id := ""
-	path_trusted_domain_id := int64(0)
+	path_trusted_domain_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
 		"<account_id>/<trusted_domain_id>",
@@ -226,10 +242,10 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.Int64Value(path_trusted_domain_id)
+	data.ID = types.StringValue(path_trusted_domain_id)
 
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
+	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
 		path_trusted_domain_id,
@@ -249,7 +265,7 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

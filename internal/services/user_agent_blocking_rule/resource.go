@@ -64,6 +64,12 @@ func (r *UserAgentBlockingRuleResource) Create(ctx context.Context, req resource
 		return
 	}
 
+	params := firewall.UARuleNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *UserAgentBlockingRuleResource) Create(ctx context.Context, req resource
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.UARules.New(
 		ctx,
-		firewall.UARuleNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *UserAgentBlockingRuleResource) Update(ctx context.Context, req resource
 		return
 	}
 
+	params := firewall.UARuleUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *UserAgentBlockingRuleResource) Update(ctx context.Context, req resource
 	_, err = r.client.Firewall.UARules.Update(
 		ctx,
 		data.ID.ValueString(),
-		firewall.UARuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *UserAgentBlockingRuleResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
+	params := firewall.UARuleGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err := r.client.Firewall.UARules.Get(
 		ctx,
 		data.ID.ValueString(),
-		firewall.UARuleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 		return
 	}
 
+	params := firewall.UARuleDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Firewall.UARules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		firewall.UARuleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

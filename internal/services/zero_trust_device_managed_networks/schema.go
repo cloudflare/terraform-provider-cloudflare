@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceManagedNetworksRe
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",

@@ -2,18 +2,12 @@
 page_title: "cloudflare_queue_consumer Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Queues ReadQueues WriteWorkers Scripts ReadWorkers Scripts Write
+  
 ---
 
 # cloudflare_queue_consumer (Data Source)
 
-Accepted Permissions
 
-- `Queues Read`
-- `Queues Write`
-- `Workers Scripts Read`
-- `Workers Scripts Write`
 
 ## Example Usage
 
@@ -30,11 +24,8 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Required
 
-- `queue_id` (String) A Resource identifier.
-
-### Optional
-
 - `account_id` (String) A Resource identifier.
+- `queue_id` (String) A Resource identifier.
 
 ### Read-Only
 

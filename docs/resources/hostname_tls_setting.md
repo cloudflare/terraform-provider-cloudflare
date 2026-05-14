@@ -2,16 +2,12 @@
 page_title: "cloudflare_hostname_tls_setting Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  SSL and Certificates ReadSSL and Certificates Write
+  
 ---
 
 # cloudflare_hostname_tls_setting (Resource)
 
-Accepted Permissions
 
-- `SSL and Certificates Read`
-- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -20,7 +16,7 @@ resource "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   setting_id = "ciphers"
   hostname = "app.example.com"
-  value = ["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]
+  value = "1.0"
 }
 ```
 
@@ -40,9 +36,6 @@ Available values: "ciphers", "min_tls_version", "http2".
 - `min_tls_version`: a string indicating the minimum TLS version — one of `"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"` (e.g., `"1.2"`)
 - `http2`: a string indicating whether HTTP/2 is enabled — `"on"` or `"off"` (e.g., `"on"`)
 Available values: "1.0", "1.1", "1.2", "1.3", "on", "off".
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

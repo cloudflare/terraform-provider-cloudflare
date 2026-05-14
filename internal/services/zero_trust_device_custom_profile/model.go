@@ -22,6 +22,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Description                types.String                                                                   `tfsdk:"description" json:"description,computed_optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
+	VirtualNetworks            *ZeroTrustDeviceCustomProfileVirtualNetworksModel                              `tfsdk:"virtual_networks" json:"virtual_networks,optional"`
 	AllowModeSwitch            types.Bool                                                                     `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                     `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
 	AllowedToLeave             types.Bool                                                                     `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
@@ -50,6 +51,11 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSON() (data []byte, err error
 
 func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceCustomProfileModel) (data []byte, err error) {
 	return apijson.MarshalForPatch(m, state)
+}
+
+type ZeroTrustDeviceCustomProfileVirtualNetworksModel struct {
+	Allowed *[]types.String `tfsdk:"allowed" json:"allowed,required"`
+	Default types.String    `tfsdk:"default" json:"default,required"`
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {

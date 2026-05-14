@@ -2,16 +2,12 @@
 page_title: "cloudflare_list_item Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Account Filter Lists EditAccount Filter Lists Read
+  
 ---
 
 # cloudflare_list_item (Data Source)
 
-Accepted Permissions
 
-- `Account Filter Lists Edit`
-- `Account Filter Lists Read`
 
 ## Example Usage
 
@@ -28,12 +24,9 @@ data "cloudflare_list_item" "example_list_item" {
 
 ### Required
 
+- `account_id` (String) The Account ID for this resource.
 - `item_id` (String) Defines the unique ID of the item in the List.
 - `list_id` (String) The unique ID of the list.
-
-### Optional
-
-- `account_id` (String) The Account ID for this resource.
 
 ### Read-Only
 

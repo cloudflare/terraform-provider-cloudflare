@@ -2,20 +2,12 @@
 page_title: "cloudflare_byo_ip_prefix Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  IP Prefixes: BGP On Demand ReadIP Prefixes: BGP On Demand WriteIP Prefixes: ReadIP Prefixes: WriteMagic Transit ReadMagic Transit Write
+  
 ---
 
 # cloudflare_byo_ip_prefix (Data Source)
 
-Accepted Permissions
 
-- `IP Prefixes: BGP On Demand Read`
-- `IP Prefixes: BGP On Demand Write`
-- `IP Prefixes: Read`
-- `IP Prefixes: Write`
-- `Magic Transit Read`
-- `Magic Transit Write`
 
 ## Example Usage
 
@@ -31,11 +23,8 @@ data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Required
 
-- `prefix_id` (String) Identifier of an IP Prefix.
-
-### Optional
-
 - `account_id` (String) Identifier of a Cloudflare account.
+- `prefix_id` (String) Identifier of an IP Prefix.
 
 ### Read-Only
 

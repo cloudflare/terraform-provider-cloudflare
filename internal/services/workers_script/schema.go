@@ -27,7 +27,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -220,10 +219,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"dataset": schema.StringAttribute{
-							Description: "The name of the dataset to bind to.",
-							Optional:    true,
-						},
+								"dataset": schema.StringAttribute{
+						Description: "The name of the dataset to bind to.",
+						Optional:    true,
+					},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -314,6 +313,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"period": schema.Int64Attribute{
 									Description: "The rate limit period in seconds.",
 									Required:    true,
+								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
+									Optional:    true,
 								},
 							},
 						},
@@ -874,9 +877,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"annotations": schema.SingleNestedAttribute{
 				Description: "Annotations for the version created by this upload.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
 						Description: "Human-readable message about the version. Truncated to 1000 bytes if longer.",
@@ -885,10 +886,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"workers_tag": schema.StringAttribute{
 						Description: "User-provided identifier for the version. Maximum 100 bytes.",
 						Optional:    true,
-					},
-					"workers_triggered_by": schema.StringAttribute{
-						Description: "Indicates the trigger that created this version. Server-set value.",
-						Computed:    true,
 					},
 				},
 			},

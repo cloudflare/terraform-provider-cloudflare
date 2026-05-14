@@ -2,17 +2,12 @@
 page_title: "cloudflare_workers_script_subdomain Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  
 ---
 
 # cloudflare_workers_script_subdomain (Data Source)
 
-Accepted Permissions
 
-- `Workers Scripts Read`
-- `Workers Scripts Write`
-- `Workers Tail Read`
 
 ## Example Usage
 
@@ -28,11 +23,8 @@ data "cloudflare_workers_script_subdomain" "example_workers_script_subdomain" {
 
 ### Required
 
-- `script_name` (String) Name of the script, used in URLs and route configuration.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Read-Only
 

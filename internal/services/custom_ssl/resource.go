@@ -64,6 +64,12 @@ func (r *CustomSSLResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	params := custom_certificates.CustomCertificateNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *CustomSSLResource) Create(ctx context.Context, req resource.CreateReque
 	env := CustomSSLResultEnvelope{*data}
 	_, err = r.client.CustomCertificates.New(
 		ctx,
-		custom_certificates.CustomCertificateNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *CustomSSLResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	params := custom_certificates.CustomCertificateEditParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *CustomSSLResource) Update(ctx context.Context, req resource.UpdateReque
 	_, err = r.client.CustomCertificates.Edit(
 		ctx,
 		data.ID.ValueString(),
-		custom_certificates.CustomCertificateEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *CustomSSLResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	params := custom_certificates.CustomCertificateGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := CustomSSLResultEnvelope{*data}
 	_, err := r.client.CustomCertificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		custom_certificates.CustomCertificateGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *CustomSSLResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	params := custom_certificates.CustomCertificateDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.CustomCertificates.Delete(
 		ctx,
 		data.ID.ValueString(),
-		custom_certificates.CustomCertificateDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

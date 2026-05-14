@@ -16,7 +16,7 @@ type StreamDownloadResultDataSourceEnvelope struct {
 }
 
 type StreamDownloadDataSourceModel struct {
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 }
 

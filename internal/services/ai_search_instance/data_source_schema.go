@@ -24,9 +24,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Optional: true,
@@ -84,6 +83,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"close_enough",
 						"flexible_friend",
 						"anything_goes",
+					),
+				},
+			},
+			"cache_ttl": schema.Float64Attribute{
+				Description: "Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).\nAvailable values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.",
+				Computed:    true,
+				Validators: []validator.Float64{
+					float64validator.OneOf(
+						600,
+						1800,
+						3600,
+						7200,
+						21600,
+						43200,
+						86400,
+						172800,
+						259200,
+						518400,
 					),
 				},
 			},
@@ -314,21 +331,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Computed: true,
 					},
-					"search_for_agents": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[AISearchInstanceMetadataSearchForAgentsDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"hostname": schema.StringAttribute{
-								Computed: true,
-							},
-							"zone_id": schema.StringAttribute{
-								Computed: true,
-							},
-							"zone_name": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-					},
 					"worker_domain": schema.StringAttribute{
 						Computed: true,
 					},
@@ -510,7 +512,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"content_selector": schema.ListNestedAttribute{
-										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
 										Computed:    true,
 										CustomType:  customfield.NewNestedObjectListType[AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
 										NestedObject: schema.NestedAttributeObject{
@@ -520,13 +522,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 												},
 												"selector": schema.StringAttribute{
-													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
 													Computed:    true,
 												},
 											},
 										},
 									},
 									"include_headers": schema.MapAttribute{
+										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
 										Computed:    true,
 										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
@@ -583,10 +586,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"namespace": schema.StringAttribute{
-						Optional: true,
+						Description: "Filter by namespace.",
+						Optional:    true,
 					},
 					"order_by": schema.StringAttribute{
-						Description: "Order By Column Name\nAvailable values: \"created_at\".",
+						Description: "Field to order results by.\nAvailable values: \"created_at\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -594,7 +598,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order_by_direction": schema.StringAttribute{
-						Description: "Order By Direction\nAvailable values: \"asc\", \"desc\".",
+						Description: "Order direction.\nAvailable values: \"asc\", \"desc\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -602,7 +606,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"search": schema.StringAttribute{
-						Description: "Search by id",
+						Description: "Filter instances whose id contains this string (case-insensitive).",
 						Optional:    true,
 					},
 				},

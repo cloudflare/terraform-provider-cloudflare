@@ -61,6 +61,12 @@ func (r *ContentScanningExpressionResource) Create(ctx context.Context, req reso
 		return
 	}
 
+	params := content_scanning.PayloadNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -70,9 +76,7 @@ func (r *ContentScanningExpressionResource) Create(ctx context.Context, req reso
 	env := ContentScanningExpressionResultEnvelope{data.Body}
 	_, err = r.client.ContentScanning.Payloads.New(
 		ctx,
-		content_scanning.PayloadNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -109,12 +113,16 @@ func (r *ContentScanningExpressionResource) Delete(ctx context.Context, req reso
 		return
 	}
 
+	params := content_scanning.PayloadDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ContentScanning.Payloads.Delete(
 		ctx,
 		data.ID.ValueString(),
-		content_scanning.PayloadDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

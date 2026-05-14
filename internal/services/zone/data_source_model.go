@@ -56,7 +56,16 @@ func (m *ZoneDataSourceModel) toReadParams(_ context.Context) (params zones.Zone
 }
 
 func (m *ZoneDataSourceModel) toListParams(_ context.Context) (params zones.ZoneListParams, diags diag.Diagnostics) {
-	params = zones.ZoneListParams{}
+	mFilterType := []zones.ZoneListParamsType{}
+	if m.Filter.Type != nil {
+		for _, item := range *m.Filter.Type {
+			mFilterType = append(mFilterType, zones.ZoneListParamsType(item.ValueString()))
+		}
+	}
+
+	params = zones.ZoneListParams{
+		Type: cloudflare.F(mFilterType),
+	}
 
 	if m.Filter.Account != nil {
 		paramsAccount := zones.ZoneListParamsAccount{}
@@ -137,4 +146,5 @@ type ZoneFindOneByDataSourceModel struct {
 	Name      types.String                 `tfsdk:"name" query:"name,optional"`
 	Order     types.String                 `tfsdk:"order" query:"order,optional"`
 	Status    types.String                 `tfsdk:"status" query:"status,optional"`
+	Type      *[]types.String              `tfsdk:"type" query:"type,optional"`
 }

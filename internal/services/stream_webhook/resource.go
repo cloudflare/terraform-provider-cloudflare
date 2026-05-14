@@ -61,6 +61,12 @@ func (r *StreamWebhookResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	params := stream.WebhookUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -70,9 +76,7 @@ func (r *StreamWebhookResource) Create(ctx context.Context, req resource.CreateR
 	env := StreamWebhookResultEnvelope{*data}
 	_, err = r.client.Stream.Webhooks.Update(
 		ctx,
-		stream.WebhookUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -109,6 +113,12 @@ func (r *StreamWebhookResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
+	params := stream.WebhookUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -118,9 +128,7 @@ func (r *StreamWebhookResource) Update(ctx context.Context, req resource.UpdateR
 	env := StreamWebhookResultEnvelope{*data}
 	_, err = r.client.Stream.Webhooks.Update(
 		ctx,
-		stream.WebhookUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -149,13 +157,17 @@ func (r *StreamWebhookResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
+	params := stream.WebhookGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := StreamWebhookResultEnvelope{*data}
 	_, err := r.client.Stream.Webhooks.Get(
 		ctx,
-		stream.WebhookGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -188,11 +200,15 @@ func (r *StreamWebhookResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	params := stream.WebhookDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Stream.Webhooks.Delete(
 		ctx,
-		stream.WebhookDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

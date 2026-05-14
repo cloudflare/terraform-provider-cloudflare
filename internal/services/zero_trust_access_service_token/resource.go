@@ -65,6 +65,16 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 		return
 	}
 
+	params := zero_trust.AccessServiceTokenNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -72,14 +82,6 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessServiceTokenResultEnvelope{*data}
-	params := zero_trust.AccessServiceTokenNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.ZeroTrust.Access.ServiceTokens.New(
 		ctx,
 		params,
@@ -121,6 +123,16 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 		return
 	}
 
+	params := zero_trust.AccessServiceTokenUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,14 +140,6 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessServiceTokenResultEnvelope{*data}
-	params := zero_trust.AccessServiceTokenUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err = r.client.ZeroTrust.Access.ServiceTokens.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -178,16 +182,18 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessServiceTokenResultEnvelope{*data}
 	params := zero_trust.AccessServiceTokenGetParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessServiceTokenResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -230,7 +236,9 @@ func (r *ZeroTrustAccessServiceTokenResource) Delete(ctx context.Context, req re
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
+	}
+
+	if !data.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 

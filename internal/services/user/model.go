@@ -19,6 +19,7 @@ type UserModel struct {
 	LastName                       types.String                                         `tfsdk:"last_name" json:"last_name,optional"`
 	Telephone                      types.String                                         `tfsdk:"telephone" json:"telephone,optional"`
 	Zipcode                        types.String                                         `tfsdk:"zipcode" json:"zipcode,optional"`
+	Email                          types.String                                         `tfsdk:"email" json:"email,computed"`
 	HasBusinessZones               types.Bool                                           `tfsdk:"has_business_zones" json:"has_business_zones,computed"`
 	HasEnterpriseZones             types.Bool                                           `tfsdk:"has_enterprise_zones" json:"has_enterprise_zones,computed"`
 	HasProZones                    types.Bool                                           `tfsdk:"has_pro_zones" json:"has_pro_zones,computed"`

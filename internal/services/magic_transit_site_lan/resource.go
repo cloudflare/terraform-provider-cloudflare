@@ -64,6 +64,12 @@ func (r *MagicTransitSiteLANResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+	params := magic_transit.SiteLANNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *MagicTransitSiteLANResource) Create(ctx context.Context, req resource.C
 	_, err = r.client.MagicTransit.Sites.LANs.New(
 		ctx,
 		data.SiteID.ValueString(),
-		magic_transit.SiteLANNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,6 +117,12 @@ func (r *MagicTransitSiteLANResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
+	params := magic_transit.SiteLANUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -124,9 +134,7 @@ func (r *MagicTransitSiteLANResource) Update(ctx context.Context, req resource.U
 		ctx,
 		data.SiteID.ValueString(),
 		data.ID.ValueString(),
-		magic_transit.SiteLANUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,15 +163,19 @@ func (r *MagicTransitSiteLANResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	params := magic_transit.SiteLANGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := MagicTransitSiteLANResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Sites.LANs.Get(
 		ctx,
 		data.SiteID.ValueString(),
 		data.ID.ValueString(),
-		magic_transit.SiteLANGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,13 +208,17 @@ func (r *MagicTransitSiteLANResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := magic_transit.SiteLANDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.MagicTransit.Sites.LANs.Delete(
 		ctx,
 		data.SiteID.ValueString(),
 		data.ID.ValueString(),
-		magic_transit.SiteLANDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

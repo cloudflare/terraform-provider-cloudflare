@@ -64,6 +64,12 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 		return
 	}
 
+	params := email_security.SettingImpersonationRegistryNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.New(
 		ctx,
-		email_security.SettingImpersonationRegistryNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 		return
 	}
 
+	params := email_security.SettingImpersonationRegistryEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -121,10 +131,8 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.Edit(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingImpersonationRegistryEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 		return
 	}
 
+	params := email_security.SettingImpersonationRegistryGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingImpersonationRegistryGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *EmailSecurityImpersonationRegistryResource) Delete(ctx context.Context,
 		return
 	}
 
+	params := email_security.SettingImpersonationRegistryDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Delete(
 		ctx,
-		data.ID.ValueInt64(),
-		email_security.SettingImpersonationRegistryDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		data.ID.ValueString(),
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -213,12 +229,12 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	var data = new(EmailSecurityImpersonationRegistryModel)
 
 	path_account_id := ""
-	path_display_name_id := int64(0)
+	path_impersonation_registry_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<display_name_id>",
+		"<account_id>/<impersonation_registry_id>",
 		&path_account_id,
-		&path_display_name_id,
+		&path_impersonation_registry_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -226,13 +242,13 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.Int64Value(path_display_name_id)
+	data.ID = types.StringValue(path_impersonation_registry_id)
 
 	res := new(http.Response)
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		path_display_name_id,
+		path_impersonation_registry_id,
 		email_security.SettingImpersonationRegistryGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},

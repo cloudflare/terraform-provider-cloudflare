@@ -39,6 +39,7 @@ type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeDataSourceModel]         `tfsdk:"include" json:"include,computed"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2DataSourceModel]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
+	VirtualNetworks            customfield.NestedObject[ZeroTrustDeviceDefaultProfileVirtualNetworksDataSourceModel]     `tfsdk:"virtual_networks" json:"virtual_networks,computed"`
 }
 
 func (m *ZeroTrustDeviceDefaultProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyDefaultGetParams, diags diag.Diagnostics) {
@@ -72,4 +73,9 @@ type ZeroTrustDeviceDefaultProfileIncludeDataSourceModel struct {
 type ZeroTrustDeviceDefaultProfileServiceModeV2DataSourceModel struct {
 	Mode types.String  `tfsdk:"mode" json:"mode,computed"`
 	Port types.Float64 `tfsdk:"port" json:"port,computed"`
+}
+
+type ZeroTrustDeviceDefaultProfileVirtualNetworksDataSourceModel struct {
+	Allowed customfield.List[types.String] `tfsdk:"allowed" json:"allowed,computed"`
+	Default types.String                   `tfsdk:"default" json:"default,computed"`
 }

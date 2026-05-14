@@ -23,11 +23,8 @@ data "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 
 ### Required
 
-- `bucket_name` (String) Name of the bucket.
-
-### Optional
-
 - `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Read-Only
 

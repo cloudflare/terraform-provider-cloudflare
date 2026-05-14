@@ -2,15 +2,12 @@
 page_title: "cloudflare_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Account Filter Lists Read
+  
 ---
 
 # cloudflare_list (Data Source)
 
-Accepted Permissions
 
-- `Account Filter Lists Read`
 
 ## Example Usage
 
@@ -27,11 +24,11 @@ data "cloudflare_list" "example_list" {
 
 ### Required
 
+- `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
 ### Optional
 
-- `account_id` (String) The Account ID for this resource.
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
 
 ### Read-Only

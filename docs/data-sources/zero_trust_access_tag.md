@@ -23,11 +23,8 @@ data "cloudflare_zero_trust_access_tag" "example_zero_trust_access_tag" {
 
 ### Required
 
-- `tag_name` (String) The name of the tag
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `tag_name` (String) The name of the tag
 
 ### Read-Only
 
