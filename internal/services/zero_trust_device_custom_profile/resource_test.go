@@ -244,6 +244,57 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZeroTrustDeviceCustomProfile_VirtualNetworks(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			// Create with virtual_networks (2 allowed, default = vnet1)
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworks(accountID, rnd, randomPrecedence),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("virtual_networks").AtMapKey("allowed"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			// Refresh produces no plan changes
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworks(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			// Update virtual_networks (shrink allowed to 1, rotate default to vnet2)
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworksUpdated(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("virtual_networks").AtMapKey("allowed"), knownvalue.ListSizeExact(1)),
+				},
+			},
+			// Import
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"exclude", "include"},
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -290,4 +341,12 @@ func testAccCloudflareZeroTrustDeviceCustomProfileWithInclude(accountID, rnd str
 
 func testAccCloudflareZeroTrustDeviceCustomProfileWithServiceMode(accountID, rnd string, precedence int) string {
 	return acctest.LoadTestCase("devicecustomprofilewithservicemode.tf", rnd, accountID, precedence)
+}
+
+func testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworks(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithvirtualnetworks.tf", rnd, accountID, precedence)
+}
+
+func testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworksUpdated(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithvirtualnetworksupdated.tf", rnd, accountID, precedence)
 }
