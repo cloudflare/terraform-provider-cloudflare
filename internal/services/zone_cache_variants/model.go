@@ -24,8 +24,9 @@ func (m ZoneCacheVariantsModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(state ZoneCacheVariantsModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(_ ZoneCacheVariantsModel) (data []byte, err error) {
+	// The Cloudflare API rejects RFC7386 null tombstones (e.g. `"gif":null`), see issue #6700.
+	return apijson.MarshalRoot(m)
 }
 
 type ZoneCacheVariantsValueModel struct {
