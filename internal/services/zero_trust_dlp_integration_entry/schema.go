@@ -21,7 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPIntegrationEntryReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Read",
@@ -144,8 +143,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPIntegrationEntryVariantModel](ctx),
+				Description: "A Predefined AI prompt classification topic entry.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPIntegrationEntryVariantModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"topic_type": schema.StringAttribute{
 						Description: `Available values: "Intent", "Content".`,
@@ -155,14 +155,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: `Available values: "PromptTopic".`,
+						Description: `Available values: "PromptTopic", "General".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+							stringvalidator.OneOfCaseInsensitive("PromptTopic", "General"),
 						},
 					},
 					"description": schema.StringAttribute{
-						Computed: true,
+						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Computed:    true,
 					},
 				},
 			},

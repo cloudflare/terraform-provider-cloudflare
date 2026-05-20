@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_gateway_pacfile Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_gateway_pacfile (Data Source)
 
-Accepted Permissions
 
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_zero_trust_gateway_pacfile" "example_zero_trust_gateway_pacfile
 
 ### Required
 
-- `pacfile_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `pacfile_id` (String)
 
 ### Read-Only
 

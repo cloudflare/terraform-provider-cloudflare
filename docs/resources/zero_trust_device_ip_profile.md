@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_device_ip_profile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_device_ip_profile (Resource)
 
-Accepted Permissions
 
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -32,6 +28,7 @@ resource "cloudflare_zero_trust_device_ip_profile" "example_zero_trust_device_ip
 
 ### Required
 
+- `account_id` (String)
 - `match` (String) The wirefilter expression to match registrations. Available values: "identity.name", "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.saml_attributes".
 - `name` (String) A user-friendly name for the Device IP profile.
 - `precedence` (Number) The precedence of the Device IP profile. Lower values indicate higher precedence. Device IP profile will be evaluated in ascending order of this field.
@@ -39,7 +36,6 @@ resource "cloudflare_zero_trust_device_ip_profile" "example_zero_trust_device_ip
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String) An optional description of the Device IP profile.
 - `enabled` (Boolean) Whether the Device IP profile will be applied to matching devices.
 

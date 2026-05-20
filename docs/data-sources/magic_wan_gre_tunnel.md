@@ -2,18 +2,12 @@
 page_title: "cloudflare_magic_wan_gre_tunnel Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
+  
 ---
 
 # cloudflare_magic_wan_gre_tunnel (Data Source)
 
-Accepted Permissions
 
-- `Magic Transit Read`
-- `Magic Transit Write`
-- `Magic WAN Read`
-- `Magic WAN Write`
 
 ## Example Usage
 
@@ -29,11 +23,8 @@ data "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 
 ### Required
 
-- `gre_tunnel_id` (String) Identifier
-
-### Optional
-
 - `account_id` (String) Identifier
+- `gre_tunnel_id` (String) Identifier
 
 ### Read-Only
 

@@ -2,16 +2,12 @@
 page_title: "cloudflare_user Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  User Details ReadUser Details Write
+  
 ---
 
 # cloudflare_user (Data Source)
 
-Accepted Permissions
 
-- `User Details Read`
-- `User Details Write`
 
 ## Example Usage
 

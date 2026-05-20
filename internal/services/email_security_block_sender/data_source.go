@@ -97,7 +97,7 @@ func (d *EmailSecurityBlockSenderDataSource) Read(ctx context.Context, req datas
 	env := EmailSecurityBlockSenderResultDataSourceEnvelope{*data}
 	_, err := d.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
-		data.PatternID.ValueInt64(),
+		data.PatternID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

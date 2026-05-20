@@ -64,6 +64,12 @@ func (r *EmailRoutingAddressResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
+	params := email_routing.AddressNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *EmailRoutingAddressResource) Create(ctx context.Context, req resource.C
 	env := EmailRoutingAddressResultEnvelope{*data}
 	_, err = r.client.EmailRouting.Addresses.New(
 		ctx,
-		email_routing.AddressNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -108,14 +112,18 @@ func (r *EmailRoutingAddressResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	params := email_routing.AddressGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := EmailRoutingAddressResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Addresses.Get(
 		ctx,
 		data.ID.ValueString(),
-		email_routing.AddressGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -148,12 +156,16 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := email_routing.AddressDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.EmailRouting.Addresses.Delete(
 		ctx,
 		data.ID.ValueString(),
-		email_routing.AddressDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

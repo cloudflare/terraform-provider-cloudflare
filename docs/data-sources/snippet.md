@@ -2,16 +2,12 @@
 page_title: "cloudflare_snippet Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Snippets ReadSnippets Write
+  
 ---
 
 # cloudflare_snippet (Data Source)
 
-Accepted Permissions
 
-- `Snippets Read`
-- `Snippets Write`
 
 ## Example Usage
 
@@ -28,9 +24,6 @@ data "cloudflare_snippet" "example_snippet" {
 ### Required
 
 - `snippet_name` (String) Identify the snippet.
-
-### Optional
-
 - `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Read-Only

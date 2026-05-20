@@ -2,16 +2,12 @@
 page_title: "cloudflare_calls_sfu_app Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Calls ReadCalls Write
+  
 ---
 
 # cloudflare_calls_sfu_app (Data Source)
 
-Accepted Permissions
 
-- `Calls Read`
-- `Calls Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_calls_sfu_app" "example_calls_sfu_app" {
 
 ### Required
 
-- `app_id` (String) A Cloudflare-generated unique identifier for a item.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `app_id` (String) A Cloudflare-generated unique identifier for a item.
 
 ### Read-Only
 

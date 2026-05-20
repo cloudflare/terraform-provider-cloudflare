@@ -64,6 +64,12 @@ func (r *PageRuleResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	params := page_rules.PageRuleNewParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *PageRuleResource) Create(ctx context.Context, req resource.CreateReques
 	env := PageRuleResultEnvelope{*data}
 	_, err = r.client.PageRules.New(
 		ctx,
-		page_rules.PageRuleNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *PageRuleResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	params := page_rules.PageRuleUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *PageRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	_, err = r.client.PageRules.Update(
 		ctx,
 		data.ID.ValueString(),
-		page_rules.PageRuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *PageRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	params := page_rules.PageRuleGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := PageRuleResultEnvelope{*data}
 	_, err := r.client.PageRules.Get(
 		ctx,
 		data.ID.ValueString(),
-		page_rules.PageRuleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	params := page_rules.PageRuleDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.PageRules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		page_rules.PageRuleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

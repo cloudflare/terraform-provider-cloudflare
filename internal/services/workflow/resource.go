@@ -64,6 +64,12 @@ func (r *WorkflowResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	params := workflows.WorkflowUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *WorkflowResource) Create(ctx context.Context, req resource.CreateReques
 	_, err = r.client.Workflows.Update(
 		ctx,
 		data.WorkflowName.ValueString(),
-		workflows.WorkflowUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +118,12 @@ func (r *WorkflowResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	params := workflows.WorkflowUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -124,9 +134,7 @@ func (r *WorkflowResource) Update(ctx context.Context, req resource.UpdateReques
 	_, err = r.client.Workflows.Update(
 		ctx,
 		data.WorkflowName.ValueString(),
-		workflows.WorkflowUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,14 +164,18 @@ func (r *WorkflowResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	params := workflows.WorkflowGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := WorkflowResultEnvelope{*data}
 	_, err := r.client.Workflows.Get(
 		ctx,
 		data.WorkflowName.ValueString(),
-		workflows.WorkflowGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -197,12 +209,16 @@ func (r *WorkflowResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	params := workflows.WorkflowDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.Workflows.Delete(
 		ctx,
 		data.WorkflowName.ValueString(),
-		workflows.WorkflowDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -64,6 +64,12 @@ func (r *HostnameTLSSettingResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
+	params := hostnames.SettingTLSUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -75,9 +81,7 @@ func (r *HostnameTLSSettingResource) Create(ctx context.Context, req resource.Cr
 		ctx,
 		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
 		data.Hostname.ValueString(),
-		hostnames.SettingTLSUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -115,6 +119,12 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
+	params := hostnames.SettingTLSUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -126,9 +136,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 		ctx,
 		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
 		data.Hostname.ValueString(),
-		hostnames.SettingTLSUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -158,14 +166,18 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
+	params := hostnames.SettingTLSGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
-		hostnames.SettingTLSGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -199,13 +211,17 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
+	params := hostnames.SettingTLSDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Hostnames.Settings.TLS.Delete(
 		ctx,
 		hostnames.SettingTLSDeleteParamsSettingID(data.SettingID.ValueString()),
 		data.Hostname.ValueString(),
-		hostnames.SettingTLSDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

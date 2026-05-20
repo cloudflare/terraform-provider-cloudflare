@@ -4,5 +4,5 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
   is_regex = false
   is_similarity = false
   pattern = "example.com"
-  comments = null
+  comments = "Trusted partner domain"
 }

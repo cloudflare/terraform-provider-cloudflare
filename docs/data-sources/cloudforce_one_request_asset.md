@@ -2,16 +2,12 @@
 page_title: "cloudflare_cloudforce_one_request_asset Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Cloudforce One ReadCloudforce One Write
+  
 ---
 
 # cloudflare_cloudforce_one_request_asset (Data Source)
 
-Accepted Permissions
 
-- `Cloudforce One Read`
-- `Cloudforce One Write`
 
 ## Example Usage
 
@@ -28,12 +24,9 @@ data "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_a
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `asset_id` (String) UUID.
 - `request_id` (String) UUID.
-
-### Optional
-
-- `account_id` (String) Identifier.
 
 ### Read-Only
 

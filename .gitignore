@@ -6,3 +6,19 @@ go.work*
 .DS_Store
 .idea/
 bin/
+.tmp/
+
+# Sandbox device-file artifacts
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.mcp.json
+.profile
+.ripgreprc
+.vscode/
+.zprofile
+.zshrc
+.idea
+.vscode
+.claude/

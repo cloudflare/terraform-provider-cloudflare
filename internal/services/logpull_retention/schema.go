@@ -17,7 +17,6 @@ var _ resource.ResourceWithConfigValidators = (*LogpullRetentionResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Logs Read",

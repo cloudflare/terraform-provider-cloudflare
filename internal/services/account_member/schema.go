@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*AccountMemberResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -54,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"roles": schema.SetAttribute{
 				Description: "Set of roles associated with this member.",

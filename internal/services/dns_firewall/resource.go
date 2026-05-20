@@ -64,6 +64,12 @@ func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
+	params := dns_firewall.DNSFirewallNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateReq
 	env := DNSFirewallResultEnvelope{*data}
 	_, err = r.client.DNSFirewall.New(
 		ctx,
-		dns_firewall.DNSFirewallNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
+	params := dns_firewall.DNSFirewallEditParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.DNSFirewall.Edit(
 		ctx,
 		data.ID.ValueString(),
-		dns_firewall.DNSFirewallEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *DNSFirewallResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	params := dns_firewall.DNSFirewallGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := DNSFirewallResultEnvelope{*data}
 	_, err := r.client.DNSFirewall.Get(
 		ctx,
 		data.ID.ValueString(),
-		dns_firewall.DNSFirewallGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
+	params := dns_firewall.DNSFirewallDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.DNSFirewall.Delete(
 		ctx,
 		data.ID.ValueString(),
-		dns_firewall.DNSFirewallDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

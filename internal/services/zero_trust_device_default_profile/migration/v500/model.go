@@ -63,7 +63,6 @@ type TargetDefaultProfileModel struct {
 	Default                    types.Bool                                                                         `tfsdk:"default"`
 	Enabled                    types.Bool                                                                         `tfsdk:"enabled"`
 	GatewayUniqueID            types.String                                                                       `tfsdk:"gateway_unique_id"`
-	PolicyID                   types.String                                                                       `tfsdk:"policy_id"`
 	FallbackDomains            customfield.NestedObjectList[TargetDefaultProfileFallbackDomainsModel]             `tfsdk:"fallback_domains"`
 }
 

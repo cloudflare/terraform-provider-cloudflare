@@ -2,16 +2,12 @@
 page_title: "cloudflare_email_security_impersonation_registry Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Cloud Email Security: ReadCloud Email Security: Write
+  
 ---
 
 # cloudflare_email_security_impersonation_registry (Resource)
 
-Accepted Permissions
 
-- `Cloud Email Security: Read`
-- `Cloud Email Security: Write`
 
 ## Example Usage
 
@@ -29,13 +25,10 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 
 ### Required
 
+- `account_id` (String) Account Identifier
 - `email` (String)
 - `is_email_regex` (Boolean)
 - `name` (String)
-
-### Optional
-
-- `account_id` (String) Account Identifier
 
 ### Read-Only
 

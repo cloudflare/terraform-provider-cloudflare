@@ -2,16 +2,12 @@
 page_title: "cloudflare_zero_trust_dlp_entry Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Zero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_dlp_entry (Data Source)
 
-Accepted Permissions
 
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Required
 
-- `entry_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `entry_id` (String)
 
 ### Read-Only
 

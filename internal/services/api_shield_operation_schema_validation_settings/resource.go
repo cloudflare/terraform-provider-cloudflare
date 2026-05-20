@@ -64,6 +64,12 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Create(ctx context.
 		return
 	}
 
+	params := api_gateway.OperationSchemaValidationUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Create(ctx context.
 	_, err = r.client.APIGateway.Operations.SchemaValidation.Update(
 		ctx,
 		data.OperationID.ValueString(),
-		api_gateway.OperationSchemaValidationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Update(ctx context.
 		return
 	}
 
+	params := api_gateway.OperationSchemaValidationUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -121,9 +131,7 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Update(ctx context.
 	_, err = r.client.APIGateway.Operations.SchemaValidation.Update(
 		ctx,
 		data.OperationID.ValueString(),
-		api_gateway.OperationSchemaValidationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -152,13 +160,17 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Read(ctx context.Co
 		return
 	}
 
+	params := api_gateway.OperationSchemaValidationGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
 		ctx,
 		data.OperationID.ValueString(),
-		api_gateway.OperationSchemaValidationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

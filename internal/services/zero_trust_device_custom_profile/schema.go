@@ -27,7 +27,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceCustomProfileReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",
@@ -147,6 +146,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The port number when used with proxy mode.",
 						Optional:    true,
 						Computed:    true,
+					},
+				},
+			},
+			"virtual_networks": schema.SingleNestedAttribute{
+				Description: "Virtual network access settings for the device.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.ListAttribute{
+						Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"default": schema.StringAttribute{
+						Description: "The default virtual network ID. Must be included in the `allowed` list.",
+						Required:    true,
 					},
 				},
 			},

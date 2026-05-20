@@ -61,6 +61,12 @@ func (r *RegistrarDomainResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+	params := registrar.DomainUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,9 +77,7 @@ func (r *RegistrarDomainResource) Create(ctx context.Context, req resource.Creat
 	_, err = r.client.Registrar.Domains.Update(
 		ctx,
 		data.DomainName.ValueString(),
-		registrar.DomainUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -110,6 +114,12 @@ func (r *RegistrarDomainResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
+	params := registrar.DomainUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -120,9 +130,7 @@ func (r *RegistrarDomainResource) Update(ctx context.Context, req resource.Updat
 	_, err = r.client.Registrar.Domains.Update(
 		ctx,
 		data.DomainName.ValueString(),
-		registrar.DomainUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -151,13 +159,17 @@ func (r *RegistrarDomainResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	params := registrar.DomainGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	_, err := r.client.Registrar.Domains.Get(
 		ctx,
 		data.DomainName.ValueString(),
-		registrar.DomainGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

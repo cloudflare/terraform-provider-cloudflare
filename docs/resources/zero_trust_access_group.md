@@ -2,37 +2,33 @@
 page_title: "cloudflare_zero_trust_access_group Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Access: Organizations, Identity Providers, and Groups ReadAccess: Organizations, Identity Providers, and Groups Write
+  
 ---
 
 # cloudflare_zero_trust_access_group (Resource)
 
-Accepted Permissions
 
-- `Access: Organizations, Identity Providers, and Groups Read`
-- `Access: Organizations, Identity Providers, and Groups Write`
 
 ## Example Usage
 
 ```terraform
 resource "cloudflare_zero_trust_access_group" "example_zero_trust_access_group" {
   include = [{
-    certificate = {
-
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
     }
   }]
   name = "Allow devs"
   zone_id = "zone_id"
   exclude = [{
-    certificate = {
-
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
     }
   }]
   is_default = true
   require = [{
-    certificate = {
-
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
     }
   }]
 }

@@ -64,6 +64,12 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 		return
 	}
 
+	params := zero_trust.TunnelCloudflaredConfigurationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +80,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelCloudflaredConfigurationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +118,12 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Update(ctx context.Context, r
 		return
 	}
 
+	params := zero_trust.TunnelCloudflaredConfigurationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -124,9 +134,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Update(ctx context.Context, r
 	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelCloudflaredConfigurationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,14 +164,18 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 		return
 	}
 
+	params := zero_trust.TunnelCloudflaredConfigurationGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelCloudflaredConfigurationGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

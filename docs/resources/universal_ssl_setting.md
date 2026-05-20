@@ -2,16 +2,12 @@
 page_title: "cloudflare_universal_ssl_setting Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  SSL and Certificates ReadSSL and Certificates Write
+  
 ---
 
 # cloudflare_universal_ssl_setting (Resource)
 
-Accepted Permissions
 
-- `SSL and Certificates Read`
-- `SSL and Certificates Write`
 
 ## Example Usage
 

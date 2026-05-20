@@ -64,6 +64,12 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	params := ai_gateway.AIGatewayNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +79,7 @@ func (r *AIGatewayResource) Create(ctx context.Context, req resource.CreateReque
 	env := AIGatewayResultEnvelope{*data}
 	_, err = r.client.AIGateway.New(
 		ctx,
-		ai_gateway.AIGatewayNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,6 +116,12 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	params := ai_gateway.AIGatewayUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -122,9 +132,7 @@ func (r *AIGatewayResource) Update(ctx context.Context, req resource.UpdateReque
 	_, err = r.client.AIGateway.Update(
 		ctx,
 		data.ID.ValueString(),
-		ai_gateway.AIGatewayUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -153,14 +161,18 @@ func (r *AIGatewayResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	params := ai_gateway.AIGatewayGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := AIGatewayResultEnvelope{*data}
 	_, err := r.client.AIGateway.Get(
 		ctx,
 		data.ID.ValueString(),
-		ai_gateway.AIGatewayGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,12 +205,16 @@ func (r *AIGatewayResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	params := ai_gateway.AIGatewayDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	}
+
 	_, err := r.client.AIGateway.Delete(
 		ctx,
 		data.ID.ValueString(),
-		ai_gateway.AIGatewayDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

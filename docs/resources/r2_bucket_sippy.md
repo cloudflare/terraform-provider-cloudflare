@@ -2,15 +2,12 @@
 page_title: "cloudflare_r2_bucket_sippy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Workers R2 Storage Write
+  
 ---
 
 # cloudflare_r2_bucket_sippy (Resource)
 
-Accepted Permissions
 
-- `Workers R2 Storage Write`
 
 ## Example Usage
 
@@ -38,11 +35,11 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 
 ### Required
 
+- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 
 ### Optional
 
-- `account_id` (String) Account ID.
 - `destination` (Attributes) R2 bucket to copy objects to. (see [below for nested schema](#nestedatt--destination))
 - `jurisdiction` (String) Jurisdiction of the bucket
 - `source` (Attributes) AWS S3 bucket to copy objects from. (see [below for nested schema](#nestedatt--source))

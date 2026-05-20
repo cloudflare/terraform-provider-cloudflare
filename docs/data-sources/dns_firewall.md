@@ -2,16 +2,12 @@
 page_title: "cloudflare_dns_firewall Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  DNS Firewall ReadDNS Firewall Write
+  
 ---
 
 # cloudflare_dns_firewall (Data Source)
 
-Accepted Permissions
 
-- `DNS Firewall Read`
-- `DNS Firewall Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ data "cloudflare_dns_firewall" "example_dns_firewall" {
 
 ### Required
 
-- `dns_firewall_id` (String) Identifier.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `dns_firewall_id` (String) Identifier.
 
 ### Read-Only
 

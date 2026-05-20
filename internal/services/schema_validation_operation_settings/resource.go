@@ -61,6 +61,12 @@ func (r *SchemaValidationOperationSettingsResource) Create(ctx context.Context, 
 		return
 	}
 
+	params := schema_validation.SettingOperationUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -71,9 +77,7 @@ func (r *SchemaValidationOperationSettingsResource) Create(ctx context.Context, 
 	_, err = r.client.SchemaValidation.Settings.Operations.Update(
 		ctx,
 		data.OperationID.ValueString(),
-		schema_validation.SettingOperationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -110,6 +114,12 @@ func (r *SchemaValidationOperationSettingsResource) Update(ctx context.Context, 
 		return
 	}
 
+	params := schema_validation.SettingOperationUpdateParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -120,9 +130,7 @@ func (r *SchemaValidationOperationSettingsResource) Update(ctx context.Context, 
 	_, err = r.client.SchemaValidation.Settings.Operations.Update(
 		ctx,
 		data.OperationID.ValueString(),
-		schema_validation.SettingOperationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -151,14 +159,18 @@ func (r *SchemaValidationOperationSettingsResource) Read(ctx context.Context, re
 		return
 	}
 
+	params := schema_validation.SettingOperationGetParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	res := new(http.Response)
 	env := SchemaValidationOperationSettingsResultEnvelope{*data}
 	_, err := r.client.SchemaValidation.Settings.Operations.Get(
 		ctx,
 		data.OperationID.ValueString(),
-		schema_validation.SettingOperationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -191,12 +203,16 @@ func (r *SchemaValidationOperationSettingsResource) Delete(ctx context.Context, 
 		return
 	}
 
+	params := schema_validation.SettingOperationDeleteParams{}
+
+	if !data.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.SchemaValidation.Settings.Operations.Delete(
 		ctx,
 		data.OperationID.ValueString(),
-		schema_validation.SettingOperationDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

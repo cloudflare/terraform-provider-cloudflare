@@ -2,16 +2,12 @@
 page_title: "cloudflare_workers_kv_namespace Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Workers KV Storage ReadWorkers KV Storage Write
+  
 ---
 
 # cloudflare_workers_kv_namespace (Resource)
 
-Accepted Permissions
 
-- `Workers KV Storage Read`
-- `Workers KV Storage Write`
 
 ## Example Usage
 
@@ -27,11 +23,8 @@ resource "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 
 ### Required
 
-- `title` (String) A human-readable string name for a Namespace.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `title` (String) A human-readable string name for a Namespace.
 
 ### Read-Only
 

@@ -2,15 +2,12 @@
 page_title: "cloudflare_logpush_ownership_challenge Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Logs Write
+  
 ---
 
 # cloudflare_logpush_ownership_challenge (Resource)
 
-Accepted Permissions
 
-- `Logs Write`
 
 ## Example Usage
 

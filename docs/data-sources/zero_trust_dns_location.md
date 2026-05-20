@@ -2,17 +2,12 @@
 page_title: "cloudflare_zero_trust_dns_location Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Cloudflare Zero Trust Secure DNS Locations WriteZero Trust ReadZero Trust Write
+  
 ---
 
 # cloudflare_zero_trust_dns_location (Data Source)
 
-Accepted Permissions
 
-- `Cloudflare Zero Trust Secure DNS Locations Write`
-- `Zero Trust Read`
-- `Zero Trust Write`
 
 ## Example Usage
 
@@ -28,11 +23,8 @@ data "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" {
 
 ### Required
 
-- `location_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `location_id` (String)
 
 ### Read-Only
 

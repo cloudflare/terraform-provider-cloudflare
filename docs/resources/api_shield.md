@@ -2,18 +2,12 @@
 page_title: "cloudflare_api_shield Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
+  Manages API Shield configuration properties for a zone, specifically auth ID characteristics.
 ---
 
 # cloudflare_api_shield (Resource)
 
-Accepted Permissions
-
-- `Account API Gateway`
-- `Account API Gateway Read`
-- `Domain API Gateway`
-- `Domain API Gateway Read`
+Manages API Shield configuration properties for a zone, specifically auth ID characteristics.
 
 When using `type = "jwt"` for auth ID characteristics, the `name` field must be a claim location expressed as `$(token_config_id):$(json_path)`, where:
 - `token_config_id` is the ID of the token configuration used in validating the JWT

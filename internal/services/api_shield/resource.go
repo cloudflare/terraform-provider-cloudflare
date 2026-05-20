@@ -64,6 +64,11 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	params := api_gateway.ConfigurationUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -74,9 +79,7 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
-		api_gateway.ConfigurationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,6 +117,11 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	params := api_gateway.ConfigurationUpdateParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -124,9 +132,7 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
-		api_gateway.ConfigurationUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,14 +162,17 @@ func (r *APIShieldResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	params := api_gateway.ConfigurationGetParams{}
+
+	if !data.ID.IsNull() {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
 
 	res := new(http.Response)
 	env := APIShieldResultEnvelope{*data}
 	_, err := r.client.APIGateway.Configurations.Get(
 		ctx,
-		api_gateway.ConfigurationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -2,16 +2,12 @@
 page_title: "cloudflare_stream_download Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  Stream ReadStream Write
+  
 ---
 
 # cloudflare_stream_download (Data Source)
 
-Accepted Permissions
 
-- `Stream Read`
-- `Stream Write`
 
 ## Example Usage
 
@@ -27,10 +23,7 @@ data "cloudflare_stream_download" "example_stream_download" {
 
 ### Required
 
-- `identifier` (String) A Cloudflare-generated unique identifier for a media item.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
 
