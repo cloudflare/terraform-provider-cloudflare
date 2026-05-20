@@ -5,15 +5,16 @@ package zero_trust_gateway_certificate_test
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
+	"os"
+	"testing"
+
+	cfv6 "github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"os"
-	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
@@ -40,18 +41,17 @@ func testAccCloudflareTeamsGatewayCertDeactivate(rnd, accountID string) string {
 }
 
 func testAccCheckCloudflareTeamsGatewayCertDestroy(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_zero_trust_gateway_certificate" {
 			continue
 		}
 
-		identifier := cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey])
-		_, err := client.GetTeamsList(context.Background(), identifier, rs.Primary.ID)
+		accountId := rs.Primary.Attributes[consts.AccountIDSchemaKey]
+		_, err := client.ZeroTrust.Gateway.Certificates.Get(context.Background(), rs.Primary.ID, zero_trust.GatewayCertificateGetParams{
+			AccountID: cfv6.F(accountId),
+		})
 		if err == nil {
 			return fmt.Errorf("Teams cert still exists")
 		}
@@ -97,6 +97,59 @@ func TestAccCloudflareTeamsCertificateLifeCycle(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "activate", "true"),
 				),
 			},
+			{
+				Config: testAccCloudflareTeamsGatewayCertDeactivate(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "issuer_org", "Cloudflare, Inc."),
+					resource.TestCheckResourceAttr(resourceName, "in_use", "false"),
+					resource.TestCheckResourceAttr(resourceName, "activate", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareTeamsCertificate_CreateWithActivate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_gateway_certificate.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsGatewayCertDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsGatewayCertActivate(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "issuer_org", "Cloudflare, Inc."),
+					resource.TestCheckResourceAttr(resourceName, "in_use", "false"),
+					resource.TestCheckResourceAttr(resourceName, "activate", "true"),
+				),
+			},
+			{
+				Config: testAccCloudflareTeamsGatewayCertDeactivate(rnd, accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareTeamsCertificate_CreateWithDeactivate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_gateway_certificate.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsGatewayCertDestroy,
+		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsGatewayCertDeactivate(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
