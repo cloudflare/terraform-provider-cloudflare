@@ -64,6 +64,9 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 		return
 	}
 
+	// Save the activate value since it's not returned by the API
+	activate := data.Activate
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -91,6 +94,51 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
+
+	// Check if activate field is set and handle activation
+	if !activate.IsNull() && activate.ValueBool() {
+		// Activate the certificate
+		_, err := r.client.ZeroTrust.Gateway.Certificates.Activate(
+			ctx,
+			data.ID.ValueString(),
+			zero_trust.GatewayCertificateActivateParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+				Body:      struct{}{}, // Empty body as required by the API
+			},
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to activate certificate", err.Error())
+			return
+		}
+
+		// After activation, get the updated certificate status
+		res = new(http.Response)
+		env = ZeroTrustGatewayCertificateResultEnvelope{*data}
+		_, err = r.client.ZeroTrust.Gateway.Certificates.Get(
+			ctx,
+			data.ID.ValueString(),
+			zero_trust.GatewayCertificateGetParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to get updated certificate", err.Error())
+			return
+		}
+		bytes, _ = io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize updated certificate", err.Error())
+			return
+		}
+		*data = env.Result
+		
+		// Restore the activate field since it's not returned by the API
+		data.Activate = activate
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
