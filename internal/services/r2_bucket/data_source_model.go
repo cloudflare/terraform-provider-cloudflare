@@ -5,8 +5,8 @@ package r2_bucket
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/r2"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/r2"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,7 +18,7 @@ type R2BucketResultDataSourceEnvelope struct {
 type R2BucketDataSourceModel struct {
 	ID           types.String `tfsdk:"id" path:"bucket_name,computed"`
 	BucketName   types.String `tfsdk:"bucket_name" path:"bucket_name,required"`
-	AccountID    types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
 	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction,computed,no_refresh"`
 	Location     types.String `tfsdk:"location" json:"location,computed"`
@@ -27,10 +27,8 @@ type R2BucketDataSourceModel struct {
 }
 
 func (m *R2BucketDataSourceModel) toReadParams(_ context.Context) (params r2.BucketGetParams, diags diag.Diagnostics) {
-	params = r2.BucketGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = r2.BucketGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

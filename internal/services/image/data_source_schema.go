@@ -35,7 +35,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"creator": schema.StringAttribute{
 				Description: "Can set the creator field with an internal user ID.",

@@ -5,8 +5,8 @@ package zero_trust_access_ai_controls_mcp_portal
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -19,18 +19,17 @@ type ZeroTrustAccessAIControlsMcpPortalsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessAIControlsMcpPortalsDataSourceModel struct {
-	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
 	Search    types.String                                                                           `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalsDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpPortalListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessAIControlMcpPortalListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}

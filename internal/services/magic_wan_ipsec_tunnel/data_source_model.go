@@ -5,8 +5,8 @@ package magic_wan_ipsec_tunnel
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,15 +20,13 @@ type MagicWANIPSECTunnelResultDataSourceEnvelope struct {
 type MagicWANIPSECTunnelDataSourceModel struct {
 	ID            types.String                                                            `tfsdk:"id" path:"ipsec_tunnel_id,computed"`
 	IPSECTunnelID types.String                                                            `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,required"`
-	AccountID     types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
 	IPSECTunnel   customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelDataSourceModel] `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 }
 
 func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.IPSECTunnelGetParams, diags diag.Diagnostics) {
-	params = magic_transit.IPSECTunnelGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.IPSECTunnelGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

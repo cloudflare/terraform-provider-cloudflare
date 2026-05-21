@@ -5,8 +5,8 @@ package ai_gateway
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,18 +18,17 @@ type AIGatewaysResultListDataSourceEnvelope struct {
 }
 
 type AIGatewaysDataSourceModel struct {
-	AccountID types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	Search    types.String                                                  `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                   `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AIGatewaysResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AIGatewaysDataSourceModel) toListParams(_ context.Context) (params ai_gateway.AIGatewayListParams, diags diag.Diagnostics) {
-	params = ai_gateway.AIGatewayListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = ai_gateway.AIGatewayListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}

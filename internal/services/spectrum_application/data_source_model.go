@@ -5,8 +5,8 @@ package spectrum_application
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/spectrum"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/spectrum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type SpectrumApplicationResultDataSourceEnvelope struct {
 type SpectrumApplicationDataSourceModel struct {
 	ID               types.String                                                          `tfsdk:"id" path:"app_id,computed"`
 	AppID            types.String                                                          `tfsdk:"app_id" path:"app_id,optional"`
-	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	ArgoSmartRouting types.Bool                                                            `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed"`
 	CreatedOn        timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	IPFirewall       types.Bool                                                            `tfsdk:"ip_firewall" json:"ip_firewall,computed"`
@@ -38,21 +38,18 @@ type SpectrumApplicationDataSourceModel struct {
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {
-	params = spectrum.AppGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = spectrum.AppGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
 }
 
 func (m *SpectrumApplicationDataSourceModel) toListParams(_ context.Context) (params spectrum.AppListParams, diags diag.Diagnostics) {
-	params = spectrum.AppListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = spectrum.AppListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(spectrum.AppListParamsDirection(m.Filter.Direction.ValueString()))
 	}

@@ -5,8 +5,8 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type WorkersForPlatformsDispatchNamespacesResultListDataSourceEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespacesDataSourceModel struct {
-	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers_for_platforms.DispatchNamespaceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

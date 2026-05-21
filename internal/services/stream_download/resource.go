@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,12 +61,6 @@ func (r *StreamDownloadResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	params := stream.DownloadNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -77,7 +71,9 @@ func (r *StreamDownloadResource) Create(ctx context.Context, req resource.Create
 	_, err = r.client.Stream.Downloads.New(
 		ctx,
 		data.Identifier.ValueString(),
-		params,
+		stream.DownloadNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -110,17 +106,13 @@ func (r *StreamDownloadResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	params := stream.DownloadGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	_, err := r.client.Stream.Downloads.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		params,
+		stream.DownloadGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -146,16 +138,12 @@ func (r *StreamDownloadResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	params := stream.DownloadDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Stream.Downloads.Delete(
 		ctx,
 		data.Identifier.ValueString(),
-		params,
+		stream.DownloadDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

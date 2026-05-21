@@ -5,8 +5,8 @@ package dns_zone_transfers_tsig
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,17 +18,15 @@ type DNSZoneTransfersTSIGResultDataSourceEnvelope struct {
 type DNSZoneTransfersTSIGDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"tsig_id,computed"`
 	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,required"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Algo      types.String `tfsdk:"algo" json:"algo,computed"`
 	Name      types.String `tfsdk:"name" json:"name,computed"`
 	Secret    types.String `tfsdk:"secret" json:"secret,computed"`
 }
 
 func (m *DNSZoneTransfersTSIGDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferTSIGGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferTSIGGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.ZoneTransferTSIGGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

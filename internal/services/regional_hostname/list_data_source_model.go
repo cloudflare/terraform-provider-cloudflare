@@ -5,8 +5,8 @@ package regional_hostname
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/addressing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type RegionalHostnamesResultListDataSourceEnvelope struct {
 }
 
 type RegionalHostnamesDataSourceModel struct {
-	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                          `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[RegionalHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RegionalHostnamesDataSourceModel) toListParams(_ context.Context) (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
-	params = addressing.RegionalHostnameListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = addressing.RegionalHostnameListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

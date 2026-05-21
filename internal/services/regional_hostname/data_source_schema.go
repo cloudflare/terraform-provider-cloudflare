@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",

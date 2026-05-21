@@ -5,8 +5,8 @@ package zone
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -46,10 +46,8 @@ type ZoneDataSourceModel struct {
 }
 
 func (m *ZoneDataSourceModel) toReadParams(_ context.Context) (params zones.ZoneGetParams, diags diag.Diagnostics) {
-	params = zones.ZoneGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = zones.ZoneGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

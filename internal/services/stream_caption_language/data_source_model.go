@@ -5,8 +5,8 @@ package stream_caption_language
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,19 +16,17 @@ type StreamCaptionLanguageResultDataSourceEnvelope struct {
 }
 
 type StreamCaptionLanguageDataSourceModel struct {
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 	Language   types.String `tfsdk:"language" path:"language,required"`
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Generated  types.Bool   `tfsdk:"generated" json:"generated,computed"`
 	Label      types.String `tfsdk:"label" json:"label,computed"`
 	Status     types.String `tfsdk:"status" json:"status,computed"`
 }
 
 func (m *StreamCaptionLanguageDataSourceModel) toReadParams(_ context.Context) (params stream.CaptionLanguageGetParams, diags diag.Diagnostics) {
-	params = stream.CaptionLanguageGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = stream.CaptionLanguageGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

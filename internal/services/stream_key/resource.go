@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *StreamKeyResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	params := stream.KeyNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *StreamKeyResource) Create(ctx context.Context, req resource.CreateReque
 	env := StreamKeyResultEnvelope{*data}
 	_, err = r.client.Stream.Keys.New(
 		ctx,
-		params,
+		stream.KeyNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,17 +108,13 @@ func (r *StreamKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	params := stream.KeyGetParams{}
-
-	if !data.ID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := StreamKeyResultEnvelope{*data}
 	_, err := r.client.Stream.Keys.Get(
 		ctx,
-		params,
+		stream.KeyGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -155,16 +147,12 @@ func (r *StreamKeyResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	params := stream.KeyDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Stream.Keys.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		stream.KeyDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

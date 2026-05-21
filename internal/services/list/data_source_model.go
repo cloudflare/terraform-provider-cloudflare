@@ -5,8 +5,8 @@ package list
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/rules"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type ListResultDataSourceEnvelope struct {
 }
 
 type ListDataSourceModel struct {
-	AccountID             types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID             types.String                                         `tfsdk:"account_id" path:"account_id,required"`
 	ListID                types.String                                         `tfsdk:"list_id" path:"list_id,required"`
 	ID                    types.String                                         `tfsdk:"id" path:"list_id,computed"`
 	CreatedOn             types.String                                         `tfsdk:"created_on" json:"created_on,computed"`
@@ -33,10 +33,8 @@ type ListDataSourceModel struct {
 }
 
 func (m *ListDataSourceModel) toReadParams(_ context.Context) (params rules.ListGetParams, diags diag.Diagnostics) {
-	params = rules.ListGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = rules.ListGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

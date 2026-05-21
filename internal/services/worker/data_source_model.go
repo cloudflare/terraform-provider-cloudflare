@@ -5,8 +5,8 @@ package worker
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type WorkerResultDataSourceEnvelope struct {
 type WorkerDataSourceModel struct {
 	ID            types.String                                                    `tfsdk:"id" path:"worker_id,computed"`
 	WorkerID      types.String                                                    `tfsdk:"worker_id" path:"worker_id,optional"`
-	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeployedOn    timetypes.RFC3339                                               `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 	Logpush       types.Bool                                                      `tfsdk:"logpush" json:"logpush,computed"`
@@ -35,21 +35,18 @@ type WorkerDataSourceModel struct {
 }
 
 func (m *WorkerDataSourceModel) toReadParams(_ context.Context) (params workers.BetaWorkerGetParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.BetaWorkerGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *WorkerDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerListParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.BetaWorkerListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(workers.BetaWorkerListParamsOrder(m.Filter.Order.ValueString()))
 	}

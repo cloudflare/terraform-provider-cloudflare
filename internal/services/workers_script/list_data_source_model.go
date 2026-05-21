@@ -5,8 +5,8 @@ package workers_script
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,18 +18,17 @@ type WorkersScriptsResultListDataSourceEnvelope struct {
 }
 
 type WorkersScriptsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Tags      types.String                                                      `tfsdk:"tags" query:"tags,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersScriptsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersScriptsDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
-	params = workers.ScriptListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.ScriptListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Tags.IsNull() {
 		params.Tags = cloudflare.F(m.Tags.ValueString())
 	}

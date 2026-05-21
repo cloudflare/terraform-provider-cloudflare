@@ -5,8 +5,8 @@ package healthcheck
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/healthchecks"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/healthchecks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type HealthcheckResultDataSourceEnvelope struct {
 type HealthcheckDataSourceModel struct {
 	ID                   types.String                                                   `tfsdk:"id" path:"healthcheck_id,computed"`
 	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,required"`
-	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Address              types.String                                                   `tfsdk:"address" json:"address,computed"`
 	ConsecutiveFails     types.Int64                                                    `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
 	ConsecutiveSuccesses types.Int64                                                    `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
@@ -41,10 +41,8 @@ type HealthcheckDataSourceModel struct {
 }
 
 func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
-	params = healthchecks.HealthcheckGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = healthchecks.HealthcheckGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

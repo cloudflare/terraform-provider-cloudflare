@@ -5,8 +5,8 @@ package waiting_room
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/waiting_rooms"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type WaitingRoomResultDataSourceEnvelope struct {
 type WaitingRoomDataSourceModel struct {
 	ID                         types.String                                                             `tfsdk:"id" path:"waiting_room_id,computed"`
 	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
 	CreatedOn                  timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML             types.String                                                             `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
@@ -49,10 +49,8 @@ type WaitingRoomDataSourceModel struct {
 }
 
 func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
-	params = waiting_rooms.WaitingRoomGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = waiting_rooms.WaitingRoomGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

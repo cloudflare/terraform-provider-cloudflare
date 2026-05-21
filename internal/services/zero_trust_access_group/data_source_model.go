@@ -5,8 +5,8 @@ package zero_trust_access_group
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -34,13 +34,6 @@ func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams(_ context.Context) (p
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
@@ -51,12 +44,6 @@ func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams(_ context.Context) (p
 func (m *ZeroTrustAccessGroupDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessGroupListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessGroupListParams{}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 	if !m.Filter.Name.IsNull() {
 		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}

@@ -5,8 +5,8 @@ package account_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type AccountTokenResultDataSourceEnvelope struct {
 type AccountTokenDataSourceModel struct {
 	ID         types.String                                                      `tfsdk:"id" path:"token_id,computed"`
 	TokenID    types.String                                                      `tfsdk:"token_id" path:"token_id,optional"`
-	AccountID  types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ExpiresOn  timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	IssuedOn   timetypes.RFC3339                                                 `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339                                                 `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
@@ -34,21 +34,18 @@ type AccountTokenDataSourceModel struct {
 }
 
 func (m *AccountTokenDataSourceModel) toReadParams(_ context.Context) (params accounts.TokenGetParams, diags diag.Diagnostics) {
-	params = accounts.TokenGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = accounts.TokenGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *AccountTokenDataSourceModel) toListParams(_ context.Context) (params accounts.TokenListParams, diags diag.Diagnostics) {
-	params = accounts.TokenListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = accounts.TokenListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Filter.Direction.ValueString()))
 	}

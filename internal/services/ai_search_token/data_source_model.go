@@ -5,8 +5,8 @@ package ai_search_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/ai_search"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/ai_search"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +18,7 @@ type AISearchTokenResultDataSourceEnvelope struct {
 
 type AISearchTokenDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
 	CfAPIID    types.String                           `tfsdk:"cf_api_id" json:"cf_api_id,computed"`
 	CreatedAt  timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy  types.String                           `tfsdk:"created_by" json:"created_by,computed"`
@@ -42,7 +42,7 @@ func (m *AISearchTokenDataSourceModel) toListParams(_ context.Context) (params a
 	params = ai_search.TokenListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
-	
+
 	return
 }
 

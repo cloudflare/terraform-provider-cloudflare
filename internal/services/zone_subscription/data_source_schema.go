@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"currency": schema.StringAttribute{
 				Description: "The monetary unit in which pricing information is displayed.",

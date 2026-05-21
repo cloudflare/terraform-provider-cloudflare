@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/acm"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/acm"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *TotalTLSResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	params := acm.TotalTLSUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *TotalTLSResource) Create(ctx context.Context, req resource.CreateReques
 	env := TotalTLSResultEnvelope{*data}
 	_, err = r.client.ACM.TotalTLS.Update(
 		ctx,
-		params,
+		acm.TotalTLSUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *TotalTLSResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	params := acm.TotalTLSUpdateParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *TotalTLSResource) Update(ctx context.Context, req resource.UpdateReques
 	env := TotalTLSResultEnvelope{*data}
 	_, err = r.client.ACM.TotalTLS.Update(
 		ctx,
-		params,
+		acm.TotalTLSUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +154,13 @@ func (r *TotalTLSResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	params := acm.TotalTLSGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := TotalTLSResultEnvelope{*data}
 	_, err := r.client.ACM.TotalTLS.Get(
 		ctx,
-		params,
+		acm.TotalTLSGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

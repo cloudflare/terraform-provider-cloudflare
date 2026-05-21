@@ -5,8 +5,8 @@ package zero_trust_gateway_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type ZeroTrustGatewayCertificatesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayCertificatesDataSourceModel struct {
-	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustGatewayCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustGatewayCertificatesDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayCertificateListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayCertificateListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayCertificateListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

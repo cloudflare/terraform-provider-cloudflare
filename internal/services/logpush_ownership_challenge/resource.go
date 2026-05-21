@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/logpush"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/logpush"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,16 +61,6 @@ func (r *LogpushOwnershipChallengeResource) Create(ctx context.Context, req reso
 		return
 	}
 
-	params := logpush.OwnershipNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -78,6 +68,14 @@ func (r *LogpushOwnershipChallengeResource) Create(ctx context.Context, req reso
 	}
 	res := new(http.Response)
 	env := LogpushOwnershipChallengeResultEnvelope{*data}
+	params := logpush.OwnershipNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Logpush.Ownership.New(
 		ctx,
 		params,

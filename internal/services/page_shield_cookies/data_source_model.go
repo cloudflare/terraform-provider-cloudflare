@@ -5,8 +5,8 @@ package page_shield_cookies
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_shield"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +19,7 @@ type PageShieldCookiesResultDataSourceEnvelope struct {
 
 type PageShieldCookiesDataSourceModel struct {
 	CookieID          types.String                   `tfsdk:"cookie_id" path:"cookie_id,required"`
-	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
 	DomainAttribute   types.String                   `tfsdk:"domain_attribute" json:"domain_attribute,computed"`
 	ExpiresAttribute  timetypes.RFC3339              `tfsdk:"expires_attribute" json:"expires_attribute,computed" format:"date-time"`
 	FirstSeenAt       timetypes.RFC3339              `tfsdk:"first_seen_at" json:"first_seen_at,computed" format:"date-time"`
@@ -37,10 +37,8 @@ type PageShieldCookiesDataSourceModel struct {
 }
 
 func (m *PageShieldCookiesDataSourceModel) toReadParams(_ context.Context) (params page_shield.CookieGetParams, diags diag.Diagnostics) {
-	params = page_shield.CookieGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.CookieGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

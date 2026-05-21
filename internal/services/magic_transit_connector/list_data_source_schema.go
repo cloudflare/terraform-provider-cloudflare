@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"device_type": schema.StringAttribute{
 				Description: "Filter connectors by device type.\nAvailable values: \"MANAGED\", \"LICENSED\".",

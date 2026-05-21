@@ -5,8 +5,8 @@ package dns_zone_transfers_incoming
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +18,7 @@ type DNSZoneTransfersIncomingResultDataSourceEnvelope struct {
 
 type DNSZoneTransfersIncomingDataSourceModel struct {
 	ID                 types.String                  `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID             types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID             types.String                  `tfsdk:"zone_id" path:"zone_id,required"`
 	AutoRefreshSeconds types.Float64                 `tfsdk:"auto_refresh_seconds" json:"auto_refresh_seconds,computed"`
 	CheckedTime        types.String                  `tfsdk:"checked_time" json:"checked_time,computed"`
 	CreatedTime        types.String                  `tfsdk:"created_time" json:"created_time,computed"`
@@ -29,10 +29,8 @@ type DNSZoneTransfersIncomingDataSourceModel struct {
 }
 
 func (m *DNSZoneTransfersIncomingDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferIncomingGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferIncomingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = dns.ZoneTransferIncomingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "A case-insensitive string to find in the description.",

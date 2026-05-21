@@ -5,8 +5,8 @@ package dns_firewall
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns_firewall"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type DNSFirewallResultDataSourceEnvelope struct {
 type DNSFirewallDataSourceModel struct {
 	ID                   types.String                                                         `tfsdk:"id" path:"dns_firewall_id,computed"`
 	DNSFirewallID        types.String                                                         `tfsdk:"dns_firewall_id" path:"dns_firewall_id,required"`
-	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	DeprecateAnyRequests types.Bool                                                           `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,computed"`
 	ECSFallback          types.Bool                                                           `tfsdk:"ecs_fallback" json:"ecs_fallback,computed"`
 	MaximumCacheTTL      types.Float64                                                        `tfsdk:"maximum_cache_ttl" json:"maximum_cache_ttl,computed"`
@@ -36,10 +36,8 @@ type DNSFirewallDataSourceModel struct {
 }
 
 func (m *DNSFirewallDataSourceModel) toReadParams(_ context.Context) (params dns_firewall.DNSFirewallGetParams, diags diag.Diagnostics) {
-	params = dns_firewall.DNSFirewallGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns_firewall.DNSFirewallGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -5,8 +5,8 @@ package zero_trust_list
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,18 +18,17 @@ type ZeroTrustListsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustListsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Type      types.String                                                      `tfsdk:"type" query:"type,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustListsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustListsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayListListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayListListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(zero_trust.GatewayListListParamsType(m.Type.ValueString()))
 	}

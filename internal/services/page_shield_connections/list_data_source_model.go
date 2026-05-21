@@ -5,8 +5,8 @@ package page_shield_connections
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_shield"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type PageShieldConnectionsListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldConnectionsListDataSourceModel struct {
-	ZoneID              types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID              types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
 	Direction           types.String                                                                 `tfsdk:"direction" query:"direction,optional"`
 	ExcludeCDNCGI       types.Bool                                                                   `tfsdk:"exclude_cdn_cgi" query:"exclude_cdn_cgi,optional"`
 	ExcludeURLs         types.String                                                                 `tfsdk:"exclude_urls" query:"exclude_urls,optional"`
@@ -36,11 +36,10 @@ type PageShieldConnectionsListDataSourceModel struct {
 }
 
 func (m *PageShieldConnectionsListDataSourceModel) toListParams(_ context.Context) (params page_shield.ConnectionListParams, diags diag.Diagnostics) {
-	params = page_shield.ConnectionListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.ConnectionListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(page_shield.ConnectionListParamsDirection(m.Direction.ValueString()))
 	}

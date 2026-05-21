@@ -5,8 +5,8 @@ package calls_turn_app
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/calls"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/calls"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,8 +17,8 @@ type CallsTURNAppResultDataSourceEnvelope struct {
 }
 
 type CallsTURNAppDataSourceModel struct {
+	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	KeyID     types.String      `tfsdk:"key_id" path:"key_id,required"`
-	AccountID types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
@@ -26,10 +26,8 @@ type CallsTURNAppDataSourceModel struct {
 }
 
 func (m *CallsTURNAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNGetParams, diags diag.Diagnostics) {
-	params = calls.TURNGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = calls.TURNGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

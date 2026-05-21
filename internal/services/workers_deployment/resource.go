@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *WorkersDeploymentResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	params := workers.ScriptDeploymentNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *WorkersDeploymentResource) Create(ctx context.Context, req resource.Cre
 	_, err = r.client.Workers.Scripts.Deployments.New(
 		ctx,
 		data.ScriptName.ValueString(),
-		params,
+		workers.ScriptDeploymentNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,19 +109,15 @@ func (r *WorkersDeploymentResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	params := workers.ScriptDeploymentGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := WorkersDeploymentResultEnvelope{*data}
 	_, err := r.client.Workers.Scripts.Deployments.Get(
 		ctx,
 		data.ScriptName.ValueString(),
 		data.ID.ValueString(),
-		params,
+		workers.ScriptDeploymentGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

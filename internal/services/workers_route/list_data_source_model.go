@@ -5,8 +5,8 @@ package workers_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,14 @@ type WorkersRoutesResultListDataSourceEnvelope struct {
 }
 
 type WorkersRoutesDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[WorkersRoutesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersRoutesDataSourceModel) toListParams(_ context.Context) (params workers.RouteListParams, diags diag.Diagnostics) {
-	params = workers.RouteListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = workers.RouteListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

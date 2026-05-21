@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"flag": schema.BoolAttribute{
 				Description: "The log retention flag for Logpull API.",

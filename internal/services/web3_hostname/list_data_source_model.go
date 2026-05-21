@@ -5,8 +5,8 @@ package web3_hostname
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/web3"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/web3"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type Web3HostnamesResultListDataSourceEnvelope struct {
 }
 
 type Web3HostnamesDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[Web3HostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *Web3HostnamesDataSourceModel) toListParams(_ context.Context) (params web3.HostnameListParams, diags diag.Diagnostics) {
-	params = web3.HostnameListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = web3.HostnameListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

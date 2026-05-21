@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *DNSZoneTransfersACLResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := dns.ZoneTransferACLNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *DNSZoneTransfersACLResource) Create(ctx context.Context, req resource.C
 	env := DNSZoneTransfersACLResultEnvelope{*data}
 	_, err = r.client.DNS.ZoneTransfers.ACLs.New(
 		ctx,
-		params,
+		dns.ZoneTransferACLNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,12 +112,6 @@ func (r *DNSZoneTransfersACLResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := dns.ZoneTransferACLUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *DNSZoneTransfersACLResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.DNS.ZoneTransfers.ACLs.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferACLUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,18 +153,14 @@ func (r *DNSZoneTransfersACLResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := dns.ZoneTransferACLGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := DNSZoneTransfersACLResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.ACLs.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferACLGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -205,16 +193,12 @@ func (r *DNSZoneTransfersACLResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	params := dns.ZoneTransferACLDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.DNS.ZoneTransfers.ACLs.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		dns.ZoneTransferACLDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

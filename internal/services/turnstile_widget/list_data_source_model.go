@@ -5,8 +5,8 @@ package turnstile_widget
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/turnstile"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type TurnstileWidgetsResultListDataSourceEnvelope struct {
 }
 
 type TurnstileWidgetsDataSourceModel struct {
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String                                                        `tfsdk:"direction" query:"direction,optional"`
 	Filter    types.String                                                        `tfsdk:"filter" query:"filter,optional"`
 	Order     types.String                                                        `tfsdk:"order" query:"order,optional"`
@@ -27,11 +27,10 @@ type TurnstileWidgetsDataSourceModel struct {
 }
 
 func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (params turnstile.WidgetListParams, diags diag.Diagnostics) {
-	params = turnstile.WidgetListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = turnstile.WidgetListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Direction.ValueString()))
 	}

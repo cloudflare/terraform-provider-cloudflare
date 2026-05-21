@@ -5,8 +5,8 @@ package load_balancer
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,14 @@ type LoadBalancersResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancersDataSourceModel struct {
-	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                      `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[LoadBalancersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LoadBalancersDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
-	params = load_balancers.LoadBalancerListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = load_balancers.LoadBalancerListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

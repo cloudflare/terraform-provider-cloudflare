@@ -5,8 +5,8 @@ package user_agent_blocking_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/firewall"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,7 +17,7 @@ type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneID      types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID      types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	Description types.String                                                              `tfsdk:"description" query:"description,optional"`
 	Paused      types.Bool                                                                `tfsdk:"paused" query:"paused,optional"`
 	UserAgent   types.String                                                              `tfsdk:"user_agent" query:"user_agent,optional"`
@@ -26,11 +26,10 @@ type UserAgentBlockingRulesDataSourceModel struct {
 }
 
 func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = firewall.UARuleListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Description.IsNull() {
 		params.Description = cloudflare.F(m.Description.ValueString())
 	}

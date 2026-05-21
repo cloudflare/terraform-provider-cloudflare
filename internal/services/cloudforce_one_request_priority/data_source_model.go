@@ -5,8 +5,8 @@ package cloudforce_one_request_priority
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cloudforce_one"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cloudforce_one"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +19,7 @@ type CloudforceOneRequestPriorityResultDataSourceEnvelope struct {
 type CloudforceOneRequestPriorityDataSourceModel struct {
 	ID            types.String      `tfsdk:"id" path:"priority_id,computed"`
 	PriorityID    types.String      `tfsdk:"priority_id" path:"priority_id,required"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Completed     timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Content       types.String      `tfsdk:"content" json:"content,computed"`
 	Created       timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
@@ -35,10 +35,8 @@ type CloudforceOneRequestPriorityDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestPriorityDataSourceModel) toReadParams(_ context.Context) (params cloudforce_one.RequestPriorityGetParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestPriorityGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = cloudforce_one.RequestPriorityGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

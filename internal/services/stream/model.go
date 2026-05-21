@@ -15,7 +15,7 @@ type StreamResultEnvelope struct {
 }
 
 type StreamModel struct {
-	AccountID             types.String                                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID             types.String                                   `tfsdk:"account_id" path:"account_id,required"`
 	Identifier            types.String                                   `tfsdk:"identifier" path:"identifier,optional"`
 	Creator               types.String                                   `tfsdk:"creator" json:"creator,optional"`
 	MaxDurationSeconds    types.Int64                                    `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,optional"`

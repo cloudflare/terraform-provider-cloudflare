@@ -5,8 +5,8 @@ package zero_trust_risk_behavior
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,15 +17,13 @@ type ZeroTrustRiskBehaviorResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustRiskBehaviorDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
 	Behaviors customfield.NestedObjectMap[ZeroTrustRiskBehaviorBehaviorsDataSourceModel] `tfsdk:"behaviors" json:"behaviors,computed"`
 }
 
 func (m *ZeroTrustRiskBehaviorDataSourceModel) toReadParams(_ context.Context) (params zero_trust.RiskScoringBehaviourGetParams, diags diag.Diagnostics) {
-	params = zero_trust.RiskScoringBehaviourGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.RiskScoringBehaviourGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

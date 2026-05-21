@@ -5,8 +5,8 @@ package dns_zone_transfers_acl
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,14 @@ type DNSZoneTransfersACLsResultListDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersACLsDataSourceModel struct {
-	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[DNSZoneTransfersACLsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *DNSZoneTransfersACLsDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferACLListParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferACLListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.ZoneTransferACLListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/argo"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/argo"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *ArgoSmartRoutingResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	params := argo.SmartRoutingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *ArgoSmartRoutingResource) Create(ctx context.Context, req resource.Crea
 	env := ArgoSmartRoutingResultEnvelope{*data}
 	_, err = r.client.Argo.SmartRouting.Edit(
 		ctx,
-		params,
+		argo.SmartRoutingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *ArgoSmartRoutingResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	params := argo.SmartRoutingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *ArgoSmartRoutingResource) Update(ctx context.Context, req resource.Upda
 	env := ArgoSmartRoutingResultEnvelope{*data}
 	_, err = r.client.Argo.SmartRouting.Edit(
 		ctx,
-		params,
+		argo.SmartRoutingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +154,13 @@ func (r *ArgoSmartRoutingResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	params := argo.SmartRoutingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ArgoSmartRoutingResultEnvelope{*data}
 	_, err := r.client.Argo.SmartRouting.Get(
 		ctx,
-		params,
+		argo.SmartRoutingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

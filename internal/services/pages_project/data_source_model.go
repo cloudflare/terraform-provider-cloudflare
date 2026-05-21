@@ -5,8 +5,8 @@ package pages_project
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pages"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type PagesProjectResultDataSourceEnvelope struct {
 type PagesProjectDataSourceModel struct {
 	ID                   types.String                                                             `tfsdk:"id" path:"project_name,computed"`
 	ProjectName          types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
-	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn            timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Framework            types.String                                                             `tfsdk:"framework" json:"framework,computed"`
 	FrameworkVersion     types.String                                                             `tfsdk:"framework_version" json:"framework_version,computed"`
@@ -39,10 +39,8 @@ type PagesProjectDataSourceModel struct {
 }
 
 func (m *PagesProjectDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectGetParams, diags diag.Diagnostics) {
-	params = pages.ProjectGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = pages.ProjectGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

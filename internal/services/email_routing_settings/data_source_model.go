@@ -5,8 +5,8 @@ package email_routing_settings
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_routing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_routing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +18,7 @@ type EmailRoutingSettingsResultDataSourceEnvelope struct {
 
 type EmailRoutingSettingsDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Created    timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Enabled    types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
 	Modified   timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
@@ -29,10 +29,8 @@ type EmailRoutingSettingsDataSourceModel struct {
 }
 
 func (m *EmailRoutingSettingsDataSourceModel) toReadParams(_ context.Context) (params email_routing.EmailRoutingGetParams, diags diag.Diagnostics) {
-	params = email_routing.EmailRoutingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = email_routing.EmailRoutingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

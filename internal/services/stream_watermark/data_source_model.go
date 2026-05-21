@@ -5,8 +5,8 @@ package stream_watermark
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,8 +17,8 @@ type StreamWatermarkResultDataSourceEnvelope struct {
 }
 
 type StreamWatermarkDataSourceModel struct {
+	AccountID      types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Identifier     types.String      `tfsdk:"identifier" path:"identifier,required"`
-	AccountID      types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Created        timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	DownloadedFrom types.String      `tfsdk:"downloaded_from" json:"downloadedFrom,computed"`
 	Height         types.Int64       `tfsdk:"height" json:"height,computed"`
@@ -33,10 +33,8 @@ type StreamWatermarkDataSourceModel struct {
 }
 
 func (m *StreamWatermarkDataSourceModel) toReadParams(_ context.Context) (params stream.WatermarkGetParams, diags diag.Diagnostics) {
-	params = stream.WatermarkGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = stream.WatermarkGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

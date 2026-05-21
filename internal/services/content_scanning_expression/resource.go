@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/content_scanning"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/content_scanning"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,12 +61,6 @@ func (r *ContentScanningExpressionResource) Create(ctx context.Context, req reso
 		return
 	}
 
-	params := content_scanning.PayloadNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *ContentScanningExpressionResource) Create(ctx context.Context, req reso
 	env := ContentScanningExpressionResultEnvelope{data.Body}
 	_, err = r.client.ContentScanning.Payloads.New(
 		ctx,
-		params,
+		content_scanning.PayloadNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,16 +109,12 @@ func (r *ContentScanningExpressionResource) Delete(ctx context.Context, req reso
 		return
 	}
 
-	params := content_scanning.PayloadDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.ContentScanning.Payloads.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		content_scanning.PayloadDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

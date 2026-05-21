@@ -5,8 +5,8 @@ package magic_network_monitoring_configuration
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_network_monitoring"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_network_monitoring"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,7 +17,7 @@ type MagicNetworkMonitoringConfigurationResultDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringConfigurationDataSourceModel struct {
-	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,required"`
 	DefaultSampling types.Float64                                                                               `tfsdk:"default_sampling" json:"default_sampling,computed"`
 	Name            types.String                                                                                `tfsdk:"name" json:"name,computed"`
 	RouterIPs       customfield.List[types.String]                                                              `tfsdk:"router_ips" json:"router_ips,computed"`
@@ -25,10 +25,8 @@ type MagicNetworkMonitoringConfigurationDataSourceModel struct {
 }
 
 func (m *MagicNetworkMonitoringConfigurationDataSourceModel) toReadParams(_ context.Context) (params magic_network_monitoring.ConfigGetParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.ConfigGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_network_monitoring.ConfigGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -5,8 +5,8 @@ package cloud_connector_rules
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cloud_connector"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cloud_connector"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,16 +16,14 @@ type CloudConnectorRulesResultDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
-	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,required"`
 	ID     types.String                                `tfsdk:"id" json:"id,computed"`
 	Rules  *[]*CloudConnectorRulesDataSourceRulesModel `tfsdk:"rules" json:"rules,computed,no_refresh"`
 }
 
 func (m *CloudConnectorRulesDataSourceModel) toReadParams(_ context.Context) (params cloud_connector.RuleListParams, diags diag.Diagnostics) {
-	params = cloud_connector.RuleListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = cloud_connector.RuleListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

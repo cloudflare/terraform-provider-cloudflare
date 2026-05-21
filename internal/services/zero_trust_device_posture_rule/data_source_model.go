@@ -5,8 +5,8 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +19,7 @@ type ZeroTrustDevicePostureRuleResultDataSourceEnvelope struct {
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
 	ID          types.String                                                                 `tfsdk:"id" path:"rule_id,computed"`
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	Expiration  types.String                                                                 `tfsdk:"expiration" json:"expiration,computed"`
 	Name        types.String                                                                 `tfsdk:"name" json:"name,computed"`
@@ -30,10 +30,8 @@ type ZeroTrustDevicePostureRuleDataSourceModel struct {
 }
 
 func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DevicePostureGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

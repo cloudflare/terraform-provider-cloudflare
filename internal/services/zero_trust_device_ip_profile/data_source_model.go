@@ -5,8 +5,8 @@ package zero_trust_device_ip_profile
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,7 +18,7 @@ type ZeroTrustDeviceIPProfileResultDataSourceEnvelope struct {
 type ZeroTrustDeviceIPProfileDataSourceModel struct {
 	ID          types.String                                      `tfsdk:"id" path:"profile_id,computed"`
 	ProfileID   types.String                                      `tfsdk:"profile_id" path:"profile_id,optional"`
-	AccountID   types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID   types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt   types.String                                      `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String                                      `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool                                        `tfsdk:"enabled" json:"enabled,computed"`
@@ -31,21 +31,18 @@ type ZeroTrustDeviceIPProfileDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceIPProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceIPProfileGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceIPProfileGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DeviceIPProfileGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *ZeroTrustDeviceIPProfileDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceIPProfileListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceIPProfileListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DeviceIPProfileListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.PerPage.IsNull() {
 		params.PerPage = cloudflare.F(m.Filter.PerPage.ValueInt64())
 	}

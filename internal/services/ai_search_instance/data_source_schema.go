@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,

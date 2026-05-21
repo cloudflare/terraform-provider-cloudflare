@@ -5,8 +5,8 @@ package stream_watermark
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type StreamWatermarksResultListDataSourceEnvelope struct {
 }
 
 type StreamWatermarksDataSourceModel struct {
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[StreamWatermarksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *StreamWatermarksDataSourceModel) toListParams(_ context.Context) (params stream.WatermarkListParams, diags diag.Diagnostics) {
-	params = stream.WatermarkListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = stream.WatermarkListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

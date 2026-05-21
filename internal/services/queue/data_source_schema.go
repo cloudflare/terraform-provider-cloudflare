@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "A Resource identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"consumers_total_count": schema.Float64Attribute{
 				Computed: true,

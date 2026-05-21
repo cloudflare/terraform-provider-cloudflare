@@ -5,8 +5,8 @@ package page_shield_scripts
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_shield"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type PageShieldScriptsListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldScriptsListDataSourceModel struct {
-	ZoneID              types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID              types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	Direction           types.String                                                             `tfsdk:"direction" query:"direction,optional"`
 	ExcludeURLs         types.String                                                             `tfsdk:"exclude_urls" query:"exclude_urls,optional"`
 	Export              types.String                                                             `tfsdk:"export" query:"export,optional"`
@@ -37,11 +37,10 @@ type PageShieldScriptsListDataSourceModel struct {
 }
 
 func (m *PageShieldScriptsListDataSourceModel) toListParams(_ context.Context) (params page_shield.ScriptListParams, diags diag.Diagnostics) {
-	params = page_shield.ScriptListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.ScriptListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(page_shield.ScriptListParamsDirection(m.Direction.ValueString()))
 	}

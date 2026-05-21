@@ -5,8 +5,8 @@ package r2_bucket_sippy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/r2"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,18 +17,16 @@ type R2BucketSippyResultDataSourceEnvelope struct {
 }
 
 type R2BucketSippyDataSourceModel struct {
+	AccountID   types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	BucketName  types.String                                                      `tfsdk:"bucket_name" path:"bucket_name,required"`
-	AccountID   types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Enabled     types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed"`
 	Destination customfield.NestedObject[R2BucketSippyDestinationDataSourceModel] `tfsdk:"destination" json:"destination,computed"`
 	Source      customfield.NestedObject[R2BucketSippySourceDataSourceModel]      `tfsdk:"source" json:"source,computed"`
 }
 
 func (m *R2BucketSippyDataSourceModel) toReadParams(_ context.Context) (params r2.BucketSippyGetParams, diags diag.Diagnostics) {
-	params = r2.BucketSippyGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = r2.BucketSippyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

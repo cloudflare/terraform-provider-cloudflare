@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/ssl"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	params := ssl.UniversalSettingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -79,7 +73,9 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err = r.client.SSL.Universal.Settings.Edit(
 		ctx,
-		params,
+		ssl.UniversalSettingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,12 +113,6 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	params := ssl.UniversalSettingEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err = r.client.SSL.Universal.Settings.Edit(
 		ctx,
-		params,
+		ssl.UniversalSettingEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,17 +154,13 @@ func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	params := ssl.UniversalSettingGetParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := UniversalSSLSettingResultEnvelope{*data}
 	_, err := r.client.SSL.Universal.Settings.Get(
 		ctx,
-		params,
+		ssl.UniversalSettingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

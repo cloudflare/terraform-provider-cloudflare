@@ -5,8 +5,8 @@ package load_balancer_pool
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,18 +18,17 @@ type LoadBalancerPoolsResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerPoolsDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Monitor   types.String                                                         `tfsdk:"monitor" query:"monitor,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LoadBalancerPoolsDataSourceModel) toListParams(_ context.Context) (params load_balancers.PoolListParams, diags diag.Diagnostics) {
-	params = load_balancers.PoolListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = load_balancers.PoolListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Monitor.IsNull() {
 		params.Monitor = cloudflare.F(m.Monitor.ValueString())
 	}

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/speed"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/speed"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,12 +64,6 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 		return
 	}
 
-	params := speed.ScheduleNewParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -80,7 +74,9 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 	_, err = r.client.Speed.Schedule.New(
 		ctx,
 		data.URL.ValueString(),
-		params,
+		speed.ScheduleNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -114,18 +110,14 @@ func (r *ObservatoryScheduledTestResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-	params := speed.ScheduleGetParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
 	_, err := r.client.Speed.Schedule.Get(
 		ctx,
 		data.URL.ValueString(),
-		params,
+		speed.ScheduleGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -159,16 +151,12 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 		return
 	}
 
-	params := speed.ScheduleDeleteParams{}
-
-	if !data.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	_, err := r.client.Speed.Schedule.Delete(
 		ctx,
 		data.URL.ValueString(),
-		params,
+		speed.ScheduleDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

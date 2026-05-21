@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,12 +61,6 @@ func (r *AccountDNSSettingsResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	params := dns.SettingAccountEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -76,7 +70,9 @@ func (r *AccountDNSSettingsResource) Create(ctx context.Context, req resource.Cr
 	env := AccountDNSSettingsResultEnvelope{*data}
 	_, err = r.client.DNS.Settings.Account.Edit(
 		ctx,
-		params,
+		dns.SettingAccountEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,12 +109,6 @@ func (r *AccountDNSSettingsResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	params := dns.SettingAccountEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -128,7 +118,9 @@ func (r *AccountDNSSettingsResource) Update(ctx context.Context, req resource.Up
 	env := AccountDNSSettingsResultEnvelope{*data}
 	_, err = r.client.DNS.Settings.Account.Edit(
 		ctx,
-		params,
+		dns.SettingAccountEditParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,17 +149,13 @@ func (r *AccountDNSSettingsResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	params := dns.SettingAccountGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := AccountDNSSettingsResultEnvelope{*data}
 	_, err := r.client.DNS.Settings.Account.Get(
 		ctx,
-		params,
+		dns.SettingAccountGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -5,8 +5,8 @@ package zero_trust_access_service_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -29,12 +29,6 @@ type ZeroTrustAccessServiceTokensDataSourceModel struct {
 func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessServiceTokenListParams{}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}

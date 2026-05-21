@@ -5,8 +5,8 @@ package address_map
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/addressing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type AddressMapsResultListDataSourceEnvelope struct {
 }
 
 type AddressMapsDataSourceModel struct {
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AddressMapsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AddressMapsDataSourceModel) toListParams(_ context.Context) (params addressing.AddressMapListParams, diags diag.Diagnostics) {
-	params = addressing.AddressMapListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = addressing.AddressMapListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

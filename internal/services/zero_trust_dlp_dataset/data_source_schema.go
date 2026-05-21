@@ -26,11 +26,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"dataset_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"dataset_id": schema.StringAttribute{
+				Required: true,
 			},
 			"case_sensitive": schema.BoolAttribute{
 				Computed: true,

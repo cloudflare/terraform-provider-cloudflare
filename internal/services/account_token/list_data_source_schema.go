@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Direction to order results.\nAvailable values: \"asc\", \"desc\".",

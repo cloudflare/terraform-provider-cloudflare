@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/managed_transforms"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -108,12 +108,6 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	params := managed_transforms.ManagedTransformEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -123,7 +117,9 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 	env := ManagedTransformsResultEnvelope{*data}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
-		params,
+		managed_transforms.ManagedTransformEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -175,12 +171,6 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	params := managed_transforms.ManagedTransformEditParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -190,7 +180,9 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 	env := ManagedTransformsResultEnvelope{*data}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
-		params,
+		managed_transforms.ManagedTransformEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -303,17 +295,13 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	params := managed_transforms.ManagedTransformListParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := ManagedTransformsResultEnvelope{*data}
 	_, err := r.client.ManagedTransforms.List(
 		ctx,
-		params,
+		managed_transforms.ManagedTransformListParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -427,15 +415,11 @@ func (r *ManagedTransformsResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	params := managed_transforms.ManagedTransformDeleteParams{}
-
-	if !data.ID.IsNull() {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
 	err := r.client.ManagedTransforms.Delete(
 		ctx,
-		params,
+		managed_transforms.ManagedTransformDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

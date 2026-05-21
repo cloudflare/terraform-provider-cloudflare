@@ -5,8 +5,8 @@ package zero_trust_access_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type ZeroTrustAccessPolicyResultDataSourceEnvelope struct {
 type ZeroTrustAccessPolicyDataSourceModel struct {
 	ID                           types.String                                                                    `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID                     types.String                                                                    `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID                    types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID                    types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
 	AppCount                     types.Int64                                                                     `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalRequired             types.Bool                                                                      `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -41,10 +41,8 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessPolicyGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessPolicyGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessPolicyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

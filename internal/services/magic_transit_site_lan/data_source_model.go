@@ -5,8 +5,8 @@ package magic_transit_site_lan
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,8 +19,8 @@ type MagicTransitSiteLANResultDataSourceEnvelope struct {
 type MagicTransitSiteLANDataSourceModel struct {
 	ID               types.String                                                                  `tfsdk:"id" path:"lan_id,computed"`
 	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,required"`
+	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,required"`
-	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	BondID           types.Int64                                                                   `tfsdk:"bond_id" json:"bond_id,computed"`
 	HaLink           types.Bool                                                                    `tfsdk:"ha_link" json:"ha_link,computed"`
 	IsBreakout       types.Bool                                                                    `tfsdk:"is_breakout" json:"is_breakout,computed"`
@@ -34,10 +34,8 @@ type MagicTransitSiteLANDataSourceModel struct {
 }
 
 func (m *MagicTransitSiteLANDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteLANGetParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteLANGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.SiteLANGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -5,9 +5,9 @@ package dns_record
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
-	"github.com/cloudflare/cloudflare-go/v6/shared"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
+	"github.com/cloudflare/cloudflare-go/v7/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -20,7 +20,7 @@ type DNSRecordsResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordsDataSourceModel struct {
-	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
 	Search    types.String                                                  `tfsdk:"search" query:"search,optional"`
 	Type      types.String                                                  `tfsdk:"type" query:"type,optional"`
 	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment,optional"`
@@ -37,11 +37,10 @@ type DNSRecordsDataSourceModel struct {
 }
 
 func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.RecordListParams, diags diag.Diagnostics) {
-	params = dns.RecordListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = dns.RecordListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if m.Comment != nil {
 		paramsComment := dns.RecordListParamsComment{}
 		if !m.Comment.Absent.IsNull() {

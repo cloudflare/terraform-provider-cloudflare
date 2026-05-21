@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,12 +61,6 @@ func (r *StreamCaptionLanguageResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	params := stream.CaptionLanguageNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -78,7 +72,9 @@ func (r *StreamCaptionLanguageResource) Create(ctx context.Context, req resource
 		ctx,
 		data.Identifier.ValueString(),
 		data.Language.ValueString(),
-		params,
+		stream.CaptionLanguageNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -115,12 +111,6 @@ func (r *StreamCaptionLanguageResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	params := stream.CaptionLanguageUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -132,7 +122,9 @@ func (r *StreamCaptionLanguageResource) Update(ctx context.Context, req resource
 		ctx,
 		data.Identifier.ValueString(),
 		data.Language.ValueString(),
-		params,
+		stream.CaptionLanguageUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -161,19 +153,15 @@ func (r *StreamCaptionLanguageResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	params := stream.CaptionLanguageGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := StreamCaptionLanguageResultEnvelope{*data}
 	_, err := r.client.Stream.Captions.Language.Get(
 		ctx,
 		data.Identifier.ValueString(),
 		data.Language.ValueString(),
-		params,
+		stream.CaptionLanguageGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -206,17 +194,13 @@ func (r *StreamCaptionLanguageResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	params := stream.CaptionLanguageDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Stream.Captions.Language.Delete(
 		ctx,
 		data.Identifier.ValueString(),
 		data.Language.ValueString(),
-		params,
+		stream.CaptionLanguageDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

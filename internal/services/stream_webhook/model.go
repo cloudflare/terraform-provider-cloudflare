@@ -13,7 +13,7 @@ type StreamWebhookResultEnvelope struct {
 }
 
 type StreamWebhookModel struct {
-	AccountID       types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
 	NotificationURL types.String      `tfsdk:"notification_url" json:"notificationUrl,optional"`
 	Modified        timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Secret          types.String      `tfsdk:"secret" json:"secret,computed"`

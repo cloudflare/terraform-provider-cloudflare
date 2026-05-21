@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,12 +61,6 @@ func (r *StreamWatermarkResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	params := stream.WatermarkNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -76,7 +70,9 @@ func (r *StreamWatermarkResource) Create(ctx context.Context, req resource.Creat
 	env := StreamWatermarkResultEnvelope{*data}
 	_, err = r.client.Stream.Watermarks.New(
 		ctx,
-		params,
+		stream.WatermarkNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -109,18 +105,14 @@ func (r *StreamWatermarkResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := stream.WatermarkGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	res := new(http.Response)
 	env := StreamWatermarkResultEnvelope{*data}
 	_, err := r.client.Stream.Watermarks.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		params,
+		stream.WatermarkGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -153,16 +145,12 @@ func (r *StreamWatermarkResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	params := stream.WatermarkDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	}
-
 	_, err := r.client.Stream.Watermarks.Delete(
 		ctx,
 		data.Identifier.ValueString(),
-		params,
+		stream.WatermarkDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

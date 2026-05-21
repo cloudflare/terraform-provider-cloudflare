@@ -5,8 +5,8 @@ package calls_sfu_app
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/calls"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/calls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type CallsSFUAppsResultListDataSourceEnvelope struct {
 }
 
 type CallsSFUAppsDataSourceModel struct {
-	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[CallsSFUAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CallsSFUAppsDataSourceModel) toListParams(_ context.Context) (params calls.SFUListParams, diags diag.Diagnostics) {
-	params = calls.SFUListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = calls.SFUListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

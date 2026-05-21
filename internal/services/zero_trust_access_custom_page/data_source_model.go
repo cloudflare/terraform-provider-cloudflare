@@ -5,8 +5,8 @@ package zero_trust_access_custom_page
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,7 +18,7 @@ type ZeroTrustAccessCustomPageResultDataSourceEnvelope struct {
 type ZeroTrustAccessCustomPageDataSourceModel struct {
 	ID           types.String `tfsdk:"id" path:"custom_page_id,computed"`
 	CustomPageID types.String `tfsdk:"custom_page_id" path:"custom_page_id,required"`
-	AccountID    types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
 	CustomHTML   types.String `tfsdk:"custom_html" json:"custom_html,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
 	Type         types.String `tfsdk:"type" json:"type,computed"`
@@ -26,10 +26,8 @@ type ZeroTrustAccessCustomPageDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessCustomPageGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessCustomPageGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessCustomPageGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

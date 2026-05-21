@@ -5,8 +5,8 @@ package zero_trust_access_ai_controls_mcp_portal
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -20,7 +20,7 @@ type ZeroTrustAccessAIControlsMcpPortalResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
 	ID               types.String                                                                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
 	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
 	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`
@@ -35,21 +35,18 @@ type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalReadParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpPortalReadParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessAIControlMcpPortalReadParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessAIControlMcpPortalListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessAIControlMcpPortalListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}

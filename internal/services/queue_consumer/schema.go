@@ -30,14 +30,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"queue_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
+			"queue_id": schema.StringAttribute{
 				Description:   "A Resource identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"consumer_id": schema.StringAttribute{

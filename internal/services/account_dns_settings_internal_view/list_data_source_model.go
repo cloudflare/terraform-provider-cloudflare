@@ -5,8 +5,8 @@ package account_dns_settings_internal_view
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type AccountDNSSettingsInternalViewsResultListDataSourceEnvelope struct {
 }
 
 type AccountDNSSettingsInternalViewsDataSourceModel struct {
-	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Order     types.String                                                                       `tfsdk:"order" query:"order,optional"`
 	ZoneID    types.String                                                                       `tfsdk:"zone_id" query:"zone_id,optional"`
 	ZoneName  types.String                                                                       `tfsdk:"zone_name" query:"zone_name,optional"`
@@ -30,11 +30,10 @@ type AccountDNSSettingsInternalViewsDataSourceModel struct {
 }
 
 func (m *AccountDNSSettingsInternalViewsDataSourceModel) toListParams(_ context.Context) (params dns.SettingAccountViewListParams, diags diag.Diagnostics) {
-	params = dns.SettingAccountViewListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.SettingAccountViewListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(dns.SettingAccountViewListParamsDirection(m.Direction.ValueString()))
 	}

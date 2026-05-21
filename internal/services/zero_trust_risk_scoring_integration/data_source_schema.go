@@ -31,7 +31,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"account_tag": schema.StringAttribute{
 				Description: "The Cloudflare account tag.",

@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of access applications currently using this policy.",

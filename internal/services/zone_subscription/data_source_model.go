@@ -5,8 +5,8 @@ package zone_subscription
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +19,7 @@ type ZoneSubscriptionResultDataSourceEnvelope struct {
 
 type ZoneSubscriptionDataSourceModel struct {
 	ID                 types.String                                                      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID             types.String                                                      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID             types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
 	Currency           types.String                                                      `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                                                 `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
 	CurrentPeriodStart timetypes.RFC3339                                                 `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
@@ -30,10 +30,8 @@ type ZoneSubscriptionDataSourceModel struct {
 }
 
 func (m *ZoneSubscriptionDataSourceModel) toReadParams(_ context.Context) (params zones.SubscriptionGetParams, diags diag.Diagnostics) {
-	params = zones.SubscriptionGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = zones.SubscriptionGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
