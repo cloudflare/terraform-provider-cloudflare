@@ -157,7 +157,7 @@ Read-Only:
 - `is_subscribed` (Boolean) States if the subscription active.
 - `legacy_discount` (Boolean) If the legacy discount applies to this Zone.
 - `legacy_id` (String) The legacy name of the plan.
-- `name` (String) Name of the owner.
+- `name` (String) Name of the plan.
 - `price` (Number) How much the customer is paying.
 
 
