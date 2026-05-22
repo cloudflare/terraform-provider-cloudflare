@@ -940,6 +940,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
 		snippet.NewSnippetDataSource,
 		snippet.NewSnippetsDataSource,
+		snippet_rules.NewSnippetRulesDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,

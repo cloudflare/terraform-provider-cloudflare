@@ -42,6 +42,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[SnippetsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Identify the snippet.",
+							Computed:    true,
+						},
 						"created_on": schema.StringAttribute{
 							Description: "Indicates when the snippet was created.",
 							Computed:    true,

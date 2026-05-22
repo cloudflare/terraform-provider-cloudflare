@@ -17,6 +17,7 @@ type SnippetResultEnvelope struct {
 }
 
 type SnippetModel struct {
+	ID          types.String          `tfsdk:"id" json:"-,computed"`
 	SnippetName types.String          `tfsdk:"snippet_name" path:"snippet_name,required"`
 	ZoneID      types.String          `tfsdk:"zone_id" path:"zone_id,required"`
 	Metadata    *SnippetMetadataModel `tfsdk:"metadata" json:"metadata,required,no_refresh"`
