@@ -56,7 +56,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"certificate": schema.StringAttribute{
-							Description: "The zone's SSL certificate or certificate and the intermediate(s).",
+							Description: "The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.",
 							Computed:    true,
 						},
 						"expires_on": schema.StringAttribute{

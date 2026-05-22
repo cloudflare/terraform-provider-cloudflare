@@ -356,6 +356,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version_id": schema.StringAttribute{
 								Computed: true,
 							},
+							"is_valid": schema.BoolAttribute{
+								Computed: true,
+							},
 						},
 					},
 				},
@@ -378,6 +381,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"is_valid": schema.BoolAttribute{
 						Computed: true,
 					},
 				},

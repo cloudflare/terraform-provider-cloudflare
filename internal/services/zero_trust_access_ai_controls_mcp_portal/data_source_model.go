@@ -55,41 +55,55 @@ func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toListParams(_ conte
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel struct {
-	ID                 types.String                                                                                         `tfsdk:"id" json:"id,computed"`
-	AuthType           types.String                                                                                         `tfsdk:"auth_type" json:"auth_type,computed"`
-	Hostname           types.String                                                                                         `tfsdk:"hostname" json:"hostname,computed"`
-	Name               types.String                                                                                         `tfsdk:"name" json:"name,computed"`
-	Prompts            customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"prompts" json:"prompts,computed"`
-	Tools              customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"tools" json:"tools,computed"`
-	CreatedAt          timetypes.RFC3339                                                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CreatedBy          types.String                                                                                         `tfsdk:"created_by" json:"created_by,computed"`
-	DefaultDisabled    types.Bool                                                                                           `tfsdk:"default_disabled" json:"default_disabled,computed"`
-	Description        types.String                                                                                         `tfsdk:"description" json:"description,computed"`
-	Error              types.String                                                                                         `tfsdk:"error" json:"error,computed"`
-	LastSuccessfulSync timetypes.RFC3339                                                                                    `tfsdk:"last_successful_sync" json:"last_successful_sync,computed" format:"date-time"`
-	LastSynced         timetypes.RFC3339                                                                                    `tfsdk:"last_synced" json:"last_synced,computed" format:"date-time"`
-	ModifiedAt         timetypes.RFC3339                                                                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	ModifiedBy         types.String                                                                                         `tfsdk:"modified_by" json:"modified_by,computed"`
-	OnBehalf           types.Bool                                                                                           `tfsdk:"on_behalf" json:"on_behalf,computed"`
-	Status             types.String                                                                                         `tfsdk:"status" json:"status,computed"`
-	UpdatedPrompts     customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsDataSourceModel] `tfsdk:"updated_prompts" json:"updated_prompts,computed"`
-	UpdatedTools       customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsDataSourceModel]   `tfsdk:"updated_tools" json:"updated_tools,computed"`
+	ID                           types.String                                                                                         `tfsdk:"id" json:"id,computed"`
+	AuthType                     types.String                                                                                         `tfsdk:"auth_type" json:"auth_type,computed"`
+	Hostname                     types.String                                                                                         `tfsdk:"hostname" json:"hostname,computed"`
+	Name                         types.String                                                                                         `tfsdk:"name" json:"name,computed"`
+	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"prompts" json:"prompts,computed"`
+	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"tools" json:"tools,computed"`
+	CreatedAt                    timetypes.RFC3339                                                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedBy                    types.String                                                                                         `tfsdk:"created_by" json:"created_by,computed"`
+	DefaultDisabled              types.Bool                                                                                           `tfsdk:"default_disabled" json:"default_disabled,computed"`
+	Description                  types.String                                                                                         `tfsdk:"description" json:"description,computed"`
+	Error                        types.String                                                                                         `tfsdk:"error" json:"error,computed"`
+	ErrorDetails                 customfield.NestedObject[ZeroTrustAccessAIControlsMcpPortalServersErrorDetailsDataSourceModel]       `tfsdk:"error_details" json:"error_details,computed"`
+	IsSharedOAuthCallbackEnabled types.Bool                                                                                           `tfsdk:"is_shared_oauth_callback_enabled" json:"is_shared_oauth_callback_enabled,computed"`
+	LastSuccessfulSync           timetypes.RFC3339                                                                                    `tfsdk:"last_successful_sync" json:"last_successful_sync,computed" format:"date-time"`
+	LastSynced                   timetypes.RFC3339                                                                                    `tfsdk:"last_synced" json:"last_synced,computed" format:"date-time"`
+	ModifiedAt                   timetypes.RFC3339                                                                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	ModifiedBy                   types.String                                                                                         `tfsdk:"modified_by" json:"modified_by,computed"`
+	OnBehalf                     types.Bool                                                                                           `tfsdk:"on_behalf" json:"on_behalf,computed"`
+	Status                       types.String                                                                                         `tfsdk:"status" json:"status,computed"`
+	UpdatedPrompts               customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsDataSourceModel] `tfsdk:"updated_prompts" json:"updated_prompts,computed"`
+	UpdatedTools                 customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsDataSourceModel]   `tfsdk:"updated_tools" json:"updated_tools,computed"`
+}
+
+type ZeroTrustAccessAIControlsMcpPortalServersErrorDetailsDataSourceModel struct {
+	Cause      types.String  `tfsdk:"cause" json:"cause,computed"`
+	IsUpstream types.Bool    `tfsdk:"is_upstream" json:"is_upstream,computed"`
+	McpCode    types.Float64 `tfsdk:"mcp_code" json:"mcp_code,computed"`
+	Retryable  types.Bool    `tfsdk:"retryable" json:"retryable,computed"`
+	StatusCode types.Float64 `tfsdk:"status_code" json:"status_code,computed"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsDataSourceModel struct {
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	PortalAlias types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
-	ServerAlias types.String `tfsdk:"server_alias" json:"server_alias,computed"`
+	Name              types.String `tfsdk:"name" json:"name,computed"`
+	Description       types.String `tfsdk:"description" json:"description,computed"`
+	Enabled           types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	PortalAlias       types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
+	PortalDescription types.String `tfsdk:"portal_description" json:"portal_description,computed"`
+	ServerAlias       types.String `tfsdk:"server_alias" json:"server_alias,computed"`
+	ServerDescription types.String `tfsdk:"server_description" json:"server_description,computed"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsDataSourceModel struct {
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	PortalAlias types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
-	ServerAlias types.String `tfsdk:"server_alias" json:"server_alias,computed"`
+	Name              types.String `tfsdk:"name" json:"name,computed"`
+	Description       types.String `tfsdk:"description" json:"description,computed"`
+	Enabled           types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	PortalAlias       types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
+	PortalDescription types.String `tfsdk:"portal_description" json:"portal_description,computed"`
+	ServerAlias       types.String `tfsdk:"server_alias" json:"server_alias,computed"`
+	ServerDescription types.String `tfsdk:"server_description" json:"server_description,computed"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalFindOneByDataSourceModel struct {

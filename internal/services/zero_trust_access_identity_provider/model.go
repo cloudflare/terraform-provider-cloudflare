@@ -5,6 +5,8 @@ package zero_trust_access_identity_provider
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,13 +15,15 @@ type ZeroTrustAccessIdentityProviderResultEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderModel struct {
-	ID         types.String                                                             `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name       types.String                                                             `tfsdk:"name" json:"name,required"`
-	Type       types.String                                                             `tfsdk:"type" json:"type,required"`
-	Config     *ZeroTrustAccessIdentityProviderConfigModel                              `tfsdk:"config" json:"config,required"`
-	SCIMConfig customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel] `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+	ID                   types.String                                                                     `tfsdk:"id" json:"id,computed"`
+	AccountID            types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID               types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name                 types.String                                                                     `tfsdk:"name" json:"name,required"`
+	Type                 types.String                                                                     `tfsdk:"type" json:"type,required"`
+	Config               *ZeroTrustAccessIdentityProviderConfigModel                                      `tfsdk:"config" json:"config,required"`
+	SAMLCertificateSetID types.String                                                                     `tfsdk:"saml_certificate_set_id" json:"saml_certificate_set_id,optional"`
+	SCIMConfig           customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel]         `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+	SAMLCertificateSet   customfield.NestedObject[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel] `tfsdk:"saml_certificate_set" json:"saml_certificate_set,computed"`
 }
 
 func (m ZeroTrustAccessIdentityProviderModel) MarshalJSON() (data []byte, err error) {
@@ -53,12 +57,14 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	PingEnvID                types.String                                                   `tfsdk:"ping_env_id" json:"ping_env_id,optional"`
 	Attributes               *[]types.String                                                `tfsdk:"attributes" json:"attributes,optional"`
 	EmailAttributeName       types.String                                                   `tfsdk:"email_attribute_name" json:"email_attribute_name,optional"`
+	EnableEncryption         types.Bool                                                     `tfsdk:"enable_encryption" json:"enable_encryption,computed_optional"`
 	HeaderAttributes         *[]*ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel `tfsdk:"header_attributes" json:"header_attributes,optional"`
 	IdPPublicCERTs           *[]types.String                                                `tfsdk:"idp_public_certs" json:"idp_public_certs,optional"`
 	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
 	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,computed_optional"`
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`
 	RedirectURL              types.String                                                   `tfsdk:"redirect_url" json:"redirect_url,computed"`
+	RestrictToAccountMembers types.Bool                                                     `tfsdk:"restrict_to_account_members" json:"restrict_to_account_members,computed_optional"`
 }
 
 type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
@@ -73,4 +79,19 @@ type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,computed_optional"`
 	Secret                 types.String `tfsdk:"secret" json:"secret,computed"`
 	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,computed_optional"`
+}
+
+type ZeroTrustAccessIdentityProviderSAMLCertificateSetModel struct {
+	CreatedAt           timetypes.RFC3339                                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UID                 types.String                                                                                       `tfsdk:"uid" json:"uid,computed"`
+	UpdatedAt           timetypes.RFC3339                                                                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	CurrentCertificate  customfield.NestedObject[ZeroTrustAccessIdentityProviderSAMLCertificateSetCurrentCertificateModel] `tfsdk:"current_certificate" json:"current_certificate,computed"`
+	PreviousCertificate jsontypes.Normalized                                                                               `tfsdk:"previous_certificate" json:"previous_certificate,computed"`
+}
+
+type ZeroTrustAccessIdentityProviderSAMLCertificateSetCurrentCertificateModel struct {
+	IsCurrent         types.Bool        `tfsdk:"is_current" json:"is_current,computed"`
+	NotAfter          timetypes.RFC3339 `tfsdk:"not_after" json:"not_after,computed" format:"date-time"`
+	PublicCertificate types.String      `tfsdk:"public_certificate" json:"public_certificate,computed"`
+	UID               types.String      `tfsdk:"uid" json:"uid,computed"`
 }

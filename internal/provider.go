@@ -59,6 +59,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dls_prefix_binding"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_acl"
@@ -138,13 +139,14 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
@@ -450,7 +452,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
-		api_shield_discovery_operation.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
@@ -459,9 +460,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		page_shield_policy.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
-		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
+		dls_prefix_binding.NewResource,
 		image.NewResource,
 		image_variant.NewResource,
 		magic_wan_gre_tunnel.NewResource,
@@ -588,6 +589,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ai_search_token.NewResource,
 		custom_pages.NewResource,
 		custom_page_asset.NewResource,
+		secrets_store.NewResource,
+		secrets_store_secret.NewResource,
 		pipeline.NewResource,
 		pipeline_sink.NewResource,
 		pipeline_stream.NewResource,
@@ -758,12 +761,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
-		regional_hostname.NewRegionalHostnameDataSource,
-		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
 		address_map.NewAddressMapsDataSource,
 		byo_ip_prefix.NewByoIPPrefixDataSource,
 		byo_ip_prefix.NewByoIPPrefixesDataSource,
+		dls_prefix_binding.NewDLSPrefixBindingDataSource,
+		dls_prefix_binding.NewDLSPrefixBindingsDataSource,
 		image.NewImageDataSource,
 		image.NewImagesDataSource,
 		image_variant.NewImageVariantDataSource,
@@ -977,6 +980,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_pages.NewCustomPagesListDataSource,
 		custom_page_asset.NewCustomPageAssetDataSource,
 		custom_page_asset.NewCustomPageAssetsDataSource,
+		secrets_store.NewSecretsStoreDataSource,
+		secrets_store.NewSecretsStoresDataSource,
+		secrets_store_secret.NewSecretsStoreSecretDataSource,
+		secrets_store_secret.NewSecretsStoreSecretsDataSource,
 		pipeline.NewPipelineDataSource,
 		pipeline_sink.NewPipelineSinkDataSource,
 		pipeline_sink.NewPipelineSinksDataSource,

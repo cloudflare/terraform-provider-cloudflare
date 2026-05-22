@@ -62,6 +62,7 @@ type ZeroTrustDevicePostureRuleInputModel struct {
 	SensorConfig            types.String                                   `tfsdk:"sensor_config" json:"sensor_config,optional"`
 	State                   types.String                                   `tfsdk:"state" json:"state,optional"`
 	VersionOperator         types.String                                   `tfsdk:"version_operator" json:"versionOperator,optional"`
+	AuthState               *[]types.String                                `tfsdk:"auth_state" json:"auth_state,optional"`
 	CountOperator           types.String                                   `tfsdk:"count_operator" json:"countOperator,optional"`
 	IssueCount              types.String                                   `tfsdk:"issue_count" json:"issue_count,optional"`
 	EidLastSeen             types.String                                   `tfsdk:"eid_last_seen" json:"eid_last_seen,optional"`

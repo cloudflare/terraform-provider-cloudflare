@@ -198,6 +198,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"version_id": schema.StringAttribute{
 						Computed: true,
 					},
+					"is_valid": schema.BoolAttribute{
+						Computed: true,
+					},
 				},
 			},
 		},
