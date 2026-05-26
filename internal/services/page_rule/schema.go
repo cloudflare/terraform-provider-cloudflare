@@ -272,7 +272,7 @@ Version: 500,
 						Optional: true,
 						Validators: []validator.Int64{
 							int64validator.AtLeast(0),
-							int64validator.AtMost(2419200),
+							int64validator.AtMost(31536000),
 						},
 					},
 					"email_obfuscation": schema.StringAttribute{
