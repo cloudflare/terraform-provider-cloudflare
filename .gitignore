@@ -1,5 +1,6 @@
 .prism.log
 .stdy.log
+.tmp/
 dist/
 terraform-provider-cloudflare
 go.work*
