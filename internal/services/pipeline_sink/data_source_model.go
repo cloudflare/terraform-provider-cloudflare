@@ -44,6 +44,9 @@ func (m *PipelineSinkDataSourceModel) toListParams(_ context.Context) (params pi
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
 	if !m.Filter.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.Filter.PipelineID.ValueString())
 	}
@@ -113,5 +116,6 @@ type PipelineSinkSchemaFormatDataSourceModel struct {
 }
 
 type PipelineSinkFindOneByDataSourceModel struct {
+	Name       types.String `tfsdk:"name" query:"name,optional"`
 	PipelineID types.String `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 }
