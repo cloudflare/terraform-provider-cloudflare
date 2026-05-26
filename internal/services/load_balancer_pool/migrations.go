@@ -14,30 +14,30 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerPoolResource)(nil)
 //
 // Schema version history:
 // - v4 (SDKv2): schema_version=0 (implicit, no explicit version set)
-// - v5 production (v5.0–v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
+// - early v5 (v5.0–v5.7, before GetSchemaVersion was added): schema_version=0 with v5 (object) shape
+// - v5 production (v5.0–v5.18 after stepping stone): schema_version=1
 // - v5 current: schema_version=500
 //
 // Upgrade paths:
-// 1. v4 SDKv2 (schema_version=0) → v5 (500): Full transformation
-//    - load_shedding: Array[0] → NestedObject
-//    - origin_steering: Array[0] → NestedObject
-//    - origins.header: Complex nested structure transformation
-//    - check_regions: Set → List
-//    - origins: Set → List
 //
-// 2. v5 production (schema_version=1) → v5 (500): No-op
-//    - State is already in v5 format; just bumps the version number.
+//  1. schema_version=0 → 500: AMBIGUOUS between
+//     - v4 SDKv2 format (load_shedding/origin_steering as JSON arrays [{...}])
+//     - early v5 format (load_shedding/origin_steering as JSON objects {...})
+//     PriorSchema must be nil because the Plugin Framework rejects the state
+//     pre-handler if the prior-schema shape doesn't match the raw JSON (see #7098).
+//     The handler reads req.RawState.JSON directly and routes to the correct path.
+//
+//  2. schema_version=1 → 500: No-op
+//     State is already in v5 format; just bumps the version number.
 func (r *LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-	sourceSchema := v500.SourceCloudflareLoadBalancerPoolSchema()
 
 	return map[int64]resource.StateUpgrader{
-		// Handle upgrades from legacy v4 SDKv2 provider (schema_version=0).
-		// UpgradeFromLegacyV0 detects v4 vs early-v5 format at runtime and
-		// either transforms (v4) or passes through (early v5 at version 0).
+		// Handle schema_version=0 state. AMBIGUOUS between v4 SDKv2 (list shape)
+		// and early v5 (object shape). PriorSchema=nil so the handler can inspect
+		// req.RawState.JSON itself and pick the right path. See #7098.
 		0: {
-			PriorSchema:   &sourceSchema,
-			StateUpgrader: v500.UpgradeFromLegacyV0,
+			StateUpgrader: v500.UpgradeFromV0Ambiguous,
 		},
 		// Handle upgrades from v5 production state (schema_version=1).
 		// Users on v5.0–v5.18 had GetSchemaVersion(1, 500) which stored state
