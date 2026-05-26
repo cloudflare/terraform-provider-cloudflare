@@ -43,6 +43,7 @@ type ZeroTrustDNSLocationsResultDataSourceModel struct {
 	IP                        types.String                                                               `tfsdk:"ip" json:"ip,computed"`
 	IPV4Destination           types.String                                                               `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
 	IPV4DestinationBackup     types.String                                                               `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
+	MaxTTLSecs                types.Int64                                                                `tfsdk:"max_ttl_secs" json:"max_ttl_secs,computed"`
 	Name                      types.String                                                               `tfsdk:"name" json:"name,computed"`
 	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationsNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
 	UpdatedAt                 timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
