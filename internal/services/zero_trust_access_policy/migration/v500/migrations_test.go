@@ -942,3 +942,203 @@ func renameResourceTypeInState(t *testing.T, tmpDir string, oldType string, newT
 
 	t.Logf("Renamed %s.%s to %s.%s in state file", oldType, resourceName, newType, resourceName)
 }
+
+// removeResourceFromState removes a resource (matched by type+name) from the
+// terraform state file. Simulates `terraform state rm`.
+//
+// Used in cross-provider migration tests when the v4 → v5 rename removes a
+// resource type entirely (e.g. zone-scoped cloudflare_access_application has
+// no direct v5 equivalent in this provider). Without this, the v5 provider
+// errors out reading the dangling resource with:
+//
+//	no schema available for cloudflare_access_application.<name> while reading state
+func removeResourceFromState(t *testing.T, tmpDir string, resourceType string, resourceName string) {
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		t.Fatalf("Could not find work directory in %s: %v", tmpDir, err)
+	}
+	workDir := matches[0]
+	stateFile := filepath.Join(workDir, "terraform.tfstate")
+
+	data, err := os.ReadFile(stateFile)
+	if err != nil {
+		t.Fatalf("Could not read state file %s: %v", stateFile, err)
+	}
+
+	var state struct {
+		Version   int `json:"version"`
+		Resources []struct {
+			Module    string          `json:"module,omitempty"`
+			Mode      string          `json:"mode"`
+			Type      string          `json:"type"`
+			Name      string          `json:"name"`
+			Provider  string          `json:"provider"`
+			Instances json.RawMessage `json:"instances"`
+		} `json:"resources"`
+	}
+	if err := json.Unmarshal(data, &state); err != nil {
+		t.Fatalf("Could not parse state file: %v", err)
+	}
+
+	filtered := state.Resources[:0]
+	removed := false
+	for _, r := range state.Resources {
+		if r.Type == resourceType && r.Name == resourceName {
+			removed = true
+			continue
+		}
+		filtered = append(filtered, r)
+	}
+	if !removed {
+		t.Fatalf("Could not find resource %s.%s in state to remove", resourceType, resourceName)
+	}
+	state.Resources = filtered
+
+	newData, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		t.Fatalf("Could not marshal state: %v", err)
+	}
+	if err := os.WriteFile(stateFile, newData, 0644); err != nil {
+		t.Fatalf("Could not write state file: %v", err)
+	}
+
+	t.Logf("Removed %s.%s from state file", resourceType, resourceName)
+}
+
+//go:embed testdata/v4_zone_id.tf
+var v4ZoneIDConfig string
+
+// TestMigrateZeroTrustAccessPolicyFromV4_ZoneIDScoped reproduces APIX-851:
+// When a v4 cloudflare_access_policy used zone_id (no account_id), the migration
+// to v5 cloudflare_zero_trust_access_policy produced a null account_id in state.
+// This caused "missing required account_id parameter" on any subsequent CRUD
+// operation because the Go SDK requires a non-empty account_id to construct the
+// API URL: POST accounts/{account_id}/access/policies.
+//
+// The fix derives account_id from the CLOUDFLARE_ACCOUNT_ID env var (with a Warning)
+// or returns a clear Error naming APIX-851 if the env var is also unset.
+//
+// This test focuses on the APIX-851 contract: given a zone-scoped v4 state with
+// CLOUDFLARE_ACCOUNT_ID set, after migration the v5 state has the correct
+// account_id and Read()/plan succeed.
+//
+// We bypass tf-migrate (which doesn't handle the zone-scoped v4 →
+// v5 rename today) and mirror the proven pattern from
+// TestMigrateZeroTrustAccessPolicyStateMvScenario: create with v4, manually
+// rename the resource type in state, then apply with v5 + manually-set
+// account_id in HCL. The state-upgrade path that runs in step 2 is exactly the
+// production path the APIX-851 fix patches.
+func TestMigrateZeroTrustAccessPolicyFromV4_ZoneIDScoped(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("CLOUDFLARE_ACCOUNT_ID must be set for this test")
+	}
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		t.Skip("CLOUDFLARE_ZONE_ID must be set for this test")
+	}
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	if domain == "" {
+		t.Skip("CLOUDFLARE_DOMAIN must be set for this test")
+	}
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	v4Config := fmt.Sprintf(v4ZoneIDConfig, rnd, zoneID, domain)
+
+	// v5 config: cloudflare_zero_trust_access_policy is account-scoped only and
+	// is no longer tied to an application — the user creates it once and
+	// references it from access applications by ID. The migrated state retains
+	// the original policy ID, so Read() will fetch it from /accounts/{id}/access/policies/{policy_id}.
+	v5Config := fmt.Sprintf(`resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+
+  include = [{
+    email = {
+      email = "test@example.com"
+    }
+  }]
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider using zone_id + application_id.
+				// State written has account_id=null, zone_id=<zone>, application_id=<app>.
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.7",
+					},
+				},
+				Config: v4Config,
+			},
+			{
+				// Step 2: simulate the resource-type rename that tf-migrate would do
+				// (it currently doesn't handle the zone-scoped variant — separate bug),
+				// then apply with v5. The state-upgrade triggered by the type rename
+				// runs Transform → resolveAccountID, which under APIX-851 must
+				// either fall back to CLOUDFLARE_ACCOUNT_ID or emit a clear error.
+				//
+				// We also drop cloudflare_access_application from state — it has no
+				// direct v5 equivalent in this provider (would be renamed to
+				// cloudflare_zero_trust_access_application under a different schema),
+				// and the v5 config doesn't manage it. Leaving it in state causes
+				// the v5 provider to fail with "no schema available for
+				// cloudflare_access_application.<name> while reading state".
+				PreConfig: func() {
+					renameResourceTypeInState(t, tmpDir, "cloudflare_access_policy", "cloudflare_zero_trust_access_policy", rnd)
+					removeResourceFromState(t, tmpDir, "cloudflare_access_application", rnd)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   v5Config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+					// APIX-851 contract: account_id is populated post-migration
+					// (derived from CLOUDFLARE_ACCOUNT_ID, since the v4 state was zone-scoped).
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+			{
+				// Step 3: scrub the policy from state before the framework's auto-destroy.
+				//
+				// The policy was created in step 1 as an APPLICATION-OWNED (zone-scoped)
+				// v4 access_policy. The v5 cloudflare_zero_trust_access_policy resource
+				// only knows how to delete via the account-scoped endpoint
+				// (DELETE /accounts/{id}/access/policies/{policy_id}), which the API
+				// rejects with "invalid endpoint for deleting application-owned policies".
+				//
+				// This is itself a known limitation of the migration (separate from
+				// APIX-851's account_id contract): once a zone-scoped v4 policy is
+				// migrated to the v5 account-scoped resource, the v5 resource cannot
+				// actually destroy it. Users must either delete via the parent
+				// access_application or via the v4 API.
+				//
+				// For test cleanup we drop the policy from state so the framework's
+				// auto-destroy is a no-op. The orphaned application+policy in the test
+				// account are left for the resource sweeper to clean up.
+				PreConfig: func() {
+					removeResourceFromState(t, tmpDir, "cloudflare_zero_trust_access_policy", rnd)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   " ",
+				PlanOnly:                 true,
+			},
+		},
+	})
+}

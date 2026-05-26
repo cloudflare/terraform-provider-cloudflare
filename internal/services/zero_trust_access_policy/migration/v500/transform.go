@@ -2,6 +2,8 @@ package v500
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
@@ -23,13 +25,73 @@ func normalizeBoolFalseToNull(b types.Bool) types.Bool {
 	return b
 }
 
+// resolveAccountID derives the v5 account_id from the v4 state. The v5
+// cloudflare_zero_trust_access_policy is account-scoped only; v4 supported
+// zone-scoped policies (zone_id + application_id, no account_id). When the v4
+// state is zone-scoped we fall back to the CLOUDFLARE_ACCOUNT_ID environment
+// variable (the standard provider env var) and emit a Warning. If neither the
+// state nor the env var supplies an account_id, an actionable Error diagnostic
+// is returned naming the resource and pointing at APIX-851.
+//
+// Returns (accountID, diags). On error, accountID is types.StringNull() and
+// diags contains an Error; the caller must abort the transform.
+func resolveAccountID(v4 SourceAccessPolicyModel) (types.String, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	// Happy path: v4 was account-scoped or both account_id + zone_id were set.
+	if !v4.AccountID.IsNull() && v4.AccountID.ValueString() != "" {
+		return v4.AccountID, diags
+	}
+
+	// v4 was zone-scoped (or under-populated). Try env var fallback.
+	if envID := strings.TrimSpace(os.Getenv("CLOUDFLARE_ACCOUNT_ID")); envID != "" {
+		diags.AddWarning(
+			"Derived account_id from CLOUDFLARE_ACCOUNT_ID during migration",
+			fmt.Sprintf(
+				"The v4 cloudflare_access_policy state was zone-scoped (zone_id=%q, application_id=%q) "+
+					"and contained no account_id, but the v5 cloudflare_zero_trust_access_policy is "+
+					"account-scoped only. Used CLOUDFLARE_ACCOUNT_ID=%q from the environment.\n\n"+
+					"Verify the value is correct for this resource; if not, run `terraform state rm` "+
+					"and re-import after the migration completes. Tracking: APIX-851.",
+				v4.ZoneID.ValueString(),
+				v4.ApplicationID.ValueString(),
+				envID,
+			),
+		)
+		return types.StringValue(envID), diags
+	}
+
+	// No account_id available anywhere.
+	diags.AddError(
+		"Cannot migrate zone-scoped Access policy without account_id",
+		fmt.Sprintf(
+			"The v4 cloudflare_access_policy was zone-scoped (zone_id=%q, application_id=%q) and "+
+				"contained no account_id in state. The v5 cloudflare_zero_trust_access_policy is "+
+				"account-scoped only and requires a non-empty account_id to read, update, or delete.\n\n"+
+				"To resolve, set the CLOUDFLARE_ACCOUNT_ID environment variable to the parent account "+
+				"of this zone and re-run the migration, then verify the resource was imported under "+
+				"the correct account.\n\n"+
+				"Tracking: APIX-851.",
+			v4.ZoneID.ValueString(),
+			v4.ApplicationID.ValueString(),
+		),
+	)
+	return types.StringNull(), diags
+}
+
 // Transform converts a v4 cloudflare_access_policy state to v5 cloudflare_zero_trust_access_policy state.
 func Transform(ctx context.Context, v4 SourceAccessPolicyModel) (*TargetAccessPolicyModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	accountID, accountIDDiags := resolveAccountID(v4)
+	diags.Append(accountIDDiags...)
+	if diags.HasError() {
+		return nil, diags
+	}
+
 	v5 := &TargetAccessPolicyModel{
 		ID:                           v4.ID,
-		AccountID:                    v4.AccountID,
+		AccountID:                    accountID,
 		Name:                         v4.Name,
 		Decision:                     v4.Decision,
 		SessionDuration:              v4.SessionDuration,
