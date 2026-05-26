@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"http2",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name. The value type depends on the setting:\n- `ciphers`: value is an array of cipher suite strings (e.g., `[\"ECDHE-RSA-AES128-GCM-SHA256\", \"AES128-GCM-SHA256\"]`)\n- `min_tls_version`: value is a TLS version string (`\"1.0\"`, `\"1.1\"`, `\"1.2\"`, or `\"1.3\"`)\n- `http2`: value is `\"on\"` or `\"off\"`\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
@@ -48,7 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"http2",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",

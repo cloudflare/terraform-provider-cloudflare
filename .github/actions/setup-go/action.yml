@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: stainless-api/retrieve-github-access-token@v1
+    - uses: stainless-api/retrieve-github-access-token@1f03f929b746c5b03dcdafa2bebbb18ca5672e1a # v1.0.0
       id: get_token
       if: github.repository == 'stainless-sdks/cloudflare-terraform'
       with:
@@ -26,7 +26,7 @@ runs:
       run: git config --global url."https://x-access-token:${{ steps.get_token.outputs.github_access_token }}@github.com/stainless-sdks/cloudflare-go".insteadOf "https://github.com/stainless-sdks/cloudflare-go"
 
     - name: Setup go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
       with:
         go-version: ${{ inputs.go-version }}
         go-version-file: ./go.mod

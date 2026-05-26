@@ -15,21 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
       with:
         go-version-file: "go.mod"
     - name: Import GPG key
       id: import_gpg
-      uses: crazy-max/ghaction-import-gpg@v6
+      uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
       with:
         gpg_private_key: ${{ secrets.CLOUDFLARE_GPG_SIGNING_KEY || secrets.GPG_SIGNING_KEY }}
         passphrase: ${{ secrets.CLOUDFLARE_GPG_SIGNING_PASSWORD || secrets.GPG_SIGNING_PASSWORD }}
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v7
+      uses: goreleaser/goreleaser-action@1a80836c5c9d9e5755a25cb59ec6f45a3b5f41a8 # v7.2.1
       with:
         distribution: goreleaser
         version: "~> v2.15.2"
