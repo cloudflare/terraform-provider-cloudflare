@@ -8,8 +8,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDNSLocationDataSource)(nil)
@@ -68,6 +70,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"ipv4_destination_backup": schema.StringAttribute{
 				Description: "Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.",
 				Computed:    true,
+			},
+			"max_ttl_secs": schema.Int64Attribute{
+				Description: "Specify the maximum TTL, in seconds, applied to DNS response records.\nRecords whose upstream TTL exceeds this value are served with the\ncapped value. When null or absent, no cap is applied at this tier.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(60, 36000),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Specify the location name.",
