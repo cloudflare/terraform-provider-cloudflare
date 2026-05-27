@@ -242,6 +242,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileDNSSearchSuffixesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"default": schema.BoolAttribute{
 				Description: "Whether the policy is the default policy for an account.",
 				Computed:    true,

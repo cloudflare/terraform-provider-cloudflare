@@ -108,6 +108,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Determines which tunnel protocol to use.",
 				Computed:    true,
 			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileDNSSearchSuffixesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+						},
+					},
+				},
+			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "List of routes excluded in the WARP client's tunnel.",
 				Computed:    true,
