@@ -130,6 +130,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
 			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
 				Computed:    true,

@@ -69,6 +69,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
 							Computed:    true,
 						},
+						"dns_search_suffixes": schema.ListNestedAttribute{
+							Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesDNSSearchSuffixesDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"suffix": schema.StringAttribute{
+										Description: "The DNS search suffix to append when resolving short hostnames.",
+										Computed:    true,
+									},
+									"description": schema.StringAttribute{
+										Description: "A description of the DNS search suffix.",
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the policy will be applied to matching devices.",
 							Computed:    true,

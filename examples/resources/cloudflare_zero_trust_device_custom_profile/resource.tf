@@ -10,6 +10,10 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   captive_portal = 180
   description = "Policy for test teams."
   disable_auto_fallback = true
+  dns_search_suffixes = [{
+    suffix = "internal.corp"
+    description = "Example internal domains"
+  }]
   enabled = true
   exclude = [{
     address = "192.0.2.0/24"
