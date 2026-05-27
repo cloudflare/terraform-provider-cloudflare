@@ -35,7 +35,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"offset": schema.Int64Attribute{
-				Description: "Offset the results",
+				Description: "Offset the results.",
 				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
