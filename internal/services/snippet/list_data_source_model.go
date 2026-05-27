@@ -32,6 +32,7 @@ func (m *SnippetsDataSourceModel) toListParams(_ context.Context) (params snippe
 }
 
 type SnippetsResultDataSourceModel struct {
+	ID          types.String      `tfsdk:"id" json:"snippet_name,computed"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	SnippetName types.String      `tfsdk:"snippet_name" json:"snippet_name,computed"`
 	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

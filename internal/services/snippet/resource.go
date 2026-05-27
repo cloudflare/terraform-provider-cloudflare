@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*SnippetResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*SnippetResource)(nil)
+var _ resource.ResourceWithImportState = (*SnippetResource)(nil)
 
 func NewResource() resource.Resource {
 	return &SnippetResource{}
@@ -90,6 +92,7 @@ func (r *SnippetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.SnippetName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -139,6 +142,7 @@ func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.SnippetName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -179,6 +183,7 @@ func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	data = &env.Result
+	data.ID = data.SnippetName
 
 	res = new(http.Response)
 	_, err = r.client.Snippets.Content.Get(
@@ -231,6 +236,53 @@ func (r *SnippetResource) Delete(ctx context.Context, req resource.DeleteRequest
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.SnippetName
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *SnippetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(SnippetModel)
+
+	path_zone_id := ""
+	path_snippet_name := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<snippet_name>",
+		&path_zone_id,
+		&path_snippet_name,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.SnippetName = types.StringValue(path_snippet_name)
+
+	res := new(http.Response)
+	env := SnippetResultEnvelope{*data}
+	_, err := r.client.Snippets.Get(
+		ctx,
+		path_snippet_name,
+		snippets.SnippetGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.SnippetName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

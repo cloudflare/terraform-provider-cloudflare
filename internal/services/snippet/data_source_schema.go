@@ -22,6 +22,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identify the snippet.",
+				Computed:    true,
+			},
 			"snippet_name": schema.StringAttribute{
 				Description: "Identify the snippet.",
 				Required:    true,
