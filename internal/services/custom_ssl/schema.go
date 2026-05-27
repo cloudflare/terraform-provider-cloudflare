@@ -100,7 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("ubiquitous"),
 			},
 			"deploy": schema.StringAttribute{
-				Description: "The environment to deploy the certificate to, defaults to production\nAvailable values: \"staging\", \"production\".",
+				Description: "The environment to deploy the certificate to, defaults to production.\nAvailable values: \"staging\", \"production\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -207,16 +207,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"tunnel": schema.SingleNestedAttribute{
-						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[CustomSSLKeylessServerTunnelModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"private_ip": schema.StringAttribute{
-								Description: "Private IP of the Key Server Host",
+								Description: "Private IP of the Key Server Host.",
 								Computed:    true,
 							},
 							"vnet_id": schema.StringAttribute{
-								Description: "Cloudflare Tunnel Virtual Network ID",
+								Description: "Cloudflare Tunnel Virtual Network ID.",
 								Computed:    true,
 							},
 						},

@@ -73,7 +73,7 @@ func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params 
 		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.SSL.IsNull() {
-		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.Filter.SSL.ValueFloat64()))
+		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.Filter.SSL.ValueInt64()))
 	}
 	if !m.Filter.SSLStatus.IsNull() {
 		params.SSLStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSLStatus(m.Filter.SSLStatus.ValueString()))
@@ -161,7 +161,7 @@ type CustomHostnameFindOneByDataSourceModel struct {
 	Hostname             *CustomHostnamesHostnameDataSourceModel `tfsdk:"hostname" query:"hostname,optional"`
 	HostnameStatus       types.String                            `tfsdk:"hostname_status" query:"hostname_status,optional"`
 	Order                types.String                            `tfsdk:"order" query:"order,computed_optional"`
-	SSL                  types.Float64                           `tfsdk:"ssl" query:"ssl,optional"`
+	SSL                  types.Int64                             `tfsdk:"ssl" query:"ssl,computed_optional"`
 	SSLStatus            types.String                            `tfsdk:"ssl_status" query:"ssl_status,optional"`
 	Wildcard             types.Bool                              `tfsdk:"wildcard" query:"wildcard,optional"`
 }

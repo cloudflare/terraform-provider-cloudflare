@@ -8,7 +8,6 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
     contain = "example.com"
   }
   hostname_status = "provisioned"
-  ssl = 0
   ssl_status = "active"
   wildcard = false
 }
