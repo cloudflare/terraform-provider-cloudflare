@@ -703,8 +703,12 @@ In v5, application-scoped policies are no longer standalone resources. Instead,
 they are defined inline within the `cloudflare_zero_trust_access_application`
 resource using the `policies` attribute.
 
-Do not use a `moved` block for this scenario. Application-scoped policies must
-be dropped from standalone state and rewritten as inline application policies.
+Use a `removed` block rather than a `moved` block. v4 application-scoped
+`cloudflare_access_policy` and v5 inline
+`cloudflare_zero_trust_access_application.policies` are different schemas
+backed by different API endpoints, so Terraform cannot rename one into the
+other; the policy must be dropped from standalone state and re-expressed on
+the application.
 
 #### Migration Steps
 
@@ -778,6 +782,75 @@ resource "cloudflare_zero_trust_access_application" "my_app" {
 
 ~> **Account-level policies** (without `application_id`) migrate normally using
 `tf-migrate` and are renamed to `cloudflare_zero_trust_access_policy`.
+
+#### Keeping existing policies attached (in-place migration)
+
+If your v4 configuration referenced policies by ID on the application (for
+example, policies that are owned in the Zero Trust dashboard or in another
+Terraform stack), use the following two-step pattern so the application keeps
+pointing at the same policies the whole time.
+
+**Step 1 — drop the policy resources from state, keep `policies` populated
+with hardcoded UUIDs.**
+
+```hcl
+removed {
+  from = cloudflare_zero_trust_access_policy.app_policy
+  lifecycle {
+    destroy = false
+  }
+}
+
+resource "cloudflare_zero_trust_access_application" "my_app" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "My Application"
+  domain     = "app.example.com"
+  type       = "self_hosted"
+
+  policies = [
+    {
+      id         = "1b33372b-5433-41bb-b333-59b122bbdaf0" # existing policy UUID
+      precedence = 1
+    },
+  ]
+}
+```
+
+The Step 1 plan should report `0 to add, 0 to change, 0 to destroy`, plus a
+`# ... will no longer be managed by Terraform` line for each removed policy.
+
+**Step 2 — recreate the policies as `cloudflare_zero_trust_access_policy`
+resources and switch the application to resource references in the same
+apply.**
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "app_policy" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "Allow employees"
+  decision   = "allow"
+
+  include = [{ email_domain = { domain = "example.com" } }]
+}
+
+resource "cloudflare_zero_trust_access_application" "my_app" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "My Application"
+  domain     = "app.example.com"
+  type       = "self_hosted"
+
+  policies = [
+    {
+      id         = cloudflare_zero_trust_access_policy.app_policy.id
+      precedence = 1
+    },
+  ]
+}
+```
+
+When both changes ship in the same apply, the application's `policies` list
+goes directly from `[{ id = "<hardcoded-uuid>", ... }]` to
+`[{ id = cloudflare_zero_trust_access_policy.app_policy.id, ... }]`. If you
+want to keep policies owned outside of Terraform, stop after Step 1.
 
 ### `cloudflare_zone_settings_override`
 
