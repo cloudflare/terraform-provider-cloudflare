@@ -365,6 +365,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -671,6 +681,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -974,6 +994,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
+											},
+										},
+									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
 											},
 										},
 									},
@@ -1284,6 +1314,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
+											},
+										},
+									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
 											},
 										},
 									},

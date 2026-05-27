@@ -222,6 +222,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"virtual_network_id": schema.StringAttribute{
+							Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
+							Computed:    true,
+						},
 					},
 				},
 			},

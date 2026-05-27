@@ -589,7 +589,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"include_subdomains": schema.BoolAttribute{
 										Computed: true,
 										Optional: true,
-										Default:  booldefault.StaticBool(false),
+										Default:  booldefault.StaticBool(true),
 									},
 									"max_age": schema.Float64Attribute{
 										Optional: true,

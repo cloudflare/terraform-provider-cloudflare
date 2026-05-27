@@ -100,6 +100,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"virtual_network_id": schema.StringAttribute{
+				Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
+				Computed:    true,
+			},
 			"origin_direct": schema.ListAttribute{
 				Description: "List of origin IP addresses. Array may contain multiple IP addresses for load balancing.",
 				Computed:    true,

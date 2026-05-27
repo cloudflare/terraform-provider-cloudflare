@@ -9,6 +9,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
   servers = [{
     server_id = "my-mcp-server"
     default_disabled = true
+    is_shared_oauth_callback_enabled = true
     on_behalf = true
     updated_prompts = [{
       name = "name"

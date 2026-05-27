@@ -261,10 +261,11 @@ type WorkersScriptMetadataObservabilityLogsModel struct {
 }
 
 type WorkersScriptMetadataObservabilityTracesModel struct {
-	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
-	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
-	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	Destinations      *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	Enabled           types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
+	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist           types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
@@ -310,10 +311,11 @@ type WorkersScriptObservabilityLogsModel struct {
 }
 
 type WorkersScriptObservabilityTracesModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
 }
 
 type WorkersScriptPlacementModel struct {

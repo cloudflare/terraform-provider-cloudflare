@@ -82,10 +82,11 @@ type WorkersScriptsObservabilityLogsDataSourceModel struct {
 }
 
 type WorkersScriptsObservabilityTracesDataSourceModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
 }
 
 type WorkersScriptsPlacementDataSourceModel struct {

@@ -55,6 +55,7 @@ type SpectrumApplicationsResultDataSourceModel struct {
 	OriginPort       customfield.NormalizedDynamicValue                                     `tfsdk:"origin_port" json:"origin_port,computed"`
 	ProxyProtocol    types.String                                                           `tfsdk:"proxy_protocol" json:"proxy_protocol,computed"`
 	TLS              types.String                                                           `tfsdk:"tls" json:"tls,computed"`
+	VirtualNetworkID types.String                                                           `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
 }
 
 type SpectrumApplicationsDNSDataSourceModel struct {

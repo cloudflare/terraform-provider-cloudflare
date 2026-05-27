@@ -326,6 +326,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -612,6 +621,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -891,6 +909,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 									ElementType: types.StringType,
+								},
+							},
+						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
 								},
 							},
 						},

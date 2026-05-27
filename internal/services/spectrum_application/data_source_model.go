@@ -29,6 +29,7 @@ type SpectrumApplicationDataSourceModel struct {
 	ProxyProtocol    types.String                                                          `tfsdk:"proxy_protocol" json:"proxy_protocol,computed"`
 	TLS              types.String                                                          `tfsdk:"tls" json:"tls,computed"`
 	TrafficType      types.String                                                          `tfsdk:"traffic_type" json:"traffic_type,computed"`
+	VirtualNetworkID types.String                                                          `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
 	OriginDirect     customfield.List[types.String]                                        `tfsdk:"origin_direct" json:"origin_direct,computed"`
 	DNS              customfield.NestedObject[SpectrumApplicationDNSDataSourceModel]       `tfsdk:"dns" json:"dns,computed"`
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsDataSourceModel]   `tfsdk:"edge_ips" json:"edge_ips,computed"`

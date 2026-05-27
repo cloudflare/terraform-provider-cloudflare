@@ -97,4 +97,5 @@ type AIGatewayDynamicRoutingVersionDataSourceModel struct {
 	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Data      types.String `tfsdk:"data" json:"data,computed"`
 	VersionID types.String `tfsdk:"version_id" json:"version_id,computed"`
+	IsValid   types.Bool   `tfsdk:"is_valid" json:"is_valid,computed"`
 }
