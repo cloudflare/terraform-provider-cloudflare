@@ -40,14 +40,23 @@ func UpgradeFromLegacyV0(ctx context.Context, req resource.UpgradeStateRequest, 
 
 // UpgradeFromV1 handles state upgrade from v5 (schema version 1) to v5 (schema version 500).
 //
-// This is a no-op upgrader that exists solely to support the schema version rollout mechanism:
-// - When migration mode is set (testing): schema version = 500
+// This is a no-op upgrader that exists solely to support the schema version rollout mechanism.
+// The v1 and v500 schemas are identical, so no transformation is needed — just a version bump.
 //
-// This upgrader ensures users with schema version 1 can seamlessly upgrade to version 500
-// when the version is increased during testing, without any actual state transformation.
+// IMPORTANT: This upgrader is registered with PriorSchema=nil in migrations.go, so
+// req.State is NOT populated by the framework. We must use req.RawState directly.
 func UpgradeFromV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 	tflog.Debug(ctx, "No-op state upgrade from v1 to v500 (schema versions are compatible)")
 
-	// No-op: v1 and v500 have identical schemas — copy raw state directly.
-	resp.State.Raw = req.State.Raw
+	// req.State is nil because PriorSchema is nil — use RawState instead.
+	targetType := resp.State.Schema.Type().TerraformType(ctx)
+	rawValue, err := req.RawState.Unmarshal(targetType)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to unmarshal state during v1→v500 upgrade for authenticated_origin_pulls_settings",
+			"The raw state could not be read with the current schema. This may indicate state corruption. Error: "+err.Error(),
+		)
+		return
+	}
+	resp.State.Raw = rawValue
 }
