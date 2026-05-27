@@ -41,6 +41,6 @@ type ZeroTrustDEXTestDataModel struct {
 
 type ZeroTrustDEXTestTargetPoliciesModel struct {
 	ID      types.String `tfsdk:"id" json:"id,required"`
-	Default types.Bool   `tfsdk:"default" json:"default,computed"`
-	Name    types.String `tfsdk:"name" json:"name,computed"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed_optional"`
+	Name    types.String `tfsdk:"name" json:"name,computed_optional"`
 }

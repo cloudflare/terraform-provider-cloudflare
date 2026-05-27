@@ -69,7 +69,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"hold_after": schema.StringAttribute{
 				Computed: true,
 			},
-			"include_subdomains": schema.StringAttribute{
+			"include_subdomains": schema.BoolAttribute{
 				Computed: true,
 			},
 		},

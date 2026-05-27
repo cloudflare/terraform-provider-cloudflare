@@ -98,11 +98,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"default": schema.BoolAttribute{
 							Description:   "Whether the DEX rule is the account default",
 							Computed:      true,
+							Optional:      true,
 							PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 						},
 						"name": schema.StringAttribute{
 							Description:   "The name of the DEX rule",
 							Computed:      true,
+							Optional:      true,
 							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 						},
 					},

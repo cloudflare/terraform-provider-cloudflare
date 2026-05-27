@@ -76,7 +76,7 @@ Required:
 
 - `id` (String) The id of the DEX rule
 
-Read-Only:
+Optional:
 
 - `default` (Boolean) Whether the DEX rule is the account default
 - `name` (String) The name of the DEX rule
