@@ -74,7 +74,7 @@ func (r *DLSPrefixBindingResource) Create(ctx context.Context, req resource.Crea
 	_, err = r.client.DLS.RegionalServices.PrefixBindings.New(
 		ctx,
 		dls.RegionalServicePrefixBindingNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueInt64()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -123,7 +123,7 @@ func (r *DLSPrefixBindingResource) Update(ctx context.Context, req resource.Upda
 		ctx,
 		data.ID.ValueString(),
 		dls.RegionalServicePrefixBindingEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueInt64()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -159,7 +159,7 @@ func (r *DLSPrefixBindingResource) Read(ctx context.Context, req resource.ReadRe
 		ctx,
 		data.ID.ValueString(),
 		dls.RegionalServicePrefixBindingGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueInt64()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -197,7 +197,7 @@ func (r *DLSPrefixBindingResource) Delete(ctx context.Context, req resource.Dele
 		ctx,
 		data.ID.ValueString(),
 		dls.RegionalServicePrefixBindingDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueInt64()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -212,7 +212,7 @@ func (r *DLSPrefixBindingResource) Delete(ctx context.Context, req resource.Dele
 func (r *DLSPrefixBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data = new(DLSPrefixBindingModel)
 
-	path_account_id := int64(0)
+	path_account_id := ""
 	path_binding_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
@@ -225,7 +225,7 @@ func (r *DLSPrefixBindingResource) ImportState(ctx context.Context, req resource
 		return
 	}
 
-	data.AccountID = types.Int64Value(path_account_id)
+	data.AccountID = types.StringValue(path_account_id)
 	data.ID = types.StringValue(path_binding_id)
 
 	res := new(http.Response)

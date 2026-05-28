@@ -18,7 +18,7 @@ type DLSPrefixBindingResultDataSourceEnvelope struct {
 type DLSPrefixBindingDataSourceModel struct {
 	ID        types.String `tfsdk:"id" path:"binding_id,computed"`
 	BindingID types.String `tfsdk:"binding_id" path:"binding_id,required"`
-	AccountID types.Int64  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	CIDR      types.String `tfsdk:"cidr" json:"cidr,computed"`
 	PrefixID  types.String `tfsdk:"prefix_id" json:"prefix_id,computed"`
 	RegionKey types.String `tfsdk:"region_key" json:"region_key,computed"`
@@ -26,7 +26,7 @@ type DLSPrefixBindingDataSourceModel struct {
 
 func (m *DLSPrefixBindingDataSourceModel) toReadParams(_ context.Context) (params dls.RegionalServicePrefixBindingGetParams, diags diag.Diagnostics) {
 	params = dls.RegionalServicePrefixBindingGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueInt64()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

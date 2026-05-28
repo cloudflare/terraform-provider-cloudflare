@@ -17,14 +17,14 @@ type DLSPrefixBindingsResultListDataSourceEnvelope struct {
 }
 
 type DLSPrefixBindingsDataSourceModel struct {
-	AccountID types.Int64                                                          `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[DLSPrefixBindingsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *DLSPrefixBindingsDataSourceModel) toListParams(_ context.Context) (params dls.RegionalServicePrefixBindingListParams, diags diag.Diagnostics) {
 	params = dls.RegionalServicePrefixBindingListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueInt64()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

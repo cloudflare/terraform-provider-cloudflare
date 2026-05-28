@@ -173,11 +173,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												"name": schema.StringAttribute{
 													Computed: true,
 												},
-												"description": schema.StringAttribute{
-													Description:        "Deprecated: use `portal_description` or `server_description` instead. Populated for backward compatibility — portal-level wins when present, otherwise falls back to server-level. Will be removed after the deprecation window.",
-													Computed:           true,
-													DeprecationMessage: "This attribute is deprecated.",
-												},
 												"enabled": schema.BoolAttribute{
 													Computed: true,
 												},
@@ -203,11 +198,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Attributes: map[string]schema.Attribute{
 												"name": schema.StringAttribute{
 													Computed: true,
-												},
-												"description": schema.StringAttribute{
-													Description:        "Deprecated: use `portal_description` or `server_description` instead. Populated for backward compatibility — portal-level wins when present, otherwise falls back to server-level. Will be removed after the deprecation window.",
-													Computed:           true,
-													DeprecationMessage: "This attribute is deprecated.",
 												},
 												"enabled": schema.BoolAttribute{
 													Computed: true,
