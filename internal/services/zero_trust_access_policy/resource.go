@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
@@ -17,6 +18,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -231,14 +233,26 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Access.Policies.Delete(
-		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessPolicyDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
+	res := new(http.Response)
+	err := retry.RetryContext(ctx, 2*time.Minute, func() *retry.RetryError {
+		_, retryErr := r.client.ZeroTrust.Access.Policies.Delete(
+			ctx,
+			data.ID.ValueString(),
+			zero_trust.AccessPolicyDeleteParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if retryErr != nil {
+			// Check if it's a 409 where we're just waiting for the policy to detach
+			if res != nil && res.StatusCode == http.StatusConflict {
+				return retry.RetryableError(retryErr)
+			}
+			return retry.NonRetryableError(retryErr)
+		}
+		return nil
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
