@@ -85,7 +85,6 @@ type ZeroTrustAccessAIControlsMcpPortalsServersErrorDetailsDataSourceModel struc
 
 type ZeroTrustAccessAIControlsMcpPortalsServersUpdatedPromptsDataSourceModel struct {
 	Name              types.String `tfsdk:"name" json:"name,computed"`
-	Description       types.String `tfsdk:"description" json:"description,computed"`
 	Enabled           types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	PortalAlias       types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
 	PortalDescription types.String `tfsdk:"portal_description" json:"portal_description,computed"`
@@ -95,7 +94,6 @@ type ZeroTrustAccessAIControlsMcpPortalsServersUpdatedPromptsDataSourceModel str
 
 type ZeroTrustAccessAIControlsMcpPortalsServersUpdatedToolsDataSourceModel struct {
 	Name              types.String `tfsdk:"name" json:"name,computed"`
-	Description       types.String `tfsdk:"description" json:"description,computed"`
 	Enabled           types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	PortalAlias       types.String `tfsdk:"portal_alias" json:"portal_alias,computed"`
 	PortalDescription types.String `tfsdk:"portal_description" json:"portal_description,computed"`

@@ -22,8 +22,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Unique identifier for the prefix binding.",
 				Required:    true,
 			},
-			"account_id": schema.Int64Attribute{
-				Required: true,
+			"account_id": schema.StringAttribute{
+				Description: "Identifier of a Cloudflare account.",
+				Required:    true,
 			},
 			"cidr": schema.StringAttribute{
 				Description: "The CIDR that is bound.",

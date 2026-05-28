@@ -13,7 +13,7 @@ type DLSPrefixBindingResultEnvelope struct {
 
 type DLSPrefixBindingModel struct {
 	ID        types.String `tfsdk:"id" json:"id,computed"`
-	AccountID types.Int64  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	CIDR      types.String `tfsdk:"cidr" json:"cidr,required"`
 	PrefixID  types.String `tfsdk:"prefix_id" json:"prefix_id,required"`
 	RegionKey types.String `tfsdk:"region_key" json:"region_key,required"`
