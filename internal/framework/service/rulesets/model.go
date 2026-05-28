@@ -28,6 +28,7 @@ type RulesModel struct {
 
 type ActionParametersModel struct {
 	AdditionalCacheablePorts types.Set                                    `tfsdk:"additional_cacheable_ports"`
+	AssetName                types.String                                 `tfsdk:"asset_name"`
 	AutomaticHTTPSRewrites   types.Bool                                   `tfsdk:"automatic_https_rewrites"`
 	AutoMinify               []*ActionParameterAutoMinifyModel            `tfsdk:"autominify"`
 	BIC                      types.Bool                                   `tfsdk:"bic"`
