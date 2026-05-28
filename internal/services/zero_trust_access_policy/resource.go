@@ -245,7 +245,7 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
 		if retryErr != nil {
-			// Check if it's a 409 where we're just waiting for the policy to detach
+			// Check if 409 and we're just waiting for the policy to detach
 			if res != nil && res.StatusCode == http.StatusConflict {
 				return retry.RetryableError(retryErr)
 			}
