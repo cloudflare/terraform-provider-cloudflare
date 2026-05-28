@@ -51,6 +51,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_csr"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_origin_trust_store"
@@ -400,6 +401,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		certificate_authorities_hostname_associations.NewResource,
 		client_certificate.NewResource,
 		custom_ssl.NewResource,
+		custom_csr.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
 		dns_firewall.NewResource,
@@ -657,6 +659,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		client_certificate.NewClientCertificatesDataSource,
 		custom_ssl.NewCustomSSLDataSource,
 		custom_ssl.NewCustomSSLsDataSource,
+		custom_csr.NewCustomCsrDataSource,
+		custom_csr.NewCustomCsrsDataSource,
 		custom_hostname.NewCustomHostnameDataSource,
 		custom_hostname.NewCustomHostnamesDataSource,
 		custom_hostname_fallback_origin.NewCustomHostnameFallbackOriginDataSource,
