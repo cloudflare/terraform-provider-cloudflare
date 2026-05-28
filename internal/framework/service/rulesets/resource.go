@@ -317,6 +317,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 		// action_parameters
 		if !reflect.ValueOf(ruleResponse.ActionParameters).IsNil() {
 			rule.ActionParameters = append(rule.ActionParameters, &ActionParametersModel{
+				AssetName:               flatteners.String(ruleResponse.ActionParameters.AssetName),
 				AutomaticHTTPSRewrites:  flatteners.Bool(ruleResponse.ActionParameters.AutomaticHTTPSRewrites),
 				BIC:                     flatteners.Bool(ruleResponse.ActionParameters.BrowserIntegrityCheck),
 				Cache:                   flatteners.Bool(ruleResponse.ActionParameters.Cache),
@@ -833,6 +834,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 
 		if !ap.ContentType.IsNull() {
 			rr.ActionParameters.ContentType = ap.ContentType.ValueString()
+		}
+
+		if !ap.AssetName.IsNull() {
+			rr.ActionParameters.AssetName = ap.AssetName.ValueString()
 		}
 
 		if !ap.HostHeader.IsNull() {

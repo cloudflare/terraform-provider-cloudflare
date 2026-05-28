@@ -150,6 +150,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Specifies uncommon ports to allow cacheable assets to be served from.",
 									},
+									"asset_name": schema.StringAttribute{
+										Optional:            true,
+										MarkdownDescription: "Name of a custom asset to serve as the error response.",
+									},
 									"automatic_https_rewrites": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Turn on or off Cloudflare Automatic HTTPS rewrites.",
