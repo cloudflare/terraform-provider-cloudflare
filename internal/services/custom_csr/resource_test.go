@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -68,19 +69,18 @@ func TestAccCloudflareCustomCsr_ZoneWorkflow(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	if domain == "" {
-		domain = acctest.TestAccCloudflareZoneName
-	}
 	resourceName := "cloudflare_custom_csr." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCustomCsrDestroy,
 		Steps: []resource.TestStep{
+			// Step 1: Create zone-scoped CSR with default key_type (rsa2048)
 			{
 				Config: testAccCustomCsrZoneConfig(rnd, zoneID, domain),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -95,7 +95,22 @@ func TestAccCloudflareCustomCsr_ZoneWorkflow(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("csr"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_at"), knownvalue.NotNull()),
 				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
+			// Step 2: Re-apply same config — verify no drift
+			{
+				Config: testAccCustomCsrZoneConfig(rnd, zoneID, domain),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 3: Import by zone
 			{
 				ResourceName: resourceName,
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
@@ -117,15 +132,13 @@ func TestAccCloudflareCustomCsr_ZoneP256(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	if domain == "" {
-		domain = acctest.TestAccCloudflareZoneName
-	}
 	resourceName := "cloudflare_custom_csr." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCustomCsrDestroy,
@@ -137,6 +150,11 @@ func TestAccCloudflareCustomCsr_ZoneP256(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("key_type"), knownvalue.StringExact("p256v1")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("csr"), knownvalue.NotNull()),
 				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
@@ -146,19 +164,18 @@ func TestAccCloudflareCustomCsr_AccountWorkflow(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	if domain == "" {
-		domain = acctest.TestAccCloudflareZoneName
-	}
 	resourceName := "cloudflare_custom_csr." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCustomCsrDestroy,
 		Steps: []resource.TestStep{
+			// Step 1: Create account-scoped CSR with name and description
 			{
 				Config: testAccCustomCsrAccountConfig(rnd, accountID, domain),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -170,7 +187,22 @@ func TestAccCloudflareCustomCsr_AccountWorkflow(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("csr"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_at"), knownvalue.NotNull()),
 				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
+			// Step 2: Re-apply same config — verify no drift
+			{
+				Config: testAccCustomCsrAccountConfig(rnd, accountID, domain),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 3: Import by account
 			{
 				ResourceName: resourceName,
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
