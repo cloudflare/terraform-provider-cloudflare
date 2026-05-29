@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_shield_discovery_operation
+package regional_hostname
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type APIShieldDiscoveryOperationsDataSource struct {
+type RegionalHostnamesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*APIShieldDiscoveryOperationsDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*RegionalHostnamesDataSource)(nil)
 
-func NewAPIShieldDiscoveryOperationsDataSource() datasource.DataSource {
-	return &APIShieldDiscoveryOperationsDataSource{}
+func NewRegionalHostnamesDataSource() datasource.DataSource {
+	return &RegionalHostnamesDataSource{}
 }
 
-func (d *APIShieldDiscoveryOperationsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_shield_discovery_operations"
+func (d *RegionalHostnamesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_regional_hostnames"
 }
 
-func (d *APIShieldDiscoveryOperationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RegionalHostnamesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *APIShieldDiscoveryOperationsDataSource) Configure(ctx context.Context, 
 	d.client = client
 }
 
-func (d *APIShieldDiscoveryOperationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *APIShieldDiscoveryOperationsDataSourceModel
+func (d *RegionalHostnamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *RegionalHostnamesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *APIShieldDiscoveryOperationsDataSource) Read(ctx context.Context, req d
 		return
 	}
 
-	env := APIShieldDiscoveryOperationsResultListDataSourceEnvelope{}
+	env := RegionalHostnamesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
+	page, err := d.client.Addressing.RegionalHostnames.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *APIShieldDiscoveryOperationsDataSource) Read(ctx context.Context, req d
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[APIShieldDiscoveryOperationsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[RegionalHostnamesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 
