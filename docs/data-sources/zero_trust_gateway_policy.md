@@ -23,11 +23,8 @@ data "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" 
 
 ### Required
 
-- `rule_id` (String) Identify the API resource with a UUID.
-
-### Optional
-
 - `account_id` (String)
+- `rule_id` (String) Identify the API resource with a UUID.
 
 ### Read-Only
 

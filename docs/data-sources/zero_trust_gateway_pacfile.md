@@ -27,11 +27,8 @@ data "cloudflare_zero_trust_gateway_pacfile" "example_zero_trust_gateway_pacfile
 
 ### Required
 
-- `pacfile_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `pacfile_id` (String)
 
 ### Read-Only
 

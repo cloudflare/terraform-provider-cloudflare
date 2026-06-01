@@ -34,13 +34,13 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Required
 
+- `account_id` (String)
 - `enabled` (Boolean)
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String)
 - `profile_id` (String)
 - `type` (String) Available values: "custom", "predefined", "integration".
@@ -57,7 +57,7 @@ Cannot be set to false if secret is true
 - `secret` (Boolean)
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--pattern"></a>
@@ -95,9 +95,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 ## Import
 

@@ -30,9 +30,6 @@ data "cloudflare_schema_validation_operation_settings" "example_schema_validatio
 ### Required
 
 - `operation_id` (String) UUID.
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

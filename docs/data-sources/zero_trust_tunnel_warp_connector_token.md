@@ -28,11 +28,8 @@ data "cloudflare_zero_trust_tunnel_warp_connector_token" "example_zero_trust_tun
 
 ### Required
 
-- `tunnel_id` (String) UUID of the tunnel.
-
-### Optional
-
 - `account_id` (String) Cloudflare account ID
+- `tunnel_id` (String) UUID of the tunnel.
 
 ### Read-Only
 

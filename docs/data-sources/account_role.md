@@ -28,11 +28,8 @@ data "cloudflare_account_role" "example_account_role" {
 
 ### Required
 
-- `role_id` (String) Role identifier tag.
-
-### Optional
-
 - `account_id` (String) Account identifier tag.
+- `role_id` (String) Role identifier tag.
 
 ### Read-Only
 

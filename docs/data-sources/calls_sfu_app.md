@@ -27,11 +27,8 @@ data "cloudflare_calls_sfu_app" "example_calls_sfu_app" {
 
 ### Required
 
-- `app_id` (String) A Cloudflare-generated unique identifier for a item.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `app_id` (String) A Cloudflare-generated unique identifier for a item.
 
 ### Read-Only
 

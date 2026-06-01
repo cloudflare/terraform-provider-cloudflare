@@ -39,12 +39,12 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Required
 
+- `account_id` (String) A Resource identifier.
 - `queue_id` (String) A Resource identifier.
 - `type` (String) Available values: "worker", "http_pull".
 
 ### Optional
 
-- `account_id` (String) A Resource identifier.
 - `dead_letter_queue` (String)
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))

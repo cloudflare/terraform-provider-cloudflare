@@ -27,11 +27,8 @@ data "cloudflare_image" "example_image" {
 
 ### Required
 
-- `image_id` (String) Image unique identifier.
-
-### Optional
-
 - `account_id` (String) Account identifier tag.
+- `image_id` (String) Image unique identifier.
 
 ### Read-Only
 

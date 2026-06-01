@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_ai_controls_mcp_server Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  MCP Portals ReadMCP Portals Write
 ---
 
 # cloudflare_zero_trust_access_ai_controls_mcp_server (Resource)
 
+Accepted Permissions
 
+- `MCP Portals Read`
+- `MCP Portals Write`
 
 ## Example Usage
 
@@ -40,6 +44,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 
 ### Required
 
+- `account_id` (String)
 - `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
 - `hostname` (String)
 - `id` (String) server id
@@ -47,9 +52,9 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 
 ### Optional
 
-- `account_id` (String)
 - `auth_credentials` (String, Sensitive)
 - `description` (String)
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New servers default to true; existing servers default to false. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--updated_tools))
 
@@ -58,6 +63,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 - `created_at` (String)
 - `created_by` (String)
 - `error` (String)
+- `error_details` (Attributes) (see [below for nested schema](#nestedatt--error_details))
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
@@ -92,6 +98,18 @@ Optional:
 - `alias` (String)
 - `description` (String)
 - `enabled` (Boolean)
+
+
+<a id="nestedatt--error_details"></a>
+### Nested Schema for `error_details`
+
+Read-Only:
+
+- `cause` (String) Underlying error message
+- `is_upstream` (Boolean) True = MCP server returned an error. False = couldn't reach the server
+- `mcp_code` (Number) MCP protocol error code
+- `retryable` (Boolean) Whether the error is transient and worth retrying
+- `status_code` (Number) HTTP status code from the server
 
 ## Import
 

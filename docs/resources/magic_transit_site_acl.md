@@ -48,6 +48,7 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `lan_1` (Attributes) (see [below for nested schema](#nestedatt--lan_1))
 - `lan_2` (Attributes) (see [below for nested schema](#nestedatt--lan_2))
 - `name` (String) The name of the ACL.
@@ -55,7 +56,6 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
 
 ### Optional
 
-- `account_id` (String) Identifier
 - `description` (String) Description for the ACL.
 - `forward_locally` (Boolean) The desired forwarding action for this ACL policy. If set to "false", the policy will forward traffic to Cloudflare. If set to "true", the policy will forward traffic locally on the Magic Connector. If not included in request, will default to false.
 - `protocols` (List of String)

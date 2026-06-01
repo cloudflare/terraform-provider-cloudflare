@@ -305,11 +305,11 @@ resource "cloudflare_zone_setting" "browser_cache" {
 
 - `setting_id` (String) Setting name
 - `value` (Dynamic) Current value of the zone setting.
+- `zone_id` (String) Identifier
 
 ### Optional
 
 - `enabled` (Boolean) ssl-recommender enrollment setting.
-- `zone_id` (String) Identifier
 
 ### Read-Only
 

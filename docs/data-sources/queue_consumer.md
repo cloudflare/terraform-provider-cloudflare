@@ -30,11 +30,8 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 
 ### Required
 
-- `queue_id` (String) A Resource identifier.
-
-### Optional
-
 - `account_id` (String) A Resource identifier.
+- `queue_id` (String) A Resource identifier.
 
 ### Read-Only
 

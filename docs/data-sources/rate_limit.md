@@ -28,9 +28,6 @@ data "cloudflare_rate_limit" "example_rate_limit" {
 ### Required
 
 - `rate_limit_id` (String) Defines the unique identifier of the rate limit.
-
-### Optional
-
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

@@ -101,9 +101,6 @@ data "cloudflare_zone_setting" "example_zone_setting" {
 ### Required
 
 - `setting_id` (String) Setting name
-
-### Optional
-
 - `zone_id` (String) Identifier
 
 ### Read-Only

@@ -28,11 +28,8 @@ data "cloudflare_ai_gateway_dynamic_routing" "example_ai_gateway_dynamic_routing
 
 ### Required
 
-- `gateway_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `gateway_id` (String)
 
 ### Read-Only
 
@@ -142,6 +139,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 

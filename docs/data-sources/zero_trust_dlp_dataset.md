@@ -27,11 +27,8 @@ data "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
 
 ### Required
 
-- `dataset_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `dataset_id` (String)
 
 ### Read-Only
 

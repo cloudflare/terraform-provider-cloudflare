@@ -28,12 +28,9 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 
 ### Required
 
+- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 - `queue_id` (String) Queue ID.
-
-### Optional
-
-- `account_id` (String) Account ID.
 
 ### Read-Only
 

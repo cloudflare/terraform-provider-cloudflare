@@ -23,11 +23,8 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 
 ### Required
 
-- `policy_id` (String)
-
-### Optional
-
 - `account_id` (String)
+- `policy_id` (String)
 
 ### Read-Only
 
@@ -39,6 +36,7 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 - `default` (Boolean) Whether the policy is the default policy for an account.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
+- `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
@@ -58,6 +56,16 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
+- `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--virtual_networks))
+
+<a id="nestedatt--dns_search_suffixes"></a>
+### Nested Schema for `dns_search_suffixes`
+
+Read-Only:
+
+- `description` (String) A description of the DNS search suffix.
+- `suffix` (String) The DNS search suffix to append when resolving short hostnames.
+
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
@@ -105,5 +113,14 @@ Read-Only:
 
 - `id` (String) The id of the DEX test targeting this policy.
 - `name` (String) The name of the DEX test targeting this policy.
+
+
+<a id="nestedatt--virtual_networks"></a>
+### Nested Schema for `virtual_networks`
+
+Read-Only:
+
+- `allowed` (List of String) List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.
+- `default` (String) The default virtual network ID. Must be included in the `allowed` list.
 
 

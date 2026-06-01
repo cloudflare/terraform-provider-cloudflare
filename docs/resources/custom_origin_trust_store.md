@@ -32,10 +32,7 @@ resource "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_sto
 
 ### Required
 
-- `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
-
-### Optional
-
+- `certificate` (String) The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.
 - `zone_id` (String) Identifier.
 
 ### Read-Only

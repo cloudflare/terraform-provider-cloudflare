@@ -93,6 +93,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 
 - `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
 - `private_key` (String, Sensitive) The zone's private key.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -106,7 +107,6 @@ Available values: "staging", "production".
 Note: The API accepts this field as either "policy" or "policy_restrictions" in requests. Responses return this field as "policy_restrictions".
 - `type` (String) The type 'legacy_custom' enables support for legacy clients which do not include SNI in the TLS handshake.
 Available values: "legacy_custom", "sni_custom".
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 
@@ -152,15 +152,15 @@ Read-Only:
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 Available values: "active", "deleted".
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--keyless_server--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel. (see [below for nested schema](#nestedatt--keyless_server--tunnel))
 
 <a id="nestedatt--keyless_server--tunnel"></a>
 ### Nested Schema for `keyless_server.tunnel`
 
 Read-Only:
 
-- `private_ip` (String) Private IP of the Key Server Host
-- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
+- `private_ip` (String) Private IP of the Key Server Host.
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID.
 
 ## Import
 

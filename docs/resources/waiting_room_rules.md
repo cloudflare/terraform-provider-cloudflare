@@ -35,9 +35,6 @@ resource "cloudflare_waiting_room_rules" "example_waiting_room_rules" {
 
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 - `waiting_room_id` (String)
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only
