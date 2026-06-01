@@ -147,6 +147,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
@@ -461,6 +462,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_cache_reserve.NewResource,
 		tiered_cache.NewResource,
 		zone_cache_variants.NewResource,
+		regional_hostname.NewResource,
 		regional_tiered_cache.NewResource,
 		origin_cloud_region.NewResource,
 		certificate_pack.NewResource,
@@ -721,6 +723,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone_cache_reserve.NewZoneCacheReserveDataSource,
 		tiered_cache.NewTieredCacheDataSource,
 		zone_cache_variants.NewZoneCacheVariantsDataSource,
+		regional_hostname.NewRegionalHostnameDataSource,
+		regional_hostname.NewRegionalHostnamesDataSource,
 		regional_tiered_cache.NewRegionalTieredCacheDataSource,
 		origin_cloud_region.NewOriginCloudRegionDataSource,
 		origin_cloud_region.NewOriginCloudRegionsDataSource,
