@@ -5,8 +5,8 @@ package argo_tiered_caching
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/argo"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/argo"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,17 +18,15 @@ type ArgoTieredCachingResultDataSourceEnvelope struct {
 
 type ArgoTieredCachingDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *ArgoTieredCachingDataSourceModel) toReadParams(_ context.Context) (params argo.TieredCachingGetParams, diags diag.Diagnostics) {
-	params = argo.TieredCachingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = argo.TieredCachingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

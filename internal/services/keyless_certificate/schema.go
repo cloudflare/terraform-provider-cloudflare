@@ -67,11 +67,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Keyless certificate identifier tag.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate": schema.StringAttribute{
@@ -107,15 +107,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"tunnel": schema.SingleNestedAttribute{
-				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"private_ip": schema.StringAttribute{
-						Description: "Private IP of the Key Server Host",
+						Description: "Private IP of the Key Server Host.",
 						Required:    true,
 					},
 					"vnet_id": schema.StringAttribute{
-						Description: "Cloudflare Tunnel Virtual Network ID",
+						Description: "Cloudflare Tunnel Virtual Network ID.",
 						Required:    true,
 					},
 				},

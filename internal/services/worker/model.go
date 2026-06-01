@@ -15,7 +15,7 @@ type WorkerResultEnvelope struct {
 
 type WorkerModel struct {
 	ID            types.String                                          `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                          `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                          `tfsdk:"account_id" path:"account_id,required"`
 	Name          types.String                                          `tfsdk:"name" json:"name,required"`
 	Logpush       types.Bool                                            `tfsdk:"logpush" json:"logpush,computed_optional"`
 	Tags          customfield.Set[types.String]                         `tfsdk:"tags" json:"tags,computed_optional"`
@@ -52,10 +52,11 @@ type WorkerObservabilityLogsModel struct {
 }
 
 type WorkerObservabilityTracesModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed_optional"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
 }
 
 type WorkerSubdomainModel struct {

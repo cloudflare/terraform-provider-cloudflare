@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account ID.",
-				Optional:    true,
+				Required:    true,
 			},
 			"creation_date": schema.StringAttribute{
 				Description: "Creation timestamp.",

@@ -31,14 +31,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
-			"gateway_id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Optional:      true,
+			"gateway_id": schema.StringAttribute{
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"elements": schema.ListNestedAttribute{
@@ -356,6 +356,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version_id": schema.StringAttribute{
 								Computed: true,
 							},
+							"is_valid": schema.BoolAttribute{
+								Computed: true,
+							},
 						},
 					},
 				},
@@ -378,6 +381,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"is_valid": schema.BoolAttribute{
 						Computed: true,
 					},
 				},

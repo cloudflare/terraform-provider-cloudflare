@@ -5,8 +5,8 @@ package token_validation_config
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/token_validation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/token_validation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type TokenValidationConfigResultDataSourceEnvelope struct {
 type TokenValidationConfigDataSourceModel struct {
 	ID           types.String                                                              `tfsdk:"id" path:"config_id,computed"`
 	ConfigID     types.String                                                              `tfsdk:"config_id" path:"config_id,required"`
-	ZoneID       types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID       types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedAt    timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description  types.String                                                              `tfsdk:"description" json:"description,computed"`
 	LastUpdated  timetypes.RFC3339                                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
@@ -31,10 +31,8 @@ type TokenValidationConfigDataSourceModel struct {
 }
 
 func (m *TokenValidationConfigDataSourceModel) toReadParams(_ context.Context) (params token_validation.ConfigurationGetParams, diags diag.Diagnostics) {
-	params = token_validation.ConfigurationGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = token_validation.ConfigurationGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

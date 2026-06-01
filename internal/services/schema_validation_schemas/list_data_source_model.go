@@ -5,8 +5,8 @@ package schema_validation_schemas
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/schema_validation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/schema_validation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type SchemaValidationSchemasListResultListDataSourceEnvelope struct {
 }
 
 type SchemaValidationSchemasListDataSourceModel struct {
-	ZoneID            types.String                                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID            types.String                                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	ValidationEnabled types.Bool                                                                     `tfsdk:"validation_enabled" query:"validation_enabled,optional"`
 	OmitSource        types.Bool                                                                     `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	MaxItems          types.Int64                                                                    `tfsdk:"max_items"`
@@ -26,11 +26,10 @@ type SchemaValidationSchemasListDataSourceModel struct {
 }
 
 func (m *SchemaValidationSchemasListDataSourceModel) toListParams(_ context.Context) (params schema_validation.SchemaListParams, diags diag.Diagnostics) {
-	params = schema_validation.SchemaListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = schema_validation.SchemaListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.OmitSource.IsNull() {
 		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}

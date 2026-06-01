@@ -26,15 +26,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				Computed: true,
+			"id": schema.StringAttribute{
+				Description: "Impersonation registry entry identifier",
+				Computed:    true,
 			},
-			"display_name_id": schema.Int64Attribute{
-				Optional: true,
+			"impersonation_registry_id": schema.StringAttribute{
+				Description: "Impersonation registry entry identifier",
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
-				Optional:    true,
+				Description: "Identifier.",
+				Required:    true,
 			},
 			"comments": schema.StringAttribute{
 				Computed: true,
@@ -60,6 +62,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"last_modified": schema.StringAttribute{
+				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         timetypes.RFC3339Type{},
+			},
+			"modified_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
@@ -67,7 +75,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"provenance": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"A1S_INTERNAL",
+						"SNOOPY-CASB_OFFICE_365",
+						"SNOOPY-OFFICE_365",
+						"SNOOPY-GOOGLE_DIRECTORY",
+					),
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
@@ -80,7 +97,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "The field to sort by.\nAvailable values: \"name\", \"email\", \"created_at\".",
+						Description: "Field to sort by.\nAvailable values: \"name\", \"email\", \"created_at\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -103,7 +120,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"search": schema.StringAttribute{
-						Description: "Allows searching in multiple properties of a record simultaneously.\nThis parameter is intended for human users, not automation. Its exact\nbehavior is intentionally left unspecified and is subject to change\nin the future.",
+						Description: "Search term for filtering records. Behavior may change.",
 						Optional:    true,
 					},
 				},
@@ -118,6 +135,6 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Schema(ctx context.Contex
 
 func (d *EmailSecurityImpersonationRegistryDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("display_name_id"), path.MatchRoot("filter")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("impersonation_registry_id"), path.MatchRoot("filter")),
 	}
 }

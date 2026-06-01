@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -97,7 +97,7 @@ func (d *EmailSecurityBlockSenderDataSource) Read(ctx context.Context, req datas
 	env := EmailSecurityBlockSenderResultDataSourceEnvelope{*data}
 	_, err := d.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
-		data.PatternID.ValueInt64(),
+		data.PatternID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

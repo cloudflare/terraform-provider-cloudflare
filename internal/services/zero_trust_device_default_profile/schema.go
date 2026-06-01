@@ -6,9 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -27,7 +27,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceDefaultProfileRes
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",
@@ -36,11 +35,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
@@ -118,6 +117,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"virtual_networks": schema.SingleNestedAttribute{
+				Description: "Virtual network access settings for the device.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.ListAttribute{
+						Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"default": schema.StringAttribute{
+						Description: "The default virtual network ID. Must be included in the `allowed` list.",
+						Required:    true,
+					},
+				},
+			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
 				Computed:    true,
@@ -189,6 +203,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
+			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
 			},
 			"default": schema.BoolAttribute{
 				Description:   "Whether the policy will be applied to matching devices.",

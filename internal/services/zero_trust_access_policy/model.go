@@ -14,7 +14,7 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                   `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	Decision                     types.String                                                   `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                   `tfsdk:"name" json:"name,required"`
 	ApprovalRequired             types.Bool                                                     `tfsdk:"approval_required" json:"approval_required,optional"`
@@ -60,31 +60,32 @@ type ZeroTrustAccessPolicyMfaConfigModel struct {
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {
-	Group                *ZeroTrustAccessPolicyExcludeGroupModel                `tfsdk:"group" json:"group,optional"`
-	AnyValidServiceToken *ZeroTrustAccessPolicyExcludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
-	AuthContext          *ZeroTrustAccessPolicyExcludeAuthContextModel          `tfsdk:"auth_context" json:"auth_context,optional"`
-	AuthMethod           *ZeroTrustAccessPolicyExcludeAuthMethodModel           `tfsdk:"auth_method" json:"auth_method,optional"`
-	AzureAD              *ZeroTrustAccessPolicyExcludeAzureADModel              `tfsdk:"azure_ad" json:"azureAD,optional"`
-	Certificate          *ZeroTrustAccessPolicyExcludeCertificateModel          `tfsdk:"certificate" json:"certificate,optional"`
-	CommonName           *ZeroTrustAccessPolicyExcludeCommonNameModel           `tfsdk:"common_name" json:"common_name,optional"`
-	Geo                  *ZeroTrustAccessPolicyExcludeGeoModel                  `tfsdk:"geo" json:"geo,optional"`
-	DevicePosture        *ZeroTrustAccessPolicyExcludeDevicePostureModel        `tfsdk:"device_posture" json:"device_posture,optional"`
-	EmailDomain          *ZeroTrustAccessPolicyExcludeEmailDomainModel          `tfsdk:"email_domain" json:"email_domain,optional"`
-	EmailList            *ZeroTrustAccessPolicyExcludeEmailListModel            `tfsdk:"email_list" json:"email_list,optional"`
-	Email                *ZeroTrustAccessPolicyExcludeEmailModel                `tfsdk:"email" json:"email,optional"`
-	Everyone             *ZeroTrustAccessPolicyExcludeEveryoneModel             `tfsdk:"everyone" json:"everyone,optional"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyExcludeExternalEvaluationModel   `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
-	GitHubOrganization   *ZeroTrustAccessPolicyExcludeGitHubOrganizationModel   `tfsdk:"github_organization" json:"github-organization,optional"`
-	GSuite               *ZeroTrustAccessPolicyExcludeGSuiteModel               `tfsdk:"gsuite" json:"gsuite,optional"`
-	LoginMethod          *ZeroTrustAccessPolicyExcludeLoginMethodModel          `tfsdk:"login_method" json:"login_method,optional"`
-	IPList               *ZeroTrustAccessPolicyExcludeIPListModel               `tfsdk:"ip_list" json:"ip_list,optional"`
-	IP                   *ZeroTrustAccessPolicyExcludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
-	Okta                 *ZeroTrustAccessPolicyExcludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
-	SAML                 *ZeroTrustAccessPolicyExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
-	OIDC                 *ZeroTrustAccessPolicyExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
-	ServiceToken         *ZeroTrustAccessPolicyExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
-	LinkedAppToken       *ZeroTrustAccessPolicyExcludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
-	UserRiskScore        *ZeroTrustAccessPolicyExcludeUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	Group                   *ZeroTrustAccessPolicyExcludeGroupModel                   `tfsdk:"group" json:"group,optional"`
+	AnyValidServiceToken    *ZeroTrustAccessPolicyExcludeAnyValidServiceTokenModel    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
+	AuthContext             *ZeroTrustAccessPolicyExcludeAuthContextModel             `tfsdk:"auth_context" json:"auth_context,optional"`
+	AuthMethod              *ZeroTrustAccessPolicyExcludeAuthMethodModel              `tfsdk:"auth_method" json:"auth_method,optional"`
+	AzureAD                 *ZeroTrustAccessPolicyExcludeAzureADModel                 `tfsdk:"azure_ad" json:"azureAD,optional"`
+	Certificate             *ZeroTrustAccessPolicyExcludeCertificateModel             `tfsdk:"certificate" json:"certificate,optional"`
+	CommonName              *ZeroTrustAccessPolicyExcludeCommonNameModel              `tfsdk:"common_name" json:"common_name,optional"`
+	Geo                     *ZeroTrustAccessPolicyExcludeGeoModel                     `tfsdk:"geo" json:"geo,optional"`
+	DevicePosture           *ZeroTrustAccessPolicyExcludeDevicePostureModel           `tfsdk:"device_posture" json:"device_posture,optional"`
+	EmailDomain             *ZeroTrustAccessPolicyExcludeEmailDomainModel             `tfsdk:"email_domain" json:"email_domain,optional"`
+	EmailList               *ZeroTrustAccessPolicyExcludeEmailListModel               `tfsdk:"email_list" json:"email_list,optional"`
+	Email                   *ZeroTrustAccessPolicyExcludeEmailModel                   `tfsdk:"email" json:"email,optional"`
+	Everyone                *ZeroTrustAccessPolicyExcludeEveryoneModel                `tfsdk:"everyone" json:"everyone,optional"`
+	ExternalEvaluation      *ZeroTrustAccessPolicyExcludeExternalEvaluationModel      `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
+	GitHubOrganization      *ZeroTrustAccessPolicyExcludeGitHubOrganizationModel      `tfsdk:"github_organization" json:"github-organization,optional"`
+	GSuite                  *ZeroTrustAccessPolicyExcludeGSuiteModel                  `tfsdk:"gsuite" json:"gsuite,optional"`
+	LoginMethod             *ZeroTrustAccessPolicyExcludeLoginMethodModel             `tfsdk:"login_method" json:"login_method,optional"`
+	IPList                  *ZeroTrustAccessPolicyExcludeIPListModel                  `tfsdk:"ip_list" json:"ip_list,optional"`
+	IP                      *ZeroTrustAccessPolicyExcludeIPModel                      `tfsdk:"ip" json:"ip,optional"`
+	Okta                    *ZeroTrustAccessPolicyExcludeOktaModel                    `tfsdk:"okta" json:"okta,optional"`
+	SAML                    *ZeroTrustAccessPolicyExcludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
+	OIDC                    *ZeroTrustAccessPolicyExcludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
+	ServiceToken            *ZeroTrustAccessPolicyExcludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken          *ZeroTrustAccessPolicyExcludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore           *ZeroTrustAccessPolicyExcludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	CloudflareAccountMember *ZeroTrustAccessPolicyExcludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGroupModel struct {
@@ -196,32 +197,37 @@ type ZeroTrustAccessPolicyExcludeUserRiskScoreModel struct {
 	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
 }
 
+type ZeroTrustAccessPolicyExcludeCloudflareAccountMemberModel struct {
+	AccountID types.String `tfsdk:"account_id" json:"account_id,optional"`
+}
+
 type ZeroTrustAccessPolicyIncludeModel struct {
-	Group                *ZeroTrustAccessPolicyIncludeGroupModel                `tfsdk:"group" json:"group,optional"`
-	AnyValidServiceToken *ZeroTrustAccessPolicyIncludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
-	AuthContext          *ZeroTrustAccessPolicyIncludeAuthContextModel          `tfsdk:"auth_context" json:"auth_context,optional"`
-	AuthMethod           *ZeroTrustAccessPolicyIncludeAuthMethodModel           `tfsdk:"auth_method" json:"auth_method,optional"`
-	AzureAD              *ZeroTrustAccessPolicyIncludeAzureADModel              `tfsdk:"azure_ad" json:"azureAD,optional"`
-	Certificate          *ZeroTrustAccessPolicyIncludeCertificateModel          `tfsdk:"certificate" json:"certificate,optional"`
-	CommonName           *ZeroTrustAccessPolicyIncludeCommonNameModel           `tfsdk:"common_name" json:"common_name,optional"`
-	Geo                  *ZeroTrustAccessPolicyIncludeGeoModel                  `tfsdk:"geo" json:"geo,optional"`
-	DevicePosture        *ZeroTrustAccessPolicyIncludeDevicePostureModel        `tfsdk:"device_posture" json:"device_posture,optional"`
-	EmailDomain          *ZeroTrustAccessPolicyIncludeEmailDomainModel          `tfsdk:"email_domain" json:"email_domain,optional"`
-	EmailList            *ZeroTrustAccessPolicyIncludeEmailListModel            `tfsdk:"email_list" json:"email_list,optional"`
-	Email                *ZeroTrustAccessPolicyIncludeEmailModel                `tfsdk:"email" json:"email,optional"`
-	Everyone             *ZeroTrustAccessPolicyIncludeEveryoneModel             `tfsdk:"everyone" json:"everyone,optional"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyIncludeExternalEvaluationModel   `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
-	GitHubOrganization   *ZeroTrustAccessPolicyIncludeGitHubOrganizationModel   `tfsdk:"github_organization" json:"github-organization,optional"`
-	GSuite               *ZeroTrustAccessPolicyIncludeGSuiteModel               `tfsdk:"gsuite" json:"gsuite,optional"`
-	LoginMethod          *ZeroTrustAccessPolicyIncludeLoginMethodModel          `tfsdk:"login_method" json:"login_method,optional"`
-	IPList               *ZeroTrustAccessPolicyIncludeIPListModel               `tfsdk:"ip_list" json:"ip_list,optional"`
-	IP                   *ZeroTrustAccessPolicyIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
-	Okta                 *ZeroTrustAccessPolicyIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
-	SAML                 *ZeroTrustAccessPolicyIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
-	OIDC                 *ZeroTrustAccessPolicyIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
-	ServiceToken         *ZeroTrustAccessPolicyIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
-	LinkedAppToken       *ZeroTrustAccessPolicyIncludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
-	UserRiskScore        *ZeroTrustAccessPolicyIncludeUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	Group                   *ZeroTrustAccessPolicyIncludeGroupModel                   `tfsdk:"group" json:"group,optional"`
+	AnyValidServiceToken    *ZeroTrustAccessPolicyIncludeAnyValidServiceTokenModel    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
+	AuthContext             *ZeroTrustAccessPolicyIncludeAuthContextModel             `tfsdk:"auth_context" json:"auth_context,optional"`
+	AuthMethod              *ZeroTrustAccessPolicyIncludeAuthMethodModel              `tfsdk:"auth_method" json:"auth_method,optional"`
+	AzureAD                 *ZeroTrustAccessPolicyIncludeAzureADModel                 `tfsdk:"azure_ad" json:"azureAD,optional"`
+	Certificate             *ZeroTrustAccessPolicyIncludeCertificateModel             `tfsdk:"certificate" json:"certificate,optional"`
+	CommonName              *ZeroTrustAccessPolicyIncludeCommonNameModel              `tfsdk:"common_name" json:"common_name,optional"`
+	Geo                     *ZeroTrustAccessPolicyIncludeGeoModel                     `tfsdk:"geo" json:"geo,optional"`
+	DevicePosture           *ZeroTrustAccessPolicyIncludeDevicePostureModel           `tfsdk:"device_posture" json:"device_posture,optional"`
+	EmailDomain             *ZeroTrustAccessPolicyIncludeEmailDomainModel             `tfsdk:"email_domain" json:"email_domain,optional"`
+	EmailList               *ZeroTrustAccessPolicyIncludeEmailListModel               `tfsdk:"email_list" json:"email_list,optional"`
+	Email                   *ZeroTrustAccessPolicyIncludeEmailModel                   `tfsdk:"email" json:"email,optional"`
+	Everyone                *ZeroTrustAccessPolicyIncludeEveryoneModel                `tfsdk:"everyone" json:"everyone,optional"`
+	ExternalEvaluation      *ZeroTrustAccessPolicyIncludeExternalEvaluationModel      `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
+	GitHubOrganization      *ZeroTrustAccessPolicyIncludeGitHubOrganizationModel      `tfsdk:"github_organization" json:"github-organization,optional"`
+	GSuite                  *ZeroTrustAccessPolicyIncludeGSuiteModel                  `tfsdk:"gsuite" json:"gsuite,optional"`
+	LoginMethod             *ZeroTrustAccessPolicyIncludeLoginMethodModel             `tfsdk:"login_method" json:"login_method,optional"`
+	IPList                  *ZeroTrustAccessPolicyIncludeIPListModel                  `tfsdk:"ip_list" json:"ip_list,optional"`
+	IP                      *ZeroTrustAccessPolicyIncludeIPModel                      `tfsdk:"ip" json:"ip,optional"`
+	Okta                    *ZeroTrustAccessPolicyIncludeOktaModel                    `tfsdk:"okta" json:"okta,optional"`
+	SAML                    *ZeroTrustAccessPolicyIncludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
+	OIDC                    *ZeroTrustAccessPolicyIncludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
+	ServiceToken            *ZeroTrustAccessPolicyIncludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken          *ZeroTrustAccessPolicyIncludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore           *ZeroTrustAccessPolicyIncludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	CloudflareAccountMember *ZeroTrustAccessPolicyIncludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
 }
 
 type ZeroTrustAccessPolicyIncludeGroupModel struct {
@@ -333,32 +339,37 @@ type ZeroTrustAccessPolicyIncludeUserRiskScoreModel struct {
 	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
 }
 
+type ZeroTrustAccessPolicyIncludeCloudflareAccountMemberModel struct {
+	AccountID types.String `tfsdk:"account_id" json:"account_id,optional"`
+}
+
 type ZeroTrustAccessPolicyRequireModel struct {
-	Group                *ZeroTrustAccessPolicyRequireGroupModel                `tfsdk:"group" json:"group,optional"`
-	AnyValidServiceToken *ZeroTrustAccessPolicyRequireAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
-	AuthContext          *ZeroTrustAccessPolicyRequireAuthContextModel          `tfsdk:"auth_context" json:"auth_context,optional"`
-	AuthMethod           *ZeroTrustAccessPolicyRequireAuthMethodModel           `tfsdk:"auth_method" json:"auth_method,optional"`
-	AzureAD              *ZeroTrustAccessPolicyRequireAzureADModel              `tfsdk:"azure_ad" json:"azureAD,optional"`
-	Certificate          *ZeroTrustAccessPolicyRequireCertificateModel          `tfsdk:"certificate" json:"certificate,optional"`
-	CommonName           *ZeroTrustAccessPolicyRequireCommonNameModel           `tfsdk:"common_name" json:"common_name,optional"`
-	Geo                  *ZeroTrustAccessPolicyRequireGeoModel                  `tfsdk:"geo" json:"geo,optional"`
-	DevicePosture        *ZeroTrustAccessPolicyRequireDevicePostureModel        `tfsdk:"device_posture" json:"device_posture,optional"`
-	EmailDomain          *ZeroTrustAccessPolicyRequireEmailDomainModel          `tfsdk:"email_domain" json:"email_domain,optional"`
-	EmailList            *ZeroTrustAccessPolicyRequireEmailListModel            `tfsdk:"email_list" json:"email_list,optional"`
-	Email                *ZeroTrustAccessPolicyRequireEmailModel                `tfsdk:"email" json:"email,optional"`
-	Everyone             *ZeroTrustAccessPolicyRequireEveryoneModel             `tfsdk:"everyone" json:"everyone,optional"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyRequireExternalEvaluationModel   `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
-	GitHubOrganization   *ZeroTrustAccessPolicyRequireGitHubOrganizationModel   `tfsdk:"github_organization" json:"github-organization,optional"`
-	GSuite               *ZeroTrustAccessPolicyRequireGSuiteModel               `tfsdk:"gsuite" json:"gsuite,optional"`
-	LoginMethod          *ZeroTrustAccessPolicyRequireLoginMethodModel          `tfsdk:"login_method" json:"login_method,optional"`
-	IPList               *ZeroTrustAccessPolicyRequireIPListModel               `tfsdk:"ip_list" json:"ip_list,optional"`
-	IP                   *ZeroTrustAccessPolicyRequireIPModel                   `tfsdk:"ip" json:"ip,optional"`
-	Okta                 *ZeroTrustAccessPolicyRequireOktaModel                 `tfsdk:"okta" json:"okta,optional"`
-	SAML                 *ZeroTrustAccessPolicyRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
-	OIDC                 *ZeroTrustAccessPolicyRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
-	ServiceToken         *ZeroTrustAccessPolicyRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
-	LinkedAppToken       *ZeroTrustAccessPolicyRequireLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
-	UserRiskScore        *ZeroTrustAccessPolicyRequireUserRiskScoreModel        `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	Group                   *ZeroTrustAccessPolicyRequireGroupModel                   `tfsdk:"group" json:"group,optional"`
+	AnyValidServiceToken    *ZeroTrustAccessPolicyRequireAnyValidServiceTokenModel    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
+	AuthContext             *ZeroTrustAccessPolicyRequireAuthContextModel             `tfsdk:"auth_context" json:"auth_context,optional"`
+	AuthMethod              *ZeroTrustAccessPolicyRequireAuthMethodModel              `tfsdk:"auth_method" json:"auth_method,optional"`
+	AzureAD                 *ZeroTrustAccessPolicyRequireAzureADModel                 `tfsdk:"azure_ad" json:"azureAD,optional"`
+	Certificate             *ZeroTrustAccessPolicyRequireCertificateModel             `tfsdk:"certificate" json:"certificate,optional"`
+	CommonName              *ZeroTrustAccessPolicyRequireCommonNameModel              `tfsdk:"common_name" json:"common_name,optional"`
+	Geo                     *ZeroTrustAccessPolicyRequireGeoModel                     `tfsdk:"geo" json:"geo,optional"`
+	DevicePosture           *ZeroTrustAccessPolicyRequireDevicePostureModel           `tfsdk:"device_posture" json:"device_posture,optional"`
+	EmailDomain             *ZeroTrustAccessPolicyRequireEmailDomainModel             `tfsdk:"email_domain" json:"email_domain,optional"`
+	EmailList               *ZeroTrustAccessPolicyRequireEmailListModel               `tfsdk:"email_list" json:"email_list,optional"`
+	Email                   *ZeroTrustAccessPolicyRequireEmailModel                   `tfsdk:"email" json:"email,optional"`
+	Everyone                *ZeroTrustAccessPolicyRequireEveryoneModel                `tfsdk:"everyone" json:"everyone,optional"`
+	ExternalEvaluation      *ZeroTrustAccessPolicyRequireExternalEvaluationModel      `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
+	GitHubOrganization      *ZeroTrustAccessPolicyRequireGitHubOrganizationModel      `tfsdk:"github_organization" json:"github-organization,optional"`
+	GSuite                  *ZeroTrustAccessPolicyRequireGSuiteModel                  `tfsdk:"gsuite" json:"gsuite,optional"`
+	LoginMethod             *ZeroTrustAccessPolicyRequireLoginMethodModel             `tfsdk:"login_method" json:"login_method,optional"`
+	IPList                  *ZeroTrustAccessPolicyRequireIPListModel                  `tfsdk:"ip_list" json:"ip_list,optional"`
+	IP                      *ZeroTrustAccessPolicyRequireIPModel                      `tfsdk:"ip" json:"ip,optional"`
+	Okta                    *ZeroTrustAccessPolicyRequireOktaModel                    `tfsdk:"okta" json:"okta,optional"`
+	SAML                    *ZeroTrustAccessPolicyRequireSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
+	OIDC                    *ZeroTrustAccessPolicyRequireOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
+	ServiceToken            *ZeroTrustAccessPolicyRequireServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken          *ZeroTrustAccessPolicyRequireLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
+	UserRiskScore           *ZeroTrustAccessPolicyRequireUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
+	CloudflareAccountMember *ZeroTrustAccessPolicyRequireCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGroupModel struct {
@@ -468,4 +479,8 @@ type ZeroTrustAccessPolicyRequireLinkedAppTokenModel struct {
 
 type ZeroTrustAccessPolicyRequireUserRiskScoreModel struct {
 	UserRiskScore *[]types.String `tfsdk:"user_risk_score" json:"user_risk_score,required"`
+}
+
+type ZeroTrustAccessPolicyRequireCloudflareAccountMemberModel struct {
+	AccountID types.String `tfsdk:"account_id" json:"account_id,optional"`
 }

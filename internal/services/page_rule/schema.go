@@ -28,7 +28,6 @@ var _ resource.ResourceWithConfigValidators = (*PageRuleResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Apps and Policies Read",
@@ -73,11 +72,11 @@ Version: 500,
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"priority": schema.Int64Attribute{

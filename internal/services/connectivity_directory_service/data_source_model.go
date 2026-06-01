@@ -5,8 +5,8 @@ package connectivity_directory_service
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/connectivity"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/connectivity"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type ConnectivityDirectoryServiceResultDataSourceEnvelope struct {
 type ConnectivityDirectoryServiceDataSourceModel struct {
 	ID          types.String                                                                     `tfsdk:"id" path:"service_id,computed"`
 	ServiceID   types.String                                                                     `tfsdk:"service_id" path:"service_id,computed_optional"`
-	AccountID   types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID   types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	AppProtocol types.String                                                                     `tfsdk:"app_protocol" json:"app_protocol,computed"`
 	CreatedAt   timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	HTTPPort    types.Int64                                                                      `tfsdk:"http_port" json:"http_port,computed"`
@@ -35,21 +35,18 @@ type ConnectivityDirectoryServiceDataSourceModel struct {
 }
 
 func (m *ConnectivityDirectoryServiceDataSourceModel) toReadParams(_ context.Context) (params connectivity.DirectoryServiceGetParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = connectivity.DirectoryServiceGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *ConnectivityDirectoryServiceDataSourceModel) toListParams(_ context.Context) (params connectivity.DirectoryServiceListParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = connectivity.DirectoryServiceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Type.IsNull() {
 		params.Type = cloudflare.F(connectivity.DirectoryServiceListParamsType(m.Filter.Type.ValueString()))
 	}

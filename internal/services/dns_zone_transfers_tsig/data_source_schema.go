@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"algo": schema.StringAttribute{
 				Description: "TSIG algorithm.",

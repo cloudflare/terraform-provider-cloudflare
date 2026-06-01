@@ -5,8 +5,8 @@ package list_item
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/rules"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,7 +17,7 @@ type ListItemResultDataSourceEnvelope struct {
 }
 
 type ListItemDataSourceModel struct {
-	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,required"`
 	ListID     types.String                                              `tfsdk:"list_id" path:"list_id,required"`
 	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
 	ID         types.String                                              `tfsdk:"id" json:"id,computed" path:"item_id,computed"`

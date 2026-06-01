@@ -5,8 +5,8 @@ package account_dns_settings_internal_view
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type AccountDNSSettingsInternalViewResultDataSourceEnvelope struct {
 type AccountDNSSettingsInternalViewDataSourceModel struct {
 	ID           types.String                                            `tfsdk:"id" path:"view_id,computed"`
 	ViewID       types.String                                            `tfsdk:"view_id" path:"view_id,optional"`
-	AccountID    types.String                                            `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String                                            `tfsdk:"account_id" path:"account_id,required"`
 	CreatedTime  timetypes.RFC3339                                       `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`
 	ModifiedTime timetypes.RFC3339                                       `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
 	Name         types.String                                            `tfsdk:"name" json:"name,computed"`
@@ -29,21 +29,18 @@ type AccountDNSSettingsInternalViewDataSourceModel struct {
 }
 
 func (m *AccountDNSSettingsInternalViewDataSourceModel) toReadParams(_ context.Context) (params dns.SettingAccountViewGetParams, diags diag.Diagnostics) {
-	params = dns.SettingAccountViewGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.SettingAccountViewGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *AccountDNSSettingsInternalViewDataSourceModel) toListParams(_ context.Context) (params dns.SettingAccountViewListParams, diags diag.Diagnostics) {
-	params = dns.SettingAccountViewListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.SettingAccountViewListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(dns.SettingAccountViewListParamsDirection(m.Filter.Direction.ValueString()))
 	}

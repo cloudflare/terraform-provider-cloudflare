@@ -5,8 +5,8 @@ package content_scanning
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/content_scanning"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/content_scanning"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,16 +16,14 @@ type ContentScanningResultDataSourceEnvelope struct {
 }
 
 type ContentScanningDataSourceModel struct {
-	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Modified types.String `tfsdk:"modified" json:"modified,computed"`
 	Value    types.String `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *ContentScanningDataSourceModel) toReadParams(_ context.Context) (params content_scanning.ContentScanningGetParams, diags diag.Diagnostics) {
-	params = content_scanning.ContentScanningGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = content_scanning.ContentScanningGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

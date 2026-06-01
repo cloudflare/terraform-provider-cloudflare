@@ -17,12 +17,13 @@ type APIShieldOperationResultEnvelope struct {
 type APIShieldOperationModel struct {
 	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
 	OperationID types.String                                              `tfsdk:"operation_id" json:"operation_id,computed"`
-	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	Endpoint    types.String                                              `tfsdk:"endpoint" json:"endpoint,required"`
 	Host        types.String                                              `tfsdk:"host" json:"host,required"`
 	Method      types.String                                              `tfsdk:"method" json:"method,required"`
 	LastUpdated timetypes.RFC3339                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Features    customfield.NestedObject[APIShieldOperationFeaturesModel] `tfsdk:"features" json:"features,computed"`
+	Schemas     customfield.NestedObject[APIShieldOperationSchemasModel]  `tfsdk:"schemas" json:"schemas,computed"`
 }
 
 func (m APIShieldOperationModel) MarshalJSON() (data []byte, err error) {
@@ -110,4 +111,19 @@ type APIShieldOperationFeaturesSchemaInfoActiveSchemaModel struct {
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsLearned types.Bool        `tfsdk:"is_learned" json:"is_learned,computed"`
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
+}
+
+type APIShieldOperationSchemasModel struct {
+	Learned  customfield.NestedObject[APIShieldOperationSchemasLearnedModel]  `tfsdk:"learned" json:"learned,computed"`
+	Uploaded customfield.NestedObject[APIShieldOperationSchemasUploadedModel] `tfsdk:"uploaded" json:"uploaded,computed"`
+}
+
+type APIShieldOperationSchemasLearnedModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters" json:"parameters,computed"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body" json:"requestBody,computed"`
+}
+
+type APIShieldOperationSchemasUploadedModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters" json:"parameters,computed"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body" json:"requestBody,computed"`
 }

@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier of the user.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"country": schema.StringAttribute{
 				Description: "The country in which the user lives.",
@@ -52,6 +52,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"zipcode": schema.StringAttribute{
 				Description: "The zipcode or postal code where the user lives.",
 				Optional:    true,
+			},
+			"email": schema.StringAttribute{
+				Description: "Current email address of the user.",
+				Computed:    true,
 			},
 			"has_business_zones": schema.BoolAttribute{
 				Description: "Indicates whether user has any business zones",

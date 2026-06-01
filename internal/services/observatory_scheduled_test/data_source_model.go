@@ -5,8 +5,8 @@ package observatory_scheduled_test
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/speed"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/speed"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,17 +17,16 @@ type ObservatoryScheduledTestResultDataSourceEnvelope struct {
 
 type ObservatoryScheduledTestDataSourceModel struct {
 	URL       types.String `tfsdk:"url" path:"url,required"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Region    types.String `tfsdk:"region" query:"region,computed_optional"`
 	Frequency types.String `tfsdk:"frequency" json:"frequency,computed"`
 }
 
 func (m *ObservatoryScheduledTestDataSourceModel) toReadParams(_ context.Context) (params speed.ScheduleGetParams, diags diag.Diagnostics) {
-	params = speed.ScheduleGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = speed.ScheduleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Region.IsNull() {
 		params.Region = cloudflare.F(speed.ScheduleGetParamsRegion(m.Region.ValueString()))
 	}

@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"behaviors": schema.MapNestedAttribute{
 				Computed:   true,

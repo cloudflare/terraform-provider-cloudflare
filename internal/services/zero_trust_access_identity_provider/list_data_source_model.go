@@ -5,9 +5,11 @@ package zero_trust_access_identity_provider
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,12 +29,6 @@ type ZeroTrustAccessIdentityProvidersDataSourceModel struct {
 func (m *ZeroTrustAccessIdentityProvidersDataSourceModel) toListParams(_ context.Context) (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderListParams{}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 	if !m.SCIMEnabled.IsNull() {
 		params.SCIMEnabled = cloudflare.F(m.SCIMEnabled.ValueString())
 	}
@@ -47,11 +43,13 @@ func (m *ZeroTrustAccessIdentityProvidersDataSourceModel) toListParams(_ context
 }
 
 type ZeroTrustAccessIdentityProvidersResultDataSourceModel struct {
-	Config     customfield.NestedObject[ZeroTrustAccessIdentityProvidersConfigDataSourceModel]     `tfsdk:"config" json:"config,computed"`
-	Name       types.String                                                                        `tfsdk:"name" json:"name,computed"`
-	Type       types.String                                                                        `tfsdk:"type" json:"type,computed"`
-	ID         types.String                                                                        `tfsdk:"id" json:"id,computed"`
-	SCIMConfig customfield.NestedObject[ZeroTrustAccessIdentityProvidersSCIMConfigDataSourceModel] `tfsdk:"scim_config" json:"scim_config,computed"`
+	Config               customfield.NestedObject[ZeroTrustAccessIdentityProvidersConfigDataSourceModel]             `tfsdk:"config" json:"config,computed"`
+	Name                 types.String                                                                                `tfsdk:"name" json:"name,computed"`
+	Type                 types.String                                                                                `tfsdk:"type" json:"type,computed"`
+	ID                   types.String                                                                                `tfsdk:"id" json:"id,computed"`
+	SAMLCertificateSet   customfield.NestedObject[ZeroTrustAccessIdentityProvidersSAMLCertificateSetDataSourceModel] `tfsdk:"saml_certificate_set" json:"saml_certificate_set,computed"`
+	SAMLCertificateSetID types.String                                                                                `tfsdk:"saml_certificate_set_id" json:"saml_certificate_set_id,computed"`
+	SCIMConfig           customfield.NestedObject[ZeroTrustAccessIdentityProvidersSCIMConfigDataSourceModel]         `tfsdk:"scim_config" json:"scim_config,computed"`
 }
 
 type ZeroTrustAccessIdentityProvidersConfigDataSourceModel struct {
@@ -77,16 +75,34 @@ type ZeroTrustAccessIdentityProvidersConfigDataSourceModel struct {
 	PingEnvID                types.String                                                                                        `tfsdk:"ping_env_id" json:"ping_env_id,computed"`
 	Attributes               customfield.List[types.String]                                                                      `tfsdk:"attributes" json:"attributes,computed"`
 	EmailAttributeName       types.String                                                                                        `tfsdk:"email_attribute_name" json:"email_attribute_name,computed"`
+	EnableEncryption         types.Bool                                                                                          `tfsdk:"enable_encryption" json:"enable_encryption,computed"`
 	HeaderAttributes         customfield.NestedObjectList[ZeroTrustAccessIdentityProvidersConfigHeaderAttributesDataSourceModel] `tfsdk:"header_attributes" json:"header_attributes,computed"`
 	IdPPublicCERTs           customfield.List[types.String]                                                                      `tfsdk:"idp_public_certs" json:"idp_public_certs,computed"`
 	IssuerURL                types.String                                                                                        `tfsdk:"issuer_url" json:"issuer_url,computed"`
 	SignRequest              types.Bool                                                                                          `tfsdk:"sign_request" json:"sign_request,computed"`
 	SSOTargetURL             types.String                                                                                        `tfsdk:"sso_target_url" json:"sso_target_url,computed"`
+	RedirectURL              types.String                                                                                        `tfsdk:"redirect_url" json:"redirect_url,computed"`
+	RestrictToAccountMembers types.Bool                                                                                          `tfsdk:"restrict_to_account_members" json:"restrict_to_account_members,computed"`
 }
 
 type ZeroTrustAccessIdentityProvidersConfigHeaderAttributesDataSourceModel struct {
 	AttributeName types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	HeaderName    types.String `tfsdk:"header_name" json:"header_name,computed"`
+}
+
+type ZeroTrustAccessIdentityProvidersSAMLCertificateSetDataSourceModel struct {
+	CreatedAt           timetypes.RFC3339                                                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UID                 types.String                                                                                                  `tfsdk:"uid" json:"uid,computed"`
+	UpdatedAt           timetypes.RFC3339                                                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	CurrentCertificate  customfield.NestedObject[ZeroTrustAccessIdentityProvidersSAMLCertificateSetCurrentCertificateDataSourceModel] `tfsdk:"current_certificate" json:"current_certificate,computed"`
+	PreviousCertificate jsontypes.Normalized                                                                                          `tfsdk:"previous_certificate" json:"previous_certificate,computed"`
+}
+
+type ZeroTrustAccessIdentityProvidersSAMLCertificateSetCurrentCertificateDataSourceModel struct {
+	IsCurrent         types.Bool        `tfsdk:"is_current" json:"is_current,computed"`
+	NotAfter          timetypes.RFC3339 `tfsdk:"not_after" json:"not_after,computed" format:"date-time"`
+	PublicCertificate types.String      `tfsdk:"public_certificate" json:"public_certificate,computed"`
+	UID               types.String      `tfsdk:"uid" json:"uid,computed"`
 }
 
 type ZeroTrustAccessIdentityProvidersSCIMConfigDataSourceModel struct {

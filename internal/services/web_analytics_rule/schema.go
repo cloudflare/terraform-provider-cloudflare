@@ -21,16 +21,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The Web Analytics rule identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ruleset_id": schema.StringAttribute{
 				Description:   "The Web Analytics ruleset identifier.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"host": schema.StringAttribute{

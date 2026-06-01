@@ -5,8 +5,8 @@ package regional_tiered_cache
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cache"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,17 +18,15 @@ type RegionalTieredCacheResultDataSourceEnvelope struct {
 
 type RegionalTieredCacheDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *RegionalTieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {
-	params = cache.RegionalTieredCacheGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = cache.RegionalTieredCacheGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

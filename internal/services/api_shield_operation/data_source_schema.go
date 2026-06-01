@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"feature": schema.ListAttribute{
 				Description: "Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.",
@@ -58,6 +58,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
+			},
+			"with_schemas": schema.BoolAttribute{
+				Description: "When true, includes OpenAPI schemas (both uploaded and learned) for the operation in the response. Due to the conversion overhead, this parameter is only supported on single-operation retrieval.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"endpoint": schema.StringAttribute{
 				Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
@@ -289,6 +294,55 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"block",
 									),
 								},
+							},
+						},
+					},
+				},
+			},
+			"schemas": schema.SingleNestedAttribute{
+				Description: "OpenAPI JSON schemas for an operation, including both user-uploaded and Cloudflare-learned schemas.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"learned": schema.SingleNestedAttribute{
+						Description: "An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasLearnedDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"parameters": schema.ListAttribute{
+								Description: "OpenAPI parameter objects describing path, query, header, or cookie parameters.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+								ElementType: types.MapType{
+									ElemType: jsontypes.NormalizedType{},
+								},
+							},
+							"request_body": schema.MapAttribute{
+								Description: "OpenAPI request body object describing the expected request payload.",
+								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
+								ElementType: jsontypes.NormalizedType{},
+							},
+						},
+					},
+					"uploaded": schema.SingleNestedAttribute{
+						Description: "An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[APIShieldOperationSchemasUploadedDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"parameters": schema.ListAttribute{
+								Description: "OpenAPI parameter objects describing path, query, header, or cookie parameters.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[customfield.Map[jsontypes.Normalized]](ctx),
+								ElementType: types.MapType{
+									ElemType: jsontypes.NormalizedType{},
+								},
+							},
+							"request_body": schema.MapAttribute{
+								Description: "OpenAPI request body object describing the expected request payload.",
+								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
+								ElementType: jsontypes.NormalizedType{},
 							},
 						},
 					},

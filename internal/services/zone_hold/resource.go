@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,7 +64,6 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -114,7 +113,6 @@ func (r *ZoneHoldResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -156,7 +154,6 @@ func (r *ZoneHoldResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
 	_, err := r.client.Zones.Holds.Get(
@@ -196,7 +193,6 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.Zones.Holds.Delete(
 		ctx,

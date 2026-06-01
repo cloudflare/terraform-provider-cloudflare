@@ -5,8 +5,8 @@ package zero_trust_gateway_proxy_endpoint
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type ZeroTrustGatewayProxyEndpointResultDataSourceEnvelope struct {
 type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
 	ID              types.String                   `tfsdk:"id" path:"proxy_endpoint_id,computed"`
 	ProxyEndpointID types.String                   `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id,required"`
-	AccountID       types.String                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID       types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt       timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind            types.String                   `tfsdk:"kind" json:"kind,computed"`
 	Name            types.String                   `tfsdk:"name" json:"name,computed"`
@@ -30,10 +30,8 @@ type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayProxyEndpointGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayProxyEndpointGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayProxyEndpointGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

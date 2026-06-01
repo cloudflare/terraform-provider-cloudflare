@@ -29,13 +29,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Required:    true,
+			},
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
 				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -313,6 +313,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"period": schema.Int64Attribute{
 												Description: "The period in seconds.",
+												Computed:    true,
+											},
+											"mitigation_timeout": schema.Int64Attribute{
+												Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
 												Computed:    true,
 											},
 										},

@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -30,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "Filter by the certificate authority that issued the SSL certificate.\nAvailable values: \"google\", \"lets_encrypt\", \"ssl_com\".",
@@ -82,13 +81,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
 				Optional:    true,
 			},
-			"ssl": schema.Float64Attribute{
-				Description: "Whether to filter hostnames based on if they have SSL enabled.\nAvailable values: 0, 1.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.OneOf(0, 1),
-				},
-			},
 			"ssl_status": schema.StringAttribute{
 				Description: "Filter by SSL certificate status.\nAvailable values: \"initializing\", \"pending_validation\", \"deleted\", \"pending_issuance\", \"pending_deployment\", \"pending_deletion\", \"pending_expiration\", \"expired\", \"active\", \"initializing_timed_out\", \"validation_timed_out\", \"issuance_timed_out\", \"deployment_timed_out\", \"deletion_timed_out\", \"pending_cleanup\", \"staging_deployment\", \"staging_active\", \"deactivating\", \"inactive\", \"backup_issued\", \"holding_deployment\".",
 				Optional:    true,
@@ -137,6 +129,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ssl", "ssl_status"),
+				},
+			},
+			"ssl": schema.Int64Attribute{
+				Description: "Whether to filter hostnames based on if they have SSL enabled.\nAvailable values: 0, 1.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(0, 1),
 				},
 			},
 			"max_items": schema.Int64Attribute{
@@ -236,7 +236,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"certificate_authority": schema.StringAttribute{
-									Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
+									Description: "The Certificate Authority that will issue the certificate.\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

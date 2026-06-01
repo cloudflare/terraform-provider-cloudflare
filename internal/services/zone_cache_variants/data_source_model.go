@@ -5,8 +5,8 @@ package zone_cache_variants
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cache"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,17 +19,15 @@ type ZoneCacheVariantsResultDataSourceEnvelope struct {
 
 type ZoneCacheVariantsDataSourceModel struct {
 	ID         types.String                                                    `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Editable   types.Bool                                                      `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      customfield.NestedObject[ZoneCacheVariantsValueDataSourceModel] `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *ZoneCacheVariantsDataSourceModel) toReadParams(_ context.Context) (params cache.VariantGetParams, diags diag.Diagnostics) {
-	params = cache.VariantGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = cache.VariantGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

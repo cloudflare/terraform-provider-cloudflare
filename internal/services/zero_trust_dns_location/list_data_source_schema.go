@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -170,6 +170,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"ipv4_destination_backup": schema.StringAttribute{
 							Description: "Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.",
 							Computed:    true,
+						},
+						"max_ttl_secs": schema.Int64Attribute{
+							Description: "Specify the maximum TTL, in seconds, applied to DNS response records.\nRecords whose upstream TTL exceeds this value are served with the\ncapped value. When null or absent, no cap is applied at this tier.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(60, 36000),
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "Specify the location name.",

@@ -5,8 +5,8 @@ package pipeline_stream
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pipelines"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pipelines"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,17 +18,20 @@ type PipelineStreamsResultListDataSourceEnvelope struct {
 }
 
 type PipelineStreamsDataSourceModel struct {
-	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	Name       types.String                                                       `tfsdk:"name" query:"name,optional"`
 	PipelineID types.String                                                       `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 	MaxItems   types.Int64                                                        `tfsdk:"max_items"`
 	Result     customfield.NestedObjectList[PipelineStreamsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PipelineStreamsDataSourceModel) toListParams(_ context.Context) (params pipelines.StreamListParams, diags diag.Diagnostics) {
-	params = pipelines.StreamListParams{}
+	params = pipelines.StreamListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.PipelineID.ValueString())

@@ -5,8 +5,8 @@ package magic_transit_connector
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,19 @@ type MagicTransitConnectorsResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitConnectorsDataSourceModel struct {
-	AccountID types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
-	MaxItems  types.Int64                                                               `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[MagicTransitConnectorsResultDataSourceModel] `tfsdk:"result"`
+	AccountID  types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
+	DeviceType types.String                                                              `tfsdk:"device_type" query:"device_type,optional"`
+	MaxItems   types.Int64                                                               `tfsdk:"max_items"`
+	Result     customfield.NestedObjectList[MagicTransitConnectorsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicTransitConnectorsDataSourceModel) toListParams(_ context.Context) (params magic_transit.ConnectorListParams, diags diag.Diagnostics) {
-	params = magic_transit.ConnectorListParams{}
+	params = magic_transit.ConnectorListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	if !m.DeviceType.IsNull() {
+		params.DeviceType = cloudflare.F(magic_transit.ConnectorListParamsDeviceType(m.DeviceType.ValueString()))
 	}
 
 	return
@@ -51,4 +54,5 @@ type MagicTransitConnectorsResultDataSourceModel struct {
 type MagicTransitConnectorsDeviceDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed"`
+	Type         types.String `tfsdk:"type" json:"type,computed"`
 }

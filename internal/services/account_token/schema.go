@@ -45,7 +45,6 @@ func (v ResourcesValidator) MarkdownDescription(context.Context) string {
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 501,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account API Tokens Read",
@@ -56,7 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Token identifier tag.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
@@ -67,7 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token name.",
 				Required:    true,
 			},
-			"policies": schema.ListNestedAttribute{
+			"policies": schema.SetNestedAttribute{
 				Description: "Set of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -79,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 							},
 						},
-						"permission_groups": schema.ListNestedAttribute{
+						"permission_groups": schema.SetNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
 							NestedObject: schema.NestedAttributeObject{

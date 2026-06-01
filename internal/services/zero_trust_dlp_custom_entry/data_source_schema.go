@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"case_sensitive": schema.BoolAttribute{
 				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
@@ -59,11 +59,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
+				Description: `Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"custom",
+						"custom_prompt_topic",
 						"predefined",
 						"integration",
 						"exact_data",
@@ -136,8 +137,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomEntryVariantDataSourceModel](ctx),
+				Description: "A Predefined AI prompt classification topic entry.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomEntryVariantDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"topic_type": schema.StringAttribute{
 						Description: `Available values: "Intent", "Content".`,
@@ -147,14 +149,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: `Available values: "PromptTopic".`,
+						Description: `Available values: "PromptTopic", "General".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+							stringvalidator.OneOfCaseInsensitive("PromptTopic", "General"),
 						},
 					},
 					"description": schema.StringAttribute{
-						Computed: true,
+						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Computed:    true,
 					},
 				},
 			},

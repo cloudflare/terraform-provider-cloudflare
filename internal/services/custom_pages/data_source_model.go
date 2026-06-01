@@ -5,8 +5,8 @@ package custom_pages
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/custom_pages"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,13 +33,6 @@ type CustomPagesDataSourceModel struct {
 
 func (m *CustomPagesDataSourceModel) toReadParams(_ context.Context) (params custom_pages.CustomPageGetParams, diags diag.Diagnostics) {
 	params = custom_pages.CustomPageGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())

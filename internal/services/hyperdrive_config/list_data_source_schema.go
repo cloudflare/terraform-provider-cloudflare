@@ -28,7 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Define configurations using a unique string identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -153,7 +153,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.\n\nMaximum allowed: 20 for free tier accounts, 100 for paid tier accounts.\nIf not specified, defaults to 20 for free tier and 60 for paid tier.\nContact Cloudflare if you need a higher limit.",
 							Computed:    true,
 							Validators: []validator.Int64{
-								int64validator.Between(5, 100),
+								int64validator.AtLeast(5),
 							},
 						},
 					},

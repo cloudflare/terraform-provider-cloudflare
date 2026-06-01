@@ -28,14 +28,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"limit": schema.Int64Attribute{
 				Description: "Limit to the number of records returned.",
 				Optional:    true,
 			},
 			"offset": schema.Int64Attribute{
-				Description: "Offset the results",
+				Description: "Offset the results.",
 				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -56,7 +56,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"certificate": schema.StringAttribute{
-							Description: "The zone's SSL certificate or certificate and the intermediate(s).",
+							Description: "The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.",
 							Computed:    true,
 						},
 						"expires_on": schema.StringAttribute{

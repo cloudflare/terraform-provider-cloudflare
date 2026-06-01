@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/custom_hostnames"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/custom_hostnames"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,7 +64,6 @@ func (r *CustomHostnameFallbackOriginResource) Create(ctx context.Context, req r
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -114,7 +113,6 @@ func (r *CustomHostnameFallbackOriginResource) Update(ctx context.Context, req r
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -156,7 +154,6 @@ func (r *CustomHostnameFallbackOriginResource) Read(ctx context.Context, req res
 		return
 	}
 
-
 	res := new(http.Response)
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
 	_, err := r.client.CustomHostnames.FallbackOrigin.Get(
@@ -196,7 +193,6 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.CustomHostnames.FallbackOrigin.Delete(
 		ctx,

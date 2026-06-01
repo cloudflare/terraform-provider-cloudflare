@@ -20,7 +20,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessMTLSCertificateRe
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Mutual TLS Certificates Read",
@@ -31,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The ID of the application that will use this certificate.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",

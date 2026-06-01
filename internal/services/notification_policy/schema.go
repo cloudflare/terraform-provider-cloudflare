@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*NotificationPolicyResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -37,11 +36,11 @@ Version: 500,
 			"id": schema.StringAttribute{
 				Description:   "UUID",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "The account id",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"alert_type": schema.StringAttribute{

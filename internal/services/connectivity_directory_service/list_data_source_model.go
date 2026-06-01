@@ -5,8 +5,8 @@ package connectivity_directory_service
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/connectivity"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/connectivity"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,18 +18,17 @@ type ConnectivityDirectoryServicesResultListDataSourceEnvelope struct {
 }
 
 type ConnectivityDirectoryServicesDataSourceModel struct {
-	AccountID types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	Type      types.String                                                                     `tfsdk:"type" query:"type,optional"`
 	MaxItems  types.Int64                                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ConnectivityDirectoryServicesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ConnectivityDirectoryServicesDataSourceModel) toListParams(_ context.Context) (params connectivity.DirectoryServiceListParams, diags diag.Diagnostics) {
-	params = connectivity.DirectoryServiceListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = connectivity.DirectoryServiceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(connectivity.DirectoryServiceListParamsType(m.Type.ValueString()))
 	}

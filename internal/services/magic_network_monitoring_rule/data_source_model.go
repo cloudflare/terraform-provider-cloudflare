@@ -5,8 +5,8 @@ package magic_network_monitoring_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_network_monitoring"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_network_monitoring"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +19,7 @@ type MagicNetworkMonitoringRuleResultDataSourceEnvelope struct {
 type MagicNetworkMonitoringRuleDataSourceModel struct {
 	ID                     types.String                   `tfsdk:"id" path:"rule_id,computed"`
 	RuleID                 types.String                   `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID              types.String                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID              types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	AutomaticAdvertisement types.Bool                     `tfsdk:"automatic_advertisement" json:"automatic_advertisement,computed"`
 	BandwidthThreshold     types.Float64                  `tfsdk:"bandwidth_threshold" json:"bandwidth_threshold,computed"`
 	Duration               types.String                   `tfsdk:"duration" json:"duration,computed"`
@@ -33,10 +33,8 @@ type MagicNetworkMonitoringRuleDataSourceModel struct {
 }
 
 func (m *MagicNetworkMonitoringRuleDataSourceModel) toReadParams(_ context.Context) (params magic_network_monitoring.RuleGetParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.RuleGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_network_monitoring.RuleGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

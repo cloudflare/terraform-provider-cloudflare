@@ -5,8 +5,8 @@ package zero_trust_gateway_logging
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,16 +18,14 @@ type ZeroTrustGatewayLoggingResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewayLoggingDataSourceModel struct {
 	ID                 types.String                                                                       `tfsdk:"id" path:"account_id,computed"`
-	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	RedactPii          types.Bool                                                                         `tfsdk:"redact_pii" json:"redact_pii,computed"`
 	SettingsByRuleType customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeDataSourceModel] `tfsdk:"settings_by_rule_type" json:"settings_by_rule_type,computed"`
 }
 
 func (m *ZeroTrustGatewayLoggingDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayLoggingGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLoggingGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayLoggingGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -5,8 +5,8 @@ package email_routing_dns
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_routing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -14,7 +14,7 @@ import (
 
 type EmailRoutingDNSDataSourceModel struct {
 	ID         types.String                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	Subdomain  types.String                                                         `tfsdk:"subdomain" query:"subdomain,optional"`
 	Success    types.Bool                                                           `tfsdk:"success" json:"success,computed"`
 	Errors     customfield.NestedObjectList[EmailRoutingDNSErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`
@@ -24,11 +24,10 @@ type EmailRoutingDNSDataSourceModel struct {
 }
 
 func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params email_routing.DNSGetParams, diags diag.Diagnostics) {
-	params = email_routing.DNSGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = email_routing.DNSGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Subdomain.IsNull() {
 		params.Subdomain = cloudflare.F(m.Subdomain.ValueString())
 	}

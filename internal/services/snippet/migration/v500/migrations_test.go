@@ -67,7 +67,7 @@ func TestMigrateCloudflareSnippetBasic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID),
@@ -116,7 +116,7 @@ func TestMigrateCloudflareSnippetMultipleFiles(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigMultipleFiles, rnd, zoneID),
@@ -171,7 +171,7 @@ func TestMigrateCloudflareSnippetComplexContent(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigComplexContent, rnd, zoneID),
@@ -220,7 +220,7 @@ func TestMigrateCloudflareSnippetWithImport(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigBasic, rnd, zoneID),
@@ -263,7 +263,7 @@ func TestMigrateCloudflareSnippetURLRewrite(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigURLRewrite, rnd, zoneID),
@@ -312,7 +312,7 @@ func TestMigrateCloudflareSnippetHeaderManipulation(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigHeaderManipulation, rnd, zoneID),
@@ -361,7 +361,7 @@ func TestMigrateCloudflareSnippetEdgeCases(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: fmt.Sprintf(testAccCloudflareSnippetMigrationConfigEdgeCases, rnd, zoneID),
@@ -405,7 +405,7 @@ func TestMigrateCloudflareSnippet_Migration_Basic_MultiVersion(t *testing.T) {
 	}{
 		{
 			name:     "from_v4_52_1",
-			version:  "4.52.7",
+			version:  "4.52.1",
 			configFn: func(zoneID, rnd string) string { return fmt.Sprintf(v4MigrationBasicConfig, zoneID, rnd) },
 		},
 	}
@@ -472,7 +472,7 @@ func TestMigrateCloudflareSnippet_Migration_WithMultipleFiles(t *testing.T) {
 				{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
-							VersionConstraint: "4.52.7",
+							VersionConstraint: "4.52.1",
 							Source:            "cloudflare/cloudflare",
 						},
 					},
@@ -483,7 +483,7 @@ func TestMigrateCloudflareSnippet_Migration_WithMultipleFiles(t *testing.T) {
 					},
 				},
 			},
-			acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata").AtMapKey("main_module"), knownvalue.StringExact("main.js")),
@@ -514,7 +514,7 @@ func TestMigrateCloudflareSnippet_Migration_ComplexContent(t *testing.T) {
 				{
 					ExternalProviders: map[string]resource.ExternalProvider{
 						"cloudflare": {
-							VersionConstraint: "4.52.7",
+							VersionConstraint: "4.52.1",
 							Source:            "cloudflare/cloudflare",
 						},
 					},
@@ -524,7 +524,7 @@ func TestMigrateCloudflareSnippet_Migration_ComplexContent(t *testing.T) {
 					},
 				},
 			},
-			acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata").AtMapKey("main_module"), knownvalue.StringExact("worker.js")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("files"), knownvalue.ListSizeExact(1)),

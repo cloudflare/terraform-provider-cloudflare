@@ -41,7 +41,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Zone identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"argo_smart_routing": schema.BoolAttribute{
 				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
@@ -99,6 +99,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"https",
 					),
 				},
+			},
+			"virtual_network_id": schema.StringAttribute{
+				Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
+				Computed:    true,
 			},
 			"origin_direct": schema.ListAttribute{
 				Description: "List of origin IP addresses. Array may contain multiple IP addresses for load balancing.",

@@ -13,6 +13,7 @@ type UserResultDataSourceEnvelope struct {
 
 type UserDataSourceModel struct {
 	Country                        types.String                                                   `tfsdk:"country" json:"country,computed"`
+	Email                          types.String                                                   `tfsdk:"email" json:"email,computed"`
 	FirstName                      types.String                                                   `tfsdk:"first_name" json:"first_name,computed"`
 	HasBusinessZones               types.Bool                                                     `tfsdk:"has_business_zones" json:"has_business_zones,computed"`
 	HasEnterpriseZones             types.Bool                                                     `tfsdk:"has_enterprise_zones" json:"has_enterprise_zones,computed"`

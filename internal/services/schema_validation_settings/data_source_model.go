@@ -5,8 +5,8 @@ package schema_validation_settings
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/schema_validation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/schema_validation"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,16 +16,14 @@ type SchemaValidationSettingsResultDataSourceEnvelope struct {
 }
 
 type SchemaValidationSettingsDataSourceModel struct {
-	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action,computed"`
 	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action,computed"`
 }
 
 func (m *SchemaValidationSettingsDataSourceModel) toReadParams(_ context.Context) (params schema_validation.SettingGetParams, diags diag.Diagnostics) {
-	params = schema_validation.SettingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = schema_validation.SettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

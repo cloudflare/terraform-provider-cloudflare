@@ -5,8 +5,8 @@ package stream_download
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,7 +16,7 @@ type StreamDownloadResultDataSourceEnvelope struct {
 }
 
 type StreamDownloadDataSourceModel struct {
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 }
 

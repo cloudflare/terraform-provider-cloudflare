@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Specifies the public ID of the account.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
@@ -264,6 +264,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"name": schema.StringAttribute{
+						Description: "Filters streams by name (case-insensitive substring).",
+						Optional:    true,
+					},
 					"pipeline_id": schema.StringAttribute{
 						Description: "Specifies the public ID of the pipeline.",
 						Optional:    true,

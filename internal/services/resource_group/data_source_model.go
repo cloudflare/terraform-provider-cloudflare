@@ -5,8 +5,8 @@ package resource_group
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/iam"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/iam"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,8 +17,8 @@ type ResourceGroupResultDataSourceEnvelope struct {
 }
 
 type ResourceGroupDataSourceModel struct {
+	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	ResourceGroupID types.String                                                    `tfsdk:"resource_group_id" path:"resource_group_id,required"`
-	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	ID              types.String                                                    `tfsdk:"id" json:"id,computed"`
 	Name            types.String                                                    `tfsdk:"name" json:"name,computed"`
 	Meta            customfield.NestedObject[ResourceGroupMetaDataSourceModel]      `tfsdk:"meta" json:"meta,computed"`
@@ -26,10 +26,8 @@ type ResourceGroupDataSourceModel struct {
 }
 
 func (m *ResourceGroupDataSourceModel) toReadParams(_ context.Context) (params iam.ResourceGroupGetParams, diags diag.Diagnostics) {
-	params = iam.ResourceGroupGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = iam.ResourceGroupGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

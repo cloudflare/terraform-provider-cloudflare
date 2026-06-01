@@ -5,8 +5,8 @@ package zone_lockdown
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/firewall"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type ZoneLockdownsResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownsDataSourceModel struct {
-	ZoneID            types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID            types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn         timetypes.RFC3339                                                `tfsdk:"created_on" query:"created_on,optional" format:"date-time"`
 	Description       types.String                                                     `tfsdk:"description" query:"description,optional"`
 	DescriptionSearch types.String                                                     `tfsdk:"description_search" query:"description_search,optional"`
@@ -38,11 +38,10 @@ func (m *ZoneLockdownsDataSourceModel) toListParams(_ context.Context) (params f
 	mModifiedOn, errs := m.ModifiedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = firewall.LockdownListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = firewall.LockdownListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.CreatedOn.IsNull() {
 		params.CreatedOn = cloudflare.F(mCreatedOn)
 	}

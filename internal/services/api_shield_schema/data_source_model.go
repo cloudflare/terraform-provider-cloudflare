@@ -5,8 +5,8 @@ package api_shield_schema
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +18,7 @@ type APIShieldSchemaResultDataSourceEnvelope struct {
 
 type APIShieldSchemaDataSourceModel struct {
 	SchemaID          types.String      `tfsdk:"schema_id" path:"schema_id,required"`
-	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	OmitSource        types.Bool        `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
@@ -28,11 +28,10 @@ type APIShieldSchemaDataSourceModel struct {
 }
 
 func (m *APIShieldSchemaDataSourceModel) toReadParams(_ context.Context) (params api_gateway.UserSchemaGetParams, diags diag.Diagnostics) {
-	params = api_gateway.UserSchemaGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = api_gateway.UserSchemaGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.OmitSource.IsNull() {
 		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}

@@ -5,8 +5,8 @@ package zero_trust_dlp_integration_entry
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -21,7 +21,7 @@ type ZeroTrustDLPIntegrationEntryResultDataSourceEnvelope struct {
 type ZeroTrustDLPIntegrationEntryDataSourceModel struct {
 	ID            types.String                                                                      `tfsdk:"id" path:"entry_id,computed"`
 	EntryID       types.String                                                                      `tfsdk:"entry_id" path:"entry_id,required"`
-	AccountID     types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
 	CaseSensitive types.Bool                                                                        `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description   types.String                                                                      `tfsdk:"description" json:"description,computed"`
@@ -40,10 +40,8 @@ type ZeroTrustDLPIntegrationEntryDataSourceModel struct {
 }
 
 func (m *ZeroTrustDLPIntegrationEntryDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPEntryIntegrationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryIntegrationGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DLPEntryIntegrationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

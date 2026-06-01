@@ -5,8 +5,8 @@ package workflow
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workflows"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workflows"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type WorkflowResultDataSourceEnvelope struct {
 type WorkflowDataSourceModel struct {
 	ID           types.String                                               `tfsdk:"id" path:"workflow_name,computed"`
 	WorkflowName types.String                                               `tfsdk:"workflow_name" path:"workflow_name,optional"`
-	AccountID    types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	ClassName    types.String                                               `tfsdk:"class_name" json:"class_name,computed"`
 	CreatedOn    timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn   timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -32,21 +32,18 @@ type WorkflowDataSourceModel struct {
 }
 
 func (m *WorkflowDataSourceModel) toReadParams(_ context.Context) (params workflows.WorkflowGetParams, diags diag.Diagnostics) {
-	params = workflows.WorkflowGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workflows.WorkflowGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *WorkflowDataSourceModel) toListParams(_ context.Context) (params workflows.WorkflowListParams, diags diag.Diagnostics) {
-	params = workflows.WorkflowListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workflows.WorkflowListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}

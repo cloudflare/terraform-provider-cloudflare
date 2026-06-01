@@ -21,7 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPIntegrationEntryReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Read",
@@ -31,10 +30,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"entry_id": schema.StringAttribute{
@@ -67,11 +66,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
+				Description: `Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"custom",
+						"custom_prompt_topic",
 						"predefined",
 						"integration",
 						"exact_data",
@@ -144,8 +144,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPIntegrationEntryVariantModel](ctx),
+				Description: "A Predefined AI prompt classification topic entry.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPIntegrationEntryVariantModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"topic_type": schema.StringAttribute{
 						Description: `Available values: "Intent", "Content".`,
@@ -155,14 +156,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: `Available values: "PromptTopic".`,
+						Description: `Available values: "PromptTopic", "General".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+							stringvalidator.OneOfCaseInsensitive("PromptTopic", "General"),
 						},
 					},
 					"description": schema.StringAttribute{
-						Computed: true,
+						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Computed:    true,
 					},
 				},
 			},

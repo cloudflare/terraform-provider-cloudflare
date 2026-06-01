@@ -5,8 +5,8 @@ package zero_trust_dlp_entry
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -19,16 +19,14 @@ type ZeroTrustDLPEntriesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPEntriesDataSourceModel struct {
-	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDLPEntriesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDLPEntriesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPEntryListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DLPEntryListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

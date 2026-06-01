@@ -5,8 +5,8 @@ package page_shield_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_shield"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,14 @@ type PageShieldPoliciesResultListDataSourceEnvelope struct {
 }
 
 type PageShieldPoliciesDataSourceModel struct {
-	ZoneID   types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                           `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[PageShieldPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PageShieldPoliciesDataSourceModel) toListParams(_ context.Context) (params page_shield.PolicyListParams, diags diag.Diagnostics) {
-	params = page_shield.PolicyListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.PolicyListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -31,11 +31,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"csr": schema.StringAttribute{
@@ -44,7 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{utils.RequiresReplaceIfNotCSRSemantic()},
 			},
 			"validity_days": schema.Int64Attribute{
-				Description:   "The number of days the Client Certificate will be valid after the issued_on date",
+				Description:   "The number of days the Client Certificate will be valid after the issued_on date.",
 				Required:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
@@ -52,39 +52,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"certificate": schema.StringAttribute{
-				Description: "The Client Certificate PEM",
+				Description: "The Client Certificate PEM.",
 				Computed:    true,
 			},
 			"common_name": schema.StringAttribute{
-				Description: "Common Name of the Client Certificate",
+				Description: "Common Name of the Client Certificate.",
 				Computed:    true,
 			},
 			"country": schema.StringAttribute{
-				Description: "Country, provided by the CSR",
+				Description: "Country, provided by the CSR.",
 				Computed:    true,
 			},
 			"expires_on": schema.StringAttribute{
-				Description: "Date that the Client Certificate expires",
+				Description: "Date that the Client Certificate expires.",
 				Computed:    true,
 			},
 			"fingerprint_sha256": schema.StringAttribute{
-				Description: "Unique identifier of the Client Certificate",
+				Description: "Unique identifier of the Client Certificate.",
 				Computed:    true,
 			},
 			"issued_on": schema.StringAttribute{
-				Description: "Date that the Client Certificate was issued by the Certificate Authority",
+				Description: "Date that the Client Certificate was issued by the Certificate Authority.",
 				Computed:    true,
 			},
 			"location": schema.StringAttribute{
-				Description: "Location, provided by the CSR",
+				Description: "Location, provided by the CSR.",
 				Computed:    true,
 			},
 			"organization": schema.StringAttribute{
-				Description: "Organization, provided by the CSR",
+				Description: "Organization, provided by the CSR.",
 				Computed:    true,
 			},
 			"organizational_unit": schema.StringAttribute{
-				Description: "Organizational Unit, provided by the CSR",
+				Description: "Organizational Unit, provided by the CSR.",
 				Computed:    true,
 			},
 			"serial_number": schema.StringAttribute{
@@ -96,15 +96,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"ski": schema.StringAttribute{
-				Description: "Subject Key Identifier",
+				Description: "Subject Key Identifier.",
 				Computed:    true,
 			},
 			"state": schema.StringAttribute{
-				Description: "State, provided by the CSR",
+				Description: "State, provided by the CSR.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions\nAvailable values: \"active\", \"pending_reactivation\", \"pending_revocation\", \"revoked\".",
+				Description: "Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions.\nAvailable values: \"active\", \"pending_reactivation\", \"pending_revocation\", \"revoked\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -116,7 +116,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"certificate_authority": schema.SingleNestedAttribute{
-				Description: "Certificate Authority used to issue the Client Certificate",
+				Description: "Certificate Authority used to issue the Client Certificate.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ClientCertificateCertificateAuthorityModel](ctx),
 				Attributes: map[string]schema.Attribute{

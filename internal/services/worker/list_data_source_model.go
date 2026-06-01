@@ -5,8 +5,8 @@ package worker
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type WorkersResultListDataSourceEnvelope struct {
 }
 
 type WorkersDataSourceModel struct {
-	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	Order     types.String                                               `tfsdk:"order" query:"order,computed_optional"`
 	OrderBy   types.String                                               `tfsdk:"order_by" query:"order_by,computed_optional"`
 	MaxItems  types.Int64                                                `tfsdk:"max_items"`
@@ -26,11 +26,10 @@ type WorkersDataSourceModel struct {
 }
 
 func (m *WorkersDataSourceModel) toListParams(_ context.Context) (params workers.BetaWorkerListParams, diags diag.Diagnostics) {
-	params = workers.BetaWorkerListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.BetaWorkerListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(workers.BetaWorkerListParamsOrder(m.Order.ValueString()))
 	}
@@ -71,10 +70,11 @@ type WorkersObservabilityLogsDataSourceModel struct {
 }
 
 type WorkersObservabilityTracesDataSourceModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
 }
 
 type WorkersReferencesDataSourceModel struct {

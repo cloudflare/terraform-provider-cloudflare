@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
@@ -107,6 +107,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"tunnel_protocol": schema.StringAttribute{
 				Description: "Determines which tunnel protocol to use.",
 				Computed:    true,
+			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileDNSSearchSuffixesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "List of routes excluded in the WARP client's tunnel.",
@@ -199,6 +216,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the DEX test targeting this policy.",
 							Computed:    true,
 						},
+					},
+				},
+			},
+			"virtual_networks": schema.SingleNestedAttribute{
+				Description: "Virtual network access settings for the device.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfileVirtualNetworksDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.ListAttribute{
+						Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"default": schema.StringAttribute{
+						Description: "The default virtual network ID. Must be included in the `allowed` list.",
+						Computed:    true,
 					},
 				},
 			},

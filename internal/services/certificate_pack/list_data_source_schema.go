@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"deploy": schema.StringAttribute{
 				Description: "Specify the deployment environment for the certificate packs.\nAvailable values: \"staging\", \"production\".",
@@ -190,7 +190,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate_authority": schema.StringAttribute{
-							Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)\nAvailable values: \"google\", \"lets_encrypt\", \"ssl_com\".",
+							Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details](https://developers.cloudflare.com/ssl/reference/certificate-authorities).\nAvailable values: \"google\", \"lets_encrypt\", \"ssl_com\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

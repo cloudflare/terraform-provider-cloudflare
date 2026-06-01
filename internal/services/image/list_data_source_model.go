@@ -5,8 +5,8 @@ package image
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/images"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/images"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -19,18 +19,17 @@ type ImagesItemsListDataSourceEnvelope struct {
 }
 
 type ImagesDataSourceModel struct {
-	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,required"`
 	Creator   types.String                                              `tfsdk:"creator" query:"creator,optional"`
 	MaxItems  types.Int64                                               `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ImagesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ImagesDataSourceModel) toListParams(_ context.Context) (params images.V1ListParams, diags diag.Diagnostics) {
-	params = images.V1ListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = images.V1ListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Creator.IsNull() {
 		params.Creator = cloudflare.F(m.Creator.ValueString())
 	}

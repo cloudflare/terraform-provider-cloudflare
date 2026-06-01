@@ -25,7 +25,7 @@ var (
 // Migration Test Configuration
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.7
+// - Last stable v4 release: default 4.52.0
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 //
 // Based on breaking changes analysis:
@@ -390,13 +390,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_Basic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run v2 migration from v4 to v5
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -436,13 +436,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run v2 migration from v4 to v5
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
 				statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -656,13 +656,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_CORSHeaders(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Migrate to v5 - cors_headers should be transformed from array to object
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
 				// Verify cors_headers is now an object (MaxItems:1 transformation)
@@ -700,13 +700,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_SAASApp(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Migrate to v5 - saas_app should be transformed from array to object
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),
 				// Verify saas_app is now an object (MaxItems:1 transformation)
@@ -746,13 +746,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_Minimal(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Migrate to v5 - type should default to "self_hosted"
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				// type should default to "self_hosted" when not specified in v4
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
@@ -789,7 +789,7 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_LandingPageDesign(t *testing.T
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config:             v4Config,
@@ -844,13 +844,13 @@ func TestMigrateZeroTrustAccessApplication_V4toV5_SelfHostedDomains(t *testing.T
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.7",
+						VersionConstraint: "4.52.0",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Migrate to v5 - self_hosted_domains should be converted from set to list
-			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.7", "v4", "v5", []statecheck.StateCheck{
+			acctest.MigrationV2TestStep(t, v4Config, tmpDir, "4.52.0", "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
 				// Verify self_hosted_domains was migrated

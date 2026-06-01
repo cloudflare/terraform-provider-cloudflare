@@ -5,8 +5,8 @@ package notification_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/alerting"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type NotificationPolicyResultDataSourceEnvelope struct {
 type NotificationPolicyDataSourceModel struct {
 	ID            types.String                                                          `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID      types.String                                                          `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	AlertInterval types.String                                                          `tfsdk:"alert_interval" json:"alert_interval,computed"`
 	AlertType     types.String                                                          `tfsdk:"alert_type" json:"alert_type,computed"`
 	Created       timetypes.RFC3339                                                     `tfsdk:"created" json:"created,computed" format:"date-time"`
@@ -33,10 +33,8 @@ type NotificationPolicyDataSourceModel struct {
 }
 
 func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (params alerting.PolicyGetParams, diags diag.Diagnostics) {
-	params = alerting.PolicyGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = alerting.PolicyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

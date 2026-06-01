@@ -98,7 +98,7 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 }
 
 type WorkersScriptMetadataModel struct {
-	Annotations        customfield.NestedObject[WorkersScriptMetadataAnnotationsModel] `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Annotations        *WorkersScriptMetadataAnnotationsModel      `tfsdk:"annotations" json:"annotations,optional"`
 	Assets             *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
 	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart           types.String                                                     `tfsdk:"body_part" json:"body_part,optional"`
@@ -118,9 +118,8 @@ type WorkersScriptMetadataModel struct {
 }
 
 type WorkersScriptMetadataAnnotationsModel struct {
-	WorkersMessage     types.String `tfsdk:"workers_message" json:"workers/message,optional"`
-	WorkersTag         types.String `tfsdk:"workers_tag" json:"workers/tag,optional"`
-	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by" json:"workers/triggered_by,computed"`
+	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,optional"`
+	WorkersTag     types.String `tfsdk:"workers_tag" json:"workers/tag,optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
@@ -195,8 +194,9 @@ type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
 }
 
 type WorkersScriptMetadataBindingsSimpleModel struct {
-	Limit  types.Float64 `tfsdk:"limit" json:"limit,required"`
-	Period types.Int64   `tfsdk:"period" json:"period,required"`
+	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
+	Period            types.Int64   `tfsdk:"period" json:"period,required"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
 }
 
 type WorkersScriptMetadataLimitsModel struct {
@@ -261,10 +261,11 @@ type WorkersScriptMetadataObservabilityLogsModel struct {
 }
 
 type WorkersScriptMetadataObservabilityTracesModel struct {
-	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
-	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
-	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	Destinations      *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	Enabled           types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
+	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist           types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
@@ -310,10 +311,11 @@ type WorkersScriptObservabilityLogsModel struct {
 }
 
 type WorkersScriptObservabilityTracesModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
 }
 
 type WorkersScriptPlacementModel struct {

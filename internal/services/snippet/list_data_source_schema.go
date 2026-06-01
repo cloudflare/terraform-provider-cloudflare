@@ -27,7 +27,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Use this field to specify the unique ID of the zone.",
-				Optional:    true,
+				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -42,6 +42,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[SnippetsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Identify the snippet.",
+							Computed:    true,
+						},
 						"created_on": schema.StringAttribute{
 							Description: "Indicates when the snippet was created.",
 							Computed:    true,

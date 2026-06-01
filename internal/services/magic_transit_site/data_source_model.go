@@ -5,8 +5,8 @@ package magic_transit_site
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +19,7 @@ type MagicTransitSiteResultDataSourceEnvelope struct {
 type MagicTransitSiteDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" path:"site_id,computed"`
 	SiteID               types.String                                                      `tfsdk:"site_id" path:"site_id,optional"`
-	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ConnectorID          types.String                                                      `tfsdk:"connector_id" json:"connector_id,computed"`
 	Description          types.String                                                      `tfsdk:"description" json:"description,computed"`
 	HaMode               types.Bool                                                        `tfsdk:"ha_mode" json:"ha_mode,computed"`
@@ -30,21 +30,18 @@ type MagicTransitSiteDataSourceModel struct {
 }
 
 func (m *MagicTransitSiteDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteGetParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.SiteGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *MagicTransitSiteDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.SiteListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Connectorid.IsNull() {
 		params.Connectorid = cloudflare.F(m.Filter.Connectorid.ValueString())
 	}

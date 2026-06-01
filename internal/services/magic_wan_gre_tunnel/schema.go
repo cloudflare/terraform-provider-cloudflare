@@ -26,7 +26,6 @@ var _ resource.ResourceWithConfigValidators = (*MagicWANGRETunnelResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Magic Transit Read",
@@ -39,11 +38,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bgp": schema.SingleNestedAttribute{
@@ -93,7 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"automatic_return_routing": schema.BoolAttribute{
-				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
@@ -253,7 +252,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 					},
@@ -434,7 +433,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.",
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 					},

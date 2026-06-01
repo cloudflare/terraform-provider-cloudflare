@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"app_protocol": schema.StringAttribute{
 				Description: `Available values: "postgresql", "mysql".`,

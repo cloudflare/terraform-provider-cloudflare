@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
@@ -75,7 +75,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[D1DatabaseReadReplicationDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).\nAvailable values: \"auto\", \"disabled\".",
+						Description: "The read replication mode for the database. Mode 'auto' denotes that D1 creates replicas and automatically places them around the world. Mode 'disabled' denotes that no database replicas are used.\nAvailable values: \"auto\", \"disabled\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("auto", "disabled"),

@@ -5,8 +5,8 @@ package email_security_trusted_domains
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_security"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_security"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +18,7 @@ type EmailSecurityTrustedDomainsListResultListDataSourceEnvelope struct {
 }
 
 type EmailSecurityTrustedDomainsListDataSourceModel struct {
-	AccountID    types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Direction    types.String                                                                       `tfsdk:"direction" query:"direction,optional"`
 	IsRecent     types.Bool                                                                         `tfsdk:"is_recent" query:"is_recent,optional"`
 	IsSimilarity types.Bool                                                                         `tfsdk:"is_similarity" query:"is_similarity,optional"`
@@ -30,11 +30,10 @@ type EmailSecurityTrustedDomainsListDataSourceModel struct {
 }
 
 func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.Context) (params email_security.SettingTrustedDomainListParams, diags diag.Diagnostics) {
-	params = email_security.SettingTrustedDomainListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingTrustedDomainListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingTrustedDomainListParamsDirection(m.Direction.ValueString()))
 	}
@@ -58,12 +57,13 @@ func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.
 }
 
 type EmailSecurityTrustedDomainsListResultDataSourceModel struct {
-	ID           types.Int64       `tfsdk:"id" json:"id,computed"`
+	ID           types.String      `tfsdk:"id" json:"id,computed"`
+	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRecent     types.Bool        `tfsdk:"is_recent" json:"is_recent,computed"`
 	IsRegex      types.Bool        `tfsdk:"is_regex" json:"is_regex,computed"`
 	IsSimilarity types.Bool        `tfsdk:"is_similarity" json:"is_similarity,computed"`
 	LastModified timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern      types.String      `tfsdk:"pattern" json:"pattern,computed"`
-	Comments     types.String      `tfsdk:"comments" json:"comments,computed"`
 }

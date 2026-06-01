@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -21,7 +21,7 @@ type ZeroTrustTunnelCloudflaredResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	ID              types.String                                                                       `tfsdk:"id" path:"tunnel_id,computed"`
 	TunnelID        types.String                                                                       `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
-	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	AccountTag      types.String                                                                       `tfsdk:"account_tag" json:"account_tag,computed"`
 	ConfigSrc       types.String                                                                       `tfsdk:"config_src" json:"config_src,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                  `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
@@ -38,23 +38,18 @@ type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelCloudflaredGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelCloudflaredGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
-	
-
-	params = zero_trust.TunnelCloudflaredListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelCloudflaredListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.ExcludePrefix.IsNull() {
 		params.ExcludePrefix = cloudflare.F(m.Filter.ExcludePrefix.ValueString())
 	}

@@ -5,8 +5,8 @@ package total_tls
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/acm"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/acm"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,17 +17,15 @@ type TotalTLSResultDataSourceEnvelope struct {
 
 type TotalTLSDataSourceModel struct {
 	ID                   types.String `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	ValidityPeriod       types.Int64  `tfsdk:"validity_period" json:"validity_period,computed"`
 }
 
 func (m *TotalTLSDataSourceModel) toReadParams(_ context.Context) (params acm.TotalTLSGetParams, diags diag.Diagnostics) {
-	params = acm.TotalTLSGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = acm.TotalTLSGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

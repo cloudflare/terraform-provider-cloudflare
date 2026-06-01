@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceManagedNetworksRe
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",
@@ -29,15 +28,15 @@ Version: 500,
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"network_id": schema.StringAttribute{
 				Description:   "API UUID.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{

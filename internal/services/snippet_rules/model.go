@@ -13,8 +13,9 @@ type SnippetRulesResultEnvelope struct {
 }
 
 type SnippetRulesModel struct {
-	ZoneID types.String               `tfsdk:"zone_id" path:"zone_id,optional"`
-	Rules  *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,required"`
+	ID     types.String               `tfsdk:"id" json:"-,computed"`
+	ZoneID types.String               `tfsdk:"zone_id" path:"zone_id,required"`
+	Rules  *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,required,no_refresh"`
 }
 
 func (m SnippetRulesModel) MarshalJSON() (data []byte, err error) {

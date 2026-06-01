@@ -5,8 +5,8 @@ package custom_ssl
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/custom_certificates"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/custom_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +20,7 @@ type CustomSSLResultDataSourceEnvelope struct {
 type CustomSSLDataSourceModel struct {
 	ID                  types.String                                                      `tfsdk:"id" path:"custom_certificate_id,computed"`
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
-	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
 	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	CustomCsrID         types.String                                                      `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
@@ -38,21 +38,18 @@ type CustomSSLDataSourceModel struct {
 }
 
 func (m *CustomSSLDataSourceModel) toReadParams(_ context.Context) (params custom_certificates.CustomCertificateGetParams, diags diag.Diagnostics) {
-	params = custom_certificates.CustomCertificateGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = custom_certificates.CustomCertificateGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
 }
 
 func (m *CustomSSLDataSourceModel) toListParams(_ context.Context) (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
-	params = custom_certificates.CustomCertificateListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = custom_certificates.CustomCertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Filter.Match.IsNull() {
 		params.Match = cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(m.Filter.Match.ValueString()))
 	}

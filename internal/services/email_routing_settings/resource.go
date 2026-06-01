@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_routing"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_routing"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -108,7 +108,6 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Get(
@@ -147,7 +146,6 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.EmailRouting.Disable(
 		ctx,

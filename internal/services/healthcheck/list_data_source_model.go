@@ -5,8 +5,8 @@ package healthcheck
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/healthchecks"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/healthchecks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type HealthchecksResultListDataSourceEnvelope struct {
 }
 
 type HealthchecksDataSourceModel struct {
-	ZoneID   types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                     `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[HealthchecksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *HealthchecksDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
-	params = healthchecks.HealthcheckListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = healthchecks.HealthcheckListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

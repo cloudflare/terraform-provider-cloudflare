@@ -5,8 +5,8 @@ package zero_trust_access_key_configuration
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,17 +18,15 @@ type ZeroTrustAccessKeyConfigurationResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessKeyConfigurationDataSourceModel struct {
 	ID                      types.String      `tfsdk:"id" path:"account_id,computed"`
-	AccountID               types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID               types.String      `tfsdk:"account_id" path:"account_id,required"`
 	DaysUntilNextRotation   types.Float64     `tfsdk:"days_until_next_rotation" json:"days_until_next_rotation,computed"`
 	KeyRotationIntervalDays types.Float64     `tfsdk:"key_rotation_interval_days" json:"key_rotation_interval_days,computed"`
 	LastKeyRotationAt       timetypes.RFC3339 `tfsdk:"last_key_rotation_at" json:"last_key_rotation_at,computed" format:"date-time"`
 }
 
 func (m *ZeroTrustAccessKeyConfigurationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessKeyGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessKeyGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessKeyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

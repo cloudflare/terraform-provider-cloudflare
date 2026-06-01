@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/api_gateway"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,7 +64,6 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -112,7 +111,6 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -151,7 +149,6 @@ func (r *APIShieldSchemaValidationSettingsResource) Read(ctx context.Context, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	res := new(http.Response)
 	_, err := r.client.APIGateway.Settings.SchemaValidation.Get(

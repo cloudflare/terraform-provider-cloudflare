@@ -5,8 +5,8 @@ package ai_gateway
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/ai_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,50 +18,48 @@ type AIGatewayResultDataSourceEnvelope struct {
 }
 
 type AIGatewayDataSourceModel struct {
-	ID                      types.String                                               `tfsdk:"id" path:"id,computed_optional"`
-	AccountID               types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
-	Authentication          types.Bool                                                 `tfsdk:"authentication" json:"authentication,computed"`
-	CacheInvalidateOnUpdate types.Bool                                                 `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
-	CacheTTL                types.Int64                                                `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
-	CollectLogs             types.Bool                                                 `tfsdk:"collect_logs" json:"collect_logs,computed"`
-	CreatedAt               timetypes.RFC3339                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	IsDefault               types.Bool                                                 `tfsdk:"is_default" json:"is_default,computed"`
-	LogManagement           types.Int64                                                `tfsdk:"log_management" json:"log_management,computed"`
-	LogManagementStrategy   types.String                                               `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
-	Logpush                 types.Bool                                                 `tfsdk:"logpush" json:"logpush,computed"`
-	LogpushPublicKey        types.String                                               `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
-	ModifiedAt              timetypes.RFC3339                                          `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	RateLimitingInterval    types.Int64                                                `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
-	RateLimitingLimit       types.Int64                                                `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
-	RateLimitingTechnique   types.String                                               `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
-	RetryBackoff            types.String                                               `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
-	RetryDelay              types.Int64                                                `tfsdk:"retry_delay" json:"retry_delay,computed"`
-	RetryMaxAttempts        types.Int64                                                `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
-	StoreID                 types.String                                               `tfsdk:"store_id" json:"store_id,computed"`
-	WorkersAIBillingMode    types.String                                               `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
-	Zdr                     types.Bool                                                 `tfsdk:"zdr" json:"zdr,computed"`
-	DLP                     customfield.NestedObject[AIGatewayDLPDataSourceModel]      `tfsdk:"dlp" json:"dlp,computed"`
-	Otel                    customfield.NestedObjectList[AIGatewayOtelDataSourceModel] `tfsdk:"otel" json:"otel,computed"`
-	Stripe                  customfield.NestedObject[AIGatewayStripeDataSourceModel]   `tfsdk:"stripe" json:"stripe,computed"`
-	Filter                  *AIGatewayFindOneByDataSourceModel                         `tfsdk:"filter"`
+	ID                      types.String                                                 `tfsdk:"id" path:"id,computed_optional"`
+	AccountID               types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	Authentication          types.Bool                                                   `tfsdk:"authentication" json:"authentication,computed"`
+	CacheInvalidateOnUpdate types.Bool                                                   `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
+	CacheTTL                types.Int64                                                  `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
+	CollectLogs             types.Bool                                                   `tfsdk:"collect_logs" json:"collect_logs,computed"`
+	CreatedAt               timetypes.RFC3339                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	IsDefault               types.Bool                                                   `tfsdk:"is_default" json:"is_default,computed"`
+	LogManagement           types.Int64                                                  `tfsdk:"log_management" json:"log_management,computed"`
+	LogManagementStrategy   types.String                                                 `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
+	Logpush                 types.Bool                                                   `tfsdk:"logpush" json:"logpush,computed"`
+	LogpushPublicKey        types.String                                                 `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
+	ModifiedAt              timetypes.RFC3339                                            `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	RateLimitingInterval    types.Int64                                                  `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
+	RateLimitingLimit       types.Int64                                                  `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
+	RateLimitingTechnique   types.String                                                 `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
+	RetryBackoff            types.String                                                 `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
+	RetryDelay              types.Int64                                                  `tfsdk:"retry_delay" json:"retry_delay,computed"`
+	RetryMaxAttempts        types.Int64                                                  `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
+	StoreID                 types.String                                                 `tfsdk:"store_id" json:"store_id,computed"`
+	WorkersAIBillingMode    types.String                                                 `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
+	Zdr                     types.Bool                                                   `tfsdk:"zdr" json:"zdr,computed"`
+	DLP                     customfield.NestedObject[AIGatewayDLPDataSourceModel]        `tfsdk:"dlp" json:"dlp,computed"`
+	Guardrails              customfield.NestedObject[AIGatewayGuardrailsDataSourceModel] `tfsdk:"guardrails" json:"guardrails,computed"`
+	Otel                    customfield.NestedObjectList[AIGatewayOtelDataSourceModel]   `tfsdk:"otel" json:"otel,computed"`
+	Stripe                  customfield.NestedObject[AIGatewayStripeDataSourceModel]     `tfsdk:"stripe" json:"stripe,computed"`
+	Filter                  *AIGatewayFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *AIGatewayDataSourceModel) toReadParams(_ context.Context) (params ai_gateway.AIGatewayGetParams, diags diag.Diagnostics) {
-	params = ai_gateway.AIGatewayGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = ai_gateway.AIGatewayGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *AIGatewayDataSourceModel) toListParams(_ context.Context) (params ai_gateway.AIGatewayListParams, diags diag.Diagnostics) {
-	params = ai_gateway.AIGatewayListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = ai_gateway.AIGatewayListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
@@ -82,6 +80,45 @@ type AIGatewayDLPPoliciesDataSourceModel struct {
 	Check    customfield.List[types.String] `tfsdk:"check" json:"check,computed"`
 	Enabled  types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	Profiles customfield.List[types.String] `tfsdk:"profiles" json:"profiles,computed"`
+}
+
+type AIGatewayGuardrailsDataSourceModel struct {
+	Prompt   customfield.NestedObject[AIGatewayGuardrailsPromptDataSourceModel]   `tfsdk:"prompt" json:"prompt,computed"`
+	Response customfield.NestedObject[AIGatewayGuardrailsResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`
+}
+
+type AIGatewayGuardrailsPromptDataSourceModel struct {
+	P1  types.String `tfsdk:"p1" json:"P1,computed"`
+	S1  types.String `tfsdk:"s1" json:"S1,computed"`
+	S10 types.String `tfsdk:"s10" json:"S10,computed"`
+	S11 types.String `tfsdk:"s11" json:"S11,computed"`
+	S12 types.String `tfsdk:"s12" json:"S12,computed"`
+	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S2  types.String `tfsdk:"s2" json:"S2,computed"`
+	S3  types.String `tfsdk:"s3" json:"S3,computed"`
+	S4  types.String `tfsdk:"s4" json:"S4,computed"`
+	S5  types.String `tfsdk:"s5" json:"S5,computed"`
+	S6  types.String `tfsdk:"s6" json:"S6,computed"`
+	S7  types.String `tfsdk:"s7" json:"S7,computed"`
+	S8  types.String `tfsdk:"s8" json:"S8,computed"`
+	S9  types.String `tfsdk:"s9" json:"S9,computed"`
+}
+
+type AIGatewayGuardrailsResponseDataSourceModel struct {
+	P1  types.String `tfsdk:"p1" json:"P1,computed"`
+	S1  types.String `tfsdk:"s1" json:"S1,computed"`
+	S10 types.String `tfsdk:"s10" json:"S10,computed"`
+	S11 types.String `tfsdk:"s11" json:"S11,computed"`
+	S12 types.String `tfsdk:"s12" json:"S12,computed"`
+	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S2  types.String `tfsdk:"s2" json:"S2,computed"`
+	S3  types.String `tfsdk:"s3" json:"S3,computed"`
+	S4  types.String `tfsdk:"s4" json:"S4,computed"`
+	S5  types.String `tfsdk:"s5" json:"S5,computed"`
+	S6  types.String `tfsdk:"s6" json:"S6,computed"`
+	S7  types.String `tfsdk:"s7" json:"S7,computed"`
+	S8  types.String `tfsdk:"s8" json:"S8,computed"`
+	S9  types.String `tfsdk:"s9" json:"S9,computed"`
 }
 
 type AIGatewayOtelDataSourceModel struct {

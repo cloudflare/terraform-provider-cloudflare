@@ -5,8 +5,8 @@ package zero_trust_device_posture_integration
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,16 +17,14 @@ type ZeroTrustDevicePostureIntegrationsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureIntegrationsDataSourceModel struct {
-	AccountID types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                          `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                           `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDevicePostureIntegrationsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDevicePostureIntegrationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureIntegrationListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DevicePostureIntegrationListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

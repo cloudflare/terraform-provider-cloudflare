@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the zone's custom SSL.\nAvailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\".",
@@ -170,16 +170,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"tunnel": schema.SingleNestedAttribute{
-									Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+									Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[CustomSSLsKeylessServerTunnelDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"private_ip": schema.StringAttribute{
-											Description: "Private IP of the Key Server Host",
+											Description: "Private IP of the Key Server Host.",
 											Computed:    true,
 										},
 										"vnet_id": schema.StringAttribute{
-											Description: "Cloudflare Tunnel Virtual Network ID",
+											Description: "Cloudflare Tunnel Virtual Network ID.",
 											Computed:    true,
 										},
 									},

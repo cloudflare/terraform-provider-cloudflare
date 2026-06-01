@@ -5,8 +5,8 @@ package zero_trust_device_default_profile
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,38 +17,43 @@ type ZeroTrustDeviceDefaultProfileResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
-	ID                         types.String                                                                              `tfsdk:"id" path:"account_id,computed"`
-	AccountID                  types.String                                                                              `tfsdk:"account_id" path:"account_id,optional"`
-	AllowModeSwitch            types.Bool                                                                                `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
-	AllowUpdates               types.Bool                                                                                `tfsdk:"allow_updates" json:"allow_updates,computed"`
-	AllowedToLeave             types.Bool                                                                                `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`
-	AutoConnect                types.Float64                                                                             `tfsdk:"auto_connect" json:"auto_connect,computed"`
-	CaptivePortal              types.Float64                                                                             `tfsdk:"captive_portal" json:"captive_portal,computed"`
-	Default                    types.Bool                                                                                `tfsdk:"default" json:"default,computed"`
-	DisableAutoFallback        types.Bool                                                                                `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed"`
-	Enabled                    types.Bool                                                                                `tfsdk:"enabled" json:"enabled,computed"`
-	ExcludeOfficeIPs           types.Bool                                                                                `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
-	GatewayUniqueID            types.String                                                                              `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
-	PolicyID                   types.String                                                                              `tfsdk:"policy_id" json:"policy_id,computed"`
-	RegisterInterfaceIPWithDNS types.Bool                                                                                `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed"`
-	SccmVpnBoundarySupport     types.Bool                                                                                `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed"`
-	SupportURL                 types.String                                                                              `tfsdk:"support_url" json:"support_url,computed"`
-	SwitchLocked               types.Bool                                                                                `tfsdk:"switch_locked" json:"switch_locked,computed"`
-	TunnelProtocol             types.String                                                                              `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
-	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeDataSourceModel]         `tfsdk:"exclude" json:"exclude,computed"`
-	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
-	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeDataSourceModel]         `tfsdk:"include" json:"include,computed"`
-	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2DataSourceModel]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
+	ID                         types.String                                                                                `tfsdk:"id" path:"account_id,computed"`
+	AccountID                  types.String                                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AllowModeSwitch            types.Bool                                                                                  `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
+	AllowUpdates               types.Bool                                                                                  `tfsdk:"allow_updates" json:"allow_updates,computed"`
+	AllowedToLeave             types.Bool                                                                                  `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`
+	AutoConnect                types.Float64                                                                               `tfsdk:"auto_connect" json:"auto_connect,computed"`
+	CaptivePortal              types.Float64                                                                               `tfsdk:"captive_portal" json:"captive_portal,computed"`
+	Default                    types.Bool                                                                                  `tfsdk:"default" json:"default,computed"`
+	DisableAutoFallback        types.Bool                                                                                  `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed"`
+	Enabled                    types.Bool                                                                                  `tfsdk:"enabled" json:"enabled,computed"`
+	ExcludeOfficeIPs           types.Bool                                                                                  `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
+	GatewayUniqueID            types.String                                                                                `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
+	PolicyID                   types.String                                                                                `tfsdk:"policy_id" json:"policy_id,computed"`
+	RegisterInterfaceIPWithDNS types.Bool                                                                                  `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed"`
+	SccmVpnBoundarySupport     types.Bool                                                                                  `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed"`
+	SupportURL                 types.String                                                                                `tfsdk:"support_url" json:"support_url,computed"`
+	SwitchLocked               types.Bool                                                                                  `tfsdk:"switch_locked" json:"switch_locked,computed"`
+	TunnelProtocol             types.String                                                                                `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
+	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesDataSourceModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed"`
+	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeDataSourceModel]           `tfsdk:"exclude" json:"exclude,computed"`
+	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel]   `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
+	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeDataSourceModel]           `tfsdk:"include" json:"include,computed"`
+	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2DataSourceModel]         `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
+	VirtualNetworks            customfield.NestedObject[ZeroTrustDeviceDefaultProfileVirtualNetworksDataSourceModel]       `tfsdk:"virtual_networks" json:"virtual_networks,computed"`
 }
 
 func (m *ZeroTrustDeviceDefaultProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyDefaultGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePolicyDefaultGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DevicePolicyDefaultGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
+}
+
+type ZeroTrustDeviceDefaultProfileDNSSearchSuffixesDataSourceModel struct {
+	Suffix      types.String `tfsdk:"suffix" json:"suffix,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 }
 
 type ZeroTrustDeviceDefaultProfileExcludeDataSourceModel struct {
@@ -72,4 +77,9 @@ type ZeroTrustDeviceDefaultProfileIncludeDataSourceModel struct {
 type ZeroTrustDeviceDefaultProfileServiceModeV2DataSourceModel struct {
 	Mode types.String  `tfsdk:"mode" json:"mode,computed"`
 	Port types.Float64 `tfsdk:"port" json:"port,computed"`
+}
+
+type ZeroTrustDeviceDefaultProfileVirtualNetworksDataSourceModel struct {
+	Allowed customfield.List[types.String] `tfsdk:"allowed" json:"allowed,computed"`
+	Default types.String                   `tfsdk:"default" json:"default,computed"`
 }

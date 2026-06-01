@@ -5,8 +5,8 @@ package magic_transit_connector
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,8 +18,8 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 
 type MagicTransitConnectorDataSourceModel struct {
 	ID                           types.String                                                         `tfsdk:"id" path:"connector_id,computed"`
-	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,required"`
-	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`
+	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Activated                    types.Bool                                                           `tfsdk:"activated" json:"activated,computed"`
 	InterruptWindowDurationHours types.Float64                                                        `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed"`
 	InterruptWindowHourOfDay     types.Float64                                                        `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed"`
@@ -32,13 +32,24 @@ type MagicTransitConnectorDataSourceModel struct {
 	InterruptWindowDaysOfWeek    customfield.List[types.String]                                       `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed"`
 	InterruptWindowEmbargoDates  customfield.List[types.String]                                       `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed"`
 	Device                       customfield.NestedObject[MagicTransitConnectorDeviceDataSourceModel] `tfsdk:"device" json:"device,computed"`
+	Filter                       *MagicTransitConnectorFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
 func (m *MagicTransitConnectorDataSourceModel) toReadParams(_ context.Context) (params magic_transit.ConnectorGetParams, diags diag.Diagnostics) {
-	params = magic_transit.ConnectorGetParams{}
+	params = magic_transit.ConnectorGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	return
+}
+
+func (m *MagicTransitConnectorDataSourceModel) toListParams(_ context.Context) (params magic_transit.ConnectorListParams, diags diag.Diagnostics) {
+	params = magic_transit.ConnectorListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Filter.DeviceType.IsNull() {
+		params.DeviceType = cloudflare.F(magic_transit.ConnectorListParamsDeviceType(m.Filter.DeviceType.ValueString()))
 	}
 
 	return
@@ -47,4 +58,9 @@ func (m *MagicTransitConnectorDataSourceModel) toReadParams(_ context.Context) (
 type MagicTransitConnectorDeviceDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed"`
+	Type         types.String `tfsdk:"type" json:"type,computed"`
+}
+
+type MagicTransitConnectorFindOneByDataSourceModel struct {
+	DeviceType types.String `tfsdk:"device_type" query:"device_type,optional"`
 }

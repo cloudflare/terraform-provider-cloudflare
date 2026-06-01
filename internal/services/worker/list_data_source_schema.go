@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"order": schema.StringAttribute{
 				Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
@@ -147,6 +147,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										"persist": schema.BoolAttribute{
 											Description: "Whether trace persistence is enabled for the Worker.",
 											Computed:    true,
+										},
+										"propagation_policy": schema.StringAttribute{
+											Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" (default) honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.\nAvailable values: \"authenticated\", \"accept\".",
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("authenticated", "accept"),
+											},
 										},
 									},
 								},

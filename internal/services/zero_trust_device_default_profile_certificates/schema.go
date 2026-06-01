@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceDefaultProfileCer
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"SSL and Certificates Read",
@@ -25,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{

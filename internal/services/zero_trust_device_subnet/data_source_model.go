@@ -5,8 +5,8 @@ package zero_trust_device_subnet
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +19,7 @@ type ZeroTrustDeviceSubnetResultDataSourceEnvelope struct {
 type ZeroTrustDeviceSubnetDataSourceModel struct {
 	ID               types.String      `tfsdk:"id" path:"subnet_id,computed"`
 	SubnetID         types.String      `tfsdk:"subnet_id" path:"subnet_id,required"`
-	AccountID        types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Comment          types.String      `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt        timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -30,10 +30,8 @@ type ZeroTrustDeviceSubnetDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceSubnetDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkSubnetWARPGetParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkSubnetWARPGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.NetworkSubnetWARPGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

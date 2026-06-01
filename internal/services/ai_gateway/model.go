@@ -15,7 +15,7 @@ type AIGatewayResultEnvelope struct {
 
 type AIGatewayModel struct {
 	ID                      types.String                                     `tfsdk:"id" json:"id,required"`
-	AccountID               types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID               types.String                                     `tfsdk:"account_id" path:"account_id,required"`
 	CacheInvalidateOnUpdate types.Bool                                       `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,required"`
 	CacheTTL                types.Int64                                      `tfsdk:"cache_ttl" json:"cache_ttl,required"`
 	CollectLogs             types.Bool                                       `tfsdk:"collect_logs" json:"collect_logs,required"`
@@ -33,6 +33,7 @@ type AIGatewayModel struct {
 	StoreID                 types.String                                     `tfsdk:"store_id" json:"store_id,optional"`
 	Zdr                     types.Bool                                       `tfsdk:"zdr" json:"zdr,optional"`
 	DLP                     *AIGatewayDLPModel                               `tfsdk:"dlp" json:"dlp,optional"`
+	Guardrails              *AIGatewayGuardrailsModel                        `tfsdk:"guardrails" json:"guardrails,optional"`
 	Stripe                  *AIGatewayStripeModel                            `tfsdk:"stripe" json:"stripe,optional"`
 	WorkersAIBillingMode    types.String                                     `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed_optional"`
 	Otel                    customfield.NestedObjectList[AIGatewayOtelModel] `tfsdk:"otel" json:"otel,computed_optional"`
@@ -62,6 +63,45 @@ type AIGatewayDLPPoliciesModel struct {
 	Check    *[]types.String `tfsdk:"check" json:"check,required"`
 	Enabled  types.Bool      `tfsdk:"enabled" json:"enabled,required"`
 	Profiles *[]types.String `tfsdk:"profiles" json:"profiles,required"`
+}
+
+type AIGatewayGuardrailsModel struct {
+	Prompt   *AIGatewayGuardrailsPromptModel   `tfsdk:"prompt" json:"prompt,required"`
+	Response *AIGatewayGuardrailsResponseModel `tfsdk:"response" json:"response,required"`
+}
+
+type AIGatewayGuardrailsPromptModel struct {
+	P1  types.String `tfsdk:"p1" json:"P1,optional"`
+	S1  types.String `tfsdk:"s1" json:"S1,optional"`
+	S10 types.String `tfsdk:"s10" json:"S10,optional"`
+	S11 types.String `tfsdk:"s11" json:"S11,optional"`
+	S12 types.String `tfsdk:"s12" json:"S12,optional"`
+	S13 types.String `tfsdk:"s13" json:"S13,optional"`
+	S2  types.String `tfsdk:"s2" json:"S2,optional"`
+	S3  types.String `tfsdk:"s3" json:"S3,optional"`
+	S4  types.String `tfsdk:"s4" json:"S4,optional"`
+	S5  types.String `tfsdk:"s5" json:"S5,optional"`
+	S6  types.String `tfsdk:"s6" json:"S6,optional"`
+	S7  types.String `tfsdk:"s7" json:"S7,optional"`
+	S8  types.String `tfsdk:"s8" json:"S8,optional"`
+	S9  types.String `tfsdk:"s9" json:"S9,optional"`
+}
+
+type AIGatewayGuardrailsResponseModel struct {
+	P1  types.String `tfsdk:"p1" json:"P1,optional"`
+	S1  types.String `tfsdk:"s1" json:"S1,optional"`
+	S10 types.String `tfsdk:"s10" json:"S10,optional"`
+	S11 types.String `tfsdk:"s11" json:"S11,optional"`
+	S12 types.String `tfsdk:"s12" json:"S12,optional"`
+	S13 types.String `tfsdk:"s13" json:"S13,optional"`
+	S2  types.String `tfsdk:"s2" json:"S2,optional"`
+	S3  types.String `tfsdk:"s3" json:"S3,optional"`
+	S4  types.String `tfsdk:"s4" json:"S4,optional"`
+	S5  types.String `tfsdk:"s5" json:"S5,optional"`
+	S6  types.String `tfsdk:"s6" json:"S6,optional"`
+	S7  types.String `tfsdk:"s7" json:"S7,optional"`
+	S8  types.String `tfsdk:"s8" json:"S8,optional"`
+	S9  types.String `tfsdk:"s9" json:"S9,optional"`
 }
 
 type AIGatewayStripeModel struct {

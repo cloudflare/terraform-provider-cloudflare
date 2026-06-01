@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*CustomSSLResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Mutual TLS Certificates Read",
@@ -36,11 +35,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
@@ -208,16 +207,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"tunnel": schema.SingleNestedAttribute{
-						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel.",
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[CustomSSLKeylessServerTunnelModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"private_ip": schema.StringAttribute{
-								Description: "Private IP of the Key Server Host",
+								Description: "Private IP of the Key Server Host.",
 								Computed:    true,
 							},
 							"vnet_id": schema.StringAttribute{
-								Description: "Cloudflare Tunnel Virtual Network ID",
+								Description: "Cloudflare Tunnel Virtual Network ID.",
 								Computed:    true,
 							},
 						},
