@@ -42,7 +42,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",

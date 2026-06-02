@@ -45,6 +45,7 @@ type SourceSnippetFileModel struct {
 // - Files uses *[]TargetSnippetFileModel (framework converts to SnippetFileType via reflection)
 // - Timestamps use timetypes.RFC3339 (matches schema CustomType)
 type TargetSnippetModel struct {
+	ID          types.String                `tfsdk:"id"`
 	SnippetName types.String                `tfsdk:"snippet_name"`
 	ZoneID      types.String                `tfsdk:"zone_id"`
 	Files       *[]TargetSnippetFileModel   `tfsdk:"files"`

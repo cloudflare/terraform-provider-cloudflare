@@ -155,9 +155,14 @@ type TargetV5ZeroTrustAccessGroupIncludeModel struct {
 	Okta                 *TargetV5OktaModel                 `tfsdk:"okta"`
 	SAML                 *TargetV5SAMLModel                 `tfsdk:"saml"`
 	OIDC                 *TargetV5OIDCModel                 `tfsdk:"oidc"`
-	ServiceToken         *TargetV5ServiceTokenModel         `tfsdk:"service_token"`
-	LinkedAppToken       *TargetV5LinkedAppTokenModel       `tfsdk:"linked_app_token"`
-	UserRiskScore        *TargetV5UserRiskScoreModel        `tfsdk:"user_risk_score"`
+	ServiceToken            *TargetV5ServiceTokenModel            `tfsdk:"service_token"`
+	LinkedAppToken          *TargetV5LinkedAppTokenModel          `tfsdk:"linked_app_token"`
+	UserRiskScore           *TargetV5UserRiskScoreModel           `tfsdk:"user_risk_score"`
+	CloudflareAccountMember *TargetV5CloudflareAccountMemberModel `tfsdk:"cloudflare_account_member"`
+}
+
+type TargetV5CloudflareAccountMemberModel struct {
+	AccountID types.String `tfsdk:"account_id"`
 }
 
 type TargetV5UserRiskScoreModel struct {
