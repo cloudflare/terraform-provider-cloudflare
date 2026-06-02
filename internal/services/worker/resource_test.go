@@ -117,6 +117,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"persist":            knownvalue.Bool(true),
+							"propagation_policy": knownvalue.StringExact("authenticated"),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -152,6 +153,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"persist":            knownvalue.Bool(true),
+							"propagation_policy": knownvalue.StringExact("authenticated"),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
