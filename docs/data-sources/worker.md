@@ -2,12 +2,17 @@
 page_title: "cloudflare_worker Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_worker (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -86,6 +91,8 @@ Read-Only:
 - `enabled` (Boolean) Whether traces are enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `persist` (Boolean) Whether trace persistence is enabled for the Worker.
+- `propagation_policy` (String) Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" (default) honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.
+Available values: "authenticated", "accept".
 
 
 

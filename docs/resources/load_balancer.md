@@ -2,12 +2,16 @@
 page_title: "cloudflare_load_balancer Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Load Balancers ReadLoad Balancers Write
 ---
 
 # cloudflare_load_balancer (Resource)
 
+Accepted Permissions
 
+- `Load Balancers Read`
+- `Load Balancers Write`
 
 ## Example Usage
 

@@ -20,7 +20,7 @@ type KeylessCertificateResultDataSourceEnvelope struct {
 type KeylessCertificateDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" path:"keyless_certificate_id,computed"`
 	KeylessCertificateID types.String                                                      `tfsdk:"keyless_certificate_id" path:"keyless_certificate_id,required"`
-	ZoneID               types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID               types.String                                                      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn            timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Enabled              types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed"`
 	Host                 types.String                                                      `tfsdk:"host" json:"host,computed"`

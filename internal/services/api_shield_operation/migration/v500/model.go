@@ -38,7 +38,25 @@ type TargetAPIShieldOperationModel struct {
 	Host        types.String                                                          `tfsdk:"host"`
 	Method      types.String                                                          `tfsdk:"method"`
 	LastUpdated timetypes.RFC3339                                                     `tfsdk:"last_updated"`
+	Schemas     customfield.NestedObject[TargetAPIShieldOperationSchemasModel]        `tfsdk:"schemas"`
 	Features    customfield.NestedObject[TargetAPIShieldOperationFeaturesModel]       `tfsdk:"features"`
+}
+
+// TargetAPIShieldOperationSchemasModel mirrors APIShieldOperationSchemasModel from the
+// parent package — split into its own type here so the migration target is independent.
+type TargetAPIShieldOperationSchemasModel struct {
+	Learned  customfield.NestedObject[TargetAPIShieldOperationSchemasLearnedModel]  `tfsdk:"learned"`
+	Uploaded customfield.NestedObject[TargetAPIShieldOperationSchemasUploadedModel] `tfsdk:"uploaded"`
+}
+
+type TargetAPIShieldOperationSchemasLearnedModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body"`
+}
+
+type TargetAPIShieldOperationSchemasUploadedModel struct {
+	Parameters  customfield.List[customfield.Map[jsontypes.Normalized]] `tfsdk:"parameters"`
+	RequestBody customfield.Map[jsontypes.Normalized]                   `tfsdk:"request_body"`
 }
 
 // TargetAPIShieldOperationFeaturesModel represents the features nested structure.

@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_schema Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_schema (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ~> `cloudflare_api_shield_schema` is in a deprecation phase and will be removed in the future.
   Instead, please utilize the [cloudflare_schema_validation_schemas](./schema_validation_schemas) resource instead.

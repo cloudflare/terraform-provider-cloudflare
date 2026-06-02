@@ -19,7 +19,7 @@ type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 type EmailSecurityTrustedDomainsDataSourceModel struct {
 	ID              types.String                                         `tfsdk:"id" path:"trusted_domain_id,computed"`
 	TrustedDomainID types.String                                         `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
-	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt       timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRecent        types.Bool                                           `tfsdk:"is_recent" json:"is_recent,computed"`

@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_kv Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers KV Storage ReadWorkers KV Storage Write
 ---
 
 # cloudflare_workers_kv (Data Source)
 
+Accepted Permissions
 
+- `Workers KV Storage Read`
+- `Workers KV Storage Write`
 
 ## Example Usage
 

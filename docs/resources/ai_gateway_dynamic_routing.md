@@ -2,12 +2,16 @@
 page_title: "cloudflare_ai_gateway_dynamic_routing Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  AI Gateway ReadAI Gateway Write
 ---
 
 # cloudflare_ai_gateway_dynamic_routing (Resource)
 
+Accepted Permissions
 
+- `AI Gateway Read`
+- `AI Gateway Write`
 
 ## Example Usage
 
@@ -254,6 +258,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 
@@ -266,6 +271,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 ## Import

@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_webhook Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_webhook (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -23,5 +27,11 @@ data "cloudflare_stream_webhook" "example_stream_webhook" {
 ### Required
 
 - `account_id` (String) The account identifier tag.
+
+### Read-Only
+
+- `modified` (String) The date and time the webhook was last modified.
+- `notification_url` (String) The URL where webhooks will be sent.
+- `secret` (String, Sensitive) The secret used to verify webhook signatures.
 
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_load_balancer_monitor Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Load Balancing: Monitors and Pools ReadLoad Balancing: Monitors and Pools Write
 ---
 
 # cloudflare_load_balancer_monitor (Resource)
 
+Accepted Permissions
 
+- `Load Balancing: Monitors and Pools Read`
+- `Load Balancing: Monitors and Pools Write`
 
 ## Example Usage
 

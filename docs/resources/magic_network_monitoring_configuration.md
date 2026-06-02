@@ -2,12 +2,17 @@
 page_title: "cloudflare_magic_network_monitoring_configuration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Network Monitoring AdminMagic Network Monitoring Config ReadMagic Network Monitoring Config Write
 ---
 
 # cloudflare_magic_network_monitoring_configuration (Resource)
 
+Accepted Permissions
 
+- `Magic Network Monitoring Admin`
+- `Magic Network Monitoring Config Read`
+- `Magic Network Monitoring Config Write`
 
 ## Example Usage
 

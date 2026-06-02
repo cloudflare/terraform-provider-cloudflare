@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_security_trusted_domains Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloud Email Security: ReadCloud Email Security: Write
 ---
 
 # cloudflare_email_security_trusted_domains (Resource)
 
+Accepted Permissions
 
+- `Cloud Email Security: Read`
+- `Cloud Email Security: Write`
 
 ## Example Usage
 
@@ -27,42 +31,22 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
 
 ### Required
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
+- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
+- `is_regex` (Boolean)
+- `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
+- `pattern` (String)
 
 ### Optional
 
-- `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
 - `comments` (String)
-- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a
-Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
-- `is_similarity` (Boolean) Select for partner or other approved domains that have similar
-spelling to your connected domains. Prevents listed domains from
-triggering a Spoof disposition.
-- `pattern` (String)
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (Number) The unique identifier for the trusted domain.
-- `last_modified` (String)
-
-<a id="nestedatt--body"></a>
-### Nested Schema for `body`
-
-Required:
-
-- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a
-Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
-- `is_similarity` (Boolean) Select for partner or other approved domains that have similar
-spelling to your connected domains. Prevents listed domains from
-triggering a Spoof disposition.
-- `pattern` (String)
-
-Optional:
-
-- `comments` (String)
+- `id` (String) Trusted domain identifier
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 
 ## Import
 

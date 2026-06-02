@@ -17,7 +17,7 @@ type ListItemResultDataSourceEnvelope struct {
 }
 
 type ListItemDataSourceModel struct {
-	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ListID     types.String                                              `tfsdk:"list_id" path:"list_id,required"`
 	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
 	ID         types.String                                              `tfsdk:"id" json:"id,computed" path:"item_id,computed"`

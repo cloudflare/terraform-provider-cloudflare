@@ -2,12 +2,16 @@
 page_title: "cloudflare_content_scanning_expression Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account WAF WriteZone WAF Write
 ---
 
 # cloudflare_content_scanning_expression (Resource)
 
+Accepted Permissions
 
+- `Account WAF Write`
+- `Zone WAF Write`
 
 ## Example Usage
 

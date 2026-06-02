@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Firewall Access Rules ReadAccount Firewall Access Rules Write
 ---
 
 # cloudflare_access_rule (Resource)
 
+Accepted Permissions
 
+- `Account Firewall Access Rules Read`
+- `Account Firewall Access Rules Write`
 
 ## Example Usage
 

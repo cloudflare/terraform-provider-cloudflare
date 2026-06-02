@@ -19,7 +19,7 @@ type PipelineResultDataSourceEnvelope struct {
 type PipelineDataSourceModel struct {
 	ID            types.String                                                `tfsdk:"id" path:"pipeline_id,computed"`
 	PipelineID    types.String                                                `tfsdk:"pipeline_id" path:"pipeline_id,required"`
-	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt     types.String                                                `tfsdk:"created_at" json:"created_at,computed"`
 	FailureReason types.String                                                `tfsdk:"failure_reason" json:"failure_reason,computed"`
 	ModifiedAt    types.String                                                `tfsdk:"modified_at" json:"modified_at,computed"`

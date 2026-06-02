@@ -2,12 +2,16 @@
 page_title: "cloudflare_image_variant Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Images ReadImages Write
 ---
 
 # cloudflare_image_variant (Resource)
 
+Accepted Permissions
 
+- `Images Read`
+- `Images Write`
 
 ## Example Usage
 

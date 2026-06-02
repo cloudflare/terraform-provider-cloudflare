@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_dlp_integration_entry Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dlp_integration_entry (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -47,10 +51,10 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 - `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
+- `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--confidence"></a>
@@ -85,9 +89,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 ## Import
 

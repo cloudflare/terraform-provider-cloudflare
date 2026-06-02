@@ -16,7 +16,7 @@ type PagesProjectResultEnvelope struct {
 type PagesProjectModel struct {
 	ID                   types.String                                                   `tfsdk:"id" json:"-,computed"`
 	Name                 types.String                                                   `tfsdk:"name" json:"name,required"`
-	AccountID            types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	ProductionBranch     types.String                                                   `tfsdk:"production_branch" json:"production_branch,required"`
 	BuildConfig          customfield.NestedObject[PagesProjectBuildConfigModel]         `tfsdk:"build_config" json:"build_config,computed_optional"`
 	Source               *PagesProjectSourceModel                                       `tfsdk:"source" json:"source,optional"`

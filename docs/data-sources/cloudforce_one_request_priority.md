@@ -2,12 +2,16 @@
 page_title: "cloudflare_cloudforce_one_request_priority Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One ReadCloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_request_priority (Data Source)
 
+Accepted Permissions
 
+- `Cloudforce One Read`
+- `Cloudforce One Write`
 
 ## Example Usage
 

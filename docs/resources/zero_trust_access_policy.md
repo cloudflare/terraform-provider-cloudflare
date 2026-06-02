@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies Write
 ---
 
 # cloudflare_zero_trust_access_policy (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Write`
 
 ## Example Usage
 
@@ -16,8 +20,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   decision = "allow"
   include = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   name = "Allow devs"
@@ -38,8 +42,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     }
   }
   exclude = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   isolation_required = false
@@ -51,8 +55,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{
-    group = {
-      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    certificate = {
+
     }
   }]
   session_duration = "24h"
@@ -127,6 +131,7 @@ Optional:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--exclude--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--exclude--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--exclude--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--exclude--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--exclude--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--exclude--email))
@@ -181,6 +186,14 @@ Required:
 
 <a id="nestedatt--exclude--certificate"></a>
 ### Nested Schema for `exclude.certificate`
+
+
+<a id="nestedatt--exclude--cloudflare_account_member"></a>
+### Nested Schema for `exclude.cloudflare_account_member`
+
+Optional:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--exclude--common_name"></a>
@@ -362,6 +375,7 @@ Optional:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--include--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--include--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--include--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--include--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--include--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--include--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--include--email))
@@ -416,6 +430,14 @@ Required:
 
 <a id="nestedatt--include--certificate"></a>
 ### Nested Schema for `include.certificate`
+
+
+<a id="nestedatt--include--cloudflare_account_member"></a>
+### Nested Schema for `include.cloudflare_account_member`
+
+Optional:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--include--common_name"></a>
@@ -607,6 +629,7 @@ Optional:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--require--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--require--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--require--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--require--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--require--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--require--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--require--email))
@@ -661,6 +684,14 @@ Required:
 
 <a id="nestedatt--require--certificate"></a>
 ### Nested Schema for `require.certificate`
+
+
+<a id="nestedatt--require--cloudflare_account_member"></a>
+### Nested Schema for `require.cloudflare_account_member`
+
+Optional:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--require--common_name"></a>

@@ -2,12 +2,16 @@
 page_title: "cloudflare_filter Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_filter (Data Source)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 

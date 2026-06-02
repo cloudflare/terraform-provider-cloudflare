@@ -17,7 +17,7 @@ type ZeroTrustRiskBehaviorResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustRiskBehaviorDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	Behaviors customfield.NestedObjectMap[ZeroTrustRiskBehaviorBehaviorsDataSourceModel] `tfsdk:"behaviors" json:"behaviors,computed"`
 }
 

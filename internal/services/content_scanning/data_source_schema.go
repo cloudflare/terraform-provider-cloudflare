@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"modified": schema.StringAttribute{
 				Description: "Defines the last modification date (ISO 8601) of the Content Scanning status.",

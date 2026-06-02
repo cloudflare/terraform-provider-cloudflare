@@ -15,7 +15,7 @@ type StreamLiveInputResultEnvelope struct {
 }
 
 type StreamLiveInputModel struct {
-	AccountID                types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	LiveInputIdentifier      types.String                                                 `tfsdk:"live_input_identifier" path:"live_input_identifier,optional"`
 	DefaultCreator           types.String                                                 `tfsdk:"default_creator" json:"defaultCreator,optional,no_refresh"`
 	DeleteRecordingAfterDays types.Float64                                                `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,optional"`

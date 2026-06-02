@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_gateway_app_types_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_gateway_app_types_list (Data Source)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 

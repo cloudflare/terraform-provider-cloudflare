@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline_sinks Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline_sinks (Data Source)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -28,6 +32,7 @@ data "cloudflare_pipeline_sinks" "example_pipeline_sinks" {
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) Filters sinks by name (case-insensitive substring).
 - `pipeline_id` (String)
 
 ### Read-Only

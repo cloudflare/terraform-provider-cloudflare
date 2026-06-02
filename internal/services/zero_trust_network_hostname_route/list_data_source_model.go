@@ -18,7 +18,7 @@ type ZeroTrustNetworkHostnameRoutesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustNetworkHostnameRoutesDataSourceModel struct {
-	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Comment   types.String                                                                      `tfsdk:"comment" query:"comment,optional"`
 	ExistedAt types.String                                                                      `tfsdk:"existed_at" query:"existed_at,optional"`
 	Hostname  types.String                                                                      `tfsdk:"hostname" query:"hostname,optional"`

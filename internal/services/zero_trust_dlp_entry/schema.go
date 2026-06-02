@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPEntryResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		DeprecationMessage: "This resource is no longer used but has been split into `zero_trust_dlp_custom_entry`, `zero_trust_dlp_predefined_entry`, and `zero_trust_dlp_integration_entry`",
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
@@ -34,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"profile_id": schema.StringAttribute{

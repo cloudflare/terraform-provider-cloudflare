@@ -67,7 +67,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The unique ID of the zone.",
-				Required:    true,
+				Optional:    true,
 			},
 			"scope": schema.StringAttribute{
 				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\", \"none\".",

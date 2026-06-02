@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_dlp_custom_profile Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dlp_custom_profile (Data Source)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -23,8 +27,11 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 
 ### Required
 
-- `account_id` (String)
 - `profile_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 
@@ -80,9 +87,9 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
+- `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--entries--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
 - `word_list` (String)
 
 <a id="nestedatt--entries--confidence"></a>
@@ -108,9 +115,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 
 
@@ -140,9 +147,9 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--shared_entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
+- `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--shared_entries--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--shared_entries--variant))
 - `word_list` (String)
 
 <a id="nestedatt--shared_entries--confidence"></a>
@@ -168,8 +175,8 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 

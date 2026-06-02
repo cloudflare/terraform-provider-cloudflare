@@ -2,12 +2,17 @@
 page_title: "cloudflare_zero_trust_dns_location Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare Zero Trust Secure DNS Locations WriteZero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dns_location (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare Zero Trust Secure DNS Locations Write`
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -23,8 +28,11 @@ data "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" {
 
 ### Required
 
-- `account_id` (String)
 - `location_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 
@@ -39,6 +47,9 @@ data "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" {
 - `ip` (String) Defines the automatically generated IPv6 destination IP assigned to this location. Gateway counts all DNS requests sent to this IP as requests under this location.
 - `ipv4_destination` (String) Show the primary destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.
 - `ipv4_destination_backup` (String) Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.
+- `max_ttl_secs` (Number) Specify the maximum TTL, in seconds, applied to DNS response records.
+Records whose upstream TTL exceeds this value are served with the
+capped value. When null or absent, no cap is applied at this tier.
 - `name` (String) Specify the location name.
 - `networks` (Attributes List) Specify the list of network ranges from which requests at this location originate. The list takes effect only if it is non-empty and the IPv4 endpoint is enabled for this location. (see [below for nested schema](#nestedatt--networks))
 - `updated_at` (String)

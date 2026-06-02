@@ -2,12 +2,16 @@
 page_title: "cloudflare_argo_smart_routing Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_argo_smart_routing (Data Source)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 

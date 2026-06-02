@@ -17,7 +17,7 @@ type ListItemsResultListDataSourceEnvelope struct {
 }
 
 type ListItemsDataSourceModel struct {
-	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	ListID    types.String                                                 `tfsdk:"list_id" path:"list_id,required"`
 	PerPage   types.Int64                                                  `tfsdk:"per_page" query:"per_page,optional"`
 	Search    types.String                                                 `tfsdk:"search" query:"search,optional"`

@@ -19,7 +19,7 @@ type WaitingRoomRulesResultDataSourceEnvelope struct {
 type WaitingRoomRulesDataSourceModel struct {
 	ID            types.String      `tfsdk:"id" path:"waiting_room_id,computed"`
 	WaitingRoomID types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action        types.String      `tfsdk:"action" json:"action,computed"`
 	Description   types.String      `tfsdk:"description" json:"description,computed"`
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed"`

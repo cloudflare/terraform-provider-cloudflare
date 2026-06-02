@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to take when the expression matches.\nAvailable values: \"bypass_waiting_room\".",

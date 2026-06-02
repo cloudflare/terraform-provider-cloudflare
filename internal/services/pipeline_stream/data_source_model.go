@@ -20,7 +20,7 @@ type PipelineStreamResultDataSourceEnvelope struct {
 type PipelineStreamDataSourceModel struct {
 	ID            types.String                                                         `tfsdk:"id" path:"stream_id,computed"`
 	StreamID      types.String                                                         `tfsdk:"stream_id" path:"stream_id,optional"`
-	AccountID     types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt     timetypes.RFC3339                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Endpoint      types.String                                                         `tfsdk:"endpoint" json:"endpoint,computed"`
 	ModifiedAt    timetypes.RFC3339                                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`

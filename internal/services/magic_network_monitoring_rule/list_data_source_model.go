@@ -17,7 +17,7 @@ type MagicNetworkMonitoringRulesResultListDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringRulesDataSourceModel struct {
-	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	MaxItems  types.Int64                                                                    `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[MagicNetworkMonitoringRulesResultDataSourceModel] `tfsdk:"result"`
 }

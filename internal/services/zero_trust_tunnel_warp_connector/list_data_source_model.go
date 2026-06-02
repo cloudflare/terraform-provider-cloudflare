@@ -19,7 +19,7 @@ type ZeroTrustTunnelWARPConnectorsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelWARPConnectorsDataSourceModel struct {
-	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ExcludePrefix types.String                                                                     `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
 	ExistedAt     types.String                                                                     `tfsdk:"existed_at" query:"existed_at,optional"`
 	IncludePrefix types.String                                                                     `tfsdk:"include_prefix" query:"include_prefix,optional"`

@@ -2,12 +2,16 @@
 page_title: "cloudflare_pages_project Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pages ReadPages Write
 ---
 
 # cloudflare_pages_project (Resource)
 
+Accepted Permissions
 
+- `Pages Read`
+- `Pages Write`
 
 -> If you are using a `source` block configuration, you must first have a
    connected GitHub or GitLab account connected to Cloudflare. See the

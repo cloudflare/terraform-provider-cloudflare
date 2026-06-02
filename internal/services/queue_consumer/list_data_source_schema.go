@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "A Resource identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"queue_id": schema.StringAttribute{
 				Description: "A Resource identifier.",

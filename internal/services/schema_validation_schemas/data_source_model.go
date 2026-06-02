@@ -19,7 +19,7 @@ type SchemaValidationSchemasResultDataSourceEnvelope struct {
 type SchemaValidationSchemasDataSourceModel struct {
 	ID                types.String                                     `tfsdk:"id" path:"schema_id,computed"`
 	SchemaID          types.String                                     `tfsdk:"schema_id" path:"schema_id,computed_optional"`
-	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	OmitSource        types.Bool                                       `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	CreatedAt         timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String                                     `tfsdk:"kind" json:"kind,computed"`

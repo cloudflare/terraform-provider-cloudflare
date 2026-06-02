@@ -20,7 +20,7 @@ type StreamsResultListDataSourceEnvelope struct {
 }
 
 type StreamsDataSourceModel struct {
-	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	After         timetypes.RFC3339                                          `tfsdk:"after" query:"after,optional" format:"date-time"`
 	Before        timetypes.RFC3339                                          `tfsdk:"before" query:"before,optional" format:"date-time"`
 	Creator       types.String                                               `tfsdk:"creator" query:"creator,optional"`

@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -233,7 +234,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_prompt_topic"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_integration_entry"
@@ -462,7 +462,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_cache_reserve.NewResource,
 		tiered_cache.NewResource,
 		zone_cache_variants.NewResource,
-		regional_hostname.NewResource,
 		regional_tiered_cache.NewResource,
 		origin_cloud_region.NewResource,
 		certificate_pack.NewResource,
@@ -530,6 +529,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
+		api_shield_discovery_operation.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
@@ -539,6 +539,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
+		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		dls_prefix_binding.NewResource,
@@ -723,8 +724,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone_cache_reserve.NewZoneCacheReserveDataSource,
 		tiered_cache.NewTieredCacheDataSource,
 		zone_cache_variants.NewZoneCacheVariantsDataSource,
-		regional_hostname.NewRegionalHostnameDataSource,
-		regional_hostname.NewRegionalHostnamesDataSource,
 		regional_tiered_cache.NewRegionalTieredCacheDataSource,
 		origin_cloud_region.NewOriginCloudRegionDataSource,
 		origin_cloud_region.NewOriginCloudRegionsDataSource,
@@ -854,6 +853,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
+		regional_hostname.NewRegionalHostnameDataSource,
+		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
 		address_map.NewAddressMapsDataSource,
 		byo_ip_prefix.NewByoIPPrefixDataSource,
@@ -973,8 +974,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorDataSource,
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
-		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicDataSource,
-		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicsDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_settings.NewZeroTrustDLPSettingsDataSource,
@@ -1042,7 +1041,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		snippet_rules.NewSnippetRulesListDataSource,
 		snippets.NewSnippetsDataSource,     // deprecated.
 		snippets.NewSnippetsListDataSource, // deprecated.
-		snippet_rules.NewSnippetRulesDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,

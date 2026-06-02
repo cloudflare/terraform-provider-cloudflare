@@ -16,6 +16,10 @@ import (
 )
 
 func main() {
+	fmt.Println("\nDEPRECATION NOTICE: cmd/migrate is deprecated and will be removed in a future release.")
+	fmt.Println("Please use https://github.com/cloudflare/tf-migrate for all Terraform v4→v5 migrations.")
+	fmt.Println(strings.Repeat("=", 80))
+
 	// Define flags
 	dryRun := flag.Bool("dryrun", false, "Show what changes would be made without actually modifying files")
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")

@@ -2,12 +2,16 @@
 page_title: "cloudflare_sso_connector Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSO Connector ReadSSO Connector Write
 ---
 
 # cloudflare_sso_connector (Resource)
 
+Accepted Permissions
 
+- `SSO Connector Read`
+- `SSO Connector Write`
 
 ## Example Usage
 

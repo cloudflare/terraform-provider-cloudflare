@@ -19,7 +19,7 @@ type EmailRoutingRuleResultDataSourceEnvelope struct {
 type EmailRoutingRuleDataSourceModel struct {
 	ID             types.String                                                          `tfsdk:"id" path:"rule_identifier,computed"`
 	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`
-	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
 	Priority       types.Float64                                                         `tfsdk:"priority" json:"priority,computed"`

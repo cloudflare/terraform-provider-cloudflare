@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline (Resource)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 

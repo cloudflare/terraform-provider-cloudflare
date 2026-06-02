@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*CustomHostnameFallbackOriginReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"SSL and Certificates Read",

@@ -13,7 +13,7 @@ type StreamDownloadResultEnvelope struct {
 }
 
 type StreamDownloadModel struct {
-	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Identifier      types.String                                         `tfsdk:"identifier" path:"identifier,required"`
 	PercentComplete types.Float64                                        `tfsdk:"percent_complete" json:"percentComplete,computed,no_refresh"`
 	Status          types.String                                         `tfsdk:"status" json:"status,computed,no_refresh"`

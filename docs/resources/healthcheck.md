@@ -2,12 +2,16 @@
 page_title: "cloudflare_healthcheck Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Health Checks ReadHealth Checks Write
 ---
 
 # cloudflare_healthcheck (Resource)
 
+Accepted Permissions
 
+- `Health Checks Read`
+- `Health Checks Write`
 
 ## Example Usage
 

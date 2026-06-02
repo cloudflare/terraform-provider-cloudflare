@@ -20,7 +20,7 @@ type CustomHostnameResultDataSourceEnvelope struct {
 type CustomHostnameDataSourceModel struct {
 	ID                        types.String                                                                     `tfsdk:"id" path:"custom_hostname_id,computed"`
 	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id,optional"`
-	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt                 timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomOriginServer        types.String                                                                     `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
 	CustomOriginSNI           types.String                                                                     `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`

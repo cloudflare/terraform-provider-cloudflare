@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_mtls_certificates Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Mutual TLS Certificates ReadAccess: Mutual TLS Certificates Write
 ---
 
 # cloudflare_zero_trust_access_mtls_certificates (Data Source)
 
+Accepted Permissions
 
+- `Access: Mutual TLS Certificates Read`
+- `Access: Mutual TLS Certificates Write`
 
 ## Example Usage
 

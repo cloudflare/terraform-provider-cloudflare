@@ -2,12 +2,16 @@
 page_title: "cloudflare_image Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Images ReadImages Write
 ---
 
 # cloudflare_image (Data Source)
 
+Accepted Permissions
 
+- `Images Read`
+- `Images Write`
 
 ## Example Usage
 

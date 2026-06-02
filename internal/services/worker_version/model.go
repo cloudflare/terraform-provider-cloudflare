@@ -16,7 +16,7 @@ type WorkerVersionResultEnvelope struct {
 
 type WorkerVersionModel struct {
 	ID                 types.String                                             `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
 	CompatibilityDate  types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule         types.String                                             `tfsdk:"main_module" json:"main_module,optional"`

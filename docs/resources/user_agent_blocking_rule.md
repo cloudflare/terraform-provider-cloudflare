@@ -2,12 +2,16 @@
 page_title: "cloudflare_user_agent_blocking_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_user_agent_blocking_rule (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 

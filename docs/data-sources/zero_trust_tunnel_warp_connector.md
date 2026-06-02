@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_tunnel_warp_connector Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: WARP ReadCloudflare One Connector: WARP WriteCloudflare One Connectors ReadCloudflare One Connectors Write
 ---
 
 # cloudflare_zero_trust_tunnel_warp_connector (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: WARP Read`
+- `Cloudflare One Connector: WARP Write`
+- `Cloudflare One Connectors Read`
+- `Cloudflare One Connectors Write`
 
 ## Example Usage
 

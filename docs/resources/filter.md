@@ -2,12 +2,16 @@
 page_title: "cloudflare_filter Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_filter (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ~> `cloudflare_filter` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still fully

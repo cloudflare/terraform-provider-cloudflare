@@ -2,12 +2,16 @@
 page_title: "cloudflare_address_map Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Address Maps ReadAddress Maps Write
 ---
 
 # cloudflare_address_map (Data Source)
 
+Accepted Permissions
 
+- `Address Maps Read`
+- `Address Maps Write`
 
 ## Example Usage
 

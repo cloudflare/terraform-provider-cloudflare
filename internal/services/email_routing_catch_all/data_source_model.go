@@ -18,7 +18,7 @@ type EmailRoutingCatchAllResultDataSourceEnvelope struct {
 
 type EmailRoutingCatchAllDataSourceModel struct {
 	ID       types.String                                                              `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled  types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	Name     types.String                                                              `tfsdk:"name" json:"name,computed"`
 	Tag      types.String                                                              `tfsdk:"tag" json:"tag,computed"`

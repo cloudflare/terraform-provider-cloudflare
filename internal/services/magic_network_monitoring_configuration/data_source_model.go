@@ -17,7 +17,7 @@ type MagicNetworkMonitoringConfigurationResultDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringConfigurationDataSourceModel struct {
-	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	DefaultSampling types.Float64                                                                               `tfsdk:"default_sampling" json:"default_sampling,computed"`
 	Name            types.String                                                                                `tfsdk:"name" json:"name,computed"`
 	RouterIPs       customfield.List[types.String]                                                              `tfsdk:"router_ips" json:"router_ips,computed"`

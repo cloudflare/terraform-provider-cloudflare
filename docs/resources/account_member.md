@@ -2,12 +2,17 @@
 page_title: "cloudflare_account_member Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteSCIM Provisioning
 ---
 
 # cloudflare_account_member (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `SCIM Provisioning`
 
 ## Example Usage
 

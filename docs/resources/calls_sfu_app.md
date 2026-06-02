@@ -2,12 +2,16 @@
 page_title: "cloudflare_calls_sfu_app Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Calls ReadCalls Write
 ---
 
 # cloudflare_calls_sfu_app (Resource)
 
+Accepted Permissions
 
+- `Calls Read`
+- `Calls Write`
 
 ## Example Usage
 

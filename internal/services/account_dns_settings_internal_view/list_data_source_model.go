@@ -18,7 +18,7 @@ type AccountDNSSettingsInternalViewsResultListDataSourceEnvelope struct {
 }
 
 type AccountDNSSettingsInternalViewsDataSourceModel struct {
-	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Order     types.String                                                                       `tfsdk:"order" query:"order,optional"`
 	ZoneID    types.String                                                                       `tfsdk:"zone_id" query:"zone_id,optional"`
 	ZoneName  types.String                                                                       `tfsdk:"zone_name" query:"zone_name,optional"`

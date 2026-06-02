@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_network_hostname_routes Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Networks ReadCloudflare One Networks WriteCloudflare Tunnel ReadCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_network_hostname_routes (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Networks Read`
+- `Cloudflare One Networks Write`
+- `Cloudflare Tunnel Read`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 

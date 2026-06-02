@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_script Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_script (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 -> For more direct control over Workers resources, we recommend the beta `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
@@ -33,7 +38,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
         EOT
         html_handling = "auto-trailing-slash"
         not_found_handling = "404-page"
-        run_worker_first = ["string"]
+        run_worker_first = []
         serve_directly = true
       }
       jwt = "jwt"
@@ -50,6 +55,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     keep_bindings = ["string"]
     limits = {
       cpu_ms = 50
+      subrequests = 1000
     }
     logpush = false
     main_module = "worker.js"
@@ -110,6 +116,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 ### Optional
 
+- `annotations` (Attributes) Annotations for the version created by this upload. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
 - `body_part` (String) Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
@@ -146,6 +153,15 @@ Available values: "standard", "bundled", "unbound".
 - `placement_mode` (String, Deprecated) Available values: "smart", "targeted".
 - `placement_status` (String, Deprecated) Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `startup_time_ms` (Number)
+
+<a id="nestedatt--annotations"></a>
+### Nested Schema for `annotations`
+
+Optional:
+
+- `workers_message` (String) Human-readable message about the version. Truncated to 1000 bytes if longer.
+- `workers_tag` (String) User-provided identifier for the version. Maximum 100 bytes.
+
 
 <a id="nestedatt--assets"></a>
 ### Nested Schema for `assets`
@@ -190,9 +206,11 @@ Optional:
 - `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
 - `allowed_destination_addresses` (List of String) List of allowed destination addresses.
 - `allowed_sender_addresses` (List of String) List of allowed sender addresses.
+- `app_id` (String) ID of the Flagship app to bind to for feature flag evaluation.
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
+- `database_id` (String) Identifier of the D1 database to bind to.
 - `dataset` (String) The name of the dataset to bind to.
 - `destination_address` (String) Destination address for the email.
 - `dispatch_namespace` (String) The dispatch namespace the Durable Object script belongs to.
@@ -254,6 +272,10 @@ Required:
 - `limit` (Number) The rate limit value.
 - `period` (Number) The rate limit period in seconds.
 
+Optional:
+
+- `mitigation_timeout` (Number) Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.
+
 
 
 <a id="nestedatt--limits"></a>
@@ -262,6 +284,7 @@ Required:
 Optional:
 
 - `cpu_ms` (Number) The amount of CPU time this Worker can use in milliseconds.
+- `subrequests` (Number) The number of subrequests this Worker can make per request.
 
 
 <a id="nestedatt--migrations"></a>

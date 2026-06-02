@@ -18,7 +18,7 @@ type ZoneDNSSECResultDataSourceEnvelope struct {
 
 type ZoneDNSSECDataSourceModel struct {
 	ID                types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,computed"`
 	Digest            types.String      `tfsdk:"digest" json:"digest,computed"`
 	DigestAlgorithm   types.String      `tfsdk:"digest_algorithm" json:"digest_algorithm,computed"`

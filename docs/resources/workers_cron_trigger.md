@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_cron_trigger Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_cron_trigger (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 

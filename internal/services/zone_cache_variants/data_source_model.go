@@ -19,7 +19,7 @@ type ZoneCacheVariantsResultDataSourceEnvelope struct {
 
 type ZoneCacheVariantsDataSourceModel struct {
 	ID         types.String                                                    `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID     types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Editable   types.Bool                                                      `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      customfield.NestedObject[ZoneCacheVariantsValueDataSourceModel] `tfsdk:"value" json:"value,computed"`

@@ -2,12 +2,18 @@
 page_title: "cloudflare_queue Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Queues ReadQueues WriteWorkers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_queue (Data Source)
 
+Accepted Permissions
 
+- `Queues Read`
+- `Queues Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflared_route Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Networks WriteCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflared_route (Resource)
 
+Accepted Permissions
 
+- `Cloudflare One Networks Write`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 

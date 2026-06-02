@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline_streams Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline_streams (Data Source)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -28,6 +32,7 @@ data "cloudflare_pipeline_streams" "example_pipeline_streams" {
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) Filters streams by name (case-insensitive substring).
 - `pipeline_id` (String) Specifies the public ID of the pipeline.
 
 ### Read-Only

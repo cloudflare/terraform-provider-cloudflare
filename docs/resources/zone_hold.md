@@ -2,12 +2,50 @@
 page_title: "cloudflare_zone_hold Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies RevokeAccess: Apps and Policies WriteAccess: Mutual TLS Certificates WriteAccess: Organizations, Identity Providers, and Groups WriteAnalytics ReadApps WriteCache PurgeDNS ReadDNS WriteFirewall Services ReadFirewall Services WriteLoad Balancers ReadLoad Balancers WriteLogs ReadLogs WritePage Rules ReadPage Rules WriteSSL and Certificates ReadSSL and Certificates WriteStream ReadStream WriteTrust and Safety ReadTrust and Safety WriteWorkers Routes ReadWorkers Routes WriteWorkers Scripts ReadWorkers Scripts WriteZaraz AdminZaraz EditZaraz ReadZero Trust: PII ReadZone ReadZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_zone_hold (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Revoke`
+- `Access: Apps and Policies Write`
+- `Access: Mutual TLS Certificates Write`
+- `Access: Organizations, Identity Providers, and Groups Write`
+- `Analytics Read`
+- `Apps Write`
+- `Cache Purge`
+- `DNS Read`
+- `DNS Write`
+- `Firewall Services Read`
+- `Firewall Services Write`
+- `Load Balancers Read`
+- `Load Balancers Write`
+- `Logs Read`
+- `Logs Write`
+- `Page Rules Read`
+- `Page Rules Write`
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
+- `Stream Read`
+- `Stream Write`
+- `Trust and Safety Read`
+- `Trust and Safety Write`
+- `Workers Routes Read`
+- `Workers Routes Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Zaraz Admin`
+- `Zaraz Edit`
+- `Zaraz Read`
+- `Zero Trust: PII Read`
+- `Zone Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 
@@ -30,7 +68,7 @@ resource "cloudflare_zone_hold" "example_zone_hold" {
 then automatically re-enabled by the system at the time specified
 in this RFC3339-formatted timestamp. A past-dated `hold_after` value will have
 no effect on an existing, enabled hold. Providing an empty string will set its value
-to the current time.
+to the current time. Providing `null` will disable the hold indefinitely.
 - `include_subdomains` (Boolean) If `true`, the zone hold will extend to block any subdomain of the given zone, as well
 as SSL4SaaS Custom Hostnames. For example, a zone hold on a zone with the hostname
 'example.com' and include_subdomains=true will block 'example.com',

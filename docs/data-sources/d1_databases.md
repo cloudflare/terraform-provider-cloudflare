@@ -2,12 +2,16 @@
 page_title: "cloudflare_d1_databases Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  D1 ReadD1 Write
 ---
 
 # cloudflare_d1_databases (Data Source)
 
+Accepted Permissions
 
+- `D1 Read`
+- `D1 Write`
 
 ## Example Usage
 

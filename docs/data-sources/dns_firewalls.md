@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_firewalls Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS Firewall ReadDNS Firewall Write
 ---
 
 # cloudflare_dns_firewalls (Data Source)
 
+Accepted Permissions
 
+- `DNS Firewall Read`
+- `DNS Firewall Write`
 
 ## Example Usage
 

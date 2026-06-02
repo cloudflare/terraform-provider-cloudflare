@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_dex_test Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare DEX ReadCloudflare DEX WriteZero Trust ReadZero Trust Report
 ---
 
 # cloudflare_zero_trust_dex_test (Resource)
 
+Accepted Permissions
 
+- `Cloudflare DEX Read`
+- `Cloudflare DEX Write`
+- `Zero Trust Read`
+- `Zero Trust Report`
 
 ## Example Usage
 

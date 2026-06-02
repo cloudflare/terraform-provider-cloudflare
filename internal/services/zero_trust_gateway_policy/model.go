@@ -15,7 +15,7 @@ type ZeroTrustGatewayPolicyResultEnvelope struct {
 
 type ZeroTrustGatewayPolicyModel struct {
 	ID            types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,optional"`
@@ -65,14 +65,14 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	DNSResolvers                    *ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel         `tfsdk:"dns_resolvers" json:"dns_resolvers,optional"`
 	Egress                          *ZeroTrustGatewayPolicyRuleSettingsEgressModel               `tfsdk:"egress" json:"egress,optional"`
 	ForensicCopy                    *ZeroTrustGatewayPolicyRuleSettingsForensicCopyModel         `tfsdk:"forensic_copy" json:"forensic_copy,optional"`
-	IgnoreCNAMECategoryMatches      types.Bool                                                   `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,optional"`
+	IgnoreCNAMECategoryMatches      types.Bool                                                   `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed_optional"`
 	InsecureDisableDNSSECValidation types.Bool                                                   `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,optional"`
 	IPCategories                    types.Bool                                                   `tfsdk:"ip_categories" json:"ip_categories,optional"`
 	IPIndicatorFeeds                types.Bool                                                   `tfsdk:"ip_indicator_feeds" json:"ip_indicator_feeds,optional"`
 	L4override                      *ZeroTrustGatewayPolicyRuleSettingsL4overrideModel           `tfsdk:"l4override" json:"l4override,optional"`
 	NotificationSettings            *ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel `tfsdk:"notification_settings" json:"notification_settings,optional"`
 	OverrideHost                    types.String                                                 `tfsdk:"override_host" json:"override_host,optional"`
-	OverrideIPs                     *[]types.String                                              `tfsdk:"override_ips" json:"override_ips,optional"`
+	OverrideIPs                     customfield.List[types.String]                               `tfsdk:"override_ips" json:"override_ips,optional"`
 	PayloadLog                      *ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel           `tfsdk:"payload_log" json:"payload_log,optional"`
 	Quarantine                      *ZeroTrustGatewayPolicyRuleSettingsQuarantineModel           `tfsdk:"quarantine" json:"quarantine,optional"`
 	Redirect                        *ZeroTrustGatewayPolicyRuleSettingsRedirectModel             `tfsdk:"redirect" json:"redirect,optional"`

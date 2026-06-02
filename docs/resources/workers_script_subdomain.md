@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_script_subdomain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_script_subdomain (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 -> This resource is redundant with `cloudflare_worker` and should not be used together. When using the `cloudflare_worker` resource, use the nested `subdomain` attribute to control subdomain settings instead.
 

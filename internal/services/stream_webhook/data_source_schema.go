@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the webhook was last modified.",

@@ -19,7 +19,7 @@ type CustomOriginTrustStoreResultDataSourceEnvelope struct {
 type CustomOriginTrustStoreDataSourceModel struct {
 	ID                       types.String                                    `tfsdk:"id" path:"custom_origin_trust_store_id,computed"`
 	CustomOriginTrustStoreID types.String                                    `tfsdk:"custom_origin_trust_store_id" path:"custom_origin_trust_store_id,optional"`
-	ZoneID                   types.String                                    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                   types.String                                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Certificate              types.String                                    `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn                timetypes.RFC3339                               `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer                   types.String                                    `tfsdk:"issuer" json:"issuer,computed"`

@@ -20,7 +20,7 @@ type AccountDNSSettingsInternalViewResultDataSourceEnvelope struct {
 type AccountDNSSettingsInternalViewDataSourceModel struct {
 	ID           types.String                                            `tfsdk:"id" path:"view_id,computed"`
 	ViewID       types.String                                            `tfsdk:"view_id" path:"view_id,optional"`
-	AccountID    types.String                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String                                            `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedTime  timetypes.RFC3339                                       `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`
 	ModifiedTime timetypes.RFC3339                                       `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
 	Name         types.String                                            `tfsdk:"name" json:"name,computed"`

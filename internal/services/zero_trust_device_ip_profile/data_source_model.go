@@ -18,7 +18,7 @@ type ZeroTrustDeviceIPProfileResultDataSourceEnvelope struct {
 type ZeroTrustDeviceIPProfileDataSourceModel struct {
 	ID          types.String                                      `tfsdk:"id" path:"profile_id,computed"`
 	ProfileID   types.String                                      `tfsdk:"profile_id" path:"profile_id,optional"`
-	AccountID   types.String                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt   types.String                                      `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String                                      `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool                                        `tfsdk:"enabled" json:"enabled,computed"`

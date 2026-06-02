@@ -2,12 +2,16 @@
 page_title: "cloudflare_certificate_pack Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_certificate_pack (Resource)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ~> Certificate packs are not able to be updated in place. If
 you require a zero downtime rotation, you can create multiple
@@ -33,7 +37,7 @@ resource "cloudflare_certificate_pack" "example_certificate_pack" {
 
 ### Required
 
-- `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
+- `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details](https://developers.cloudflare.com/ssl/reference/certificate-authorities).
 Available values: "google", "lets_encrypt", "ssl_com".
 - `type` (String) Type of certificate pack.
 Available values: "advanced".

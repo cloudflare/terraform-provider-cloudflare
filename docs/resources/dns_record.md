@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_record Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS ReadDNS Write
 ---
 
 # cloudflare_dns_record (Resource)
 
+Accepted Permissions
 
+- `DNS Read`
+- `DNS Write`
 
 ## Example Usage
 

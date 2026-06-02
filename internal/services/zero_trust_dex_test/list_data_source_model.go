@@ -17,7 +17,7 @@ type ZeroTrustDEXTestsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDEXTestsDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Kind      types.String                                                         `tfsdk:"kind" query:"kind,optional"`
 	TestName  types.String                                                         `tfsdk:"test_name" query:"testName,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`

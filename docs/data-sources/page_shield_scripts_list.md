@@ -2,12 +2,20 @@
 page_title: "cloudflare_page_shield_scripts_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Domain Page ShieldDomain Page Shield ReadPage ShieldPage Shield ReadZone Settings ReadZone Settings Write
 ---
 
 # cloudflare_page_shield_scripts_list (Data Source)
 
+Accepted Permissions
 
+- `Domain Page Shield`
+- `Domain Page Shield Read`
+- `Page Shield`
+- `Page Shield Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 

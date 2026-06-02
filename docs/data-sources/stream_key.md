@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_key Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_key (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -28,5 +32,6 @@ data "cloudflare_stream_key" "example_stream_key" {
 
 - `created` (String) The date and time a signing key was created.
 - `id` (String) Identifier.
+- `key_id` (String) The unique identifier for the signing key.
 
 

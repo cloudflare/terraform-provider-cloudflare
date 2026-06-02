@@ -48,6 +48,6 @@ Required:
 Optional:
 
 - `limit` (Number) Limit to the number of records returned.
-- `offset` (Number) Offset the results
+- `offset` (Number) Offset the results.
 
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_api_shield_discovery_operation Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayDomain API Gateway
 ---
 
 # cloudflare_api_shield_discovery_operation (Resource)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Domain API Gateway`
 
 ## Example Usage
 
@@ -25,7 +29,6 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
 ### Required
 
 - `operation_id` (String) UUID.
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -33,6 +36,7 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
   * `review` - Mark operation as for review
   * `ignored` - Mark operation as ignored
 Available values: "review", "ignored".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

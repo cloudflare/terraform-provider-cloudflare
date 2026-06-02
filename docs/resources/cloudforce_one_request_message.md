@@ -2,12 +2,15 @@
 page_title: "cloudflare_cloudforce_one_request_message Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudforce One Write
 ---
 
 # cloudflare_cloudforce_one_request_message (Resource)
 
+Accepted Permissions
 
+- `Cloudforce One Write`
 
 ## Example Usage
 

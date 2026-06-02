@@ -20,7 +20,7 @@ type AISearchInstanceModel struct {
 	Type                           types.String                                                        `tfsdk:"type" json:"type,optional"`
 	AIGatewayID                    types.String                                                        `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed_optional"`
 	AISearchModel                  types.String                                                        `tfsdk:"aisearch_model" json:"ai_search_model,computed_optional"`
-	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,optional"`
+	ChunkSize                      types.Int64                                                         `tfsdk:"chunk_size" json:"chunk_size,computed_optional"`
 	EmbeddingModel                 types.String                                                        `tfsdk:"embedding_model" json:"embedding_model,computed_optional"`
 	RerankingModel                 types.String                                                        `tfsdk:"reranking_model" json:"reranking_model,computed_optional"`
 	RewriteModel                   types.String                                                        `tfsdk:"rewrite_model" json:"rewrite_model,computed_optional"`
@@ -37,7 +37,7 @@ type AISearchInstanceModel struct {
 	Chunk                          types.Bool                                                          `tfsdk:"chunk" json:"chunk,computed_optional,no_refresh"`
 	ChunkOverlap                   types.Int64                                                         `tfsdk:"chunk_overlap" json:"chunk_overlap,computed_optional"`
 	FusionMethod                   types.String                                                        `tfsdk:"fusion_method" json:"fusion_method,computed_optional"`
-	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
+	HybridSearchEnabled            types.Bool                                                          `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed_optional"`
 	MaxNumResults                  types.Int64                                                         `tfsdk:"max_num_results" json:"max_num_results,computed_optional"`
 	Paused                         types.Bool                                                          `tfsdk:"paused" json:"paused,computed_optional"`
 	Reranking                      types.Bool                                                          `tfsdk:"reranking" json:"reranking,computed_optional"`

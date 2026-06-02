@@ -14,7 +14,7 @@ type AddressMapResultEnvelope struct {
 
 type AddressMapModel struct {
 	ID           types.String                   `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	IPs          *[]types.String                `tfsdk:"ips" json:"ips,optional,no_refresh"`
 	Memberships  *[]*AddressMapMembershipsModel `tfsdk:"memberships" json:"memberships,optional"`
 	DefaultSNI   types.String                   `tfsdk:"default_sni" json:"default_sni,optional"`

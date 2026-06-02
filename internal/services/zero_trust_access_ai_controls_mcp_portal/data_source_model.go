@@ -20,7 +20,7 @@ type ZeroTrustAccessAIControlsMcpPortalResultDataSourceEnvelope struct {
 
 type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
 	ID               types.String                                                                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
 	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`

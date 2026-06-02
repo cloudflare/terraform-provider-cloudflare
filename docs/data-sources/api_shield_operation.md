@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_operation Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_operation (Data Source)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 
@@ -31,6 +37,7 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `feature` (List of String) Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `operation_id` (String) UUID.
+- `with_schemas` (Boolean) When true, includes OpenAPI schemas (both uploaded and learned) for the operation in the response. Due to the conversion overhead, this parameter is only supported on single-operation retrieval.
 
 ### Read-Only
 
@@ -41,6 +48,7 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
+- `schemas` (Attributes) OpenAPI JSON schemas for an operation, including both user-uploaded and Cloudflare-learned schemas. (see [below for nested schema](#nestedatt--schemas))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -186,5 +194,32 @@ Read-Only:
 - `period_seconds` (Number) The period over which this threshold is suggested.
 - `requests` (Number) The estimated number of requests covered by these calculations.
 - `suggested_threshold` (Number) The suggested threshold in requests done by the same auth_id or period_seconds.
+
+
+
+<a id="nestedatt--schemas"></a>
+### Nested Schema for `schemas`
+
+Read-Only:
+
+- `learned` (Attributes) An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension. (see [below for nested schema](#nestedatt--schemas--learned))
+- `uploaded` (Attributes) An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension. (see [below for nested schema](#nestedatt--schemas--uploaded))
+
+<a id="nestedatt--schemas--learned"></a>
+### Nested Schema for `schemas.learned`
+
+Read-Only:
+
+- `parameters` (List of Map of String) OpenAPI parameter objects describing path, query, header, or cookie parameters.
+- `request_body` (Map of String) OpenAPI request body object describing the expected request payload.
+
+
+<a id="nestedatt--schemas--uploaded"></a>
+### Nested Schema for `schemas.uploaded`
+
+Read-Only:
+
+- `parameters` (List of Map of String) OpenAPI parameter objects describing path, query, header, or cookie parameters.
+- `request_body` (Map of String) OpenAPI request body object describing the expected request payload.
 
 

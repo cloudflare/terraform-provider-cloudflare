@@ -2,24 +2,28 @@
 page_title: "cloudflare_stream_watermark Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_watermark (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
 ```terraform
 resource "cloudflare_stream_watermark" "example_stream_watermark" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  file = "@/Users/rchen/Downloads/watermark.png"
   name = "Marketing Videos"
   opacity = 0.75
   padding = 0.1
   position = "center"
   scale = 0.1
+  url = "https://example.com"
 }
 ```
 
@@ -29,7 +33,6 @@ resource "cloudflare_stream_watermark" "example_stream_watermark" {
 ### Required
 
 - `account_id` (String) The account identifier tag.
-- `file` (String) The image file to upload.
 
 ### Optional
 
@@ -39,6 +42,7 @@ resource "cloudflare_stream_watermark" "example_stream_watermark" {
 - `padding` (Number) The whitespace between the adjacent edges (determined by position) of the video and the image. `0.0` indicates no padding, and `1.0` indicates a fully padded video width or length, as determined by the algorithm.
 - `position` (String) The location of the image. Valid positions are: `upperRight`, `upperLeft`, `lowerLeft`, `lowerRight`, and `center`. Note that `center` ignores the `padding` parameter.
 - `scale` (Number) The size of the image relative to the overall size of the video. This parameter will adapt to horizontal and vertical videos automatically. `0.0` indicates no scaling (use the size of the image as-is), and `1.0 `fills the entire video.
+- `url` (String) URL of the watermark image to copy.
 
 ### Read-Only
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_custom_domains Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_custom_domains (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 

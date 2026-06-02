@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_deployment Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_deployment (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -43,7 +48,7 @@ data "cloudflare_workers_deployment" "example_workers_deployment" {
 
 Read-Only:
 
-- `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
+- `workers_message` (String) Human-readable message about the deployment. Truncated to 1000 bytes if longer.
 - `workers_triggered_by` (String) Operation that triggered the creation of the deployment.
 
 

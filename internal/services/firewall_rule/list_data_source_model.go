@@ -17,7 +17,7 @@ type FirewallRulesResultListDataSourceEnvelope struct {
 }
 
 type FirewallRulesDataSourceModel struct {
-	ZoneID      types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action      types.String                                                     `tfsdk:"action" query:"action,optional"`
 	Description types.String                                                     `tfsdk:"description" query:"description,optional"`
 	ID          types.String                                                     `tfsdk:"id" query:"id,optional"`

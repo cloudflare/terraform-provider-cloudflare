@@ -2,12 +2,19 @@
 page_title: "cloudflare_dns_zone_transfers_incoming Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS ReadDNS WriteZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_dns_zone_transfers_incoming (Resource)
 
+Accepted Permissions
 
+- `DNS Read`
+- `DNS Write`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 

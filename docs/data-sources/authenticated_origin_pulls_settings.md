@@ -2,12 +2,16 @@
 page_title: "cloudflare_authenticated_origin_pulls_settings Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_authenticated_origin_pulls_settings (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 

@@ -20,7 +20,7 @@ type LoadBalancerPoolResultDataSourceEnvelope struct {
 type LoadBalancerPoolDataSourceModel struct {
 	ID                 types.String                                                                `tfsdk:"id" path:"pool_id,computed"`
 	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id,optional"`
-	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn          types.String                                                                `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                           `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`

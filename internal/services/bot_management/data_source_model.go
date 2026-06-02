@@ -18,7 +18,7 @@ type BotManagementResultDataSourceEnvelope struct {
 
 type BotManagementDataSourceModel struct {
 	ID                           types.String                                                                 `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
 	AIBotsProtection             types.String                                                                 `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed"`
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
 	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`

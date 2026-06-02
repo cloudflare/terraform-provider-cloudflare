@@ -19,7 +19,7 @@ type ZeroTrustRiskScoringIntegrationResultDataSourceEnvelope struct {
 type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
 	ID              types.String      `tfsdk:"id" path:"integration_id,computed"`
 	IntegrationID   types.String      `tfsdk:"integration_id" path:"integration_id,required"`
-	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	AccountTag      types.String      `tfsdk:"account_tag" json:"account_tag,computed"`
 	Active          types.Bool        `tfsdk:"active" json:"active,computed"`
 	CreatedAt       timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

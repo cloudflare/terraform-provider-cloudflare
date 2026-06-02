@@ -10,10 +10,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   captive_portal = 180
   description = "Policy for test teams."
   disable_auto_fallback = true
-  dns_search_suffixes = [{
-    suffix = "internal.corp"
-    description = "Example internal domains"
-  }]
   enabled = true
   exclude = [{
     address = "192.0.2.0/24"
@@ -35,8 +31,4 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   support_url = "https://1.1.1.1/help"
   switch_locked = true
   tunnel_protocol = "wireguard"
-  virtual_networks = {
-    allowed = ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"]
-    default = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
-  }
 }

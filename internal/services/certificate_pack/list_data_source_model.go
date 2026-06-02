@@ -18,7 +18,7 @@ type CertificatePacksResultListDataSourceEnvelope struct {
 }
 
 type CertificatePacksDataSourceModel struct {
-	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Deploy   types.String                                                        `tfsdk:"deploy" query:"deploy,optional"`
 	Status   types.String                                                        `tfsdk:"status" query:"status,optional"`
 	MaxItems types.Int64                                                         `tfsdk:"max_items"`

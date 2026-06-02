@@ -18,7 +18,7 @@ type CustomOriginTrustStoresResultListDataSourceEnvelope struct {
 }
 
 type CustomOriginTrustStoresDataSourceModel struct {
-	ZoneID   types.String                                                               `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	Limit    types.Int64                                                                `tfsdk:"limit" query:"limit,optional"`
 	Offset   types.Int64                                                                `tfsdk:"offset" query:"offset,optional"`
 	MaxItems types.Int64                                                                `tfsdk:"max_items"`

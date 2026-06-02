@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_custom_domain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_custom_domain (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
 
 ## Example Usage
 

@@ -17,7 +17,7 @@ type ClientCertificatesResultListDataSourceEnvelope struct {
 }
 
 type ClientCertificatesDataSourceModel struct {
-	ZoneID   types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Limit    types.Int64                                                           `tfsdk:"limit" query:"limit,optional"`
 	Offset   types.Int64                                                           `tfsdk:"offset" query:"offset,optional"`
 	Status   types.String                                                          `tfsdk:"status" query:"status,optional"`

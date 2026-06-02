@@ -2,12 +2,18 @@
 page_title: "cloudflare_custom_ssl Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Mutual TLS Certificates ReadAccess: Mutual TLS Certificates WriteSSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_custom_ssl (Resource)
 
+Accepted Permissions
 
+- `Access: Mutual TLS Certificates Read`
+- `Access: Mutual TLS Certificates Write`
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -146,15 +152,15 @@ Read-Only:
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 Available values: "active", "deleted".
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--keyless_server--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel. (see [below for nested schema](#nestedatt--keyless_server--tunnel))
 
 <a id="nestedatt--keyless_server--tunnel"></a>
 ### Nested Schema for `keyless_server.tunnel`
 
 Read-Only:
 
-- `private_ip` (String) Private IP of the Key Server Host
-- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
+- `private_ip` (String) Private IP of the Key Server Host.
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID.
 
 ## Import
 

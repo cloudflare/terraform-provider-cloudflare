@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_routing_dns Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_email_routing_dns (Data Source)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 ## Example Usage
 

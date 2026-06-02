@@ -2,12 +2,16 @@
 page_title: "cloudflare_user Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  User Details ReadUser Details Write
 ---
 
 # cloudflare_user (Data Source)
 
+Accepted Permissions
 
+- `User Details Read`
+- `User Details Write`
 
 ## Example Usage
 
@@ -24,6 +28,7 @@ data "cloudflare_user" "example_user" {
 
 - `betas` (List of String) Lists the betas that the user is participating in.
 - `country` (String) The country in which the user lives.
+- `email` (String) Current email address of the user.
 - `first_name` (String) User's first name
 - `has_business_zones` (Boolean) Indicates whether user has any business zones
 - `has_enterprise_zones` (Boolean) Indicates whether user has any enterprise zones

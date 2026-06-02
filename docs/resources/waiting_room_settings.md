@@ -2,12 +2,16 @@
 page_title: "cloudflare_waiting_room_settings Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Waiting Rooms ReadWaiting Rooms Write
 ---
 
 # cloudflare_waiting_room_settings (Resource)
 
+Accepted Permissions
 
+- `Waiting Rooms Read`
+- `Waiting Rooms Write`
 
 ## Example Usage
 

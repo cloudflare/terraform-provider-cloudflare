@@ -2,12 +2,18 @@
 page_title: "cloudflare_api_shield_schema Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API GatewayAccount API Gateway ReadDomain API GatewayDomain API Gateway Read
 ---
 
 # cloudflare_api_shield_schema (Data Source)
 
+Accepted Permissions
 
+- `Account API Gateway`
+- `Account API Gateway Read`
+- `Domain API Gateway`
+- `Domain API Gateway Read`
 
 ## Example Usage
 

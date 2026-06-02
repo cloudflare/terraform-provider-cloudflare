@@ -45,6 +45,7 @@ type TargetDefaultProfileModel struct {
 	AccountID                  types.String                                                                       `tfsdk:"account_id"`
 	LANAllowMinutes            types.Float64                                                                      `tfsdk:"lan_allow_minutes"`
 	LANAllowSubnetSize         types.Float64                                                                      `tfsdk:"lan_allow_subnet_size"`
+	VirtualNetworks            *TargetDefaultProfileVirtualNetworksModel                                          `tfsdk:"virtual_networks"`
 	AllowModeSwitch            types.Bool                                                                         `tfsdk:"allow_mode_switch"`
 	AllowUpdates               types.Bool                                                                         `tfsdk:"allow_updates"`
 	AllowedToLeave             types.Bool                                                                         `tfsdk:"allowed_to_leave"`
@@ -57,12 +58,14 @@ type TargetDefaultProfileModel struct {
 	SupportURL                 types.String                                                                       `tfsdk:"support_url"`
 	SwitchLocked               types.Bool                                                                         `tfsdk:"switch_locked"`
 	TunnelProtocol             types.String                                                                       `tfsdk:"tunnel_protocol"`
+	DNSSearchSuffixes          customfield.NestedObjectList[TargetDefaultProfileDNSSearchSuffixesModel]           `tfsdk:"dns_search_suffixes"`
 	Exclude                    customfield.NestedObjectList[TargetDefaultProfileExcludeModel]                     `tfsdk:"exclude"`
 	Include                    customfield.NestedObjectList[TargetDefaultProfileIncludeModel]                     `tfsdk:"include"`
 	ServiceModeV2              customfield.NestedObject[TargetDefaultProfileServiceModeV2Model]                   `tfsdk:"service_mode_v2"`
 	Default                    types.Bool                                                                         `tfsdk:"default"`
 	Enabled                    types.Bool                                                                         `tfsdk:"enabled"`
 	GatewayUniqueID            types.String                                                                       `tfsdk:"gateway_unique_id"`
+	PolicyID                   types.String                                                                       `tfsdk:"policy_id"`
 	FallbackDomains            customfield.NestedObjectList[TargetDefaultProfileFallbackDomainsModel]             `tfsdk:"fallback_domains"`
 }
 
@@ -87,4 +90,14 @@ type TargetDefaultProfileFallbackDomainsModel struct {
 	Suffix      types.String                   `tfsdk:"suffix"`
 	Description types.String                   `tfsdk:"description"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server"`
+}
+
+type TargetDefaultProfileVirtualNetworksModel struct {
+	Allowed *[]types.String `tfsdk:"allowed"`
+	Default types.String    `tfsdk:"default"`
+}
+
+type TargetDefaultProfileDNSSearchSuffixesModel struct {
+	Suffix      types.String `tfsdk:"suffix"`
+	Description types.String `tfsdk:"description"`
 }

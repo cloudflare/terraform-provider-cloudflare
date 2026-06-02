@@ -17,7 +17,7 @@ type AccountAPITokenPermissionGroupsListResultListDataSourceEnvelope struct {
 }
 
 type AccountAPITokenPermissionGroupsListDataSourceModel struct {
-	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Name      types.String                                                                           `tfsdk:"name" query:"name,optional"`
 	Scope     types.String                                                                           `tfsdk:"scope" query:"scope,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`

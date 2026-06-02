@@ -18,6 +18,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredRouteR
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloudflare One Networks Write",
@@ -32,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Cloudflare account ID",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"network": schema.StringAttribute{

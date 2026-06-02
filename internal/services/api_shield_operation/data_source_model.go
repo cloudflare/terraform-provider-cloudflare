@@ -21,7 +21,7 @@ type APIShieldOperationResultDataSourceEnvelope struct {
 type APIShieldOperationDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" path:"operation_id,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
-	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
 	WithSchemas types.Bool                                                          `tfsdk:"with_schemas" query:"with_schemas,computed_optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
