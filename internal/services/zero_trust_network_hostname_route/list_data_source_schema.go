@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -90,6 +91,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"hostname": schema.StringAttribute{
 							Description: "The hostname of the route.",
 							Computed:    true,
+						},
+						"tun_type": schema.StringAttribute{
+							Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"warp\", \"magic\", \"ip_sec\", \"gre\", \"cni\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"cfd_tunnel",
+									"warp_connector",
+									"warp",
+									"magic",
+									"ip_sec",
+									"gre",
+									"cni",
+								),
+							},
 						},
 						"tunnel_id": schema.StringAttribute{
 							Description: "UUID of the tunnel.",

@@ -114,8 +114,8 @@ type AIGatewayStripeUsageEventsModel struct {
 }
 
 type AIGatewayOtelModel struct {
-	Authorization types.String             `tfsdk:"authorization" json:"authorization,required"`
 	Headers       *map[string]types.String `tfsdk:"headers" json:"headers,required"`
 	URL           types.String             `tfsdk:"url" json:"url,required"`
+	Authorization types.String             `tfsdk:"authorization" json:"authorization,optional"`
 	ContentType   types.String             `tfsdk:"content_type" json:"content_type,computed_optional"`
 }

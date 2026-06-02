@@ -28,7 +28,6 @@ resource "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" 
       }]
     }
   }
-  max_ttl_secs = 3600
   networks = [{
     network = "192.0.2.1/32"
   }]

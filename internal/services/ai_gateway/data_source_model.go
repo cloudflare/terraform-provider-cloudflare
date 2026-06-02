@@ -122,9 +122,9 @@ type AIGatewayGuardrailsResponseDataSourceModel struct {
 }
 
 type AIGatewayOtelDataSourceModel struct {
-	Authorization types.String                  `tfsdk:"authorization" json:"authorization,computed"`
 	Headers       customfield.Map[types.String] `tfsdk:"headers" json:"headers,computed"`
 	URL           types.String                  `tfsdk:"url" json:"url,computed"`
+	Authorization types.String                  `tfsdk:"authorization" json:"authorization,computed"`
 	ContentType   types.String                  `tfsdk:"content_type" json:"content_type,computed"`
 }
 

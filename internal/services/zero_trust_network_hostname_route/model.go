@@ -20,6 +20,7 @@ type ZeroTrustNetworkHostnameRouteModel struct {
 	TunnelID   types.String      `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt  timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
+	TunType    types.String      `tfsdk:"tun_type" json:"tun_type,computed"`
 	TunnelName types.String      `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
 }
 

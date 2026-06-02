@@ -385,15 +385,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectListType[AIGatewaysOtelDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
-									"authorization": schema.StringAttribute{
-										Computed: true,
-									},
 									"headers": schema.MapAttribute{
 										Computed:    true,
 										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"url": schema.StringAttribute{
+										Computed: true,
+									},
+									"authorization": schema.StringAttribute{
 										Computed: true,
 									},
 									"content_type": schema.StringAttribute{
