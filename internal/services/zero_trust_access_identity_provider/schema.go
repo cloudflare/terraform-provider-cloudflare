@@ -367,9 +367,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"saml_certificate_set": schema.SingleNestedAttribute{
-				Description: "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel](ctx),
+				Description:   "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"created_at": schema.StringAttribute{
 						Description: "Timestamp when the certificate set was created",
