@@ -236,7 +236,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt \nSAML assertions using the certificate from the assigned certificate set.\n\nTo enable encryption:\n1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`\n2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request\n3. Configure the public certificate in your external Identity Provider\n\nNote: Requires `saml_certificate_set_id` to be set when `true`.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
@@ -298,7 +297,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 				},
 			},
