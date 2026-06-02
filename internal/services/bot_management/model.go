@@ -19,6 +19,7 @@ type BotManagementAPIModel struct {
 	AIBotsProtection             *string                                      `json:"ai_bots_protection,omitempty"`
 	AutoUpdateModel              *bool                                        `json:"auto_update_model,omitempty"`
 	BmCookieEnabled              *bool                                        `json:"bm_cookie_enabled,omitempty"`
+	ContentBotsProtection        *string                                      `json:"content_bots_protection,omitempty"`
 	CrawlerProtection            *string                                      `json:"crawler_protection,omitempty"`
 	EnableJS                     *bool                                        `json:"enable_js,omitempty"`
 	FightMode                    *bool                                        `json:"fight_mode,omitempty"`
@@ -167,14 +168,20 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 
 	// Update string fields
 	updateStringField(&m.AIBotsProtection, api.AIBotsProtection)
+	updateStringField(&m.ContentBotsProtection, api.ContentBotsProtection)
 	updateStringField(&m.CrawlerProtection, api.CrawlerProtection)
 	updateStringField(&m.SBFMDefinitelyAutomated, api.SBFMDefinitelyAutomated)
 	updateStringField(&m.SBFMLikelyAutomated, api.SBFMLikelyAutomated)
 	updateStringField(&m.SBFMVerifiedBots, api.SBFMVerifiedBots)
-	
+
 	// cf_robots_variant is not returned by API, set to null if unknown
 	if m.CfRobotsVariant.IsUnknown() {
 		m.CfRobotsVariant = types.StringNull()
+	}
+
+	// content_bots_protection may not be returned by API for all zone types
+	if m.ContentBotsProtection.IsUnknown() {
+		m.ContentBotsProtection = types.StringNull()
 	}
 
 	// Handle nested stale zone configuration
