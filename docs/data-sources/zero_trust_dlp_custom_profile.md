@@ -27,8 +27,11 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 
 ### Required
 
-- `account_id` (String)
 - `profile_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

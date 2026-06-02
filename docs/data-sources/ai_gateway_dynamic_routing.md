@@ -28,8 +28,11 @@ data "cloudflare_ai_gateway_dynamic_routing" "example_ai_gateway_dynamic_routing
 
 ### Required
 
-- `account_id` (String)
 - `gateway_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

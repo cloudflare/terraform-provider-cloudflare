@@ -27,8 +27,11 @@ data "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Required
 
-- `account_id` (String)
 - `entry_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

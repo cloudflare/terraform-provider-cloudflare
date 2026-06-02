@@ -23,8 +23,11 @@ data "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_post
 
 ### Required
 
-- `account_id` (String)
 - `rule_id` (String) API UUID.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

@@ -27,8 +27,11 @@ data "cloudflare_dns_zone_transfers_tsig" "example_dns_zone_transfers_tsig" {
 
 ### Required
 
-- `account_id` (String)
 - `tsig_id` (String)
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 

@@ -29,8 +29,11 @@ data "cloudflare_zero_trust_dex_rule" "example_zero_trust_dex_rule" {
 
 ### Required
 
-- `account_id` (String)
 - `rule_id` (String) API Resource UUID tag.
+
+### Optional
+
+- `account_id` (String)
 
 ### Read-Only
 
