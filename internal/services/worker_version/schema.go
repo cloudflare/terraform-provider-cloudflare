@@ -455,6 +455,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"database_id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"id": schema.StringAttribute{
