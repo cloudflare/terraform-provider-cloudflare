@@ -18,7 +18,7 @@ type ZeroTrustListsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustListsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Type      types.String                                                      `tfsdk:"type" query:"type,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustListsResultDataSourceModel] `tfsdk:"result"`

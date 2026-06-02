@@ -20,7 +20,7 @@ type WorkflowResultDataSourceEnvelope struct {
 type WorkflowDataSourceModel struct {
 	ID           types.String                                               `tfsdk:"id" path:"workflow_name,computed"`
 	WorkflowName types.String                                               `tfsdk:"workflow_name" path:"workflow_name,optional"`
-	AccountID    types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	ClassName    types.String                                               `tfsdk:"class_name" json:"class_name,computed"`
 	CreatedOn    timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn   timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

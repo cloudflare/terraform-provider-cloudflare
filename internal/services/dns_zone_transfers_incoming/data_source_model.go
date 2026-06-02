@@ -18,7 +18,7 @@ type DNSZoneTransfersIncomingResultDataSourceEnvelope struct {
 
 type DNSZoneTransfersIncomingDataSourceModel struct {
 	ID                 types.String                  `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID             types.String                  `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID             types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	AutoRefreshSeconds types.Float64                 `tfsdk:"auto_refresh_seconds" json:"auto_refresh_seconds,computed"`
 	CheckedTime        types.String                  `tfsdk:"checked_time" json:"checked_time,computed"`
 	CreatedTime        types.String                  `tfsdk:"created_time" json:"created_time,computed"`

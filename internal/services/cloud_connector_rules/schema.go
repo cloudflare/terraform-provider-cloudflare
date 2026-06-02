@@ -18,6 +18,7 @@ var _ resource.ResourceWithConfigValidators = (*CloudConnectorRulesResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloud Connector Read",

@@ -19,7 +19,7 @@ type ZeroTrustAccessAIControlsMcpServersResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessAIControlsMcpServersDataSourceModel struct {
-	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
 	Search    types.String                                                                           `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpServersResultDataSourceModel] `tfsdk:"result"`

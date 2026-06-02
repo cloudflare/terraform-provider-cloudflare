@@ -15,6 +15,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkersCronTriggerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",

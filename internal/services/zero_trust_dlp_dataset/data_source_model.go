@@ -18,7 +18,7 @@ type ZeroTrustDLPDatasetResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPDatasetDataSourceModel struct {
-	AccountID       types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	DatasetID       types.String                                                            `tfsdk:"dataset_id" path:"dataset_id,required"`
 	CaseSensitive   types.Bool                                                              `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt       timetypes.RFC3339                                                       `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

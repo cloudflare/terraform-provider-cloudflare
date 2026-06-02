@@ -17,7 +17,7 @@ type ZeroTrustDeviceIPProfilesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceIPProfilesDataSourceModel struct {
-	AccountID types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	PerPage   types.Int64                                                                  `tfsdk:"per_page" query:"per_page,computed_optional"`
 	MaxItems  types.Int64                                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustDeviceIPProfilesResultDataSourceModel] `tfsdk:"result"`

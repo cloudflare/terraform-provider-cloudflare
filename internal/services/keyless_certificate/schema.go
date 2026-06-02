@@ -23,6 +23,7 @@ var _ resource.ResourceWithConfigValidators = (*KeylessCertificateResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Apps and Policies Read",
