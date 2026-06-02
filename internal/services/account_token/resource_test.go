@@ -639,6 +639,48 @@ func TestAccAccountToken_ResourcesFlexible(t *testing.T) {
 	})
 }
 
+// Because order is not always preserved by the API, there is a danger of
+// "inconsistent results" after an apply. This test ensures that we can handle
+// complex cases where we have different policies with different perms and
+// different resources and that we can correct identify them when they change.
+func TestAccAccountToken_FullFlexible(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccountTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("account_token-full-flexible1.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("account_token-full-flexible2.tf", rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			// Import step — ignore policies ordering since import uses canonical
+			// sort (no prior state) which may differ from the last config order
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value", "policies"},
+			},
+		},
+	})
+}
+
 func TestAccAccountToken_CRUD(t *testing.T) {
 	// Comprehensive test covering Create, Read, Update, Delete + Import
 	rnd := utils.GenerateRandomResourceName()
