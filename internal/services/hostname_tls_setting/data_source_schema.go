@@ -48,7 +48,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the tls setting was originally created for this hostname.",

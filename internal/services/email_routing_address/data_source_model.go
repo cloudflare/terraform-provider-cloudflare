@@ -19,7 +19,7 @@ type EmailRoutingAddressResultDataSourceEnvelope struct {
 type EmailRoutingAddressDataSourceModel struct {
 	ID                           types.String                                 `tfsdk:"id" path:"destination_address_identifier,computed"`
 	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier,optional"`
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Created                      timetypes.RFC3339                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Email                        types.String                                 `tfsdk:"email" json:"email,computed"`
 	Modified                     timetypes.RFC3339                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`

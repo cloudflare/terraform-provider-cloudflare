@@ -13,7 +13,7 @@ type DNSZoneTransfersPeerResultEnvelope struct {
 
 type DNSZoneTransfersPeerModel struct {
 	ID         types.String  `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String  `tfsdk:"account_id" path:"account_id,optional"`
 	Name       types.String  `tfsdk:"name" json:"name,required"`
 	IP         types.String  `tfsdk:"ip" json:"ip,optional"`
 	IxfrEnable types.Bool    `tfsdk:"ixfr_enable" json:"ixfr_enable,optional"`

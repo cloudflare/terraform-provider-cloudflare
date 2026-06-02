@@ -19,7 +19,7 @@ type MagicTransitSiteResultDataSourceEnvelope struct {
 type MagicTransitSiteDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" path:"site_id,computed"`
 	SiteID               types.String                                                      `tfsdk:"site_id" path:"site_id,optional"`
-	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	ConnectorID          types.String                                                      `tfsdk:"connector_id" json:"connector_id,computed"`
 	Description          types.String                                                      `tfsdk:"description" json:"description,computed"`
 	HaMode               types.Bool                                                        `tfsdk:"ha_mode" json:"ha_mode,computed"`

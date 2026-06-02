@@ -19,7 +19,7 @@ type CloudforceOneRequestPriorityResultDataSourceEnvelope struct {
 type CloudforceOneRequestPriorityDataSourceModel struct {
 	ID            types.String      `tfsdk:"id" path:"priority_id,computed"`
 	PriorityID    types.String      `tfsdk:"priority_id" path:"priority_id,required"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Completed     timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Content       types.String      `tfsdk:"content" json:"content,computed"`
 	Created       timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`

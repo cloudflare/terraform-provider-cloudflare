@@ -18,7 +18,7 @@ type ZoneLockdownsResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownsDataSourceModel struct {
-	ZoneID            types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn         timetypes.RFC3339                                                `tfsdk:"created_on" query:"created_on,optional" format:"date-time"`
 	Description       types.String                                                     `tfsdk:"description" query:"description,optional"`
 	DescriptionSearch types.String                                                     `tfsdk:"description_search" query:"description_search,optional"`

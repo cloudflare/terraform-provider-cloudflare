@@ -20,7 +20,7 @@ type HyperdriveConfigResultDataSourceEnvelope struct {
 type HyperdriveConfigDataSourceModel struct {
 	ID                    types.String                                                     `tfsdk:"id" path:"hyperdrive_id,computed"`
 	HyperdriveID          types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,required"`
-	AccountID             types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID             types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn             timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn            timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                  types.String                                                     `tfsdk:"name" json:"name,computed"`

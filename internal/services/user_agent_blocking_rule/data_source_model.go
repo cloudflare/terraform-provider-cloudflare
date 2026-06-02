@@ -19,7 +19,7 @@ type UserAgentBlockingRuleResultDataSourceEnvelope struct {
 type UserAgentBlockingRuleDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"ua_rule_id,computed"`
 	UARuleID      types.String                                                                `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
-	ZoneID        types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String                                                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description   types.String                                                                `tfsdk:"description" json:"description,computed"`
 	Mode          types.String                                                                `tfsdk:"mode" json:"mode,computed"`
 	Paused        types.Bool                                                                  `tfsdk:"paused" json:"paused,computed"`

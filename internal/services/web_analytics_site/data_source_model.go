@@ -20,7 +20,7 @@ type WebAnalyticsSiteResultDataSourceEnvelope struct {
 type WebAnalyticsSiteDataSourceModel struct {
 	ID          types.String                                                       `tfsdk:"id" path:"site_id,computed"`
 	SiteID      types.String                                                       `tfsdk:"site_id" path:"site_id,optional"`
-	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	AutoInstall types.Bool                                                         `tfsdk:"auto_install" json:"auto_install,computed"`
 	Created     timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteTag     types.String                                                       `tfsdk:"site_tag" json:"site_tag,computed"`

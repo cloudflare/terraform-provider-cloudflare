@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",

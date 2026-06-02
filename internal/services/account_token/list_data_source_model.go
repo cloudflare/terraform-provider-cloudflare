@@ -18,7 +18,7 @@ type AccountTokensResultListDataSourceEnvelope struct {
 }
 
 type AccountTokensDataSourceModel struct {
-	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Direction types.String                                                     `tfsdk:"direction" query:"direction,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AccountTokensResultDataSourceModel] `tfsdk:"result"`

@@ -18,7 +18,7 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
-	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	ExistedAt        types.String                                                                        `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset,optional"`

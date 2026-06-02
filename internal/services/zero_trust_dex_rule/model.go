@@ -14,7 +14,7 @@ type ZeroTrustDEXRuleResultEnvelope struct {
 
 type ZeroTrustDEXRuleModel struct {
 	ID            types.String                                                     `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Match         types.String                                                     `tfsdk:"match" json:"match,required"`
 	Name          types.String                                                     `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                     `tfsdk:"description" json:"description,optional"`

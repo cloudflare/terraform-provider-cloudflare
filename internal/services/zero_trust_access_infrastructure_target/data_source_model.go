@@ -20,7 +20,7 @@ type ZeroTrustAccessInfrastructureTargetResultDataSourceEnvelope struct {
 type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 	ID         types.String                                                                   `tfsdk:"id" path:"target_id,computed"`
 	TargetID   types.String                                                                   `tfsdk:"target_id" path:"target_id,optional"`
-	AccountID  types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt  timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Hostname   types.String                                                                   `tfsdk:"hostname" json:"hostname,computed"`
 	ModifiedAt timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`

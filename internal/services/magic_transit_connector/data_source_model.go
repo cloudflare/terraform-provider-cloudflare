@@ -19,7 +19,7 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 type MagicTransitConnectorDataSourceModel struct {
 	ID                           types.String                                                         `tfsdk:"id" path:"connector_id,computed"`
 	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`
-	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Activated                    types.Bool                                                           `tfsdk:"activated" json:"activated,computed"`
 	InterruptWindowDurationHours types.Float64                                                        `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed"`
 	InterruptWindowHourOfDay     types.Float64                                                        `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed"`

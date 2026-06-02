@@ -17,8 +17,8 @@ type MagicTransitSiteACLsResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteACLsDataSourceModel struct {
-	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
-	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,required"`
+	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,optional"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[MagicTransitSiteACLsResultDataSourceModel] `tfsdk:"result"`
 }

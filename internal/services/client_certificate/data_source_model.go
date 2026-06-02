@@ -19,7 +19,7 @@ type ClientCertificateResultDataSourceEnvelope struct {
 type ClientCertificateDataSourceModel struct {
 	ID                   types.String                                                                   `tfsdk:"id" path:"client_certificate_id,computed"`
 	ClientCertificateID  types.String                                                                   `tfsdk:"client_certificate_id" path:"client_certificate_id,optional"`
-	ZoneID               types.String                                                                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID               types.String                                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	Certificate          types.String                                                                   `tfsdk:"certificate" json:"certificate,computed"`
 	CommonName           types.String                                                                   `tfsdk:"common_name" json:"common_name,computed"`
 	Country              types.String                                                                   `tfsdk:"country" json:"country,computed"`

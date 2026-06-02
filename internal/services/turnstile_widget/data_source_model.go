@@ -20,7 +20,7 @@ type TurnstileWidgetResultDataSourceEnvelope struct {
 type TurnstileWidgetDataSourceModel struct {
 	ID             types.String                             `tfsdk:"id" path:"sitekey,computed"`
 	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
-	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,optional"`
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to take if the expression matches\nAvailable values: \"allow\", \"log\", \"add_reporting_directives\".",

@@ -17,7 +17,7 @@ type ObservatoryScheduledTestResultDataSourceEnvelope struct {
 
 type ObservatoryScheduledTestDataSourceModel struct {
 	URL       types.String `tfsdk:"url" path:"url,required"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Region    types.String `tfsdk:"region" query:"region,computed_optional"`
 	Frequency types.String `tfsdk:"frequency" json:"frequency,computed"`
 }

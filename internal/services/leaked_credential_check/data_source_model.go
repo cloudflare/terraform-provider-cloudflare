@@ -16,7 +16,7 @@ type LeakedCredentialCheckResultDataSourceEnvelope struct {
 }
 
 type LeakedCredentialCheckDataSourceModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 

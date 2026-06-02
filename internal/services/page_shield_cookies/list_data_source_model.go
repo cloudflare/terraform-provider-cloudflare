@@ -18,7 +18,7 @@ type PageShieldCookiesListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldCookiesListDataSourceModel struct {
-	ZoneID    types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	Direction types.String                                                             `tfsdk:"direction" query:"direction,optional"`
 	Domain    types.String                                                             `tfsdk:"domain" query:"domain,optional"`
 	Export    types.String                                                             `tfsdk:"export" query:"export,optional"`

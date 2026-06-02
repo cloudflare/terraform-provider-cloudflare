@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Specifies the public ID of the account.",
-				Required:    true,
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Filters streams by name (case-insensitive substring).",

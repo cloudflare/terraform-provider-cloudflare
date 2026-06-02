@@ -17,7 +17,7 @@ type AccountDNSSettingsResultDataSourceEnvelope struct {
 }
 
 type AccountDNSSettingsDataSourceModel struct {
-	AccountID      types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID      types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	EnforceDNSOnly types.Bool                                                              `tfsdk:"enforce_dns_only" json:"enforce_dns_only,computed"`
 	ZoneDefaults   customfield.NestedObject[AccountDNSSettingsZoneDefaultsDataSourceModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed"`
 }

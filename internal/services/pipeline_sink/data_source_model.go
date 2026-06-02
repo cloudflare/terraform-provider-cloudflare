@@ -20,7 +20,7 @@ type PipelineSinkResultDataSourceEnvelope struct {
 type PipelineSinkDataSourceModel struct {
 	ID         types.String                                                `tfsdk:"id" path:"sink_id,computed"`
 	SinkID     types.String                                                `tfsdk:"sink_id" path:"sink_id,optional"`
-	AccountID  types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID  types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt  timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt timetypes.RFC3339                                           `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Name       types.String                                                `tfsdk:"name" json:"name,computed"`

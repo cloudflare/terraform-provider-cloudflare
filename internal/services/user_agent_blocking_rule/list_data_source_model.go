@@ -17,7 +17,7 @@ type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneID      types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                                                              `tfsdk:"description" query:"description,optional"`
 	Paused      types.Bool                                                                `tfsdk:"paused" query:"paused,optional"`
 	UserAgent   types.String                                                              `tfsdk:"user_agent" query:"user_agent,optional"`

@@ -19,7 +19,7 @@ type APIShieldOperationsResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationsDataSourceModel struct {
-	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	Direction types.String                                                           `tfsdk:"direction" query:"direction,optional"`
 	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint,optional"`
 	Order     types.String                                                           `tfsdk:"order" query:"order,optional"`

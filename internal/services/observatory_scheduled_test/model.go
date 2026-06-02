@@ -16,7 +16,7 @@ type ObservatoryScheduledTestResultEnvelope struct {
 type ObservatoryScheduledTestModel struct {
 	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
 	URL       types.String                                                    `tfsdk:"url" path:"url,required"`
-	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed_optional"`
 	Region    types.String                                                    `tfsdk:"region" json:"region,computed_optional"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed,no_refresh"`

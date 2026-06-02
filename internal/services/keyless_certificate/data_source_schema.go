@@ -70,7 +70,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",

@@ -19,7 +19,7 @@ type EmailSecurityBlockSenderResultDataSourceEnvelope struct {
 type EmailSecurityBlockSenderDataSourceModel struct {
 	ID           types.String                                      `tfsdk:"id" path:"pattern_id,computed"`
 	PatternID    types.String                                      `tfsdk:"pattern_id" path:"pattern_id,optional"`
-	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Comments     types.String                                      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRegex      types.Bool                                        `tfsdk:"is_regex" json:"is_regex,computed"`

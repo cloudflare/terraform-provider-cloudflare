@@ -15,7 +15,7 @@ type ZeroTrustDNSLocationResultEnvelope struct {
 
 type ZeroTrustDNSLocationModel struct {
 	ID                        types.String                                                    `tfsdk:"id" json:"id,computed"`
-	AccountID                 types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                 types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Name                      types.String                                                    `tfsdk:"name" json:"name,required"`
 	MaxTTLSecs                types.Int64                                                     `tfsdk:"max_ttl_secs" json:"max_ttl_secs,optional"`
 	Endpoints                 *ZeroTrustDNSLocationEndpointsModel                             `tfsdk:"endpoints" json:"endpoints,optional"`

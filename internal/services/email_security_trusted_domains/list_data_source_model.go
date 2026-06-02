@@ -18,7 +18,7 @@ type EmailSecurityTrustedDomainsListResultListDataSourceEnvelope struct {
 }
 
 type EmailSecurityTrustedDomainsListDataSourceModel struct {
-	AccountID    types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID    types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Direction    types.String                                                                       `tfsdk:"direction" query:"direction,optional"`
 	IsRecent     types.Bool                                                                         `tfsdk:"is_recent" query:"is_recent,optional"`
 	IsSimilarity types.Bool                                                                         `tfsdk:"is_similarity" query:"is_similarity,optional"`

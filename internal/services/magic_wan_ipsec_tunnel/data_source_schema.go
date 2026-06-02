@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"ipsec_tunnel": schema.SingleNestedAttribute{
 				Computed:   true,
