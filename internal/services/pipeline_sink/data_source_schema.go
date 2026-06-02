@@ -323,6 +323,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"name": schema.StringAttribute{
+						Description: "Filters sinks by name (case-insensitive substring).",
+						Optional:    true,
+					},
 					"pipeline_id": schema.StringAttribute{
 						Optional: true,
 					},

@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*StreamDownloadResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Stream Read",
@@ -27,14 +28,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"identifier": schema.StringAttribute{
-				Description:   "A Cloudflare-generated unique identifier for a media item.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"identifier": schema.StringAttribute{
+				Description:   "A Cloudflare-generated unique identifier for a media item.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"audio": schema.SingleNestedAttribute{

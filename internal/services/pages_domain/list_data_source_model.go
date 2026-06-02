@@ -5,8 +5,8 @@ package pages_domain
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pages"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,17 +17,15 @@ type PagesDomainsResultListDataSourceEnvelope struct {
 }
 
 type PagesDomainsDataSourceModel struct {
-	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name,required"`
 	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name,required"`
 	MaxItems    types.Int64                                                     `tfsdk:"max_items"`
 	Result      customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PagesDomainsDataSourceModel) toListParams(_ context.Context) (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
-	params = pages.ProjectDomainListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = pages.ProjectDomainListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

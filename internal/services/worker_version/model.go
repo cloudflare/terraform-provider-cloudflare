@@ -16,8 +16,8 @@ type WorkerVersionResultEnvelope struct {
 
 type WorkerVersionModel struct {
 	ID                 types.String                                             `tfsdk:"id" json:"id,computed"`
-	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
 	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
+	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
 	CompatibilityDate  types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule         types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
 	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
@@ -139,7 +139,7 @@ type WorkerVersionBindingsModel struct {
 	InstanceName                types.String                        `tfsdk:"instance_name" json:"instance_name,optional"`
 	Namespace                   types.String                        `tfsdk:"namespace" json:"namespace,optional"`
 	Dataset                     types.String                        `tfsdk:"dataset" json:"dataset,optional"`
-	DatabaseID                  types.String                        `tfsdk:"database_id" json:"database_id,computed_optional"`
+	DatabaseID                  types.String                        `tfsdk:"database_id" json:"database_id,optional"`
 	ID                          types.String                        `tfsdk:"id" json:"id,optional"`
 	Part                        types.String                        `tfsdk:"part" json:"part,optional"`
 	Outbound                    *WorkerVersionBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
@@ -194,8 +194,9 @@ type WorkerVersionBindingsOutboundWorkerModel struct {
 }
 
 type WorkerVersionBindingsSimpleModel struct {
-	Limit  types.Float64 `tfsdk:"limit" json:"limit,required"`
-	Period types.Int64   `tfsdk:"period" json:"period,required"`
+	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
+	Period            types.Int64   `tfsdk:"period" json:"period,required"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
 }
 
 type WorkerVersionLimitsModel struct {

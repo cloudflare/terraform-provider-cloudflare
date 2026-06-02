@@ -5,8 +5,8 @@ package logpush_dataset_field
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/logpush"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/logpush"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,13 +23,6 @@ type LogpushDatasetFieldDataSourceModel struct {
 
 func (m *LogpushDatasetFieldDataSourceModel) toReadParams(_ context.Context) (params logpush.DatasetFieldGetParams, diags diag.Diagnostics) {
 	params = logpush.DatasetFieldGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())

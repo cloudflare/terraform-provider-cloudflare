@@ -5,8 +5,8 @@ package address_map
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/addressing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,10 +33,8 @@ type AddressMapDataSourceModel struct {
 }
 
 func (m *AddressMapDataSourceModel) toReadParams(_ context.Context) (params addressing.AddressMapGetParams, diags diag.Diagnostics) {
-	params = addressing.AddressMapGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = addressing.AddressMapGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

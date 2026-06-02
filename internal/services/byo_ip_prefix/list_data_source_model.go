@@ -5,8 +5,8 @@ package byo_ip_prefix
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/addressing"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type ByoIPPrefixesDataSourceModel struct {
 }
 
 func (m *ByoIPPrefixesDataSourceModel) toListParams(_ context.Context) (params addressing.PrefixListParams, diags diag.Diagnostics) {
-	params = addressing.PrefixListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = addressing.PrefixListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

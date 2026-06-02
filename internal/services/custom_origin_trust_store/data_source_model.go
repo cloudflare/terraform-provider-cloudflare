@@ -5,8 +5,8 @@ package custom_origin_trust_store
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/acm"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/acm"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -31,21 +31,18 @@ type CustomOriginTrustStoreDataSourceModel struct {
 }
 
 func (m *CustomOriginTrustStoreDataSourceModel) toReadParams(_ context.Context) (params acm.CustomTrustStoreGetParams, diags diag.Diagnostics) {
-	params = acm.CustomTrustStoreGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = acm.CustomTrustStoreGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
 }
 
 func (m *CustomOriginTrustStoreDataSourceModel) toListParams(_ context.Context) (params acm.CustomTrustStoreListParams, diags diag.Diagnostics) {
-	params = acm.CustomTrustStoreListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = acm.CustomTrustStoreListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Filter.Limit.IsNull() {
 		params.Limit = cloudflare.F(m.Filter.Limit.ValueInt64())
 	}

@@ -5,8 +5,8 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers_for_platforms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -31,10 +31,8 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 }
 
 func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers_for_platforms.DispatchNamespaceGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

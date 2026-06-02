@@ -5,8 +5,8 @@ package r2_bucket_lock
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/r2"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,16 +18,14 @@ type R2BucketLockResultDataSourceEnvelope struct {
 }
 
 type R2BucketLockDataSourceModel struct {
+	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                   `tfsdk:"bucket_name" path:"bucket_name,required"`
-	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	Rules      customfield.NestedObjectList[R2BucketLockRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketLockDataSourceModel) toReadParams(_ context.Context) (params r2.BucketLockGetParams, diags diag.Diagnostics) {
-	params = r2.BucketLockGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = r2.BucketLockGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

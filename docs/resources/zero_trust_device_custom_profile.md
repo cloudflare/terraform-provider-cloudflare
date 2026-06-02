@@ -56,12 +56,12 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 
 ### Required
 
+- `account_id` (String)
 - `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
 - `name` (String) The name of the device settings profile.
 
 ### Optional
 
-- `account_id` (String)
 - `allow_mode_switch` (Boolean) Whether to allow the user to switch WARP between modes.
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization.
@@ -69,6 +69,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
+- `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
@@ -82,6 +83,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
+- `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--virtual_networks))
 
 ### Read-Only
 
@@ -91,6 +93,18 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `id` (String) The ID of this resource.
 - `policy_id` (String)
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
+
+<a id="nestedatt--dns_search_suffixes"></a>
+### Nested Schema for `dns_search_suffixes`
+
+Required:
+
+- `suffix` (String) The DNS search suffix to append when resolving short hostnames.
+
+Optional:
+
+- `description` (String) A description of the DNS search suffix.
+
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
@@ -119,6 +133,15 @@ Optional:
 
 - `mode` (String) The mode to run the WARP client under.
 - `port` (Number) The port number when used with proxy mode.
+
+
+<a id="nestedatt--virtual_networks"></a>
+### Nested Schema for `virtual_networks`
+
+Required:
+
+- `allowed` (List of String) List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.
+- `default` (String) The default virtual network ID. Must be included in the `allowed` list.
 
 
 <a id="nestedatt--fallback_domains"></a>

@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -97,7 +97,7 @@ func (d *EmailSecurityTrustedDomainsDataSource) Read(ctx context.Context, req da
 	env := EmailSecurityTrustedDomainsResultDataSourceEnvelope{*data}
 	_, err := d.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
-		data.TrustedDomainID.ValueInt64(),
+		data.TrustedDomainID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

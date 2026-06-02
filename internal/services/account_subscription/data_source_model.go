@@ -5,8 +5,8 @@ package account_subscription
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -30,10 +30,8 @@ type AccountSubscriptionDataSourceModel struct {
 }
 
 func (m *AccountSubscriptionDataSourceModel) toReadParams(_ context.Context) (params accounts.SubscriptionGetParams, diags diag.Diagnostics) {
-	params = accounts.SubscriptionGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = accounts.SubscriptionGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

@@ -30,11 +30,11 @@ resource "cloudflare_zero_trust_tunnel_warp_connector" "example_zero_trust_tunne
 
 ### Required
 
+- `account_id` (String) Cloudflare account ID
 - `name` (String) A user-friendly name for a tunnel.
 
 ### Optional
 
-- `account_id` (String) Cloudflare account ID
 - `ha` (Boolean) Indicates that the tunnel will be created to be highly available. If omitted, defaults to false.
 - `tunnel_secret` (String, Sensitive) Sets the password required to run a locally-managed tunnel. Must be at least 32 bytes and encoded as a base64 string.
 

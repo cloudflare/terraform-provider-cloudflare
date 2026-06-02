@@ -36,13 +36,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: `Identifier for the version, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created version.`,
 				Required:    true,
 			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
+				Required:    true,
+			},
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
 				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
-				Optional:    true,
 			},
 			"include": schema.StringAttribute{
 				Description: "Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.\nAvailable values: \"modules\".",
@@ -352,6 +352,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"period": schema.Int64Attribute{
 									Description: "The period in seconds.",
+									Computed:    true,
+								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
 									Computed:    true,
 								},
 							},

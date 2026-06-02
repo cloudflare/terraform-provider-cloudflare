@@ -11,9 +11,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
@@ -258,7 +258,6 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	scriptName := data.ScriptName.ValueString()
 
 	// fetch the script resource
-
 	res := new(http.Response)
 	path := fmt.Sprintf("accounts/%s/workers/services/%s", accountId, scriptName)
 	err := r.client.Get(
@@ -328,13 +327,6 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	if !state.Migrations.IsNull() {
 		data.Migrations = state.Migrations
 	}
-
-	// The copier cannot properly map annotations from the API response because
-	// the API uses slash-separated keys (e.g. "workers/triggered_by") that don't
-	// match Go struct field names. Preserve annotations from prior state to avoid
-	// drift. For the initial Read after Create, the Create response already set
-	// annotations correctly via apijson deserialization.
-	data.Annotations = state.Annotations
 
 	// fetch the script content
 	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(

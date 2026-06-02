@@ -27,11 +27,8 @@ resource "cloudflare_email_routing_address" "example_email_routing_address" {
 
 ### Required
 
-- `email` (String) The contact email address of the user.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `email` (String) The contact email address of the user.
 
 ### Read-Only
 

@@ -5,8 +5,8 @@ package custom_hostname
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/custom_hostnames"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,21 +24,20 @@ type CustomHostnamesDataSourceModel struct {
 	Direction            types.String                                                       `tfsdk:"direction" query:"direction,optional"`
 	HostnameStatus       types.String                                                       `tfsdk:"hostname_status" query:"hostname_status,optional"`
 	ID                   types.String                                                       `tfsdk:"id" query:"id,optional"`
-	SSL                  types.Float64                                                      `tfsdk:"ssl" query:"ssl,optional"`
 	SSLStatus            types.String                                                       `tfsdk:"ssl_status" query:"ssl_status,optional"`
 	Wildcard             types.Bool                                                         `tfsdk:"wildcard" query:"wildcard,optional"`
 	Hostname             *CustomHostnamesHostnameDataSourceModel                            `tfsdk:"hostname" query:"hostname,optional"`
 	Order                types.String                                                       `tfsdk:"order" query:"order,computed_optional"`
+	SSL                  types.Int64                                                        `tfsdk:"ssl" query:"ssl,computed_optional"`
 	MaxItems             types.Int64                                                        `tfsdk:"max_items"`
 	Result               customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
-	params = custom_hostnames.CustomHostnameListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = custom_hostnames.CustomHostnameListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}
@@ -65,7 +64,7 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.SSL.IsNull() {
-		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.SSL.ValueFloat64()))
+		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.SSL.ValueInt64()))
 	}
 	if !m.SSLStatus.IsNull() {
 		params.SSLStatus = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSLStatus(m.SSLStatus.ValueString()))

@@ -5,8 +5,8 @@ package zero_trust_device_settings
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -29,10 +29,8 @@ type ZeroTrustDeviceSettingsDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceSettingsDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceSettingGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceSettingGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DeviceSettingGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

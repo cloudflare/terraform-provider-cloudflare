@@ -5,8 +5,8 @@ package ai_search_instance
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/ai_search"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/ai_search"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,6 +24,7 @@ type AISearchInstanceDataSourceModel struct {
 	AISearchModel        types.String                                                                  `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                    `tfsdk:"cache" json:"cache,computed"`
 	CacheThreshold       types.String                                                                  `tfsdk:"cache_threshold" json:"cache_threshold,computed"`
+	CacheTTL             types.Float64                                                                 `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
 	ChunkOverlap         types.Int64                                                                   `tfsdk:"chunk_overlap" json:"chunk_overlap,computed"`
 	ChunkSize            types.Int64                                                                   `tfsdk:"chunk_size" json:"chunk_size,computed"`
 	CreatedAt            timetypes.RFC3339                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -61,21 +62,18 @@ type AISearchInstanceDataSourceModel struct {
 }
 
 func (m *AISearchInstanceDataSourceModel) toReadParams(_ context.Context) (params ai_search.InstanceReadParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceReadParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = ai_search.InstanceReadParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = ai_search.InstanceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Namespace.IsNull() {
 		params.Namespace = cloudflare.F(m.Filter.Namespace.ValueString())
 	}
@@ -107,15 +105,8 @@ type AISearchInstanceIndexingOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceMetadataDataSourceModel struct {
-	CreatedFromAISearchWizard types.Bool                                                                       `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
-	SearchForAgents           customfield.NestedObject[AISearchInstanceMetadataSearchForAgentsDataSourceModel] `tfsdk:"search_for_agents" json:"search_for_agents,computed"`
-	WorkerDomain              types.String                                                                     `tfsdk:"worker_domain" json:"worker_domain,computed"`
-}
-
-type AISearchInstanceMetadataSearchForAgentsDataSourceModel struct {
-	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
-	ZoneID   types.String `tfsdk:"zone_id" json:"zone_id,computed"`
-	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
+	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,computed"`
 }
 
 type AISearchInstancePublicEndpointParamsDataSourceModel struct {

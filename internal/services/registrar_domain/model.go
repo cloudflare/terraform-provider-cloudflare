@@ -12,8 +12,8 @@ type RegistrarDomainResultEnvelope struct {
 }
 
 type RegistrarDomainModel struct {
-	DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
+	DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
 	AutoRenew  types.Bool   `tfsdk:"auto_renew" json:"auto_renew,optional,no_refresh"`
 	Locked     types.Bool   `tfsdk:"locked" json:"locked,optional,no_refresh"`
 	Privacy    types.Bool   `tfsdk:"privacy" json:"privacy,optional,no_refresh"`

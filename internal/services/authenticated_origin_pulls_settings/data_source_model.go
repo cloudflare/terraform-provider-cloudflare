@@ -5,8 +5,8 @@ package authenticated_origin_pulls_settings
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/origin_tls_client_auth"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/origin_tls_client_auth"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,10 +22,8 @@ type AuthenticatedOriginPullsSettingsDataSourceModel struct {
 }
 
 func (m *AuthenticatedOriginPullsSettingsDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.SettingGetParams, diags diag.Diagnostics) {
-	params = origin_tls_client_auth.SettingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = origin_tls_client_auth.SettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

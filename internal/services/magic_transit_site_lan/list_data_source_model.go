@@ -5,8 +5,8 @@ package magic_transit_site_lan
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,17 +17,15 @@ type MagicTransitSiteLANsResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteLANsDataSourceModel struct {
-	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,required"`
 	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,required"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[MagicTransitSiteLANsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicTransitSiteLANsDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteLANListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteLANListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.SiteLANListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -75,9 +73,16 @@ type MagicTransitSiteLANsStaticAddressingDHCPRelayDataSourceModel struct {
 }
 
 type MagicTransitSiteLANsStaticAddressingDHCPServerDataSourceModel struct {
-	DHCPPoolEnd   types.String                   `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,computed"`
-	DHCPPoolStart types.String                   `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed"`
-	DNSServer     types.String                   `tfsdk:"dns_server" json:"dns_server,computed"`
-	DNSServers    customfield.List[types.String] `tfsdk:"dns_servers" json:"dns_servers,computed"`
-	Reservations  customfield.Map[types.String]  `tfsdk:"reservations" json:"reservations,computed"`
+	DHCPOptions   customfield.NestedObjectList[MagicTransitSiteLANsStaticAddressingDHCPServerDHCPOptionsDataSourceModel] `tfsdk:"dhcp_options" json:"dhcp_options,computed"`
+	DHCPPoolEnd   types.String                                                                                           `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,computed"`
+	DHCPPoolStart types.String                                                                                           `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed"`
+	DNSServer     types.String                                                                                           `tfsdk:"dns_server" json:"dns_server,computed"`
+	DNSServers    customfield.List[types.String]                                                                         `tfsdk:"dns_servers" json:"dns_servers,computed"`
+	Reservations  customfield.Map[types.String]                                                                          `tfsdk:"reservations" json:"reservations,computed"`
+}
+
+type MagicTransitSiteLANsStaticAddressingDHCPServerDHCPOptionsDataSourceModel struct {
+	Code  types.Int64  `tfsdk:"code" json:"code,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }

@@ -5,8 +5,8 @@ package zero_trust_tunnel_warp_connector
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -36,10 +36,8 @@ type ZeroTrustTunnelWARPConnectorDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelWARPConnectorDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelWARPConnectorGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelWARPConnectorGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelWARPConnectorGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -51,11 +49,10 @@ func (m *ZeroTrustTunnelWARPConnectorDataSourceModel) toListParams(_ context.Con
 	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelWARPConnectorListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelWARPConnectorListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.ExcludePrefix.IsNull() {
 		params.ExcludePrefix = cloudflare.F(m.Filter.ExcludePrefix.ValueString())
 	}

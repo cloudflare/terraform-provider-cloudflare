@@ -19,12 +19,18 @@ var _ resource.ResourceWithConfigValidators = (*R2BucketSippyResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers R2 Storage Write",
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description:   "Account ID.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"bucket_name": schema.StringAttribute{
 				Description:   "Name of the bucket.",
 				Required:      true,
@@ -42,11 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"fedramp",
 					),
 				},
-			},
-			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"destination": schema.SingleNestedAttribute{
 				Description: "R2 bucket to copy objects to.",

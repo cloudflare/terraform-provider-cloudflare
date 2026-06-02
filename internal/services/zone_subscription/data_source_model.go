@@ -5,8 +5,8 @@ package zone_subscription
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -30,10 +30,8 @@ type ZoneSubscriptionDataSourceModel struct {
 }
 
 func (m *ZoneSubscriptionDataSourceModel) toReadParams(_ context.Context) (params zones.SubscriptionGetParams, diags diag.Diagnostics) {
-	params = zones.SubscriptionGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = zones.SubscriptionGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

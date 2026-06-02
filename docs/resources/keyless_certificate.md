@@ -94,6 +94,7 @@ resource "cloudflare_keyless_certificate" "example_keyless_certificate" {
 
 - `certificate` (String) The zone's SSL certificate or SSL certificate and intermediate(s).
 - `host` (String) The keyless SSL name.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -102,8 +103,7 @@ Available values: "ubiquitous", "optimal", "force".
 - `enabled` (Boolean, Deprecated) Whether or not the Keyless SSL is on or off.
 - `name` (String) The keyless SSL name.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
-- `zone_id` (String) Identifier.
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel. (see [below for nested schema](#nestedatt--tunnel))
 
 ### Read-Only
 
@@ -119,8 +119,8 @@ Available values: "active", "deleted".
 
 Required:
 
-- `private_ip` (String) Private IP of the Key Server Host
-- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
+- `private_ip` (String) Private IP of the Key Server Host.
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID.
 
 ## Import
 

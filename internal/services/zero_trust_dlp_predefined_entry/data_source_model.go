@@ -5,8 +5,8 @@ package zero_trust_dlp_predefined_entry
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -40,10 +40,8 @@ type ZeroTrustDLPPredefinedEntryDataSourceModel struct {
 }
 
 func (m *ZeroTrustDLPPredefinedEntryDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPEntryPredefinedGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryPredefinedGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DLPEntryPredefinedGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

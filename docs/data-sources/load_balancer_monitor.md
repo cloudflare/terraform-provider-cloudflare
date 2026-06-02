@@ -27,11 +27,8 @@ data "cloudflare_load_balancer_monitor" "example_load_balancer_monitor" {
 
 ### Required
 
-- `monitor_id` (String)
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `monitor_id` (String)
 
 ### Read-Only
 

@@ -61,6 +61,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
+- `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--include))
@@ -72,6 +73,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
+- `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--virtual_networks))
 
 ### Read-Only
 
@@ -81,6 +83,18 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `gateway_unique_id` (String)
 - `id` (String) The ID of this resource.
 - `policy_id` (String)
+
+<a id="nestedatt--dns_search_suffixes"></a>
+### Nested Schema for `dns_search_suffixes`
+
+Required:
+
+- `suffix` (String) The DNS search suffix to append when resolving short hostnames.
+
+Optional:
+
+- `description` (String) A description of the DNS search suffix.
+
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
@@ -109,6 +123,15 @@ Optional:
 
 - `mode` (String) The mode to run the WARP client under.
 - `port` (Number) The port number when used with proxy mode.
+
+
+<a id="nestedatt--virtual_networks"></a>
+### Nested Schema for `virtual_networks`
+
+Required:
+
+- `allowed` (List of String) List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.
+- `default` (String) The default virtual network ID. Must be included in the `allowed` list.
 
 
 <a id="nestedatt--fallback_domains"></a>

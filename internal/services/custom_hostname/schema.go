@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("ubiquitous"),
 					},
 					"certificate_authority": schema.StringAttribute{
-						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
+						Description: "The Certificate Authority that will issue the certificate.\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
 						Optional:    true,
 						Computed:    true,
 						Validators: []validator.String{
@@ -76,11 +76,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"cloudflare_branding": schema.BoolAttribute{
-						Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true",
+						Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
 						Optional:    true,
 					},
 					"custom_cert_bundle": schema.ListNestedAttribute{
-						Description: "Array of custom certificate and key pairs (1 or 2 pairs allowed)",
+						Description: "Array of custom certificate and key pairs (1 or 2 pairs allowed).",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{

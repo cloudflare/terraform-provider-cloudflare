@@ -109,7 +109,7 @@ var ExpectEmptyPlanExceptIncludeExcludeDrift = expectEmptyPlanExceptIncludeExclu
 // Migration Test Configuration
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.7
+// - Last stable v4 release: default 4.52.5
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 //
 // Based on zero_trust_device_profiles → zero_trust_device_default_profile migration:
@@ -225,37 +225,37 @@ func TestMigrateDeviceDefaultProfileBasic(t *testing.T) {
 							},
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
-							// Resource should be renamed to cloudflare_zero_trust_device_default_profile
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+						// Resource should be renamed to cloudflare_zero_trust_device_default_profile
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 
-							// Validate type conversions Int64 → Float64
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("auto_connect"), knownvalue.Float64Exact(0)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("captive_portal"), knownvalue.Float64Exact(180)),
+						// Validate type conversions Int64 → Float64
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("auto_connect"), knownvalue.Float64Exact(0)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("captive_portal"), knownvalue.Float64Exact(180)),
 
-							// Validate service_mode_v2 structure change (flatten → nested)
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(8080)),
+						// Validate service_mode_v2 structure change (flatten → nested)
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(8080)),
 
-							// Validate field additions with v5 defaults
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("register_interface_ip_with_dns"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("sccm_vpn_boundary_support"), knownvalue.Bool(false)),
+						// Validate field additions with v5 defaults
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("register_interface_ip_with_dns"), knownvalue.Bool(true)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("sccm_vpn_boundary_support"), knownvalue.Bool(false)),
 
-							// Validate pass-through fields
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("disable_auto_fallback"), knownvalue.Bool(false)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_mode_switch"), knownvalue.Bool(false)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("switch_locked"), knownvalue.Bool(false)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_updates"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allowed_to_leave"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("support_url"), knownvalue.StringExact("https://support.example.com")),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("tunnel_protocol"), knownvalue.StringExact("wireguard")),
+						// Validate pass-through fields
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("disable_auto_fallback"), knownvalue.Bool(false)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_mode_switch"), knownvalue.Bool(false)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("switch_locked"), knownvalue.Bool(false)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_updates"), knownvalue.Bool(true)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allowed_to_leave"), knownvalue.Bool(true)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("support_url"), knownvalue.StringExact("https://support.example.com")),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("tunnel_protocol"), knownvalue.StringExact("wireguard")),
 
-							// Computed fields should be populated by API (just check they're set)
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("default"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
-						},
+						// Computed fields should be populated by API (just check they're set)
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("default"), knownvalue.Bool(true)),
+						statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 					},
 				},
-			})
+			},
+		})
 		})
 	}
 }
@@ -337,11 +337,11 @@ func TestMigrateDeviceDefaultProfileWithServiceModeV2(t *testing.T) {
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-
+							
 							// Verify service_mode_v2 nested object created
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(8080)),
-
+							
 							// Verify other fields
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_mode_switch"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("auto_connect"), knownvalue.Float64Exact(15)),
@@ -431,22 +431,22 @@ func TestMigrateDeviceDefaultProfileMaximal(t *testing.T) {
 						},
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-
+							
 							// Verify boolean fields
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_mode_switch"), knownvalue.Bool(false)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allow_updates"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("allowed_to_leave"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("disable_auto_fallback"), knownvalue.Bool(true)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("switch_locked"), knownvalue.Bool(true)),
-
+							
 							// Verify numeric fields (converted to Float64)
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("auto_connect"), knownvalue.Float64Exact(30)),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("captive_portal"), knownvalue.Float64Exact(600)),
-
+							
 							// Verify string fields
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("support_url"), knownvalue.StringExact("https://support.cf-tf-test.com")),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("tunnel_protocol"), knownvalue.StringExact("wireguard")),
-
+							
 							// Verify service_mode_v2 nested object
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
 							statecheck.ExpectKnownValue("cloudflare_zero_trust_device_default_profile."+rnd, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(443)),

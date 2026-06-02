@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pages"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pages"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -746,10 +746,6 @@ func TestAccCloudflarePagesProject_RemoveSpecificEnvVar(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{
-					"deployment_configs.preview.env_vars",
-					"deployment_configs.production.env_vars",
-				},
 			},
 		},
 	})

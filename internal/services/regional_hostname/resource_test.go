@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/addressing"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -31,7 +32,7 @@ func init() {
 
 func testSweepCloudflareRegionalHostname(r string) error {
 	ctx := context.Background()
-	client := acctest.SharedClient()
+	client := cloudflare.NewClient(option.WithAPIKey(os.Getenv("CLOUDFLARE_API_KEY")), option.WithAPIEmail(os.Getenv("CLOUDFLARE_EMAIL")))
 
 	if zoneID == "" {
 		tflog.Info(ctx, "Skipping regional hostnames sweep: CLOUDFLARE_ZONE_ID not set")
@@ -200,7 +201,7 @@ func testAccCloudflareRegionalHostnameImportStateIdFunc(resourceName string) res
 }
 
 func testAccCheckCloudflareRegionalHostnameDestroy(s *terraform.State) error {
-	client := acctest.SharedClient()
+	client := cloudflare.NewClient(option.WithAPIKey(os.Getenv("CLOUDFLARE_API_KEY")), option.WithAPIEmail(os.Getenv("CLOUDFLARE_EMAIL")))
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_regional_hostname" {

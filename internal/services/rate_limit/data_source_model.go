@@ -5,8 +5,8 @@ package rate_limit
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/rate_limits"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type RateLimitDataSourceModel struct {
 }
 
 func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitGetParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = rate_limits.RateLimitGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

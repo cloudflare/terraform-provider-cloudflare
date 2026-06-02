@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPEntryResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		DeprecationMessage: "This resource is no longer used but has been split into `zero_trust_dlp_custom_entry`, `zero_trust_dlp_predefined_entry`, and `zero_trust_dlp_integration_entry`",
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
@@ -31,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
@@ -135,8 +136,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntryVariantModel](ctx),
+				Description: "A Predefined AI prompt classification topic entry.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPEntryVariantModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"topic_type": schema.StringAttribute{
 						Description: `Available values: "Intent", "Content".`,
@@ -146,14 +148,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: `Available values: "PromptTopic".`,
+						Description: `Available values: "PromptTopic", "General".`,
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+							stringvalidator.OneOfCaseInsensitive("PromptTopic", "General"),
 						},
 					},
 					"description": schema.StringAttribute{
-						Computed: true,
+						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Computed:    true,
 					},
 				},
 			},

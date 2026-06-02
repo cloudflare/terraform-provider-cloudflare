@@ -38,12 +38,12 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `physport` (Number)
 - `site_id` (String) Identifier
 
 ### Optional
 
-- `account_id` (String) Identifier
 - `name` (String)
 - `priority` (Number)
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))

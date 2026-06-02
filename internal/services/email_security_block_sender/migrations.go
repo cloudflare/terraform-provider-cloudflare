@@ -1,23 +1,20 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 package email_security_block_sender
 
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*EmailSecurityBlockSenderResource)(nil)
 
 func (r *EmailSecurityBlockSenderResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	targetSchema := ResourceSchema(ctx)
+	ps := v500.PriorSchema()
 	return map[int64]resource.StateUpgrader{
 		0: {
-			PriorSchema: &targetSchema,
-			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-				resp.State.Raw = req.State.Raw
-			},
+			PriorSchema:   &ps,
+			StateUpgrader: v500.UpgradeFromV0,
 		},
 	}
 }

@@ -5,8 +5,8 @@ package hyperdrive_config
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/hyperdrive"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/hyperdrive"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type HyperdriveConfigsDataSourceModel struct {
 }
 
 func (m *HyperdriveConfigsDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
-	params = hyperdrive.ConfigListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = hyperdrive.ConfigListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

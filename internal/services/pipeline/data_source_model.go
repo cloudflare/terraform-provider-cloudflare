@@ -5,8 +5,8 @@ package pipeline
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pipelines"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pipelines"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type PipelineDataSourceModel struct {
 }
 
 func (m *PipelineDataSourceModel) toReadParams(_ context.Context) (params pipelines.PipelineGetV1Params, diags diag.Diagnostics) {
-	params = pipelines.PipelineGetV1Params{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = pipelines.PipelineGetV1Params{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

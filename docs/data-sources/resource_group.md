@@ -28,11 +28,8 @@ data "cloudflare_resource_group" "example_resource_group" {
 
 ### Required
 
-- `resource_group_id` (String) Resource Group identifier tag.
-
-### Optional
-
 - `account_id` (String) Account identifier tag.
+- `resource_group_id` (String) Resource Group identifier tag.
 
 ### Read-Only
 

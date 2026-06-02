@@ -5,8 +5,8 @@ package hostname_tls_setting
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/hostnames"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/hostnames"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,10 +28,8 @@ type HostnameTLSSettingDataSourceModel struct {
 }
 
 func (m *HostnameTLSSettingDataSourceModel) toReadParams(_ context.Context) (params hostnames.SettingTLSGetParams, diags diag.Diagnostics) {
-	params = hostnames.SettingTLSGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = hostnames.SettingTLSGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

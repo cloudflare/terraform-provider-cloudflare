@@ -5,8 +5,8 @@ package waiting_room_rules
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/waiting_rooms"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,10 +29,8 @@ type WaitingRoomRulesDataSourceModel struct {
 }
 
 func (m *WaitingRoomRulesDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.RuleGetParams, diags diag.Diagnostics) {
-	params = waiting_rooms.RuleGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = waiting_rooms.RuleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

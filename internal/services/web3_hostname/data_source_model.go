@@ -5,8 +5,8 @@ package web3_hostname
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/web3"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/web3"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type Web3HostnameDataSourceModel struct {
 }
 
 func (m *Web3HostnameDataSourceModel) toReadParams(_ context.Context) (params web3.HostnameGetParams, diags diag.Diagnostics) {
-	params = web3.HostnameGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = web3.HostnameGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

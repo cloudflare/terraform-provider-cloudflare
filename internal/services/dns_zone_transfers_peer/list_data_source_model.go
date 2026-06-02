@@ -5,8 +5,8 @@ package dns_zone_transfers_peer
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -23,10 +23,8 @@ type DNSZoneTransfersPeersDataSourceModel struct {
 }
 
 func (m *DNSZoneTransfersPeersDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferPeerListParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferPeerListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns.ZoneTransferPeerListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

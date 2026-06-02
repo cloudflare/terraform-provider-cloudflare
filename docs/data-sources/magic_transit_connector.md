@@ -27,11 +27,12 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 
 ### Required
 
-- `connector_id` (String)
+- `account_id` (String) Account identifier
 
 ### Optional
 
-- `account_id` (String) Account identifier
+- `connector_id` (String)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
@@ -49,6 +50,15 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 - `notes` (String)
 - `timezone` (String)
 
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `device_type` (String) Filter connectors by device type.
+Available values: "MANAGED", "LICENSED".
+
+
 <a id="nestedatt--device"></a>
 ### Nested Schema for `device`
 
@@ -56,5 +66,6 @@ Read-Only:
 
 - `id` (String)
 - `serial_number` (String)
+- `type` (String) Available values: "MANAGED", "LICENSED".
 
 

@@ -30,6 +30,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Specifies the public ID of the account.",
 				Optional:    true,
 			},
+			"name": schema.StringAttribute{
+				Description: "Filters sinks by name (case-insensitive substring).",
+				Optional:    true,
+			},
 			"pipeline_id": schema.StringAttribute{
 				Optional: true,
 			},

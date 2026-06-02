@@ -228,12 +228,12 @@ resource "cloudflare_pages_project" "example_pages_project" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `name` (String) Name of the project.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--build_config))
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
 - `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--source))

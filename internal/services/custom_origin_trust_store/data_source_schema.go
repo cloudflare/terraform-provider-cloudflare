@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"certificate": schema.StringAttribute{
-				Description: "The zone's SSL certificate or certificate and the intermediate(s).",
+				Description: "The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.",
 				Computed:    true,
 			},
 			"expires_on": schema.StringAttribute{
@@ -87,7 +87,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"offset": schema.Int64Attribute{
-						Description: "Offset the results",
+						Description: "Offset the results.",
 						Optional:    true,
 					},
 				},

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -112,7 +112,6 @@ func (r *DNSZoneTransfersIncomingResource) Update(ctx context.Context, req resou
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -153,7 +152,6 @@ func (r *DNSZoneTransfersIncomingResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-
 	res := new(http.Response)
 	env := DNSZoneTransfersIncomingResultEnvelope{*data}
 	_, err := r.client.DNS.ZoneTransfers.Incoming.Get(
@@ -192,7 +190,6 @@ func (r *DNSZoneTransfersIncomingResource) Delete(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.DNS.ZoneTransfers.Incoming.Delete(
 		ctx,

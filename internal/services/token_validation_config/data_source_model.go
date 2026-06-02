@@ -5,8 +5,8 @@ package token_validation_config
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/token_validation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/token_validation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -31,10 +31,8 @@ type TokenValidationConfigDataSourceModel struct {
 }
 
 func (m *TokenValidationConfigDataSourceModel) toReadParams(_ context.Context) (params token_validation.ConfigurationGetParams, diags diag.Diagnostics) {
-	params = token_validation.ConfigurationGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = token_validation.ConfigurationGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

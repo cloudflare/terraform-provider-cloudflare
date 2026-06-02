@@ -30,7 +30,7 @@ data "cloudflare_origin_ca_certificates" "example_origin_ca_certificates" {
 
 - `limit` (Number) Limit to the number of records returned.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Offset the results
+- `offset` (Number) Offset the results.
 
 ### Read-Only
 

@@ -29,6 +29,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The country in which the user lives.",
 				Computed:    true,
 			},
+			"email": schema.StringAttribute{
+				Description: "Current email address of the user.",
+				Computed:    true,
+			},
 			"first_name": schema.StringAttribute{
 				Description: "User's first name",
 				Computed:    true,

@@ -9,16 +9,15 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 )
@@ -151,21 +150,6 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 
-	// The API returns database_id for D1 bindings but not for other types.
-	// Null out unknown database_id values to prevent "unknown after apply" errors.
-	if !data.Bindings.IsNull() && !data.Bindings.IsUnknown() {
-		var bindingsList []WorkerVersionBindingsModel
-		diags = data.Bindings.ElementsAs(ctx, &bindingsList, true)
-		resp.Diagnostics.Append(diags...)
-		for i := range bindingsList {
-			if bindingsList[i].DatabaseID.IsUnknown() {
-				bindingsList[i].DatabaseID = types.StringNull()
-			}
-		}
-		data.Bindings, diags = customfield.NewObjectList(ctx, bindingsList)
-		resp.Diagnostics.Append(diags...)
-	}
-
 	if data.Modules != nil && planModules != nil {
 		apiModuleNameMap := make(map[string]*WorkerVersionModulesModel)
 		for _, mod := range *data.Modules {
@@ -275,21 +259,6 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 	data.Assets = assets
-
-	// The API returns database_id for D1 bindings but not for other types.
-	// Null out unknown database_id values to prevent drift.
-	if !data.Bindings.IsNull() && !data.Bindings.IsUnknown() {
-		var readBindingsList []WorkerVersionBindingsModel
-		readDiags := data.Bindings.ElementsAs(ctx, &readBindingsList, true)
-		resp.Diagnostics.Append(readDiags...)
-		for i := range readBindingsList {
-			if readBindingsList[i].DatabaseID.IsUnknown() {
-				readBindingsList[i].DatabaseID = types.StringNull()
-			}
-		}
-		data.Bindings, readDiags = customfield.NewObjectList(ctx, readBindingsList)
-		resp.Diagnostics.Append(readDiags...)
-	}
 
 	apiModuleNameMap := make(map[string]*WorkerVersionModulesModel)
 	if data.Modules != nil {

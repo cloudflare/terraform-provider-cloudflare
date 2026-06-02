@@ -27,11 +27,8 @@ data "cloudflare_calls_turn_app" "example_calls_turn_app" {
 
 ### Required
 
-- `key_id` (String) A Cloudflare-generated unique identifier for a item.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `key_id` (String) A Cloudflare-generated unique identifier for a item.
 
 ### Read-Only
 

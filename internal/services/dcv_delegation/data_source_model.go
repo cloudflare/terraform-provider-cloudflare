@@ -5,8 +5,8 @@ package dcv_delegation
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dcv_delegation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dcv_delegation"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,10 +21,8 @@ type DCVDelegationDataSourceModel struct {
 }
 
 func (m *DCVDelegationDataSourceModel) toReadParams(_ context.Context) (params dcv_delegation.DCVDelegationGetParams, diags diag.Diagnostics) {
-	params = dcv_delegation.DCVDelegationGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = dcv_delegation.DCVDelegationGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

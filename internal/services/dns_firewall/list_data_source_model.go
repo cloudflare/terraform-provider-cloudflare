@@ -5,8 +5,8 @@ package dns_firewall
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns_firewall"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type DNSFirewallsDataSourceModel struct {
 }
 
 func (m *DNSFirewallsDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
-	params = dns_firewall.DNSFirewallListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = dns_firewall.DNSFirewallListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

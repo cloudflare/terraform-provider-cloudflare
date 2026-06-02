@@ -5,8 +5,8 @@ package load_balancer
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -44,10 +44,8 @@ type LoadBalancerDataSourceModel struct {
 }
 
 func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
-	params = load_balancers.LoadBalancerGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = load_balancers.LoadBalancerGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
