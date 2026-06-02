@@ -19,7 +19,7 @@ type QueueConsumersResultListDataSourceEnvelope struct {
 
 type QueueConsumersDataSourceModel struct {
 	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
-	QueueID   types.String                                                      `tfsdk:"queue_id" path:"queue_id,optional"`
+	QueueID   types.String                                                      `tfsdk:"queue_id" path:"queue_id,required"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[QueueConsumersResultDataSourceModel] `tfsdk:"result"`
 }
