@@ -421,15 +421,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[AIGatewayOtelModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"authorization": schema.StringAttribute{
-							Required: true,
-						},
 						"headers": schema.MapAttribute{
 							Required:    true,
 							ElementType: types.StringType,
 						},
 						"url": schema.StringAttribute{
 							Required: true,
+						},
+						"authorization": schema.StringAttribute{
+							Optional: true,
 						},
 						"content_type": schema.StringAttribute{
 							Description: `Available values: "json", "protobuf".`,

@@ -52,6 +52,7 @@ type WorkflowsInstancesDataSourceModel struct {
 	Errored         types.Float64 `tfsdk:"errored" json:"errored,computed"`
 	Paused          types.Float64 `tfsdk:"paused" json:"paused,computed"`
 	Queued          types.Float64 `tfsdk:"queued" json:"queued,computed"`
+	RollingBack     types.Float64 `tfsdk:"rolling_back" json:"rollingBack,computed"`
 	Running         types.Float64 `tfsdk:"running" json:"running,computed"`
 	Terminated      types.Float64 `tfsdk:"terminated" json:"terminated,computed"`
 	Waiting         types.Float64 `tfsdk:"waiting" json:"waiting,computed"`

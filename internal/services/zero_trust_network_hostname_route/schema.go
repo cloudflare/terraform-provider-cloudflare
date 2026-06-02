@@ -7,10 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustNetworkHostnameRouteResource)(nil)
@@ -58,6 +60,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"tun_type": schema.StringAttribute{
+				Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"warp\", \"magic\", \"ip_sec\", \"gre\", \"cni\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"cfd_tunnel",
+						"warp_connector",
+						"warp",
+						"magic",
+						"ip_sec",
+						"gre",
+						"cni",
+					),
+				},
 			},
 			"tunnel_name": schema.StringAttribute{
 				Description: "A user-friendly name for a tunnel.",

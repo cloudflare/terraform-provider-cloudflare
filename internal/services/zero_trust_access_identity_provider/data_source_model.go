@@ -24,6 +24,7 @@ type ZeroTrustAccessIdentityProviderDataSourceModel struct {
 	AccountID            types.String                                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID               types.String                                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name                 types.String                                                                               `tfsdk:"name" json:"name,computed"`
+	ReadOnly             types.Bool                                                                                 `tfsdk:"read_only" json:"read_only,computed"`
 	SAMLCertificateSetID types.String                                                                               `tfsdk:"saml_certificate_set_id" json:"saml_certificate_set_id,computed"`
 	Type                 types.String                                                                               `tfsdk:"type" json:"type,computed"`
 	Config               customfield.NestedObject[ZeroTrustAccessIdentityProviderConfigDataSourceModel]             `tfsdk:"config" json:"config,computed"`

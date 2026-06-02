@@ -72,6 +72,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"queued": schema.Float64Attribute{
 									Computed: true,
 								},
+								"rolling_back": schema.Float64Attribute{
+									Computed: true,
+								},
 								"running": schema.Float64Attribute{
 									Computed: true,
 								},

@@ -141,7 +141,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"is_shared_oauth_callback_enabled": schema.BoolAttribute{
-										Description: "When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New servers default to true; existing servers default to false. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.",
+										Description: "When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. Operators manage this internal rollout flag through admin endpoints. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.",
 										Computed:    true,
 									},
 									"last_successful_sync": schema.StringAttribute{

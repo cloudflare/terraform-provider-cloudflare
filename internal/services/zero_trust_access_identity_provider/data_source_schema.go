@@ -49,6 +49,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the identity provider, shown to users on the login page.",
 				Computed:    true,
 			},
+			"read_only": schema.BoolAttribute{
+				Description: "Indicates that the identity provider is immutable and cannot be updated or deleted via the API.",
+				Computed:    true,
+			},
 			"saml_certificate_set_id": schema.StringAttribute{
 				Description: "The UID of the SAML encryption certificate set assigned to this Identity Provider.\nOnly present for SAML identity providers with encryption configured.\nCreate a certificate set via POST to `/identity_providers/{id}/saml_certificate`.",
 				Computed:    true,
