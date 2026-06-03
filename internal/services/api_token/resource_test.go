@@ -10,7 +10,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/compare"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -301,20 +300,103 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 	})
 }
 
-// Test that permission group order doesn't affect plans. This test uses two
-// corresponding .tf files that are identical except they swap the order of two
-// permission groups on the same policy. We use statecheck.CompareValue to
-// assert that permission group 0 never changes and permission group 1 never
-// changes despite changing the order of the permission groups and updating the
-// token name.
+// checkPermissionGroupIDsUnchanged verifies that the set of permission group
+// IDs at policies[policyIdx] matches expectedIDs regardless of order.
+func checkPermissionGroupIDsUnchanged(resourceName string, policyIdx int, expectedIDs *[]string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource %s not found in state", resourceName)
+		}
+		var actualIDs []string
+		for i := 0; ; i++ {
+			key := fmt.Sprintf("policies.%d.permission_groups.%d.id", policyIdx, i)
+			val, ok := rs.Primary.Attributes[key]
+			if !ok {
+				break
+			}
+			actualIDs = append(actualIDs, val)
+		}
+		if len(*expectedIDs) == 0 {
+			*expectedIDs = make([]string, len(actualIDs))
+			copy(*expectedIDs, actualIDs)
+			return nil
+		}
+		if len(actualIDs) != len(*expectedIDs) {
+			return fmt.Errorf("permission_groups count changed: expected %d, got %d", len(*expectedIDs), len(actualIDs))
+		}
+		expected := make(map[string]bool, len(*expectedIDs))
+		for _, id := range *expectedIDs {
+			expected[id] = true
+		}
+		for _, id := range actualIDs {
+			if !expected[id] {
+				return fmt.Errorf("unexpected permission_group ID %s; expected one of %v", id, *expectedIDs)
+			}
+		}
+		return nil
+	}
+}
+
+// checkAllPolicyPermGroupIDsUnchanged verifies that the combined set of
+// permission group IDs across all policies is unchanged (order-insensitive).
+func checkAllPolicyPermGroupIDsUnchanged(resourceName string, expectedIDs *[]string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource %s not found in state", resourceName)
+		}
+		var actualIDs []string
+		for pi := 0; ; pi++ {
+			found := false
+			for pgi := 0; ; pgi++ {
+				key := fmt.Sprintf("policies.%d.permission_groups.%d.id", pi, pgi)
+				val, ok := rs.Primary.Attributes[key]
+				if !ok {
+					break
+				}
+				found = true
+				actualIDs = append(actualIDs, val)
+			}
+			if !found {
+				break
+			}
+		}
+		if len(*expectedIDs) == 0 {
+			*expectedIDs = make([]string, len(actualIDs))
+			copy(*expectedIDs, actualIDs)
+			return nil
+		}
+		if len(actualIDs) != len(*expectedIDs) {
+			return fmt.Errorf("total permission_group count changed: expected %d, got %d", len(*expectedIDs), len(actualIDs))
+		}
+		expected := make(map[string]int, len(*expectedIDs))
+		for _, id := range *expectedIDs {
+			expected[id]++
+		}
+		for _, id := range actualIDs {
+			if expected[id] <= 0 {
+				return fmt.Errorf("unexpected permission_group ID %s; expected IDs: %v", id, *expectedIDs)
+			}
+			expected[id]--
+		}
+		return nil
+	}
+}
+
+// Test that reordering permission_groups in HCL is handled correctly.
+// `policies` and `permission_groups` are declared as ListNestedAttribute, so
+// the framework reports a planned update whenever the HCL ordering differs
+// from prior state. The provider tolerates this: after apply, state ends up
+// in the new HCL order, the API call is content-equivalent, and the
+// underlying set of permission group IDs is preserved across the reorder.
+// `checkPermissionGroupIDsUnchanged` verifies the latter across all steps.
 func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_api_token.test_account_token"
 
-	permgroup0_SAME := statecheck.CompareValue(compare.ValuesSame())
-	permgroup1_SAME := statecheck.CompareValue(compare.ValuesSame())
+	var permGroupIDs []string
 
-	// Test that permission group order doesn't affect plans
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -325,17 +407,17 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd+"-updated"),
@@ -348,29 +430,33 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd+"-updated"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDs),
 			},
-			// Import step
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{"value", "policies"},
 			},
 		},
 	})
 
-	// Test the reverse order scenario
+	// Reverse-order variant
+	var permGroupIDsReverse []string
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -381,17 +467,17 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order1.tf", rnd+"-updated"),
@@ -404,46 +490,39 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
 				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-permissiongroup-order2.tf", rnd+"-updated"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-					permgroup0_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					permgroup1_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(1).AtMapKey("id")),
-				},
+				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDsReverse),
 			},
 			// Import step
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{"value", "policies"},
 			},
 		},
 	})
 }
 
-// Test that policy group order doesn't affect plans. This test uses two
-// corresponding .tf files that are identical except they swap the order of two
-// policies.
+// Test that reordering policies in HCL is handled correctly. Same rationale
+// as TestAccAPIToken_PermissionGroupOrder: List schema means reorder shows a
+// planned update, but the set of permission group IDs across all policies is
+// preserved (asserted via checkAllPolicyPermGroupIDsUnchanged).
 func TestAccAPIToken_PolicyOrder(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_api_token.test_account_token"
 
-	policy1_permgroup_SAME := statecheck.CompareValue(compare.ValuesSame())
-	policy2_permgroup_SAME := statecheck.CompareValue(compare.ValuesSame())
+	var allPermGroupIDs []string
 
-	// Test that policy order doesn't affect plans
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -454,17 +533,17 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd+"-updated"),
@@ -477,29 +556,33 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDs),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd+"-updated"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDs),
 			},
-			// Import step
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{"value", "policies"},
 			},
 		},
 	})
 
-	// Test the reverse order scenario
+	// Reverse-order variant
+	var allPermGroupIDsReverse []string
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -510,17 +593,17 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order1.tf", rnd+"-updated"),
@@ -533,30 +616,24 @@ func TestAccAPIToken_PolicyOrder(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
 				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDsReverse),
 			},
 			{
 				Config: acctest.LoadTestCase("api_token-policy-order2.tf", rnd+"-updated"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-					policy1_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-					policy2_permgroup_SAME.AddStateValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(1).AtMapKey("permission_groups").AtSliceIndex(0).AtMapKey("id")),
-				},
+				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDsReverse),
 			},
 			// Import step
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{"value", "policies"},
 			},
 		},
 	})
@@ -602,12 +679,14 @@ func TestAccAPIToken_ResourcesFlexible(t *testing.T) {
 					},
 				},
 			},
-			// Import step
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{"value", "policies"},
 			},
 		},
 	})
