@@ -43,10 +43,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A short description of the monitor group",
 							Computed:    true,
 						},
-						"members": schema.ListNestedAttribute{
+						"members": schema.SetNestedAttribute{
 							Description: "List of monitors in this group",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[LoadBalancerMonitorGroupsMembersDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[LoadBalancerMonitorGroupsMembersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{

@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A short description of the monitor group",
 				Required:    true,
 			},
-			"members": schema.ListNestedAttribute{
+			"members": schema.SetNestedAttribute{
 				Description: "List of monitors in this group",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
