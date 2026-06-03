@@ -112,7 +112,7 @@ func TestAccCloudflareEmailRoutingRule_Basic(t *testing.T) {
 
 					resource.TestCheckResourceAttr(name, "actions.0.type", "forward"),
 					resource.TestCheckResourceAttr(name, "actions.0.value.#", "1"),
-					resource.TestCheckResourceAttr(name, "actions.0.value.0", "destinationaddress@example.net"),
+					resource.TestCheckResourceAttr(name, "actions.0.value.0", "terraform-provider-acct@cloudflare.com"),
 				),
 			},
 		},
