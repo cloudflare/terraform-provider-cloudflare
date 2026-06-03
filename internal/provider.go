@@ -113,6 +113,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_client"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_scope"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
@@ -581,6 +583,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		user_group.NewResource,
 		user_group_members.NewResource,
 		sso_connector.NewResource,
+		oauth_client.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
 		leaked_credential_check.NewResource,
@@ -969,6 +972,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		user_group_members.NewUserGroupMembersDataSource,
 		sso_connector.NewSSOConnectorDataSource,
 		sso_connector.NewSSOConnectorsDataSource,
+		oauth_client.NewOAuthClientDataSource,
+		oauth_client.NewOAuthClientsDataSource,
+		oauth_scope.NewOAuthScopesDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		workflow.NewWorkflowDataSource,
