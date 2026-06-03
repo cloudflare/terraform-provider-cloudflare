@@ -341,7 +341,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
 						Computed:    true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.UseNonNullStateForUnknown(),
 						},
 					},
 					"seat_deprovision": schema.BoolAttribute{
