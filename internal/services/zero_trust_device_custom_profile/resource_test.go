@@ -245,6 +245,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 }
 
 func TestAccCloudflareZeroTrustDeviceCustomProfile_VirtualNetworks(t *testing.T) {
+	t.Skip("This is a closed beta that your account must opt into")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
