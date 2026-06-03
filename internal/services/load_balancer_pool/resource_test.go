@@ -174,6 +174,42 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareLoadBalancerPool_NoLoadSheddingDrift verifies that a pool
+// config with no explicit load_shedding block does NOT produce drift on a
+// no-op re-apply. Without the UseStateForUnknown plan modifier on
+// load_shedding, Terraform fills in child Default values (default_percent=0,
+// session_percent=0) on every plan, causing a perpetual null -> 0 diff.
+func TestAccCloudflareLoadBalancerPool_NoLoadSheddingDrift(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create pool without load_shedding declared.
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
+			},
+			{
+				// Step 2: re-apply identical config. Must be a no-op.
+				// Without UseStateForUnknown on load_shedding, this
+				// would plan an in-place update (null -> 0 on percent
+				// fields).
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
@@ -404,10 +440,10 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					// TODO: see if this is still actually needed
-					// testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
-					// testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
+				Check:  resource.ComposeTestCheckFunc(
+				// TODO: see if this is still actually needed
+				// testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+				// testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
 				),
 			},
 			{
