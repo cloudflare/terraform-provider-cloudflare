@@ -32,11 +32,11 @@ func (m *LoadBalancerMonitorGroupsDataSourceModel) toListParams(_ context.Contex
 }
 
 type LoadBalancerMonitorGroupsResultDataSourceModel struct {
-	ID          types.String                                                                  `tfsdk:"id" json:"id,computed"`
-	Description types.String                                                                  `tfsdk:"description" json:"description,computed"`
-	Members     customfield.NestedObjectList[LoadBalancerMonitorGroupsMembersDataSourceModel] `tfsdk:"members" json:"members,computed"`
-	CreatedOn   timetypes.RFC3339                                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn  timetypes.RFC3339                                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ID          types.String                                                                 `tfsdk:"id" json:"id,computed"`
+	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	Members     customfield.NestedObjectSet[LoadBalancerMonitorGroupsMembersDataSourceModel] `tfsdk:"members" json:"members,computed"`
+	CreatedOn   timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn  timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 type LoadBalancerMonitorGroupsMembersDataSourceModel struct {
