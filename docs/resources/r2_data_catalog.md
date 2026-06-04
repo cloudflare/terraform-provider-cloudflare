@@ -2,12 +2,16 @@
 page_title: "cloudflare_r2_data_catalog Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers R2 Data Catalog ReadWorkers R2 Data Catalog Write
 ---
 
 # cloudflare_r2_data_catalog (Resource)
 
+Accepted Permissions
 
+- `Workers R2 Data Catalog Read`
+- `Workers R2 Data Catalog Write`
 
 ## Example Usage
 

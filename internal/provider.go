@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -147,6 +148,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
@@ -527,6 +529,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
+		api_shield_discovery_operation.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
@@ -536,6 +539,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
+		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		dls_prefix_binding.NewResource,
@@ -849,6 +853,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
+		regional_hostname.NewRegionalHostnameDataSource,
+		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
 		address_map.NewAddressMapsDataSource,
 		byo_ip_prefix.NewByoIPPrefixDataSource,
@@ -1035,7 +1041,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		snippet_rules.NewSnippetRulesListDataSource,
 		snippets.NewSnippetsDataSource,     // deprecated.
 		snippets.NewSnippetsListDataSource, // deprecated.
-		snippet_rules.NewSnippetRulesDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,

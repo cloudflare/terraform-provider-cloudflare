@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"order": schema.StringAttribute{
 				Description: "Field to order DNS views by.\nAvailable values: \"name\", \"created_on\", \"modified_on\".",

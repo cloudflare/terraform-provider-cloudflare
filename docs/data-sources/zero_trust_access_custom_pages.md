@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_custom_pages Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Custom Pages ReadAccess: Custom Pages Write
 ---
 
 # cloudflare_zero_trust_access_custom_pages (Data Source)
 
+Accepted Permissions
 
+- `Access: Custom Pages Read`
+- `Access: Custom Pages Write`
 
 ## Example Usage
 

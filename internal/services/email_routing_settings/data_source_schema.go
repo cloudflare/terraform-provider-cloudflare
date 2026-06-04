@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",

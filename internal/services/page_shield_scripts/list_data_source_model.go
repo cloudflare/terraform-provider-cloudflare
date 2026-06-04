@@ -18,7 +18,7 @@ type PageShieldScriptsListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldScriptsListDataSourceModel struct {
-	ZoneID              types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID              types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	Direction           types.String                                                             `tfsdk:"direction" query:"direction,optional"`
 	ExcludeURLs         types.String                                                             `tfsdk:"exclude_urls" query:"exclude_urls,optional"`
 	Export              types.String                                                             `tfsdk:"export" query:"export,optional"`

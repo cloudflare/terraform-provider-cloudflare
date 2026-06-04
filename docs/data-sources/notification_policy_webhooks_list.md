@@ -2,12 +2,19 @@
 page_title: "cloudflare_notification_policy_webhooks_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteNotifications ReadNotifications WriteZero Trust: PII Read
 ---
 
 # cloudflare_notification_policy_webhooks_list (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `Notifications Read`
+- `Notifications Write`
+- `Zero Trust: PII Read`
 
 ## Example Usage
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_certificate_pack Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_certificate_pack (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -32,7 +36,7 @@ data "cloudflare_certificate_pack" "example_certificate_pack" {
 
 ### Read-Only
 
-- `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
+- `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details](https://developers.cloudflare.com/ssl/reference/certificate-authorities).
 Available values: "google", "lets_encrypt", "ssl_com".
 - `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--certificates))
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.

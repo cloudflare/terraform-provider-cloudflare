@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_dlp_custom_profile Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_dlp_custom_profile (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 

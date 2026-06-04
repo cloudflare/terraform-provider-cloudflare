@@ -20,7 +20,7 @@ type TokenValidationRulesResultDataSourceEnvelope struct {
 type TokenValidationRulesDataSourceModel struct {
 	ID          types.String                                                          `tfsdk:"id" path:"rule_id,computed"`
 	RuleID      types.String                                                          `tfsdk:"rule_id" path:"rule_id,optional"`
-	ZoneID      types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action      types.String                                                          `tfsdk:"action" json:"action,computed"`
 	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String                                                          `tfsdk:"description" json:"description,computed"`

@@ -2,12 +2,16 @@
 page_title: "cloudflare_list Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Filter Lists EditAccount Filter Lists Read
 ---
 
 # cloudflare_list (Resource)
 
+Accepted Permissions
 
+- `Account Filter Lists Edit`
+- `Account Filter Lists Read`
 
 ~> The `cloudflare_list` resource supports defining list items in line with the
   `items` attribute. The provider also has a `cloudflare_list_item` resource for

@@ -19,7 +19,7 @@ type PageShieldConnectionsResultDataSourceEnvelope struct {
 
 type PageShieldConnectionsDataSourceModel struct {
 	ConnectionID              types.String                   `tfsdk:"connection_id" path:"connection_id,required"`
-	ZoneID                    types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                    types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	AddedAt                   timetypes.RFC3339              `tfsdk:"added_at" json:"added_at,computed" format:"date-time"`
 	DomainReportedMalicious   types.Bool                     `tfsdk:"domain_reported_malicious" json:"domain_reported_malicious,computed"`
 	FirstPageURL              types.String                   `tfsdk:"first_page_url" json:"first_page_url,computed"`

@@ -2,12 +2,17 @@
 page_title: "cloudflare_zero_trust_tunnel_warp_connector_token Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: cloudflared WriteCloudflare One Connectors WriteCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_warp_connector_token (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: cloudflared Write`
+- `Cloudflare One Connectors Write`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_lists Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Filter Lists EditAccount Filter Lists Read
 ---
 
 # cloudflare_lists (Data Source)
 
+Accepted Permissions
 
+- `Account Filter Lists Edit`
+- `Account Filter Lists Read`
 
 ## Example Usage
 

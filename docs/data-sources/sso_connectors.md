@@ -2,12 +2,15 @@
 page_title: "cloudflare_sso_connectors Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSO Connector Read
 ---
 
 # cloudflare_sso_connectors (Data Source)
 
+Accepted Permissions
 
+- `SSO Connector Read`
 
 ## Example Usage
 

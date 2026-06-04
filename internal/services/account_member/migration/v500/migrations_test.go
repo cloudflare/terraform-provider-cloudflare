@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	cloudflarev6 "github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	cloudflarev6 "github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"

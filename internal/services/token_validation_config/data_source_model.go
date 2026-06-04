@@ -20,7 +20,7 @@ type TokenValidationConfigResultDataSourceEnvelope struct {
 type TokenValidationConfigDataSourceModel struct {
 	ID           types.String                                                              `tfsdk:"id" path:"config_id,computed"`
 	ConfigID     types.String                                                              `tfsdk:"config_id" path:"config_id,required"`
-	ZoneID       types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID       types.String                                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt    timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description  types.String                                                              `tfsdk:"description" json:"description,computed"`
 	LastUpdated  timetypes.RFC3339                                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`

@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_posture_integration Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_posture_integration (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 

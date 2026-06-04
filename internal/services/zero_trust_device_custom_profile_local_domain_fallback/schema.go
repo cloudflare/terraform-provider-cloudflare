@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceCustomProfileLoca
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",
@@ -32,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"domains": schema.SetNestedAttribute{

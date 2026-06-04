@@ -20,7 +20,7 @@ type D1DatabaseResultDataSourceEnvelope struct {
 type D1DatabaseDataSourceModel struct {
 	ID              types.String                                                       `tfsdk:"id" path:"database_id,computed"`
 	DatabaseID      types.String                                                       `tfsdk:"database_id" path:"database_id,optional"`
-	AccountID       types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt       timetypes.RFC3339                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	FileSize        types.Float64                                                      `tfsdk:"file_size" json:"file_size,computed"`
 	Jurisdiction    types.String                                                       `tfsdk:"jurisdiction" json:"jurisdiction,computed"`

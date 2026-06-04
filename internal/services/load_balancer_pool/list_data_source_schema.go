@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"monitor": schema.StringAttribute{
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",

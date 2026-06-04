@@ -2,12 +2,15 @@
 page_title: "cloudflare_zones Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Zone Read
 ---
 
 # cloudflare_zones (Data Source)
 
+Accepted Permissions
 
+- `Zone Zone Read`
 
 ## Example Usage
 
@@ -48,6 +51,7 @@ Available values: "any", "all".
 Available values: "name", "status", "account.id", "account.name", "plan.id".
 - `status` (String) Specify a zone status to filter by.
 Available values: "initializing", "pending", "active", "moved".
+- `type` (List of String) Zone types to filter by. Multiple types can be specified as a comma-separated list (e.g., ?type=full,partial,secondary). When this parameter is not provided, zones with type "internal" are excluded from the results.
 
 ### Read-Only
 

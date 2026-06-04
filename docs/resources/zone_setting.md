@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_setting Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Settings ReadZone Settings Write
 ---
 
 # cloudflare_zone_setting (Resource)
 
+Accepted Permissions
 
+- `Zone Settings Read`
+- `Zone Settings Write`
 
 -> If using the `ssl_recommender` zone setting, use the `enabled` attribute instead of `value`.
 

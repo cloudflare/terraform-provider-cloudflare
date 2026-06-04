@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_caption_language Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_caption_language (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 

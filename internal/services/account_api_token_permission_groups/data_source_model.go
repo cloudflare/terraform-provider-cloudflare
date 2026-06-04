@@ -17,7 +17,7 @@ type AccountAPITokenPermissionGroupsResultDataSourceEnvelope struct {
 }
 
 type AccountAPITokenPermissionGroupsDataSourceModel struct {
-	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Name             types.String                                                                                 `tfsdk:"name" query:"name,optional"`
 	Scope            types.String                                                                                 `tfsdk:"scope" query:"scope,optional"`
 	PermissionGroups customfield.NestedObjectList[AccountAPITokenPermissionGroupsPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`

@@ -27,6 +27,7 @@ var _ resource.ResourceWithConfigValidators = (*SpectrumApplicationResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zone Settings Read",
@@ -41,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Zone identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"protocol": schema.StringAttribute{

@@ -258,6 +258,7 @@ func TestMigrateWorkerVersionFromV0_WithStartupTimeMs(t *testing.T) {
 		"main_script_base64":  tftypes.NewValue(tftypes.String, nil),
 		"migration_tag":       tftypes.NewValue(tftypes.String, nil),
 		"startup_time_ms":     tftypes.NewValue(tftypes.Number, 100),
+		"containers":          tftypes.NewValue(schemaV0.Attributes["containers"].GetType().TerraformType(ctx), nil),
 		"urls":                tftypes.NewValue(schemaV0.Attributes["urls"].GetType().TerraformType(ctx), nil),
 	})
 

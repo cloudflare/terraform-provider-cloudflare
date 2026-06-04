@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline_sink Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline_sink (Data Source)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 
@@ -47,6 +51,7 @@ Available values: "r2", "r2_data_catalog".
 
 Optional:
 
+- `name` (String) Filters sinks by name (case-insensitive substring).
 - `pipeline_id` (String)
 
 

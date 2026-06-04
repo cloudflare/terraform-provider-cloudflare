@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_dnssec Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS ReadDNS Write
 ---
 
 # cloudflare_zone_dnssec (Data Source)
 
+Accepted Permissions
 
+- `DNS Read`
+- `DNS Write`
 
 ## Example Usage
 

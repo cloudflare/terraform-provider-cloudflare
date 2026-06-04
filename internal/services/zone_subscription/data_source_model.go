@@ -19,7 +19,7 @@ type ZoneSubscriptionResultDataSourceEnvelope struct {
 
 type ZoneSubscriptionDataSourceModel struct {
 	ID                 types.String                                                      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID             types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID             types.String                                                      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Currency           types.String                                                      `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                                                 `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
 	CurrentPeriodStart timetypes.RFC3339                                                 `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`

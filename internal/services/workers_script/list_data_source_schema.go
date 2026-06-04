@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"tags": schema.StringAttribute{
 				Description: "Filter scripts by tags. Format: comma-separated list of tag:allowed pairs where allowed is 'yes' or 'no'.",

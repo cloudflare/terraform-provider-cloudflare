@@ -2,12 +2,19 @@
 page_title: "cloudflare_custom_pages_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Custom Pages ReadAccount Custom Pages WriteAccount Settings ReadAccount Settings WriteZero Trust: PII Read
 ---
 
 # cloudflare_custom_pages_list (Data Source)
 
+Accepted Permissions
 
+- `Account Custom Pages Read`
+- `Account Custom Pages Write`
+- `Account Settings Read`
+- `Account Settings Write`
+- `Zero Trust: PII Read`
 
 ## Example Usage
 

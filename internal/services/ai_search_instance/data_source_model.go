@@ -19,7 +19,7 @@ type AISearchInstanceResultDataSourceEnvelope struct {
 
 type AISearchInstanceDataSourceModel struct {
 	ID                   types.String                                                                  `tfsdk:"id" path:"id,computed_optional"`
-	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	AIGatewayID          types.String                                                                  `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                  `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                    `tfsdk:"cache" json:"cache,computed"`

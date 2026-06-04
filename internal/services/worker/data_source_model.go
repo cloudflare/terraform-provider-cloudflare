@@ -20,7 +20,7 @@ type WorkerResultDataSourceEnvelope struct {
 type WorkerDataSourceModel struct {
 	ID            types.String                                                    `tfsdk:"id" path:"worker_id,computed"`
 	WorkerID      types.String                                                    `tfsdk:"worker_id" path:"worker_id,optional"`
-	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeployedOn    timetypes.RFC3339                                               `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
 	Logpush       types.Bool                                                      `tfsdk:"logpush" json:"logpush,computed"`

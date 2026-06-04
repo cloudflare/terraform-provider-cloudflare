@@ -2,12 +2,16 @@
 page_title: "cloudflare_custom_hostname_fallback_origin Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_custom_hostname_fallback_origin (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 

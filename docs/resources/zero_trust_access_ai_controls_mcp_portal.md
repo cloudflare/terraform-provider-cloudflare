@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_ai_controls_mcp_portal Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  MCP Portals ReadMCP Portals Write
 ---
 
 # cloudflare_zero_trust_access_ai_controls_mcp_portal (Resource)
 
+Accepted Permissions
 
+- `MCP Portals Read`
+- `MCP Portals Write`
 
 ## Example Usage
 
@@ -74,6 +78,7 @@ Required:
 Optional:
 
 - `default_disabled` (Boolean)
+- `is_shared_oauth_callback_enabled` (Boolean)
 - `on_behalf` (Boolean)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_tools))

@@ -21,13 +21,16 @@ description: |-
 - `cf_api_key` (String, Sensitive)
 - `name` (String)
 
+### Optional
+
+- `legacy` (Boolean)
+
 ### Read-Only
 
 - `created_at` (String)
 - `created_by` (String)
 - `enabled` (Boolean)
 - `id` (String) The ID of this resource.
-- `legacy` (Boolean)
 - `modified_at` (String)
 - `modified_by` (String)
 

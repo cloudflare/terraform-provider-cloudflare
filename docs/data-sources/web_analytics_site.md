@@ -2,12 +2,15 @@
 page_title: "cloudflare_web_analytics_site Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings Read
 ---
 
 # cloudflare_web_analytics_site (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
 
 ## Example Usage
 

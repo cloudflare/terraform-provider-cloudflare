@@ -2,12 +2,16 @@
 page_title: "cloudflare_api_token Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  API Tokens ReadAPI Tokens Write
 ---
 
 # cloudflare_api_token (Data Source)
 
+Accepted Permissions
 
+- `API Tokens Read`
+- `API Tokens Write`
 
 ## Example Usage
 

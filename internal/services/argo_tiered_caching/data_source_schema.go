@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Whether the setting is editable.",

@@ -2,12 +2,16 @@
 page_title: "cloudflare_account_dns_settings_internal_view Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS View ReadDNS View Write
 ---
 
 # cloudflare_account_dns_settings_internal_view (Data Source)
 
+Accepted Permissions
 
+- `DNS View Read`
+- `DNS View Write`
 
 ## Example Usage
 

@@ -2,12 +2,18 @@
 page_title: "cloudflare_zone_cache_reserve Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone ReadZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_zone_cache_reserve (Resource)
 
+Accepted Permissions
 
+- `Zone Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 

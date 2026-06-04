@@ -16,7 +16,7 @@ type SchemaValidationSettingsResultDataSourceEnvelope struct {
 }
 
 type SchemaValidationSettingsDataSourceModel struct {
-	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action,computed"`
 	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action,computed"`
 }

@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,6 +29,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -43,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{

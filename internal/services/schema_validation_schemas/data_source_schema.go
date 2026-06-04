@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"omit_source": schema.BoolAttribute{
 				Description: "Omit the source-files of schemas and only retrieve their meta-data.",

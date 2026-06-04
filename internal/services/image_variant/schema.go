@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*ImageVariantResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Images Read",
@@ -34,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"options": schema.SingleNestedAttribute{

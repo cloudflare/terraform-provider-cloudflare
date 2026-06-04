@@ -19,7 +19,7 @@ type WaitingRoomEventsResultListDataSourceEnvelope struct {
 
 type WaitingRoomEventsDataSourceModel struct {
 	WaitingRoomID types.String                                                         `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID        types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems      types.Int64                                                          `tfsdk:"max_items"`
 	Result        customfield.NestedObjectList[WaitingRoomEventsResultDataSourceModel] `tfsdk:"result"`
 }

@@ -2,12 +2,50 @@
 page_title: "cloudflare_keyless_certificate Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Apps and Policies ReadAccess: Apps and Policies RevokeAccess: Apps and Policies WriteAccess: Mutual TLS Certificates WriteAccess: Organizations, Identity Providers, and Groups WriteAnalytics ReadApps WriteCache PurgeDNS ReadDNS WriteFirewall Services ReadFirewall Services WriteLoad Balancers ReadLoad Balancers WriteLogs ReadLogs WritePage Rules ReadPage Rules WriteSSL and Certificates ReadSSL and Certificates WriteStream ReadStream WriteTrust and Safety ReadTrust and Safety WriteWorkers Routes ReadWorkers Routes WriteWorkers Scripts ReadWorkers Scripts WriteZaraz AdminZaraz EditZaraz ReadZero Trust: PII ReadZone ReadZone Settings ReadZone Settings WriteZone Write
 ---
 
 # cloudflare_keyless_certificate (Resource)
 
+Accepted Permissions
 
+- `Access: Apps and Policies Read`
+- `Access: Apps and Policies Revoke`
+- `Access: Apps and Policies Write`
+- `Access: Mutual TLS Certificates Write`
+- `Access: Organizations, Identity Providers, and Groups Write`
+- `Analytics Read`
+- `Apps Write`
+- `Cache Purge`
+- `DNS Read`
+- `DNS Write`
+- `Firewall Services Read`
+- `Firewall Services Write`
+- `Load Balancers Read`
+- `Load Balancers Write`
+- `Logs Read`
+- `Logs Write`
+- `Page Rules Read`
+- `Page Rules Write`
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
+- `Stream Read`
+- `Stream Write`
+- `Trust and Safety Read`
+- `Trust and Safety Write`
+- `Workers Routes Read`
+- `Workers Routes Write`
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Zaraz Admin`
+- `Zaraz Edit`
+- `Zaraz Read`
+- `Zero Trust: PII Read`
+- `Zone Read`
+- `Zone Settings Read`
+- `Zone Settings Write`
+- `Zone Write`
 
 ## Example Usage
 
@@ -65,7 +103,7 @@ Available values: "ubiquitous", "optimal", "force".
 - `enabled` (Boolean, Deprecated) Whether or not the Keyless SSL is on or off.
 - `name` (String) The keyless SSL name.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel. (see [below for nested schema](#nestedatt--tunnel))
 
 ### Read-Only
 
@@ -81,8 +119,8 @@ Available values: "active", "deleted".
 
 Required:
 
-- `private_ip` (String) Private IP of the Key Server Host
-- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
+- `private_ip` (String) Private IP of the Key Server Host.
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID.
 
 ## Import
 

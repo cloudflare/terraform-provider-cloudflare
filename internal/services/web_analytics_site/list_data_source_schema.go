@@ -28,7 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
 				Description: "The property used to sort the list of results.\nAvailable values: \"host\", \"created\".",

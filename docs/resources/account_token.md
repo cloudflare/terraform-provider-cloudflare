@@ -2,12 +2,16 @@
 page_title: "cloudflare_account_token Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account API Tokens ReadAccount API Tokens Write
 ---
 
 # cloudflare_account_token (Resource)
 
+Accepted Permissions
 
+- `Account API Tokens Read`
+- `Account API Tokens Write`
 
 ## Example Usage
 

@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*R2BucketEventNotificationResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers R2 Storage Read",

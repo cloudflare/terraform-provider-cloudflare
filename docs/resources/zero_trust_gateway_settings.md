@@ -219,6 +219,9 @@ Optional:
 Optional:
 
 - `enabled` (Boolean) Specify whether to match all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.
+
+Read-Only:
+
 - `read_only` (Boolean) Indicate that this setting was shared via the Orgs API and read only for the current account.
 - `source_account` (String) Indicate the account tag of the account that shared this setting.
 - `version` (Number) Indicate the version number of the setting.

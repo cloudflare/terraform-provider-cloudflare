@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_wan_gre_tunnel Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_wan_gre_tunnel (Data Source)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -36,7 +42,7 @@ data "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 
 Read-Only:
 
-- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise.
+- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.
 - `bgp` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--bgp))
 - `bgp_status` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--bgp_status))
 - `cloudflare_gre_endpoint` (String) The IP address assigned to the Cloudflare side of the GRE tunnel.

@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_route Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Routes ReadWorkers Routes Write
 ---
 
 # cloudflare_workers_route (Resource)
 
+Accepted Permissions
 
+- `Workers Routes Read`
+- `Workers Routes Write`
 
 ## Example Usage
 

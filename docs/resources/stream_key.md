@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_key Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_key (Resource)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -29,6 +33,7 @@ resource "cloudflare_stream_key" "example_stream_key" {
 - `created` (String) The date and time a signing key was created.
 - `id` (String) Identifier.
 - `jwk` (String, Sensitive) The signing key in JWK format.
+- `key_id` (String) The unique identifier for the signing key.
 - `pem` (String, Sensitive) The signing key in PEM format.
 
 ## Import

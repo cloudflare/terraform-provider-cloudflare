@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_default_profile_local_domain_fallback Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_default_profile_local_domain_fallback (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 

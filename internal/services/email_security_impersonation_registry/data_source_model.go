@@ -19,7 +19,7 @@ type EmailSecurityImpersonationRegistryResultDataSourceEnvelope struct {
 type EmailSecurityImpersonationRegistryDataSourceModel struct {
 	ID                      types.String                                                `tfsdk:"id" path:"impersonation_registry_id,computed"`
 	ImpersonationRegistryID types.String                                                `tfsdk:"impersonation_registry_id" path:"impersonation_registry_id,optional"`
-	AccountID               types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID               types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	Comments                types.String                                                `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt               timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DirectoryID             types.Int64                                                 `tfsdk:"directory_id" json:"directory_id,computed"`

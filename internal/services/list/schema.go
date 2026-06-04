@@ -25,6 +25,7 @@ var _ resource.ResourceWithConfigValidators = (*ListResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Filter Lists Edit",
@@ -39,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID for this resource.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"kind": schema.StringAttribute{

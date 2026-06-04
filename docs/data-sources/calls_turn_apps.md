@@ -2,12 +2,16 @@
 page_title: "cloudflare_calls_turn_apps Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Calls ReadCalls Write
 ---
 
 # cloudflare_calls_turn_apps (Data Source)
 
+Accepted Permissions
 
+- `Calls Read`
+- `Calls Write`
 
 ## Example Usage
 

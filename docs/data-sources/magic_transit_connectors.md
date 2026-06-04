@@ -2,12 +2,16 @@
 page_title: "cloudflare_magic_transit_connectors Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_connectors (Data Source)
 
+Accepted Permissions
 
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -26,6 +30,8 @@ data "cloudflare_magic_transit_connectors" "example_magic_transit_connectors" {
 
 ### Optional
 
+- `device_type` (String) Filter connectors by device type.
+Available values: "MANAGED", "LICENSED".
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -58,5 +64,6 @@ Read-Only:
 
 - `id` (String)
 - `serial_number` (String)
+- `type` (String) Available values: "MANAGED", "LICENSED".
 
 

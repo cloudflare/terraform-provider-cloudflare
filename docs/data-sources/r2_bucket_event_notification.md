@@ -2,12 +2,16 @@
 page_title: "cloudflare_r2_bucket_event_notification Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers R2 Storage ReadWorkers R2 Storage Write
 ---
 
 # cloudflare_r2_bucket_event_notification (Data Source)
 
+Accepted Permissions
 
+- `Workers R2 Storage Read`
+- `Workers R2 Storage Write`
 
 ## Example Usage
 

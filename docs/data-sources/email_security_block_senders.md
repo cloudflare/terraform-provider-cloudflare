@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_security_block_senders Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloud Email Security: ReadCloud Email Security: Write
 ---
 
 # cloudflare_email_security_block_senders (Data Source)
 
+Accepted Permissions
 
+- `Cloud Email Security: Read`
+- `Cloud Email Security: Write`
 
 ## Example Usage
 
@@ -27,21 +31,19 @@ data "cloudflare_email_security_block_senders" "example_email_security_block_sen
 
 ### Required
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
 - `direction` (String) The sorting direction.
 Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
-- `order` (String) The field to sort by.
+- `order` (String) Field to sort by.
 Available values: "pattern", "created_at".
-- `pattern` (String)
-- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
-- `search` (String) Allows searching in multiple properties of a record simultaneously.
-This parameter is intended for human users, not automation. Its exact
-behavior is intentionally left unspecified and is subject to change
-in the future.
+- `pattern` (String) Filter by pattern value.
+- `pattern_type` (String) Filter by pattern type.
+Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
+- `search` (String) Search term for filtering records. Behavior may change.
 
 ### Read-Only
 
@@ -54,10 +56,13 @@ Read-Only:
 
 - `comments` (String)
 - `created_at` (String)
-- `id` (Number) The unique identifier for the allow policy.
+- `id` (String) Blocked sender pattern identifier
 - `is_regex` (Boolean)
-- `last_modified` (String)
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 - `pattern` (String)
-- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
+- `pattern_type` (String) Type of pattern matching.
+Note: UNKNOWN is deprecated and cannot be used when creating or updating policies, but may be returned for existing entries.
+Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 

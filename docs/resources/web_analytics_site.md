@@ -2,12 +2,16 @@
 page_title: "cloudflare_web_analytics_site Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings Write
 ---
 
 # cloudflare_web_analytics_site (Resource)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
 
 ## Example Usage
 

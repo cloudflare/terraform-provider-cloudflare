@@ -2,12 +2,15 @@
 page_title: "cloudflare_zero_trust_device_posture_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zero Trust Write
 ---
 
 # cloudflare_zero_trust_device_posture_rule (Resource)
 
+Accepted Permissions
 
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -60,6 +63,7 @@ Available values: "file", "application", "tanium", "gateway", "warp", "disk_encr
 Optional:
 
 - `active_threats` (Number) The Number of active threats.
+- `auth_state` (List of String) The set of Kolide device authentication states that pass the posture check. Device must match one of the specified states.
 - `certificate_id` (String) UUID of Cloudflare managed certificate.
 - `check_disks` (List of String) List of volume names to be checked for encryption.
 - `check_private_key` (Boolean) Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.

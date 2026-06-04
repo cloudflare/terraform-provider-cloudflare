@@ -2,12 +2,16 @@
 page_title: "cloudflare_hostname_tls_setting Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_hostname_tls_setting (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -23,10 +27,11 @@ data "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
 
 ### Required
 
-- `setting_id` (String) The TLS Setting name. The value type depends on the setting:
-- `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`)
-- `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`)
-- `http2`: value is `"on"` or `"off"`
+- `setting_id` (String) The TLS Setting name.
+The value type depends on the setting:
+- `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`).
+- `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`).
+- `http2`: value is `"on"` or `"off"`.
 Available values: "ciphers", "min_tls_version", "http2".
 - `zone_id` (String) Identifier.
 
@@ -34,17 +39,19 @@ Available values: "ciphers", "min_tls_version", "http2".
 
 - `created_at` (String) This is the time the tls setting was originally created for this hostname.
 - `hostname` (String) The hostname for which the tls settings are set.
-- `id` (String) The TLS Setting name. The value type depends on the setting:
-- `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`)
-- `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`)
-- `http2`: value is `"on"` or `"off"`
+- `id` (String) The TLS Setting name.
+The value type depends on the setting:
+- `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`).
+- `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`).
+- `http2`: value is `"on"` or `"off"`.
 Available values: "ciphers", "min_tls_version", "http2".
 - `status` (String) Deployment status for the given tls setting.
 - `updated_at` (String) This is the time the tls setting was updated.
-- `value` (String) The TLS setting value. The type depends on the `setting_id` used in the request path:
-- `ciphers`: an array of allowed cipher suite strings in BoringSSL format (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`)
-- `min_tls_version`: a string indicating the minimum TLS version — one of `"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"` (e.g., `"1.2"`)
-- `http2`: a string indicating whether HTTP/2 is enabled — `"on"` or `"off"` (e.g., `"on"`)
+- `value` (String) The TLS setting value.
+The type depends on the `setting_id` used in the request path:
+- `ciphers`: an array of allowed cipher suite strings in BoringSSL format (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`).
+- `min_tls_version`: a string indicating the minimum TLS version — one of `"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"` (e.g., `"1.2"`).
+- `http2`: a string indicating whether HTTP/2 is enabled — `"on"` or `"off"` (e.g., `"on"`).
 Available values: "1.0", "1.1", "1.2", "1.3", "on", "off".
 
 

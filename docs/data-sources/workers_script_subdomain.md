@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_script_subdomain Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_script_subdomain (Data Source)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 

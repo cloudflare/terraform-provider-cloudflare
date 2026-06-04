@@ -2,12 +2,16 @@
 page_title: "cloudflare_snippet Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Snippets ReadSnippets Write
 ---
 
 # cloudflare_snippet (Data Source)
 
+Accepted Permissions
 
+- `Snippets Read`
+- `Snippets Write`
 
 ## Example Usage
 
@@ -29,6 +33,7 @@ data "cloudflare_snippet" "example_snippet" {
 ### Read-Only
 
 - `created_on` (String) Indicates when the snippet was created.
+- `id` (String) Identify the snippet.
 - `modified_on` (String) Indicates when the snippet was last modified.
 
 

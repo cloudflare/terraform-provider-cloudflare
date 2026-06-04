@@ -2,12 +2,16 @@
 page_title: "cloudflare_pipeline Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pipelines ReadPipelines Write
 ---
 
 # cloudflare_pipeline (Data Source)
 
+Accepted Permissions
 
+- `Pipelines Read`
+- `Pipelines Write`
 
 ## Example Usage
 

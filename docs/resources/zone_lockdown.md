@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_lockdown Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_zone_lockdown (Resource)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 

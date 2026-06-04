@@ -2,12 +2,16 @@
 page_title: "cloudflare_cloud_connector_rules Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloud Connector ReadCloud Connector Write
 ---
 
 # cloudflare_cloud_connector_rules (Data Source)
 
+Accepted Permissions
 
+- `Cloud Connector Read`
+- `Cloud Connector Write`
 
 ## Example Usage
 

@@ -2,12 +2,18 @@
 page_title: "cloudflare_magic_transit_site_wan Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic Transit ReadMagic Transit WriteMagic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_site_wan (Resource)
 
+Accepted Permissions
 
+- `Magic Transit Read`
+- `Magic Transit Write`
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_rate_limit Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Firewall Services ReadFirewall Services Write
 ---
 
 # cloudflare_rate_limit (Data Source)
 
+Accepted Permissions
 
+- `Firewall Services Read`
+- `Firewall Services Write`
 
 ## Example Usage
 

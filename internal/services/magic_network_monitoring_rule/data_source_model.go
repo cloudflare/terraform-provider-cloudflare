@@ -19,7 +19,7 @@ type MagicNetworkMonitoringRuleResultDataSourceEnvelope struct {
 type MagicNetworkMonitoringRuleDataSourceModel struct {
 	ID                     types.String                   `tfsdk:"id" path:"rule_id,computed"`
 	RuleID                 types.String                   `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID              types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID              types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	AutomaticAdvertisement types.Bool                     `tfsdk:"automatic_advertisement" json:"automatic_advertisement,computed"`
 	BandwidthThreshold     types.Float64                  `tfsdk:"bandwidth_threshold" json:"bandwidth_threshold,computed"`
 	Duration               types.String                   `tfsdk:"duration" json:"duration,computed"`

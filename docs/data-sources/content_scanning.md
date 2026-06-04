@@ -2,12 +2,18 @@
 page_title: "cloudflare_content_scanning Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account WAF ReadAccount WAF WriteZone WAF ReadZone WAF Write
 ---
 
 # cloudflare_content_scanning (Data Source)
 
+Accepted Permissions
 
+- `Account WAF Read`
+- `Account WAF Write`
+- `Zone WAF Read`
+- `Zone WAF Write`
 
 ## Example Usage
 

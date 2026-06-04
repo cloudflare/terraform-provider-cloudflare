@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"auto_install": schema.BoolAttribute{
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",

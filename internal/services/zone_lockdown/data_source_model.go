@@ -20,7 +20,7 @@ type ZoneLockdownResultDataSourceEnvelope struct {
 type ZoneLockdownDataSourceModel struct {
 	ID             types.String                                                            `tfsdk:"id" path:"lock_downs_id,computed"`
 	LockDownsID    types.String                                                            `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`
-	ZoneID         types.String                                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID         types.String                                                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn      timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                                                            `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

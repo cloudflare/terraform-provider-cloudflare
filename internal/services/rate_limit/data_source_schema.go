@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Defines an identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the rule. This value is sanitized and any tags will be removed.",

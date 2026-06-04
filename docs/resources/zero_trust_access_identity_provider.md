@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_identity_provider Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Access: Organizations, Identity Providers, and Groups ReadAccess: Organizations, Identity Providers, and Groups Write
 ---
 
 # cloudflare_zero_trust_access_identity_provider (Resource)
 
+Accepted Permissions
 
+- `Access: Organizations, Identity Providers, and Groups Read`
+- `Access: Organizations, Identity Providers, and Groups Write`
 
 ## Example Usage
 
@@ -43,17 +47,22 @@ resource "cloudflare_zero_trust_access_identity_provider" "example_zero_trust_ac
 - `config` (Attributes) The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/). (see [below for nested schema](#nestedatt--config))
 - `name` (String) The name of the identity provider, shown to users on the login page.
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
-Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex".
+Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare".
 
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `saml_certificate_set_id` (String) The UID of the SAML encryption certificate set assigned to this Identity Provider.
+Only present for SAML identity providers with encryption configured.
+Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`.
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--scim_config))
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
 
 - `id` (String) UUID.
+- `saml_certificate_set` (Attributes) The SAML encryption certificate set details, including current and previous certificates.
+Only present for SAML identity providers with a certificate set assigned. (see [below for nested schema](#nestedatt--saml_certificate_set))
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
@@ -74,6 +83,15 @@ Optional:
 - `directory_id` (String) Your Azure directory uuid
 - `email_attribute_name` (String) The attribute name for email in the SAML response.
 - `email_claim_name` (String) The claim name for email in the id_token response.
+- `enable_encryption` (Boolean) Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt 
+SAML assertions using the certificate from the assigned certificate set.
+
+To enable encryption:
+1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`
+2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request
+3. Configure the public certificate in your external Identity Provider
+
+Note: Requires `saml_certificate_set_id` to be set when `true`.
 - `header_attributes` (Attributes List) Add a list of attribute names that will be returned in the response header from the Access callback. (see [below for nested schema](#nestedatt--config--header_attributes))
 - `idp_public_certs` (List of String) X509 certificate to verify the signature in the SAML authentication response
 - `issuer_url` (String) IdP Entity ID or Issuer URL
@@ -83,6 +101,7 @@ Optional:
 - `pkce_enabled` (Boolean) Enable Proof Key for Code Exchange (PKCE)
 - `prompt` (String) Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.
 Available values: "login", "select_account", "none".
+- `restrict_to_account_members` (Boolean) When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.
 - `scopes` (List of String) OAuth scopes
 - `sign_request` (Boolean) Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.
 - `sso_target_url` (String) URL to send the SAML authentication requests to
@@ -118,6 +137,29 @@ Read-Only:
 
 - `scim_base_url` (String) The base URL of Cloudflare's SCIM V2.0 API endpoint.
 - `secret` (String, Sensitive) A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.
+
+
+<a id="nestedatt--saml_certificate_set"></a>
+### Nested Schema for `saml_certificate_set`
+
+Read-Only:
+
+- `created_at` (String) Timestamp when the certificate set was created
+- `current_certificate` (Attributes) The currently active certificate used for encrypting SAML assertions (see [below for nested schema](#nestedatt--saml_certificate_set--current_certificate))
+- `previous_certificate` (String) The previous certificate, maintained during rotation to ensure continuity. Null if no rotation has occurred. Mirrors the structure of `saml_certificate`.
+- `uid` (String) Unique identifier for the certificate set
+- `updated_at` (String) Timestamp when the certificate set was last updated (e.g., during rotation)
+
+<a id="nestedatt--saml_certificate_set--current_certificate"></a>
+### Nested Schema for `saml_certificate_set.current_certificate`
+
+Read-Only:
+
+- `is_current` (Boolean) Indicates whether this is the currently active certificate
+- `not_after` (String) Certificate expiration date. Certificates are automatically rotated 30 days before expiration.
+- `public_certificate` (String) PEM-encoded X.509 certificate containing the public key.
+Configure this certificate in your external SAML Identity Provider to enable encryption.
+- `uid` (String) Unique identifier for the certificate
 
 ## Import
 

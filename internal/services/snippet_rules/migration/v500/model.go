@@ -40,7 +40,8 @@ type SourceSnippetRuleModel struct {
 // - Rules uses *[]*TargetSnippetRuleModel (matches SnippetRulesModel.Rules)
 // - last_updated uses timetypes.RFC3339 (matches schema CustomType)
 type TargetSnippetRulesModel struct {
-	ZoneID types.String              `tfsdk:"zone_id"`
+	ID     types.String               `tfsdk:"id"`
+	ZoneID types.String               `tfsdk:"zone_id"`
 	Rules  *[]*TargetSnippetRuleModel `tfsdk:"rules"`
 }
 

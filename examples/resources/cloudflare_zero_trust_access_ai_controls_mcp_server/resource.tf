@@ -6,7 +6,6 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
   name = "My MCP Server"
   auth_credentials = "auth_credentials"
   description = "This is one remote mcp server"
-  is_shared_oauth_callback_enabled = true
   updated_prompts = [{
     name = "name"
     alias = "my-custom-alias"

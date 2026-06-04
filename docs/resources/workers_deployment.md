@@ -2,12 +2,17 @@
 page_title: "cloudflare_workers_deployment Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_deployment (Resource)
 
+Accepted Permissions
 
+- `Workers Scripts Read`
+- `Workers Scripts Write`
+- `Workers Tail Read`
 
 ## Example Usage
 
@@ -61,7 +66,7 @@ Required:
 
 Optional:
 
-- `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
+- `workers_message` (String) Human-readable message about the deployment. Truncated to 1000 bytes if longer.
 
 Read-Only:
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_watermarks Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_watermarks (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 

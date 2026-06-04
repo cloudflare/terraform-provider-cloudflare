@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Required:    true,
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Filter by the name of the permission group.\nThe value must be URL-encoded.",

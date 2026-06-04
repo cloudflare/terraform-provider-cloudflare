@@ -19,6 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*UserAgentBlockingRuleResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Firewall Services Read",
@@ -33,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Defines an identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"mode": schema.StringAttribute{

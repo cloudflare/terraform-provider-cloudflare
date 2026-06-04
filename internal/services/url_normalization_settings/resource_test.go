@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v6/url_normalization"
+	"github.com/cloudflare/cloudflare-go/v7/url_normalization"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	cloudflare "github.com/cloudflare/cloudflare-go/v6"
+	cloudflare "github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"

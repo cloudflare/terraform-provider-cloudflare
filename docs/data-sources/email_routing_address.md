@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_routing_address Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Email Routing Addresses ReadEmail Routing Addresses Write
 ---
 
 # cloudflare_email_routing_address (Data Source)
 
+Accepted Permissions
 
+- `Email Routing Addresses Read`
+- `Email Routing Addresses Write`
 
 ## Example Usage
 

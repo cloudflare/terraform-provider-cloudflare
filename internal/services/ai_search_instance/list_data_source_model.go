@@ -18,7 +18,7 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 }
 
 type AISearchInstancesDataSourceModel struct {
-	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Namespace        types.String                                                         `tfsdk:"namespace" query:"namespace,optional"`
 	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
 	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`

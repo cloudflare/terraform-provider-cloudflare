@@ -18,7 +18,7 @@ type PageShieldPolicyResultDataSourceEnvelope struct {
 type PageShieldPolicyDataSourceModel struct {
 	ID          types.String `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID    types.String `tfsdk:"policy_id" path:"policy_id,required"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action      types.String `tfsdk:"action" json:"action,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`

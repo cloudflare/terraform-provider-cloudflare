@@ -2,12 +2,18 @@
 page_title: "cloudflare_turnstile_widgets Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Account Settings ReadAccount Settings WriteTurnstile Sites ReadTurnstile Sites Write
 ---
 
 # cloudflare_turnstile_widgets (Data Source)
 
+Accepted Permissions
 
+- `Account Settings Read`
+- `Account Settings Write`
+- `Turnstile Sites Read`
+- `Turnstile Sites Write`
 
 ## Example Usage
 

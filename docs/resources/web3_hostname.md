@@ -2,12 +2,16 @@
 page_title: "cloudflare_web3_hostname Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Web3 Hostnames ReadWeb3 Hostnames Write
 ---
 
 # cloudflare_web3_hostname (Resource)
 
+Accepted Permissions
 
+- `Web3 Hostnames Read`
+- `Web3 Hostnames Write`
 
 ## Example Usage
 

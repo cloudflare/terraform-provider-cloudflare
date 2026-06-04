@@ -18,7 +18,7 @@ type WorkersScriptsResultListDataSourceEnvelope struct {
 }
 
 type WorkersScriptsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Tags      types.String                                                      `tfsdk:"tags" query:"tags,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersScriptsResultDataSourceModel] `tfsdk:"result"`

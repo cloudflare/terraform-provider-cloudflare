@@ -9,8 +9,8 @@ import (
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"

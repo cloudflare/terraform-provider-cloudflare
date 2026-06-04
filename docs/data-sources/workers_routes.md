@@ -2,12 +2,16 @@
 page_title: "cloudflare_workers_routes Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Workers Routes ReadWorkers Routes Write
 ---
 
 # cloudflare_workers_routes (Data Source)
 
+Accepted Permissions
 
+- `Workers Routes Read`
+- `Workers Routes Write`
 
 ## Example Usage
 

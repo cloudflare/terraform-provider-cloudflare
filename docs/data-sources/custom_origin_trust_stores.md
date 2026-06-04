@@ -2,12 +2,16 @@
 page_title: "cloudflare_custom_origin_trust_stores Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  SSL and Certificates ReadSSL and Certificates Write
 ---
 
 # cloudflare_custom_origin_trust_stores (Data Source)
 
+Accepted Permissions
 
+- `SSL and Certificates Read`
+- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -30,7 +34,7 @@ data "cloudflare_custom_origin_trust_stores" "example_custom_origin_trust_stores
 
 - `limit` (Number) Limit to the number of records returned.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Offset the results
+- `offset` (Number) Offset the results.
 
 ### Read-Only
 
@@ -41,7 +45,7 @@ data "cloudflare_custom_origin_trust_stores" "example_custom_origin_trust_stores
 
 Read-Only:
 
-- `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
+- `certificate` (String) The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.
 - `expires_on` (String) When the certificate expires.
 - `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.

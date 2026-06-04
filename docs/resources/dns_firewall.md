@@ -2,12 +2,16 @@
 page_title: "cloudflare_dns_firewall Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DNS Firewall ReadDNS Firewall Write
 ---
 
 # cloudflare_dns_firewall (Resource)
 
+Accepted Permissions
 
+- `DNS Firewall Read`
+- `DNS Firewall Write`
 
 ## Example Usage
 

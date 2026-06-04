@@ -18,6 +18,7 @@ var _ resource.ResourceWithConfigValidators = (*OriginCloudRegionResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Origin IP address (IPv4 or IPv6). For the single PUT endpoint (`PUT /origin/cloud_regions/{origin_ip}`), this field must match the path parameter or the request will be rejected with a 400 error. For the batch PUT endpoint, this field identifies which mapping to upsert.",

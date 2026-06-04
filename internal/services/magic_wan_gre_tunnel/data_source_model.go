@@ -20,7 +20,7 @@ type MagicWANGRETunnelResultDataSourceEnvelope struct {
 type MagicWANGRETunnelDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" path:"gre_tunnel_id,computed"`
 	GRETunnelID types.String                                                        `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,required"`
-	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	GRETunnel   customfield.NestedObject[MagicWANGRETunnelGRETunnelDataSourceModel] `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_magic_transit_connector Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Magic WAN ReadMagic WAN Write
 ---
 
 # cloudflare_magic_transit_connector (Data Source)
 
+Accepted Permissions
 
+- `Magic WAN Read`
+- `Magic WAN Write`
 
 ## Example Usage
 
@@ -24,7 +28,11 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 ### Required
 
 - `account_id` (String) Account identifier
+
+### Optional
+
 - `connector_id` (String)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
@@ -42,6 +50,15 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 - `notes` (String)
 - `timezone` (String)
 
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `device_type` (String) Filter connectors by device type.
+Available values: "MANAGED", "LICENSED".
+
+
 <a id="nestedatt--device"></a>
 ### Nested Schema for `device`
 
@@ -49,5 +66,6 @@ Read-Only:
 
 - `id` (String)
 - `serial_number` (String)
+- `type` (String) Available values: "MANAGED", "LICENSED".
 
 

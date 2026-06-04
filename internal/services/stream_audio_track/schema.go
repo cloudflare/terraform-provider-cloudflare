@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*StreamAudioTrackResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Stream Read",
@@ -29,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The account identifier tag.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{

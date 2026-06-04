@@ -2,12 +2,16 @@
 page_title: "cloudflare_pages_domain Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Pages ReadPages Write
 ---
 
 # cloudflare_pages_domain (Resource)
 
+Accepted Permissions
 
+- `Pages Read`
+- `Pages Write`
 
 -> A DNS record for the domain is not automatically created. You need to create
    a `cloudflare_record` resource for the domain you want to use.

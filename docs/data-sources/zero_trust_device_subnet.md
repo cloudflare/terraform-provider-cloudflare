@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_device_subnet Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Networks ReadCloudflare One Networks Write
 ---
 
 # cloudflare_zero_trust_device_subnet (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Networks Read`
+- `Cloudflare One Networks Write`
 
 ## Example Usage
 

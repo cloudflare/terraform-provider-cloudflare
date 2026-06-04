@@ -2,12 +2,16 @@
 page_title: "cloudflare_botnet_feed_config_asn Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DDoS Botnet Feed ReadDDoS Botnet Feed Write
 ---
 
 # cloudflare_botnet_feed_config_asn (Data Source)
 
+Accepted Permissions
 
+- `DDoS Botnet Feed Read`
+- `DDoS Botnet Feed Write`
 
 ## Example Usage
 

@@ -2,12 +2,20 @@
 page_title: "cloudflare_zero_trust_tunnel_cloudflareds Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloudflare One Connector: cloudflared ReadCloudflare One Connector: cloudflared WriteCloudflare One Connectors ReadCloudflare One Connectors WriteCloudflare Tunnel ReadCloudflare Tunnel Write
 ---
 
 # cloudflare_zero_trust_tunnel_cloudflareds (Data Source)
 
+Accepted Permissions
 
+- `Cloudflare One Connector: cloudflared Read`
+- `Cloudflare One Connector: cloudflared Write`
+- `Cloudflare One Connectors Read`
+- `Cloudflare One Connectors Write`
+- `Cloudflare Tunnel Read`
+- `Cloudflare Tunnel Write`
 
 ## Example Usage
 

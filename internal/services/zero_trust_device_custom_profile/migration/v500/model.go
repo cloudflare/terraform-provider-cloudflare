@@ -50,6 +50,7 @@ type TargetCustomProfileModel struct {
 	Description                types.String                                                                      `tfsdk:"description"`
 	LANAllowMinutes            types.Float64                                                                     `tfsdk:"lan_allow_minutes"`
 	LANAllowSubnetSize         types.Float64                                                                     `tfsdk:"lan_allow_subnet_size"`
+	VirtualNetworks            *TargetCustomProfileVirtualNetworksModel                                          `tfsdk:"virtual_networks"`
 	AllowModeSwitch            types.Bool                                                                        `tfsdk:"allow_mode_switch"`
 	AllowUpdates               types.Bool                                                                        `tfsdk:"allow_updates"`
 	AllowedToLeave             types.Bool                                                                        `tfsdk:"allowed_to_leave"`
@@ -63,6 +64,7 @@ type TargetCustomProfileModel struct {
 	SupportURL                 types.String                                                                      `tfsdk:"support_url"`
 	SwitchLocked               types.Bool                                                                        `tfsdk:"switch_locked"`
 	TunnelProtocol             types.String                                                                      `tfsdk:"tunnel_protocol"`
+	DNSSearchSuffixes          customfield.NestedObjectList[TargetCustomProfileDNSSearchSuffixesModel]           `tfsdk:"dns_search_suffixes"`
 	Exclude                    customfield.NestedObjectList[TargetCustomProfileExcludeModel]                     `tfsdk:"exclude"`
 	Include                    customfield.NestedObjectList[TargetCustomProfileIncludeModel]                     `tfsdk:"include"`
 	ServiceModeV2              customfield.NestedObject[TargetCustomProfileServiceModeV2Model]                   `tfsdk:"service_mode_v2"`
@@ -98,4 +100,14 @@ type TargetCustomProfileFallbackDomainsModel struct {
 type TargetCustomProfileTargetTestsModel struct {
 	ID   types.String `tfsdk:"id"`
 	Name types.String `tfsdk:"name"`
+}
+
+type TargetCustomProfileVirtualNetworksModel struct {
+	Allowed *[]types.String `tfsdk:"allowed"`
+	Default types.String    `tfsdk:"default"`
+}
+
+type TargetCustomProfileDNSSearchSuffixesModel struct {
+	Suffix      types.String `tfsdk:"suffix"`
+	Description types.String `tfsdk:"description"`
 }

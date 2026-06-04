@@ -21,7 +21,7 @@ type ZeroTrustTunnelCloudflaredResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	ID              types.String                                                                       `tfsdk:"id" path:"tunnel_id,computed"`
 	TunnelID        types.String                                                                       `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
-	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	AccountTag      types.String                                                                       `tfsdk:"account_tag" json:"account_tag,computed"`
 	ConfigSrc       types.String                                                                       `tfsdk:"config_src" json:"config_src,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                  `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`

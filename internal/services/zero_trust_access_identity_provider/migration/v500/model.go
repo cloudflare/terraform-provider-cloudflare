@@ -2,6 +2,8 @@ package v500
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -62,13 +64,30 @@ type SourceScimConfigModel struct {
 // Target models (v5 cloudflare_zero_trust_access_identity_provider)
 
 type TargetAccessIdentityProviderModel struct {
-	ID         types.String                                      `tfsdk:"id"`
-	AccountID  types.String                                      `tfsdk:"account_id"`
-	ZoneID     types.String                                      `tfsdk:"zone_id"`
-	Name       types.String                                      `tfsdk:"name"`
-	Type       types.String                                      `tfsdk:"type"`
-	Config     *TargetConfigModel                                `tfsdk:"config"`
-	SCIMConfig customfield.NestedObject[TargetScimConfigModel]   `tfsdk:"scim_config"`
+	ID                   types.String                                            `tfsdk:"id"`
+	AccountID            types.String                                            `tfsdk:"account_id"`
+	ZoneID               types.String                                            `tfsdk:"zone_id"`
+	Name                 types.String                                            `tfsdk:"name"`
+	Type                 types.String                                            `tfsdk:"type"`
+	Config               *TargetConfigModel                                      `tfsdk:"config"`
+	SAMLCertificateSetID types.String                                            `tfsdk:"saml_certificate_set_id"`
+	SCIMConfig           customfield.NestedObject[TargetScimConfigModel]         `tfsdk:"scim_config"`
+	SAMLCertificateSet   customfield.NestedObject[TargetSAMLCertificateSetModel] `tfsdk:"saml_certificate_set"`
+}
+
+type TargetSAMLCertificateSetModel struct {
+	CreatedAt           timetypes.RFC3339                                                  `tfsdk:"created_at"`
+	UID                 types.String                                                       `tfsdk:"uid"`
+	UpdatedAt           timetypes.RFC3339                                                  `tfsdk:"updated_at"`
+	CurrentCertificate  customfield.NestedObject[TargetSAMLCertificateSetCurrentCertModel] `tfsdk:"current_certificate"`
+	PreviousCertificate jsontypes.Normalized                                               `tfsdk:"previous_certificate"`
+}
+
+type TargetSAMLCertificateSetCurrentCertModel struct {
+	IsCurrent         types.Bool        `tfsdk:"is_current"`
+	NotAfter          timetypes.RFC3339 `tfsdk:"not_after"`
+	PublicCertificate types.String      `tfsdk:"public_certificate"`
+	UID               types.String      `tfsdk:"uid"`
 }
 
 type TargetConfigModel struct {
@@ -94,12 +113,14 @@ type TargetConfigModel struct {
 	PingEnvID                types.String                    `tfsdk:"ping_env_id"`
 	Attributes               *[]types.String                 `tfsdk:"attributes"`
 	EmailAttributeName       types.String                    `tfsdk:"email_attribute_name"`
+	EnableEncryption         types.Bool                      `tfsdk:"enable_encryption"`
 	HeaderAttributes         *[]*TargetHeaderAttributesModel `tfsdk:"header_attributes"`
 	IdPPublicCERTs           *[]types.String                 `tfsdk:"idp_public_certs"`
 	IssuerURL                types.String                    `tfsdk:"issuer_url"`
 	SignRequest              types.Bool                      `tfsdk:"sign_request"`
 	SSOTargetURL             types.String                    `tfsdk:"sso_target_url"`
 	RedirectURL              types.String                    `tfsdk:"redirect_url"`
+	RestrictToAccountMembers types.Bool                      `tfsdk:"restrict_to_account_members"`
 }
 
 type TargetHeaderAttributesModel struct {

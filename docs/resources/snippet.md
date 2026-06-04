@@ -2,12 +2,16 @@
 page_title: "cloudflare_snippet Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Snippets ReadSnippets Write
 ---
 
 # cloudflare_snippet (Resource)
 
+Accepted Permissions
 
+- `Snippets Read`
+- `Snippets Write`
 
 ## Example Usage
 
@@ -46,6 +50,7 @@ resource "cloudflare_snippet" "example_snippet" {
 ### Read-Only
 
 - `created_on` (String) Indicates when the snippet was created.
+- `id` (String) Identify the snippet.
 - `modified_on` (String) Indicates when the snippet was last modified.
 
 <a id="nestedatt--files"></a>

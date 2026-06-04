@@ -2,12 +2,16 @@
 page_title: "cloudflare_email_security_impersonation_registry Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Cloud Email Security: ReadCloud Email Security: Write
 ---
 
 # cloudflare_email_security_impersonation_registry (Data Source)
 
+Accepted Permissions
 
+- `Cloud Email Security: Read`
+- `Cloud Email Security: Write`
 
 ## Example Usage
 
@@ -23,12 +27,12 @@ data "cloudflare_email_security_impersonation_registry" "example_email_security_
 
 ### Required
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `display_name_id` (Number)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `impersonation_registry_id` (String) Impersonation registry entry identifier
 
 ### Read-Only
 
@@ -38,11 +42,12 @@ data "cloudflare_email_security_impersonation_registry" "example_email_security_
 - `directory_node_id` (Number)
 - `email` (String)
 - `external_directory_node_id` (String, Deprecated)
-- `id` (Number) The ID of this resource.
+- `id` (String) Impersonation registry entry identifier
 - `is_email_regex` (Boolean)
-- `last_modified` (String)
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 - `name` (String)
-- `provenance` (String)
+- `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -51,12 +56,9 @@ Optional:
 
 - `direction` (String) The sorting direction.
 Available values: "asc", "desc".
-- `order` (String) The field to sort by.
+- `order` (String) Field to sort by.
 Available values: "name", "email", "created_at".
 - `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
-- `search` (String) Allows searching in multiple properties of a record simultaneously.
-This parameter is intended for human users, not automation. Its exact
-behavior is intentionally left unspecified and is subject to change
-in the future.
+- `search` (String) Search term for filtering records. Behavior may change.
 
 

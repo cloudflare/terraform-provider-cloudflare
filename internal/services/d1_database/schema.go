@@ -19,6 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*D1DatabaseResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"D1 Read",
@@ -38,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{

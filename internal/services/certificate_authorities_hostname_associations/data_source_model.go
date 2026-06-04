@@ -18,7 +18,7 @@ type CertificateAuthoritiesHostnameAssociationsResultDataSourceEnvelope struct {
 
 type CertificateAuthoritiesHostnameAssociationsDataSourceModel struct {
 	ID                types.String                   `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	MTLSCertificateID types.String                   `tfsdk:"mtls_certificate_id" query:"mtls_certificate_id,optional"`
 	Hostnames         customfield.List[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
 }

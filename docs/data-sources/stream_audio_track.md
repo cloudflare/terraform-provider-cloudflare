@@ -2,12 +2,16 @@
 page_title: "cloudflare_stream_audio_track Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Stream ReadStream Write
 ---
 
 # cloudflare_stream_audio_track (Data Source)
 
+Accepted Permissions
 
+- `Stream Read`
+- `Stream Write`
 
 ## Example Usage
 
@@ -27,6 +31,13 @@ data "cloudflare_stream_audio_track" "example_stream_audio_track" {
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
 ### Read-Only
+
+- `audio` (Attributes List) Array of audio tracks for the video. (see [below for nested schema](#nestedatt--audio))
+
+<a id="nestedatt--audio"></a>
+### Nested Schema for `audio`
+
+Read-Only:
 
 - `default` (Boolean) Denotes whether the audio track will be played by default in a player.
 - `label` (String) A string to uniquely identify the track amongst other audio track labels for the specified video.

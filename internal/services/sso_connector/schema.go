@@ -22,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*SSOConnectorResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"SSO Connector Read",
@@ -36,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"email_domain": schema.StringAttribute{

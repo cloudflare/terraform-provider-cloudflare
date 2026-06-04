@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"worker_id": schema.StringAttribute{
 				Description: "Identifier for the Worker, which can be ID or name.",
