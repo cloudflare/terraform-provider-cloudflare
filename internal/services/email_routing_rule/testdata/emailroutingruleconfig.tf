@@ -10,6 +10,6 @@ resource "cloudflare_email_routing_rule" "%[1]s" {
   }]
   actions = [ {
     type = "forward"
-    value = ["destinationaddress@example.net"]
+    value = ["terraform-provider-acct@cloudflare.com"]
   }]
 }

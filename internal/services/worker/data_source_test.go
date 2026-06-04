@@ -48,6 +48,7 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"persist":            knownvalue.Bool(true),
+							"propagation_policy": knownvalue.StringExact("authenticated"),
 						}),
 					})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -74,10 +75,17 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 							"persist":            knownvalue.Bool(true),
 						}),
 						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
-							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
-							"enabled":            knownvalue.Bool(false),
+							"destinations": knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":      knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
-							"persist":            knownvalue.Bool(true),
+							"persist":      knownvalue.Bool(true),
+							// The Cloudflare Workers API does not currently echo
+							// observability.traces.propagation_policy in responses, so
+							// the data source surfaces it as null. The resource has a
+							// targeted state-preservation fallback for this field;
+							// data sources have no prior state so the null is the
+							// honest reflection of what the API returned.
+							"propagation_policy": knownvalue.Null(),
 						}),
 					})),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{

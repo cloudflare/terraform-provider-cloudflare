@@ -9,6 +9,6 @@ resource "cloudflare_email_routing_catch_all" "%[1]s" {
 
 	actions = [{
 		type = "forward"
-		value = ["destinationaddress@example.net"]
+		value = ["terraform-provider-acct@cloudflare.com"]
 	}]
 }

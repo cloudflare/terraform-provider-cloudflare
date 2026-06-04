@@ -213,10 +213,13 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 			},
 			// Step 5: Import
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"created_at", "updated_at"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				// status transitions asynchronously from "initializing" to "active"
+				// after Cloudflare provisions the fallback origin; the test can
+				// observe either value depending on timing.
+				ImportStateVerifyIgnore: []string{"created_at", "updated_at", "status"},
 			},
 		},
 	})

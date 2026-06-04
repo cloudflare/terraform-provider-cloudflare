@@ -233,10 +233,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"enable_encryption": schema.BoolAttribute{
-						Description: "Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt \nSAML assertions using the certificate from the assigned certificate set.\n\nTo enable encryption:\n1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`\n2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request\n3. Configure the public certificate in your external Identity Provider\n\nNote: Requires `saml_certificate_set_id` to be set when `true`.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						Description:   "Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt \nSAML assertions using the certificate from the assigned certificate set.\n\nTo enable encryption:\n1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`\n2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request\n3. Configure the public certificate in your external Identity Provider\n\nNote: Requires `saml_certificate_set_id` to be set when `true`.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
@@ -295,10 +295,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"restrict_to_account_members": schema.BoolAttribute{
-						Description: "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						Description:   "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
 				},
 			},
@@ -341,7 +341,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
 						Computed:    true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.UseNonNullStateForUnknown(),
 						},
 					},
 					"seat_deprovision": schema.BoolAttribute{
@@ -355,7 +355,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Sensitive:   true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.UseNonNullStateForUnknown(),
 						},
 					},
 					"user_deprovision": schema.BoolAttribute{
@@ -367,9 +367,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"saml_certificate_set": schema.SingleNestedAttribute{
-				Description: "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel](ctx),
+				Description:   "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"created_at": schema.StringAttribute{
 						Description: "Timestamp when the certificate set was created",
