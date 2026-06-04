@@ -8,11 +8,13 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -438,6 +440,94 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("json", "protobuf"),
 							},
 							Default: stringdefault.StaticString("json"),
+						},
+					},
+				},
+			},
+			"spend_limits": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AIGatewaySpendLimitsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Computed: true,
+						Optional: true,
+						Default:  booldefault.StaticBool(false),
+					},
+					"rules": schema.ListNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectListType[AIGatewaySpendLimitsRulesModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Required: true,
+								},
+								"limit": schema.Float64Attribute{
+									Required: true,
+									Validators: []validator.Float64{
+										float64validator.AtLeast(0),
+									},
+								},
+								"limit_type": schema.StringAttribute{
+									Description: `Available values: "cost".`,
+									Required:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("cost"),
+									},
+								},
+								"window": schema.Int64Attribute{
+									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(0),
+									},
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+									Optional: true,
+									Default:  booldefault.StaticBool(true),
+								},
+								"metadata": schema.MapNestedAttribute{
+									Optional: true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"mode": schema.StringAttribute{
+												Description: `Available values: "partition", "match".`,
+												Required:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("partition", "match"),
+												},
+											},
+											"value": schema.StringAttribute{
+												Optional: true,
+											},
+										},
+									},
+								},
+								"model": schema.StringAttribute{
+									Description: `Available values: "partition".`,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("partition"),
+									},
+								},
+								"ai_gateway_provider": schema.StringAttribute{
+									Description: `Available values: "partition".`,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("partition"),
+									},
+								},
+								"technique": schema.StringAttribute{
+									Description: `Available values: "fixed", "sliding".`,
+									Computed:    true,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("fixed", "sliding"),
+									},
+									Default: stringdefault.StaticString("sliding"),
+								},
+							},
 						},
 					},
 				},
