@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -432,6 +433,87 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("json", "protobuf"),
+							},
+						},
+					},
+				},
+			},
+			"spend_limits": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[AIGatewaySpendLimitsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Computed: true,
+					},
+					"rules": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[AIGatewaySpendLimitsRulesDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Computed: true,
+								},
+								"limit": schema.Float64Attribute{
+									Computed: true,
+									Validators: []validator.Float64{
+										float64validator.AtLeast(0),
+									},
+								},
+								"limit_type": schema.StringAttribute{
+									Description: `Available values: "cost".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("cost"),
+									},
+								},
+								"window": schema.Int64Attribute{
+									Computed: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(0),
+									},
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+								},
+								"metadata": schema.MapNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectMapType[AIGatewaySpendLimitsRulesMetadataDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"mode": schema.StringAttribute{
+												Description: `Available values: "partition", "match".`,
+												Computed:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("partition", "match"),
+												},
+											},
+											"value": schema.StringAttribute{
+												Computed: true,
+											},
+										},
+									},
+								},
+								"model": schema.StringAttribute{
+									Description: `Available values: "partition".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("partition"),
+									},
+								},
+								"ai_gateway_provider": schema.StringAttribute{
+									Description: `Available values: "partition".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("partition"),
+									},
+								},
+								"technique": schema.StringAttribute{
+									Description: `Available values: "fixed", "sliding".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("fixed", "sliding"),
+									},
+								},
 							},
 						},
 					},
