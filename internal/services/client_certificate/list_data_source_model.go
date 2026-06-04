@@ -5,8 +5,8 @@ package client_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/client_certificates"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/client_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,11 +26,10 @@ type ClientCertificatesDataSourceModel struct {
 }
 
 func (m *ClientCertificatesDataSourceModel) toListParams(_ context.Context) (params client_certificates.ClientCertificateListParams, diags diag.Diagnostics) {
-	params = client_certificates.ClientCertificateListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = client_certificates.ClientCertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Limit.IsNull() {
 		params.Limit = cloudflare.F(m.Limit.ValueInt64())
 	}

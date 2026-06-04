@@ -5,8 +5,8 @@ package email_security_trusted_domains
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_security"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_security"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,8 +17,8 @@ type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityTrustedDomainsDataSourceModel struct {
-	ID              types.Int64                                          `tfsdk:"id" path:"trusted_domain_id,computed"`
-	TrustedDomainID types.Int64                                          `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
+	ID              types.String                                         `tfsdk:"id" path:"trusted_domain_id,computed"`
+	TrustedDomainID types.String                                         `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
 	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt       timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -26,26 +26,24 @@ type EmailSecurityTrustedDomainsDataSourceModel struct {
 	IsRegex         types.Bool                                           `tfsdk:"is_regex" json:"is_regex,computed"`
 	IsSimilarity    types.Bool                                           `tfsdk:"is_similarity" json:"is_similarity,computed"`
 	LastModified    timetypes.RFC3339                                    `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt      timetypes.RFC3339                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern         types.String                                         `tfsdk:"pattern" json:"pattern,computed"`
 	Filter          *EmailSecurityTrustedDomainsFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *EmailSecurityTrustedDomainsDataSourceModel) toReadParams(_ context.Context) (params email_security.SettingTrustedDomainGetParams, diags diag.Diagnostics) {
-	params = email_security.SettingTrustedDomainGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingTrustedDomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *EmailSecurityTrustedDomainsDataSourceModel) toListParams(_ context.Context) (params email_security.SettingTrustedDomainListParams, diags diag.Diagnostics) {
-	params = email_security.SettingTrustedDomainListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingTrustedDomainListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingTrustedDomainListParamsDirection(m.Filter.Direction.ValueString()))
 	}

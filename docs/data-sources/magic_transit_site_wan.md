@@ -30,12 +30,9 @@ data "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 - `wan_id` (String) Identifier
-
-### Optional
-
-- `account_id` (String) Identifier
 
 ### Read-Only
 

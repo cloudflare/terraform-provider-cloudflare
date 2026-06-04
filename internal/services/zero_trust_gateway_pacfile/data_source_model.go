@@ -5,8 +5,8 @@ package zero_trust_gateway_pacfile
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type ZeroTrustGatewayPacfileDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayPacfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayPacfileGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayPacfileGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayPacfileGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

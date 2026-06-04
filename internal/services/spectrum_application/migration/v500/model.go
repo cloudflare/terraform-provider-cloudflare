@@ -79,6 +79,7 @@ type TargetSpectrumApplicationModel struct {
 	ProxyProtocol    types.String                                       `tfsdk:"proxy_protocol"`
 	TLS              types.String                                       `tfsdk:"tls"`
 	TrafficType      types.String                                       `tfsdk:"traffic_type"`
+	VirtualNetworkID types.String                                       `tfsdk:"virtual_network_id"`
 	EdgeIPs          customfield.NestedObject[TargetEdgeIPsModel]       `tfsdk:"edge_ips"`
 	CreatedOn        timetypes.RFC3339                                  `tfsdk:"created_on"`
 	ModifiedOn       timetypes.RFC3339                                  `tfsdk:"modified_on"`

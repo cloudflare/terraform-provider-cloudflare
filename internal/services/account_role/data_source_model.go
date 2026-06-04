@@ -5,8 +5,8 @@ package account_role
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,8 +17,8 @@ type AccountRoleResultDataSourceEnvelope struct {
 }
 
 type AccountRoleDataSourceModel struct {
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	RoleID      types.String                                                    `tfsdk:"role_id" path:"role_id,required"`
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Description types.String                                                    `tfsdk:"description" json:"description,computed"`
 	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
 	Name        types.String                                                    `tfsdk:"name" json:"name,computed"`
@@ -26,10 +26,8 @@ type AccountRoleDataSourceModel struct {
 }
 
 func (m *AccountRoleDataSourceModel) toReadParams(_ context.Context) (params accounts.RoleGetParams, diags diag.Diagnostics) {
-	params = accounts.RoleGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = accounts.RoleGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

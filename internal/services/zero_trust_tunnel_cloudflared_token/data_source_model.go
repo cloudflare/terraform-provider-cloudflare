@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,16 +16,14 @@ type ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredTokenDataSourceModel struct {
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	Token     types.String `tfsdk:"token" json:"token,computed"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredTokenGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelCloudflaredTokenGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelCloudflaredTokenGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

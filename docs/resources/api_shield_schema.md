@@ -38,6 +38,7 @@ resource "cloudflare_api_shield_schema" "example_api_shield_schema" {
 - `file` (String) Schema file bytes
 - `kind` (String) Kind of schema
 Available values: "openapi_v3".
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -45,7 +46,6 @@ Available values: "openapi_v3".
 - `schema_id` (String)
 - `validation_enabled` (String) Flag whether schema is enabled for validation.
 Available values: "true", "false".
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 

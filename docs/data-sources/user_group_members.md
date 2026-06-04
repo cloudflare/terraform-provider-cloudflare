@@ -41,8 +41,16 @@ Available values: "asc", "desc".
 
 ### Read-Only
 
-- `email` (String) The contact email address of the user.
 - `id` (String) User Group identifier tag.
+- `members` (Attributes List) List of members in the user group. (see [below for nested schema](#nestedatt--members))
+
+<a id="nestedatt--members"></a>
+### Nested Schema for `members`
+
+Read-Only:
+
+- `email` (String) The contact email address of the user.
+- `id` (String) Account member identifier.
 - `status` (String) The member's status in the account.
 Available values: "accepted", "pending".
 

@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -84,7 +84,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.DisplayNameID = ts[0].ID
+		data.ImpersonationRegistryID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)
@@ -97,7 +97,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultDataSourceEnvelope{*data}
 	_, err := d.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		data.DisplayNameID.ValueInt64(),
+		data.ImpersonationRegistryID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -113,7 +113,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 		return
 	}
 	data = &env.Result
-	data.ID = data.DisplayNameID
+	data.ID = data.ImpersonationRegistryID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

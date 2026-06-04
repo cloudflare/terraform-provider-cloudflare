@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_ai_controls_mcp_portals Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  MCP Portals ReadMCP Portals Write
 ---
 
 # cloudflare_zero_trust_access_ai_controls_mcp_portals (Data Source)
 
+Accepted Permissions
 
+- `MCP Portals Read`
+- `MCP Portals Write`
 
 ## Example Usage
 
@@ -59,8 +63,10 @@ Read-Only:
 - `default_disabled` (Boolean)
 - `description` (String)
 - `error` (String)
+- `error_details` (Attributes) (see [below for nested schema](#nestedatt--result--servers--error_details))
 - `hostname` (String)
 - `id` (String) server id
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New servers default to true; existing servers default to false. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
@@ -73,16 +79,29 @@ Read-Only:
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--result--servers--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--result--servers--updated_tools))
 
+<a id="nestedatt--result--servers--error_details"></a>
+### Nested Schema for `result.servers.error_details`
+
+Read-Only:
+
+- `cause` (String) Underlying error message
+- `is_upstream` (Boolean) True = MCP server returned an error. False = couldn't reach the server
+- `mcp_code` (Number) MCP protocol error code
+- `retryable` (Boolean) Whether the error is transient and worth retrying
+- `status_code` (Number) HTTP status code from the server
+
+
 <a id="nestedatt--result--servers--updated_prompts"></a>
 ### Nested Schema for `result.servers.updated_prompts`
 
 Read-Only:
 
-- `description` (String)
 - `enabled` (Boolean)
 - `name` (String)
 - `portal_alias` (String)
+- `portal_description` (String)
 - `server_alias` (String)
+- `server_description` (String)
 
 
 <a id="nestedatt--result--servers--updated_tools"></a>
@@ -90,10 +109,11 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
 - `enabled` (Boolean)
 - `name` (String)
 - `portal_alias` (String)
+- `portal_description` (String)
 - `server_alias` (String)
+- `server_description` (String)
 
 

@@ -18,12 +18,12 @@ description: |-
 
 - `account_id` (String)
 - `max_items` (Number) Max items to fetch, default: 1000
-- `namespace` (String)
-- `order_by` (String) Order By Column Name
+- `namespace` (String) Filter by namespace.
+- `order_by` (String) Field to order results by.
 Available values: "created_at".
-- `order_by_direction` (String) Order By Direction
+- `order_by_direction` (String) Order direction.
 Available values: "asc", "desc".
-- `search` (String) Search by id
+- `search` (String) Filter instances whose id contains this string (case-insensitive).
 
 ### Read-Only
 
@@ -38,6 +38,8 @@ Read-Only:
 - `aisearch_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
 - `cache` (Boolean)
 - `cache_threshold` (String) Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".
+- `cache_ttl` (Number) Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).
+Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.
 - `chunk_overlap` (Number)
 - `chunk_size` (Number)
 - `created_at` (String)
@@ -107,18 +109,7 @@ Available values: "porter", "trigram".
 Read-Only:
 
 - `created_from_aisearch_wizard` (Boolean)
-- `search_for_agents` (Attributes) (see [below for nested schema](#nestedatt--result--metadata--search_for_agents))
 - `worker_domain` (String)
-
-<a id="nestedatt--result--metadata--search_for_agents"></a>
-### Nested Schema for `result.metadata.search_for_agents`
-
-Read-Only:
-
-- `hostname` (String)
-- `zone_id` (String)
-- `zone_name` (String)
-
 
 
 <a id="nestedatt--result--public_endpoint_params"></a>
@@ -174,7 +165,7 @@ Read-Only:
 
 Read-Only:
 
-- `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--result--retrieval_options--boost_by))
+- `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--result--retrieval_options--boost_by))
 - `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.
 Available values: "and", "or".
 
@@ -183,9 +174,9 @@ Available values: "and", "or".
 
 Read-Only:
 
-- `direction` (String) Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional ��� defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
+- `direction` (String) Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
 Available values: "asc", "desc", "exists", "not_exists".
-- `field` (String) Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.
+- `field` (String) Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
 
 
 
@@ -227,8 +218,8 @@ Read-Only:
 
 Read-Only:
 
-- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options--content_selector))
-- `include_headers` (Map of String)
+- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected. (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options--content_selector))
+- `include_headers` (Map of String) Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).
 - `include_images` (Boolean)
 - `specific_sitemaps` (List of String) List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.
 - `use_browser_rendering` (Boolean)
@@ -239,7 +230,7 @@ Read-Only:
 Read-Only:
 
 - `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
-- `selector` (String) CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.
+- `selector` (String) CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.
 
 
 

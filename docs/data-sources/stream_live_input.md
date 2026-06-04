@@ -27,11 +27,8 @@ data "cloudflare_stream_live_input" "example_stream_live_input" {
 
 ### Required
 
-- `live_input_identifier` (String) A unique identifier for a live input.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `live_input_identifier` (String) A unique identifier for a live input.
 
 ### Read-Only
 

@@ -5,8 +5,8 @@ package cloudforce_one_request_message
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cloudforce_one"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cloudforce_one"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -34,10 +34,8 @@ type CloudforceOneRequestMessageDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestMessageDataSourceModel) toReadParams(_ context.Context) (params cloudforce_one.RequestMessageGetParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestMessageGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = cloudforce_one.RequestMessageGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

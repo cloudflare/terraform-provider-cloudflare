@@ -5,8 +5,8 @@ package magic_transit_site_wan
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,17 +17,15 @@ type MagicTransitSiteWANsResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteWANsDataSourceModel struct {
-	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,required"`
 	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	SiteID    types.String                                                            `tfsdk:"site_id" path:"site_id,required"`
 	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[MagicTransitSiteWANsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MagicTransitSiteWANsDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteWANListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteWANListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = magic_transit.SiteWANListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

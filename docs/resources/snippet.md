@@ -45,14 +45,12 @@ resource "cloudflare_snippet" "example_snippet" {
 - `files` (List of Object) The list of files belonging to the snippet. (see [below for nested schema](#nestedatt--files))
 - `metadata` (Attributes) Provide metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
 - `snippet_name` (String) Identify the snippet.
-
-### Optional
-
 - `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Read-Only
 
 - `created_on` (String) Indicates when the snippet was created.
+- `id` (String) Identify the snippet.
 - `modified_on` (String) Indicates when the snippet was last modified.
 
 <a id="nestedatt--files"></a>

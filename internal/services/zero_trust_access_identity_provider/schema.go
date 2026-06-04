@@ -10,6 +10,8 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -38,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -55,7 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description:   "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\".",
+				Description:   "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\".",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Validators: []validator.String{
@@ -74,6 +76,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"onelogin",
 						"pingone",
 						"yandex",
+						"cloudflare",
 					),
 				},
 			},
@@ -229,6 +232,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
 						},
 					},
+					"enable_encryption": schema.BoolAttribute{
+						Description:   "Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt \nSAML assertions using the certificate from the assigned certificate set.\n\nTo enable encryption:\n1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`\n2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request\n3. Configure the public certificate in your external Identity Provider\n\nNote: Requires `saml_certificate_set_id` to be set when `true`.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Optional:    true,
@@ -285,7 +294,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
 						},
 					},
+					"restrict_to_account_members": schema.BoolAttribute{
+						Description:   "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+					},
 				},
+			},
+			"saml_certificate_set_id": schema.StringAttribute{
+				Description: "The UID of the SAML encryption certificate set assigned to this Identity Provider.\nOnly present for SAML identity providers with encryption configured.\nCreate a certificate set via POST to `/identity_providers/{id}/saml_certificate`.",
+				Optional:    true,
 			},
 			"scim_config": schema.SingleNestedAttribute{
 				Description: "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",
@@ -322,7 +341,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
 						Computed:    true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.UseNonNullStateForUnknown(),
 						},
 					},
 					"seat_deprovision": schema.BoolAttribute{
@@ -336,7 +355,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Sensitive:   true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
+							stringplanmodifier.UseNonNullStateForUnknown(),
 						},
 					},
 					"user_deprovision": schema.BoolAttribute{
@@ -344,6 +363,57 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
+					},
+				},
+			},
+			"saml_certificate_set": schema.SingleNestedAttribute{
+				Description:   "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
+				Computed:      true,
+				CustomType:    customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel](ctx),
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
+				Attributes: map[string]schema.Attribute{
+					"created_at": schema.StringAttribute{
+						Description: "Timestamp when the certificate set was created",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"uid": schema.StringAttribute{
+						Description: "Unique identifier for the certificate set",
+						Computed:    true,
+					},
+					"updated_at": schema.StringAttribute{
+						Description: "Timestamp when the certificate set was last updated (e.g., during rotation)",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"current_certificate": schema.SingleNestedAttribute{
+						Description: "The currently active certificate used for encrypting SAML assertions",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSAMLCertificateSetCurrentCertificateModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"is_current": schema.BoolAttribute{
+								Description: "Indicates whether this is the currently active certificate",
+								Computed:    true,
+							},
+							"not_after": schema.StringAttribute{
+								Description: "Certificate expiration date. Certificates are automatically rotated 30 days before expiration.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"public_certificate": schema.StringAttribute{
+								Description: "PEM-encoded X.509 certificate containing the public key.\nConfigure this certificate in your external SAML Identity Provider to enable encryption.",
+								Computed:    true,
+							},
+							"uid": schema.StringAttribute{
+								Description: "Unique identifier for the certificate",
+								Computed:    true,
+							},
+						},
+					},
+					"previous_certificate": schema.StringAttribute{
+						Description: "The previous certificate, maintained during rotation to ensure continuity. Null if no rotation has occurred. Mirrors the structure of `saml_certificate`.",
+						Computed:    true,
+						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
 			},

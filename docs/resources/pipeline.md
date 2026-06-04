@@ -28,12 +28,9 @@ resource "cloudflare_pipeline" "example_pipeline" {
 
 ### Required
 
+- `account_id` (String) Specifies the public ID of the account.
 - `name` (String) Specifies the name of the Pipeline.
 - `sql` (String) Specifies SQL for the Pipeline processing flow.
-
-### Optional
-
-- `account_id` (String) Specifies the public ID of the account.
 
 ### Read-Only
 

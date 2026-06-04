@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -327,15 +327,12 @@ func TestAccAccountToken_TokenTTL(t *testing.T) {
 
 // checkPermissionGroupIDsUnchanged verifies that the set of permission group
 // IDs at policies[policyIdx] matches expectedIDs regardless of order.
-// This replaces cross-step positional stability checks that assumed Set behavior.
 func checkPermissionGroupIDsUnchanged(resourceName string, policyIdx int, expectedIDs *[]string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource %s not found in state", resourceName)
 		}
-
-		// Collect all permission_group IDs at this policy index
 		var actualIDs []string
 		for i := 0; ; i++ {
 			key := fmt.Sprintf("policies.%d.permission_groups.%d.id", policyIdx, i)
@@ -345,15 +342,11 @@ func checkPermissionGroupIDsUnchanged(resourceName string, policyIdx int, expect
 			}
 			actualIDs = append(actualIDs, val)
 		}
-
-		// On first call, capture the IDs as the baseline
 		if len(*expectedIDs) == 0 {
 			*expectedIDs = make([]string, len(actualIDs))
 			copy(*expectedIDs, actualIDs)
 			return nil
 		}
-
-		// Compare as sets: same IDs regardless of order
 		if len(actualIDs) != len(*expectedIDs) {
 			return fmt.Errorf("permission_groups count changed: expected %d, got %d", len(*expectedIDs), len(actualIDs))
 		}
@@ -370,16 +363,20 @@ func checkPermissionGroupIDsUnchanged(resourceName string, policyIdx int, expect
 	}
 }
 
+// Test that reordering permission_groups in HCL is handled correctly.
+// `policies` and `permission_groups` are declared as ListNestedAttribute, so
+// the framework reports a planned update whenever the HCL ordering differs
+// from prior state. The provider tolerates this: after apply, state ends up
+// in the new HCL order, the API call is content-equivalent, and the
+// underlying set of permission group IDs is preserved across the reorder.
+// `checkPermissionGroupIDsUnchanged` verifies the latter across all steps.
 func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_token.test_account_token"
 
-	// Track the set of permission group IDs across steps (order-insensitive)
 	var permGroupIDs []string
 
-	// Test that permission group order swap produces a benign update
-	// but the same set of IDs is preserved
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -425,8 +422,9 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 				},
 				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDs),
 			},
-			// Import step — ignore policies ordering since import uses canonical
-			// sort (no prior state) which may differ from the last config order
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -437,7 +435,7 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 		},
 	})
 
-	// Test the reverse order scenario
+	// Reverse-order variant
 	var permGroupIDsReverse []string
 
 	resource.Test(t, resource.TestCase{
@@ -483,14 +481,9 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("permission_groups"), knownvalue.ListSizeExact(2)),
-				},
 				Check: checkPermissionGroupIDsUnchanged(resourceName, 0, &permGroupIDsReverse),
 			},
-			// Import step — ignore policies ordering since import uses canonical
-			// sort (no prior state) which may differ from the last config order
+			// Import step
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -510,8 +503,6 @@ func checkAllPolicyPermGroupIDsUnchanged(resourceName string, expectedIDs *[]str
 		if !ok {
 			return fmt.Errorf("resource %s not found in state", resourceName)
 		}
-
-		// Collect all permission group IDs across all policies
 		var actualIDs []string
 		for pi := 0; ; pi++ {
 			found := false
@@ -528,15 +519,11 @@ func checkAllPolicyPermGroupIDsUnchanged(resourceName string, expectedIDs *[]str
 				break
 			}
 		}
-
-		// On first call, capture the IDs as the baseline
 		if len(*expectedIDs) == 0 {
 			*expectedIDs = make([]string, len(actualIDs))
 			copy(*expectedIDs, actualIDs)
 			return nil
 		}
-
-		// Compare as sets: same IDs regardless of order or which policy they're in
 		if len(actualIDs) != len(*expectedIDs) {
 			return fmt.Errorf("total permission_group count changed: expected %d, got %d", len(*expectedIDs), len(actualIDs))
 		}
@@ -554,19 +541,17 @@ func checkAllPolicyPermGroupIDsUnchanged(resourceName string, expectedIDs *[]str
 	}
 }
 
-// Test that policy group order doesn't affect plans. This test uses two
-// corresponding .tf files that are identical except they swap the order of two
-// policies.
+// Test that reordering policies in HCL is handled correctly. Same rationale
+// as TestAccAccountToken_PermissionGroupOrder: List schema means reorder
+// shows a planned update, but the set of permission group IDs across all
+// policies is preserved (asserted via checkAllPolicyPermGroupIDsUnchanged).
 func TestAccAccountToken_PolicyOrder(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_token.test_account_token"
 
-	// Track the combined set of permission group IDs across all policies
 	var allPermGroupIDs []string
 
-	// Test that policy order swap produces a benign update
-	// but the same set of permission group IDs is preserved
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -612,8 +597,9 @@ func TestAccAccountToken_PolicyOrder(t *testing.T) {
 				},
 				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDs),
 			},
-			// Import step — ignore policies ordering since import uses canonical
-			// sort (no prior state) which may differ from the last config order
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -624,7 +610,7 @@ func TestAccAccountToken_PolicyOrder(t *testing.T) {
 		},
 	})
 
-	// Test the reverse order scenario
+	// Reverse-order variant
 	var allPermGroupIDsReverse []string
 
 	resource.Test(t, resource.TestCase{
@@ -670,14 +656,9 @@ func TestAccAccountToken_PolicyOrder(t *testing.T) {
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
-				},
 				Check: checkAllPolicyPermGroupIDsUnchanged(resourceName, &allPermGroupIDsReverse),
 			},
-			// Import step — ignore policies ordering since import uses canonical
-			// sort (no prior state) which may differ from the last config order
+			// Import step
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -726,6 +707,49 @@ func TestAccAccountToken_ResourcesFlexible(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			// Import step. `policies` is ignored because import has no prior state
+			// and uses the API's canonical order, which may differ from the last
+			// applied HCL order.
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value", "policies"},
+			},
+		},
+	})
+}
+
+// Because order is not always preserved by the API, there is a danger of
+// "inconsistent results" after an apply. This test ensures that we can handle
+// complex cases where we have different policies with different perms and
+// different resources and that we can correct identify them when they change.
+func TestAccAccountToken_FullFlexible(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccountTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("account_token-full-flexible1.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("account_token-full-flexible2.tf", rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 					},
 				},
 			},

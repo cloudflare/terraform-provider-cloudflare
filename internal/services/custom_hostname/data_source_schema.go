@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -151,7 +151,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"certificate_authority": schema.StringAttribute{
-						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
+						Description: "The Certificate Authority that will issue the certificate.\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -469,11 +469,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("ssl", "ssl_status"),
 						},
 					},
-					"ssl": schema.Float64Attribute{
+					"ssl": schema.Int64Attribute{
 						Description: "Whether to filter hostnames based on if they have SSL enabled.\nAvailable values: 0, 1.",
+						Computed:    true,
 						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.OneOf(0, 1),
+						Validators: []validator.Int64{
+							int64validator.OneOf(0, 1),
 						},
 					},
 					"ssl_status": schema.StringAttribute{

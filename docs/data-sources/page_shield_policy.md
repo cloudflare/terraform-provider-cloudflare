@@ -32,9 +32,6 @@ data "cloudflare_page_shield_policy" "example_page_shield_policy" {
 ### Required
 
 - `policy_id` (String) Identifier
-
-### Optional
-
 - `zone_id` (String) Identifier
 
 ### Read-Only

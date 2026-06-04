@@ -5,8 +5,8 @@ package page_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_rules"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_rules"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,10 +27,8 @@ type PageRuleDataSourceModel struct {
 }
 
 func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params page_rules.PageRuleGetParams, diags diag.Diagnostics) {
-	params = page_rules.PageRuleGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_rules.PageRuleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

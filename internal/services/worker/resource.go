@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -154,6 +154,8 @@ func (r *WorkerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
+	prior := *data
+
 	res := new(http.Response)
 	env := WorkerResultEnvelope{*data}
 	_, err := r.client.Workers.Beta.Workers.Get(
@@ -181,6 +183,13 @@ func (r *WorkerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 	data = &env.Result
+
+	// The Cloudflare API does not consistently echo observability.traces.propagation_policy.
+	// Preserve the prior state value when the API omits it to avoid spurious refresh plans.
+	resp.Diagnostics.Append(preservePropagationPolicy(ctx, data, &prior)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -251,6 +260,15 @@ func (r *WorkerResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 	data = &env.Result
+
+	// On import we have no prior state, so synthesize one with the documented
+	// default for propagation_policy ("authenticated") so the field is not
+	// left null when the API omits it.
+	synthetic := importStateWithPropagationPolicyDefault(ctx)
+	resp.Diagnostics.Append(preservePropagationPolicy(ctx, data, synthetic)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -16,6 +16,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptSubdomainResource)(
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -29,14 +30,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"script_name": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{

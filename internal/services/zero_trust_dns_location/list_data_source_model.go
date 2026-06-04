@@ -5,8 +5,8 @@ package zero_trust_dns_location
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type ZeroTrustDNSLocationsDataSourceModel struct {
 }
 
 func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLocationListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayLocationListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -45,6 +43,7 @@ type ZeroTrustDNSLocationsResultDataSourceModel struct {
 	IP                        types.String                                                               `tfsdk:"ip" json:"ip,computed"`
 	IPV4Destination           types.String                                                               `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
 	IPV4DestinationBackup     types.String                                                               `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
+	MaxTTLSecs                types.Int64                                                                `tfsdk:"max_ttl_secs" json:"max_ttl_secs,computed"`
 	Name                      types.String                                                               `tfsdk:"name" json:"name,computed"`
 	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationsNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
 	UpdatedAt                 timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

@@ -24,6 +24,7 @@ var _ resource.ResourceWithConfigValidators = (*AIGatewayResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"AI Gateway Read",
@@ -34,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "gateway id",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
@@ -170,6 +171,217 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"profiles": schema.ListAttribute{
 									Required:    true,
 									ElementType: types.StringType,
+								},
+							},
+						},
+					},
+				},
+			},
+			"guardrails": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"prompt": schema.SingleNestedAttribute{
+						Required: true,
+						Attributes: map[string]schema.Attribute{
+							"p1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s10": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s11": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s12": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s13": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s2": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s3": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s4": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s5": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s6": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s7": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s8": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s9": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+						},
+					},
+					"response": schema.SingleNestedAttribute{
+						Required: true,
+						Attributes: map[string]schema.Attribute{
+							"p1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s10": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s11": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s12": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s13": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s2": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s3": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s4": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s5": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s6": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s7": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s8": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s9": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
 								},
 							},
 						},

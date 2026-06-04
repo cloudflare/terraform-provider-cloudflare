@@ -54,11 +54,8 @@ data "cloudflare_account_permission_group" "example_account_permission_group" {
 
 ### Required
 
-- `permission_group_id` (String) Permission Group identifier tag.
-
-### Optional
-
 - `account_id` (String) Account identifier tag.
+- `permission_group_id` (String) Permission Group identifier tag.
 
 ### Read-Only
 

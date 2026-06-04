@@ -27,11 +27,8 @@ data "cloudflare_stream_watermark" "example_stream_watermark" {
 
 ### Required
 
-- `identifier` (String) The unique identifier for a watermark profile.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `identifier` (String) The unique identifier for a watermark profile.
 
 ### Read-Only
 

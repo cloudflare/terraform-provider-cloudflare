@@ -79,11 +79,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `annotations` (Attributes) Metadata about the version. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker.
 
@@ -245,6 +245,10 @@ Required:
 
 - `limit` (Number) The limit (requests per period).
 - `period` (Number) The period in seconds.
+
+Optional:
+
+- `mitigation_timeout` (Number) Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.
 
 
 

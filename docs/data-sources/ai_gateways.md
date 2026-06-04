@@ -46,6 +46,7 @@ Read-Only:
 - `collect_logs` (Boolean)
 - `created_at` (String)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--result--dlp))
+- `guardrails` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails))
 - `id` (String) gateway id
 - `is_default` (Boolean)
 - `log_management` (Number)
@@ -87,6 +88,57 @@ Read-Only:
 - `enabled` (Boolean)
 - `id` (String)
 - `profiles` (List of String)
+
+
+
+<a id="nestedatt--result--guardrails"></a>
+### Nested Schema for `result.guardrails`
+
+Read-Only:
+
+- `prompt` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails--prompt))
+- `response` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails--response))
+
+<a id="nestedatt--result--guardrails--prompt"></a>
+### Nested Schema for `result.guardrails.prompt`
+
+Read-Only:
+
+- `p1` (String) Available values: "FLAG", "BLOCK".
+- `s1` (String) Available values: "FLAG", "BLOCK".
+- `s10` (String) Available values: "FLAG", "BLOCK".
+- `s11` (String) Available values: "FLAG", "BLOCK".
+- `s12` (String) Available values: "FLAG", "BLOCK".
+- `s13` (String) Available values: "FLAG", "BLOCK".
+- `s2` (String) Available values: "FLAG", "BLOCK".
+- `s3` (String) Available values: "FLAG", "BLOCK".
+- `s4` (String) Available values: "FLAG", "BLOCK".
+- `s5` (String) Available values: "FLAG", "BLOCK".
+- `s6` (String) Available values: "FLAG", "BLOCK".
+- `s7` (String) Available values: "FLAG", "BLOCK".
+- `s8` (String) Available values: "FLAG", "BLOCK".
+- `s9` (String) Available values: "FLAG", "BLOCK".
+
+
+<a id="nestedatt--result--guardrails--response"></a>
+### Nested Schema for `result.guardrails.response`
+
+Read-Only:
+
+- `p1` (String) Available values: "FLAG", "BLOCK".
+- `s1` (String) Available values: "FLAG", "BLOCK".
+- `s10` (String) Available values: "FLAG", "BLOCK".
+- `s11` (String) Available values: "FLAG", "BLOCK".
+- `s12` (String) Available values: "FLAG", "BLOCK".
+- `s13` (String) Available values: "FLAG", "BLOCK".
+- `s2` (String) Available values: "FLAG", "BLOCK".
+- `s3` (String) Available values: "FLAG", "BLOCK".
+- `s4` (String) Available values: "FLAG", "BLOCK".
+- `s5` (String) Available values: "FLAG", "BLOCK".
+- `s6` (String) Available values: "FLAG", "BLOCK".
+- `s7` (String) Available values: "FLAG", "BLOCK".
+- `s8` (String) Available values: "FLAG", "BLOCK".
+- `s9` (String) Available values: "FLAG", "BLOCK".
 
 
 

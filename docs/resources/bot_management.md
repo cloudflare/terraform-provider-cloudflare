@@ -2,12 +2,16 @@
 page_title: "cloudflare_bot_management Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Bot Management ReadBot Management Write
 ---
 
 # cloudflare_bot_management (Resource)
 
+Accepted Permissions
 
+- `Bot Management Read`
+- `Bot Management Write`
 
 ## Example Usage
 

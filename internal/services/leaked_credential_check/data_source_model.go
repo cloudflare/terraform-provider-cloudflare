@@ -5,8 +5,8 @@ package leaked_credential_check
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/leaked_credential_checks"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/leaked_credential_checks"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,10 +21,8 @@ type LeakedCredentialCheckDataSourceModel struct {
 }
 
 func (m *LeakedCredentialCheckDataSourceModel) toReadParams(_ context.Context) (params leaked_credential_checks.LeakedCredentialCheckGetParams, diags diag.Diagnostics) {
-	params = leaked_credential_checks.LeakedCredentialCheckGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = leaked_credential_checks.LeakedCredentialCheckGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

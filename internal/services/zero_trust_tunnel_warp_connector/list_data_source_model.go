@@ -5,8 +5,8 @@ package zero_trust_tunnel_warp_connector
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -39,11 +39,10 @@ func (m *ZeroTrustTunnelWARPConnectorsDataSourceModel) toListParams(_ context.Co
 	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelWARPConnectorListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.TunnelWARPConnectorListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.ExcludePrefix.IsNull() {
 		params.ExcludePrefix = cloudflare.F(m.ExcludePrefix.ValueString())
 	}

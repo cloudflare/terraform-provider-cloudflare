@@ -5,8 +5,8 @@ package zero_trust_gateway_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -44,10 +44,8 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayRuleGetParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayRuleGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayRuleGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

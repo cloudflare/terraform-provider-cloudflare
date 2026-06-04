@@ -5,8 +5,8 @@ package zone
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -22,6 +22,7 @@ type ZonesDataSourceModel struct {
 	Name      types.String                                             `tfsdk:"name" query:"name,optional"`
 	Order     types.String                                             `tfsdk:"order" query:"order,optional"`
 	Status    types.String                                             `tfsdk:"status" query:"status,optional"`
+	Type      *[]types.String                                          `tfsdk:"type" query:"type,optional"`
 	Account   *ZonesAccountDataSourceModel                             `tfsdk:"account" query:"account,optional"`
 	Match     types.String                                             `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems  types.Int64                                              `tfsdk:"max_items"`
@@ -29,7 +30,16 @@ type ZonesDataSourceModel struct {
 }
 
 func (m *ZonesDataSourceModel) toListParams(_ context.Context) (params zones.ZoneListParams, diags diag.Diagnostics) {
-	params = zones.ZoneListParams{}
+	mType := []zones.ZoneListParamsType{}
+	if m.Type != nil {
+		for _, item := range *m.Type {
+			mType = append(mType, zones.ZoneListParamsType(item.ValueString()))
+		}
+	}
+
+	params = zones.ZoneListParams{
+		Type: cloudflare.F(mType),
+	}
 
 	if m.Account != nil {
 		paramsAccount := zones.ZoneListParamsAccount{}

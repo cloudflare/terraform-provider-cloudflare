@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -41,12 +41,10 @@ func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context
 	}
 
 	params = zero_trust.NetworkRouteListParams{
-		TunTypes: cloudflare.F(mTunTypes),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		TunTypes:  cloudflare.F(mTunTypes),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
 	if !m.Comment.IsNull() {
 		params.Comment = cloudflare.F(m.Comment.ValueString())
 	}

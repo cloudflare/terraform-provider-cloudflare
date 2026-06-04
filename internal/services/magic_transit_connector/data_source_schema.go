@@ -7,11 +7,13 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"connector_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier",
@@ -102,6 +104,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"serial_number": schema.StringAttribute{
 						Computed: true,
 					},
+					"type": schema.StringAttribute{
+						Description: `Available values: "MANAGED", "LICENSED".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("MANAGED", "LICENSED"),
+						},
+					},
+				},
+			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"device_type": schema.StringAttribute{
+						Description: "Filter connectors by device type.\nAvailable values: \"MANAGED\", \"LICENSED\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("MANAGED", "LICENSED"),
+						},
+					},
 				},
 			},
 		},
@@ -113,5 +134,7 @@ func (d *MagicTransitConnectorDataSource) Schema(ctx context.Context, req dataso
 }
 
 func (d *MagicTransitConnectorDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("connector_id"), path.MatchRoot("filter")),
+	}
 }

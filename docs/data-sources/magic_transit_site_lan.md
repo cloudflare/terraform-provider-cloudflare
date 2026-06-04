@@ -30,12 +30,9 @@ data "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `lan_id` (String) Identifier
 - `site_id` (String) Identifier
-
-### Optional
-
-- `account_id` (String) Identifier
 
 ### Read-Only
 
@@ -101,10 +98,21 @@ Read-Only:
 
 Read-Only:
 
+- `dhcp_options` (Attributes List) Optional list of custom DHCP options to include in DHCP responses. Only valid when DHCP server is enabled. (see [below for nested schema](#nestedatt--static_addressing--dhcp_server--dhcp_options))
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
 - `dns_server` (String) A valid IPv4 address.
 - `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
+
+<a id="nestedatt--static_addressing--dhcp_server--dhcp_options"></a>
+### Nested Schema for `static_addressing.dhcp_server.dhcp_options`
+
+Read-Only:
+
+- `code` (Number) DHCP option number (1-254). Options 0 and 255 are reserved by RFC 2132. Options 3, 6, and 51 are not allowed because they conflict with connector-managed configuration.
+- `type` (String) The type of the option value. text: a string (max 255 bytes). hex: colon-separated hex bytes (e.g. "01:04:aa:bb:cc", max 255 bytes). ip: an IPv4 address (e.g. "10.20.30.40"). byte: an unsigned integer 0-255 (1 byte). short: an unsigned integer 0-65535 (2 bytes). integer: an unsigned integer 0-4294967295 (4 bytes).
+Available values: "text", "hex", "ip", "byte", "short", "integer".
+- `value` (String) The option value, interpreted according to the type field.
 
 

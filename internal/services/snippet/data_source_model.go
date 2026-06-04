@@ -5,8 +5,8 @@ package snippet
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/snippets"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/snippets"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,6 +17,7 @@ type SnippetResultDataSourceEnvelope struct {
 }
 
 type SnippetDataSourceModel struct {
+	ID          types.String      `tfsdk:"id" path:"snippet_name,computed"`
 	SnippetName types.String      `tfsdk:"snippet_name" path:"snippet_name,required"`
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -24,10 +25,8 @@ type SnippetDataSourceModel struct {
 }
 
 func (m *SnippetDataSourceModel) toReadParams(_ context.Context) (params snippets.SnippetGetParams, diags diag.Diagnostics) {
-	params = snippets.SnippetGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = snippets.SnippetGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

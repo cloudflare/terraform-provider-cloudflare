@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cache"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cache"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -65,7 +65,6 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +72,9 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	res := new(http.Response)
 	env := TieredCacheResultEnvelope{*data}
-	_, err = r.client.Cache.SmartTieredCache.Edit(
+	_, err = r.client.Cache.SmartTieredCache.New(
 		ctx,
-		cache.SmartTieredCacheEditParams{
+		cache.SmartTieredCacheNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -114,7 +113,6 @@ func (r *TieredCacheResource) Update(ctx context.Context, req resource.UpdateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -157,7 +155,6 @@ func (r *TieredCacheResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-
 	res := new(http.Response)
 	env := TieredCacheResultEnvelope{*data}
 	_, err := r.client.Cache.SmartTieredCache.Get(
@@ -197,7 +194,6 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.Cache.SmartTieredCache.Delete(
 		ctx,

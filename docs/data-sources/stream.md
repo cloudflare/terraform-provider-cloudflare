@@ -27,11 +27,8 @@ data "cloudflare_stream" "example_stream" {
 
 ### Required
 
-- `identifier` (String) A Cloudflare-generated unique identifier for a media item.
-
-### Optional
-
 - `account_id` (String) The account identifier tag.
+- `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
 ### Read-Only
 

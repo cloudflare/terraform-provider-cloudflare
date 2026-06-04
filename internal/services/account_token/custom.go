@@ -52,30 +52,7 @@ func UnmarshalCustom(data []byte, model *AccountTokenResultEnvelope) (err error)
 		return
 	}
 
-	// pull out the raw JSON values for each policy resource and map to the model
-	var base map[string]json.RawMessage
-	if err := json.Unmarshal(data, &base); err != nil {
-		return err
-	}
-	var result map[string]json.RawMessage
-	if err := json.Unmarshal(base["result"], &result); err != nil {
-		return err
-	}
-	var policyJsons []json.RawMessage
-	if err := json.Unmarshal(result["policies"], &policyJsons); err != nil {
-		return err
-	}
-	for i, policyJson := range policyJsons {
-		var policy map[string]json.RawMessage
-		if err := json.Unmarshal(policyJson, &policy); err != nil {
-			return err
-		}
-		(*model.Result.Policies)[i].Resources = types.StringValue(string(policy["resources"]))
-	}
-
-	// Reorder to match prior state (or canonical sort if no prior)
-	reorderPoliciesFromSnapshot(model.Result.Policies, snap)
-	return
+	return unmarshalCustomWithSnapshot(data, model, snap)
 }
 
 func UnmarshalComputedCustom(data []byte, model *AccountTokenResultEnvelope) (err error) {
@@ -91,6 +68,15 @@ func UnmarshalComputedCustom(data []byte, model *AccountTokenResultEnvelope) (er
 // unmarshalCustomWithSnapshot is like UnmarshalCustom but uses a provided
 // snapshot instead of capturing its own. apijson.Unmarshal is NOT called
 // because the caller has already done the initial unmarshal.
+//
+// Note: when this is reached via UnmarshalComputedCustom (update path),
+// apijson.UnmarshalComputed leaves the planned Policies slice in place
+// because the field is tagged "required", not "computed". That means the
+// model still carries the user's planned effect + permission_groups for
+// each policy, and only the Resources string still needs to be populated
+// from the API response. The API may reorder policies relative to what
+// was sent, so we must match by policy identity (effect + permission group
+// set), NOT by positional index.
 func unmarshalCustomWithSnapshot(data []byte, model *AccountTokenResultEnvelope, snap *policyOrderSnapshot) error {
 	// pull out the raw JSON values for each policy resource and map to the model
 	var base map[string]json.RawMessage
@@ -105,12 +91,82 @@ func unmarshalCustomWithSnapshot(data []byte, model *AccountTokenResultEnvelope,
 	if err := json.Unmarshal(result["policies"], &policyJsons); err != nil {
 		return err
 	}
-	for i, policyJson := range policyJsons {
-		var policy map[string]json.RawMessage
-		if err := json.Unmarshal(policyJson, &policy); err != nil {
+
+	// Parse each API policy into an identity (effect + permission group IDs)
+	// and a resources string so we can match by identity instead of by index.
+	type apiPolicy struct {
+		effect    string
+		pgIDs     []string
+		resources string
+	}
+	apiPolicies := make([]apiPolicy, 0, len(policyJsons))
+	for _, pj := range policyJsons {
+		var p struct {
+			Effect           string `json:"effect"`
+			PermissionGroups []struct {
+				ID string `json:"id"`
+			} `json:"permission_groups"`
+			Resources json.RawMessage `json:"resources"`
+		}
+		if err := json.Unmarshal(pj, &p); err != nil {
 			return err
 		}
-		(*model.Result.Policies)[i].Resources = types.StringValue(string(policy["resources"]))
+		ids := make([]string, len(p.PermissionGroups))
+		for i, pg := range p.PermissionGroups {
+			ids[i] = pg.ID
+		}
+		apiPolicies = append(apiPolicies, apiPolicy{
+			effect:    p.Effect,
+			pgIDs:     ids,
+			resources: string(p.Resources),
+		})
+	}
+
+	// identityKey is intentionally narrower than policyFingerprint: it omits
+	// resources because that's the field we're trying to assign. Sorting the
+	// permission group IDs makes the key invariant to PG order changes within
+	// a policy (those are handled later by reorderPoliciesFromSnapshot).
+	identityKey := func(effect string, pgIDs []string) string {
+		sorted := make([]string, len(pgIDs))
+		copy(sorted, pgIDs)
+		sort.Strings(sorted)
+		return effect + "|" + strings.Join(sorted, ",")
+	}
+
+	// Index API policies by identity. Use a slice of indices per key so that
+	// duplicate identities (multiple policies with the same effect + PG set
+	// but different resources) are consumed in encounter order.
+	available := make(map[string][]int, len(apiPolicies))
+	for i, ap := range apiPolicies {
+		k := identityKey(ap.effect, ap.pgIDs)
+		available[k] = append(available[k], i)
+	}
+
+	// For each model policy, find the matching API policy by identity and
+	// copy its resources string into the model. If no match is found (which
+	// shouldn't happen for a healthy round-trip), fall back to positional
+	// assignment to preserve previous behavior.
+	policies := *model.Result.Policies
+	for i, p := range policies {
+		var pgIDs []string
+		if p.PermissionGroups != nil {
+			pgIDs = make([]string, len(*p.PermissionGroups))
+			for j, pg := range *p.PermissionGroups {
+				pgIDs[j] = pg.ID.ValueString()
+			}
+		}
+		k := identityKey(p.Effect.ValueString(), pgIDs)
+		if idxs, ok := available[k]; ok && len(idxs) > 0 {
+			apIdx := idxs[0]
+			available[k] = idxs[1:]
+			policies[i].Resources = types.StringValue(apiPolicies[apIdx].resources)
+			continue
+		}
+		// Fallback: positional. Preserves prior (buggy) behavior only when
+		// identity lookup fails, which is better than dropping the value.
+		if i < len(apiPolicies) {
+			policies[i].Resources = types.StringValue(apiPolicies[i].resources)
+		}
 	}
 
 	// Reorder to match prior state (or canonical sort if no prior)

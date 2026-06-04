@@ -30,12 +30,9 @@ resource "cloudflare_pages_domain" "example_pages_domain" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `name` (String) The domain name.
 - `project_name` (String) Name of the project.
-
-### Optional
-
-- `account_id` (String) Identifier.
 
 ### Read-Only
 

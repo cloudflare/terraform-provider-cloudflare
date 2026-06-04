@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
@@ -33,6 +34,9 @@ var v4FullConfig string
 
 //go:embed testdata/v5_full.tf
 var v5FullConfig string
+
+//go:embed testdata/v5_object_attrs.tf
+var v5ObjectAttrsConfig string
 
 //go:embed testdata/v4_check_regions.tf
 var v4CheckRegionsConfig string
@@ -138,10 +142,12 @@ func TestMigrateLoadBalancerPool_V4ToV5_Basic(t *testing.T) {
 	}
 }
 
-// TestMigrateLoadBalancerPool_V4ToV5_FullConfig tests all optional attributes with complex transformations
-// Note: Only testing from_v4_latest because from_v5 with load_shedding/origin_steering creates a schema
-// conflict (v5 state uses objects, but v4 schema expects arrays). This is not a real-world scenario
-// since v5 users already have correct state format.
+// TestMigrateLoadBalancerPool_V4ToV5_FullConfig tests all optional attributes with complex transformations.
+//
+// Note: Historically this only tested from_v4_latest because from_v5 with load_shedding/origin_steering
+// triggered a schema conflict in the upgrader (v5 state uses objects, but the slot-0 PriorSchema was the
+// v4 list shape). That regression is now fixed (#7098) and explicitly covered by
+// TestMigrateLoadBalancerPool_FromEarlyV5_FullConfig below.
 func TestMigrateLoadBalancerPool_V4ToV5_FullConfig(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -362,4 +368,79 @@ func TestMigrateLoadBalancerPool_V4ToV5_CheckRegions(t *testing.T) {
 			})
 		})
 	}
+}
+
+// TestMigrateLoadBalancerPool_FromEarlyV5_ObjectAttrs is a regression test for #7098.
+//
+// Before the fix, state written by a pre-v5.19 provider at schema_version=0 with
+// the v5 object shape for `load_shedding` and `origin_steering` could not be
+// upgraded to the current schema_version=500. The framework rejected the state
+// pre-handler with:
+//
+//	AttributeName("origin_steering"): invalid JSON, expected "[", got "{"
+//
+// because slot 0 was registered with the v4 SDKv2 PriorSchema (list shape).
+//
+// This test exercises the exact failing path:
+//  1. Create the resource with v5.18.0 (state at schema_version=0, object shape).
+//  2. Switch to the local current provider — the state upgrader must transparently
+//     accept the object shape and emit an empty plan.
+//
+// We use v5_object_attrs.tf (no `header` block) instead of v5_full.tf because the
+// LB Pool API validates that any origin `header.host` values resolve via DNS against
+// the origin address, which would fail in CI for synthetic test domains and mask the
+// real regression we care about.
+func TestMigrateLoadBalancerPool_FromEarlyV5_ObjectAttrs(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := rnd
+	tmpDir := t.TempDir()
+	testConfig := fmt.Sprintf(v5ObjectAttrsConfig, rnd, accountID, name)
+	resourceName := fmt.Sprintf("cloudflare_load_balancer_pool.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			// Step 1: create with v5.18.0 (last release before schema_version bump to 500).
+			// State written at schema_version=0 with v5 object shape for load_shedding / origin_steering.
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.18.0",
+					},
+				},
+				Config: testConfig,
+			},
+			// Step 2: switch to local current provider. State upgrade runs (0 → 500).
+			// The handler must accept object-shaped load_shedding/origin_steering
+			// and produce a no-op plan.
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   testConfig,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.DebugNonEmptyPlan,
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("origin_steering").AtMapKey("policy"),
+						knownvalue.StringExact("random"),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("load_shedding").AtMapKey("default_policy"),
+						knownvalue.StringExact("random"),
+					),
+				},
+			},
+		},
+	})
 }

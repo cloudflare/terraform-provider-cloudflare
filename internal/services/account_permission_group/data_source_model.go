@@ -5,8 +5,8 @@ package account_permission_group
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/iam"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/iam"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,18 +17,16 @@ type AccountPermissionGroupResultDataSourceEnvelope struct {
 }
 
 type AccountPermissionGroupDataSourceModel struct {
+	AccountID         types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	PermissionGroupID types.String                                                        `tfsdk:"permission_group_id" path:"permission_group_id,required"`
-	AccountID         types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	ID                types.String                                                        `tfsdk:"id" json:"id,computed"`
 	Name              types.String                                                        `tfsdk:"name" json:"name,computed"`
 	Meta              customfield.NestedObject[AccountPermissionGroupMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m *AccountPermissionGroupDataSourceModel) toReadParams(_ context.Context) (params iam.PermissionGroupGetParams, diags diag.Diagnostics) {
-	params = iam.PermissionGroupGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = iam.PermissionGroupGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

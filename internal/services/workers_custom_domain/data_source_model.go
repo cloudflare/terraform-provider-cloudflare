@@ -5,8 +5,8 @@ package workers_custom_domain
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -29,21 +29,18 @@ type WorkersCustomDomainDataSourceModel struct {
 }
 
 func (m *WorkersCustomDomainDataSourceModel) toReadParams(_ context.Context) (params workers.DomainGetParams, diags diag.Diagnostics) {
-	params = workers.DomainGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.DomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
-	params = workers.DomainListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = workers.DomainListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Environment.IsNull() {
 		params.Environment = cloudflare.F(m.Filter.Environment.ValueString())
 	}

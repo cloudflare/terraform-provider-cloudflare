@@ -5,8 +5,8 @@ package zero_trust_device_custom_profile_local_domain_fallback
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,10 +26,8 @@ type ZeroTrustDeviceCustomProfileLocalDomainFallbackDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceCustomProfileLocalDomainFallbackDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyCustomFallbackDomainGetParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePolicyCustomFallbackDomainGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DevicePolicyCustomFallbackDomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

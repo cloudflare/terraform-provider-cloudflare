@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/custom_hostnames"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/custom_hostnames"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -213,10 +213,13 @@ func TestAccCloudflareCustomHostnameFallbackOrigin_FullLifecycle(t *testing.T) {
 			},
 			// Step 5: Import
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"created_at", "updated_at"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				// status transitions asynchronously from "initializing" to "active"
+				// after Cloudflare provisions the fallback origin; the test can
+				// observe either value depending on timing.
+				ImportStateVerifyIgnore: []string{"created_at", "updated_at", "status"},
 			},
 		},
 	})

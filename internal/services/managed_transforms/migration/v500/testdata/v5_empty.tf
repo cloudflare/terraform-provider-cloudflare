@@ -1,8 +1,3 @@
-import {
-  to = cloudflare_managed_transforms.%[1]s
-  id = "%[2]s"
-}
-
 resource "cloudflare_managed_transforms" "%[1]s" {
   zone_id = "%[2]s"
 

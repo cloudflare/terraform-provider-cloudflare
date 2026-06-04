@@ -28,12 +28,9 @@ data "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_a
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `asset_id` (String) UUID.
 - `request_id` (String) UUID.
-
-### Optional
-
-- `account_id` (String) Identifier.
 
 ### Read-Only
 

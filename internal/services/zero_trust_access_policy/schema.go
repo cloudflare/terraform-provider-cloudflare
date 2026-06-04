@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the policy",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -445,6 +445,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -729,6 +738,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -1009,6 +1027,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 									ElementType: types.StringType,
+								},
+							},
+						},
+						"cloudflare_account_member": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"account_id": schema.StringAttribute{
+									Description: "Identifier.",
+									Optional:    true,
 								},
 							},
 						},

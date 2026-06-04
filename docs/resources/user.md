@@ -39,6 +39,7 @@ resource "cloudflare_user" "example_user" {
 ### Read-Only
 
 - `betas` (List of String) Lists the betas that the user is participating in.
+- `email` (String) Current email address of the user.
 - `has_business_zones` (Boolean) Indicates whether user has any business zones
 - `has_enterprise_zones` (Boolean) Indicates whether user has any enterprise zones
 - `has_pro_zones` (Boolean) Indicates whether user has any pro zones

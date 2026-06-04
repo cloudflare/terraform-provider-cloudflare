@@ -11,24 +11,29 @@ var _ resource.ResourceWithUpgradeState = (*SpectrumApplicationResource)(nil)
 
 // UpgradeState registers state upgraders for schema version changes.
 //
-// Both v4 and v5 used schema_version=0 (neither set an explicit Version).
+// Schema version history:
+//   - v4 (SDKv2): schema_version=0, dns/origin_dns/edge_ips/origin_port_range as JSON arrays
+//   - early v5 (v5.0–v5.7): schema_version=0, same fields as JSON objects
+//   - v5 production (v5.0–v5.18, with stepping stone): schema_version=1
+//   - v5 current: schema_version=500
 //
-//   - Slot 0: no-op upgrader (safely bumps existing v5 users from 0→1)
+// Upgrade paths:
 //
-// Testing: schema returns version 500
-//   - Slot 0: v4→v5 full transformation (v4 state has schema_version=0)
-//   - Slot 1: v5 no-op (v5 users already bumped to version=1 in prod)
+//  1. schema_version=0 → 500: AMBIGUOUS between v4 (list shape) and early v5
+//     (object shape). PriorSchema MUST be nil — if we set it to the v4 source
+//     schema, the Plugin Framework rejects early-v5 state pre-handler with
+//     `AttributeName("dns"): invalid JSON, expected "[", got "{"` (see #7098).
+//     The handler reads req.RawState.JSON itself and routes accordingly.
+//
+//  2. schema_version=1 → 500: No-op for v5 production state.
 func (r *SpectrumApplicationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
 
-	sourceSchema := v500.SourceSpectrumApplicationSchema()
-
 	return map[int64]resource.StateUpgrader{
-		// Handle state from v4 provider (schema_version=0)
-		// Full transformation: arrays→objects, origin_port_range→origin_port, etc.
+		// schema_version=0 — ambiguous between v4 SDKv2 and early v5; format
+		// detection happens in the handler against req.RawState.JSON.
 		0: {
-			PriorSchema:   &sourceSchema,
-			StateUpgrader: v500.UpgradeFromV0,
+			StateUpgrader: v500.UpgradeFromV0Ambiguous,
 		},
 
 		// Handle state from v5 provider with version=1 (production dormant state)

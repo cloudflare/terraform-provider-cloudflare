@@ -30,9 +30,6 @@ data "cloudflare_token_validation_config" "example_token_validation_config" {
 ### Required
 
 - `config_id` (String) UUID.
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

@@ -30,12 +30,12 @@ resource "cloudflare_zero_trust_device_subnet" "example_zero_trust_device_subnet
 
 ### Required
 
+- `account_id` (String) Cloudflare account ID
 - `name` (String) A user-friendly name for the subnet.
 - `network` (String) The private IPv4 or IPv6 range defining the subnet, in CIDR notation.
 
 ### Optional
 
-- `account_id` (String) Cloudflare account ID
 - `comment` (String) An optional description of the subnet.
 - `is_default_network` (Boolean) If `true`, this is the default subnet for the account. There can only be one default subnet per account.
 

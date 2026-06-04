@@ -5,8 +5,8 @@ package email_security_impersonation_registry
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_security"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_security"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -28,11 +28,10 @@ type EmailSecurityImpersonationRegistriesDataSourceModel struct {
 }
 
 func (m *EmailSecurityImpersonationRegistriesDataSourceModel) toListParams(_ context.Context) (params email_security.SettingImpersonationRegistryListParams, diags diag.Diagnostics) {
-	params = email_security.SettingImpersonationRegistryListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingImpersonationRegistryListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingImpersonationRegistryListParamsDirection(m.Direction.ValueString()))
 	}
@@ -50,15 +49,16 @@ func (m *EmailSecurityImpersonationRegistriesDataSourceModel) toListParams(_ con
 }
 
 type EmailSecurityImpersonationRegistriesResultDataSourceModel struct {
-	ID                      types.Int64       `tfsdk:"id" json:"id,computed"`
-	CreatedAt               timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Email                   types.String      `tfsdk:"email" json:"email,computed"`
-	IsEmailRegex            types.Bool        `tfsdk:"is_email_regex" json:"is_email_regex,computed"`
-	LastModified            timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
-	Name                    types.String      `tfsdk:"name" json:"name,computed"`
+	ID                      types.String      `tfsdk:"id" json:"id,computed"`
 	Comments                types.String      `tfsdk:"comments" json:"comments,computed"`
+	CreatedAt               timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DirectoryID             types.Int64       `tfsdk:"directory_id" json:"directory_id,computed"`
 	DirectoryNodeID         types.Int64       `tfsdk:"directory_node_id" json:"directory_node_id,computed"`
+	Email                   types.String      `tfsdk:"email" json:"email,computed"`
 	ExternalDirectoryNodeID types.String      `tfsdk:"external_directory_node_id" json:"external_directory_node_id,computed"`
+	IsEmailRegex            types.Bool        `tfsdk:"is_email_regex" json:"is_email_regex,computed"`
+	LastModified            timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt              timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	Name                    types.String      `tfsdk:"name" json:"name,computed"`
 	Provenance              types.String      `tfsdk:"provenance" json:"provenance,computed"`
 }

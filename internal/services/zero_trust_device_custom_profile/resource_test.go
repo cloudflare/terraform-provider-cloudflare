@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -245,6 +245,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 }
 
 func TestAccCloudflareZeroTrustDeviceCustomProfile_VirtualNetworks(t *testing.T) {
+	t.Skip("This is a closed beta that your account must opt into")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

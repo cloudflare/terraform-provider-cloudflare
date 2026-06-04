@@ -50,10 +50,10 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--result--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
+- `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--result--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--result--variant))
 - `word_list` (String)
 
 <a id="nestedatt--result--confidence"></a>
@@ -79,8 +79,8 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 

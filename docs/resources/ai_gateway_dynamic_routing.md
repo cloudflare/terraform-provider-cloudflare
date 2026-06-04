@@ -37,13 +37,10 @@ resource "cloudflare_ai_gateway_dynamic_routing" "example_ai_gateway_dynamic_rou
 
 ### Required
 
+- `account_id` (String)
 - `elements` (Attributes List) (see [below for nested schema](#nestedatt--elements))
 - `gateway_id` (String)
 - `name` (String)
-
-### Optional
-
-- `account_id` (String)
 
 ### Read-Only
 
@@ -261,6 +258,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 
@@ -273,6 +271,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 ## Import

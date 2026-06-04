@@ -196,9 +196,14 @@ type TargetConditionModel struct {
 	Okta                 *TargetOktaModel                 `tfsdk:"okta"`
 	SAML                 *TargetSAMLModel                 `tfsdk:"saml"`
 	OIDC                 *TargetOIDCModel                 `tfsdk:"oidc"`
-	ServiceToken         *TargetServiceTokenModel         `tfsdk:"service_token"`
-	LinkedAppToken       *TargetLinkedAppTokenModel       `tfsdk:"linked_app_token"`
-	UserRiskScore        *TargetUserRiskScoreModel        `tfsdk:"user_risk_score"`
+	ServiceToken            *TargetServiceTokenModel            `tfsdk:"service_token"`
+	LinkedAppToken          *TargetLinkedAppTokenModel          `tfsdk:"linked_app_token"`
+	UserRiskScore           *TargetUserRiskScoreModel           `tfsdk:"user_risk_score"`
+	CloudflareAccountMember *TargetCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member"`
+}
+
+type TargetCloudflareAccountMemberModel struct {
+	AccountID types.String `tfsdk:"account_id"`
 }
 
 type TargetUserRiskScoreModel struct {
