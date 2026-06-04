@@ -697,6 +697,18 @@ func TestAccAPIToken_ResourcesFlexible(t *testing.T) {
 // complex cases where we have different policies with different perms and
 // different resources and that we can correct identify them when they change.
 func TestAccApiToken_FullFlexible(t *testing.T) {
+	// The fixture uses permission groups that require the CI runner's API
+	// credentials to hold "Account API Tokens Write". The test consistently
+	// fails in CI with:
+	//
+	//   400 Bad Request {"errors":[{"code":1001,"message":"Failed common
+	//   permission check against resources. (Permission group: \"Account API
+	//   Tokens Write\")"}]}
+	//
+	// This is an account/credential entitlement issue, not a provider bug.
+	// Re-enable once the CI credentials have the required permission.
+	t.Skip("requires \"Account API Tokens Write\" permission on the CI API credentials; tracked separately")
+
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_api_token.test_account_token"
