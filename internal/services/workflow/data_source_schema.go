@@ -89,6 +89,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"schedules": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[WorkflowSchedulesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"cron": schema.StringAttribute{
+							Computed: true,
+						},
+						"next_instance": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
