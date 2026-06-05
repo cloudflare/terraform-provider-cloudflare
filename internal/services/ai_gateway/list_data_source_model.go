@@ -132,20 +132,30 @@ type AIGatewaysSpendLimitsDataSourceModel struct {
 }
 
 type AIGatewaysSpendLimitsRulesDataSourceModel struct {
-	ID                types.String                                                                   `tfsdk:"id" json:"id,computed"`
-	Limit             types.Float64                                                                  `tfsdk:"limit" json:"limit,computed"`
-	LimitType         types.String                                                                   `tfsdk:"limit_type" json:"limitType,computed"`
-	Window            types.Int64                                                                    `tfsdk:"window" json:"window,computed"`
-	Enabled           types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed"`
-	Metadata          customfield.NestedObjectMap[AIGatewaysSpendLimitsRulesMetadataDataSourceModel] `tfsdk:"metadata" json:"metadata,computed"`
-	Model             types.String                                                                   `tfsdk:"model" json:"model,computed"`
-	AIGatewayProvider types.String                                                                   `tfsdk:"ai_gateway_provider" json:"provider,computed"`
-	Technique         types.String                                                                   `tfsdk:"technique" json:"technique,computed"`
+	Limit             types.Float64                                                                        `tfsdk:"limit" json:"limit,computed"`
+	LimitType         types.String                                                                         `tfsdk:"limit_type" json:"limitType,computed"`
+	Window            types.Int64                                                                          `tfsdk:"window" json:"window,computed"`
+	ID                types.String                                                                         `tfsdk:"id" json:"id,computed"`
+	Enabled           types.Bool                                                                           `tfsdk:"enabled" json:"enabled,computed"`
+	Metadata          customfield.NestedObjectMap[AIGatewaysSpendLimitsRulesMetadataDataSourceModel]       `tfsdk:"metadata" json:"metadata,computed"`
+	Model             customfield.NestedObject[AIGatewaysSpendLimitsRulesModelDataSourceModel]             `tfsdk:"model" json:"model,computed"`
+	AIGatewayProvider customfield.NestedObject[AIGatewaysSpendLimitsRulesAIGatewayProviderDataSourceModel] `tfsdk:"ai_gateway_provider" json:"provider,computed"`
+	Technique         types.String                                                                         `tfsdk:"technique" json:"technique,computed"`
 }
 
 type AIGatewaysSpendLimitsRulesMetadataDataSourceModel struct {
-	Mode  types.String `tfsdk:"mode" json:"mode,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
+}
+
+type AIGatewaysSpendLimitsRulesModelDataSourceModel struct {
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
+}
+
+type AIGatewaysSpendLimitsRulesAIGatewayProviderDataSourceModel struct {
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
 }
 
 type AIGatewaysStripeDataSourceModel struct {

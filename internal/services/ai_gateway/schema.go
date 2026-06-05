@@ -461,9 +461,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectListType[AIGatewaySpendLimitsRulesModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
-								"id": schema.StringAttribute{
-									Required: true,
-								},
 								"limit": schema.Float64Attribute{
 									Required: true,
 									Validators: []validator.Float64{
@@ -483,6 +480,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										int64validator.AtLeast(0),
 									},
 								},
+								"id": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+									Default:  stringdefault.StaticString("e608f00a"),
+								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
 									Optional: true,
@@ -493,30 +495,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"mode": schema.StringAttribute{
-												Description: `Available values: "partition", "match".`,
+												Description: `Available values: "partition", "filter".`,
 												Required:    true,
 												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("partition", "match"),
+													stringvalidator.OneOfCaseInsensitive("partition", "filter"),
 												},
 											},
-											"value": schema.StringAttribute{
-												Optional: true,
+											"values": schema.ListAttribute{
+												Optional:    true,
+												ElementType: types.StringType,
 											},
 										},
 									},
 								},
-								"model": schema.StringAttribute{
-									Description: `Available values: "partition".`,
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("partition"),
+								"model": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: `Available values: "filter".`,
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("filter"),
+											},
+										},
+										"values": schema.ListAttribute{
+											Required:    true,
+											ElementType: types.StringType,
+										},
 									},
 								},
-								"ai_gateway_provider": schema.StringAttribute{
-									Description: `Available values: "partition".`,
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("partition"),
+								"ai_gateway_provider": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: `Available values: "filter".`,
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("filter"),
+											},
+										},
+										"values": schema.ListAttribute{
+											Required:    true,
+											ElementType: types.StringType,
+										},
 									},
 								},
 								"technique": schema.StringAttribute{
