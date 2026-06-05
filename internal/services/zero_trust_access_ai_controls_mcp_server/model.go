@@ -22,12 +22,12 @@ type ZeroTrustAccessAIControlsMcpServerModel struct {
 	Name                         types.String                                                                  `tfsdk:"name" json:"name,required"`
 	AuthCredentials              types.String                                                                  `tfsdk:"auth_credentials" json:"auth_credentials,optional,no_refresh"`
 	Description                  types.String                                                                  `tfsdk:"description" json:"description,optional"`
+	IsSharedOAuthCallbackEnabled types.Bool                                                                    `tfsdk:"is_shared_oauth_callback_enabled" json:"is_shared_oauth_callback_enabled,optional"`
 	UpdatedPrompts               *[]*ZeroTrustAccessAIControlsMcpServerUpdatedPromptsModel                     `tfsdk:"updated_prompts" json:"updated_prompts,optional"`
 	UpdatedTools                 *[]*ZeroTrustAccessAIControlsMcpServerUpdatedToolsModel                       `tfsdk:"updated_tools" json:"updated_tools,optional"`
 	CreatedAt                    timetypes.RFC3339                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                  `tfsdk:"created_by" json:"created_by,computed"`
 	Error                        types.String                                                                  `tfsdk:"error" json:"error,computed"`
-	IsSharedOAuthCallbackEnabled types.Bool                                                                    `tfsdk:"is_shared_oauth_callback_enabled" json:"is_shared_oauth_callback_enabled,computed"`
 	LastSuccessfulSync           timetypes.RFC3339                                                             `tfsdk:"last_successful_sync" json:"last_successful_sync,computed" format:"date-time"`
 	LastSynced                   timetypes.RFC3339                                                             `tfsdk:"last_synced" json:"last_synced,computed" format:"date-time"`
 	ModifiedAt                   timetypes.RFC3339                                                             `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`

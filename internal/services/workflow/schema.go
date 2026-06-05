@@ -61,6 +61,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"schedules": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"cron": schema.StringAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
