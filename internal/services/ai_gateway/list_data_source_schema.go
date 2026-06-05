@@ -451,9 +451,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectListType[AIGatewaysSpendLimitsRulesDataSourceModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Computed: true,
-											},
 											"limit": schema.Float64Attribute{
 												Computed: true,
 												Validators: []validator.Float64{
@@ -473,6 +470,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													int64validator.AtLeast(0),
 												},
 											},
+											"id": schema.StringAttribute{
+												Computed: true,
+											},
 											"enabled": schema.BoolAttribute{
 												Computed: true,
 											},
@@ -482,30 +482,54 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												NestedObject: schema.NestedAttributeObject{
 													Attributes: map[string]schema.Attribute{
 														"mode": schema.StringAttribute{
-															Description: `Available values: "partition", "match".`,
+															Description: `Available values: "partition", "filter".`,
 															Computed:    true,
 															Validators: []validator.String{
-																stringvalidator.OneOfCaseInsensitive("partition", "match"),
+																stringvalidator.OneOfCaseInsensitive("partition", "filter"),
 															},
 														},
-														"value": schema.StringAttribute{
-															Computed: true,
+														"values": schema.ListAttribute{
+															Computed:    true,
+															CustomType:  customfield.NewListType[types.String](ctx),
+															ElementType: types.StringType,
 														},
 													},
 												},
 											},
-											"model": schema.StringAttribute{
-												Description: `Available values: "partition".`,
-												Computed:    true,
-												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("partition"),
+											"model": schema.SingleNestedAttribute{
+												Computed:   true,
+												CustomType: customfield.NewNestedObjectType[AIGatewaysSpendLimitsRulesModelDataSourceModel](ctx),
+												Attributes: map[string]schema.Attribute{
+													"mode": schema.StringAttribute{
+														Description: `Available values: "filter".`,
+														Computed:    true,
+														Validators: []validator.String{
+															stringvalidator.OneOfCaseInsensitive("filter"),
+														},
+													},
+													"values": schema.ListAttribute{
+														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
+														ElementType: types.StringType,
+													},
 												},
 											},
-											"ai_gateway_provider": schema.StringAttribute{
-												Description: `Available values: "partition".`,
-												Computed:    true,
-												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("partition"),
+											"ai_gateway_provider": schema.SingleNestedAttribute{
+												Computed:   true,
+												CustomType: customfield.NewNestedObjectType[AIGatewaysSpendLimitsRulesAIGatewayProviderDataSourceModel](ctx),
+												Attributes: map[string]schema.Attribute{
+													"mode": schema.StringAttribute{
+														Description: `Available values: "filter".`,
+														Computed:    true,
+														Validators: []validator.String{
+															stringvalidator.OneOfCaseInsensitive("filter"),
+														},
+													},
+													"values": schema.ListAttribute{
+														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
+														ElementType: types.StringType,
+													},
 												},
 											},
 											"technique": schema.StringAttribute{

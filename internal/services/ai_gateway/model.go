@@ -127,18 +127,28 @@ type AIGatewaySpendLimitsModel struct {
 }
 
 type AIGatewaySpendLimitsRulesModel struct {
-	ID                types.String                                       `tfsdk:"id" json:"id,required"`
 	Limit             types.Float64                                      `tfsdk:"limit" json:"limit,required"`
 	LimitType         types.String                                       `tfsdk:"limit_type" json:"limitType,required"`
 	Window            types.Int64                                        `tfsdk:"window" json:"window,required"`
+	ID                types.String                                       `tfsdk:"id" json:"id,computed_optional"`
 	Enabled           types.Bool                                         `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Metadata          *map[string]AIGatewaySpendLimitsRulesMetadataModel `tfsdk:"metadata" json:"metadata,optional"`
-	Model             types.String                                       `tfsdk:"model" json:"model,optional"`
-	AIGatewayProvider types.String                                       `tfsdk:"ai_gateway_provider" json:"provider,optional"`
+	Model             *AIGatewaySpendLimitsRulesModelModel               `tfsdk:"model" json:"model,optional"`
+	AIGatewayProvider *AIGatewaySpendLimitsRulesAIGatewayProviderModel   `tfsdk:"ai_gateway_provider" json:"provider,optional"`
 	Technique         types.String                                       `tfsdk:"technique" json:"technique,computed_optional"`
 }
 
 type AIGatewaySpendLimitsRulesMetadataModel struct {
-	Mode  types.String `tfsdk:"mode" json:"mode,required"`
-	Value types.String `tfsdk:"value" json:"value,optional"`
+	Mode   types.String    `tfsdk:"mode" json:"mode,required"`
+	Values *[]types.String `tfsdk:"values" json:"values,optional"`
+}
+
+type AIGatewaySpendLimitsRulesModelModel struct {
+	Mode   types.String    `tfsdk:"mode" json:"mode,required"`
+	Values *[]types.String `tfsdk:"values" json:"values,required"`
+}
+
+type AIGatewaySpendLimitsRulesAIGatewayProviderModel struct {
+	Mode   types.String    `tfsdk:"mode" json:"mode,required"`
+	Values *[]types.String `tfsdk:"values" json:"values,required"`
 }
