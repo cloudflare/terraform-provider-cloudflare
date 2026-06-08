@@ -150,6 +150,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store_secret"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share_recipient"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share_resource"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
@@ -586,6 +589,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		oauth_client.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
+		share.NewResource,
+		share_recipient.NewResource,
+		share_resource.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
@@ -979,6 +985,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		workflow.NewWorkflowDataSource,
 		workflow.NewWorkflowsDataSource,
+		share.NewShareDataSource,
+		share.NewSharesDataSource,
+		share_recipient.NewShareRecipientDataSource,
+		share_recipient.NewShareRecipientsDataSource,
+		share_resource.NewShareResourceDataSource,
+		share_resource.NewShareResourcesDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRuleDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
