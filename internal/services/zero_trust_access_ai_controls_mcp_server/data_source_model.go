@@ -33,6 +33,7 @@ type ZeroTrustAccessAIControlsMcpServerDataSourceModel struct {
 	ModifiedAt                   timetypes.RFC3339                                                                             `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                   types.String                                                                                  `tfsdk:"modified_by" json:"modified_by,computed"`
 	Name                         types.String                                                                                  `tfsdk:"name" json:"name,computed"`
+	SecureWebGateway             types.Bool                                                                                    `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
 	Status                       types.String                                                                                  `tfsdk:"status" json:"status,computed"`
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                       `tfsdk:"prompts" json:"prompts,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                       `tfsdk:"tools" json:"tools,computed"`

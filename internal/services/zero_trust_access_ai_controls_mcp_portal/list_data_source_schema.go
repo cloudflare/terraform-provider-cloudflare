@@ -162,6 +162,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"on_behalf": schema.BoolAttribute{
 										Computed: true,
 									},
+									"secure_web_gateway": schema.BoolAttribute{
+										Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+										Computed:    true,
+									},
 									"status": schema.StringAttribute{
 										Computed: true,
 									},

@@ -54,6 +54,7 @@ type ZeroTrustAccessAIControlsMcpServersResultDataSourceModel struct {
 	LastSynced                   timetypes.RFC3339                                                                              `tfsdk:"last_synced" json:"last_synced,computed" format:"date-time"`
 	ModifiedAt                   timetypes.RFC3339                                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                   types.String                                                                                   `tfsdk:"modified_by" json:"modified_by,computed"`
+	SecureWebGateway             types.Bool                                                                                     `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
 	Status                       types.String                                                                                   `tfsdk:"status" json:"status,computed"`
 	UpdatedPrompts               customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpServersUpdatedPromptsDataSourceModel] `tfsdk:"updated_prompts" json:"updated_prompts,computed"`
 	UpdatedTools                 customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpServersUpdatedToolsDataSourceModel]   `tfsdk:"updated_tools" json:"updated_tools,computed"`

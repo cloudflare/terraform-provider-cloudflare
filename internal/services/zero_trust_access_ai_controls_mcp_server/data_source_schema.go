@@ -86,6 +86,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Computed: true,
 			},
+			"secure_web_gateway": schema.BoolAttribute{
+				Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+				Computed:    true,
+			},
 			"status": schema.StringAttribute{
 				Computed: true,
 			},
