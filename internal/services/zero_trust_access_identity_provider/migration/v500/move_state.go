@@ -21,6 +21,16 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 	tflog.Info(ctx, "Moving state from cloudflare_access_identity_provider")
 
 	var sourceState SourceAccessIdentityProviderModel
+	if req.SourceState == nil {
+		resp.Diagnostics.AddError(
+			"Unable to Read Source State",
+			"The source state for "+req.SourceTypeName+" could not be decoded. "+
+				"This typically occurs when the state file uses the legacy flatmap format "+
+				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
+				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
+		)
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return

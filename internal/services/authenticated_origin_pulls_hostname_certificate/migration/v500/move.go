@@ -16,6 +16,16 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 
 	// Read v4 state into v4 model
 	var v4Model V4Model
+	if req.SourceState == nil {
+		resp.Diagnostics.AddError(
+			"Unable to Read Source State",
+			"The source state for "+req.SourceTypeName+" could not be decoded. "+
+				"This typically occurs when the state file uses the legacy flatmap format "+
+				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
+				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
+		)
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &v4Model)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Error(ctx, "Failed to get source state during move")

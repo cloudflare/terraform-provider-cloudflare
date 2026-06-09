@@ -38,6 +38,16 @@ func MoveState(
 
 	// Parse the source state (v4 SDKv2 format)
 	var sourceState SourceV4ZeroTrustAccessGroupModel
+	if req.SourceState == nil {
+		resp.Diagnostics.AddError(
+			"Unable to Read Source State",
+			"The source state for "+req.SourceTypeName+" could not be decoded. "+
+				"This typically occurs when the state file uses the legacy flatmap format "+
+				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
+				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
+		)
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return
