@@ -142,6 +142,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_data_catalog"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
@@ -468,6 +469,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		page_shield_policy.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
+		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		dls_prefix_binding.NewResource,
@@ -775,6 +777,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
+		regional_hostname.NewRegionalHostnameDataSource,
+		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
 		address_map.NewAddressMapsDataSource,
 		byo_ip_prefix.NewByoIPPrefixDataSource,
