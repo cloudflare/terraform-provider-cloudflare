@@ -115,7 +115,9 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 	res := new(http.Response)
 	_, err = r.client.Accounts.Update(
 		ctx,
-		accounts.AccountUpdateParams{},
+		accounts.AccountUpdateParams{
+        	AccountID: cloudflare.F(state.ID.ValueString()),
+    	},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
