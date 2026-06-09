@@ -84,8 +84,9 @@ func (m *OrganizationDataSourceModel) toListParams(_ context.Context) (params or
 }
 
 type OrganizationMetaDataSourceModel struct {
-	Flags     customfield.NestedObject[OrganizationMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
-	ManagedBy types.String                                                   `tfsdk:"managed_by" json:"managed_by,computed"`
+	Flags         customfield.NestedObject[OrganizationMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
+	HierarchyTags customfield.List[types.String]                                 `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy     types.String                                                   `tfsdk:"managed_by" json:"managed_by,computed"`
 }
 
 type OrganizationMetaFlagsDataSourceModel struct {
