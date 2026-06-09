@@ -85,6 +85,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_app"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_flag"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/google_tag_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
@@ -663,6 +665,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		ai_gateway.NewResource,
 		ai_gateway_dynamic_routing.NewResource,
+		flagship_app.NewResource,
+		flagship_flag.NewResource,
 		user_group.NewResource,
 		user_group_members.NewResource,
 		sso_connector.NewResource,
@@ -1062,6 +1066,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_gateway.NewAIGatewayDataSource,
 		ai_gateway.NewAIGatewaysDataSource,
 		ai_gateway_dynamic_routing.NewAIGatewayDynamicRoutingDataSource,
+		flagship_app.NewFlagshipAppDataSource,
+		flagship_app.NewFlagshipAppsDataSource,
+		flagship_flag.NewFlagshipFlagDataSource,
+		flagship_flag.NewFlagshipFlagsDataSource,
 		account_permission_group.NewAccountPermissionGroupDataSource,
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
