@@ -9,11 +9,13 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*D1DatabaseDataSource)(nil)
@@ -38,6 +40,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
 				Required:    true,
+			},
+			"fields": schema.ListAttribute{
+				Description: "Comma-separated list of fields to include in the response. When omitted,\nall fields are returned.",
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"uuid",
+							"name",
+							"created_at",
+							"version",
+							"jurisdiction",
+							"num_tables",
+							"file_size",
+							"running_in_region",
+							"read_replication",
+						),
+					),
+				},
+				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
