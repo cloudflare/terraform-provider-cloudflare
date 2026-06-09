@@ -131,6 +131,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"hierarchy_tags": schema.ListAttribute{
+									Description: "Ordered chain of organization tags from the root organization down to\n(and including) this organization itself. Root organizations return a\nsingle-element array containing their own tag; sub-organizations return\n`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for\nconstructing authorization scopes that need to cover every ancestor\nin the hierarchy.",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								"managed_by": schema.StringAttribute{
 									Computed: true,
 								},
