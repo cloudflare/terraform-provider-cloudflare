@@ -241,11 +241,17 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_class"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag_category"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_integration_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_level"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_level_order"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dns_location"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
@@ -630,6 +636,12 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_dlp_custom_entry.NewResource,
 		zero_trust_dlp_predefined_entry.NewResource,
 		zero_trust_dlp_integration_entry.NewResource,
+		zero_trust_dlp_sensitivity_group.NewResource,
+		zero_trust_dlp_sensitivity_level.NewResource,
+		zero_trust_dlp_sensitivity_level_order.NewResource,
+		zero_trust_dlp_data_tag_category.NewResource,
+		zero_trust_dlp_data_tag.NewResource,
+		zero_trust_dlp_data_class.NewResource,
 		zero_trust_gateway_settings.NewResource,
 		zero_trust_list.NewResource,
 		zero_trust_dns_location.NewResource,
@@ -1003,6 +1015,17 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dlp_predefined_entry.NewZeroTrustDLPPredefinedEntriesDataSource,
 		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntryDataSource,
 		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntriesDataSource,
+		zero_trust_dlp_sensitivity_group.NewZeroTrustDLPSensitivityGroupDataSource,
+		zero_trust_dlp_sensitivity_group.NewZeroTrustDLPSensitivityGroupsDataSource,
+		zero_trust_dlp_sensitivity_level.NewZeroTrustDLPSensitivityLevelDataSource,
+		zero_trust_dlp_sensitivity_level.NewZeroTrustDLPSensitivityLevelsDataSource,
+		zero_trust_dlp_sensitivity_level_order.NewZeroTrustDLPSensitivityLevelOrderDataSource,
+		zero_trust_dlp_data_tag_category.NewZeroTrustDLPDataTagCategoryDataSource,
+		zero_trust_dlp_data_tag_category.NewZeroTrustDLPDataTagCategoriesDataSource,
+		zero_trust_dlp_data_tag.NewZeroTrustDLPDataTagDataSource,
+		zero_trust_dlp_data_tag.NewZeroTrustDLPDataTagsDataSource,
+		zero_trust_dlp_data_class.NewZeroTrustDLPDataClassDataSource,
+		zero_trust_dlp_data_class.NewZeroTrustDLPDataClassesDataSource,
 		zero_trust_gateway_categories.NewZeroTrustGatewayCategoriesListDataSource,
 		zero_trust_gateway_app_types.NewZeroTrustGatewayAppTypesListDataSource,
 		zero_trust_gateway_settings.NewZeroTrustGatewaySettingsDataSource,
