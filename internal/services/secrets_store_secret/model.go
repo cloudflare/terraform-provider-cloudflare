@@ -9,6 +9,10 @@ import (
 )
 
 type SecretsStoreSecretResultEnvelope struct {
+	Result *[]*SecretsStoreSecretModel `json:"result"`
+}
+
+type SecretsStoreSecretSingleResultEnvelope struct {
 	Result SecretsStoreSecretModel `json:"result"`
 }
 
@@ -18,10 +22,10 @@ type SecretsStoreSecretModel struct {
 	StoreID   types.String      `tfsdk:"store_id" path:"store_id,required"`
 	Comment   types.String      `tfsdk:"comment" json:"comment,optional"`
 	Value     types.String      `tfsdk:"value" json:"value,optional,no_refresh"`
-	Scopes    *[]types.String   `tfsdk:"scopes" json:"scopes,optional"`
+	Scopes    *[]types.String   `tfsdk:"scopes" json:"scopes,required"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
+	Name      types.String      `tfsdk:"name" json:"name,required"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
