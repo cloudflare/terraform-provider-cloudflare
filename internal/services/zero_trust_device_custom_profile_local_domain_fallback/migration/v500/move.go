@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -12,17 +13,17 @@ import (
 //
 // This is triggered by Terraform 1.8+ when it encounters a `moved` block:
 //
-//   moved {
-//     from = cloudflare_zero_trust_local_fallback_domain.example
-//     to   = cloudflare_zero_trust_device_custom_profile_local_domain_fallback.example
-//   }
+//	moved {
+//	  from = cloudflare_zero_trust_local_fallback_domain.example
+//	  to   = cloudflare_zero_trust_device_custom_profile_local_domain_fallback.example
+//	}
 //
 // or for the deprecated alias:
 //
-//   moved {
-//     from = cloudflare_fallback_domain.example
-//     to   = cloudflare_zero_trust_device_custom_profile_local_domain_fallback.example
-//   }
+//	moved {
+//	  from = cloudflare_fallback_domain.example
+//	  to   = cloudflare_zero_trust_device_custom_profile_local_domain_fallback.example
+//	}
 //
 // This handler is called when:
 // - The legacy resource has a policy_id (custom profile path)
@@ -34,9 +35,9 @@ func MoveFallbackDomainToCustomProfile(ctx context.Context, req resource.MoveSta
 	if req.SourceTypeName != "cloudflare_zero_trust_local_fallback_domain" && req.SourceTypeName != "cloudflare_fallback_domain" {
 		tflog.Warn(ctx, "MoveFallbackDomainToCustomProfile called with unexpected source type",
 			map[string]any{
-				"source_type":           req.SourceTypeName,
-				"expected_types":        []string{"cloudflare_zero_trust_local_fallback_domain", "cloudflare_fallback_domain"},
-				"target_resource_type":  "cloudflare_zero_trust_device_custom_profile_local_domain_fallback",
+				"source_type":          req.SourceTypeName,
+				"expected_types":       []string{"cloudflare_zero_trust_local_fallback_domain", "cloudflare_fallback_domain"},
+				"target_resource_type": "cloudflare_zero_trust_device_custom_profile_local_domain_fallback",
 			})
 		// Don't handle this move - let Terraform try other handlers or fail
 		return
@@ -49,14 +50,7 @@ func MoveFallbackDomainToCustomProfile(ctx context.Context, req resource.MoveSta
 
 	// Parse the source state (legacy v4 format)
 	var sourceState SourceCloudflareFallbackDomainModel
-	if req.SourceState == nil {
-		resp.Diagnostics.AddError(
-			"Unable to Read Source State",
-			"The source state for "+req.SourceTypeName+" could not be decoded. "+
-				"This typically occurs when the state file uses the legacy flatmap format "+
-				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
-				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
-		)
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
 		return
 	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)

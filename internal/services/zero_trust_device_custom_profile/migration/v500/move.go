@@ -5,6 +5,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -43,14 +44,7 @@ func MoveDeviceProfilesToCustomProfile(ctx context.Context, req resource.MoveSta
 
 	// Read the source state using the v4 schema
 	var source SourceDeviceProfileModel
-	if req.SourceState == nil {
-		resp.Diagnostics.AddError(
-			"Unable to Read Source State",
-			"The source state for "+req.SourceTypeName+" could not be decoded. "+
-				"This typically occurs when the state file uses the legacy flatmap format "+
-				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
-				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
-		)
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
 		return
 	}
 	diags := req.SourceState.Get(ctx, &source)

@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -10,10 +11,10 @@ import (
 // MoveArgoToTieredCaching handles moving state from legacy cloudflare_argo to cloudflare_argo_tiered_caching.
 // This is triggered by Terraform 1.8+ when it encounters a `moved` block:
 //
-//   moved {
-//     from = cloudflare_argo.example
-//     to   = cloudflare_argo_tiered_caching.example
-//   }
+//	moved {
+//	  from = cloudflare_argo.example
+//	  to   = cloudflare_argo_tiered_caching.example
+//	}
 //
 // This handler is called when:
 // - Scenario 4: Only tiered_caching attribute exists (no smart_routing)
@@ -24,14 +25,7 @@ func MoveArgoToTieredCaching(ctx context.Context, req resource.MoveStateRequest,
 
 	// Parse the source state (legacy v4 cloudflare_argo format)
 	var sourceState SourceCloudflareArgoModel
-	if req.SourceState == nil {
-		resp.Diagnostics.AddError(
-			"Unable to Read Source State",
-			"The source state for "+req.SourceTypeName+" could not be decoded. "+
-				"This typically occurs when the state file uses the legacy flatmap format "+
-				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
-				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
-		)
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
 		return
 	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)

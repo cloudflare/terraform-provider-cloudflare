@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -10,13 +11,14 @@ import (
 // MoveState handles moving state from legacy resource to current resource.
 // This is triggered by Terraform 1.8+ when it encounters a `moved` block:
 //
-//   moved {
-//     from = cloudflare_authenticated_origin_pulls.example
-//     to   = cloudflare_authenticated_origin_pulls_settings.example
-//   }
+//	moved {
+//	  from = cloudflare_authenticated_origin_pulls.example
+//	  to   = cloudflare_authenticated_origin_pulls_settings.example
+//	}
 //
 // For Terraform < 1.8, users must manually run:
-//   terraform state mv cloudflare_authenticated_origin_pulls.example cloudflare_authenticated_origin_pulls_settings.example
+//
+//	terraform state mv cloudflare_authenticated_origin_pulls.example cloudflare_authenticated_origin_pulls_settings.example
 //
 // which will preserve the source schema_version and trigger UpgradeFromLegacyV0 instead.
 func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resource.MoveStateResponse) {
@@ -24,14 +26,7 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 
 	// Parse the source state (legacy v4 format)
 	var sourceState SourceCloudflareAuthenticatedOriginPullsModel
-	if req.SourceState == nil {
-		resp.Diagnostics.AddError(
-			"Unable to Read Source State",
-			"The source state for "+req.SourceTypeName+" could not be decoded. "+
-				"This typically occurs when the state file uses the legacy flatmap format "+
-				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
-				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
-		)
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
 		return
 	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)

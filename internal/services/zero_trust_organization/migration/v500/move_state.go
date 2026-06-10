@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -44,14 +45,7 @@ func MoveState(
 
 	// Parse the source state using the v4 source model
 	var sourceState SourceCloudflareAccessOrganizationModel
-	if req.SourceState == nil {
-		resp.Diagnostics.AddError(
-			"Unable to Read Source State",
-			"The source state for "+req.SourceTypeName+" could not be decoded. "+
-				"This typically occurs when the state file uses the legacy flatmap format "+
-				"from Terraform versions prior to 0.12. Run 'terraform apply -refresh-only' "+
-				"with the v4 provider to upgrade the state format, then retry the v5 migration.",
-		)
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
 		return
 	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
