@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -20,6 +21,9 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 	}
 
 	var source SourceTunnelCloudflaredModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &source)...)
 	if resp.Diagnostics.HasError() {
 		return

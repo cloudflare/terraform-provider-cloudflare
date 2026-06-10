@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -27,6 +28,9 @@ func MoveStateV4toV500(ctx context.Context, req resource.MoveStateRequest, resp 
 		})
 
 	var source SourceV4WorkersCustomDomainModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &source)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -33,6 +33,13 @@ security fixes.
 latest version of 4.x to ensure any transitional updates are applied to your
 existing configuration.
 
+~> If your Terraform state was originally created with Terraform 0.11 or earlier,
+it may use the legacy `attributes_flat` storage format. The v5 provider's state
+migration cannot read this format and will return an error. To check, inspect
+your `.tfstate` file for `"attributes_flat"` keys. If present, run
+`terraform apply -refresh-only` with the v4 provider to normalize the state
+before upgrading to v5.
+
 Once ready, make the following change to use the latest 5.x release:
 
 ```hcl

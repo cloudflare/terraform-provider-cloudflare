@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -18,6 +19,9 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 	tflog.Info(ctx, "Moving state from legacy cloudflare_managed_headers to cloudflare_managed_transforms")
 
 	var sourceState SourceManagedHeadersModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return

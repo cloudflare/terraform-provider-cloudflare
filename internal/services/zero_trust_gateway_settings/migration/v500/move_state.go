@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -24,6 +25,9 @@ func MoveFromCloudflareTeamsAccount(ctx context.Context, req resource.MoveStateR
 
 	// Parse the source state using the v4 source schema
 	var sourceState SourceV4ZeroTrustGatewaySettingsModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return
