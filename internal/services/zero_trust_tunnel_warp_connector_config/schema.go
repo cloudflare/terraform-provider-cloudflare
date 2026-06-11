@@ -19,6 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelWARPConnectorConf
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloudflare One Connector: WARP Read",
