@@ -78,7 +78,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"id": schema.StringAttribute{
-				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
+				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname', 'hostname.exact', 'hostname.contain', or 'hostname.startsWith' parameters.",
 				Optional:    true,
 			},
 			"ssl_status": schema.StringAttribute{
@@ -118,7 +118,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"contain": schema.StringAttribute{
-						Description: "Filters hostnames by a substring match on the hostname value. This parameter cannot be used with the 'id' parameter.",
+						Description: "Filters hostnames by a substring match on the hostname value. This parameter cannot be used with the 'id', 'hostname', 'hostname.exact', or 'hostname.startsWith' parameters.",
+						Optional:    true,
+					},
+					"exact": schema.StringAttribute{
+						Description: "Fully qualified domain name to match against. This parameter cannot be used with the 'id', 'hostname', 'hostname.contain', or 'hostname.startsWith' parameters.",
+						Optional:    true,
+					},
+					"starts_with": schema.StringAttribute{
+						Description: "Filters hostnames by a prefix match on the hostname value. This parameter cannot be used with the 'id', 'hostname', 'hostname.exact', or 'hostname.contain' parameters.",
 						Optional:    true,
 					},
 				},
