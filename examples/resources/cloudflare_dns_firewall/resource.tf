@@ -7,6 +7,7 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
     only_when_upstream_unhealthy = false
   }
   deprecate_any_requests = true
+  dns_firewall_ip_count = 2
   ecs_fallback = false
   maximum_cache_ttl = 900
   minimum_cache_ttl = 60

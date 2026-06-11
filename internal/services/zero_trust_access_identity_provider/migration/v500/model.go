@@ -72,6 +72,7 @@ type TargetAccessIdentityProviderModel struct {
 	Config               *TargetConfigModel                                      `tfsdk:"config"`
 	SAMLCertificateSetID types.String                                            `tfsdk:"saml_certificate_set_id"`
 	SCIMConfig           customfield.NestedObject[TargetScimConfigModel]         `tfsdk:"scim_config"`
+	ReadOnly             types.Bool                                              `tfsdk:"read_only"`
 	SAMLCertificateSet   customfield.NestedObject[TargetSAMLCertificateSetModel] `tfsdk:"saml_certificate_set"`
 }
 

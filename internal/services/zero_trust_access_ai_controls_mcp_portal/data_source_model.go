@@ -73,6 +73,7 @@ type ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel struct {
 	ModifiedAt                   timetypes.RFC3339                                                                                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                   types.String                                                                                         `tfsdk:"modified_by" json:"modified_by,computed"`
 	OnBehalf                     types.Bool                                                                                           `tfsdk:"on_behalf" json:"on_behalf,computed"`
+	SecureWebGateway             types.Bool                                                                                           `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
 	Status                       types.String                                                                                         `tfsdk:"status" json:"status,computed"`
 	UpdatedPrompts               customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsDataSourceModel] `tfsdk:"updated_prompts" json:"updated_prompts,computed"`
 	UpdatedTools                 customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsDataSourceModel]   `tfsdk:"updated_tools" json:"updated_tools,computed"`

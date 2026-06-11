@@ -85,6 +85,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_app"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_flag"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/google_tag_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
@@ -121,6 +123,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_client"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_scope"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
@@ -158,6 +162,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secrets_store_secret"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share_recipient"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/share_resource"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
@@ -234,11 +241,17 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_class"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag_category"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_integration_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_level"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_sensitivity_level_order"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dns_location"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
@@ -262,6 +275,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_virtual_network"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
@@ -613,6 +627,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_tunnel_warp_connector.NewResource,
+		zero_trust_tunnel_warp_connector_config.NewResource,
 		zero_trust_dlp_dataset.NewResource,
 		zero_trust_dlp_settings.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
@@ -621,6 +636,12 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_dlp_custom_entry.NewResource,
 		zero_trust_dlp_predefined_entry.NewResource,
 		zero_trust_dlp_integration_entry.NewResource,
+		zero_trust_dlp_sensitivity_group.NewResource,
+		zero_trust_dlp_sensitivity_level.NewResource,
+		zero_trust_dlp_sensitivity_level_order.NewResource,
+		zero_trust_dlp_data_tag_category.NewResource,
+		zero_trust_dlp_data_tag.NewResource,
+		zero_trust_dlp_data_class.NewResource,
 		zero_trust_gateway_settings.NewResource,
 		zero_trust_list.NewResource,
 		zero_trust_dns_location.NewResource,
@@ -658,11 +679,17 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		ai_gateway.NewResource,
 		ai_gateway_dynamic_routing.NewResource,
+		flagship_app.NewResource,
+		flagship_flag.NewResource,
 		user_group.NewResource,
 		user_group_members.NewResource,
 		sso_connector.NewResource,
+		oauth_client.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
+		share.NewResource,
+		share_recipient.NewResource,
+		share_resource.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
 		content_scanning.NewResource,
@@ -974,6 +1001,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorDataSource,
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
+		zero_trust_tunnel_warp_connector_config.NewZeroTrustTunnelWARPConnectorConfigDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_settings.NewZeroTrustDLPSettingsDataSource,
@@ -987,6 +1015,17 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dlp_predefined_entry.NewZeroTrustDLPPredefinedEntriesDataSource,
 		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntryDataSource,
 		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntriesDataSource,
+		zero_trust_dlp_sensitivity_group.NewZeroTrustDLPSensitivityGroupDataSource,
+		zero_trust_dlp_sensitivity_group.NewZeroTrustDLPSensitivityGroupsDataSource,
+		zero_trust_dlp_sensitivity_level.NewZeroTrustDLPSensitivityLevelDataSource,
+		zero_trust_dlp_sensitivity_level.NewZeroTrustDLPSensitivityLevelsDataSource,
+		zero_trust_dlp_sensitivity_level_order.NewZeroTrustDLPSensitivityLevelOrderDataSource,
+		zero_trust_dlp_data_tag_category.NewZeroTrustDLPDataTagCategoryDataSource,
+		zero_trust_dlp_data_tag_category.NewZeroTrustDLPDataTagCategoriesDataSource,
+		zero_trust_dlp_data_tag.NewZeroTrustDLPDataTagDataSource,
+		zero_trust_dlp_data_tag.NewZeroTrustDLPDataTagsDataSource,
+		zero_trust_dlp_data_class.NewZeroTrustDLPDataClassDataSource,
+		zero_trust_dlp_data_class.NewZeroTrustDLPDataClassesDataSource,
 		zero_trust_gateway_categories.NewZeroTrustGatewayCategoriesListDataSource,
 		zero_trust_gateway_app_types.NewZeroTrustGatewayAppTypesListDataSource,
 		zero_trust_gateway_settings.NewZeroTrustGatewaySettingsDataSource,
@@ -1053,6 +1092,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ai_gateway.NewAIGatewayDataSource,
 		ai_gateway.NewAIGatewaysDataSource,
 		ai_gateway_dynamic_routing.NewAIGatewayDynamicRoutingDataSource,
+		flagship_app.NewFlagshipAppDataSource,
+		flagship_app.NewFlagshipAppsDataSource,
+		flagship_flag.NewFlagshipFlagDataSource,
+		flagship_flag.NewFlagshipFlagsDataSource,
 		account_permission_group.NewAccountPermissionGroupDataSource,
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
@@ -1062,10 +1105,19 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		user_group_members.NewUserGroupMembersDataSource,
 		sso_connector.NewSSOConnectorDataSource,
 		sso_connector.NewSSOConnectorsDataSource,
+		oauth_client.NewOAuthClientDataSource,
+		oauth_client.NewOAuthClientsDataSource,
+		oauth_scope.NewOAuthScopesDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		workflow.NewWorkflowDataSource,
 		workflow.NewWorkflowsDataSource,
+		share.NewShareDataSource,
+		share.NewSharesDataSource,
+		share_recipient.NewShareRecipientDataSource,
+		share_recipient.NewShareRecipientsDataSource,
+		share_resource.NewShareResourceDataSource,
+		share_resource.NewShareResourcesDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRuleDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,

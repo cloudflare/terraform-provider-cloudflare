@@ -110,8 +110,9 @@ type OrganizationsResultDataSourceModel struct {
 }
 
 type OrganizationsMetaDataSourceModel struct {
-	Flags     customfield.NestedObject[OrganizationsMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
-	ManagedBy types.String                                                    `tfsdk:"managed_by" json:"managed_by,computed"`
+	Flags         customfield.NestedObject[OrganizationsMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
+	HierarchyTags customfield.List[types.String]                                  `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy     types.String                                                    `tfsdk:"managed_by" json:"managed_by,computed"`
 }
 
 type OrganizationsMetaFlagsDataSourceModel struct {

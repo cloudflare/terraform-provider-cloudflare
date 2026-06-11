@@ -37,12 +37,11 @@ func (m ZeroTrustAccessAIControlsMcpPortalModel) MarshalJSONForUpdate(state Zero
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersModel struct {
-	ServerID                     types.String                                                     `tfsdk:"server_id" json:"server_id,required,no_refresh"`
-	DefaultDisabled              types.Bool                                                       `tfsdk:"default_disabled" json:"default_disabled,computed_optional"`
-	IsSharedOAuthCallbackEnabled types.Bool                                                       `tfsdk:"is_shared_oauth_callback_enabled" json:"is_shared_oauth_callback_enabled,optional"`
-	OnBehalf                     types.Bool                                                       `tfsdk:"on_behalf" json:"on_behalf,computed_optional"`
-	UpdatedPrompts               *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional"`
-	UpdatedTools                 *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel   `tfsdk:"updated_tools" json:"updated_tools,optional"`
+	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required,no_refresh"`
+	DefaultDisabled types.Bool                                                       `tfsdk:"default_disabled" json:"default_disabled,computed_optional"`
+	OnBehalf        types.Bool                                                       `tfsdk:"on_behalf" json:"on_behalf,computed_optional"`
+	UpdatedPrompts  *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional"`
+	UpdatedTools    *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel   `tfsdk:"updated_tools" json:"updated_tools,optional"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel struct {

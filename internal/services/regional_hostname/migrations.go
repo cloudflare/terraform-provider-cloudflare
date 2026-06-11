@@ -2,9 +2,10 @@ package regional_hostname
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname/migration/v500"
+	v500 "github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname/migration/v500"
 )
 
 var _ resource.ResourceWithUpgradeState = (*RegionalHostnameResource)(nil)
