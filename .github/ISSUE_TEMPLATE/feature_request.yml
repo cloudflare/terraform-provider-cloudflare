@@ -1,0 +1,47 @@
+name: 🚀 Feature Request
+about: I have a suggestion!
+labels: ["kind/enhancement"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for opening an issue. Please note that we try to keep the 
+      Terraform issue tracker reserved for bug reports and feature requests. 
+      For general usage questions, please see: https://www.terraform.io/community.html.
+- type: checkboxes
+  attributes:
+    label: Confirmation
+    description: Please make sure to have followed the following checks.
+    options:
+      - label: I have searched the issue tracker and my suggestion does not already have an associated feature request.
+        required: true
+- type: textarea
+  attributes:
+    label: Affected resource(s)
+    description: |
+      Please list the resources as a list, for example:
+      - cloudflare_ruleset
+      - cloudflare_zone
+
+      If this issue appears to affect multiple resources, it may be an issue with
+      Terraform's core, so please mention this.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Description
+    description: Please leave a helpful description of the feature request here.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Additional Info
+    description: Add any relevant technical details, examples, or context.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: References
+    description: Are there any other GitHub issues (open or closed) or Pull Requests that should be linked here? 
+  validations:
+    required: false
