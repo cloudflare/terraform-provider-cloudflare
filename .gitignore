@@ -7,3 +7,16 @@ go.work*
 .idea/
 bin/
 .tmp/
+
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.mcp.json
+.profile
+.ripgreprc
+.vscode/
+.zprofile
+.zshrc
+.idea
+.vscode
