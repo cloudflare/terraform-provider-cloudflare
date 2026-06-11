@@ -24,7 +24,7 @@ body:
       - cloudflare_zone
 
       If this issue appears to affect multiple resources, it may be an issue with
-      Terraform's core, so please mention this.
+      the Terraform provider's broader internals, so please mention this.
   validations:
     required: true
 - type: textarea
