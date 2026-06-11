@@ -78,6 +78,9 @@ func testSweepSecretsStoreSecrets(_ string) error {
 func getExistingStoreID(t *testing.T) string {
 	t.Helper()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("skipping: CLOUDFLARE_ACCOUNT_ID must be set")
+	}
 	client := acctest.SharedClient()
 	stores, err := client.SecretsStore.Stores.List(context.Background(), secrets_store.StoreListParams{
 		AccountID: cloudflare.F(accountID),

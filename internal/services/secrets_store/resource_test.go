@@ -26,6 +26,9 @@ func TestMain(m *testing.M) {
 func getExistingStore(t *testing.T) (storeID, storeName string) {
 	t.Helper()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("skipping: CLOUDFLARE_ACCOUNT_ID must be set")
+	}
 	client := acctest.SharedClient()
 	stores, err := client.SecretsStore.Stores.List(context.Background(), secrets_store.StoreListParams{
 		AccountID: cloudflare.F(accountID),
@@ -92,6 +95,9 @@ func TestAccCloudflareSecretsStore_Import(t *testing.T) {
 // limit) and is skipped when a store already exists.
 func TestAccCloudflareSecretsStore_Workflow(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("skipping: CLOUDFLARE_ACCOUNT_ID must be set")
+	}
 	resourceName := "cloudflare_secrets_store.test"
 	storeName := "cftftest-store"
 
