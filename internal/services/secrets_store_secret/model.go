@@ -21,7 +21,7 @@ type SecretsStoreSecretModel struct {
 	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	StoreID   types.String      `tfsdk:"store_id" path:"store_id,required"`
 	Comment   types.String      `tfsdk:"comment" json:"comment,optional"`
-	Value     types.String      `tfsdk:"value" json:"value,optional,no_refresh"`
+	Value     types.String      `tfsdk:"value" json:"value,required,no_refresh"`
 	Scopes    *[]types.String   `tfsdk:"scopes" json:"scopes,required"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
