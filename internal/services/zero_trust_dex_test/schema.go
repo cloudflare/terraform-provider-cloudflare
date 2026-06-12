@@ -39,6 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
+				Description:   "Unique identifier linked to an account.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -90,15 +91,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
+							Description: "The id of the DEX rule.",
 							Required:    true,
 						},
 						"default": schema.BoolAttribute{
-							Description: "Whether the DEX rule is the account default",
+							Description: "Whether the DEX rule is the account default.",
 							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the DEX rule",
+							Description: "The name of the DEX rule.",
 							Computed:    true,
 						},
 					},

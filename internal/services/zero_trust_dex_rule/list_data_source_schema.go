@@ -28,14 +28,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Description: "Unique identifier linked to an account.",
+				Required:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Filter results by rule name",
+				Description: "Filter results by rule name.",
 				Optional:    true,
 			},
 			"sort_by": schema.StringAttribute{
-				Description: "Which property to sort results by\nAvailable values: \"name\", \"created_at\", \"updated_at\".",
+				Description: "Which property to sort results by.\nAvailable values: \"name\", \"created_at\", \"updated_at\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -47,7 +48,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"sort_order": schema.StringAttribute{
-				Description: "Sort direction for sort_by property\nAvailable values: \"ASC\", \"DESC\".",
+				Description: "Sort direction for sort_by property.\nAvailable values: \"ASC\", \"DESC\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

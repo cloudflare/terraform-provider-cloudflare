@@ -37,7 +37,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Description: "Unique identifier linked to an account.",
+				Required:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",
@@ -94,15 +95,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "API Resource UUID tag.",
+							Description: "The id of the DEX rule.",
 							Computed:    true,
 						},
 						"default": schema.BoolAttribute{
-							Description: "Whether the DEX rule is the account default",
+							Description: "Whether the DEX rule is the account default.",
 							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the DEX rule",
+							Description: "The name of the DEX rule.",
 							Computed:    true,
 						},
 					},
@@ -112,14 +113,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"kind": schema.StringAttribute{
-						Description: "Filter by test type\nAvailable values: \"http\", \"traceroute\".",
+						Description: "Filter by test type.\nAvailable values: \"http\", \"traceroute\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "traceroute"),
 						},
 					},
 					"test_name": schema.StringAttribute{
-						Description: "Filter by test name",
+						Description: "Filter by test name.",
 						Optional:    true,
 					},
 				},

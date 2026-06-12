@@ -35,7 +35,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Description: "Unique identifier linked to an account.",
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
