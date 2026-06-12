@@ -33,6 +33,7 @@ func testSweepCloudflareZeroTrustDLPPredefinedProfile(r string) error {
 }
 
 func TestAccCloudflareZeroTrustDlpPredefinedProfile_Basic(t *testing.T) {
+	t.Skip("skipping: account-level OCR is not enabled on the test account")
 	// Generate a random resource name to avoid conflicts during testing
 	rnd := utils.GenerateRandomResourceName()
 	// Define the full resource name for checks
@@ -74,6 +75,7 @@ func TestAccCloudflareZeroTrustDlpPredefinedProfile_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareZeroTrustDlpPredefinedProfileEnabledEntries_Basic(t *testing.T) {
+	t.Skip("skipping: account-level OCR is not enabled on the test account")
 	// Generate a random resource name to avoid conflicts during testing
 	rnd := utils.GenerateRandomResourceName()
 	// Define the full resource name for checks
@@ -119,6 +121,7 @@ func testAccZeroTrustDlpPredefinedProfileConfigEnabledEntries(rnd, accountID, en
 }
 
 func TestAccUpgradeZeroTrustDlpPredefinedProfile_FromPublishedV5(t *testing.T) {
+	t.Skip("skipping: account-level OCR is not enabled on the test account")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
