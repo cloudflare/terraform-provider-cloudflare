@@ -23,8 +23,11 @@ data "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Required
 
-- `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
+
+### Optional
+
+- `account_id` (String) Account ID.
 
 ### Read-Only
 

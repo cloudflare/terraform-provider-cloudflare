@@ -30,6 +30,9 @@ data "cloudflare_leaked_credential_check_rule" "example_leaked_credential_check_
 ### Required
 
 - `detection_id` (String) Defines the unique ID for this custom detection.
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

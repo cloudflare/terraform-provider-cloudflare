@@ -62,6 +62,7 @@ Read-Only:
 Available values: "constant", "linear", "exponential".
 - `retry_delay` (Number) Delay between retry attempts in milliseconds (0-5000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
+- `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits))
 - `store_id` (String)
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--result--stripe))
 - `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.
@@ -151,6 +152,58 @@ Read-Only:
 - `content_type` (String) Available values: "json", "protobuf".
 - `headers` (Map of String)
 - `url` (String)
+
+
+<a id="nestedatt--result--spend_limits"></a>
+### Nested Schema for `result.spend_limits`
+
+Read-Only:
+
+- `enabled` (Boolean)
+- `rules` (Attributes List) (see [below for nested schema](#nestedatt--result--spend_limits--rules))
+
+<a id="nestedatt--result--spend_limits--rules"></a>
+### Nested Schema for `result.spend_limits.rules`
+
+Read-Only:
+
+- `ai_gateway_provider` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits--rules--ai_gateway_provider))
+- `enabled` (Boolean)
+- `id` (String)
+- `limit` (Number)
+- `limit_type` (String) Available values: "cost".
+- `metadata` (Attributes Map) (see [below for nested schema](#nestedatt--result--spend_limits--rules--metadata))
+- `model` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits--rules--model))
+- `technique` (String) Available values: "fixed", "sliding".
+- `window` (Number)
+
+<a id="nestedatt--result--spend_limits--rules--ai_gateway_provider"></a>
+### Nested Schema for `result.spend_limits.rules.ai_gateway_provider`
+
+Read-Only:
+
+- `mode` (String) Available values: "filter".
+- `values` (List of String)
+
+
+<a id="nestedatt--result--spend_limits--rules--metadata"></a>
+### Nested Schema for `result.spend_limits.rules.metadata`
+
+Read-Only:
+
+- `mode` (String) Available values: "partition", "filter".
+- `values` (List of String)
+
+
+<a id="nestedatt--result--spend_limits--rules--model"></a>
+### Nested Schema for `result.spend_limits.rules.model`
+
+Read-Only:
+
+- `mode` (String) Available values: "filter".
+- `values` (List of String)
+
+
 
 
 <a id="nestedatt--result--stripe"></a>

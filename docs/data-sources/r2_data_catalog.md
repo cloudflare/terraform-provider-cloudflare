@@ -27,8 +27,11 @@ data "cloudflare_r2_data_catalog" "example_r2_data_catalog" {
 
 ### Required
 
-- `account_id` (String) Use this to identify the account.
 - `bucket_name` (String) Specifies the R2 bucket name.
+
+### Optional
+
+- `account_id` (String) Use this to identify the account.
 
 ### Read-Only
 

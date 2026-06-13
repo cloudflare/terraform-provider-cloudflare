@@ -32,13 +32,13 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `key_name` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
 - `namespace_id` (String) Namespace identifier tag.
 - `value` (String) A byte sequence to be stored, up to 25 MiB in length.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `metadata` (String) Associates arbitrary JSON data with a key/value pair.
 
 ### Read-Only

@@ -31,8 +31,11 @@ data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Required
 
-- `account_id` (String) Identifier of a Cloudflare account.
 - `prefix_id` (String) Identifier of an IP Prefix.
+
+### Optional
+
+- `account_id` (String) Identifier of a Cloudflare account.
 
 ### Read-Only
 

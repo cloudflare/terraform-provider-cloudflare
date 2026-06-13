@@ -29,11 +29,11 @@ data "cloudflare_queue_consumers" "example_queue_consumers" {
 
 ### Required
 
-- `account_id` (String) A Resource identifier.
 - `queue_id` (String) A Resource identifier.
 
 ### Optional
 
+- `account_id` (String) A Resource identifier.
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

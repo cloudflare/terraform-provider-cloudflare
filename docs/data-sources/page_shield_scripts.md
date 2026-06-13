@@ -32,6 +32,9 @@ data "cloudflare_page_shield_scripts" "example_page_shield_scripts" {
 ### Required
 
 - `script_id` (String) Identifier
+
+### Optional
+
 - `zone_id` (String) Identifier
 
 ### Read-Only

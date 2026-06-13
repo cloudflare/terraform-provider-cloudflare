@@ -29,11 +29,11 @@ data "cloudflare_magic_transit_site_acls" "example_magic_transit_site_acls" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `site_id` (String) Identifier
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

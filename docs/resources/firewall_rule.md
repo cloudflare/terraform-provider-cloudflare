@@ -47,6 +47,9 @@ resource "cloudflare_firewall_rule" "example_firewall_rule" {
 
 - `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--action))
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only
