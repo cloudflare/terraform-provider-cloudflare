@@ -31,7 +31,7 @@ data "cloudflare_load_balancer_monitor_group" "example_load_balancer_monitor_gro
 - `created_on` (String) The timestamp of when the monitor group was created
 - `description` (String) A short description of the monitor group
 - `id` (String) The ID of this resource.
-- `members` (Attributes List) List of monitors in this group (see [below for nested schema](#nestedatt--members))
+- `members` (Attributes Set) List of monitors in this group (see [below for nested schema](#nestedatt--members))
 - `modified_on` (String) The timestamp of when the monitor group was last updated
 
 <a id="nestedatt--members"></a>

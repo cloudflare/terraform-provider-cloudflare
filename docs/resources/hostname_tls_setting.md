@@ -42,6 +42,9 @@ The type depends on the `setting_id` used in the request path:
 - `min_tls_version`: a string indicating the minimum TLS version — one of `"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"` (e.g., `"1.2"`).
 - `http2`: a string indicating whether HTTP/2 is enabled — `"on"` or `"off"` (e.g., `"on"`).
 Available values: "1.0", "1.1", "1.2", "1.3", "on", "off".
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

@@ -33,6 +33,9 @@ The value type depends on the setting:
 - `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`).
 - `http2`: value is `"on"` or `"off"`.
 Available values: "ciphers", "min_tls_version", "http2".
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

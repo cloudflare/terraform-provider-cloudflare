@@ -74,7 +74,7 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))
 - `mfa_configuration_allowed` (Boolean) Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.
-- `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured.
+- `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'ssh_piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.
 - `mfa_ssh_piv_key_requirements` (Attributes) Configures SSH PIV key requirements for MFA using hardware security keys. (see [below for nested schema](#nestedatt--mfa_ssh_piv_key_requirements))
 - `name` (String) The name of your Zero Trust organization.
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.

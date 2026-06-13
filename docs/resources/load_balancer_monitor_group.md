@@ -31,7 +31,7 @@ resource "cloudflare_load_balancer_monitor_group" "example_load_balancer_monitor
 
 - `account_id` (String) Identifier.
 - `description` (String) A short description of the monitor group
-- `members` (Attributes List) List of monitors in this group (see [below for nested schema](#nestedatt--members))
+- `members` (Attributes Set) List of monitors in this group (see [below for nested schema](#nestedatt--members))
 
 ### Read-Only
 

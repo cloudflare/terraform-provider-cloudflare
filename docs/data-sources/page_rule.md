@@ -62,6 +62,9 @@ data "cloudflare_page_rule" "example_page_rule" {
 ### Required
 
 - `pagerule_id` (String) Identifier.
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

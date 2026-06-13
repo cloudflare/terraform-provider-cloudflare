@@ -45,6 +45,7 @@ Read-Only:
 - `config` (Attributes) The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/). (see [below for nested schema](#nestedatt--result--config))
 - `id` (String) UUID.
 - `name` (String) The name of the identity provider, shown to users on the login page.
+- `read_only` (Boolean) Indicates that the identity provider is immutable and cannot be updated or deleted via the API.
 - `saml_certificate_set` (Attributes) The SAML encryption certificate set details, including current and previous certificates.
 Only present for SAML identity providers with a certificate set assigned. (see [below for nested schema](#nestedatt--result--saml_certificate_set))
 - `saml_certificate_set_id` (String) The UID of the SAML encryption certificate set assigned to this Identity Provider.

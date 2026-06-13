@@ -48,11 +48,11 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_custom_entry" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)

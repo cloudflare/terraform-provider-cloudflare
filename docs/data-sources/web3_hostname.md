@@ -28,6 +28,9 @@ data "cloudflare_web3_hostname" "example_web3_hostname" {
 ### Required
 
 - `identifier` (String) Specify the identifier of the hostname.
+
+### Optional
+
 - `zone_id` (String) Specify the identifier of the hostname.
 
 ### Read-Only

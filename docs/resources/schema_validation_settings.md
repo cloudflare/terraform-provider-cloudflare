@@ -37,7 +37,6 @@ Mitigation actions are as follows:
   - `"block"` - deny access to the site when request does not conform to schema
   - `"none"` - skip running schema validation
 Available values: "none", "log", "block".
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -46,6 +45,7 @@ Available values: "none", "log", "block".
   - `"none"` - skip running schema validation entirely for the request
   - `null` - clears any existing override
 Available values: "none".
+- `zone_id` (String) Identifier.
 
 ## Import
 

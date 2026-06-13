@@ -35,13 +35,13 @@ resource "cloudflare_connectivity_directory_service" "example_connectivity_direc
 
 ### Required
 
-- `account_id` (String) Account identifier
 - `host` (Attributes) (see [below for nested schema](#nestedatt--host))
 - `name` (String)
 - `type` (String) Available values: "tcp", "http".
 
 ### Optional
 
+- `account_id` (String) Account identifier
 - `app_protocol` (String) Available values: "postgresql", "mysql".
 - `http_port` (Number)
 - `https_port` (Number)
