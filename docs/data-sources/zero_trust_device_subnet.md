@@ -27,8 +27,11 @@ data "cloudflare_zero_trust_device_subnet" "example_zero_trust_device_subnet" {
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID
 - `subnet_id` (String) The UUID of the subnet.
+
+### Optional
+
+- `account_id` (String) Cloudflare account ID
 
 ### Read-Only
 

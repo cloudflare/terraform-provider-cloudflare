@@ -111,11 +111,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `annotations` (Attributes) Annotations for the version created by this upload. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
@@ -161,6 +161,10 @@ Optional:
 
 - `workers_message` (String) Human-readable message about the version. Truncated to 1000 bytes if longer.
 - `workers_tag` (String) User-provided identifier for the version. Maximum 100 bytes.
+
+Read-Only:
+
+- `workers_triggered_by` (String) Indicates the trigger that created this version. Server-set value.
 
 
 <a id="nestedatt--assets"></a>

@@ -40,6 +40,7 @@ data "cloudflare_workflow" "example_workflow" {
 - `instances` (Attributes) (see [below for nested schema](#nestedatt--instances))
 - `modified_on` (String)
 - `name` (String)
+- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 - `script_name` (String)
 - `triggered_on` (String)
 
@@ -60,9 +61,19 @@ Read-Only:
 - `errored` (Number)
 - `paused` (Number)
 - `queued` (Number)
+- `rolling_back` (Number)
 - `running` (Number)
 - `terminated` (Number)
 - `waiting` (Number)
 - `waiting_for_pause` (Number)
+
+
+<a id="nestedatt--schedules"></a>
+### Nested Schema for `schedules`
+
+Read-Only:
+
+- `cron` (String)
+- `next_instance` (String)
 
 

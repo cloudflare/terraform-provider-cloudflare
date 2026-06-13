@@ -105,6 +105,12 @@ an organization has no parent (i.e. it is a 'root' organization)."
 Read-Only:
 
 - `flags` (Attributes) Enable features for Organizations. (see [below for nested schema](#nestedatt--meta--flags))
+- `hierarchy_tags` (List of String) Ordered chain of organization tags from the root organization down to
+(and including) this organization itself. Root organizations return a
+single-element array containing their own tag; sub-organizations return
+`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for
+constructing authorization scopes that need to cover every ancestor
+in the hierarchy.
 - `managed_by` (String)
 
 <a id="nestedatt--meta--flags"></a>

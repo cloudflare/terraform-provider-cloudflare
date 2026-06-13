@@ -26,8 +26,11 @@ data "cloudflare_sso_connector" "example_sso_connector" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `sso_connector_id` (String) SSO Connector identifier tag.
+
+### Optional
+
+- `account_id` (String) Account identifier tag.
 
 ### Read-Only
 

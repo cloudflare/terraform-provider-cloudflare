@@ -47,6 +47,7 @@ Read-Only:
 - `instances` (Attributes) (see [below for nested schema](#nestedatt--result--instances))
 - `modified_on` (String)
 - `name` (String)
+- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--result--schedules))
 - `script_name` (String)
 - `triggered_on` (String)
 
@@ -59,9 +60,19 @@ Read-Only:
 - `errored` (Number)
 - `paused` (Number)
 - `queued` (Number)
+- `rolling_back` (Number)
 - `running` (Number)
 - `terminated` (Number)
 - `waiting` (Number)
 - `waiting_for_pause` (Number)
+
+
+<a id="nestedatt--result--schedules"></a>
+### Nested Schema for `result.schedules`
+
+Read-Only:
+
+- `cron` (String)
+- `next_instance` (String)
 
 

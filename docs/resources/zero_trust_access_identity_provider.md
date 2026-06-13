@@ -52,6 +52,7 @@ Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "gith
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `read_only` (Boolean) Indicates that the identity provider is immutable and cannot be updated or deleted via the API.
 - `saml_certificate_set_id` (String) The UID of the SAML encryption certificate set assigned to this Identity Provider.
 Only present for SAML identity providers with encryption configured.
 Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`.

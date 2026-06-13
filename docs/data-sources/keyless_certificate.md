@@ -62,6 +62,9 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 ### Required
 
 - `keyless_certificate_id` (String) Identifier.
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

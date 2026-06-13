@@ -31,6 +31,9 @@ resource "cloudflare_content_scanning" "example_content_scanning" {
 
 - `value` (String) The status value for Content Scanning.
 Available values: "enabled", "disabled".
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

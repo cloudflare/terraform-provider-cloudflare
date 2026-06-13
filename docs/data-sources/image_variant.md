@@ -27,8 +27,11 @@ data "cloudflare_image_variant" "example_image_variant" {
 
 ### Required
 
-- `account_id` (String) Account identifier tag.
 - `variant_id` (String)
+
+### Optional
+
+- `account_id` (String) Account identifier tag.
 
 ### Read-Only
 

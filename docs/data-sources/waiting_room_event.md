@@ -30,6 +30,9 @@ data "cloudflare_waiting_room_event" "example_waiting_room_event" {
 
 - `event_id` (String)
 - `waiting_room_id` (String)
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only

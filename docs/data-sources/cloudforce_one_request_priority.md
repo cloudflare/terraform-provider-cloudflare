@@ -27,8 +27,11 @@ data "cloudflare_cloudforce_one_request_priority" "example_cloudforce_one_reques
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `priority_id` (String) UUID.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

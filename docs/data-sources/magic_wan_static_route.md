@@ -29,8 +29,11 @@ data "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `route_id` (String) Identifier
+
+### Optional
+
+- `account_id` (String) Identifier
 
 ### Read-Only
 

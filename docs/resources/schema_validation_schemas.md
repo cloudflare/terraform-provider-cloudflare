@@ -37,6 +37,9 @@ Available values: "openapi_v3".
 - `name` (String) A human-readable name for the schema
 - `source` (String) The raw schema, e.g., the OpenAPI schema, either as JSON or YAML
 - `validation_enabled` (Boolean) An indicator if this schema is enabled
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ### Read-Only
