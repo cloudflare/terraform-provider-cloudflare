@@ -27,22 +27,20 @@ data "cloudflare_email_security_trusted_domains" "example_email_security_trusted
 
 ### Optional
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `trusted_domain_id` (Number) The unique identifier for the trusted domain.
+- `trusted_domain_id` (String) Trusted domain identifier
 
 ### Read-Only
 
 - `comments` (String)
 - `created_at` (String)
-- `id` (Number) The unique identifier for the trusted domain.
-- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a
-Suspicious or Malicious disposition.
+- `id` (String) Trusted domain identifier
+- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
 - `is_regex` (Boolean)
-- `is_similarity` (Boolean) Select for partner or other approved domains that have similar
-spelling to your connected domains. Prevents listed domains from
-triggering a Spoof disposition.
-- `last_modified` (String)
+- `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 - `pattern` (String)
 
 <a id="nestedatt--filter"></a>
@@ -52,14 +50,11 @@ Optional:
 
 - `direction` (String) The sorting direction.
 Available values: "asc", "desc".
-- `is_recent` (Boolean)
-- `is_similarity` (Boolean)
-- `order` (String) The field to sort by.
+- `is_recent` (Boolean) Filter to show only recently registered domains that are trusted to prevent triggering Suspicious or Malicious dispositions.
+- `is_similarity` (Boolean) Filter to show only proximity domains (partner or approved domains with similar spelling to connected domains) that prevent Spoof dispositions.
+- `order` (String) Field to sort by.
 Available values: "pattern", "created_at".
 - `pattern` (String)
-- `search` (String) Allows searching in multiple properties of a record simultaneously.
-This parameter is intended for human users, not automation. Its exact
-behavior is intentionally left unspecified and is subject to change
-in the future.
+- `search` (String) Search term for filtering records. Behavior may change.
 
 

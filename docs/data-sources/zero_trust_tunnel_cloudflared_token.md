@@ -28,11 +28,8 @@ data "cloudflare_zero_trust_tunnel_cloudflared_token" "example_zero_trust_tunnel
 
 ### Required
 
-- `tunnel_id` (String) UUID of the tunnel.
-
-### Optional
-
 - `account_id` (String) Cloudflare account ID
+- `tunnel_id` (String) UUID of the tunnel.
 
 ### Read-Only
 

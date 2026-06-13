@@ -35,18 +35,19 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 
 ### Optional
 
-- `account_id` (String) Account Identifier
-
-### Read-Only
-
+- `account_id` (String) Identifier.
 - `comments` (String)
-- `created_at` (String)
 - `directory_id` (Number)
 - `directory_node_id` (Number)
 - `external_directory_node_id` (String, Deprecated)
-- `id` (Number) The ID of this resource.
-- `last_modified` (String)
-- `provenance` (String)
+- `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
+
+### Read-Only
+
+- `created_at` (String)
+- `id` (String) Impersonation registry entry identifier
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 
 ## Import
 

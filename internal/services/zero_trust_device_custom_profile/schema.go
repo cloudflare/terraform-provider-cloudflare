@@ -36,11 +36,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"policy_id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
@@ -150,6 +150,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"virtual_networks": schema.SingleNestedAttribute{
+				Description: "Virtual network access settings for the device.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.ListAttribute{
+						Description: "List of virtual network IDs the device is allowed to access. When virtual_networks is set, at least one entry is required.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"default": schema.StringAttribute{
+						Description: "The default virtual network ID. Must be included in the `allowed` list.",
+						Required:    true,
+					},
+				},
+			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
 				Computed:    true,
@@ -227,6 +242,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"dns_search_suffixes": schema.ListNestedAttribute{
+				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileDNSSearchSuffixesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The DNS search suffix to append when resolving short hostnames.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the DNS search suffix.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
 			},
 			"default": schema.BoolAttribute{
 				Description: "Whether the policy is the default policy for an account.",

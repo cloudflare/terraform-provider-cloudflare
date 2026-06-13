@@ -48,6 +48,7 @@ Available values: "r2", "r2_data_catalog".
 
 Optional:
 
+- `name` (String) Filters sinks by name (case-insensitive substring).
 - `pipeline_id` (String)
 
 

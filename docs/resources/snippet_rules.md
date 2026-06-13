@@ -3,13 +3,14 @@ page_title: "cloudflare_snippet_rules Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Snippets Write
+  Snippets ReadSnippets Write
 ---
 
 # cloudflare_snippet_rules (Resource)
 
 Accepted Permissions
 
+- `Snippets Read`
 - `Snippets Write`
 
 ## Example Usage
@@ -36,6 +37,10 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 ### Optional
 
 - `zone_id` (String) Use this field to specify the unique ID of the zone.
+
+### Read-Only
+
+- `id` (String) Use this field to specify the unique ID of the zone.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`

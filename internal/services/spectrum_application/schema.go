@@ -27,7 +27,7 @@ var _ resource.ResourceWithConfigValidators = (*SpectrumApplicationResource)(nil
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zone Settings Read",
@@ -38,7 +38,7 @@ Version: 500,
 			"id": schema.StringAttribute{
 				Description:   "App identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Zone identifier.",
@@ -85,6 +85,10 @@ Version: 500,
 						"strict",
 					),
 				},
+			},
+			"virtual_network_id": schema.StringAttribute{
+				Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
+				Optional:    true,
 			},
 			"origin_direct": schema.ListAttribute{
 				Description: "List of origin IP addresses. Array may contain multiple IP addresses for load balancing.",

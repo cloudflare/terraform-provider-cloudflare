@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_ai_controls_mcp_server Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  MCP Portals ReadMCP Portals Write
 ---
 
 # cloudflare_zero_trust_access_ai_controls_mcp_server (Resource)
 
+Accepted Permissions
 
+- `MCP Portals Read`
+- `MCP Portals Write`
 
 ## Example Usage
 
@@ -20,6 +24,8 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
   name = "My MCP Server"
   auth_credentials = "auth_credentials"
   description = "This is one remote mcp server"
+  is_shared_oauth_callback_enabled = true
+  secure_web_gateway = false
   updated_prompts = [{
     name = "name"
     alias = "my-custom-alias"
@@ -50,6 +56,8 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 - `account_id` (String)
 - `auth_credentials` (String, Sensitive)
 - `description` (String)
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
+- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--updated_tools))
 
@@ -58,6 +66,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 - `created_at` (String)
 - `created_by` (String)
 - `error` (String)
+- `error_details` (Attributes) (see [below for nested schema](#nestedatt--error_details))
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
@@ -92,6 +101,18 @@ Optional:
 - `alias` (String)
 - `description` (String)
 - `enabled` (Boolean)
+
+
+<a id="nestedatt--error_details"></a>
+### Nested Schema for `error_details`
+
+Read-Only:
+
+- `cause` (String) Underlying error message
+- `is_upstream` (Boolean) True = MCP server returned an error. False = couldn't reach the server
+- `mcp_code` (Number) MCP protocol error code
+- `retryable` (Boolean) Whether the error is transient and worth retrying
+- `status_code` (Number) HTTP status code from the server
 
 ## Import
 

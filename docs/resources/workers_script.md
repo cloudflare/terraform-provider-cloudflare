@@ -276,6 +276,10 @@ Required:
 - `limit` (Number) The rate limit value.
 - `period` (Number) The rate limit period in seconds.
 
+Optional:
+
+- `mitigation_timeout` (Number) Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.
+
 
 
 <a id="nestedatt--limits"></a>

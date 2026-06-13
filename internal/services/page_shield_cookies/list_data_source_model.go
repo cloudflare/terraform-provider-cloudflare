@@ -5,8 +5,8 @@ package page_shield_cookies
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/page_shield"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/page_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -38,11 +38,10 @@ type PageShieldCookiesListDataSourceModel struct {
 }
 
 func (m *PageShieldCookiesListDataSourceModel) toListParams(_ context.Context) (params page_shield.CookieListParams, diags diag.Diagnostics) {
-	params = page_shield.CookieListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = page_shield.CookieListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(page_shield.CookieListParamsDirection(m.Direction.ValueString()))
 	}

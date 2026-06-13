@@ -5,8 +5,8 @@ package email_security_block_sender
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_security"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_security"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,34 +17,32 @@ type EmailSecurityBlockSenderResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityBlockSenderDataSourceModel struct {
-	ID           types.Int64                                       `tfsdk:"id" path:"pattern_id,computed"`
-	PatternID    types.Int64                                       `tfsdk:"pattern_id" path:"pattern_id,optional"`
+	ID           types.String                                      `tfsdk:"id" path:"pattern_id,computed"`
+	PatternID    types.String                                      `tfsdk:"pattern_id" path:"pattern_id,optional"`
 	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
 	Comments     types.String                                      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsRegex      types.Bool                                        `tfsdk:"is_regex" json:"is_regex,computed"`
 	LastModified timetypes.RFC3339                                 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	ModifiedAt   timetypes.RFC3339                                 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Pattern      types.String                                      `tfsdk:"pattern" json:"pattern,computed"`
 	PatternType  types.String                                      `tfsdk:"pattern_type" json:"pattern_type,computed"`
 	Filter       *EmailSecurityBlockSenderFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *EmailSecurityBlockSenderDataSourceModel) toReadParams(_ context.Context) (params email_security.SettingBlockSenderGetParams, diags diag.Diagnostics) {
-	params = email_security.SettingBlockSenderGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingBlockSenderGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context) (params email_security.SettingBlockSenderListParams, diags diag.Diagnostics) {
-	params = email_security.SettingBlockSenderListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = email_security.SettingBlockSenderListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingBlockSenderListParamsDirection(m.Filter.Direction.ValueString()))
 	}

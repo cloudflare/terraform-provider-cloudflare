@@ -5,6 +5,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -25,6 +26,9 @@ import (
 func MoveDeviceProfilesToDefaultProfile(ctx context.Context, req resource.MoveStateRequest, resp *resource.MoveStateResponse) {
 	// Read the source state using the v4 schema
 	var source SourceDeviceProfileModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	diags := req.SourceState.Get(ctx, &source)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

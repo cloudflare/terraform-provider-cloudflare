@@ -27,6 +27,8 @@ data "cloudflare_magic_transit_connectors" "example_magic_transit_connectors" {
 ### Optional
 
 - `account_id` (String) Account identifier
+- `device_type` (String) Filter connectors by device type.
+Available values: "MANAGED", "LICENSED".
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -59,5 +61,6 @@ Read-Only:
 
 - `id` (String)
 - `serial_number` (String)
+- `type` (String) Available values: "MANAGED", "LICENSED".
 
 

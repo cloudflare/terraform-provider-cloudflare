@@ -5,8 +5,8 @@ package token_validation_rules
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/token_validation"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/token_validation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,10 +33,8 @@ type TokenValidationRulesDataSourceModel struct {
 }
 
 func (m *TokenValidationRulesDataSourceModel) toReadParams(_ context.Context) (params token_validation.RuleGetParams, diags diag.Diagnostics) {
-	params = token_validation.RuleGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = token_validation.RuleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
@@ -51,12 +49,10 @@ func (m *TokenValidationRulesDataSourceModel) toListParams(_ context.Context) (p
 	}
 
 	params = token_validation.RuleListParams{
+		ZoneID:             cloudflare.F(m.ZoneID.ValueString()),
 		TokenConfiguration: cloudflare.F(mFilterTokenConfiguration),
 	}
 
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
 	}

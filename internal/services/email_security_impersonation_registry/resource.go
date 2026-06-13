@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/email_security"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/email_security"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -121,7 +121,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.Edit(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingImpersonationRegistryEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +157,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingImpersonationRegistryGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,7 +195,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Delete(ctx context.Context,
 
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Delete(
 		ctx,
-		data.ID.ValueInt64(),
+		data.ID.ValueString(),
 		email_security.SettingImpersonationRegistryDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -213,12 +213,12 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	var data = new(EmailSecurityImpersonationRegistryModel)
 
 	path_account_id := ""
-	path_display_name_id := int64(0)
+	path_impersonation_registry_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<display_name_id>",
+		"<account_id>/<impersonation_registry_id>",
 		&path_account_id,
-		&path_display_name_id,
+		&path_impersonation_registry_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -226,13 +226,13 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.Int64Value(path_display_name_id)
+	data.ID = types.StringValue(path_impersonation_registry_id)
 
 	res := new(http.Response)
 	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
-		path_display_name_id,
+		path_impersonation_registry_id,
 		email_security.SettingImpersonationRegistryGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},

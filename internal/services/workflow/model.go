@@ -16,11 +16,12 @@ type WorkflowResultEnvelope struct {
 type WorkflowModel struct {
 	ID                types.String                                     `tfsdk:"id" json:"-,computed"`
 	Name              types.String                                     `tfsdk:"name" json:"name,computed"`
-	WorkflowName      types.String                                     `tfsdk:"workflow_name" path:"workflow_name,required"`
 	AccountID         types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
+	WorkflowName      types.String                                     `tfsdk:"workflow_name" path:"workflow_name,required"`
 	ClassName         types.String                                     `tfsdk:"class_name" json:"class_name,required"`
 	ScriptName        types.String                                     `tfsdk:"script_name" json:"script_name,required"`
 	Limits            *WorkflowLimitsModel                             `tfsdk:"limits" json:"limits,optional,no_refresh"`
+	Schedules         *[]*WorkflowSchedulesModel                       `tfsdk:"schedules" json:"schedules,optional"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	IsDeleted         types.Float64                                    `tfsdk:"is_deleted" json:"is_deleted,computed,no_refresh"`
 	ModifiedOn        timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -42,11 +43,16 @@ type WorkflowLimitsModel struct {
 	Steps types.Int64 `tfsdk:"steps" json:"steps,optional"`
 }
 
+type WorkflowSchedulesModel struct {
+	Cron types.String `tfsdk:"cron" json:"cron,required"`
+}
+
 type WorkflowInstancesModel struct {
 	Complete        types.Float64 `tfsdk:"complete" json:"complete,computed"`
 	Errored         types.Float64 `tfsdk:"errored" json:"errored,computed"`
 	Paused          types.Float64 `tfsdk:"paused" json:"paused,computed"`
 	Queued          types.Float64 `tfsdk:"queued" json:"queued,computed"`
+	RollingBack     types.Float64 `tfsdk:"rolling_back" json:"rollingBack,computed"`
 	Running         types.Float64 `tfsdk:"running" json:"running,computed"`
 	Terminated      types.Float64 `tfsdk:"terminated" json:"terminated,computed"`
 	Waiting         types.Float64 `tfsdk:"waiting" json:"waiting,computed"`

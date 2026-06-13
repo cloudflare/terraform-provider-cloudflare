@@ -37,7 +37,7 @@ type WorkersEnvironmentModel struct {
 type WorkersScriptModel struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
-	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
@@ -195,8 +195,9 @@ type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
 }
 
 type WorkersScriptMetadataBindingsSimpleModel struct {
-	Limit  types.Float64 `tfsdk:"limit" json:"limit,required"`
-	Period types.Int64   `tfsdk:"period" json:"period,required"`
+	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
+	Period            types.Int64   `tfsdk:"period" json:"period,required"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
 }
 
 type WorkersScriptMetadataLimitsModel struct {
@@ -261,10 +262,11 @@ type WorkersScriptMetadataObservabilityLogsModel struct {
 }
 
 type WorkersScriptMetadataObservabilityTracesModel struct {
-	Destinations     *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
-	Enabled          types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
-	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Persist          types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	Destinations      *[]types.String `tfsdk:"destinations" json:"destinations,optional"`
+	Enabled           types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
+	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Persist           types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
+	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
@@ -310,10 +312,11 @@ type WorkersScriptObservabilityLogsModel struct {
 }
 
 type WorkersScriptObservabilityTracesModel struct {
-	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
-	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
 }
 
 type WorkersScriptPlacementModel struct {

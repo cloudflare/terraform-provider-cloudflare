@@ -214,8 +214,9 @@ type TargetBindingsOutboundWorkerModel struct {
 }
 
 type TargetBindingsSimpleModel struct {
-	Limit  types.Float64 `tfsdk:"limit"`
-	Period types.Int64   `tfsdk:"period"`
+	Limit             types.Float64 `tfsdk:"limit"`
+	Period            types.Int64   `tfsdk:"period"`
+	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout"`
 }
 
 type TargetAssetsModel struct {

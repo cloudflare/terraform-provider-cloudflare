@@ -23,13 +23,10 @@ data "cloudflare_registrar_domain" "example_registrar_domain" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `domain_name` (String) Fully qualified domain name (FQDN) including the extension
 (e.g., `example.com`, `mybrand.app`). The domain name uniquely
 identifies a registration — the same domain cannot be registered
 twice, making it a natural idempotency key for registration requests.
-
-### Optional
-
-- `account_id` (String) Identifier
 
 

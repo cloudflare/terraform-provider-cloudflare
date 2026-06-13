@@ -33,7 +33,7 @@ data "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_store" 
 
 ### Read-Only
 
-- `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
+- `certificate` (String) The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.
 - `expires_on` (String) When the certificate expires.
 - `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.
@@ -49,6 +49,6 @@ Available values: "initializing", "pending_deployment", "active", "pending_delet
 Optional:
 
 - `limit` (Number) Limit to the number of records returned.
-- `offset` (Number) Offset the results
+- `offset` (Number) Offset the results.
 
 

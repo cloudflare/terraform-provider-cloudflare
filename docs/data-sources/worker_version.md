@@ -30,12 +30,12 @@ data "cloudflare_worker_version" "example_worker_version" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `version_id` (String) Identifier for the version, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created version.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `include` (String) Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.
 Available values: "modules".
 
@@ -187,6 +187,7 @@ Read-Only:
 Read-Only:
 
 - `limit` (Number) The limit (requests per period).
+- `mitigation_timeout` (Number) Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.
 - `period` (Number) The period in seconds.
 
 

@@ -5,8 +5,8 @@ package dns_zone_transfers_incoming
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/dns"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,10 +29,8 @@ type DNSZoneTransfersIncomingDataSourceModel struct {
 }
 
 func (m *DNSZoneTransfersIncomingDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferIncomingGetParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferIncomingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = dns.ZoneTransferIncomingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -33,7 +33,7 @@ resource "cloudflare_client_certificate" "example_client_certificate" {
 ### Required
 
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
-- `validity_days` (Number) The number of days the Client Certificate will be valid after the issued_on date
+- `validity_days` (Number) The number of days the Client Certificate will be valid after the issued_on date.
 
 ### Optional
 
@@ -42,22 +42,22 @@ resource "cloudflare_client_certificate" "example_client_certificate" {
 
 ### Read-Only
 
-- `certificate` (String) The Client Certificate PEM
-- `certificate_authority` (Attributes) Certificate Authority used to issue the Client Certificate (see [below for nested schema](#nestedatt--certificate_authority))
-- `common_name` (String) Common Name of the Client Certificate
-- `country` (String) Country, provided by the CSR
-- `expires_on` (String) Date that the Client Certificate expires
-- `fingerprint_sha256` (String) Unique identifier of the Client Certificate
+- `certificate` (String) The Client Certificate PEM.
+- `certificate_authority` (Attributes) Certificate Authority used to issue the Client Certificate. (see [below for nested schema](#nestedatt--certificate_authority))
+- `common_name` (String) Common Name of the Client Certificate.
+- `country` (String) Country, provided by the CSR.
+- `expires_on` (String) Date that the Client Certificate expires.
+- `fingerprint_sha256` (String) Unique identifier of the Client Certificate.
 - `id` (String) Identifier.
-- `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority
-- `location` (String) Location, provided by the CSR
-- `organization` (String) Organization, provided by the CSR
-- `organizational_unit` (String) Organizational Unit, provided by the CSR
+- `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority.
+- `location` (String) Location, provided by the CSR.
+- `organization` (String) Organization, provided by the CSR.
+- `organizational_unit` (String) Organizational Unit, provided by the CSR.
 - `serial_number` (String) The serial number on the created Client Certificate.
 - `signature` (String) The type of hash used for the Client Certificate..
-- `ski` (String) Subject Key Identifier
-- `state` (String) State, provided by the CSR
-- `status` (String) Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions
+- `ski` (String) Subject Key Identifier.
+- `state` (String) State, provided by the CSR.
+- `status` (String) Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions.
 Available values: "active", "pending_reactivation", "pending_revocation", "revoked".
 
 <a id="nestedatt--certificate_authority"></a>

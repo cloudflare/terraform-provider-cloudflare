@@ -36,6 +36,7 @@ data "cloudflare_snippet" "example_snippet" {
 ### Read-Only
 
 - `created_on` (String) Indicates when the snippet was created.
+- `id` (String) Identify the snippet.
 - `modified_on` (String) Indicates when the snippet was last modified.
 
 

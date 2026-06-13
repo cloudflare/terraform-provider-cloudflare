@@ -40,6 +40,8 @@ data "cloudflare_zero_trust_network_hostname_route" "example_zero_trust_network_
 - `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
 - `hostname` (String) The hostname of the route.
 - `id` (String) The hostname route ID.
+- `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "warp", "magic", "ip_sec", "gre", "cni".
 - `tunnel_id` (String) UUID of the tunnel.
 - `tunnel_name` (String) A user-friendly name for a tunnel.
 

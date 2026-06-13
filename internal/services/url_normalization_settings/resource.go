@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/url_normalization"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/cloudflare-go/v7/url_normalization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,7 +64,6 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -114,7 +113,6 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -156,7 +154,6 @@ func (r *URLNormalizationSettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-
 	res := new(http.Response)
 	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err := r.client.URLNormalization.Get(
@@ -196,7 +193,6 @@ func (r *URLNormalizationSettingsResource) Delete(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	err := r.client.URLNormalization.Delete(
 		ctx,

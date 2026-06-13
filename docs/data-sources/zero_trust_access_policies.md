@@ -95,6 +95,7 @@ Read-Only:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email))
@@ -149,6 +150,14 @@ Read-Only:
 
 <a id="nestedatt--result--exclude--certificate"></a>
 ### Nested Schema for `result.exclude.certificate`
+
+
+<a id="nestedatt--result--exclude--cloudflare_account_member"></a>
+### Nested Schema for `result.exclude.cloudflare_account_member`
+
+Read-Only:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--result--exclude--common_name"></a>
@@ -327,6 +336,7 @@ Read-Only:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--include--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--include--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--result--include--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--include--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--include--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--include--email))
@@ -381,6 +391,14 @@ Read-Only:
 
 <a id="nestedatt--result--include--certificate"></a>
 ### Nested Schema for `result.include.certificate`
+
+
+<a id="nestedatt--result--include--cloudflare_account_member"></a>
+### Nested Schema for `result.include.cloudflare_account_member`
+
+Read-Only:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--result--include--common_name"></a>
@@ -569,6 +587,7 @@ Read-Only:
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--require--azure_ad))
 - `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--require--certificate))
+- `cloudflare_account_member` (Attributes) (see [below for nested schema](#nestedatt--result--require--cloudflare_account_member))
 - `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--require--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--require--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--require--email))
@@ -623,6 +642,14 @@ Read-Only:
 
 <a id="nestedatt--result--require--certificate"></a>
 ### Nested Schema for `result.require.certificate`
+
+
+<a id="nestedatt--result--require--cloudflare_account_member"></a>
+### Nested Schema for `result.require.cloudflare_account_member`
+
+Read-Only:
+
+- `account_id` (String) Identifier.
 
 
 <a id="nestedatt--result--require--common_name"></a>

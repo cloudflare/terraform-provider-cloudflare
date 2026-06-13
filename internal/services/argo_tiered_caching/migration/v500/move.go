@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -10,10 +11,10 @@ import (
 // MoveArgoToTieredCaching handles moving state from legacy cloudflare_argo to cloudflare_argo_tiered_caching.
 // This is triggered by Terraform 1.8+ when it encounters a `moved` block:
 //
-//   moved {
-//     from = cloudflare_argo.example
-//     to   = cloudflare_argo_tiered_caching.example
-//   }
+//	moved {
+//	  from = cloudflare_argo.example
+//	  to   = cloudflare_argo_tiered_caching.example
+//	}
 //
 // This handler is called when:
 // - Scenario 4: Only tiered_caching attribute exists (no smart_routing)
@@ -24,6 +25,9 @@ func MoveArgoToTieredCaching(ctx context.Context, req resource.MoveStateRequest,
 
 	// Parse the source state (legacy v4 cloudflare_argo format)
 	var sourceState SourceCloudflareArgoModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return

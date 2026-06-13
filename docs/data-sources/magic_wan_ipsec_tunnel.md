@@ -46,7 +46,7 @@ data "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 Read-Only:
 
 - `allow_null_cipher` (Boolean) When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).
-- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise.
+- `automatic_return_routing` (Boolean) True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.
 - `bgp` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--bgp))
 - `bgp_status` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--bgp_status))
 - `cloudflare_endpoint` (String) The IP address assigned to the Cloudflare side of the IPsec tunnel.

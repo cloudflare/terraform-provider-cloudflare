@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
@@ -29,6 +30,9 @@ var v4OriginDirectConfig string
 
 //go:embed testdata/v4_complex.tf
 var v4ComplexConfig string
+
+//go:embed testdata/v5_complex.tf
+var v5ComplexConfig string
 
 // TestMigrateSpectrumApplication_Basic tests v4→v5 migration with dns block and origin_direct
 func TestMigrateSpectrumApplication_Basic(t *testing.T) {
@@ -223,5 +227,77 @@ func TestMigrateSpectrumApplication_Complex(t *testing.T) {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ip_firewall"), knownvalue.Bool(true)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("traffic_type"), knownvalue.StringExact("direct")),
 			})...),
+	})
+}
+// TestMigrateSpectrumApplication_FromEarlyV5_Complex is a regression test for #7098.
+//
+// Before the fix, state written by a pre-v5.19 provider at schema_version=0 with
+// v5 object shape for `dns` and `edge_ips` could not be upgraded to the current
+// schema_version=500. The framework rejected the state pre-handler with:
+//
+//	AttributeName("dns"): invalid JSON, expected "[", got "{"
+//
+// because slot 0 was registered with the v4 SDKv2 PriorSchema (list shape).
+//
+// This test exercises the exact failing path:
+//  1. Create the resource with v5.18.0 (state at schema_version=0, object shape).
+//  2. Switch to the local current provider — state upgrade must transparently
+//     accept the object shape and produce an empty plan.
+func TestMigrateSpectrumApplication_FromEarlyV5_Complex(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_spectrum_application." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	tmpDir := t.TempDir()
+	testConfig := fmt.Sprintf(v5ComplexConfig, rnd, zoneID, rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			// Step 1: create with v5.18.0 (last release before schema_version bump to 500).
+			// State written at schema_version=0 with v5 object shape for dns / edge_ips.
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.18.0",
+					},
+				},
+				Config: testConfig,
+			},
+			// Step 2: switch to local current provider. State upgrade runs (0 → 500).
+			// The handler must accept object-shaped dns/edge_ips and produce a no-op plan.
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   testConfig,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						acctest.DebugNonEmptyPlan,
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("dns").AtMapKey("type"),
+						knownvalue.StringExact("CNAME"),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("dns").AtMapKey("name"),
+						knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain)),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("edge_ips").AtMapKey("type"),
+						knownvalue.StringExact("dynamic"),
+					),
+				},
+			},
+		},
 	})
 }

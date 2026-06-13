@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkflowResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -30,18 +31,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"name": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
-			"workflow_name": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"workflow_name": schema.StringAttribute{
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"class_name": schema.StringAttribute{
@@ -57,6 +58,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 						Validators: []validator.Int64{
 							int64validator.AtLeast(1),
+						},
+					},
+				},
+			},
+			"schedules": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"cron": schema.StringAttribute{
+							Required: true,
 						},
 					},
 				},
@@ -96,6 +107,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"queued": schema.Float64Attribute{
+						Computed: true,
+					},
+					"rolling_back": schema.Float64Attribute{
 						Computed: true,
 					},
 					"running": schema.Float64Attribute{

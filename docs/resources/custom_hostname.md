@@ -125,10 +125,10 @@ Optional:
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 Available values: "ubiquitous", "optimal", "force".
-- `certificate_authority` (String) The Certificate Authority that will issue the certificate
+- `certificate_authority` (String) The Certificate Authority that will issue the certificate.
 Available values: "digicert", "google", "lets_encrypt", "ssl_com".
-- `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true
-- `custom_cert_bundle` (Attributes List) Array of custom certificate and key pairs (1 or 2 pairs allowed) (see [below for nested schema](#nestedatt--ssl--custom_cert_bundle))
+- `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.
+- `custom_cert_bundle` (Attributes List) Array of custom certificate and key pairs (1 or 2 pairs allowed). (see [below for nested schema](#nestedatt--ssl--custom_cert_bundle))
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
 - `custom_key` (String, Sensitive) The key for a custom uploaded certificate.

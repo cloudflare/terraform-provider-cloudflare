@@ -26,7 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkerVersionResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-Version: 500,
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -38,16 +38,16 @@ Version: 500,
 			"id": schema.StringAttribute{
 				Description:   "Version identifier.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
-			"worker_id": schema.StringAttribute{
-				Description:   "Identifier for the Worker, which can be ID or name.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"worker_id": schema.StringAttribute{
+				Description:   "Identifier for the Worker, which can be ID or name.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"compatibility_date": schema.StringAttribute{
@@ -575,6 +575,10 @@ Version: 500,
 								"period": schema.Int64Attribute{
 									Description: "The period in seconds.",
 									Required:    true,
+								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
+									Optional:    true,
 								},
 							},
 						},

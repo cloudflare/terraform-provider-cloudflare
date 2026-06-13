@@ -46,6 +46,7 @@ Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", 
 - `id` (String) UUID.
 - `last_updated` (String)
 - `operation_id` (String) UUID.
+- `schemas` (Attributes) OpenAPI JSON schemas for an operation, including both user-uploaded and Cloudflare-learned schemas. (see [below for nested schema](#nestedatt--schemas))
 
 <a id="nestedatt--features"></a>
 ### Nested Schema for `features`
@@ -176,6 +177,33 @@ Read-Only:
 - `period_seconds` (Number) The period over which this threshold is suggested.
 - `requests` (Number) The estimated number of requests covered by these calculations.
 - `suggested_threshold` (Number) The suggested threshold in requests done by the same auth_id or period_seconds.
+
+
+
+<a id="nestedatt--schemas"></a>
+### Nested Schema for `schemas`
+
+Read-Only:
+
+- `learned` (Attributes) An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension. (see [below for nested schema](#nestedatt--schemas--learned))
+- `uploaded` (Attributes) An OpenAPI operation object fragment containing schema information for an operation. May include parameter definitions, request body specifications, and a component schema extension. (see [below for nested schema](#nestedatt--schemas--uploaded))
+
+<a id="nestedatt--schemas--learned"></a>
+### Nested Schema for `schemas.learned`
+
+Read-Only:
+
+- `parameters` (List of Map of String) OpenAPI parameter objects describing path, query, header, or cookie parameters.
+- `request_body` (Map of String) OpenAPI request body object describing the expected request payload.
+
+
+<a id="nestedatt--schemas--uploaded"></a>
+### Nested Schema for `schemas.uploaded`
+
+Read-Only:
+
+- `parameters` (List of Map of String) OpenAPI parameter objects describing path, query, header, or cookie parameters.
+- `request_body` (Map of String) OpenAPI request body object describing the expected request payload.
 
 ## Import
 

@@ -25,6 +25,9 @@ resource "cloudflare_workflow" "example_workflow" {
   limits = {
     steps = 1
   }
+  schedules = [{
+    cron = "x"
+  }]
 }
 ```
 
@@ -41,6 +44,7 @@ resource "cloudflare_workflow" "example_workflow" {
 
 - `account_id` (String)
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
+- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 
 ### Read-Only
 
@@ -62,6 +66,14 @@ Optional:
 - `steps` (Number)
 
 
+<a id="nestedatt--schedules"></a>
+### Nested Schema for `schedules`
+
+Required:
+
+- `cron` (String)
+
+
 <a id="nestedatt--instances"></a>
 ### Nested Schema for `instances`
 
@@ -71,6 +83,7 @@ Read-Only:
 - `errored` (Number)
 - `paused` (Number)
 - `queued` (Number)
+- `rolling_back` (Number)
 - `running` (Number)
 - `terminated` (Number)
 - `waiting` (Number)

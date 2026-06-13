@@ -5,8 +5,8 @@ package zero_trust_device_ip_profile
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,11 +24,10 @@ type ZeroTrustDeviceIPProfilesDataSourceModel struct {
 }
 
 func (m *ZeroTrustDeviceIPProfilesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceIPProfileListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceIPProfileListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.DeviceIPProfileListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.PerPage.IsNull() {
 		params.PerPage = cloudflare.F(m.PerPage.ValueInt64())
 	}

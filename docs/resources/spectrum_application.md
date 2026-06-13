@@ -67,6 +67,7 @@ Available values: "off", "v1", "v2", "simple".
 Available values: "off", "flexible", "full", "strict".
 - `traffic_type` (String) Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.
 Available values: "direct", "http", "https".
+- `virtual_network_id` (String) Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.
 - `zone_id` (String) Zone identifier.
 
 ### Read-Only

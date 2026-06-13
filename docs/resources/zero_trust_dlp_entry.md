@@ -57,7 +57,7 @@ Cannot be set to false if secret is true
 - `secret` (Boolean)
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
+- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--pattern"></a>
@@ -95,9 +95,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String)
+- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
 - `topic_type` (String) Available values: "Intent", "Content".
-- `type` (String) Available values: "PromptTopic".
+- `type` (String) Available values: "PromptTopic", "General".
 
 ## Import
 

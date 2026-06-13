@@ -439,6 +439,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesExcludeCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -742,6 +752,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
+											},
+										},
+									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesIncludeCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
 											},
 										},
 									},
@@ -1094,6 +1114,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
+											},
+										},
+									},
+									"cloudflare_account_member": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesRequireCloudflareAccountMemberDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"account_id": schema.StringAttribute{
+												Description: "Identifier.",
+												Computed:    true,
 											},
 										},
 									},

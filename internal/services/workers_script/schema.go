@@ -220,10 +220,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"dataset": schema.StringAttribute{
-							Description: "The name of the dataset to bind to.",
-							Optional:    true,
-						},
+								"dataset": schema.StringAttribute{
+						Description: "The name of the dataset to bind to.",
+						Optional:    true,
+					},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -314,6 +314,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"period": schema.Int64Attribute{
 									Description: "The rate limit period in seconds.",
 									Required:    true,
+								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.",
+									Optional:    true,
 								},
 							},
 						},

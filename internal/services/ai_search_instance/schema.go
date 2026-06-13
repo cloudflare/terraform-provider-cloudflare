@@ -29,11 +29,12 @@ var _ resource.ResourceWithConfigValidators = (*AISearchInstanceResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
@@ -250,20 +251,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Optional: true,
 					},
-					"search_for_agents": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"hostname": schema.StringAttribute{
-								Required: true,
-							},
-							"zone_id": schema.StringAttribute{
-								Required: true,
-							},
-							"zone_name": schema.StringAttribute{
-								Required: true,
-							},
-						},
-					},
 					"worker_domain": schema.StringAttribute{
 						Optional: true,
 					},
@@ -288,6 +275,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Default: stringdefault.StaticString("close_enough"),
+			},
+			"cache_ttl": schema.Float64Attribute{
+				Description: "Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).\nAvailable values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.OneOf(
+						600,
+						1800,
+						3600,
+						7200,
+						21600,
+						43200,
+						86400,
+						172800,
+						259200,
+						518400,
+					),
+				},
+				Default: float64default.StaticFloat64(172800),
 			},
 			"chunk": schema.BoolAttribute{
 				Computed: true,
@@ -503,16 +510,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
 					"boost_by": schema.ListNestedAttribute{
-						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"field": schema.StringAttribute{
-									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support asc/desc directions; text/boolean fields support exists/not_exists.",
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
 									Required:    true,
 								},
 								"direction": schema.StringAttribute{
-									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional - defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -583,7 +590,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"include_subdomains": schema.BoolAttribute{
 										Computed: true,
 										Optional: true,
-										Default:  booldefault.StaticBool(false),
+										Default:  booldefault.StaticBool(true),
 									},
 									"max_age": schema.Float64Attribute{
 										Optional: true,
@@ -610,7 +617,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"content_selector": schema.ListNestedAttribute{
-										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed.",
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
 										Optional:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -619,13 +626,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													Required:    true,
 												},
 												"selector": schema.StringAttribute{
-													Description: "CSS selector to extract content from pages matching the path pattern. Supports standard CSS selectors including class, ID, element, and attribute selectors.",
+													Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
 													Required:    true,
 												},
 											},
 										},
 									},
 									"include_headers": schema.MapAttribute{
+										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
 										Optional:    true,
 										ElementType: types.StringType,
 									},

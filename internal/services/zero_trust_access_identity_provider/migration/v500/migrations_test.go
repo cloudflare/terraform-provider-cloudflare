@@ -26,7 +26,7 @@ var (
 // Migration Test Configuration
 //
 // Version is read from LAST_V4_VERSION environment variable (set in .github/workflows/migration-tests.yml)
-// - Last stable v4 release: default 4.52.7
+// - Last stable v4 release: default 4.52.5
 // - Current v5 release: auto-updates with releases (internal.PackageVersion)
 //
 // Key changes: cloudflare_access_identity_provider → cloudflare_zero_trust_access_identity_provider

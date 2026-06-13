@@ -5,8 +5,8 @@ package zero_trust_gateway_proxy_endpoint
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type ZeroTrustGatewayProxyEndpointsDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayProxyEndpointsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayProxyEndpointListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayProxyEndpointListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.GatewayProxyEndpointListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

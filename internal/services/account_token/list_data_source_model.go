@@ -5,8 +5,8 @@ package account_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/accounts"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -25,11 +25,10 @@ type AccountTokensDataSourceModel struct {
 }
 
 func (m *AccountTokensDataSourceModel) toListParams(_ context.Context) (params accounts.TokenListParams, diags diag.Diagnostics) {
-	params = accounts.TokenListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = accounts.TokenListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Direction.ValueString()))
 	}

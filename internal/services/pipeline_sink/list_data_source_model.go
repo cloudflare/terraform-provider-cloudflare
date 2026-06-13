@@ -5,8 +5,8 @@ package pipeline_sink
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pipelines"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pipelines"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,16 +19,19 @@ type PipelineSinksResultListDataSourceEnvelope struct {
 
 type PipelineSinksDataSourceModel struct {
 	AccountID  types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	Name       types.String                                                     `tfsdk:"name" query:"name,optional"`
 	PipelineID types.String                                                     `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 	MaxItems   types.Int64                                                      `tfsdk:"max_items"`
 	Result     customfield.NestedObjectList[PipelineSinksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PipelineSinksDataSourceModel) toListParams(_ context.Context) (params pipelines.SinkListParams, diags diag.Diagnostics) {
-	params = pipelines.SinkListParams{}
+	params = pipelines.SinkListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.PipelineID.ValueString())

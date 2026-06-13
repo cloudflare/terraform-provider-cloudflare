@@ -32,19 +32,16 @@ data "cloudflare_email_security_trusted_domains_list" "example_email_security_tr
 
 ### Optional
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
 - `direction` (String) The sorting direction.
 Available values: "asc", "desc".
-- `is_recent` (Boolean)
-- `is_similarity` (Boolean)
+- `is_recent` (Boolean) Filter to show only recently registered domains that are trusted to prevent triggering Suspicious or Malicious dispositions.
+- `is_similarity` (Boolean) Filter to show only proximity domains (partner or approved domains with similar spelling to connected domains) that prevent Spoof dispositions.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `order` (String) The field to sort by.
+- `order` (String) Field to sort by.
 Available values: "pattern", "created_at".
 - `pattern` (String)
-- `search` (String) Allows searching in multiple properties of a record simultaneously.
-This parameter is intended for human users, not automation. Its exact
-behavior is intentionally left unspecified and is subject to change
-in the future.
+- `search` (String) Search term for filtering records. Behavior may change.
 
 ### Read-Only
 
@@ -57,14 +54,12 @@ Read-Only:
 
 - `comments` (String)
 - `created_at` (String)
-- `id` (Number) The unique identifier for the trusted domain.
-- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a
-Suspicious or Malicious disposition.
+- `id` (String) Trusted domain identifier
+- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
 - `is_regex` (Boolean)
-- `is_similarity` (Boolean) Select for partner or other approved domains that have similar
-spelling to your connected domains. Prevents listed domains from
-triggering a Spoof disposition.
-- `last_modified` (String)
+- `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 - `pattern` (String)
 
 

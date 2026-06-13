@@ -5,8 +5,8 @@ package stream_watermark
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/stream"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,10 +24,8 @@ type StreamWatermarksDataSourceModel struct {
 }
 
 func (m *StreamWatermarksDataSourceModel) toListParams(_ context.Context) (params stream.WatermarkListParams, diags diag.Diagnostics) {
-	params = stream.WatermarkListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = stream.WatermarkListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

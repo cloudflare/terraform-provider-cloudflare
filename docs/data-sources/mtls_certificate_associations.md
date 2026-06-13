@@ -27,11 +27,8 @@ data "cloudflare_mtls_certificate_associations" "example_mtls_certificate_associ
 
 ### Required
 
-- `mtls_certificate_id` (String) Identifier.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `mtls_certificate_id` (String) Identifier.
 
 ### Read-Only
 

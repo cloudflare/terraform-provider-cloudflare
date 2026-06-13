@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkRouteGetParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkRouteGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.NetworkRouteGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -48,12 +46,10 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 	}
 
 	params = zero_trust.NetworkRouteListParams{
-		TunTypes: cloudflare.F(mFilterTunTypes),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		TunTypes:  cloudflare.F(mFilterTunTypes),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
 	if !m.Filter.Comment.IsNull() {
 		params.Comment = cloudflare.F(m.Filter.Comment.ValueString())
 	}

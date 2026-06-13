@@ -5,8 +5,8 @@ package zero_trust_access_mtls_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -30,13 +30,6 @@ type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 
 func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessCertificateGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCertificateGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())

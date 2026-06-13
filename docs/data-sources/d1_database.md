@@ -19,6 +19,7 @@ Accepted Permissions
 data "cloudflare_d1_database" "example_d1_database" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  fields = ["uuid"]
 }
 ```
 
@@ -29,6 +30,8 @@ data "cloudflare_d1_database" "example_d1_database" {
 
 - `account_id` (String) Account identifier tag.
 - `database_id` (String) D1 database identifier (UUID).
+- `fields` (List of String) Comma-separated list of fields to include in the response. When omitted,
+all fields are returned.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
@@ -57,7 +60,7 @@ Optional:
 
 Read-Only:
 
-- `mode` (String) The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).
+- `mode` (String) The read replication mode for the database. Mode 'auto' denotes that D1 creates replicas and automatically places them around the world. Mode 'disabled' denotes that no database replicas are used.
 Available values: "auto", "disabled".
 
 

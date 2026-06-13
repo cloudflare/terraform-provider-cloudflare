@@ -5,8 +5,8 @@ package waiting_room_event
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/waiting_rooms"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -25,10 +25,8 @@ type WaitingRoomEventsDataSourceModel struct {
 }
 
 func (m *WaitingRoomEventsDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.EventListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = waiting_rooms.EventListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

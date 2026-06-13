@@ -55,6 +55,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 - `account_id` (String)
 - `authentication` (Boolean)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--dlp))
+- `guardrails` (Attributes) (see [below for nested schema](#nestedatt--guardrails))
 - `log_management` (Number)
 - `log_management_strategy` (String) Available values: "STOP_INSERTING", "DELETE_OLDEST".
 - `logpush` (Boolean)
@@ -65,6 +66,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 Available values: "constant", "linear", "exponential".
 - `retry_delay` (Number) Delay between retry attempts in milliseconds (0-5000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
+- `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--spend_limits))
 - `store_id` (String)
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--stripe))
 - `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.
@@ -103,18 +105,127 @@ Required:
 
 
 
+<a id="nestedatt--guardrails"></a>
+### Nested Schema for `guardrails`
+
+Required:
+
+- `prompt` (Attributes) (see [below for nested schema](#nestedatt--guardrails--prompt))
+- `response` (Attributes) (see [below for nested schema](#nestedatt--guardrails--response))
+
+<a id="nestedatt--guardrails--prompt"></a>
+### Nested Schema for `guardrails.prompt`
+
+Optional:
+
+- `p1` (String) Available values: "FLAG", "BLOCK".
+- `s1` (String) Available values: "FLAG", "BLOCK".
+- `s10` (String) Available values: "FLAG", "BLOCK".
+- `s11` (String) Available values: "FLAG", "BLOCK".
+- `s12` (String) Available values: "FLAG", "BLOCK".
+- `s13` (String) Available values: "FLAG", "BLOCK".
+- `s2` (String) Available values: "FLAG", "BLOCK".
+- `s3` (String) Available values: "FLAG", "BLOCK".
+- `s4` (String) Available values: "FLAG", "BLOCK".
+- `s5` (String) Available values: "FLAG", "BLOCK".
+- `s6` (String) Available values: "FLAG", "BLOCK".
+- `s7` (String) Available values: "FLAG", "BLOCK".
+- `s8` (String) Available values: "FLAG", "BLOCK".
+- `s9` (String) Available values: "FLAG", "BLOCK".
+
+
+<a id="nestedatt--guardrails--response"></a>
+### Nested Schema for `guardrails.response`
+
+Optional:
+
+- `p1` (String) Available values: "FLAG", "BLOCK".
+- `s1` (String) Available values: "FLAG", "BLOCK".
+- `s10` (String) Available values: "FLAG", "BLOCK".
+- `s11` (String) Available values: "FLAG", "BLOCK".
+- `s12` (String) Available values: "FLAG", "BLOCK".
+- `s13` (String) Available values: "FLAG", "BLOCK".
+- `s2` (String) Available values: "FLAG", "BLOCK".
+- `s3` (String) Available values: "FLAG", "BLOCK".
+- `s4` (String) Available values: "FLAG", "BLOCK".
+- `s5` (String) Available values: "FLAG", "BLOCK".
+- `s6` (String) Available values: "FLAG", "BLOCK".
+- `s7` (String) Available values: "FLAG", "BLOCK".
+- `s8` (String) Available values: "FLAG", "BLOCK".
+- `s9` (String) Available values: "FLAG", "BLOCK".
+
+
+
 <a id="nestedatt--otel"></a>
 ### Nested Schema for `otel`
 
 Required:
 
-- `authorization` (String)
 - `headers` (Map of String)
 - `url` (String)
 
 Optional:
 
+- `authorization` (String)
 - `content_type` (String) Available values: "json", "protobuf".
+
+
+<a id="nestedatt--spend_limits"></a>
+### Nested Schema for `spend_limits`
+
+Optional:
+
+- `enabled` (Boolean)
+- `rules` (Attributes List) (see [below for nested schema](#nestedatt--spend_limits--rules))
+
+<a id="nestedatt--spend_limits--rules"></a>
+### Nested Schema for `spend_limits.rules`
+
+Required:
+
+- `limit` (Number)
+- `limit_type` (String) Available values: "cost".
+- `window` (Number)
+
+Optional:
+
+- `ai_gateway_provider` (Attributes) (see [below for nested schema](#nestedatt--spend_limits--rules--ai_gateway_provider))
+- `enabled` (Boolean)
+- `id` (String)
+- `metadata` (Attributes Map) (see [below for nested schema](#nestedatt--spend_limits--rules--metadata))
+- `model` (Attributes) (see [below for nested schema](#nestedatt--spend_limits--rules--model))
+- `technique` (String) Available values: "fixed", "sliding".
+
+<a id="nestedatt--spend_limits--rules--ai_gateway_provider"></a>
+### Nested Schema for `spend_limits.rules.ai_gateway_provider`
+
+Required:
+
+- `mode` (String) Available values: "filter".
+- `values` (List of String)
+
+
+<a id="nestedatt--spend_limits--rules--metadata"></a>
+### Nested Schema for `spend_limits.rules.metadata`
+
+Required:
+
+- `mode` (String) Available values: "partition", "filter".
+
+Optional:
+
+- `values` (List of String)
+
+
+<a id="nestedatt--spend_limits--rules--model"></a>
+### Nested Schema for `spend_limits.rules.model`
+
+Required:
+
+- `mode` (String) Available values: "filter".
+- `values` (List of String)
+
+
 
 
 <a id="nestedatt--stripe"></a>

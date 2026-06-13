@@ -31,7 +31,7 @@ data "cloudflare_client_certificates" "example_client_certificates" {
 
 - `limit` (Number) Limit to the number of records returned.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Offset the results
+- `offset` (Number) Offset the results.
 - `status` (String) Client Certitifcate Status to filter results by.
 Available values: "all", "active", "pending_reactivation", "pending_revocation", "revoked".
 - `zone_id` (String) Identifier.
@@ -45,25 +45,25 @@ Available values: "all", "active", "pending_reactivation", "pending_revocation",
 
 Read-Only:
 
-- `certificate` (String) The Client Certificate PEM
-- `certificate_authority` (Attributes) Certificate Authority used to issue the Client Certificate (see [below for nested schema](#nestedatt--result--certificate_authority))
-- `common_name` (String) Common Name of the Client Certificate
-- `country` (String) Country, provided by the CSR
+- `certificate` (String) The Client Certificate PEM.
+- `certificate_authority` (Attributes) Certificate Authority used to issue the Client Certificate. (see [below for nested schema](#nestedatt--result--certificate_authority))
+- `common_name` (String) Common Name of the Client Certificate.
+- `country` (String) Country, provided by the CSR.
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
-- `expires_on` (String) Date that the Client Certificate expires
-- `fingerprint_sha256` (String) Unique identifier of the Client Certificate
+- `expires_on` (String) Date that the Client Certificate expires.
+- `fingerprint_sha256` (String) Unique identifier of the Client Certificate.
 - `id` (String) Identifier.
-- `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority
-- `location` (String) Location, provided by the CSR
-- `organization` (String) Organization, provided by the CSR
-- `organizational_unit` (String) Organizational Unit, provided by the CSR
+- `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority.
+- `location` (String) Location, provided by the CSR.
+- `organization` (String) Organization, provided by the CSR.
+- `organizational_unit` (String) Organizational Unit, provided by the CSR.
 - `serial_number` (String) The serial number on the created Client Certificate.
 - `signature` (String) The type of hash used for the Client Certificate..
-- `ski` (String) Subject Key Identifier
-- `state` (String) State, provided by the CSR
-- `status` (String) Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions
+- `ski` (String) Subject Key Identifier.
+- `state` (String) State, provided by the CSR.
+- `status` (String) Client Certificates may be active or revoked, and the pending_reactivation or pending_revocation represent in-progress asynchronous transitions.
 Available values: "active", "pending_reactivation", "pending_revocation", "revoked".
-- `validity_days` (Number) The number of days the Client Certificate will be valid after the issued_on date
+- `validity_days` (Number) The number of days the Client Certificate will be valid after the issued_on date.
 
 <a id="nestedatt--result--certificate_authority"></a>
 ### Nested Schema for `result.certificate_authority`

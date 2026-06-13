@@ -5,8 +5,8 @@ package cloudforce_one_request_priority
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cloudforce_one"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cloudforce_one"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,10 +35,8 @@ type CloudforceOneRequestPriorityDataSourceModel struct {
 }
 
 func (m *CloudforceOneRequestPriorityDataSourceModel) toReadParams(_ context.Context) (params cloudforce_one.RequestPriorityGetParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestPriorityGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = cloudforce_one.RequestPriorityGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

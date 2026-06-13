@@ -5,8 +5,8 @@ package zero_trust_network_hostname_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -30,11 +30,10 @@ type ZeroTrustNetworkHostnameRoutesDataSourceModel struct {
 }
 
 func (m *ZeroTrustNetworkHostnameRoutesDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkHostnameRouteListParams, diags diag.Diagnostics) {
-	params = zero_trust.NetworkHostnameRouteListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.NetworkHostnameRouteListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
+
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}
@@ -63,6 +62,7 @@ type ZeroTrustNetworkHostnameRoutesResultDataSourceModel struct {
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt  timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Hostname   types.String      `tfsdk:"hostname" json:"hostname,computed"`
+	TunType    types.String      `tfsdk:"tun_type" json:"tun_type,computed"`
 	TunnelID   types.String      `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	TunnelName types.String      `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
 }

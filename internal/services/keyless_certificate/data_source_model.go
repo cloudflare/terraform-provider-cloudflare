@@ -5,8 +5,8 @@ package keyless_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/keyless_certificates"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/keyless_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,10 +33,8 @@ type KeylessCertificateDataSourceModel struct {
 }
 
 func (m *KeylessCertificateDataSourceModel) toReadParams(_ context.Context) (params keyless_certificates.KeylessCertificateGetParams, diags diag.Diagnostics) {
-	params = keyless_certificates.KeylessCertificateGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = keyless_certificates.KeylessCertificateGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

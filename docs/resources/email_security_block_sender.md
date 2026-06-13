@@ -32,18 +32,21 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 
 - `is_regex` (Boolean)
 - `pattern` (String)
-- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
+- `pattern_type` (String) Type of pattern matching.
+Note: UNKNOWN is deprecated and cannot be used when creating or updating policies, but may be returned for existing entries.
+Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 ### Optional
 
-- `account_id` (String) Account Identifier
+- `account_id` (String) Identifier.
 - `comments` (String)
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (Number) The unique identifier for the allow policy.
-- `last_modified` (String)
+- `id` (String) Blocked sender pattern identifier
+- `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
+- `modified_at` (String)
 
 ## Import
 

@@ -5,8 +5,8 @@ package organization
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/organizations"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/organizations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -110,8 +110,9 @@ type OrganizationsResultDataSourceModel struct {
 }
 
 type OrganizationsMetaDataSourceModel struct {
-	Flags     customfield.NestedObject[OrganizationsMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
-	ManagedBy types.String                                                    `tfsdk:"managed_by" json:"managed_by,computed"`
+	Flags         customfield.NestedObject[OrganizationsMetaFlagsDataSourceModel] `tfsdk:"flags" json:"flags,computed"`
+	HierarchyTags customfield.List[types.String]                                  `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy     types.String                                                    `tfsdk:"managed_by" json:"managed_by,computed"`
 }
 
 type OrganizationsMetaFlagsDataSourceModel struct {

@@ -49,6 +49,7 @@ data "cloudflare_pipeline_stream" "example_pipeline_stream" {
 
 Optional:
 
+- `name` (String) Filters streams by name (case-insensitive substring).
 - `pipeline_id` (String) Specifies the public ID of the pipeline.
 
 

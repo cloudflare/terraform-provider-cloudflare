@@ -205,6 +205,156 @@ func TestSortPolicies_SortsPoliciesByEffectThenResources(t *testing.T) {
 	}
 }
 
+// TestUnmarshalComputedCustom_GitHub7125 reproduces the bug from
+// https://github.com/cloudflare/terraform-provider-cloudflare/issues/7125.
+//
+// On update, the planned model contains the user's two policies (each with a
+// distinct set of permission_groups and distinct resources). The user changed
+// one permission_group ID inside policy A. The API stored the new policies and
+// returned them in swapped order: [B, A_new].
+//
+// Because Policies is tagged required (not computed), apijson.UnmarshalComputed
+// leaves the planned policies in place. The custom unmarshal then walks the API
+// response by index and overwrites each model policy's Resources using
+// policyJsons[i]. When the API reorders policies relative to what was sent,
+// this assigns the wrong resources to each policy: policy A ends up with
+// policy B's resources and vice-versa. The subsequent reorder step then sees
+// policies whose fingerprints no longer match the snapshot, so they fall
+// through to the canonical sort and the swap is persisted to state.
+//
+// A correct implementation must match API policies to model policies by
+// identity (effect + permission_group set), not by positional index.
+func TestUnmarshalComputedCustom_GitHub7125(t *testing.T) {
+	const resA = `{"com.cloudflare.api.account.acct123":"*"}`
+	const resB = `{"com.cloudflare.api.account.acct123":{"com.cloudflare.api.account.zone.*":"*"}}`
+
+	// Planned model: policy A (R2-ish PGs, flat resources) then policy B
+	// (DNS/Zone PGs, nested resources). One PG ID in A was just changed by
+	// the user (pgA3-new replaces the previous pgA3).
+	pgsA := []*AccountTokenPoliciesPermissionGroupsModel{
+		{ID: types.StringValue("pgA1")},
+		{ID: types.StringValue("pgA2")},
+		{ID: types.StringValue("pgA3-new")},
+		{ID: types.StringValue("pgA4")},
+		{ID: types.StringValue("pgA5")},
+		{ID: types.StringValue("pgA6")},
+	}
+	pgsB := []*AccountTokenPoliciesPermissionGroupsModel{
+		{ID: types.StringValue("pgB1")},
+		{ID: types.StringValue("pgB2")},
+		{ID: types.StringValue("pgB3")},
+		{ID: types.StringValue("pgB4")},
+	}
+	policies := []*AccountTokenPoliciesModel{
+		{
+			Effect:           types.StringValue("allow"),
+			PermissionGroups: &pgsA,
+			Resources:        types.StringValue(resA),
+		},
+		{
+			Effect:           types.StringValue("allow"),
+			PermissionGroups: &pgsB,
+			Resources:        types.StringValue(resB),
+		},
+	}
+	env := AccountTokenResultEnvelope{
+		Result: AccountTokenModel{
+			Name:     types.StringValue("name"),
+			Policies: &policies,
+		},
+	}
+
+	// API response: same two policies as the plan, but in swapped order
+	// ([B, A_new] instead of [A_new, B]).
+	data := json.RawMessage(`{
+		"result":{
+			"name":"name",
+			"policies":[
+				{
+					"effect":"allow",
+					"permission_groups":[
+						{"id":"pgB1"},
+						{"id":"pgB2"},
+						{"id":"pgB3"},
+						{"id":"pgB4"}
+					],
+					"resources":` + resB + `
+				},
+				{
+					"effect":"allow",
+					"permission_groups":[
+						{"id":"pgA1"},
+						{"id":"pgA2"},
+						{"id":"pgA3-new"},
+						{"id":"pgA4"},
+						{"id":"pgA5"},
+						{"id":"pgA6"}
+					],
+					"resources":` + resA + `
+				}
+			]
+		}
+	}`)
+
+	if err := UnmarshalComputedCustom(data, &env); err != nil {
+		t.Fatal(err)
+	}
+
+	// Each policy in the final model must carry the resources that belong to
+	// its own permission_group set, regardless of the order the API returned
+	// the policies in. Verify by matching on a stable PG ID inside each set.
+	got := *env.Result.Policies
+	if len(got) != 2 {
+		t.Fatalf("expected 2 policies, got %d", len(got))
+	}
+
+	pgsContain := func(p *AccountTokenPoliciesModel, id string) bool {
+		if p.PermissionGroups == nil {
+			return false
+		}
+		for _, pg := range *p.PermissionGroups {
+			if pg.ID.ValueString() == id {
+				return true
+			}
+		}
+		return false
+	}
+
+	for i, p := range got {
+		switch {
+		case pgsContain(p, "pgA1"):
+			// This is policy A — must have policy A's flat resources and
+			// must carry the new (post-edit) PG ID.
+			if p.Resources.ValueString() != resA {
+				t.Fatalf("policies[%d] is policy A but has wrong resources:\n  want: %s\n  got:  %s",
+					i, resA, p.Resources.ValueString())
+			}
+			if !pgsContain(p, "pgA3-new") {
+				t.Fatalf("policies[%d] is policy A but does not contain the updated permission_group pgA3-new", i)
+			}
+		case pgsContain(p, "pgB1"):
+			// This is policy B — must have policy B's nested resources.
+			if p.Resources.ValueString() != resB {
+				t.Fatalf("policies[%d] is policy B but has wrong resources:\n  want: %s\n  got:  %s",
+					i, resB, p.Resources.ValueString())
+			}
+		default:
+			t.Fatalf("policies[%d] has unrecognized permission_groups", i)
+		}
+	}
+
+	// And the order in state should still match the planned order [A, B],
+	// so that the next plan is a no-op.
+	if !pgsContain(got[0], "pgA1") {
+		t.Fatalf("expected policies[0] to be policy A (matching planned order), got policy with pgs %+v",
+			*got[0].PermissionGroups)
+	}
+	if !pgsContain(got[1], "pgB1") {
+		t.Fatalf("expected policies[1] to be policy B (matching planned order), got policy with pgs %+v",
+			*got[1].PermissionGroups)
+	}
+}
+
 func TestUnmarshalCustom_SortsPermissionGroups(t *testing.T) {
 	// API returns permission groups in [zzz, aaa, mmm] order, no prior state
 	data := json.RawMessage(`{

@@ -261,6 +261,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 
@@ -273,6 +274,7 @@ Read-Only:
 - `active` (String) Available values: "true", "false".
 - `created_at` (String)
 - `data` (String)
+- `is_valid` (Boolean)
 - `version_id` (String)
 
 ## Import

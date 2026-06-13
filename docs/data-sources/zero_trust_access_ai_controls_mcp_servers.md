@@ -2,12 +2,16 @@
 page_title: "cloudflare_zero_trust_access_ai_controls_mcp_servers Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  MCP Portals ReadMCP Portals Write
 ---
 
 # cloudflare_zero_trust_access_ai_controls_mcp_servers (Data Source)
 
+Accepted Permissions
 
+- `MCP Portals Read`
+- `MCP Portals Write`
 
 ## Example Usage
 
@@ -41,18 +45,33 @@ Read-Only:
 - `created_by` (String)
 - `description` (String)
 - `error` (String)
+- `error_details` (Attributes) (see [below for nested schema](#nestedatt--result--error_details))
 - `hostname` (String)
 - `id` (String) server id
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)
 - `name` (String)
 - `prompts` (List of Map of String)
+- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
 - `status` (String)
 - `tools` (List of Map of String)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--result--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--result--updated_tools))
+
+<a id="nestedatt--result--error_details"></a>
+### Nested Schema for `result.error_details`
+
+Read-Only:
+
+- `cause` (String) Underlying error message
+- `is_upstream` (Boolean) True = MCP server returned an error. False = couldn't reach the server
+- `mcp_code` (Number) MCP protocol error code
+- `retryable` (Boolean) Whether the error is transient and worth retrying
+- `status_code` (Number) HTTP status code from the server
+
 
 <a id="nestedatt--result--updated_prompts"></a>
 ### Nested Schema for `result.updated_prompts`

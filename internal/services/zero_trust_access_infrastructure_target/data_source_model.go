@@ -5,8 +5,8 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -29,10 +29,8 @@ type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 }
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessInfrastructureTargetGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = zero_trust.AccessInfrastructureTargetGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -61,13 +59,11 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	diags.Append(errs...)
 
 	params = zero_trust.AccessInfrastructureTargetListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mFilterIPs),
 		TargetIDs: cloudflare.F(mFilterTargetIDs),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	}
 	if !m.Filter.CreatedAfter.IsNull() {
 		params.CreatedAfter = cloudflare.F(mFilterCreatedAfter)
 	}

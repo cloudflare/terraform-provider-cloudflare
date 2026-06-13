@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/cache"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/cache"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -64,7 +64,6 @@ func (r *ZoneCacheVariantsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -114,7 +113,6 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -156,7 +154,6 @@ func (r *ZoneCacheVariantsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-
 	res := new(http.Response)
 	env := ZoneCacheVariantsResultEnvelope{*data}
 	_, err := r.client.Cache.Variants.Get(
@@ -196,7 +193,6 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 
 	_, err := r.client.Cache.Variants.Delete(
 		ctx,

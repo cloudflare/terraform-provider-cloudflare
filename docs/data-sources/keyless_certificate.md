@@ -79,14 +79,14 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 Available values: "active", "deleted".
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel. (see [below for nested schema](#nestedatt--tunnel))
 
 <a id="nestedatt--tunnel"></a>
 ### Nested Schema for `tunnel`
 
 Read-Only:
 
-- `private_ip` (String) Private IP of the Key Server Host
-- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
+- `private_ip` (String) Private IP of the Key Server Host.
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID.
 
 

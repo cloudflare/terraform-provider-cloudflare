@@ -29,6 +29,7 @@ data "cloudflare_pipeline_sinks" "example_pipeline_sinks" {
 
 - `account_id` (String) Specifies the public ID of the account.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) Filters sinks by name (case-insensitive substring).
 - `pipeline_id` (String)
 
 ### Read-Only

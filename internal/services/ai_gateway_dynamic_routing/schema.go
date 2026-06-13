@@ -22,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*AIGatewayDynamicRoutingResource)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"AI Gateway Read",
@@ -31,14 +32,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
-			"gateway_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"gateway_id": schema.StringAttribute{
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"elements": schema.ListNestedAttribute{
@@ -356,6 +357,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version_id": schema.StringAttribute{
 								Computed: true,
 							},
+							"is_valid": schema.BoolAttribute{
+								Computed: true,
+							},
 						},
 					},
 				},
@@ -378,6 +382,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"is_valid": schema.BoolAttribute{
 						Computed: true,
 					},
 				},

@@ -5,8 +5,8 @@ package universal_ssl_setting
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/ssl"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/ssl"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,10 +22,8 @@ type UniversalSSLSettingDataSourceModel struct {
 }
 
 func (m *UniversalSSLSettingDataSourceModel) toReadParams(_ context.Context) (params ssl.UniversalSettingGetParams, diags diag.Diagnostics) {
-	params = ssl.UniversalSettingGetParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = ssl.UniversalSettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

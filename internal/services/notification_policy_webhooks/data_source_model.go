@@ -5,8 +5,8 @@ package notification_policy_webhooks
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/alerting"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/alerting"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,10 +30,8 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 }
 
 func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams(_ context.Context) (params alerting.DestinationWebhookGetParams, diags diag.Diagnostics) {
-	params = alerting.DestinationWebhookGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = alerting.DestinationWebhookGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

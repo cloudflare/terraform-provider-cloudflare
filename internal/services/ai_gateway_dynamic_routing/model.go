@@ -16,8 +16,8 @@ type AIGatewayDynamicRoutingResultEnvelope struct {
 
 type AIGatewayDynamicRoutingModel struct {
 	ID         types.String                                                     `tfsdk:"id" json:"id,computed"`
-	GatewayID  types.String                                                     `tfsdk:"gateway_id" path:"gateway_id,required"`
 	AccountID  types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	GatewayID  types.String                                                     `tfsdk:"gateway_id" path:"gateway_id,required"`
 	Elements   *[]*AIGatewayDynamicRoutingElementsModel                         `tfsdk:"elements" json:"elements,required"`
 	Name       types.String                                                     `tfsdk:"name" json:"name,required"`
 	CreatedAt  timetypes.RFC3339                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -161,6 +161,7 @@ type AIGatewayDynamicRoutingRouteVersionModel struct {
 	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Data      types.String `tfsdk:"data" json:"data,computed"`
 	VersionID types.String `tfsdk:"version_id" json:"version_id,computed"`
+	IsValid   types.Bool   `tfsdk:"is_valid" json:"is_valid,computed"`
 }
 
 type AIGatewayDynamicRoutingVersionModel struct {
@@ -168,4 +169,5 @@ type AIGatewayDynamicRoutingVersionModel struct {
 	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Data      types.String `tfsdk:"data" json:"data,computed"`
 	VersionID types.String `tfsdk:"version_id" json:"version_id,computed"`
+	IsValid   types.Bool   `tfsdk:"is_valid" json:"is_valid,computed"`
 }

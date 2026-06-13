@@ -113,7 +113,7 @@ Read-Only:
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 Available values: "ubiquitous", "optimal", "force".
-- `certificate_authority` (String) The Certificate Authority that will issue the certificate
+- `certificate_authority` (String) The Certificate Authority that will issue the certificate.
 Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.

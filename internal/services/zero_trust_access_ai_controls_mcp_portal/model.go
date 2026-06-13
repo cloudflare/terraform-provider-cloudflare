@@ -47,13 +47,13 @@ type ZeroTrustAccessAIControlsMcpPortalServersModel struct {
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel struct {
 	Name        types.String `tfsdk:"name" json:"name,required"`
 	Alias       types.String `tfsdk:"alias" json:"alias,optional,no_refresh"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional,no_refresh"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersUpdatedToolsModel struct {
 	Name        types.String `tfsdk:"name" json:"name,required"`
 	Alias       types.String `tfsdk:"alias" json:"alias,optional,no_refresh"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional,no_refresh"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 }

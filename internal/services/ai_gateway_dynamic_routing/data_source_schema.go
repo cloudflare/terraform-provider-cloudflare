@@ -26,14 +26,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Optional:    true,
+			},
 			"gateway_id": schema.StringAttribute{
 				Required: true,
 			},
 			"id": schema.StringAttribute{
 				Required: true,
-			},
-			"account_id": schema.StringAttribute{
-				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
@@ -196,6 +196,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"version_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"is_valid": schema.BoolAttribute{
 						Computed: true,
 					},
 				},

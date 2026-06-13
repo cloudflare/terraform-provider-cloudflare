@@ -5,8 +5,8 @@ package pipeline_stream
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/pipelines"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/pipelines"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -34,20 +34,20 @@ type PipelineStreamDataSourceModel struct {
 }
 
 func (m *PipelineStreamDataSourceModel) toReadParams(_ context.Context) (params pipelines.StreamGetParams, diags diag.Diagnostics) {
-	params = pipelines.StreamGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	params = pipelines.StreamGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
 func (m *PipelineStreamDataSourceModel) toListParams(_ context.Context) (params pipelines.StreamListParams, diags diag.Diagnostics) {
-	params = pipelines.StreamListParams{}
+	params = pipelines.StreamListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}
 	if !m.Filter.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.Filter.PipelineID.ValueString())
@@ -104,5 +104,6 @@ type PipelineStreamWorkerBindingDataSourceModel struct {
 }
 
 type PipelineStreamFindOneByDataSourceModel struct {
+	Name       types.String `tfsdk:"name" query:"name,optional"`
 	PipelineID types.String `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 }

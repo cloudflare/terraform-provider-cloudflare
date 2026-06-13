@@ -8,11 +8,13 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -24,6 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*AIGatewayResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"AI Gateway Read",
@@ -34,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "gateway id",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Optional:      true,
@@ -176,6 +179,217 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"guardrails": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"prompt": schema.SingleNestedAttribute{
+						Required: true,
+						Attributes: map[string]schema.Attribute{
+							"p1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s10": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s11": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s12": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s13": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s2": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s3": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s4": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s5": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s6": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s7": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s8": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s9": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+						},
+					},
+					"response": schema.SingleNestedAttribute{
+						Required: true,
+						Attributes: map[string]schema.Attribute{
+							"p1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s1": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s10": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s11": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s12": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s13": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s2": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s3": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s4": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s5": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s6": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s7": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s8": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+							"s9": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
+						},
+					},
+				},
+			},
 			"stripe": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -209,15 +423,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[AIGatewayOtelModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"authorization": schema.StringAttribute{
-							Required: true,
-						},
 						"headers": schema.MapAttribute{
 							Required:    true,
 							ElementType: types.StringType,
 						},
 						"url": schema.StringAttribute{
 							Required: true,
+						},
+						"authorization": schema.StringAttribute{
+							Optional: true,
 						},
 						"content_type": schema.StringAttribute{
 							Description: `Available values: "json", "protobuf".`,
@@ -227,6 +441,115 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("json", "protobuf"),
 							},
 							Default: stringdefault.StaticString("json"),
+						},
+					},
+				},
+			},
+			"spend_limits": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AIGatewaySpendLimitsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Computed: true,
+						Optional: true,
+						Default:  booldefault.StaticBool(false),
+					},
+					"rules": schema.ListNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectListType[AIGatewaySpendLimitsRulesModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"limit": schema.Float64Attribute{
+									Required: true,
+									Validators: []validator.Float64{
+										float64validator.AtLeast(0),
+									},
+								},
+								"limit_type": schema.StringAttribute{
+									Description: `Available values: "cost".`,
+									Required:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("cost"),
+									},
+								},
+								"window": schema.Int64Attribute{
+									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(0),
+									},
+								},
+								"id": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+									Default:  stringdefault.StaticString("0a366eef"),
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+									Optional: true,
+									Default:  booldefault.StaticBool(true),
+								},
+								"metadata": schema.MapNestedAttribute{
+									Optional: true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"mode": schema.StringAttribute{
+												Description: `Available values: "partition", "filter".`,
+												Required:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("partition", "filter"),
+												},
+											},
+											"values": schema.ListAttribute{
+												Optional:    true,
+												ElementType: types.StringType,
+											},
+										},
+									},
+								},
+								"model": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: `Available values: "filter".`,
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("filter"),
+											},
+										},
+										"values": schema.ListAttribute{
+											Required:    true,
+											ElementType: types.StringType,
+										},
+									},
+								},
+								"ai_gateway_provider": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: `Available values: "filter".`,
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("filter"),
+											},
+										},
+										"values": schema.ListAttribute{
+											Required:    true,
+											ElementType: types.StringType,
+										},
+									},
+								},
+								"technique": schema.StringAttribute{
+									Description: `Available values: "fixed", "sliding".`,
+									Computed:    true,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("fixed", "sliding"),
+									},
+									Default: stringdefault.StaticString("sliding"),
+								},
+							},
 						},
 					},
 				},
