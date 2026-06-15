@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	cfv6 "github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
+	cfv7 "github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -50,7 +50,7 @@ func testAccCheckCloudflareTeamsGatewayCertDestroy(s *terraform.State) error {
 
 		accountId := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		_, err := client.ZeroTrust.Gateway.Certificates.Get(context.Background(), rs.Primary.ID, zero_trust.GatewayCertificateGetParams{
-			AccountID: cfv6.F(accountId),
+			AccountID: cfv7.F(accountId),
 		})
 		if err == nil {
 			return fmt.Errorf("Teams cert still exists")
