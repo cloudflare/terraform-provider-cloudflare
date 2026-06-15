@@ -269,6 +269,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_auto_origin_tls_kex"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dns_settings"
@@ -410,6 +411,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		regional_tiered_cache.NewResource,
 		origin_cloud_region.NewResource,
 		certificate_pack.NewResource,
+		zone_auto_origin_tls_kex.NewResource,
 		universal_ssl_setting.NewResource,
 		total_tls.NewResource,
 		custom_origin_trust_store.NewResource,
@@ -680,6 +682,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		origin_cloud_region.NewOriginCloudRegionsDataSource,
 		certificate_pack.NewCertificatePackDataSource,
 		certificate_pack.NewCertificatePacksDataSource,
+		zone_auto_origin_tls_kex.NewZoneAutoOriginTLSKexDataSource,
 		universal_ssl_setting.NewUniversalSSLSettingDataSource,
 		total_tls.NewTotalTLSDataSource,
 		custom_origin_trust_store.NewCustomOriginTrustStoreDataSource,
