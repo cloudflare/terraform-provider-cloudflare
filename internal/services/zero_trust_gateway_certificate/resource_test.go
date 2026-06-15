@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	cfv6 "github.com/cloudflare/cloudflare-go/v7"
+	cfv7 "github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -62,7 +62,7 @@ func testSweepCloudflareZeroTrustGatewayCertificate(r string) error {
 	client := acctest.SharedClient()
 
 	page, err := client.ZeroTrust.Gateway.Certificates.List(ctx, zero_trust.GatewayCertificateListParams{
-		AccountID: cfv6.F(accountID),
+		AccountID: cfv7.F(accountID),
 	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to list gateway certificates: %s", err))
@@ -93,7 +93,7 @@ func testSweepCloudflareZeroTrustGatewayCertificate(r string) error {
 					ctx,
 					cert.ID,
 					zero_trust.GatewayCertificateDeactivateParams{
-						AccountID: cfv6.F(accountID),
+						AccountID: cfv7.F(accountID),
 						Body:      struct{}{},
 					},
 				)
@@ -110,7 +110,7 @@ func testSweepCloudflareZeroTrustGatewayCertificate(r string) error {
 				ctx,
 				cert.ID,
 				zero_trust.GatewayCertificateDeleteParams{
-					AccountID: cfv6.F(accountID),
+					AccountID: cfv7.F(accountID),
 				},
 			)
 			if err != nil {
