@@ -93,7 +93,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The id of the DEX rule",
+							Description: "The id of the DEX rule.",
 							Required:    true,
 						},
 						"default": schema.BoolAttribute{
