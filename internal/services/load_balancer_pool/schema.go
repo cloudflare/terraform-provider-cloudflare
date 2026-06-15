@@ -4,6 +4,7 @@ package load_balancer_pool
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -219,6 +221,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("hash"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",

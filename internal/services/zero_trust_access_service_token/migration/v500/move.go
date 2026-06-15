@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -10,13 +11,14 @@ import (
 // MoveState handles moving state from legacy resource to current resource.
 // This is triggered by Terraform 1.8+ when it encounters a `moved` block:
 //
-//   moved {
-//     from = cloudflare_access_service_token.example
-//     to   = cloudflare_zero_trust_access_service_token.example
-//   }
+//	moved {
+//	  from = cloudflare_access_service_token.example
+//	  to   = cloudflare_zero_trust_access_service_token.example
+//	}
 //
 // For Terraform < 1.8, users must manually run:
-//   terraform state mv cloudflare_access_service_token.example cloudflare_zero_trust_access_service_token.example
+//
+//	terraform state mv cloudflare_access_service_token.example cloudflare_zero_trust_access_service_token.example
 //
 // which will preserve the source schema_version and trigger UpgradeFromV4 instead.
 func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resource.MoveStateResponse) {
@@ -24,6 +26,9 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 
 	// Parse the source state (legacy v4 format)
 	var sourceState SourceAccessServiceTokenModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return

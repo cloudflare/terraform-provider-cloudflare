@@ -107,6 +107,8 @@ func (r *ListResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 
+		normalizeListItems(ctx, itemsSet)
+
 		var items customfield.NestedObjectSet[ListItemModel]
 
 		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
@@ -167,6 +169,8 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		if resp.Diagnostics.HasError() {
 			return
 		}
+
+		normalizeListItems(ctx, itemsSet)
 
 		var items customfield.NestedObjectSet[ListItemModel]
 
@@ -230,6 +234,8 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		if resp.Diagnostics.HasError() {
 			return
 		}
+
+		normalizeListItems(ctx, itemsSet)
 
 		var items customfield.NestedObjectSet[ListItemModel]
 
@@ -314,6 +320,8 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	normalizeListItems(ctx, itemsSet)
 
 	var items customfield.NestedObjectSet[ListItemModel]
 

@@ -72,9 +72,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Default:  booldefault.StaticBool(false),
 						},
-						"is_shared_oauth_callback_enabled": schema.BoolAttribute{
-							Optional: true,
-						},
 						"on_behalf": schema.BoolAttribute{
 							Computed: true,
 							Optional: true,

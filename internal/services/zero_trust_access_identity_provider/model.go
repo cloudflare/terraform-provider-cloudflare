@@ -23,6 +23,7 @@ type ZeroTrustAccessIdentityProviderModel struct {
 	Config               *ZeroTrustAccessIdentityProviderConfigModel                                      `tfsdk:"config" json:"config,required"`
 	SAMLCertificateSetID types.String                                                                     `tfsdk:"saml_certificate_set_id" json:"saml_certificate_set_id,optional"`
 	SCIMConfig           customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel]         `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+	ReadOnly             types.Bool                                                                       `tfsdk:"read_only" json:"read_only,optional"`
 	SAMLCertificateSet   customfield.NestedObject[ZeroTrustAccessIdentityProviderSAMLCertificateSetModel] `tfsdk:"saml_certificate_set" json:"saml_certificate_set,computed"`
 }
 

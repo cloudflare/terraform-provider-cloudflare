@@ -79,11 +79,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `annotations` (Attributes) Metadata about the version. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker.
 

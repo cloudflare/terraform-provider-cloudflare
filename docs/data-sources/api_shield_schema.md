@@ -31,11 +31,11 @@ data "cloudflare_api_shield_schema" "example_api_shield_schema" {
 ### Required
 
 - `schema_id` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

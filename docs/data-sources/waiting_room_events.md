@@ -28,11 +28,11 @@ data "cloudflare_waiting_room_events" "example_waiting_room_events" {
 ### Required
 
 - `waiting_room_id` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

@@ -6,4 +6,7 @@ resource "cloudflare_workflow" "example_workflow" {
   limits = {
     steps = 1
   }
+  schedules = [{
+    cron = "x"
+  }]
 }

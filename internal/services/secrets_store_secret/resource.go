@@ -4,6 +4,7 @@ package secrets_store_secret
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -64,13 +65,13 @@ func (r *SecretsStoreSecretResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, err := json.Marshal([]SecretsStoreSecretModel{*data})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
+	env := SecretsStoreSecretResultEnvelope{Result: &[]*SecretsStoreSecretModel{data}}
 	_, err = r.client.SecretsStore.Stores.Secrets.New(
 		ctx,
 		data.StoreID.ValueString(),
@@ -91,7 +92,11 @@ func (r *SecretsStoreSecretResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	if env.Result == nil || len(*env.Result) == 0 {
+		resp.Diagnostics.AddError("bad state", "expected to have created 1 item")
+		return
+	}
+	data = (*env.Result)[0]
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -119,7 +124,7 @@ func (r *SecretsStoreSecretResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
+	env := SecretsStoreSecretSingleResultEnvelope{*data}
 	_, err = r.client.SecretsStore.Stores.Secrets.Edit(
 		ctx,
 		data.StoreID.ValueString(),
@@ -156,7 +161,7 @@ func (r *SecretsStoreSecretResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
+	env := SecretsStoreSecretSingleResultEnvelope{*data}
 	_, err := r.client.SecretsStore.Stores.Secrets.Get(
 		ctx,
 		data.StoreID.ValueString(),
@@ -236,7 +241,7 @@ func (r *SecretsStoreSecretResource) ImportState(ctx context.Context, req resour
 	data.ID = types.StringValue(path_secret_id)
 
 	res := new(http.Response)
-	env := SecretsStoreSecretResultEnvelope{*data}
+	env := SecretsStoreSecretSingleResultEnvelope{*data}
 	_, err := r.client.SecretsStore.Stores.Secrets.Get(
 		ctx,
 		path_store_id,
@@ -265,3 +270,5 @@ func (r *SecretsStoreSecretResource) ImportState(ctx context.Context, req resour
 func (r *SecretsStoreSecretResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
+
+

@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -36,6 +37,9 @@ func MoveState(ctx context.Context, req resource.MoveStateRequest, resp *resourc
 
 	// Parse source state using V4 model
 	var sourceState SourceWorkerScriptModel
+	if migrations.DiagnoseMoveStateNilSourceState(req, resp) {
+		return
+	}
 	resp.Diagnostics.Append(req.SourceState.Get(ctx, &sourceState)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -40,7 +40,7 @@ Read-Only:
 - `created_on` (String) The timestamp of when the monitor group was created
 - `description` (String) A short description of the monitor group
 - `id` (String) The ID of the Monitor Group to use for checking the health of origins within this pool.
-- `members` (Attributes List) List of monitors in this group (see [below for nested schema](#nestedatt--result--members))
+- `members` (Attributes Set) List of monitors in this group (see [below for nested schema](#nestedatt--result--members))
 - `modified_on` (String) The timestamp of when the monitor group was last updated
 
 <a id="nestedatt--result--members"></a>

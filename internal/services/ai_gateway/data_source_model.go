@@ -18,33 +18,34 @@ type AIGatewayResultDataSourceEnvelope struct {
 }
 
 type AIGatewayDataSourceModel struct {
-	ID                      types.String                                                 `tfsdk:"id" path:"id,computed_optional"`
-	AccountID               types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
-	Authentication          types.Bool                                                   `tfsdk:"authentication" json:"authentication,computed"`
-	CacheInvalidateOnUpdate types.Bool                                                   `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
-	CacheTTL                types.Int64                                                  `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
-	CollectLogs             types.Bool                                                   `tfsdk:"collect_logs" json:"collect_logs,computed"`
-	CreatedAt               timetypes.RFC3339                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	IsDefault               types.Bool                                                   `tfsdk:"is_default" json:"is_default,computed"`
-	LogManagement           types.Int64                                                  `tfsdk:"log_management" json:"log_management,computed"`
-	LogManagementStrategy   types.String                                                 `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
-	Logpush                 types.Bool                                                   `tfsdk:"logpush" json:"logpush,computed"`
-	LogpushPublicKey        types.String                                                 `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
-	ModifiedAt              timetypes.RFC3339                                            `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	RateLimitingInterval    types.Int64                                                  `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
-	RateLimitingLimit       types.Int64                                                  `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
-	RateLimitingTechnique   types.String                                                 `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
-	RetryBackoff            types.String                                                 `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
-	RetryDelay              types.Int64                                                  `tfsdk:"retry_delay" json:"retry_delay,computed"`
-	RetryMaxAttempts        types.Int64                                                  `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
-	StoreID                 types.String                                                 `tfsdk:"store_id" json:"store_id,computed"`
-	WorkersAIBillingMode    types.String                                                 `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
-	Zdr                     types.Bool                                                   `tfsdk:"zdr" json:"zdr,computed"`
-	DLP                     customfield.NestedObject[AIGatewayDLPDataSourceModel]        `tfsdk:"dlp" json:"dlp,computed"`
-	Guardrails              customfield.NestedObject[AIGatewayGuardrailsDataSourceModel] `tfsdk:"guardrails" json:"guardrails,computed"`
-	Otel                    customfield.NestedObjectList[AIGatewayOtelDataSourceModel]   `tfsdk:"otel" json:"otel,computed"`
-	Stripe                  customfield.NestedObject[AIGatewayStripeDataSourceModel]     `tfsdk:"stripe" json:"stripe,computed"`
-	Filter                  *AIGatewayFindOneByDataSourceModel                           `tfsdk:"filter"`
+	ID                      types.String                                                  `tfsdk:"id" path:"id,computed_optional"`
+	AccountID               types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	Authentication          types.Bool                                                    `tfsdk:"authentication" json:"authentication,computed"`
+	CacheInvalidateOnUpdate types.Bool                                                    `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
+	CacheTTL                types.Int64                                                   `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
+	CollectLogs             types.Bool                                                    `tfsdk:"collect_logs" json:"collect_logs,computed"`
+	CreatedAt               timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	IsDefault               types.Bool                                                    `tfsdk:"is_default" json:"is_default,computed"`
+	LogManagement           types.Int64                                                   `tfsdk:"log_management" json:"log_management,computed"`
+	LogManagementStrategy   types.String                                                  `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
+	Logpush                 types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
+	LogpushPublicKey        types.String                                                  `tfsdk:"logpush_public_key" json:"logpush_public_key,computed"`
+	ModifiedAt              timetypes.RFC3339                                             `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	RateLimitingInterval    types.Int64                                                   `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
+	RateLimitingLimit       types.Int64                                                   `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
+	RateLimitingTechnique   types.String                                                  `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,computed"`
+	RetryBackoff            types.String                                                  `tfsdk:"retry_backoff" json:"retry_backoff,computed"`
+	RetryDelay              types.Int64                                                   `tfsdk:"retry_delay" json:"retry_delay,computed"`
+	RetryMaxAttempts        types.Int64                                                   `tfsdk:"retry_max_attempts" json:"retry_max_attempts,computed"`
+	StoreID                 types.String                                                  `tfsdk:"store_id" json:"store_id,computed"`
+	WorkersAIBillingMode    types.String                                                  `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed"`
+	Zdr                     types.Bool                                                    `tfsdk:"zdr" json:"zdr,computed"`
+	DLP                     customfield.NestedObject[AIGatewayDLPDataSourceModel]         `tfsdk:"dlp" json:"dlp,computed"`
+	Guardrails              customfield.NestedObject[AIGatewayGuardrailsDataSourceModel]  `tfsdk:"guardrails" json:"guardrails,computed"`
+	Otel                    customfield.NestedObjectList[AIGatewayOtelDataSourceModel]    `tfsdk:"otel" json:"otel,computed"`
+	SpendLimits             customfield.NestedObject[AIGatewaySpendLimitsDataSourceModel] `tfsdk:"spend_limits" json:"spend_limits,computed"`
+	Stripe                  customfield.NestedObject[AIGatewayStripeDataSourceModel]      `tfsdk:"stripe" json:"stripe,computed"`
+	Filter                  *AIGatewayFindOneByDataSourceModel                            `tfsdk:"filter"`
 }
 
 func (m *AIGatewayDataSourceModel) toReadParams(_ context.Context) (params ai_gateway.AIGatewayGetParams, diags diag.Diagnostics) {
@@ -122,10 +123,42 @@ type AIGatewayGuardrailsResponseDataSourceModel struct {
 }
 
 type AIGatewayOtelDataSourceModel struct {
-	Authorization types.String                  `tfsdk:"authorization" json:"authorization,computed"`
 	Headers       customfield.Map[types.String] `tfsdk:"headers" json:"headers,computed"`
 	URL           types.String                  `tfsdk:"url" json:"url,computed"`
+	Authorization types.String                  `tfsdk:"authorization" json:"authorization,computed"`
 	ContentType   types.String                  `tfsdk:"content_type" json:"content_type,computed"`
+}
+
+type AIGatewaySpendLimitsDataSourceModel struct {
+	Enabled types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	Rules   customfield.NestedObjectList[AIGatewaySpendLimitsRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
+}
+
+type AIGatewaySpendLimitsRulesDataSourceModel struct {
+	Limit             types.Float64                                                                       `tfsdk:"limit" json:"limit,computed"`
+	LimitType         types.String                                                                        `tfsdk:"limit_type" json:"limitType,computed"`
+	Window            types.Int64                                                                         `tfsdk:"window" json:"window,computed"`
+	ID                types.String                                                                        `tfsdk:"id" json:"id,computed"`
+	Enabled           types.Bool                                                                          `tfsdk:"enabled" json:"enabled,computed"`
+	Metadata          customfield.NestedObjectMap[AIGatewaySpendLimitsRulesMetadataDataSourceModel]       `tfsdk:"metadata" json:"metadata,computed"`
+	Model             customfield.NestedObject[AIGatewaySpendLimitsRulesModelDataSourceModel]             `tfsdk:"model" json:"model,computed"`
+	AIGatewayProvider customfield.NestedObject[AIGatewaySpendLimitsRulesAIGatewayProviderDataSourceModel] `tfsdk:"ai_gateway_provider" json:"provider,computed"`
+	Technique         types.String                                                                        `tfsdk:"technique" json:"technique,computed"`
+}
+
+type AIGatewaySpendLimitsRulesMetadataDataSourceModel struct {
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
+}
+
+type AIGatewaySpendLimitsRulesModelDataSourceModel struct {
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
+}
+
+type AIGatewaySpendLimitsRulesAIGatewayProviderDataSourceModel struct {
+	Mode   types.String                   `tfsdk:"mode" json:"mode,computed"`
+	Values customfield.List[types.String] `tfsdk:"values" json:"values,computed"`
 }
 
 type AIGatewayStripeDataSourceModel struct {

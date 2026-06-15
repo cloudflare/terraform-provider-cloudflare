@@ -40,10 +40,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"members": schema.ListNestedAttribute{
+			"members": schema.SetNestedAttribute{
 				Description: "List of monitors in this group",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[LoadBalancerMonitorGroupMembersDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[LoadBalancerMonitorGroupMembersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{

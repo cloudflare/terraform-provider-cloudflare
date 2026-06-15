@@ -81,7 +81,7 @@ get_product_group_services() {
             echo "waiting_room_settings"
             ;;
         performance)
-            echo "argo_smart_routing argo_tiered_caching tiered_cache regional_tiered_cache"
+            echo "argo_smart_routing argo_tiered_caching tiered_cache regional_tiered_cache origin_cloud_region"
             ;;
         cdn-advanced)
             echo "regional_hostname spectrum_application"

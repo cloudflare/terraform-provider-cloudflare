@@ -27,8 +27,11 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 ### Required
 
-- `account_id` (String) Define configurations using a unique string identifier.
 - `hyperdrive_id` (String) Define configurations using a unique string identifier.
+
+### Optional
+
+- `account_id` (String) Define configurations using a unique string identifier.
 
 ### Read-Only
 

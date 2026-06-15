@@ -18,13 +18,13 @@ type LoadBalancerMonitorGroupResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorGroupDataSourceModel struct {
-	ID             types.String                                                                 `tfsdk:"id" path:"monitor_group_id,computed"`
-	MonitorGroupID types.String                                                                 `tfsdk:"monitor_group_id" path:"monitor_group_id,required"`
-	AccountID      types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	CreatedOn      timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
-	ModifiedOn     timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Members        customfield.NestedObjectList[LoadBalancerMonitorGroupMembersDataSourceModel] `tfsdk:"members" json:"members,computed"`
+	ID             types.String                                                                `tfsdk:"id" path:"monitor_group_id,computed"`
+	MonitorGroupID types.String                                                                `tfsdk:"monitor_group_id" path:"monitor_group_id,required"`
+	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	CreatedOn      timetypes.RFC3339                                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     timetypes.RFC3339                                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Members        customfield.NestedObjectSet[LoadBalancerMonitorGroupMembersDataSourceModel] `tfsdk:"members" json:"members,computed"`
 }
 
 func (m *LoadBalancerMonitorGroupDataSourceModel) toReadParams(_ context.Context) (params load_balancers.MonitorGroupGetParams, diags diag.Diagnostics) {

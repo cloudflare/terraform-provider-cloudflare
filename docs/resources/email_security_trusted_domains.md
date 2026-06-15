@@ -31,15 +31,15 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
 
 ### Required
 
-- `account_id` (String) Identifier.
-- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
-- `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
 - `pattern` (String)
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `comments` (String)
+- `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
+- `is_regex` (Boolean)
+- `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
 
 ### Read-Only
 

@@ -241,6 +241,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "UUID.",
 							Computed:    true,
 						},
+						"read_only": schema.BoolAttribute{
+							Description: "Indicates that the identity provider is immutable and cannot be updated or deleted via the API.",
+							Computed:    true,
+						},
 						"saml_certificate_set": schema.SingleNestedAttribute{
 							Description: "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.",
 							Computed:    true,
