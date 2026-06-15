@@ -14,7 +14,7 @@ type ZeroTrustAccessTagResultEnvelope struct {
 type ZeroTrustAccessTagModel struct {
 	ID        types.String `tfsdk:"id" json:"-,computed"`
 	Name      types.String `tfsdk:"name" json:"name,required"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }
 
 func (m ZeroTrustAccessTagModel) MarshalJSON() (data []byte, err error) {

@@ -14,7 +14,7 @@ type EmailSecurityTrustedDomainsResultEnvelope struct {
 
 type EmailSecurityTrustedDomainsModel struct {
 	ID           types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String      `tfsdk:"account_id" path:"account_id,required"`
 	IsRecent     types.Bool        `tfsdk:"is_recent" json:"is_recent,optional"`
 	IsRegex      types.Bool        `tfsdk:"is_regex" json:"is_regex,optional"`
 	IsSimilarity types.Bool        `tfsdk:"is_similarity" json:"is_similarity,optional"`

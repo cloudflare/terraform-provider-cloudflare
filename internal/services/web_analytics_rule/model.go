@@ -14,7 +14,7 @@ type WebAnalyticsRuleResultEnvelope struct {
 
 type WebAnalyticsRuleModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	RulesetID types.String      `tfsdk:"ruleset_id" path:"ruleset_id,required"`
 	Host      types.String      `tfsdk:"host" json:"host,optional"`
 	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,optional"`
