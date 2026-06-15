@@ -103,6 +103,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_ownership_challenge"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_network_monitoring_configuration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_network_monitoring_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_cf1_site"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_acl"
@@ -492,6 +493,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_site_lan.NewResource,
 		magic_transit_site_wan.NewResource,
 		magic_transit_connector.NewResource,
+		magic_transit_cf1_site.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
 		pages_project.NewResource,
@@ -819,6 +821,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_transit_site_wan.NewMagicTransitSiteWANsDataSource,
 		magic_transit_connector.NewMagicTransitConnectorDataSource,
 		magic_transit_connector.NewMagicTransitConnectorsDataSource,
+		magic_transit_cf1_site.NewMagicTransitCf1SiteDataSource,
+		magic_transit_cf1_site.NewMagicTransitCf1SitesDataSource,
 		magic_network_monitoring_configuration.NewMagicNetworkMonitoringConfigurationDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRuleDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
