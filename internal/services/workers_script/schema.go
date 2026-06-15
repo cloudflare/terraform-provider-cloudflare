@@ -429,7 +429,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"keep_assets": schema.BoolAttribute{
-						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
+						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.",
 						Optional:    true,
 					},
 					"keep_bindings": schema.SetAttribute{
