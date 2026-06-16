@@ -15,7 +15,7 @@ type MagicWANStaticRouteResultEnvelope struct {
 
 type MagicWANStaticRouteModel struct {
 	ID            types.String                                                    `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Nexthop       types.String                                                    `tfsdk:"nexthop" json:"nexthop,required,no_refresh"`
 	Prefix        types.String                                                    `tfsdk:"prefix" json:"prefix,required,no_refresh"`
 	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,required,no_refresh"`

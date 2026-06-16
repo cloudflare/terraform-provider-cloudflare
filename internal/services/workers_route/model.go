@@ -13,7 +13,7 @@ type WorkersRouteResultEnvelope struct {
 
 type WorkersRouteModel struct {
 	ID      types.String `tfsdk:"id" json:"id,computed"`
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Pattern types.String `tfsdk:"pattern" json:"pattern,required"`
 	Script  types.String `tfsdk:"script" json:"script,optional"`
 }

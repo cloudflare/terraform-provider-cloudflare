@@ -14,7 +14,7 @@ type ZeroTrustGatewayPacfileResultEnvelope struct {
 
 type ZeroTrustGatewayPacfileModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Slug        types.String      `tfsdk:"slug" json:"slug,optional"`
 	Contents    types.String      `tfsdk:"contents" json:"contents,required"`
 	Name        types.String      `tfsdk:"name" json:"name,required"`
