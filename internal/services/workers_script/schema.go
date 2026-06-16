@@ -694,6 +694,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Default:     booldefault.StaticBool(true),
 							},
+							"propagation_policy": schema.StringAttribute{
+								Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" (default) honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.\nAvailable values: \"authenticated\", \"accept\".",
+								Computed:    true,
+								Optional:    true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+							},
 						},
 					},
 				},
