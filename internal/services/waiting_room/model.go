@@ -15,7 +15,7 @@ type WaitingRoomResultEnvelope struct {
 
 type WaitingRoomModel struct {
 	ID                         types.String                                                   `tfsdk:"id" json:"id,computed"`
-	ZoneID                     types.String                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                     types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Host                       types.String                                                   `tfsdk:"host" json:"host,required"`
 	Name                       types.String                                                   `tfsdk:"name" json:"name,required"`
 	NewUsersPerMinute          types.Int64                                                    `tfsdk:"new_users_per_minute" json:"new_users_per_minute,required"`
