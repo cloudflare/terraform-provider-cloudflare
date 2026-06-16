@@ -110,6 +110,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_ownership_challenge"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_network_monitoring_configuration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_network_monitoring_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_cf1_site"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_acl"
@@ -130,6 +131,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/organization_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_cloud_region"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_tls_compliance_modes"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
@@ -278,6 +280,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_auto_origin_tls_kex"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dns_settings"
@@ -479,6 +482,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		regional_tiered_cache.NewResource,
 		origin_cloud_region.NewResource,
 		certificate_pack.NewResource,
+		zone_auto_origin_tls_kex.NewResource,
 		universal_ssl_setting.NewResource,
 		total_tls.NewResource,
 		custom_origin_trust_store.NewResource,
@@ -567,6 +571,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_site_lan.NewResource,
 		magic_transit_site_wan.NewResource,
 		magic_transit_connector.NewResource,
+		magic_transit_cf1_site.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
 		mtls_certificate.NewResource,
@@ -665,6 +670,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		vulnerability_scanner_credential.NewResource,
 		vulnerability_scanner_target_environment.NewResource,
 		bot_management.NewResource,
+		origin_tls_compliance_modes.NewResource,
 		google_tag_gateway.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
@@ -756,6 +762,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		origin_cloud_region.NewOriginCloudRegionsDataSource,
 		certificate_pack.NewCertificatePackDataSource,
 		certificate_pack.NewCertificatePacksDataSource,
+		zone_auto_origin_tls_kex.NewZoneAutoOriginTLSKexDataSource,
 		universal_ssl_setting.NewUniversalSSLSettingDataSource,
 		total_tls.NewTotalTLSDataSource,
 		custom_origin_trust_store.NewCustomOriginTrustStoreDataSource,
@@ -904,6 +911,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_transit_site_wan.NewMagicTransitSiteWANsDataSource,
 		magic_transit_connector.NewMagicTransitConnectorDataSource,
 		magic_transit_connector.NewMagicTransitConnectorsDataSource,
+		magic_transit_cf1_site.NewMagicTransitCf1SiteDataSource,
+		magic_transit_cf1_site.NewMagicTransitCf1SitesDataSource,
 		magic_network_monitoring_configuration.NewMagicNetworkMonitoringConfigurationDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRuleDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
@@ -1071,6 +1080,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentDataSource,
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentsDataSource,
 		bot_management.NewBotManagementDataSource,
+		origin_tls_compliance_modes.NewOriginTLSComplianceModesDataSource,
 		google_tag_gateway.NewGoogleTagGatewayDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
