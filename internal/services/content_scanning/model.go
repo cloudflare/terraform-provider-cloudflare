@@ -12,7 +12,7 @@ type ContentScanningResultEnvelope struct {
 }
 
 type ContentScanningModel struct {
-	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Value    types.String `tfsdk:"value" json:"value,required"`
 	Modified types.String `tfsdk:"modified" json:"modified,computed"`
 }

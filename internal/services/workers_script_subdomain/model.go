@@ -13,7 +13,7 @@ type WorkersScriptSubdomainResultEnvelope struct {
 
 type WorkersScriptSubdomainModel struct {
 	ID              types.String `tfsdk:"id" json:"-,computed"`
-	AccountID       types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ScriptName      types.String `tfsdk:"script_name" path:"script_name,required"`
 	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 	PreviewsEnabled types.Bool   `tfsdk:"previews_enabled" json:"previews_enabled,computed_optional"`

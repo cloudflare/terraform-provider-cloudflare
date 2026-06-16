@@ -15,7 +15,7 @@ type WorkersDeploymentResultEnvelope struct {
 
 type WorkersDeploymentModel struct {
 	ID          types.String                                                `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	ScriptName  types.String                                                `tfsdk:"script_name" path:"script_name,required"`
 	Strategy    types.String                                                `tfsdk:"strategy" json:"strategy,required"`
 	Versions    *[]*WorkersDeploymentVersionsModel                          `tfsdk:"versions" json:"versions,required"`
