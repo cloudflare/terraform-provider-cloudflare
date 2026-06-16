@@ -76,7 +76,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"managed_request_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Request Transforms.",
-				Required:    true,
+				Optional:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ManagedTransformsManagedRequestHeadersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -93,7 +93,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"managed_response_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Response Transforms.",
-				Required:    true,
+				Optional:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ManagedTransformsManagedResponseHeadersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{

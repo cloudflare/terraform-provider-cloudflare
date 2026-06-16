@@ -14,8 +14,8 @@ type ManagedTransformsResultEnvelope struct {
 type ManagedTransformsModel struct {
 	ID                     types.String                                     `tfsdk:"id" json:"-,computed"`
 	ZoneID                 types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
-	ManagedRequestHeaders  *[]*ManagedTransformsManagedRequestHeadersModel  `tfsdk:"managed_request_headers" json:"managed_request_headers,required"`
-	ManagedResponseHeaders *[]*ManagedTransformsManagedResponseHeadersModel `tfsdk:"managed_response_headers" json:"managed_response_headers,required"`
+	ManagedRequestHeaders  *[]*ManagedTransformsManagedRequestHeadersModel  `tfsdk:"managed_request_headers" json:"managed_request_headers,optional"`
+	ManagedResponseHeaders *[]*ManagedTransformsManagedResponseHeadersModel `tfsdk:"managed_response_headers" json:"managed_response_headers,optional"`
 }
 
 func (m ManagedTransformsModel) MarshalJSON() (data []byte, err error) {
