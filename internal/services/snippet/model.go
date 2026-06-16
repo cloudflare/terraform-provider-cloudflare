@@ -37,7 +37,7 @@ var SnippetFileType = snippetFileType{
 type SnippetModel struct {
 	ID          types.String          `tfsdk:"id" json:"-,computed"`
 	SnippetName types.String          `tfsdk:"snippet_name" path:"snippet_name,required"`
-	ZoneID      types.String          `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID      types.String          `tfsdk:"zone_id" path:"zone_id,required"`
 	Files       *[]SnippetFile        `tfsdk:"files" json:"files,metadata,required"`
 	Metadata    *SnippetMetadataModel `tfsdk:"metadata" json:"metadata,required,no_refresh"`
 	CreatedOn   timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
