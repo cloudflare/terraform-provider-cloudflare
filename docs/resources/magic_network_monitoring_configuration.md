@@ -35,11 +35,11 @@ resource "cloudflare_magic_network_monitoring_configuration" "example_magic_netw
 
 ### Required
 
+- `account_id` (String)
 - `name` (String) The account name.
 
 ### Optional
 
-- `account_id` (String)
 - `default_sampling` (Number) Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.
 - `router_ips` (List of String)
 - `warp_devices` (Attributes List) (see [below for nested schema](#nestedatt--warp_devices))

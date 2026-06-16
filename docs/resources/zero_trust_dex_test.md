@@ -42,6 +42,7 @@ resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 
 ### Required
 
+- `account_id` (String)
 - `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--data))
 - `enabled` (Boolean) Determines whether or not the test is active.
 - `interval` (String) How often the test will run.
@@ -49,7 +50,6 @@ resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String) Additional details about the test.
 - `target_policies` (Attributes List) DEX rules targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 

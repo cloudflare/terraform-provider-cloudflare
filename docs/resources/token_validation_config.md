@@ -47,9 +47,6 @@ resource "cloudflare_token_validation_config" "example_token_validation_config" 
 - `title` (String)
 - `token_sources` (List of String)
 - `token_type` (String) Available values: "JWT".
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only
