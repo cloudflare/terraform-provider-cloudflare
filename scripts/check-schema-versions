@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+MIN_VERSION=500
+errors=0
+
+for dir in internal/services/*/; do
+  schema="$dir/schema.go"
+  [ -f "$schema" ] || continue
+  grep -q 'func ResourceSchema' "$schema" || continue
+
+  svc=$(basename "$dir")
+  ver=$(grep 'Version:' "$schema" | head -1 | sed 's/[^0-9]//g')
+  ver=${ver:-0}
+
+  if [ "$ver" -lt "$MIN_VERSION" ]; then
+    echo "FAIL: $svc/schema.go has Version: $ver (expected >= $MIN_VERSION)"
+    errors=$((errors + 1))
+  fi
+done
+
+if [ "$errors" -gt 0 ]; then
+  echo ""
+  echo "$errors resource(s) missing Version >= $MIN_VERSION in schema.go"
+  echo "Every resource schema must set Version: $MIN_VERSION (or greater) to ensure state upgraders are wired correctly."
+  exit 1
+fi
+
+echo "All resource schemas have Version >= $MIN_VERSION"
