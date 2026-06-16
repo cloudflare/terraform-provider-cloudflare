@@ -35,9 +35,6 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `host` (String) RFC3986-compliant host.
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

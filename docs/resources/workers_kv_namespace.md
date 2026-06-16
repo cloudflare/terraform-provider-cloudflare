@@ -27,11 +27,8 @@ resource "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 
 ### Required
 
-- `title` (String) A human-readable string name for a Namespace.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `title` (String) A human-readable string name for a Namespace.
 
 ### Read-Only
 

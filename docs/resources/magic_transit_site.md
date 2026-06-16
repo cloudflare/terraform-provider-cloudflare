@@ -37,11 +37,11 @@ resource "cloudflare_magic_transit_site" "example_magic_transit_site" {
 
 ### Required
 
+- `account_id` (String) Identifier
 - `name` (String) The name of the site.
 
 ### Optional
 
-- `account_id` (String) Identifier
 - `connector_id` (String) Magic Connector identifier tag.
 - `description` (String)
 - `ha_mode` (Boolean) Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.

@@ -68,13 +68,13 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
 - `name` (String) The name of the Access policy.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `connection_rules` (Attributes) The rules that define how users may connect to targets secured by your application. (see [below for nested schema](#nestedatt--connection_rules))

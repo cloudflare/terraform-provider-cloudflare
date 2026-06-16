@@ -44,12 +44,12 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 ### Required
 
+- `account_id` (String) Define configurations using a unique string identifier.
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 
 ### Optional
 
-- `account_id` (String) Define configurations using a unique string identifier.
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
 - `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--mtls))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
