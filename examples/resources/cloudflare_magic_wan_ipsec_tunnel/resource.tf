@@ -6,7 +6,9 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
   automatic_return_routing = true
   bgp = {
     customer_asn = 0
+    export_filter_id = "a1b2c3d4e5f647890a1b2c3d4e5f6789"
     extra_prefixes = ["string"]
+    import_filter_id = "a1b2c3d4e5f647890a1b2c3d4e5f6789"
     md5_key = "md5_key"
   }
   custom_remote_identities = {
