@@ -18,7 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = (*MoqRelayResource)(nil)
+var _ resource.ResourceWithConfigValidators = (*MoQRelayResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -46,12 +46,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "origin_fallback and lingering_subscribe are mutually exclusive.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[MoqRelayConfigModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[MoQRelayConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"lingering_subscribe": schema.SingleNestedAttribute{
 						Computed:   true,
 						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[MoqRelayConfigLingeringSubscribeModel](ctx),
+						CustomType: customfield.NewNestedObjectType[MoQRelayConfigLingeringSubscribeModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
@@ -72,7 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"origin_fallback": schema.SingleNestedAttribute{
 						Computed:   true,
 						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[MoqRelayConfigOriginFallbackModel](ctx),
+						CustomType: customfield.NewNestedObjectType[MoQRelayConfigOriginFallbackModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
@@ -83,7 +83,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Ordered list of upstream origin relays. Each entry is an object\n(not a bare string) so per-origin configuration can be added in\nthe future without another breaking change.",
 								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectListType[MoqRelayConfigOriginFallbackOriginsModel](ctx),
+								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigOriginFallbackOriginsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"url": schema.StringAttribute{
@@ -126,10 +126,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (r *MoqRelayResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *MoQRelayResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *MoqRelayResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+func (r *MoQRelayResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{}
 }

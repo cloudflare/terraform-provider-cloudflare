@@ -10,9 +10,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestMoqRelayDataSourceModelSchemaParity(t *testing.T) {
+func TestMoQRelayDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*moq_relay.MoqRelayDataSourceModel)(nil)
+	model := (*moq_relay.MoQRelayDataSourceModel)(nil)
 	schema := moq_relay.DataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)

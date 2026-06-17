@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type MoqRelaysDataSource struct {
+type MoQRelaysDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*MoqRelaysDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*MoQRelaysDataSource)(nil)
 
-func NewMoqRelaysDataSource() datasource.DataSource {
-	return &MoqRelaysDataSource{}
+func NewMoQRelaysDataSource() datasource.DataSource {
+	return &MoQRelaysDataSource{}
 }
 
-func (d *MoqRelaysDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *MoQRelaysDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_moq_relays"
 }
 
-func (d *MoqRelaysDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *MoQRelaysDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *MoqRelaysDataSource) Configure(ctx context.Context, req datasource.Conf
 	d.client = client
 }
 
-func (d *MoqRelaysDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *MoqRelaysDataSourceModel
+func (d *MoQRelaysDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *MoQRelaysDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *MoqRelaysDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	env := MoqRelaysResultListDataSourceEnvelope{}
+	env := MoQRelaysResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Moq.Relays.List(ctx, params)
+	page, err := d.client.MoQ.Relays.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *MoqRelaysDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[MoqRelaysResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[MoQRelaysResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 

@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MoqRelaysResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MoqRelaysResultDataSourceModel] `json:"result,computed"`
+type MoQRelaysResultListDataSourceEnvelope struct {
+	Result customfield.NestedObjectList[MoQRelaysResultDataSourceModel] `json:"result,computed"`
 }
 
-type MoqRelaysDataSourceModel struct {
+type MoQRelaysDataSourceModel struct {
 	AccountID     types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAfter  timetypes.RFC3339                                            `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
 	CreatedBefore timetypes.RFC3339                                            `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
 	PerPage       types.Int64                                                  `tfsdk:"per_page" query:"per_page,optional"`
 	Asc           types.Bool                                                   `tfsdk:"asc" query:"asc,computed_optional"`
 	MaxItems      types.Int64                                                  `tfsdk:"max_items"`
-	Result        customfield.NestedObjectList[MoqRelaysResultDataSourceModel] `tfsdk:"result"`
+	Result        customfield.NestedObjectList[MoQRelaysResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *MoqRelaysDataSourceModel) toListParams(_ context.Context) (params moq.RelayListParams, diags diag.Diagnostics) {
+func (m *MoQRelaysDataSourceModel) toListParams(_ context.Context) (params moq.RelayListParams, diags diag.Diagnostics) {
 	mCreatedAfter, errs := m.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)
 	mCreatedBefore, errs := m.CreatedBefore.ValueRFC3339Time()
@@ -53,7 +53,7 @@ func (m *MoqRelaysDataSourceModel) toListParams(_ context.Context) (params moq.R
 	return
 }
 
-type MoqRelaysResultDataSourceModel struct {
+type MoQRelaysResultDataSourceModel struct {
 	ID       types.String      `tfsdk:"id" json:"uid,computed"`
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`

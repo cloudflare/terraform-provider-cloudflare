@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*MoqRelayDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*MoQRelayDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -55,11 +55,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"config": schema.SingleNestedAttribute{
 				Description: "origin_fallback and lingering_subscribe are mutually exclusive.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[MoqRelayConfigDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[MoQRelayConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"lingering_subscribe": schema.SingleNestedAttribute{
 						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MoqRelayConfigLingeringSubscribeDataSourceModel](ctx),
+						CustomType: customfield.NewNestedObjectType[MoQRelayConfigLingeringSubscribeDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
@@ -75,7 +75,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"origin_fallback": schema.SingleNestedAttribute{
 						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MoqRelayConfigOriginFallbackDataSourceModel](ctx),
+						CustomType: customfield.NewNestedObjectType[MoQRelayConfigOriginFallbackDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
@@ -83,7 +83,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"origins": schema.ListNestedAttribute{
 								Description: "Ordered list of upstream origin relays. Each entry is an object\n(not a bare string) so per-origin configuration can be added in\nthe future without another breaking change.",
 								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[MoqRelayConfigOriginFallbackOriginsDataSourceModel](ctx),
+								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigOriginFallbackOriginsDataSourceModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"url": schema.StringAttribute{
@@ -128,11 +128,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *MoqRelayDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *MoQRelayDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *MoqRelayDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *MoQRelayDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("relay_id"), path.MatchRoot("filter")),
 	}

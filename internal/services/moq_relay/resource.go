@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*MoqRelayResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*MoqRelayResource)(nil)
-var _ resource.ResourceWithImportState = (*MoqRelayResource)(nil)
+var _ resource.ResourceWithConfigure = (*MoQRelayResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*MoQRelayResource)(nil)
+var _ resource.ResourceWithImportState = (*MoQRelayResource)(nil)
 
 func NewResource() resource.Resource {
-	return &MoqRelayResource{}
+	return &MoQRelayResource{}
 }
 
-// MoqRelayResource defines the resource implementation.
-type MoqRelayResource struct {
+// MoQRelayResource defines the resource implementation.
+type MoQRelayResource struct {
 	client *cloudflare.Client
 }
 
-func (r *MoqRelayResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *MoQRelayResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_moq_relay"
 }
 
-func (r *MoqRelayResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *MoQRelayResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *MoqRelayResource) Configure(ctx context.Context, req resource.Configure
 	r.client = client
 }
 
-func (r *MoqRelayResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *MoqRelayModel
+func (r *MoQRelayResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *MoQRelayModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,8 +70,8 @@ func (r *MoqRelayResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	res := new(http.Response)
-	env := MoqRelayResultEnvelope{*data}
-	_, err = r.client.Moq.Relays.New(
+	env := MoQRelayResultEnvelope{*data}
+	_, err = r.client.MoQ.Relays.New(
 		ctx,
 		moq.RelayNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -96,8 +96,8 @@ func (r *MoqRelayResource) Create(ctx context.Context, req resource.CreateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MoqRelayResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *MoqRelayModel
+func (r *MoQRelayResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *MoQRelayModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -105,7 +105,7 @@ func (r *MoqRelayResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	var state *MoqRelayModel
+	var state *MoQRelayModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -119,8 +119,8 @@ func (r *MoqRelayResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	res := new(http.Response)
-	env := MoqRelayResultEnvelope{*data}
-	_, err = r.client.Moq.Relays.Update(
+	env := MoQRelayResultEnvelope{*data}
+	_, err = r.client.MoQ.Relays.Update(
 		ctx,
 		data.UID.ValueString(),
 		moq.RelayUpdateParams{
@@ -146,8 +146,8 @@ func (r *MoqRelayResource) Update(ctx context.Context, req resource.UpdateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MoqRelayResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *MoqRelayModel
+func (r *MoQRelayResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *MoQRelayModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -156,8 +156,8 @@ func (r *MoqRelayResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	res := new(http.Response)
-	env := MoqRelayResultEnvelope{*data}
-	_, err := r.client.Moq.Relays.Get(
+	env := MoQRelayResultEnvelope{*data}
+	_, err := r.client.MoQ.Relays.Get(
 		ctx,
 		data.UID.ValueString(),
 		moq.RelayGetParams{
@@ -187,8 +187,8 @@ func (r *MoqRelayResource) Read(ctx context.Context, req resource.ReadRequest, r
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MoqRelayResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *MoqRelayModel
+func (r *MoQRelayResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *MoQRelayModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -196,7 +196,7 @@ func (r *MoqRelayResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, err := r.client.Moq.Relays.Delete(
+	_, err := r.client.MoQ.Relays.Delete(
 		ctx,
 		data.UID.ValueString(),
 		moq.RelayDeleteParams{
@@ -213,8 +213,8 @@ func (r *MoqRelayResource) Delete(ctx context.Context, req resource.DeleteReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MoqRelayResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data = new(MoqRelayModel)
+func (r *MoQRelayResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(MoQRelayModel)
 
 	path_account_id := ""
 	path_relay_id := ""
@@ -233,8 +233,8 @@ func (r *MoqRelayResource) ImportState(ctx context.Context, req resource.ImportS
 	data.UID = types.StringValue(path_relay_id)
 
 	res := new(http.Response)
-	env := MoqRelayResultEnvelope{*data}
-	_, err := r.client.Moq.Relays.Get(
+	env := MoQRelayResultEnvelope{*data}
+	_, err := r.client.MoQ.Relays.Get(
 		ctx,
 		path_relay_id,
 		moq.RelayGetParams{
@@ -259,6 +259,6 @@ func (r *MoqRelayResource) ImportState(ctx context.Context, req resource.ImportS
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MoqRelayResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *MoQRelayResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

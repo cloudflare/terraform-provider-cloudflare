@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*MoqRelaysDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*MoQRelaysDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -54,7 +54,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[MoqRelaysResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[MoQRelaysResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -81,10 +81,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *MoqRelaysDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *MoQRelaysDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *MoqRelaysDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *MoQRelaysDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }

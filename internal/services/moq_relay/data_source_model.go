@@ -13,11 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MoqRelayResultDataSourceEnvelope struct {
-	Result MoqRelayDataSourceModel `json:"result,computed"`
+type MoQRelayResultDataSourceEnvelope struct {
+	Result MoQRelayDataSourceModel `json:"result,computed"`
 }
 
-type MoqRelayDataSourceModel struct {
+type MoQRelayDataSourceModel struct {
 	ID        types.String                                            `tfsdk:"id" path:"relay_id,computed"`
 	RelayID   types.String                                            `tfsdk:"relay_id" path:"relay_id,optional"`
 	AccountID types.String                                            `tfsdk:"account_id" path:"account_id,required"`
@@ -26,11 +26,11 @@ type MoqRelayDataSourceModel struct {
 	Name      types.String                                            `tfsdk:"name" json:"name,computed"`
 	Status    types.String                                            `tfsdk:"status" json:"status,computed"`
 	UID       types.String                                            `tfsdk:"uid" json:"uid,computed"`
-	Config    customfield.NestedObject[MoqRelayConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	Filter    *MoqRelayFindOneByDataSourceModel                       `tfsdk:"filter"`
+	Config    customfield.NestedObject[MoQRelayConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	Filter    *MoQRelayFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
-func (m *MoqRelayDataSourceModel) toReadParams(_ context.Context) (params moq.RelayGetParams, diags diag.Diagnostics) {
+func (m *MoQRelayDataSourceModel) toReadParams(_ context.Context) (params moq.RelayGetParams, diags diag.Diagnostics) {
 	params = moq.RelayGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -38,7 +38,7 @@ func (m *MoqRelayDataSourceModel) toReadParams(_ context.Context) (params moq.Re
 	return
 }
 
-func (m *MoqRelayDataSourceModel) toListParams(_ context.Context) (params moq.RelayListParams, diags diag.Diagnostics) {
+func (m *MoQRelayDataSourceModel) toListParams(_ context.Context) (params moq.RelayListParams, diags diag.Diagnostics) {
 	mFilterCreatedAfter, errs := m.Filter.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)
 	mFilterCreatedBefore, errs := m.Filter.CreatedBefore.ValueRFC3339Time()
@@ -64,26 +64,26 @@ func (m *MoqRelayDataSourceModel) toListParams(_ context.Context) (params moq.Re
 	return
 }
 
-type MoqRelayConfigDataSourceModel struct {
-	LingeringSubscribe customfield.NestedObject[MoqRelayConfigLingeringSubscribeDataSourceModel] `tfsdk:"lingering_subscribe" json:"lingering_subscribe,computed"`
-	OriginFallback     customfield.NestedObject[MoqRelayConfigOriginFallbackDataSourceModel]     `tfsdk:"origin_fallback" json:"origin_fallback,computed"`
+type MoQRelayConfigDataSourceModel struct {
+	LingeringSubscribe customfield.NestedObject[MoQRelayConfigLingeringSubscribeDataSourceModel] `tfsdk:"lingering_subscribe" json:"lingering_subscribe,computed"`
+	OriginFallback     customfield.NestedObject[MoQRelayConfigOriginFallbackDataSourceModel]     `tfsdk:"origin_fallback" json:"origin_fallback,computed"`
 }
 
-type MoqRelayConfigLingeringSubscribeDataSourceModel struct {
+type MoQRelayConfigLingeringSubscribeDataSourceModel struct {
 	Enabled      types.Bool  `tfsdk:"enabled" json:"enabled,computed"`
 	MaxTimeoutMs types.Int64 `tfsdk:"max_timeout_ms" json:"max_timeout_ms,computed"`
 }
 
-type MoqRelayConfigOriginFallbackDataSourceModel struct {
+type MoQRelayConfigOriginFallbackDataSourceModel struct {
 	Enabled types.Bool                                                                       `tfsdk:"enabled" json:"enabled,computed"`
-	Origins customfield.NestedObjectList[MoqRelayConfigOriginFallbackOriginsDataSourceModel] `tfsdk:"origins" json:"origins,computed"`
+	Origins customfield.NestedObjectList[MoQRelayConfigOriginFallbackOriginsDataSourceModel] `tfsdk:"origins" json:"origins,computed"`
 }
 
-type MoqRelayConfigOriginFallbackOriginsDataSourceModel struct {
+type MoQRelayConfigOriginFallbackOriginsDataSourceModel struct {
 	URL types.String `tfsdk:"url" json:"url,computed"`
 }
 
-type MoqRelayFindOneByDataSourceModel struct {
+type MoQRelayFindOneByDataSourceModel struct {
 	Asc           types.Bool        `tfsdk:"asc" query:"asc,computed_optional"`
 	CreatedAfter  timetypes.RFC3339 `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
 	CreatedBefore timetypes.RFC3339 `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`

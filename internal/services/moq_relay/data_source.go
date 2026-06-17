@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type MoqRelayDataSource struct {
+type MoQRelayDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*MoqRelayDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*MoQRelayDataSource)(nil)
 
-func NewMoqRelayDataSource() datasource.DataSource {
-	return &MoqRelayDataSource{}
+func NewMoQRelayDataSource() datasource.DataSource {
+	return &MoQRelayDataSource{}
 }
 
-func (d *MoqRelayDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *MoQRelayDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_moq_relay"
 }
 
-func (d *MoqRelayDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *MoQRelayDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *MoqRelayDataSource) Configure(ctx context.Context, req datasource.Confi
 	d.client = client
 }
 
-func (d *MoqRelayDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *MoqRelayDataSourceModel
+func (d *MoQRelayDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *MoQRelayDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,8 +64,8 @@ func (d *MoqRelayDataSource) Read(ctx context.Context, req datasource.ReadReques
 			return
 		}
 
-		env := MoqRelaysResultListDataSourceEnvelope{}
-		page, err := d.client.Moq.Relays.List(ctx, params)
+		env := MoQRelaysResultListDataSourceEnvelope{}
+		page, err := d.client.MoQ.Relays.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
@@ -94,8 +94,8 @@ func (d *MoqRelayDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	res := new(http.Response)
-	env := MoqRelayResultDataSourceEnvelope{*data}
-	_, err := d.client.Moq.Relays.Get(
+	env := MoQRelayResultDataSourceEnvelope{*data}
+	_, err := d.client.MoQ.Relays.Get(
 		ctx,
 		data.RelayID.ValueString(),
 		params,
