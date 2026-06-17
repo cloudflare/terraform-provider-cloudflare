@@ -26,7 +26,7 @@ type OAuthClientModel struct {
 	LogoURI                 types.String                                                    `tfsdk:"logo_uri" json:"logo_uri,optional"`
 	PolicyURI               types.String                                                    `tfsdk:"policy_uri" json:"policy_uri,optional"`
 	TosURI                  types.String                                                    `tfsdk:"tos_uri" json:"tos_uri,optional"`
-	Visibility              types.String                                                    `tfsdk:"visibility" json:"visibility,optional"`
+	Visibility              types.String                                                    `tfsdk:"visibility" json:"visibility,computed_optional"`
 	AllowedCORSOrigins      *[]types.String                                                 `tfsdk:"allowed_cors_origins" json:"allowed_cors_origins,optional"`
 	PostLogoutRedirectURIs  *[]types.String                                                 `tfsdk:"post_logout_redirect_uris" json:"post_logout_redirect_uris,optional"`
 	ClientID                types.String                                                    `tfsdk:"client_id" json:"client_id,computed"`

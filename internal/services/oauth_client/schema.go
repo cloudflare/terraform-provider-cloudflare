@@ -12,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -38,7 +40,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"oauth_client_id": schema.StringAttribute{
 				Description:   "The unique identifier for an OAuth client.",
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"client_name": schema.StringAttribute{
 				Description: "Human-readable name of the OAuth client.",
@@ -108,9 +111,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"visibility": schema.StringAttribute{
 				Description: "Promote the OAuth client from private to public visibility. Only `public` is accepted; demotion to `private` is not supported. Promotion requires a non-empty client name, logo URI, verified client URI host, and at least one non-identity scope.\nAvailable values: \"public\".",
 				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("public"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"allowed_cors_origins": schema.ListAttribute{
 				Description: "Array of allowed CORS origins.",
@@ -123,27 +128,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"client_id": schema.StringAttribute{
-				Description: "The unique identifier for an OAuth client.",
-				Computed:    true,
+				Description:   "The unique identifier for an OAuth client.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"client_secret": schema.StringAttribute{
-				Description: "The client secret. This is the only time the secret is returned in a response.",
-				Computed:    true,
-				Sensitive:   true,
+				Description:   "The client secret. This is the only time the secret is returned in a response.",
+				Computed:      true,
+				Sensitive:     true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "Timestamp when the OAuth client was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp when the OAuth client was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"has_rotated_secret": schema.BoolAttribute{
-				Description: "Indicates whether the client has a rotated secret that has not yet been deleted.",
-				Computed:    true,
+				Description:   "Indicates whether the client has a rotated secret that has not yet been deleted.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"promoted_at": schema.StringAttribute{
-				Description: "Timestamp when the OAuth client was promoted to public visibility.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp when the OAuth client was promoted to public visibility.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"updated_at": schema.StringAttribute{
 				Description: "Timestamp when the OAuth client was last updated.",
@@ -154,6 +164,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Client URI domain control verification state.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[OAuthClientClientURIVerificationModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"status": schema.StringAttribute{
 						Description: "Current verification status for the client URI host.\nAvailable values: \"pending\", \"in_progress\", \"verified\", \"failed\".",
