@@ -727,7 +727,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		email_routing_settings.NewEmailRoutingSettingsDataSource,
 		email_routing_dns.NewEmailRoutingDNSDataSource,
 		email_routing_rule.NewEmailRoutingRuleDataSource,
-		email_routing_rule.NewEmailRoutingRulesDataSource,
 		email_routing_catch_all.NewEmailRoutingCatchAllDataSource,
 		email_routing_address.NewEmailRoutingAddressDataSource,
 		email_routing_address.NewEmailRoutingAddressesDataSource,

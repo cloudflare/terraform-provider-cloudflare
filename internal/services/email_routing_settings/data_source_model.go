@@ -17,15 +17,16 @@ type EmailRoutingSettingsResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingSettingsDataSourceModel struct {
-	ID         types.String      `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Created    timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Enabled    types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
-	Modified   timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Name       types.String      `tfsdk:"name" json:"name,computed"`
-	SkipWizard types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed"`
-	Status     types.String      `tfsdk:"status" json:"status,computed"`
-	Tag        types.String      `tfsdk:"tag" json:"tag,computed"`
+	ID                types.String      `tfsdk:"id" path:"zone_id,computed"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Enabled           types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
+	Modified          timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name              types.String      `tfsdk:"name" json:"name,computed"`
+	SkipWizard        types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed"`
+	Status            types.String      `tfsdk:"status" json:"status,computed"`
+	SupportSubaddress types.Bool        `tfsdk:"support_subaddress" json:"support_subaddress,computed"`
+	Tag               types.String      `tfsdk:"tag" json:"tag,computed"`
 }
 
 func (m *EmailRoutingSettingsDataSourceModel) toReadParams(_ context.Context) (params email_routing.EmailRoutingGetParams, diags diag.Diagnostics) {

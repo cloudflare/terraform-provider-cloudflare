@@ -67,6 +67,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"support_subaddress": schema.BoolAttribute{
+				Description: "Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.",
+				Computed:    true,
+			},
 			"tag": schema.StringAttribute{
 				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
 				Computed:           true,

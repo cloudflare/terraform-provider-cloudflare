@@ -18,7 +18,7 @@ type EmailRoutingRuleResultDataSourceEnvelope struct {
 
 type EmailRoutingRuleDataSourceModel struct {
 	ID             types.String                                                          `tfsdk:"id" path:"rule_identifier,computed"`
-	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`
+	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,required"`
 	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
@@ -26,24 +26,11 @@ type EmailRoutingRuleDataSourceModel struct {
 	Tag            types.String                                                          `tfsdk:"tag" json:"tag,computed"`
 	Actions        customfield.NestedObjectList[EmailRoutingRuleActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`
 	Matchers       customfield.NestedObjectList[EmailRoutingRuleMatchersDataSourceModel] `tfsdk:"matchers" json:"matchers,computed"`
-	Filter         *EmailRoutingRuleFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *EmailRoutingRuleDataSourceModel) toReadParams(_ context.Context) (params email_routing.RuleGetParams, diags diag.Diagnostics) {
 	params = email_routing.RuleGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *EmailRoutingRuleDataSourceModel) toListParams(_ context.Context) (params email_routing.RuleListParams, diags diag.Diagnostics) {
-	params = email_routing.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	if !m.Filter.Enabled.IsNull() {
-		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Filter.Enabled.ValueBool()))
 	}
 
 	return
@@ -58,8 +45,4 @@ type EmailRoutingRuleMatchersDataSourceModel struct {
 	Type  types.String `tfsdk:"type" json:"type,computed"`
 	Field types.String `tfsdk:"field" json:"field,computed"`
 	Value types.String `tfsdk:"value" json:"value,computed"`
-}
-
-type EmailRoutingRuleFindOneByDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" query:"enabled,optional"`
 }
