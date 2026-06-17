@@ -169,6 +169,7 @@ Available values: "off", "flexible", "full", "strict", "origin_pull".
 - `transformed_request_fields` (Attributes List) The transformed request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--transformed_request_fields))
 - `uri` (Attributes) A URI rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
 - `values` (List of String) The cache tag values for set_cache_tags action.
+- `vary` (Attributes) Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override. (see [below for nested schema](#nestedatt--rules--action_parameters--vary))
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
@@ -720,6 +721,41 @@ Optional:
 
 
 
+<a id="nestedatt--rules--action_parameters--vary"></a>
+### Nested Schema for `rules.action_parameters.vary`
+
+Required:
+
+- `default` (Attributes) Controls how response Vary headers without a per-header override contribute to the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--vary--default))
+
+Optional:
+
+- `headers` (Attributes Map) A mapping of lowercase request header names to their vary configuration. (see [below for nested schema](#nestedatt--rules--action_parameters--vary--headers))
+
+<a id="nestedatt--rules--action_parameters--vary--default"></a>
+### Nested Schema for `rules.action_parameters.vary.default`
+
+Required:
+
+- `action` (String) How the header value is treated when building the cache key.
+Available values: "bypass", "passthrough", "normalize".
+
+
+<a id="nestedatt--rules--action_parameters--vary--headers"></a>
+### Nested Schema for `rules.action_parameters.vary.headers`
+
+Required:
+
+- `action` (String) How the header value is treated when building the cache key.
+Available values: "bypass", "passthrough", "normalize".
+
+Optional:
+
+- `languages` (List of String) The set of languages to normalize against. Only valid for the `accept-language` header.
+- `media_types` (List of String) The set of media types to normalize against. Only valid for the `accept` header.
+
+
+
 
 <a id="nestedatt--rules--exposed_credential_check"></a>
 ### Nested Schema for `rules.exposed_credential_check`
@@ -762,5 +798,3 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_ruleset.example '<{accounts|zones}/{account_id|zone_id}>/<ruleset_id>'
 ```
-
-
