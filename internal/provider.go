@@ -113,6 +113,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
@@ -601,6 +602,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
+		moq_relay.NewResource,
 		cloudforce_one_request.NewResource,
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
@@ -1004,6 +1006,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,
 		calls_turn_app.NewCallsTURNAppsDataSource,
+		moq_relay.NewMoqRelayDataSource,
+		moq_relay.NewMoqRelaysDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestsDataSource,
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
