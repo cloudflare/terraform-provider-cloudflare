@@ -31,7 +31,7 @@ type OAuthClientDataSourceModel struct {
 	TokenEndpointAuthMethod types.String                                                              `tfsdk:"token_endpoint_auth_method" json:"token_endpoint_auth_method,computed"`
 	TosURI                  types.String                                                              `tfsdk:"tos_uri" json:"tos_uri,computed"`
 	UpdatedAt               timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Visibility              types.String                                                              `tfsdk:"visibility" json:"visibility,computed"`
+	Visibility              types.String                                                              `tfsdk:"visibility" json:"visibility,computed_optional"`
 	AllowedCORSOrigins      customfield.List[types.String]                                            `tfsdk:"allowed_cors_origins" json:"allowed_cors_origins,computed"`
 	GrantTypes              customfield.List[types.String]                                            `tfsdk:"grant_types" json:"grant_types,computed"`
 	PostLogoutRedirectURIs  customfield.List[types.String]                                            `tfsdk:"post_logout_redirect_uris" json:"post_logout_redirect_uris,computed"`
