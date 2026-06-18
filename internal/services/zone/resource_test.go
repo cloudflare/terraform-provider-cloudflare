@@ -78,6 +78,35 @@ func testSweepCloudflareZone(r string) error {
 	return nil
 }
 
+func TestZoneSweeper_NeverDeletesInfrastructureZones(t *testing.T) {
+	// Infrastructure zones that must never be swept.
+	protected := []string{
+		acctest.TestAccCloudflareZoneName,    // terraform.cfapi.net
+		acctest.TestAccCloudflareAltZoneName, // terraform2.cfapi.net
+		"terraform-alt.cfapi.net",            // CI ALT zone (CLOUDFLARE_ALT_DOMAIN)
+		"example.cfapi.net",                  // arbitrary .cfapi.net sibling
+		"example.com",                        // unrelated domain
+	}
+	for _, name := range protected {
+		if utils.ShouldSweepResource(name) {
+			t.Errorf("ShouldSweepResource(%q) = true, infrastructure zone would be deleted", name)
+		}
+	}
+
+	// Dynamically created test zones that must always be swept.
+	swept := []string{
+		fmt.Sprintf("%s.cfapi.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("%s.terraform.cfapi.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("%s.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("sub.%s.cfapi.net", utils.GenerateRandomResourceName()),
+	}
+	for _, name := range swept {
+		if !utils.ShouldSweepResource(name) {
+			t.Errorf("ShouldSweepResource(%q) = false, test zone would leak", name)
+		}
+	}
+}
+
 func TestAccCloudflareZone_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
