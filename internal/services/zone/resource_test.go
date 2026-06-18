@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -61,8 +60,7 @@ func testSweepCloudflareZone(r string) error {
 	}
 
 	for _, zone := range page.Result {
-		// Use standard filtering helper (also checked in isTestZone for zone-specific patterns)
-		if !utils.ShouldSweepResource(zone.Name) && !isTestZone(zone.Name) {
+		if !utils.ShouldSweepResource(zone.Name) {
 			continue
 		}
 
@@ -71,36 +69,13 @@ func testSweepCloudflareZone(r string) error {
 			ZoneID: cloudflare.F(zone.ID),
 		})
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone %s (%s): %s", zone.Name, zone.ID,err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone %s (%s): %s", zone.Name, zone.ID, err))
 			continue
 		}
 		tflog.Info(ctx, fmt.Sprintf("Deleted zone: %s (%s)", zone.Name, zone.ID))
 	}
 
 	return nil
-}
-
-// isTestZone checks if a zone name matches test naming patterns
-func isTestZone(name string) bool {
-	// Use standard test resource naming convention
-	if utils.ShouldSweepResource(name) {
-		return true
-	}
-
-	// Match terraform.cfapi.net test domains (zone-specific pattern)
-	if strings.HasSuffix(name, ".terraform.cfapi.net") ||
-		name == "terraform.cfapi.net" {
-		return true
-	}
-
-	// Match .cfapi.net domains (from acceptance tests)
-	if strings.HasSuffix(name, ".cfapi.net") &&
-		!strings.Contains(name, "production") &&
-		!strings.Contains(name, "prod-") {
-		return true
-	}
-
-	return false
 }
 
 func TestAccCloudflareZone_Basic(t *testing.T) {
