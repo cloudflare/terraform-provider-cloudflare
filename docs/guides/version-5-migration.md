@@ -15,11 +15,11 @@ handle Terraform state migration transparently. Combined with the
 [tf-migrate] CLI tool for HCL configuration changes, the migration process is
 significantly simpler than previous approaches.
 
-~> **Grit-based migration is deprecated.** This guide supersedes the Grit-based
-migration instructions in the [version 5 upgrade guide]. You do **not** need
-Grit to migrate. Grit patterns are no longer supported and will be removed in
-a future release. The [version 5 upgrade guide] remains a useful reference for
-per-resource attribute change details if you prefer manual HCL changes.
+~> **Grit-based migration has been removed.** This guide supersedes the
+Grit-based migration instructions in the [version 5 upgrade guide]. You do
+**not** need Grit to migrate. Grit patterns are no longer supported. The
+[version 5 upgrade guide] remains a useful reference for per-resource
+attribute change details if you prefer manual HCL changes.
 
 ## Quick Reference
 
@@ -1595,9 +1595,9 @@ before retrying.
 
 **Do I still need Grit?**
 
-No. **Grit-based migration is deprecated and will be removed in a future
-release.** `tf-migrate` replaces the Grit patterns for HCL migration, and
-state upgraders handle state automatically. Do not use Grit for new migrations.
+No. **Grit-based migration has been removed.** `tf-migrate` replaces the
+Grit patterns for HCL migration, and state upgraders handle state
+automatically. Do not use Grit for new migrations.
 
 **Do I need to manually edit my state file?**
 
