@@ -363,7 +363,7 @@ func TestMigrateZeroTrustAccessApplication_SAASAppBasic(t *testing.T) {
 	})
 }
 
-// TestMigrateZeroTrustAccessApplication_V4toV5_Basic tests the actual v4 to v5 migration using cmd/migrate (v2 migrator)
+// TestMigrateZeroTrustAccessApplication_V4toV5_Basic tests the actual v4 to v5 migration using tf-migrate
 func TestMigrateZeroTrustAccessApplication_V4toV5_Basic(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
