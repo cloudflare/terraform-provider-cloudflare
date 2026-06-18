@@ -20,6 +20,12 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     description = "Exclude testing domains from the tunnel"
   }]
   exclude_office_ips = true
+  global_acceleration = {
+    api_endpoints = ["198.51.100.1:443"]
+    enabled = true
+    masque_endpoints = ["198.51.100.1:443"]
+    wireguard_endpoints = ["198.51.100.1:2408"]
+  }
   include = [{
     address = "192.0.2.0/24"
     description = "Include testing domains in the tunnel"

@@ -37,10 +37,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"source": schema.StringAttribute{
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "r2", "web-crawler".`,
 				Optional:    true,
@@ -165,6 +161,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"",
 					),
 				},
+			},
+			"source": schema.StringAttribute{
+				Optional: true,
 			},
 			"summarization_model": schema.StringAttribute{
 				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
@@ -590,37 +589,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: `Available values: "sitemap", "feed-rss", "crawl".`,
+								Description: `Available values: "sitemap", "crawl".`,
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"sitemap",
-										"feed-rss",
-										"crawl",
-									),
+									stringvalidator.OneOfCaseInsensitive("sitemap", "crawl"),
 								},
 								Default: stringdefault.StaticString("sitemap"),
-							},
-							"store_options": schema.SingleNestedAttribute{
-								Optional: true,
-								Attributes: map[string]schema.Attribute{
-									"storage_id": schema.StringAttribute{
-										Required: true,
-									},
-									"r2_jurisdiction": schema.StringAttribute{
-										Computed: true,
-										Optional: true,
-										Default:  stringdefault.StaticString("default"),
-									},
-									"storage_type": schema.StringAttribute{
-										Description: `Available values: "r2".`,
-										Optional:    true,
-										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("r2"),
-										},
-									},
-								},
 							},
 						},
 					},

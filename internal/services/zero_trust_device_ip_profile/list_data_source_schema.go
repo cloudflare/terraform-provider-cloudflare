@@ -27,14 +27,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"per_page": schema.Int64Attribute{
-				Description: "The number of IP profiles to return per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(1, 100),
-				},
-			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

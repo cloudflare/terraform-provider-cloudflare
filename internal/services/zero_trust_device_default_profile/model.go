@@ -17,6 +17,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	AccountID                  types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
 	LANAllowMinutes            types.Float64                                                                     `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional,no_refresh"`
 	LANAllowSubnetSize         types.Float64                                                                     `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional,no_refresh"`
+	GlobalAcceleration         *ZeroTrustDeviceDefaultProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	VirtualNetworks            *ZeroTrustDeviceDefaultProfileVirtualNetworksModel                                `tfsdk:"virtual_networks" json:"virtual_networks,optional"`
 	AllowModeSwitch            types.Bool                                                                        `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                        `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
@@ -47,6 +48,13 @@ func (m ZeroTrustDeviceDefaultProfileModel) MarshalJSON() (data []byte, err erro
 
 func (m ZeroTrustDeviceDefaultProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceDefaultProfileModel) (data []byte, err error) {
 	return apijson.MarshalForPatch(m, state)
+}
+
+type ZeroTrustDeviceDefaultProfileGlobalAccelerationModel struct {
+	APIEndpoints       *[]types.String `tfsdk:"api_endpoints" json:"api_endpoints,required"`
+	Enabled            types.Bool      `tfsdk:"enabled" json:"enabled,required"`
+	MasqueEndpoints    *[]types.String `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
+	WireguardEndpoints *[]types.String `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
 }
 
 type ZeroTrustDeviceDefaultProfileVirtualNetworksModel struct {

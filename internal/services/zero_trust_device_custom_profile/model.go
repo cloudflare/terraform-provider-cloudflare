@@ -21,6 +21,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Precedence                 types.Float64                                                                    `tfsdk:"precedence" json:"precedence,required"`
 	LANAllowMinutes            types.Float64                                                                    `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                    `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
+	GlobalAcceleration         *ZeroTrustDeviceCustomProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	VirtualNetworks            *ZeroTrustDeviceCustomProfileVirtualNetworksModel                                `tfsdk:"virtual_networks" json:"virtual_networks,optional"`
 	AllowModeSwitch            types.Bool                                                                       `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                       `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
@@ -52,6 +53,13 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSON() (data []byte, err error
 
 func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceCustomProfileModel) (data []byte, err error) {
 	return apijson.MarshalForPatch(m, state)
+}
+
+type ZeroTrustDeviceCustomProfileGlobalAccelerationModel struct {
+	APIEndpoints       *[]types.String `tfsdk:"api_endpoints" json:"api_endpoints,required"`
+	Enabled            types.Bool      `tfsdk:"enabled" json:"enabled,required"`
+	MasqueEndpoints    *[]types.String `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
+	WireguardEndpoints *[]types.String `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
 }
 
 type ZeroTrustDeviceCustomProfileVirtualNetworksModel struct {

@@ -82,11 +82,6 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
         use_browser_rendering = true
       }
       parse_type = "sitemap"
-      store_options = {
-        storage_id = "storage_id"
-        r2_jurisdiction = "r2_jurisdiction"
-        storage_type = "r2"
-      }
     }
   }
   sync_interval = 900

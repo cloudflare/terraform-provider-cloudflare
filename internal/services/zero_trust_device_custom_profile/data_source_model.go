@@ -44,6 +44,7 @@ type ZeroTrustDeviceCustomProfileDataSourceModel struct {
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceCustomProfileDNSSearchSuffixesDataSourceModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeDataSourceModel]           `tfsdk:"exclude" json:"exclude,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceCustomProfileFallbackDomainsDataSourceModel]   `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
+	GlobalAcceleration         customfield.NestedObject[ZeroTrustDeviceCustomProfileGlobalAccelerationDataSourceModel]    `tfsdk:"global_acceleration" json:"global_acceleration,computed"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeDataSourceModel]           `tfsdk:"include" json:"include,computed"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2DataSourceModel]         `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
 	TargetTests                customfield.NestedObjectList[ZeroTrustDeviceCustomProfileTargetTestsDataSourceModel]       `tfsdk:"target_tests" json:"target_tests,computed"`
@@ -73,6 +74,13 @@ type ZeroTrustDeviceCustomProfileFallbackDomainsDataSourceModel struct {
 	Suffix      types.String                   `tfsdk:"suffix" json:"suffix,computed"`
 	Description types.String                   `tfsdk:"description" json:"description,computed"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`
+}
+
+type ZeroTrustDeviceCustomProfileGlobalAccelerationDataSourceModel struct {
+	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints" json:"api_endpoints,computed"`
+	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,computed"`
+	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,computed"`
 }
 
 type ZeroTrustDeviceCustomProfileIncludeDataSourceModel struct {

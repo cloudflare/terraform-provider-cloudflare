@@ -59,6 +59,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
 				Optional:    true,
 			},
+			"global_acceleration": schema.SingleNestedAttribute{
+				Description: "Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"api_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the API endpoints.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"enabled": schema.BoolAttribute{
+						Description: `Global acceleration settings are used only when "enabled".`,
+						Required:    true,
+					},
+					"masque_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+					"wireguard_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
+						Required:    true,
+						ElementType: types.StringType,
+					},
+				},
+			},
 			"virtual_networks": schema.SingleNestedAttribute{
 				Description: "Virtual network access settings for the device.",
 				Optional:    true,
