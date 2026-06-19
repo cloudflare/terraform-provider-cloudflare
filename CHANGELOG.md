@@ -1,5 +1,33 @@
 # Changelog
 
+## 5.21.0 (2026-06-19)
+
+Full Changelog: [v5.20.0...v5.21.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.20.0...v5.21.0)
+
+### Features
+
+* add new resources from staging-next ([e104922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e10492221fdee30ffb10a438a1dfff62c6ab0126))
+
+
+### Bug Fixes
+
+* add missing no-op state upgraders for version 0 -&gt; 500 ([692a0c6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/692a0c6a4d1fc0f9239ca8f11b9cb8855e41c3e4)), closes [#7181](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7181)
+* restore account_id and zone_id as required on 156 resources ([62024cf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/62024cfc80a171b236e14946dfdfee5b1289e5d2))
+* **workers_script:** add missing propagation_policy to observability traces schema ([78448d8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78448d877959879ec5f2d059b6a26b0e6dea1c95))
+* **zone:** only sweep zones containing the cftftest prefix ([293ab21](https://github.com/cloudflare/terraform-provider-cloudflare/commit/293ab2145bf50a6a35012a2a061b94571892d196))
+
+
+### Chores
+
+* Add acceptance tests for DLP data classification resources ([b85f20c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b85f20cb104acc625ca5402f6463277938b33369))
+* **ci:** optimize CI workflow runtime ([7aa373f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7aa373fd6badec68d59f2a4218f5400274b085ea))
+* clean up ([e36c8a3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e36c8a37ceac0c41b62eef795dd7d7901672545a))
+
+
+### Documentation
+
+* add docs for v5.20.1 release ([712db1d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/712db1df4a62d39a4c49e2d7953211a532efdb5e))
+
 ## 5.20.0 (2026-06-13)
 
 Full Changelog: [v5.19.1...v5.20.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.19.1...v5.20.0)
