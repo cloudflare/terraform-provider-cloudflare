@@ -41,9 +41,6 @@ Available values: "allow", "log", "add_reporting_directives".
 - `enabled` (Boolean) Whether the policy is enabled
 - `expression` (String) The expression which must match for the policy to be applied, using the Cloudflare Firewall rule expression syntax
 - `value` (String) The policy which will be applied
-
-### Optional
-
 - `zone_id` (String) Identifier
 
 ### Read-Only

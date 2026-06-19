@@ -33,9 +33,6 @@ resource "cloudflare_dns_zone_transfers_outgoing" "example_dns_zone_transfers_ou
 
 - `name` (String) Zone name.
 - `peers` (Set of String) A list of peer tags.
-
-### Optional
-
 - `zone_id` (String)
 
 ### Read-Only

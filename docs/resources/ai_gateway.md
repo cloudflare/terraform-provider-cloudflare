@@ -43,6 +43,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 
 ### Required
 
+- `account_id` (String)
 - `cache_invalidate_on_update` (Boolean)
 - `cache_ttl` (Number)
 - `collect_logs` (Boolean)
@@ -52,7 +53,6 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 
 ### Optional
 
-- `account_id` (String)
 - `authentication` (Boolean)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--dlp))
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--guardrails))

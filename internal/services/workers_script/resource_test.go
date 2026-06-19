@@ -907,6 +907,52 @@ func testAccCheckCloudflareWorkerScriptWithRatelimitBinding(rnd, accountID strin
 	return acctest.LoadTestCase("module_with_ratelimit.tf", rnd, accountID)
 }
 
+// TestAccCloudflareWorkerScript_ObservabilityTraces is a regression test for
+// https://github.com/cloudflare/terraform-provider-cloudflare/issues/7177.
+// It verifies that the observability.traces block (including propagation_policy)
+// is present in both the schema and the model, so that plan/refresh and import
+// do not fail with a "mismatch between struct and object type" error.
+func TestAccCloudflareWorkerScript_ObservabilityTraces(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccCloudflareWorkerScriptWithObservabilityTraces(resourceName, accountID),
+				ExpectNonEmptyPlan: true,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability").AtMapKey("traces").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability").AtMapKey("traces").AtMapKey("head_sampling_rate"), knownvalue.Float64Exact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability").AtMapKey("traces").AtMapKey("persist"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"main_module", "startup_time_ms", "observability.head_sampling_rate", "observability.logs"},
+			},
+		},
+	})
+}
+
+func testAccCloudflareWorkerScriptWithObservabilityTraces(rnd, accountID string) string {
+	return acctest.LoadTestCase("module_with_observability_traces.tf", rnd, accountID, moduleContent)
+}
+
 func TestAccUpgradeWorkersScript_FromPublishedV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := resourcePrefix + rnd

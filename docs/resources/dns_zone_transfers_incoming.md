@@ -34,12 +34,12 @@ resource "cloudflare_dns_zone_transfers_incoming" "example_dns_zone_transfers_in
 
 - `name` (String) Zone name.
 - `peers` (Set of String) A list of peer tags.
+- `zone_id` (String)
 
 ### Optional
 
 - `auto_refresh_seconds` (Number) How often should a secondary zone auto refresh regardless of DNS NOTIFY.
 Not applicable for primary zones.
-- `zone_id` (String)
 
 ### Read-Only
 

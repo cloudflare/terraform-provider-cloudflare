@@ -32,12 +32,12 @@ resource "cloudflare_notification_policy_webhooks" "example_notification_policy_
 
 ### Required
 
+- `account_id` (String) The account id
 - `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
 - `url` (String) The POST endpoint to call when dispatching a notification.
 
 ### Optional
 
-- `account_id` (String) The account id
 - `secret` (String, Sensitive) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
 
 ### Read-Only

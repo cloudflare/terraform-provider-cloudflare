@@ -14,7 +14,7 @@ type AccountDNSSettingsInternalViewResultEnvelope struct {
 
 type AccountDNSSettingsInternalViewModel struct {
 	ID           types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID    types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Name         types.String      `tfsdk:"name" json:"name,required"`
 	Zones        *[]types.String   `tfsdk:"zones" json:"zones,required"`
 	CreatedTime  timetypes.RFC3339 `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`

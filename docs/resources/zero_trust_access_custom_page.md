@@ -29,14 +29,11 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
 Available values: "identity_denied", "forbidden".
-
-### Optional
-
-- `account_id` (String) Identifier.
 
 ### Read-Only
 

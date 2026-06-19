@@ -14,7 +14,7 @@ type AISearchTokenResultEnvelope struct {
 
 type AISearchTokenModel struct {
 	ID         types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CfAPIID    types.String      `tfsdk:"cf_api_id" json:"cf_api_id,required"`
 	CfAPIKey   types.String      `tfsdk:"cf_api_key" json:"cf_api_key,required,no_refresh"`
 	Name       types.String      `tfsdk:"name" json:"name,required"`

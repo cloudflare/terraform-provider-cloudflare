@@ -286,10 +286,11 @@ type TargetObservabilityLogsModel struct {
 }
 
 type TargetObservabilityTracesModel struct {
-	Destinations     *[]types.String `tfsdk:"destinations"`
-	Enabled          types.Bool      `tfsdk:"enabled"`
-	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate"`
-	Persist          types.Bool      `tfsdk:"persist"`
+	Destinations      *[]types.String `tfsdk:"destinations"`
+	Enabled           types.Bool      `tfsdk:"enabled"`
+	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate"`
+	Persist           types.Bool      `tfsdk:"persist"`
+	PropagationPolicy types.String    `tfsdk:"propagation_policy"`
 }
 
 type TargetPlacementModel struct {

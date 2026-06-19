@@ -29,13 +29,13 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `email` (String)
 - `is_email_regex` (Boolean)
 - `name` (String)
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `comments` (String)
 - `directory_id` (Number)
 - `directory_node_id` (Number)
