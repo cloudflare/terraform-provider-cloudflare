@@ -4,25 +4,29 @@
 
 Full Changelog: [v5.20.0...v5.21.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.20.0...v5.21.0)
 
-### Features
+### New Resources
 
-* add new resources from staging-next ([e104922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e10492221fdee30ffb10a438a1dfff62c6ab0126))
-
+* **cloudflare_magic_transit_cf1_site:** resource + 2 data sources ([e104922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e10492221fdee30ffb10a438a1dfff62c6ab0126))
+* **cloudflare_origin_tls_compliance_modes:** resource + data source ([e104922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e10492221fdee30ffb10a438a1dfff62c6ab0126))
+* **cloudflare_zone_auto_origin_tls_kex:** resource + data source ([e104922](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e10492221fdee30ffb10a438a1dfff62c6ab0126))
 
 ### Bug Fixes
 
-* add missing no-op state upgraders for version 0 -&gt; 500 ([692a0c6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/692a0c6a4d1fc0f9239ca8f11b9cb8855e41c3e4)), closes [#7181](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7181)
-* restore account_id and zone_id as required on 156 resources ([62024cf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/62024cfc80a171b236e14946dfdfee5b1289e5d2))
-* **workers_script:** add missing propagation_policy to observability traces schema ([78448d8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78448d877959879ec5f2d059b6a26b0e6dea1c95))
+* **workers_script:** add missing propagation_policy to observability traces schema ([78448d8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78448d877959879ec5f2d059b6a26b0e6dea1c95)), closes [#7177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7177)
+* **zero_trust_gateway_certificate:** accept activate arg in create call ([7d49372](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7d49372cc260680a79c94e389d4c31b2f07f58dc))
 * **zone:** only sweep zones containing the cftftest prefix ([293ab21](https://github.com/cloudflare/terraform-provider-cloudflare/commit/293ab2145bf50a6a35012a2a061b94571892d196))
-
+* add missing no-op state upgraders for version 0 -> 500 ([692a0c6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/692a0c6a4d1fc0f9239ca8f11b9cb8855e41c3e4)), closes [#7181](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7181)
+* restore account_id and zone_id as required on 156 resources ([62024cf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/62024cfc80a171b236e14946dfdfee5b1289e5d2))
 
 ### Chores
 
-* Add acceptance tests for DLP data classification resources ([b85f20c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b85f20cb104acc625ca5402f6463277938b33369))
+* **ci:** add schema version check to CI ([accbeed](https://github.com/cloudflare/terraform-provider-cloudflare/commit/accbeed967a87306e686bfc87f11fc10c334d207))
 * **ci:** optimize CI workflow runtime ([7aa373f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7aa373fd6badec68d59f2a4218f5400274b085ea))
+* **cmd/migrate:** remove cmd/migrate tool and acctest package ([7b507f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7b507f820e51aacf0bfa9e62c96b07e5b9bfdf11))
+* **grit:** remove grit patterns and update migration guide ([a94960d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a94960dffdad2ea32ef50338f567f3ff8359e09b))
+* add acceptance tests for DLP data classification resources ([b85f20c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b85f20cb104acc625ca5402f6463277938b33369))
 * clean up ([e36c8a3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e36c8a37ceac0c41b62eef795dd7d7901672545a))
-
+* update cloudflare-go to v7 in tests ([e21ca04](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e21ca048af2f28b81ced50568acb06696bf0607d))
 
 ### Documentation
 
