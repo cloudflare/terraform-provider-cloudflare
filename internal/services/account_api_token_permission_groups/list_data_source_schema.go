@@ -56,6 +56,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Public ID.",
 							Computed:    true,
 						},
+						"category": schema.StringAttribute{
+							Description: "Product category that this permission group belongs to.\nAvailable values: \"developer_platform\", \"ai_and_machine_learning\", \"dns_and_zones\", \"app_security\", \"rules_and_configuration\", \"cloudflare_one_and_zero_trust\", \"analytics_and_logs\", \"network_services\", \"media\", \"email_and_messaging\", \"cache_and_performance\", \"account_and_billing\", \"other\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"developer_platform",
+									"ai_and_machine_learning",
+									"dns_and_zones",
+									"app_security",
+									"rules_and_configuration",
+									"cloudflare_one_and_zero_trust",
+									"analytics_and_logs",
+									"network_services",
+									"media",
+									"email_and_messaging",
+									"cache_and_performance",
+									"account_and_billing",
+									"other",
+								),
+							},
+						},
 						"name": schema.StringAttribute{
 							Description: "Permission Group Name",
 							Computed:    true,

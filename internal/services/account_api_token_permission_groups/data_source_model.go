@@ -39,7 +39,8 @@ func (m *AccountAPITokenPermissionGroupsDataSourceModel) toReadParams(_ context.
 }
 
 type AccountAPITokenPermissionGroupsPermissionGroupsDataSourceModel struct {
-	ID     types.String                   `tfsdk:"id" json:"id,computed"`
-	Name   types.String                   `tfsdk:"name" json:"name,computed"`
-	Scopes customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
+	ID       types.String                   `tfsdk:"id" json:"id,computed"`
+	Category types.String                   `tfsdk:"category" json:"category,computed"`
+	Name     types.String                   `tfsdk:"name" json:"name,computed"`
+	Scopes   customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
 }
