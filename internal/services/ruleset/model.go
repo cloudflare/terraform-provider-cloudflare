@@ -103,6 +103,7 @@ type RulesetRulesActionParametersModel struct {
 	ReadTimeout              types.Int64                                                                             `tfsdk:"read_timeout" json:"read_timeout,optional"`
 	RespectStrongEtags       types.Bool                                                                              `tfsdk:"respect_strong_etags" json:"respect_strong_etags,optional"`
 	ServeStale               customfield.NestedObject[RulesetRulesActionParametersServeStaleModel]                   `tfsdk:"serve_stale" json:"serve_stale,optional"`
+	Vary                     customfield.NestedObject[RulesetRulesActionParametersVaryModel]                         `tfsdk:"vary" json:"vary,optional"`
 	StripETags               types.Bool                                                                              `tfsdk:"strip_etags" json:"strip_etags,optional"`
 	StripLastModified        types.Bool                                                                              `tfsdk:"strip_last_modified" json:"strip_last_modified,optional"`
 	StripSetCookie           types.Bool                                                                              `tfsdk:"strip_set_cookie" json:"strip_set_cookie,optional"`
@@ -358,4 +359,19 @@ type RulesetRulesActionParametersSetCacheControlQualifiersModel struct {
 type RulesetRulesActionParametersSetCacheControlSimpleModel struct {
 	Operation      types.String `tfsdk:"operation" json:"operation,required"`
 	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only" json:"cloudflare_only,computed_optional,decode_null_to_zero"`
+}
+
+type RulesetRulesActionParametersVaryModel struct {
+	Default customfield.NestedObject[RulesetRulesActionParametersVaryDefaultModel]   `tfsdk:"default" json:"default,required"`
+	Headers customfield.NestedObjectMap[RulesetRulesActionParametersVaryHeaderModel] `tfsdk:"headers" json:"headers,optional"`
+}
+
+type RulesetRulesActionParametersVaryDefaultModel struct {
+	Action types.String `tfsdk:"action" json:"action,required"`
+}
+
+type RulesetRulesActionParametersVaryHeaderModel struct {
+	Action     types.String                   `tfsdk:"action" json:"action,required"`
+	MediaTypes customfield.List[types.String] `tfsdk:"media_types" json:"media_types,optional"`
+	Languages  customfield.List[types.String] `tfsdk:"languages" json:"languages,optional"`
 }

@@ -1531,6 +1531,91 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"vary": schema.SingleNestedAttribute{
+									Description: "Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override.",
+									Computed:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersVaryDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"default": schema.SingleNestedAttribute{
+											Description: "Controls how response Vary headers without a per-header override contribute to the cache key.",
+											Computed:    true,
+											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersVaryDefaultDataSourceModel](ctx),
+											Attributes: map[string]schema.Attribute{
+												"action": schema.StringAttribute{
+													Description: "How the header value is treated when building the cache key.\nAvailable values: \"bypass\", \"passthrough\", \"normalize\".",
+													Computed:    true,
+													Validators: []validator.String{
+														stringvalidator.OneOf("bypass", "passthrough", "normalize"),
+													},
+												},
+											},
+										},
+										"headers": schema.MapNestedAttribute{
+											Description: "A mapping of lowercase request header names to their vary configuration.",
+											Computed:    true,
+											Validators: []validator.Map{
+												mapvalidator.SizeAtMost(50),
+												mapvalidator.KeysAre(
+													stringvalidator.LengthBetween(1, 128),
+													stringvalidator.RegexMatches(
+														regexp.MustCompile("^[a-z0-9_-]+$"),
+														"header names must be lowercase and contain only letters, numbers, underscores, and hyphens",
+													),
+												),
+											},
+											CustomType: customfield.NewNestedObjectMapType[RulesetRulesActionParametersVaryHeaderDataSourceModel](ctx),
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"action": schema.StringAttribute{
+														Description: "How the header value is treated when building the cache key.\nAvailable values: \"bypass\", \"passthrough\", \"normalize\".",
+														Computed:    true,
+														Validators: []validator.String{
+															stringvalidator.OneOf("bypass", "passthrough", "normalize"),
+														},
+													},
+													"media_types": schema.ListAttribute{
+														Description: "The set of media types to normalize against. Only valid for the `accept` header.",
+														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
+														ElementType: types.StringType,
+														Validators: []validator.List{
+															listvalidator.SizeAtMost(10),
+															listvalidator.ValueStringsAre(
+																stringvalidator.LengthBetween(1, 255),
+																stringvalidator.RegexMatches(
+																	regexp.MustCompile("^[ -~]+$"),
+																	"media types must contain only printable ASCII characters",
+																),
+															),
+														},
+													},
+													"languages": schema.ListAttribute{
+														Description: "The set of languages to normalize against. Only valid for the `accept-language` header.",
+														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
+														ElementType: types.StringType,
+														Validators: []validator.List{
+															listvalidator.SizeAtMost(20),
+															listvalidator.ValueStringsAre(
+																stringvalidator.LengthBetween(1, 64),
+																stringvalidator.RegexMatches(
+																	regexp.MustCompile("^[ -~]+$"),
+																	"languages must contain only printable ASCII characters",
+																),
+															),
+														},
+													},
+												},
+											},
+										},
+									},
+								},
 								"strip_etags": schema.BoolAttribute{
 									Description: "Whether to strip the ETag header from the response.",
 									Computed:    true,
