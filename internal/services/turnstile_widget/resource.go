@@ -259,6 +259,99 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TurnstileWidgetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+// ModifyPlan suppresses no-op churn the Cloudflare API causes on this resource:
+// it returns domains sorted (so any other order replans as a diff), and several
+// computed fields replan as "(known after apply)".
+//
+// It reuses the prior domain order when the set is unchanged and carries the
+// computed values from state, then checks whether the plan now matches state
+// exactly. If it does the run was pure churn and modified_on is pinned too,
+// yielding no diff. If it does not there is a real change, so the original domain
+// order and modified_on are restored and the change plans normally.
+func (r *TurnstileWidgetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan, state *TurnstileWidgetModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() || plan == nil || state == nil {
+		return
+	}
+
+	origDomains := plan.Domains
+	origModifiedOn := plan.ModifiedOn
+
+	// Reuse the prior domain order when only the order differs.
+	if plan.Domains != nil && state.Domains != nil && domainsEqualAsSet(*plan.Domains, *state.Domains) {
+		plan.Domains = state.Domains
+	}
+
+	// Carry computed values from state when the plan leaves them unknown.
+	if plan.Sitekey.IsUnknown() {
+		plan.Sitekey = state.Sitekey
+	}
+	if plan.Secret.IsUnknown() {
+		plan.Secret = state.Secret
+	}
+	if plan.CreatedOn.IsUnknown() {
+		plan.CreatedOn = state.CreatedOn
+	}
+	if plan.BotFightMode.IsUnknown() {
+		plan.BotFightMode = state.BotFightMode
+	}
+	if plan.ClearanceLevel.IsUnknown() {
+		plan.ClearanceLevel = state.ClearanceLevel
+	}
+	if plan.EphemeralID.IsUnknown() {
+		plan.EphemeralID = state.EphemeralID
+	}
+	if plan.Offlabel.IsUnknown() {
+		plan.Offlabel = state.Offlabel
+	}
+	if plan.Region.IsUnknown() {
+		plan.Region = state.Region
+	}
+
+	// Pin modified_on only on a true no-op; tftypes equality is reliable where a
+	// Go-level comparison of framework types is not.
+	plan.ModifiedOn = state.ModifiedOn
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if !resp.Plan.Raw.Equal(req.State.Raw) {
+		plan.Domains = origDomains
+		plan.ModifiedOn = origModifiedOn
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	}
+}
+
+// domainsEqualAsSet reports whether a and b contain the same domains ignoring
+// order. It returns false on any null/unknown element so an unstable plan is
+// left untouched.
+func domainsEqualAsSet(a, b []types.String) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	counts := make(map[string]int, len(a))
+	for _, s := range a {
+		if s.IsNull() || s.IsUnknown() {
+			return false
+		}
+		counts[s.ValueString()]++
+	}
+	for _, s := range b {
+		if s.IsNull() || s.IsUnknown() {
+			return false
+		}
+		counts[s.ValueString()]--
+	}
+	for _, c := range counts {
+		if c != 0 {
+			return false
+		}
+	}
+	return true
 }

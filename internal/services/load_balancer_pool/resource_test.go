@@ -210,6 +210,54 @@ func TestAccCloudflareLoadBalancerPool_NoLoadSheddingDrift(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareLoadBalancerPool_NoReorderOrComputedDrift verifies that a
+// pool does not produce drift on a no-op re-apply, and that listing the same
+// origins in a different order is a no-op. The Cloudflare API returns origins in
+// a different order than submitted and omits several computed fields on read, so
+// without ModifyPlan both cases would plan a spurious in-place update.
+func TestAccCloudflareLoadBalancerPool_NoReorderOrComputedDrift(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	noopOnReapply := resource.ConfigPlanChecks{
+		PreApply: []plancheck.PlanCheck{
+			plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+		},
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginOrder(rnd, accountID),
+			},
+			{
+				// Identical config must be a no-op (no computed-field churn).
+				Config:           testAccCheckCloudflareLoadBalancerPoolConfigOriginOrder(rnd, accountID),
+				ConfigPlanChecks: noopOnReapply,
+			},
+			{
+				// Same origins in a different order must also be a no-op.
+				Config:           testAccCheckCloudflareLoadBalancerPoolConfigOriginReorder(rnd, accountID),
+				ConfigPlanChecks: noopOnReapply,
+			},
+			{
+				// A real change (origin weight) must still plan as an update.
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginReweighted(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
@@ -589,6 +637,18 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cfold.
 // using IPs from 192.0.2.0/24 as per RFC5737.
 func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
 	return acctest.LoadTestCase("loadbalancerpoolconfigbasic.tf", id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigOriginOrder(id, accountID string) string {
+	return acctest.LoadTestCase("loadbalancerpoolconfigoriginorder.tf", id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigOriginReorder(id, accountID string) string {
+	return acctest.LoadTestCase("loadbalancerpoolconfigoriginreorder.tf", id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigOriginReweighted(id, accountID string) string {
+	return acctest.LoadTestCase("loadbalancerpoolconfigoriginreweighted.tf", id, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastOutstandingRequests(id, accountID string) string {

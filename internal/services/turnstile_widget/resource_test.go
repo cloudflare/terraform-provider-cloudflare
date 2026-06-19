@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestMain(m *testing.M) {
@@ -92,6 +93,50 @@ func TestAccCloudflareTurnstileWidget_Basic(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				ImportState:         true,
 				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+// TestAccCloudflareTurnstileWidget_NoDomainReorderDrift verifies that listing
+// the same domains in a different order is a no-op. The API returns domains
+// sorted, so without ModifyPlan a reorder would plan a spurious update.
+func TestAccCloudflareTurnstileWidget_NoDomainReorderDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_turnstile_widget." + rnd
+
+	noop := resource.ConfigPlanChecks{
+		PreApply: []plancheck.PlanCheck{
+			plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+		},
+	}
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareTurnstileWidgetDomainOrder(rnd, accountID),
+			},
+			{
+				// Same domains, same order: no-op.
+				Config:           testAccCheckCloudflareTurnstileWidgetDomainOrder(rnd, accountID),
+				ConfigPlanChecks: noop,
+			},
+			{
+				// Same domains in a different order: no-op.
+				Config:           testAccCheckCloudflareTurnstileWidgetDomainReorder(rnd, accountID),
+				ConfigPlanChecks: noop,
+			},
+			{
+				// A real domain change must still plan as an update.
+				Config: testAccCheckCloudflareTurnstileWidgetDomainChanged(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 		},
 	})
@@ -232,6 +277,18 @@ func TestAccCloudflareTurnstileWidget_NonInteractiveMode(t *testing.T) {
 
 func testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("turnstilewidgetbasic.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareTurnstileWidgetDomainOrder(rnd, accountID string) string {
+	return acctest.LoadTestCase("turnstilewidgetdomainorder.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareTurnstileWidgetDomainReorder(rnd, accountID string) string {
+	return acctest.LoadTestCase("turnstilewidgetdomainreorder.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareTurnstileWidgetDomainChanged(rnd, accountID string) string {
+	return acctest.LoadTestCase("turnstilewidgetdomainchanged.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTurnstileWidgetMinimum(rnd, accountID string) string {
