@@ -129,6 +129,13 @@ func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq boo
 		return true, nil
 	}
 
+	// At this point at most one side is null or unknown, so the two values
+	// cannot be semantically equal. Returning early also protects the value
+	// accessors below from dereferencing null values.
+	if lhs.IsNull() || lhs.IsUnknown() || rhs.IsNull() || rhs.IsUnknown() {
+		return false, nil
+	}
+
 	if l, ok := lhs.(basetypes.DynamicValuable); ok {
 		if r, ok := rhs.(basetypes.DynamicValuable); ok {
 			ld, d := l.ToDynamicValue(ctx)
