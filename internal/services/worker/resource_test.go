@@ -226,6 +226,54 @@ func TestAccCloudflareWorker_SubdomainDynamicDefault(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareWorker_ObservabilityDestinations is a regression test for
+// https://github.com/cloudflare/terraform-provider-cloudflare/issues/7197.
+// When an observability block is present but `destinations` is omitted, the
+// plan must default to an empty list (not null) so it matches the API response.
+// Without the fix, apply fails with "Provider produced inconsistent result
+// after apply" because the planned value (null) differs from the API return ([]).
+func TestAccCloudflareWorker_ObservabilityDestinations(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_worker." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkerObservabilityLogs(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(resourceName)),
+					// destinations must be an empty list, not null
+					statecheck.ExpectKnownValue(name,
+						tfjsonpath.New("observability").AtMapKey("logs").AtMapKey("destinations"),
+						knownvalue.ListExact([]knownvalue.Check{})),
+					statecheck.ExpectKnownValue(name,
+						tfjsonpath.New("observability").AtMapKey("traces").AtMapKey("destinations"),
+						knownvalue.ListExact([]knownvalue.Check{})),
+				},
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+func testAccCloudflareWorkerObservabilityLogs(rnd, accountID string) string {
+	return acctest.LoadTestCase("observability_logs.tf", rnd, accountID)
+}
+
 func testAccCloudflareWorkerConfig(rnd, accountID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, accountID)
 }
