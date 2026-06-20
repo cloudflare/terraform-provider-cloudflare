@@ -425,6 +425,20 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 	}
 	data = &env.Result
 
+	settings, settingsErr := r.client.Workers.Scripts.ScriptAndVersionSettings.Get(
+		ctx,
+		path_worker_id,
+		workers.ScriptScriptAndVersionSettingGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if settingsErr != nil {
+		resp.Diagnostics.AddError("failed to read script settings", settingsErr.Error())
+		return
+	}
+	data.Placement = placementFromSettings(settings.Placement)
+
 	if data.Modules != nil {
 		for _, mod := range *data.Modules {
 			contentBase64 := mod.ContentBase64.ValueString()
@@ -452,12 +466,15 @@ func (r *WorkerVersionResource) ModifyPlan(_ context.Context, _ resource.ModifyP
 // applyPlacementSettings sends a PATCH to the script-and-version-settings endpoint
 // to set or clear the placement configuration. The versions API endpoint does not
 // accept placement, so this must be called after version creation.
+// Only one placement variant (region, hostname, host, or mode) is sent per call;
+// the Cloudflare placement field is a union type. The target field is not yet supported.
 func (r *WorkerVersionResource) applyPlacementSettings(ctx context.Context, accountID, scriptName string, placement *WorkerVersionPlacementModel) error {
 	settings := workers.ScriptScriptAndVersionSettingEditParamsSettings{
 		Placement: cloudflare.Null[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](),
 	}
 
 	if placement != nil {
+		// TODO: add Target support once the SDK exposes a union variant for it.
 		switch {
 		case !placement.Region.IsNull() && !placement.Region.IsUnknown() && placement.Region.ValueString() != "":
 			settings.Placement = cloudflare.F[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](
@@ -501,6 +518,7 @@ func (r *WorkerVersionResource) applyPlacementSettings(ctx context.Context, acco
 // placementFromSettings converts the placement field from a script settings
 // response into the WorkerVersionPlacementModel used in state. Returns nil
 // when the API reports no active placement configuration.
+// Note: the target field is not yet read back (see applyPlacementSettings TODO).
 func placementFromSettings(p workers.ScriptScriptAndVersionSettingGetResponsePlacement) *WorkerVersionPlacementModel {
 	if p.Region == "" && string(p.Mode) == "" && p.Hostname == "" && p.Host == "" {
 		return nil
