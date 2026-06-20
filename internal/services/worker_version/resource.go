@@ -69,6 +69,10 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	// Save planned placement before API call; versions endpoint does not accept
+	// or return placement — it must be applied separately via the settings API.
+	planPlacement := data.Placement
+
 	var assets *WorkerVersionAssetsModel
 	if data.Assets != nil {
 		assets = &WorkerVersionAssetsModel{
@@ -204,6 +208,15 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		planBindings,
 	)
 	resp.Diagnostics.Append(diags...)
+
+	// Restore planned placement and apply it via the script settings endpoint.
+	// The versions API does not accept or return placement; the correct endpoint
+	// is PATCH /accounts/{id}/workers/scripts/{name}/settings.
+	data.Placement = planPlacement
+	if settingsErr := r.applyPlacementSettings(ctx, data.AccountID.ValueString(), data.WorkerID.ValueString(), planPlacement); settingsErr != nil {
+		resp.Diagnostics.AddError("failed to apply placement settings", settingsErr.Error())
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -342,6 +355,22 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	)
 	resp.Diagnostics.Append(diags...)
 
+	// Read placement from the script settings endpoint — the versions API does
+	// not return placement since it is a script-level (not version-level) setting.
+	settings, settingsErr := r.client.Workers.Scripts.ScriptAndVersionSettings.Get(
+		ctx,
+		data.WorkerID.ValueString(),
+		workers.ScriptScriptAndVersionSettingGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if settingsErr != nil {
+		resp.Diagnostics.AddError("failed to read script settings", settingsErr.Error())
+		return
+	}
+	data.Placement = placementFromSettings(settings.Placement)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -418,4 +447,82 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 
 func (r *WorkerVersionResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+// applyPlacementSettings sends a PATCH to the script-and-version-settings endpoint
+// to set or clear the placement configuration. The versions API endpoint does not
+// accept placement, so this must be called after version creation.
+func (r *WorkerVersionResource) applyPlacementSettings(ctx context.Context, accountID, scriptName string, placement *WorkerVersionPlacementModel) error {
+	settings := workers.ScriptScriptAndVersionSettingEditParamsSettings{
+		Placement: cloudflare.Null[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](),
+	}
+
+	if placement != nil {
+		switch {
+		case !placement.Region.IsNull() && !placement.Region.IsUnknown() && placement.Region.ValueString() != "":
+			settings.Placement = cloudflare.F[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](
+				workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementRegion{
+					Region: cloudflare.F(placement.Region.ValueString()),
+				},
+			)
+		case !placement.Hostname.IsNull() && !placement.Hostname.IsUnknown() && placement.Hostname.ValueString() != "":
+			settings.Placement = cloudflare.F[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](
+				workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementHostname{
+					Hostname: cloudflare.F(placement.Hostname.ValueString()),
+				},
+			)
+		case !placement.Host.IsNull() && !placement.Host.IsUnknown() && placement.Host.ValueString() != "":
+			settings.Placement = cloudflare.F[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](
+				workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementHost{
+					Host: cloudflare.F(placement.Host.ValueString()),
+				},
+			)
+		case !placement.Mode.IsNull() && !placement.Mode.IsUnknown() && placement.Mode.ValueString() != "":
+			settings.Placement = cloudflare.F[workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementUnion](
+				workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementMode{
+					Mode: cloudflare.F(workers.ScriptScriptAndVersionSettingEditParamsSettingsPlacementModeMode(placement.Mode.ValueString())),
+				},
+			)
+		}
+	}
+
+	_, err := r.client.Workers.Scripts.ScriptAndVersionSettings.Edit(
+		ctx,
+		scriptName,
+		workers.ScriptScriptAndVersionSettingEditParams{
+			AccountID: cloudflare.F(accountID),
+			Settings:  cloudflare.F(settings),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	return err
+}
+
+// placementFromSettings converts the placement field from a script settings
+// response into the WorkerVersionPlacementModel used in state. Returns nil
+// when the API reports no active placement configuration.
+func placementFromSettings(p workers.ScriptScriptAndVersionSettingGetResponsePlacement) *WorkerVersionPlacementModel {
+	if p.Region == "" && string(p.Mode) == "" && p.Hostname == "" && p.Host == "" {
+		return nil
+	}
+	m := &WorkerVersionPlacementModel{
+		Region:   types.StringNull(),
+		Mode:     types.StringNull(),
+		Hostname: types.StringNull(),
+		Host:     types.StringNull(),
+		Target:   nil,
+	}
+	if p.Region != "" {
+		m.Region = types.StringValue(p.Region)
+	}
+	if string(p.Mode) != "" {
+		m.Mode = types.StringValue(string(p.Mode))
+	}
+	if p.Hostname != "" {
+		m.Hostname = types.StringValue(p.Hostname)
+	}
+	if p.Host != "" {
+		m.Host = types.StringValue(p.Host)
+	}
+	return m
 }
