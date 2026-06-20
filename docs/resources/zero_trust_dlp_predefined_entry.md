@@ -29,12 +29,12 @@ resource "cloudflare_zero_trust_dlp_predefined_entry" "example_zero_trust_dlp_pr
 
 ### Required
 
+- `account_id` (String)
 - `enabled` (Boolean)
 - `entry_id` (String)
 
 ### Optional
 
-- `account_id` (String)
 - `profile_id` (String) This field is not used as the owning profile.
 For predefined entries it is already set to a predefined profile.
 

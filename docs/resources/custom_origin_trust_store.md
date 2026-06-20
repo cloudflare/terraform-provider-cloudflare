@@ -33,9 +33,6 @@ resource "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_sto
 ### Required
 
 - `certificate` (String) The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

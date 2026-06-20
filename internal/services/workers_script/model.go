@@ -37,7 +37,7 @@ type WorkersEnvironmentModel struct {
 type WorkersScriptModel struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
-	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`

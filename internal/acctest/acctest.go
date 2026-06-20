@@ -1163,113 +1163,10 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 	}
 }
 
-// RunMigrationCommand runs the migration script to transform config and state
-// NOTE: assumes config and state are already in tmpDir
-func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
-	t.Helper()
-
-	// Get the current working directory to find the migration binary
-	cwd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get current working directory: %v", err)
-	}
-
-	// Build the path to the migration binary
-	// The test runs from internal/services/zone, so we need to go up to the root
-	projectRoot := filepath.Join(cwd, "..", "..", "..")
-	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
-	debugLogf(t, "Migrate path: %s", migratePath)
-
-	// Path to the transformations directories
-	transformerDir := filepath.Join(projectRoot, "cmd", "migrate", "transformations", "config")
-
-	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
-
-	// Find state file in tmpDir
-	entries, err := os.ReadDir(tmpDir)
-	var stateDir string
-	if err != nil {
-		t.Logf("Failed to read test directory: %v", err)
-	} else {
-		for _, entry := range entries {
-			if entry.IsDir() {
-				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
-				for _, inner_entry := range inner_entries {
-					if inner_entry.Name() == "terraform.tfstate" {
-						stateDir = filepath.Join(tmpDir, entry.Name())
-					}
-				}
-			}
-
-		}
-	}
-
-	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
-	debugLogf(t, "StateDir: %s", stateDir)
-	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
-	if err != nil {
-		t.Fatalf("Failed to read state file: %v", err)
-	}
-	debugLogf(t, "Config is: %s", string(state))
-	debugLogf(t, "State is: %s", string(state))
-
-	var cmd *exec.Cmd
-	// Use the new Go-based YAML transformations
-	debugLogf(t, "Running migration with YAML transformations")
-	cmd = exec.Command("go", "run", "-C", migratePath, ".",
-		"-config", tmpDir,
-		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",       // Disable Grit transformations
-		"-transformer=true", // Enable YAML transformations
-		"-transformer-dir", transformerDir) // Use local YAML configs
-	cmd.Dir = tmpDir
-	// Capture output for debugging
-	output, err := cmd.CombinedOutput()
-
-	debugLogf(t, "Migration output:\n%s", string(output))
-
-	if err != nil {
-		t.Fatalf("Migration command failed: %v\nMigration output:\n%s", err, string(output))
-	}
-	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
-	if err != nil {
-		t.Fatalf("Failed to read state file: %v", err)
-	}
-	debugLogf(t, "New State is: %s", string(newState))
-}
-
-// MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
-// This handles resources that can't use state upgraders and need plan/refresh to correct state
-// Returns multiple steps: migration step, plan step to process changes, then validation step
-func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
-	// First step: run migration
-	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
-
-	// Second step: run plan to process import blocks and state corrections
-	planStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		PlanOnly:                 true, // Just run plan to process imports/corrections
-	}
-
-	// Third step: verify final plan is clean and state is correct
-	validationStep := resource.TestStep{
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		ConfigPlanChecks: resource.ConfigPlanChecks{
-			PreApply: []plancheck.PlanCheck{
-				DebugNonEmptyPlan,
-				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
-			},
-		},
-		ConfigStateChecks: stateChecks,
-	}
-
-	return []resource.TestStep{migrationStep, planStep, validationStep}
-}
-
-// MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing
-// This is similar to MigrationTestStepWithPlan but uses the v2 migration command with explicit version parameters
+// MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing.
+// Runs the v2 migration command (tf-migrate) with explicit source/target version parameters,
+// then a PlanOnly step to process import blocks and state corrections, then a validation step
+// asserting an empty plan (modulo falsey-to-null transitions).
 func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
 	// First step: run migration
 	migrationStep := MigrationV2TestStep(t, v4Config, tmpDir, exactVersion, sourceVersion, targetVersion, nil) // No state checks yet
@@ -1313,50 +1210,6 @@ func InferMigrationVersions(testVersion string) (source, target string) {
 		return "v5", "v5"
 	}
 	return "v4", "v5"
-}
-
-// MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
-func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
-	// Choose the appropriate plan check based on the version
-	var planChecks []plancheck.PlanCheck
-	if strings.HasPrefix(exactVersion, "4.") {
-		// When upgrading from v4, allow falsey-to-null changes due to removed defaults
-		planChecks = []plancheck.PlanCheck{
-			DebugNonEmptyPlan,
-			ExpectEmptyPlanExceptFalseyToNull,
-		}
-	} else {
-		// When upgrading from v5, expect a completely empty plan
-		planChecks = []plancheck.PlanCheck{
-			DebugNonEmptyPlan,
-			plancheck.ExpectEmptyPlan(),
-		}
-	}
-
-	return resource.TestStep{
-		PreConfig: func() {
-			WriteOutConfig(t, v4Config, tmpDir)
-			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
-			if strings.HasPrefix(exactVersion, "4.") {
-				debugLogf(t, "Running migration command for version: %s", exactVersion)
-				RunMigrationCommand(t, v4Config, tmpDir)
-			} else {
-				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
-			}
-
-			// Remove provider.tf after migration. See MigrationV2TestStep for details.
-			providerTF := filepath.Join(tmpDir, "provider.tf")
-			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
-				t.Fatalf("failed to remove provider.tf after migration: %v", err)
-			}
-		},
-		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
-		ConfigDirectory:          config.StaticDirectory(tmpDir),
-		ConfigPlanChecks: resource.ConfigPlanChecks{
-			PreApply: planChecks,
-		},
-		ConfigStateChecks: stateChecks,
-	}
 }
 
 // MigrationV2TestStep creates a test step that runs the migration command and validates with v5 provider

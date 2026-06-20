@@ -36,13 +36,13 @@ resource "cloudflare_workflow" "example_workflow" {
 
 ### Required
 
+- `account_id` (String)
 - `class_name` (String)
 - `script_name` (String)
 - `workflow_name` (String)
 
 ### Optional
 
-- `account_id` (String)
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 

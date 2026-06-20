@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -61,8 +60,7 @@ func testSweepCloudflareZone(r string) error {
 	}
 
 	for _, zone := range page.Result {
-		// Use standard filtering helper (also checked in isTestZone for zone-specific patterns)
-		if !utils.ShouldSweepResource(zone.Name) && !isTestZone(zone.Name) {
+		if !utils.ShouldSweepResource(zone.Name) {
 			continue
 		}
 
@@ -71,7 +69,7 @@ func testSweepCloudflareZone(r string) error {
 			ZoneID: cloudflare.F(zone.ID),
 		})
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone %s (%s): %s", zone.Name, zone.ID,err))
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone %s (%s): %s", zone.Name, zone.ID, err))
 			continue
 		}
 		tflog.Info(ctx, fmt.Sprintf("Deleted zone: %s (%s)", zone.Name, zone.ID))
@@ -80,27 +78,33 @@ func testSweepCloudflareZone(r string) error {
 	return nil
 }
 
-// isTestZone checks if a zone name matches test naming patterns
-func isTestZone(name string) bool {
-	// Use standard test resource naming convention
-	if utils.ShouldSweepResource(name) {
-		return true
+func TestZoneSweeper_NeverDeletesInfrastructureZones(t *testing.T) {
+	// Infrastructure zones that must never be swept.
+	protected := []string{
+		acctest.TestAccCloudflareZoneName,    // terraform.cfapi.net
+		acctest.TestAccCloudflareAltZoneName, // terraform2.cfapi.net
+		"terraform-alt.cfapi.net",            // CI ALT zone (CLOUDFLARE_ALT_DOMAIN)
+		"example.cfapi.net",                  // arbitrary .cfapi.net sibling
+		"example.com",                        // unrelated domain
+	}
+	for _, name := range protected {
+		if utils.ShouldSweepResource(name) {
+			t.Errorf("ShouldSweepResource(%q) = true, infrastructure zone would be deleted", name)
+		}
 	}
 
-	// Match terraform.cfapi.net test domains (zone-specific pattern)
-	if strings.HasSuffix(name, ".terraform.cfapi.net") ||
-		name == "terraform.cfapi.net" {
-		return true
+	// Dynamically created test zones that must always be swept.
+	swept := []string{
+		fmt.Sprintf("%s.cfapi.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("%s.terraform.cfapi.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("%s.net", utils.GenerateRandomResourceName()),
+		fmt.Sprintf("sub.%s.cfapi.net", utils.GenerateRandomResourceName()),
 	}
-
-	// Match .cfapi.net domains (from acceptance tests)
-	if strings.HasSuffix(name, ".cfapi.net") &&
-		!strings.Contains(name, "production") &&
-		!strings.Contains(name, "prod-") {
-		return true
+	for _, name := range swept {
+		if !utils.ShouldSweepResource(name) {
+			t.Errorf("ShouldSweepResource(%q) = false, test zone would leak", name)
+		}
 	}
-
-	return false
 }
 
 func TestAccCloudflareZone_Basic(t *testing.T) {
