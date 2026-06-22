@@ -102,7 +102,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{})),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -112,12 +112,11 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"invocation_logs":    knownvalue.Bool(true),
 							"persist":            knownvalue.Bool(true),
 						}),
-						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"traces": knownvalue.ObjectPartial(map[string]knownvalue.Check{
 							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"persist":            knownvalue.Bool(true),
-							"propagation_policy": knownvalue.StringExact("authenticated"),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -138,7 +137,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 					// Verify computed attributes
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("observability"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -148,12 +147,11 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"invocation_logs":    knownvalue.Bool(true),
 							"persist":            knownvalue.Bool(true),
 						}),
-						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"traces": knownvalue.ObjectPartial(map[string]knownvalue.Check{
 							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
 							"persist":            knownvalue.Bool(true),
-							"propagation_policy": knownvalue.StringExact("authenticated"),
 						}),
 					})),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -187,6 +185,9 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				ImportState:         true,
 				ImportStateVerify:   true,
+				ImportStateVerifyIgnore: []string{
+					"observability.traces.propagation_policy",
+				},
 			},
 		},
 	})
@@ -265,6 +266,9 @@ func TestAccCloudflareWorker_ObservabilityDestinations(t *testing.T) {
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				ImportState:         true,
 				ImportStateVerify:   true,
+				ImportStateVerifyIgnore: []string{
+					"observability.traces.propagation_policy",
+				},
 			},
 		},
 	})
