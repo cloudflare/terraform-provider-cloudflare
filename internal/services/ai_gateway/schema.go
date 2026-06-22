@@ -482,7 +482,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Computed: true,
 									Optional: true,
-									Default:  stringdefault.StaticString("6fb25042"),
+									Default:  stringdefault.StaticString("ffd9f9c3"),
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,

@@ -44,11 +44,13 @@ type MagicTransitConnectorsResultDataSourceModel struct {
 	InterruptWindowHourOfDay     types.Float64                                                         `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed"`
 	LastUpdated                  types.String                                                          `tfsdk:"last_updated" json:"last_updated,computed"`
 	Notes                        types.String                                                          `tfsdk:"notes" json:"notes,computed"`
+	Primary                      types.Bool                                                            `tfsdk:"primary" json:"primary,computed"`
 	Timezone                     types.String                                                          `tfsdk:"timezone" json:"timezone,computed"`
 	Device                       customfield.NestedObject[MagicTransitConnectorsDeviceDataSourceModel] `tfsdk:"device" json:"device,computed"`
 	LastHeartbeat                types.String                                                          `tfsdk:"last_heartbeat" json:"last_heartbeat,computed"`
 	LastSeenVersion              types.String                                                          `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LicenseKey                   types.String                                                          `tfsdk:"license_key" json:"license_key,computed"`
+	SiteID                       types.String                                                          `tfsdk:"site_id" json:"site_id,computed"`
 }
 
 type MagicTransitConnectorsDeviceDataSourceModel struct {

@@ -98,6 +98,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"notes": schema.StringAttribute{
 							Computed: true,
 						},
+						"primary": schema.BoolAttribute{
+							Computed: true,
+						},
 						"timezone": schema.StringAttribute{
 							Computed: true,
 						},
@@ -127,6 +130,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"license_key": schema.StringAttribute{
+							Computed: true,
+						},
+						"site_id": schema.StringAttribute{
 							Computed: true,
 						},
 					},

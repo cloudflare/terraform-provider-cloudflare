@@ -11,5 +11,7 @@ resource "cloudflare_magic_transit_connector" "example_magic_transit_connector" 
   interrupt_window_embargo_dates = ["string"]
   interrupt_window_hour_of_day = 0
   notes = "notes"
+  primary = true
+  site_id = "site_id"
   timezone = "timezone"
 }
