@@ -473,7 +473,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,
-													Validators:          []validator.Int64{int64validator.AtLeast(1)},
+													Validators:          []validator.Int64{int64validator.AtLeast(0)},
 													MarkdownDescription: "Default edge TTL.",
 												},
 											},
