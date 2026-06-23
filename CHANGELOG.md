@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.21.1 (2026-06-23)
+
+Full Changelog: [v5.21.0...v5.21.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.0...v5.21.1)
+
+### Bug Fixes
+
+* **worker:** stop sending propagation_policy when not configured ([#7192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7192)) ([31d9a31](https://github.com/cloudflare/terraform-provider-cloudflare/commit/31d9a31e1a1cd743f74aa6728cf899a6e83270a0))
+
 ## 5.21.0 (2026-06-19)
 
 Full Changelog: [v5.20.0...v5.21.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.20.0...v5.21.0)
