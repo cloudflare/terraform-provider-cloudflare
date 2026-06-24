@@ -563,7 +563,7 @@ automatic state transformation for the rename.
 | v4 Resource | v5 Resource | State |
 |---|---|---|
 | `cloudflare_access_application` | `cloudflare_zero_trust_access_application` | Auto |
-| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Manual |
+| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Auto |
 | `cloudflare_access_custom_page` | `cloudflare_zero_trust_access_custom_page` | Manual |
 | `cloudflare_access_group` | `cloudflare_zero_trust_access_group` | Auto |
 | `cloudflare_access_identity_provider` | `cloudflare_zero_trust_access_identity_provider` | Auto |
@@ -642,10 +642,10 @@ into the new resource type:
 
 ```bash
 # Remove the old resource from state
-terraform state rm cloudflare_access_ca_certificate.example
+terraform state rm cloudflare_access_custom_page.example
 
 # Import into the new resource type
-terraform import cloudflare_zero_trust_access_short_lived_certificate.example <account_id>/<certificate_id>
+terraform import cloudflare_zero_trust_access_custom_page.example <account_id>/<custom_page_id>
 ```
 
 Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
