@@ -15,7 +15,7 @@ on:
       - 'stl-preview-base/**'
 
 env:
-  GOPRIVATE: github.com/cloudflare/cloudflare-go/v7,github.com/stainless-sdks/cloudflare-go/v7
+  GOPRIVATE: github.com/stainless-sdks/cloudflare-go/v7
 
 jobs:
   lint:
