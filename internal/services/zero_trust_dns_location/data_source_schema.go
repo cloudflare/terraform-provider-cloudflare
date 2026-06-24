@@ -8,8 +8,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDNSLocationDataSource)(nil)
@@ -163,6 +166,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
+						},
+					},
+				},
+			},
+			"max_ttl": schema.SingleNestedAttribute{
+				Description: "Configure DNS response TTL behavior for this Gateway location. Gateway can rewrite DNS responses to cap returned record TTLs using the account setting or a location-specific value, or leave TTLs unchanged.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDNSLocationMaxTTLDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "Specify how this location handles DNS response TTLs by using the account setting, using a location-specific value, or leaving TTLs unchanged.\nAvailable values: \"inherit\", \"override\", \"disabled\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"inherit",
+								"override",
+								"disabled",
+							),
+						},
+					},
+					"ttl_secs": schema.Int64Attribute{
+						Description: "Set the location-specific DNS TTL cap, in seconds. Required when `mode` is `override`. Must be omitted when `mode` is `inherit` or `disabled`.",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(60, 36000),
 						},
 					},
 				},

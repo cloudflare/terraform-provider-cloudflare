@@ -41,6 +41,7 @@ type ZeroTrustGatewaySettingsSettingsModel struct {
 	Fips                  *ZeroTrustGatewaySettingsSettingsFipsModel                  `tfsdk:"fips" json:"fips,optional"`
 	HostSelector          *ZeroTrustGatewaySettingsSettingsHostSelectorModel          `tfsdk:"host_selector" json:"host_selector,optional"`
 	Inspection            *ZeroTrustGatewaySettingsSettingsInspectionModel            `tfsdk:"inspection" json:"inspection,optional"`
+	MaxTTLSecs            types.Int64                                                 `tfsdk:"max_ttl_secs" json:"max_ttl_secs,optional"`
 	ProtocolDetection     *ZeroTrustGatewaySettingsSettingsProtocolDetectionModel     `tfsdk:"protocol_detection" json:"protocol_detection,optional"`
 	Sandbox               *ZeroTrustGatewaySettingsSettingsSandboxModel               `tfsdk:"sandbox" json:"sandbox,optional"`
 	TLSDecrypt            *ZeroTrustGatewaySettingsSettingsTLSDecryptModel            `tfsdk:"tls_decrypt" json:"tls_decrypt,optional"`

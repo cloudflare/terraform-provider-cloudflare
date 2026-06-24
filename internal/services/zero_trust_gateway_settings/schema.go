@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -273,6 +274,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
 								},
 							},
+						},
+					},
+					"max_ttl_secs": schema.Int64Attribute{
+						Description: "Set the account-level DNS TTL cap, in seconds. Gateway rewrites DNS responses so returned record TTLs do not exceed this value. DNS locations can inherit, override, or disable this cap.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(60, 36000),
 						},
 					},
 					"protocol_detection": schema.SingleNestedAttribute{
