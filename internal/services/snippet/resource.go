@@ -204,6 +204,9 @@ func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if data.Metadata == nil {
+		data.Metadata = &SnippetMetadataModel{}
+	}
 	data.Metadata.MainModule = types.StringValue(res.Header.Get("Cf-Entrypoint"))
 	bytes, _ = io.ReadAll(res.Body)
 	err = data.UnmarshalMultipart(bytes, res.Header.Get("Content-Type"))
