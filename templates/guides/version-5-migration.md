@@ -401,6 +401,26 @@ values to `null` for optional fields (`isolation_required`,
 `purpose_justification_required`, `approval_required`). This prevents drift
 since the API treats `false` and `null` as equivalent.
 
+#### Zero Trust Access Policy `session_duration`
+
+In v4, the API applied an implicit default of `24h` for `session_duration`, so
+most configurations omitted it. In v5, the provider schema defaults to `24h`,
+but some Cloudflare accounts enforce a maximum session duration shorter than
+`24h` (for example, `18h`) via account-level security policies. If your
+policies relied on the implicit default and your account enforces a shorter
+maximum, the first `terraform apply` after migration will fail at the API level
+even though `terraform plan` succeeds.
+
+To avoid this, add an explicit `session_duration` to every
+`cloudflare_zero_trust_access_policy` resource:
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "example" {
+  # ...existing attributes...
+  session_duration = "18h"  # or your organization's required maximum
+}
+```
+
 #### Load Balancer field renames
 
 `cloudflare_load_balancer` resources will show field renames:
