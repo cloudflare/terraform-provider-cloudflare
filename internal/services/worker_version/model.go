@@ -23,7 +23,7 @@ type WorkerVersionModel struct {
 	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
 	Migrations         *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
 	Modules            *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
-	Placement          *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
+	Placement          *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"-,optional"`
 	UsageModel         types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 	CompatibilityFlags customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	Annotations        customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
