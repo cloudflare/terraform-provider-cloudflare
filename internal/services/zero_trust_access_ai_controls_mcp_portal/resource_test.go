@@ -12,7 +12,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -96,6 +100,63 @@ func TestAccZeroTrustAccessAIControlsMcpPortal_basic(t *testing.T) {
 				),
 			},
 			// ImportState testing
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["account_id"], rs.Primary.ID), nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent covers the
+// servers drift fixes:
+//   - server_id is read back from the API (the API returns identity under "id";
+//     the schema/write path use "server_id"). Without the read-side mapping,
+//     server_id is null and every plan shows "+ server_id".
+//   - servers is a set keyed by server_id, so reordering servers[] in config
+//     produces no diff (the backend ignores client write order and returns a
+//     canonical order, so a list would churn).
+func TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent(t *testing.T) {
+	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_portal.tf-test"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	name := "Test Portal Servers Set"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessAIControlsMcpPortalDestroy,
+		Steps: []resource.TestStep{
+			// Create with two servers in order [a, b]; server_id must be set.
+			{
+				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("servers"), knownvalue.SetSizeExact(2)),
+				},
+			},
+			// Re-apply identical config: no diff (server_id stable, no "+ server_id").
+			{
+				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			// Reorder servers [b, a]: set semantics => still no diff.
+			{
+				Config: acctest.LoadTestCase("servers_set_reordered.tf", accountID, domain, name),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			// Import round-trips with server_id populated.
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
