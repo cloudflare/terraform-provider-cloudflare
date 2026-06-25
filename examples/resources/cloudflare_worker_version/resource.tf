@@ -49,6 +49,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
     content_type = "application/javascript+module"
     name = "index.js"
   }]
+  package_dependencies = [{
+    installed_version = "4.17.22"
+    name = "lodash"
+    package_json_version = "^4.17.21"
+  }]
   placement = {
     mode = "smart"
   }

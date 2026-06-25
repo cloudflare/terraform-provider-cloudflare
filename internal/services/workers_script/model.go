@@ -66,23 +66,24 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string,
 }
 
 type WorkersScriptMetadataModel struct {
-	Annotations        *WorkersScriptMetadataAnnotationsModel      `tfsdk:"annotations" json:"annotations,optional"`
-	Assets             *WorkersScriptMetadataAssetsModel           `tfsdk:"assets" json:"assets,optional"`
-	Bindings           *[]*WorkersScriptMetadataBindingsModel      `tfsdk:"bindings" json:"bindings,optional"`
-	BodyPart           types.String                                `tfsdk:"body_part" json:"body_part,optional"`
-	CompatibilityDate  types.String                                `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags customfield.Set[types.String]               `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	KeepAssets         types.Bool                                  `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings       *[]types.String                             `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Limits             *WorkersScriptMetadataLimitsModel           `tfsdk:"limits" json:"limits,optional"`
-	Logpush            types.Bool                                  `tfsdk:"logpush" json:"logpush,computed_optional"`
-	MainModule         types.String                                `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         *WorkersScriptMetadataMigrationsModel       `tfsdk:"migrations" json:"migrations,optional"`
-	Observability      *WorkersScriptMetadataObservabilityModel    `tfsdk:"observability" json:"observability,optional"`
-	Placement          *WorkersScriptMetadataPlacementModel        `tfsdk:"placement" json:"placement,optional"`
-	Tags               *[]types.String                             `tfsdk:"tags" json:"tags,optional"`
-	TailConsumers      *[]*WorkersScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
-	UsageModel         types.String                                `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	Annotations         *WorkersScriptMetadataAnnotationsModel            `tfsdk:"annotations" json:"annotations,optional"`
+	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
+	Bindings            *[]*WorkersScriptMetadataBindingsModel            `tfsdk:"bindings" json:"bindings,optional"`
+	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,optional"`
+	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	KeepAssets          types.Bool                                        `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings        *[]types.String                                   `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Limits              *WorkersScriptMetadataLimitsModel                 `tfsdk:"limits" json:"limits,optional"`
+	Logpush             types.Bool                                        `tfsdk:"logpush" json:"logpush,computed_optional"`
+	MainModule          types.String                                      `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations          *WorkersScriptMetadataMigrationsModel             `tfsdk:"migrations" json:"migrations,optional"`
+	Observability       *WorkersScriptMetadataObservabilityModel          `tfsdk:"observability" json:"observability,optional"`
+	PackageDependencies *[]*WorkersScriptMetadataPackageDependenciesModel `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
+	Placement           *WorkersScriptMetadataPlacementModel              `tfsdk:"placement" json:"placement,optional"`
+	Tags                *[]types.String                                   `tfsdk:"tags" json:"tags,optional"`
+	TailConsumers       *[]*WorkersScriptMetadataTailConsumersModel       `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
+	UsageModel          types.String                                      `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 }
 
 type WorkersScriptMetadataAnnotationsModel struct {
@@ -237,6 +238,12 @@ type WorkersScriptMetadataObservabilityTracesModel struct {
 	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 	Persist           types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
 	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
+}
+
+type WorkersScriptMetadataPackageDependenciesModel struct {
+	InstalledVersion   types.String `tfsdk:"installed_version" json:"installedVersion,required"`
+	Name               types.String `tfsdk:"name" json:"name,required"`
+	PackageJsonVersion types.String `tfsdk:"package_json_version" json:"packageJsonVersion,required"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {

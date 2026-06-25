@@ -208,6 +208,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
 			},
+			"package_dependencies": schema.ListNestedAttribute{
+				Description: "The list of npm packages that were installed and used when this Worker\nversion was built.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"installed_version": schema.StringAttribute{
+							Description: "The exact version that was resolved and installed by the package manager.",
+							Required:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The npm package name.",
+							Required:    true,
+						},
+						"package_json_version": schema.StringAttribute{
+							Description: "The version constraint as written in package.json.",
+							Required:    true,
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
 				Optional:    true,

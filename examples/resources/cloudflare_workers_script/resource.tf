@@ -76,6 +76,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
         propagation_policy = "authenticated"
       }
     }
+    package_dependencies = [{
+      installed_version = "4.17.22"
+      name = "lodash"
+      package_json_version = "^4.17.21"
+    }]
     placement = {
       mode = "smart"
     }
