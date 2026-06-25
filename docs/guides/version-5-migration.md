@@ -1706,12 +1706,12 @@ for details. If the diff is truly just cosmetic, you can safely ignore it.
 
 - [Version 5 Upgrade Guide][version 5 upgrade guide] -- Per-resource attribute
   change details and manual migration notes.
-- [Migrating Renamed Resources](migrating-renamed-resources) -- Detailed
+- [Migrating Renamed Resources](migrating-renamed-resources.md) -- Detailed
   guide for the import, state file, and two-phase swap approaches.
 - [tf-migrate] -- Source code and documentation for the HCL migration tool.
 - [Terraform moved blocks](https://developer.hashicorp.com/terraform/language/moved) --
   HashiCorp documentation on the `moved` block syntax.
 
-[version 5 upgrade guide]: version-5-upgrade
+[version 5 upgrade guide]: version-5-upgrade.md
 [tf-migrate]: https://github.com/cloudflare/tf-migrate
-[migrating renamed resources]: migrating-renamed-resources
+[migrating renamed resources]: migrating-renamed-resources.md
