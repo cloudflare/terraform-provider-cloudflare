@@ -7,7 +7,7 @@ description: Guide for handling renamed resources in the Cloudflare Provider
 ## Before you start
 
 -> For v4 to v5 migrations, the recommended approach is the
-[version 5 migration guide](version-5-migration) which uses built-in state
+[version 5 migration guide](version-5-migration.md) which uses built-in state
 upgraders that handle both configuration and state migration automatically.
 
 This guide covers general strategies for handling renamed resources across
