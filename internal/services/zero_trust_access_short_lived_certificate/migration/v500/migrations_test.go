@@ -2,13 +2,17 @@ package v500_test
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
@@ -44,21 +48,28 @@ var v5ZoneScopedConfig string
 // including the application_id -> app_id attribute rename.
 func TestMigrateAccessCACertificateBasic(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, accountID, domain string) string
+		name       string
+		version    string
+		setupFn    func(rnd, accountID, domain string) string // config for Step 1 (create)
+		migrateFn  func(rnd, accountID, domain string) string // config for Step 2 (post-migration plan)
 	}{
 		{
 			name:    "from_v4_latest",
 			version: acctest.GetLastV4Version(),
-			configFn: func(rnd, accountID, domain string) string {
+			setupFn: func(rnd, accountID, domain string) string {
 				return fmt.Sprintf(v4BasicConfig, rnd, accountID, domain)
+			},
+			migrateFn: func(rnd, accountID, domain string) string {
+				return fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 			},
 		},
 		{
 			name:    "from_v5",
 			version: currentProviderVersion,
-			configFn: func(rnd, accountID, domain string) string {
+			setupFn: func(rnd, accountID, domain string) string {
+				return fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
+			},
+			migrateFn: func(rnd, accountID, domain string) string {
 				return fmt.Sprintf(v5BasicConfig, rnd, accountID, domain)
 			},
 		},
@@ -72,14 +83,15 @@ func TestMigrateAccessCACertificateBasic(t *testing.T) {
 			tmpDir := t.TempDir()
 			resourceName := "cloudflare_zero_trust_access_short_lived_certificate." + rnd
 
-			testConfig := tc.configFn(rnd, accountID, domain)
+			setupConfig := tc.setupFn(rnd, accountID, domain)
+			migrateConfig := tc.migrateFn(rnd, accountID, domain)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-					Config:                   testConfig,
+					Config:                   setupConfig,
 				}
 			} else {
 				firstStep = resource.TestStep{
@@ -89,7 +101,7 @@ func TestMigrateAccessCACertificateBasic(t *testing.T) {
 							VersionConstraint: tc.version,
 						},
 					},
-					Config: testConfig,
+					Config: setupConfig,
 				}
 			}
 
@@ -98,16 +110,28 @@ func TestMigrateAccessCACertificateBasic(t *testing.T) {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_AccountID(t)
 				},
-				WorkingDir: tmpDir,
+				CheckDestroy: nil,
+				WorkingDir:   tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					migrationStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("app_id"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("aud"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("public_key"), knownvalue.NotNull()),
 					}),
+					// Clear state before post-test destroy. The Access CA delete
+					// API returns 500 (error 12055); removing resources from state
+					// prevents the framework's destroy from hitting that bug.
+					{
+						PreConfig: func() {
+							clearState(t, tmpDir)
+						},
+						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+						Config:                   "# empty",
+						PlanOnly:                 true,
+					},
 				},
 			})
 		})
@@ -117,21 +141,28 @@ func TestMigrateAccessCACertificateBasic(t *testing.T) {
 // TestMigrateAccessCACertificateZoneScoped tests zone-scoped resource migration.
 func TestMigrateAccessCACertificateZoneScoped(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(rnd, zoneID, domain string) string
+		name      string
+		version   string
+		setupFn   func(rnd, zoneID, domain string) string // config for Step 1 (create)
+		migrateFn func(rnd, zoneID, domain string) string // config for Step 2 (post-migration plan)
 	}{
 		{
 			name:    "from_v4_latest",
 			version: acctest.GetLastV4Version(),
-			configFn: func(rnd, zoneID, domain string) string {
+			setupFn: func(rnd, zoneID, domain string) string {
 				return fmt.Sprintf(v4ZoneScopedConfig, rnd, zoneID, domain)
+			},
+			migrateFn: func(rnd, zoneID, domain string) string {
+				return fmt.Sprintf(v5ZoneScopedConfig, rnd, zoneID, domain)
 			},
 		},
 		{
 			name:    "from_v5",
 			version: currentProviderVersion,
-			configFn: func(rnd, zoneID, domain string) string {
+			setupFn: func(rnd, zoneID, domain string) string {
+				return fmt.Sprintf(v5ZoneScopedConfig, rnd, zoneID, domain)
+			},
+			migrateFn: func(rnd, zoneID, domain string) string {
 				return fmt.Sprintf(v5ZoneScopedConfig, rnd, zoneID, domain)
 			},
 		},
@@ -145,14 +176,15 @@ func TestMigrateAccessCACertificateZoneScoped(t *testing.T) {
 			tmpDir := t.TempDir()
 			resourceName := "cloudflare_zero_trust_access_short_lived_certificate." + rnd
 
-			testConfig := tc.configFn(rnd, zoneID, domain)
+			setupConfig := tc.setupFn(rnd, zoneID, domain)
+			migrateConfig := tc.migrateFn(rnd, zoneID, domain)
 			sourceVer, targetVer := acctest.InferMigrationVersions(tc.version)
 
 			var firstStep resource.TestStep
 			if tc.version == currentProviderVersion {
 				firstStep = resource.TestStep{
 					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-					Config:                   testConfig,
+					Config:                   setupConfig,
 				}
 			} else {
 				firstStep = resource.TestStep{
@@ -162,7 +194,7 @@ func TestMigrateAccessCACertificateZoneScoped(t *testing.T) {
 							VersionConstraint: tc.version,
 						},
 					},
-					Config: testConfig,
+					Config: setupConfig,
 				}
 			}
 
@@ -171,19 +203,178 @@ func TestMigrateAccessCACertificateZoneScoped(t *testing.T) {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_ZoneID(t)
 				},
-				WorkingDir: tmpDir,
+				CheckDestroy: nil,
+				WorkingDir:   tmpDir,
 				Steps: []resource.TestStep{
 					firstStep,
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
+					migrationStep(t, migrateConfig, tmpDir, tc.version, sourceVer, targetVer, []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("app_id"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("aud"), knownvalue.NotNull()),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("public_key"), knownvalue.NotNull()),
 					}),
+					{
+						PreConfig: func() {
+							clearState(t, tmpDir)
+						},
+						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+						Config:                   "# empty",
+						PlanOnly:                 true,
+					},
 				},
 			})
 		})
+	}
+}
+
+// --------------------------------------------------------------------------
+// Test helpers (acceptance)
+// --------------------------------------------------------------------------
+
+// v4TypeRenames maps v4 resource type names to their v5 equivalents. After
+// tf-migrate rewrites the HCL config, the state file still contains the old
+// type names. The v5 provider cannot read state entries with unknown types, so
+// we rename them in-place before Terraform tries to load the state.
+var v4TypeRenames = map[string]string{
+	"cloudflare_access_application":  "cloudflare_zero_trust_access_application",
+	"cloudflare_access_ca_certificate": "cloudflare_zero_trust_access_short_lived_certificate",
+}
+
+func renameStateTypes(t *testing.T, tmpDir string, renames map[string]string) {
+	t.Helper()
+
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		t.Logf("renameStateTypes: no work* directory found in %s", tmpDir)
+		return
+	}
+	stateFile := filepath.Join(matches[0], "terraform.tfstate")
+
+	data, err := os.ReadFile(stateFile)
+	if err != nil {
+		t.Fatalf("renameStateTypes: cannot read state file %s: %v", stateFile, err)
+	}
+
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(data, &state); err != nil {
+		t.Fatalf("renameStateTypes: cannot parse state file: %v", err)
+	}
+
+	var resources []map[string]json.RawMessage
+	if err := json.Unmarshal(state["resources"], &resources); err != nil {
+		t.Fatalf("renameStateTypes: cannot parse resources: %v", err)
+	}
+
+	changed := false
+	for i, res := range resources {
+		var typ string
+		if err := json.Unmarshal(res["type"], &typ); err != nil {
+			continue
+		}
+		if newType, ok := renames[typ]; ok {
+			newTypeJSON, _ := json.Marshal(newType)
+			resources[i]["type"] = newTypeJSON
+			changed = true
+		}
+	}
+
+	if !changed {
+		return
+	}
+
+	// Increment serial so Terraform accepts the modified state.
+	var serial int64
+	if err := json.Unmarshal(state["serial"], &serial); err == nil {
+		serialJSON, _ := json.Marshal(serial + 1)
+		state["serial"] = serialJSON
+	}
+
+	resourcesJSON, _ := json.Marshal(resources)
+	state["resources"] = resourcesJSON
+
+	out, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		t.Fatalf("renameStateTypes: failed to marshal state: %v", err)
+	}
+	if err := os.WriteFile(stateFile, out, 0600); err != nil {
+		t.Fatalf("renameStateTypes: failed to write state: %v", err)
+	}
+}
+
+// clearState empties the resources array in the terraform.tfstate file so the
+// framework's post-test destroy has nothing to clean up.
+func clearState(t *testing.T, tmpDir string) {
+	t.Helper()
+
+	matches, err := filepath.Glob(filepath.Join(tmpDir, "work*"))
+	if err != nil || len(matches) == 0 {
+		return
+	}
+	stateFile := filepath.Join(matches[0], "terraform.tfstate")
+
+	data, err := os.ReadFile(stateFile)
+	if err != nil {
+		return
+	}
+
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(data, &state); err != nil {
+		return
+	}
+
+	state["resources"] = json.RawMessage("[]")
+
+	var serial int64
+	if err := json.Unmarshal(state["serial"], &serial); err == nil {
+		serialJSON, _ := json.Marshal(serial + 1)
+		state["serial"] = serialJSON
+	}
+
+	out, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return
+	}
+	_ = os.WriteFile(stateFile, out, 0600)
+}
+
+// migrationStep builds a test step that runs tf-migrate, renames v4 state
+// entries to their v5 types, and validates the result with the v5 provider.
+func migrationStep(t *testing.T, v5Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	t.Helper()
+
+	var planChecks []plancheck.PlanCheck
+	if sourceVersion == "v4" {
+		planChecks = []plancheck.PlanCheck{
+			acctest.DebugNonEmptyPlan,
+			acctest.ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		planChecks = []plancheck.PlanCheck{
+			acctest.DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			acctest.WriteOutConfig(t, v5Config, tmpDir)
+			acctest.RunMigrationV2Command(t, v5Config, tmpDir, sourceVersion, targetVersion)
+			renameStateTypes(t, tmpDir, v4TypeRenames)
+
+			// Remove provider.tf so the test framework uses ProtoV6ProviderFactories
+			// instead of resolving to the published registry binary.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
+			}
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
 	}
 }
 
