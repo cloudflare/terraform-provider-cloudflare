@@ -258,6 +258,127 @@ func (r *LoadBalancerPoolResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *LoadBalancerPoolResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+// ModifyPlan suppresses no-op churn the Cloudflare API causes on this resource:
+// it returns origins in a different order than config, and omits several computed
+// fields on read so they replan as "(known after apply)".
+//
+// It rebuilds origins in state order and carries the unsynced computed values
+// from state, then checks whether the plan now matches state exactly. If it does
+// the run was pure churn and modified_on is pinned too, yielding no diff. If it
+// does not there is a real change, so the original origin order and modified_on
+// are restored and the change plans normally (reordering a real change would put
+// a value at a position matching neither config nor prior, which Terraform
+// rejects as an invalid plan).
+func (r *LoadBalancerPoolResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan, state *LoadBalancerPoolModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() || plan == nil || state == nil {
+		return
+	}
+
+	origOrigins := plan.Origins
+	origModifiedOn := plan.ModifiedOn
+
+	// Rebuild origins in state order so the API's reordering is a no-op.
+	if plan.Origins != nil && state.Origins != nil && originAddressSetsEqual(*plan.Origins, *state.Origins) {
+		stateOrigins := *state.Origins
+		planByAddr := make(map[string]*LoadBalancerPoolOriginsModel, len(*plan.Origins))
+		for _, po := range *plan.Origins {
+			planByAddr[po.Address.ValueString()] = po
+		}
+		reordered := make([]*LoadBalancerPoolOriginsModel, 0, len(stateOrigins))
+		for _, so := range stateOrigins {
+			cp := *planByAddr[so.Address.ValueString()] // shallow copy; Header stays a shared alias, never mutated here
+			useOriginStateForUnknown(&cp, so)
+			reordered = append(reordered, &cp)
+		}
+		plan.Origins = &reordered
+	}
+
+	// Carry the computed fields the API omits from state when unknown. Stock
+	// UseStateForUnknown can't: it skips a null prior state, which is exactly
+	// these fields on a pool that never set them.
+	if plan.DisabledAt.IsUnknown() {
+		plan.DisabledAt = state.DisabledAt
+	}
+	if plan.Networks.IsUnknown() {
+		plan.Networks = state.Networks
+	}
+	if plan.NotificationFilter.IsUnknown() {
+		plan.NotificationFilter = state.NotificationFilter
+	}
+	if plan.OriginSteering.IsUnknown() {
+		plan.OriginSteering = state.OriginSteering
+	}
+	if plan.LoadShedding.IsUnknown() {
+		plan.LoadShedding = state.LoadShedding
+	}
+
+	// Tentatively treat the run as a no-op by pinning modified_on, then compare
+	// the planned value to state. tftypes equality is reliable where a Go-level
+	// comparison of framework types is not.
+	plan.ModifiedOn = state.ModifiedOn
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if !resp.Plan.Raw.Equal(req.State.Raw) {
+		plan.Origins = origOrigins
+		plan.ModifiedOn = origModifiedOn
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	}
+}
+
+// useOriginStateForUnknown carries the computed origin fields the API omits from
+// state into the planned origin when the planned value is unknown.
+func useOriginStateForUnknown(plan, state *LoadBalancerPoolOriginsModel) {
+	if plan.DisabledAt.IsUnknown() {
+		plan.DisabledAt = state.DisabledAt
+	}
+	if plan.Port.IsUnknown() {
+		plan.Port = state.Port
+	}
+	if plan.Enabled.IsUnknown() {
+		plan.Enabled = state.Enabled
+	}
+	if plan.Weight.IsUnknown() {
+		plan.Weight = state.Weight
+	}
+	if plan.FlattenCNAME.IsUnknown() {
+		plan.FlattenCNAME = state.FlattenCNAME
+	}
+}
+
+// originAddressSetsEqual reports whether a and b hold the same set of non-empty
+// addresses with no duplicates, i.e. address is a usable identity key for matching.
+func originAddressSetsEqual(a, b []*LoadBalancerPoolOriginsModel) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	counts := make(map[string]int, len(a))
+	for _, o := range a {
+		if o == nil || o.Address.IsNull() || o.Address.IsUnknown() {
+			return false
+		}
+		addr := o.Address.ValueString()
+		counts[addr]++
+		if counts[addr] > 1 {
+			return false // duplicate address: ambiguous identity
+		}
+	}
+	for _, o := range b {
+		if o == nil || o.Address.IsNull() || o.Address.IsUnknown() {
+			return false
+		}
+		if _, ok := counts[o.Address.ValueString()]; !ok {
+			return false // address in state not present in plan
+		}
+		counts[o.Address.ValueString()]--
+	}
+	return true
 }
