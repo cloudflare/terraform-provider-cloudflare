@@ -1,6 +1,7 @@
 package zero_trust_access_ai_controls_mcp_portal
 
 import (
+	"bytes"
 	"encoding/json"
 )
 
@@ -49,10 +50,18 @@ func injectServerIDs(body []byte) []byte {
 		if _, has := s["server_id"]; has {
 			continue
 		}
-		if id, ok := s["id"]; ok {
-			s["server_id"] = id
-			changed = true
+		id, ok := s["id"]
+		if !ok {
+			continue
 		}
+		// Skip an explicit JSON null id. server_id is the required element
+		// identity; copying null would only yield a null server_id (drift/churn),
+		// so treat a null id the same as an absent one.
+		if bytes.Equal(bytes.TrimSpace(id), []byte("null")) {
+			continue
+		}
+		s["server_id"] = id
+		changed = true
 	}
 	if !changed {
 		return body
