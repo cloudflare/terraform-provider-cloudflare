@@ -254,6 +254,32 @@ applying the inline policy configuration.
 See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
 
+~> **Zone-scoped policies require `account_id`.** In v4,
+`cloudflare_access_policy` could be scoped to a zone using `zone_id`. In v5,
+all access policies are account-level only and `zone_id` is not a valid
+attribute on `cloudflare_zero_trust_access_policy`. If your v4 configuration
+used `zone_id` without `account_id`, you must add `account_id` after migration.
+`tf-migrate` removes `zone_id` and emits a warning when `account_id` is
+missing.
+
+```hcl
+# v4 (zone-scoped):
+resource "cloudflare_access_policy" "example" {
+  zone_id  = var.zone_id
+  name     = "My Policy"
+  decision = "allow"
+  # ...
+}
+
+# v5 (account_id required — add manually after migration):
+resource "cloudflare_zero_trust_access_policy" "example" {
+  account_id = var.cloudflare_account_id  # REQUIRED — zone_id is no longer valid
+  name       = "My Policy"
+  decision   = "allow"
+  # ...
+}
+```
+
 ## cloudflare_access_rule
 
 - `configuration` is now a single nested attribute (`configuration = { ... }`) instead of a block (`configuration { ... }`).
