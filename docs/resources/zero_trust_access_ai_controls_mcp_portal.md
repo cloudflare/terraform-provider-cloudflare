@@ -59,7 +59,7 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 - `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
 - `description` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
-- `servers` (Attributes List) (see [below for nested schema](#nestedatt--servers))
+- `servers` (Attributes Set) (see [below for nested schema](#nestedatt--servers))
 
 ### Read-Only
 

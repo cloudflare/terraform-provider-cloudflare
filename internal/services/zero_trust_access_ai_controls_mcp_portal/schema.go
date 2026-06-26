@@ -19,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpPort
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: 501,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"MCP Portals Read",
@@ -57,10 +57,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"servers": schema.ListNestedAttribute{
+			"servers": schema.SetNestedAttribute{
 				Computed:   true,
 				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
+				CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"server_id": schema.StringAttribute{
@@ -121,9 +121,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+				// Immutable creation metadata: hold the stored value on update
+				// instead of planning it as (known after apply).
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,
