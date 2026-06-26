@@ -58,7 +58,7 @@ sections, there is the need to migrate attributes and potentially the resource r
 ### Automatic (tf-migrate)
 
 -> For the recommended migration approach using built-in state upgraders, see the
-[version 5 migration guide](version-5-migration.md).
+[version 5 migration guide](version-5-migration).
 
 For automatic configuration (HCL) migrations, use [tf-migrate], the official
 Cloudflare Terraform Provider migration tool. It handles resource renames,
@@ -156,7 +156,7 @@ completes the migration in a single pass.
 ~> `tf-migrate` handles configuration (HCL) transformations only. State migration
 is handled automatically by the v5 provider's built-in state upgraders when you
 run `terraform plan` or `terraform apply`. See the
-[version 5 migration guide](version-5-migration.md) for details.
+[version 5 migration guide](version-5-migration) for details.
 
 ~> While all efforts have been made to ease the transition, some resources require
 manual steps after migration. tf-migrate prints actionable warnings with exact
@@ -241,7 +241,18 @@ must be removed from state, then rewritten inline on the application.
    deleting the remote policy).
 2. Add the policy configuration inline in your
    `cloudflare_zero_trust_access_application` resource's `policies` attribute.
-3. Run `terraform apply`.
+3. Run `terraform plan` and verify no unexpected policy detachments.
+4. Run `terraform apply`.
+
+!> **Do not apply tf-migrate output without adding inline policies first.**
+`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
+generates a `removed` block, but does **not** add `policies` to the parent
+`cloudflare_zero_trust_access_application` resource. If you run
+`terraform apply` in this intermediate state, Terraform sends an empty
+`policies` value to the API, which detaches all policies from the application.
+Cloudflare then garbage-collects the orphaned app-scoped policies. You **must**
+add the `policies = [...]` attribute to the parent application resource before
+applying.
 
 On the first plan/apply, Terraform may show that the old policy
 "will no longer be managed by Terraform". This is expected when using a
@@ -251,8 +262,34 @@ If you are not using `tf-migrate`, you can do the equivalent state removal
 manually with `terraform state rm cloudflare_access_policy.example` before
 applying the inline policy configuration.
 
-See the [migration guide](version-5-migration.md#application-scoped-access-policies)
+See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
+
+~> **Zone-scoped policies require `account_id`.** In v4,
+`cloudflare_access_policy` could be scoped to a zone using `zone_id`. In v5,
+all access policies are account-level only and `zone_id` is not a valid
+attribute on `cloudflare_zero_trust_access_policy`. If your v4 configuration
+used `zone_id` without `account_id`, you must add `account_id` after migration.
+`tf-migrate` removes `zone_id` and emits a warning when `account_id` is
+missing.
+
+```hcl
+# v4 (zone-scoped):
+resource "cloudflare_access_policy" "example" {
+  zone_id  = var.zone_id
+  name     = "My Policy"
+  decision = "allow"
+  # ...
+}
+
+# v5 (account_id required — add manually after migration):
+resource "cloudflare_zero_trust_access_policy" "example" {
+  account_id = var.cloudflare_account_id  # REQUIRED — zone_id is no longer valid
+  name       = "My Policy"
+  decision   = "allow"
+  # ...
+}
+```
 
 ## cloudflare_access_rule
 
@@ -1477,9 +1514,9 @@ This has been removed. Users should instead use the:
   `cloudflare_zero_trust_access_application` carries its policies in its
   `policies` attribute, either inline or as a list of policy IDs. See the
   migration guide's
-  [Application-Scoped Access Policies](version-5-migration.md#application-scoped-access-policies)
+  [Application-Scoped Access Policies](version-5-migration#application-scoped-access-policies)
   section, including
-  [Keeping existing policies attached (in-place migration)](version-5-migration.md#keeping-existing-policies-attached-in-place-migration)
+  [Keeping existing policies attached (in-place migration)](version-5-migration#keeping-existing-policies-attached-in-place-migration)
   if your applications reference policy UUIDs.
 - `approval_group` is now a list of objects (`approval_group = [{ ... }]`) instead of multiple block attribute (`approval_group { ... }`).
 - `auth_context` is now a list of objects (`auth_context = [{ ... }]`) instead of multiple block attribute (`auth_context { ... }`).

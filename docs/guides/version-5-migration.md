@@ -401,6 +401,26 @@ values to `null` for optional fields (`isolation_required`,
 `purpose_justification_required`, `approval_required`). This prevents drift
 since the API treats `false` and `null` as equivalent.
 
+#### Zero Trust Access Policy `zone_id` removal
+
+In v4, `cloudflare_access_policy` could be scoped to a zone using `zone_id`.
+In v5, all access policies are account-level only -- `zone_id` is not a valid
+attribute on `cloudflare_zero_trust_access_policy`. `tf-migrate` removes
+`zone_id` during migration. If the resource already has `account_id`, no action
+is needed. If the resource only had `zone_id`, `tf-migrate` emits a
+**MIGRATION WARNING** and you must manually add `account_id`:
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "example" {
+  account_id = var.cloudflare_account_id  # add this — zone_id is no longer valid
+  # ...existing attributes...
+}
+```
+
+Note that a zone ID and an account ID are different values. You cannot simply
+rename the attribute; you must supply the correct account ID for the account
+that owns the zone.
+
 #### Load Balancer field renames
 
 `cloudflare_load_balancer` resources will show field renames:
@@ -691,6 +711,17 @@ additional manual steps after running `tf-migrate` or updating your HCL.
 config migration.** `tf-migrate` can automatically generate a `removed` block
 to drop the old state entry without destroying the remote policy, but you still
 must rewrite the policy as inline `policies` on the application resource.
+
+!> **Applying tf-migrate output without adding inline policies is destructive.**
+`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
+generates a `removed` block, but does **not** add `policies` to the parent
+`cloudflare_zero_trust_access_application` resource. If you run
+`terraform apply` in this intermediate state, Terraform sends an empty
+`policies` value to the API, which detaches all policies from the application.
+Cloudflare then garbage-collects the orphaned app-scoped policies (they have no
+independent lifecycle). You **must** add `policies = [...]` to the parent
+application resource before applying. Recovery without this step requires
+reconstructing all policies from git history or backups.
 
 In v4, `cloudflare_access_policy` could be used for both account-level policies
 and application-scoped policies (when `application_id` was set). These two types
@@ -1706,12 +1737,12 @@ for details. If the diff is truly just cosmetic, you can safely ignore it.
 
 - [Version 5 Upgrade Guide][version 5 upgrade guide] -- Per-resource attribute
   change details and manual migration notes.
-- [Migrating Renamed Resources](migrating-renamed-resources.md) -- Detailed
+- [Migrating Renamed Resources](migrating-renamed-resources) -- Detailed
   guide for the import, state file, and two-phase swap approaches.
 - [tf-migrate] -- Source code and documentation for the HCL migration tool.
 - [Terraform moved blocks](https://developer.hashicorp.com/terraform/language/moved) --
   HashiCorp documentation on the `moved` block syntax.
 
-[version 5 upgrade guide]: version-5-upgrade.md
+[version 5 upgrade guide]: version-5-upgrade
 [tf-migrate]: https://github.com/cloudflare/tf-migrate
-[migrating renamed resources]: migrating-renamed-resources.md
+[migrating renamed resources]: migrating-renamed-resources
