@@ -85,10 +85,6 @@ func (r *ZeroTrustAccessAIControlsMcpPortalResource) Create(ctx context.Context,
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	// The portal API returns each attached server's identity under "id", but the
-	// resource schema/write path use "server_id". Map it before unmarshal so the
-	// servers set is keyed correctly (see injectServerIDs).
-	bytes = injectServerIDs(bytes)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -138,10 +134,6 @@ func (r *ZeroTrustAccessAIControlsMcpPortalResource) Update(ctx context.Context,
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	// The portal API returns each attached server's identity under "id", but the
-	// resource schema/write path use "server_id". Map it before unmarshal so the
-	// servers set is keyed correctly (see injectServerIDs).
-	bytes = injectServerIDs(bytes)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -182,10 +174,6 @@ func (r *ZeroTrustAccessAIControlsMcpPortalResource) Read(ctx context.Context, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	// The portal API returns each attached server's identity under "id", but the
-	// resource schema/write path use "server_id". Map it before unmarshal so the
-	// servers set is keyed correctly (see injectServerIDs).
-	bytes = injectServerIDs(bytes)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -256,10 +244,6 @@ func (r *ZeroTrustAccessAIControlsMcpPortalResource) ImportState(ctx context.Con
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	// The portal API returns each attached server's identity under "id", but the
-	// resource schema/write path use "server_id". Map it before unmarshal so the
-	// servers set is keyed correctly (see injectServerIDs).
-	bytes = injectServerIDs(bytes)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
