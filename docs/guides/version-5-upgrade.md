@@ -241,7 +241,18 @@ must be removed from state, then rewritten inline on the application.
    deleting the remote policy).
 2. Add the policy configuration inline in your
    `cloudflare_zero_trust_access_application` resource's `policies` attribute.
-3. Run `terraform apply`.
+3. Run `terraform plan` and verify no unexpected policy detachments.
+4. Run `terraform apply`.
+
+!> **Do not apply tf-migrate output without adding inline policies first.**
+`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
+generates a `removed` block, but does **not** add `policies` to the parent
+`cloudflare_zero_trust_access_application` resource. If you run
+`terraform apply` in this intermediate state, Terraform sends an empty
+`policies` value to the API, which detaches all policies from the application.
+Cloudflare then garbage-collects the orphaned app-scoped policies. You **must**
+add the `policies = [...]` attribute to the parent application resource before
+applying.
 
 On the first plan/apply, Terraform may show that the old policy
 "will no longer be managed by Terraform". This is expected when using a
