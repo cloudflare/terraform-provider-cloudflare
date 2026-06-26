@@ -421,6 +421,26 @@ resource "cloudflare_zero_trust_access_policy" "example" {
 }
 ```
 
+#### Zero Trust Access Policy `zone_id` removal
+
+In v4, `cloudflare_access_policy` could be scoped to a zone using `zone_id`.
+In v5, all access policies are account-level only -- `zone_id` is not a valid
+attribute on `cloudflare_zero_trust_access_policy`. `tf-migrate` removes
+`zone_id` during migration. If the resource already has `account_id`, no action
+is needed. If the resource only had `zone_id`, `tf-migrate` emits a
+**MIGRATION WARNING** and you must manually add `account_id`:
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "example" {
+  account_id = var.cloudflare_account_id  # add this — zone_id is no longer valid
+  # ...existing attributes...
+}
+```
+
+Note that a zone ID and an account ID are different values. You cannot simply
+rename the attribute; you must supply the correct account ID for the account
+that owns the zone.
+
 #### Load Balancer field renames
 
 `cloudflare_load_balancer` resources will show field renames:
