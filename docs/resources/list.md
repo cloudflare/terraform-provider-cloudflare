@@ -34,7 +34,7 @@ resource "cloudflare_list" "example_list" {
     },
     {
       ip = "1.1.1.2"
-    }
+    },
     {
       ip = "1.1.1.3"
     }
