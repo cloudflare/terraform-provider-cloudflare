@@ -121,6 +121,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Filters hostnames by a substring match on the hostname value. This parameter cannot be used with the 'id' parameter.",
 						Optional:    true,
 					},
+					"exact": schema.StringAttribute{
+						Description: "Filters hostnames by an exact match on the hostname value. This parameter cannot be used with the 'id' parameter.",
+						Optional:    true,
+					},
+					"starts_with": schema.StringAttribute{
+						Description: "Filters hostnames by a prefix match on the hostname value. This parameter cannot be used with the 'id' parameter.",
+						Optional:    true,
+					},
 				},
 			},
 			"order": schema.StringAttribute{
