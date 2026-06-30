@@ -38,17 +38,17 @@ func (m *ZeroTrustAccessAIControlsMcpPortalsDataSourceModel) toListParams(_ cont
 }
 
 type ZeroTrustAccessAIControlsMcpPortalsResultDataSourceModel struct {
-	ID               types.String                                                                            `tfsdk:"id" json:"id,computed"`
-	Hostname         types.String                                                                            `tfsdk:"hostname" json:"hostname,computed"`
-	Name             types.String                                                                            `tfsdk:"name" json:"name,computed"`
-	Servers          customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel] `tfsdk:"servers" json:"servers,computed"`
-	AllowCodeMode    types.Bool                                                                              `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
-	CreatedAt        timetypes.RFC3339                                                                       `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CreatedBy        types.String                                                                            `tfsdk:"created_by" json:"created_by,computed"`
-	Description      types.String                                                                            `tfsdk:"description" json:"description,computed"`
-	ModifiedAt       timetypes.RFC3339                                                                       `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	ModifiedBy       types.String                                                                            `tfsdk:"modified_by" json:"modified_by,computed"`
-	SecureWebGateway types.Bool                                                                              `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
+	ID               types.String                                                                           `tfsdk:"id" json:"id,computed"`
+	Hostname         types.String                                                                           `tfsdk:"hostname" json:"hostname,computed"`
+	Name             types.String                                                                           `tfsdk:"name" json:"name,computed"`
+	Servers          customfield.NestedObjectSet[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel] `tfsdk:"servers" json:"servers,computed"`
+	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
+	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`
+	Description      types.String                                                                           `tfsdk:"description" json:"description,computed"`
+	ModifiedAt       timetypes.RFC3339                                                                      `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	ModifiedBy       types.String                                                                           `tfsdk:"modified_by" json:"modified_by,computed"`
+	SecureWebGateway types.Bool                                                                             `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel struct {
@@ -57,6 +57,7 @@ type ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel struct {
 	Hostname                     types.String                                                                                          `tfsdk:"hostname" json:"hostname,computed"`
 	Name                         types.String                                                                                          `tfsdk:"name" json:"name,computed"`
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                               `tfsdk:"prompts" json:"prompts,computed"`
+	ServerID                     types.String                                                                                          `tfsdk:"server_id" json:"server_id,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                               `tfsdk:"tools" json:"tools,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                                          `tfsdk:"created_by" json:"created_by,computed"`

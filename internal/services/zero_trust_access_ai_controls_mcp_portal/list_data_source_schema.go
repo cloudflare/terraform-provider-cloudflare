@@ -58,9 +58,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Computed: true,
 						},
-						"servers": schema.ListNestedAttribute{
+						"servers": schema.SetNestedAttribute{
 							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -90,6 +90,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.MapType{
 											ElemType: jsontypes.NormalizedType{},
 										},
+									},
+									"server_id": schema.StringAttribute{
+										Description: "server id",
+										Computed:    true,
 									},
 									"tools": schema.ListAttribute{
 										Computed:   true,
