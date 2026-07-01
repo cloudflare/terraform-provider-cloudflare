@@ -15,6 +15,8 @@ Deprecation markers change often. Prefer retrieved docs over pre-trained knowled
 | Registry JSON API - docs (primary) | `https://registry.terraform.io/v1/providers/cloudflare/cloudflare/{version}/docs?path={url-encoded-path}` | Full markdown |
 | GitHub raw docs (fallback) | `https://raw.githubusercontent.com/cloudflare/terraform-provider-cloudflare/{tag-or-main}/docs/{category}/{title}.md` | Use matching tag for pinned versions; use `main` only for latest/unpinned checks |
 | Local provider repo (fallback when available) | `internal/services/<service>/*schema*.go` | Framework `DeprecationMessage` values that may not appear in generated docs |
+| Cloudflare API deprecations (replacement context only) | `https://developers.cloudflare.com/fundamentals/api/reference/deprecations/` | Dated log of deprecated Cloudflare APIs/fields with replacement products. Use only for replacement guidance after the Terraform doc confirms deprecation — never to pick Terraform attribute names. |
+| Cloudflare developer docs (replacement context only) | Whichever `developers.cloudflare.com/*` URL the deprecation description links to | Product docs for the replacement service. Same scoping as above. |
 
 Do **not** fetch `https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/...`; it is a JavaScript SPA shell for non-browser clients.
 
@@ -30,7 +32,8 @@ Do **not** fetch `https://registry.terraform.io/providers/cloudflare/cloudflare/
 8. **For attribute questions**, scan the full `## Schema` attribute block for the named attribute, including nested schema sections and continuation lines, using both patterns below.
 9. **If running inside this provider repo**, also check local schema files for `DeprecationMessage` before saying something is not deprecated. Some schema-level deprecations may be present in Go but missing from generated docs.
 10. **If the user named a specific attribute** that doesn't exist in the schema, say so. The user may have a typo, wrong category, or wrong provider version.
-11. **Be explicit about what you found.** If nothing is deprecated, say so.
+11. **If the user asks what to use instead** (not just "is this deprecated?"), and only after the Terraform doc confirms deprecation: fetch any `developers.cloudflare.com/*` URL in the deprecation description, and grep the [API deprecations page](https://developers.cloudflare.com/fundamentals/api/reference/deprecations/) for the attribute or API name. Report the deprecation and end-of-life dates when present. If the replacement is another Terraform resource, confirm it in the Registry before naming it.
+12. **Be explicit about what you found.** If nothing is deprecated, say so.
 
 ## How deprecation is marked
 
@@ -53,6 +56,8 @@ Answer deprecation status only. Do not suggest HCL edits, `moved` blocks, import
 
 ## Example
 
-> **User:** "I'm getting a deprecation warning on `notification_email` for `cloudflare_load_balancer_pool`. Is it deprecated?"
+> **User:** "I'm getting a deprecation warning on `notification_email` for `cloudflare_load_balancer_pool`. What should I use instead?"
 >
-> Fetch the `load_balancer_pool` resource or data source doc from the Registry, depending on the user's context. Scan the `## Schema` block for `notification_email`. Reply with what you found - quote the deprecation description verbatim if it's deprecated, or confirm it isn't if you find no markers.
+> Fetch the `load_balancer_pool` resource doc. The `## Schema` block shows `notification_email` is deprecated and points at `https://developers.cloudflare.com/fundamentals/notifications/`. Fetch that page for replacement context, and grep the API deprecations page for the 2023-04-03 date. Reply:
+>
+> > `notification_email` was deprecated on 2023-04-03. Cloudflare moved health-check notifications to their centralized Notifications service ([docs](https://developers.cloudflare.com/fundamentals/notifications/)) — configure notifications there instead. There is no drop-in Terraform attribute replacement on `cloudflare_load_balancer_pool`; the migration is a workflow change, not a rename.
