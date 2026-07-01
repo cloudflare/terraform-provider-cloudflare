@@ -72,6 +72,16 @@ func SourceV4RulesetSchema() schema.Schema {
 										ElementType: types.Int64Type,
 										Optional:    true,
 									},
+									// Added to the v4 provider in
+									// commit 3d97253 (2026-05-28) and shipped in v4.52.8.
+									// State written by any v4 provider from that point on
+									// contains asset_name (typically null unless configured),
+									// so this source schema must declare it or the
+									// v4 → v5 raw-state unmarshal fails with
+									// "unsupported attribute asset_name".
+									"asset_name": schema.StringAttribute{
+										Optional: true,
+									},
 									"automatic_https_rewrites": schema.BoolAttribute{
 										Optional: true,
 									},
