@@ -53,7 +53,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"config": schema.SingleNestedAttribute{
-				Description: "origin_fallback and lingering_subscribe are mutually exclusive.",
+				Description: "upstreams and lingering_subscribe are mutually exclusive.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[MoQRelayConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -73,21 +73,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"origin_fallback": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MoQRelayConfigOriginFallbackDataSourceModel](ctx),
+					"upstreams": schema.SingleNestedAttribute{
+						Description: "Upstreams are external MOQT server publishers that a relay falls back\nto when it has no local publisher for a requested namespace/track.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[MoQRelayConfigUpstreamsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
 							},
-							"origins": schema.ListNestedAttribute{
-								Description: "Ordered list of upstream origin relays. Each entry is an object\n(not a bare string) so per-origin configuration can be added in\nthe future without another breaking change.",
+							"upstreams": schema.ListNestedAttribute{
+								Description: "Ordered list of upstream MOQT server publishers. Each entry is an\nobject (not a bare string) so per-upstream configuration can be\nadded in the future without another breaking change.",
 								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigOriginFallbackOriginsDataSourceModel](ctx),
+								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigUpstreamsUpstreamsDataSourceModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"url": schema.StringAttribute{
-											Description: "Upstream origin relay URL.",
+											Description: "Upstream MOQT server publisher URL.",
 											Computed:    true,
 										},
 									},

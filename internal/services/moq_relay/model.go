@@ -36,7 +36,7 @@ func (m MoQRelayModel) MarshalJSONForUpdate(state MoQRelayModel) (data []byte, e
 
 type MoQRelayConfigModel struct {
 	LingeringSubscribe customfield.NestedObject[MoQRelayConfigLingeringSubscribeModel] `tfsdk:"lingering_subscribe" json:"lingering_subscribe,computed_optional"`
-	OriginFallback     customfield.NestedObject[MoQRelayConfigOriginFallbackModel]     `tfsdk:"origin_fallback" json:"origin_fallback,computed_optional"`
+	Upstreams          customfield.NestedObject[MoQRelayConfigUpstreamsModel]          `tfsdk:"upstreams" json:"upstreams,computed_optional"`
 }
 
 type MoQRelayConfigLingeringSubscribeModel struct {
@@ -44,11 +44,11 @@ type MoQRelayConfigLingeringSubscribeModel struct {
 	MaxTimeoutMs types.Int64 `tfsdk:"max_timeout_ms" json:"max_timeout_ms,computed_optional"`
 }
 
-type MoQRelayConfigOriginFallbackModel struct {
-	Enabled types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Origins customfield.NestedObjectList[MoQRelayConfigOriginFallbackOriginsModel] `tfsdk:"origins" json:"origins,computed_optional"`
+type MoQRelayConfigUpstreamsModel struct {
+	Enabled   types.Bool                                                          `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Upstreams customfield.NestedObjectList[MoQRelayConfigUpstreamsUpstreamsModel] `tfsdk:"upstreams" json:"upstreams,computed_optional"`
 }
 
-type MoQRelayConfigOriginFallbackOriginsModel struct {
+type MoQRelayConfigUpstreamsUpstreamsModel struct {
 	URL types.String `tfsdk:"url" json:"url,optional"`
 }

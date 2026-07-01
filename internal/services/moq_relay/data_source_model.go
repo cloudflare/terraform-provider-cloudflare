@@ -66,7 +66,7 @@ func (m *MoQRelayDataSourceModel) toListParams(_ context.Context) (params moq.Re
 
 type MoQRelayConfigDataSourceModel struct {
 	LingeringSubscribe customfield.NestedObject[MoQRelayConfigLingeringSubscribeDataSourceModel] `tfsdk:"lingering_subscribe" json:"lingering_subscribe,computed"`
-	OriginFallback     customfield.NestedObject[MoQRelayConfigOriginFallbackDataSourceModel]     `tfsdk:"origin_fallback" json:"origin_fallback,computed"`
+	Upstreams          customfield.NestedObject[MoQRelayConfigUpstreamsDataSourceModel]          `tfsdk:"upstreams" json:"upstreams,computed"`
 }
 
 type MoQRelayConfigLingeringSubscribeDataSourceModel struct {
@@ -74,12 +74,12 @@ type MoQRelayConfigLingeringSubscribeDataSourceModel struct {
 	MaxTimeoutMs types.Int64 `tfsdk:"max_timeout_ms" json:"max_timeout_ms,computed"`
 }
 
-type MoQRelayConfigOriginFallbackDataSourceModel struct {
-	Enabled types.Bool                                                                       `tfsdk:"enabled" json:"enabled,computed"`
-	Origins customfield.NestedObjectList[MoQRelayConfigOriginFallbackOriginsDataSourceModel] `tfsdk:"origins" json:"origins,computed"`
+type MoQRelayConfigUpstreamsDataSourceModel struct {
+	Enabled   types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
+	Upstreams customfield.NestedObjectList[MoQRelayConfigUpstreamsUpstreamsDataSourceModel] `tfsdk:"upstreams" json:"upstreams,computed"`
 }
 
-type MoQRelayConfigOriginFallbackOriginsDataSourceModel struct {
+type MoQRelayConfigUpstreamsUpstreamsDataSourceModel struct {
 	URL types.String `tfsdk:"url" json:"url,computed"`
 }
 

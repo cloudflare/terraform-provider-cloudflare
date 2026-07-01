@@ -43,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"config": schema.SingleNestedAttribute{
-				Description: "origin_fallback and lingering_subscribe are mutually exclusive.",
+				Description: "upstreams and lingering_subscribe are mutually exclusive.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[MoQRelayConfigModel](ctx),
@@ -69,25 +69,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"origin_fallback": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[MoQRelayConfigOriginFallbackModel](ctx),
+					"upstreams": schema.SingleNestedAttribute{
+						Description: "Upstreams are external MOQT server publishers that a relay falls back\nto when it has no local publisher for a requested namespace/track.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MoQRelayConfigUpstreamsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
 								Optional: true,
 								Default:  booldefault.StaticBool(false),
 							},
-							"origins": schema.ListNestedAttribute{
-								Description: "Ordered list of upstream origin relays. Each entry is an object\n(not a bare string) so per-origin configuration can be added in\nthe future without another breaking change.",
+							"upstreams": schema.ListNestedAttribute{
+								Description: "Ordered list of upstream MOQT server publishers. Each entry is an\nobject (not a bare string) so per-upstream configuration can be\nadded in the future without another breaking change.",
 								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigOriginFallbackOriginsModel](ctx),
+								CustomType:  customfield.NewNestedObjectListType[MoQRelayConfigUpstreamsUpstreamsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"url": schema.StringAttribute{
-											Description: "Upstream origin relay URL.",
+											Description: "Upstream MOQT server publisher URL.",
 											Optional:    true,
 										},
 									},
