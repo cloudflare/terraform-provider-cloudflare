@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.22.0 (2026-07-01)
+
+Full Changelog: [v5.21.1...v5.22.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.1...v5.22.0)
+
+### Features
+
+* **skills:** add acceptance tests skill ([d03adf4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d03adf41ff2a392e07c39d4ec40b903eb2c6a5d8))
+* **skills:** add Agent Skill for Cloudflare Terraform provider resource discovery ([094737b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/094737bf72a90c8d50aa4c8f5e1420e0f08a5f8a))
+* **skills:** add deprecation checking skill ([ccb3271](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ccb32715f274c2530d59f33f8ee8fa4eb367b2a0))
+
+
+### Bug Fixes
+
+* **skill:** add sources for replacement context ([520cbc7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/520cbc78ecc4a29c7772e0fa585f4787e4d79da3))
+* **snippet:** guard against nil Metadata in Read after import ([020a1cc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/020a1ccd3c9f5a9761ba02de30edd3df07f4d893))
+
 ## 5.21.1 (2026-06-23)
 
 Full Changelog: [v5.21.0...v5.21.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.0...v5.21.1)
