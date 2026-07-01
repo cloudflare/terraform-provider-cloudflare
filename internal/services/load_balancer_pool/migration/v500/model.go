@@ -40,13 +40,20 @@ type SourceCloudflareLoadBalancerPoolModel struct {
 
 // SourceOriginsModel represents a single origin within the pool from v4.x provider.
 // Stored in TypeSet, so in state it's an array of these objects.
+//
+// NOTE: flatten_cname is intentionally NOT included here. The v4 provider
+// (SDKv2 cloudflare_load_balancer_pool) has no flatten_cname attribute on
+// origins, so v4 state never contains it. Declaring it on this Source model
+// causes tftypes → struct conversion to fail with:
+//   "Struct defines fields not found in object: flatten_cname"
+// It appears on TargetLoadBalancerPoolOriginsModel (v5) below because v5
+// introduced the field.
 type SourceOriginsModel struct {
-	Name             types.String       `tfsdk:"name"`
-	Address          types.String       `tfsdk:"address"`
-	VirtualNetworkID types.String       `tfsdk:"virtual_network_id"`
-	Weight           types.Float64      `tfsdk:"weight"`
-	Enabled          types.Bool         `tfsdk:"enabled"`
-	FlattenCNAME     types.Bool                                     `tfsdk:"flatten_cname"`
+	Name             types.String        `tfsdk:"name"`
+	Address          types.String        `tfsdk:"address"`
+	VirtualNetworkID types.String        `tfsdk:"virtual_network_id"`
+	Weight           types.Float64       `tfsdk:"weight"`
+	Enabled          types.Bool          `tfsdk:"enabled"`
 	Header           []SourceHeaderModel `tfsdk:"header"` // TypeSet stored as array
 }
 
