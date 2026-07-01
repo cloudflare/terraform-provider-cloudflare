@@ -157,6 +157,141 @@ func TestAccCloudflareSnippet_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSnippet_Import(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_snippet." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSnippetDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create the snippet
+			{
+				Config: testAccCloudflareSnippetConfig(rnd, zoneID),
+			},
+			// Step 2: Import and verify state matches config.
+			// This covers the nil-pointer dereference fix: ImportState
+			// leaves Metadata nil, then Read must handle that without
+			// crashing when it populates Metadata.MainModule from the
+			// Content.Get response header.
+			{
+				Config:            testAccCloudflareSnippetConfig(rnd, zoneID),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateId:     zoneID + "/" + rnd,
+				ImportStateVerify: true,
+			},
+			// Step 3: Plan after import produces no diff, confirming
+			// that Read fully populated files and metadata from the
+			// Content.Get endpoint.
+			{
+				Config: testAccCloudflareSnippetConfig(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSnippet_ImportFieldValidation(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSnippetDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with the basic config
+			{
+				Config: testAccCloudflareSnippetConfig(rnd, zoneID),
+			},
+			// Step 2: Import with field-level validation
+			{
+				ResourceName: "cloudflare_snippet." + rnd,
+				ImportState:  true,
+				ImportStateId: zoneID + "/" + rnd,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected 1 instance state, got %d", len(states))
+					}
+					s := states[0]
+
+					if v := s.Attributes["zone_id"]; v != zoneID {
+						return fmt.Errorf("expected zone_id %q, got %q", zoneID, v)
+					}
+					if v := s.Attributes["snippet_name"]; v != rnd {
+						return fmt.Errorf("expected snippet_name %q, got %q", rnd, v)
+					}
+					if v := s.Attributes["metadata.main_module"]; v != "main.js" {
+						return fmt.Errorf("expected metadata.main_module %q, got %q", "main.js", v)
+					}
+					if v := s.Attributes["files.#"]; v != "1" {
+						return fmt.Errorf("expected 1 file, got %s", v)
+					}
+					if v := s.Attributes["files.0.name"]; v != "main.js" {
+						return fmt.Errorf("expected files.0.name %q, got %q", "main.js", v)
+					}
+					if v := s.Attributes["files.0.content"]; v == "" {
+						return fmt.Errorf("expected files.0.content to be non-empty")
+					}
+					if v := s.Attributes["created_on"]; v == "" {
+						return fmt.Errorf("expected created_on to be set")
+					}
+					if v := s.Attributes["modified_on"]; v == "" {
+						return fmt.Errorf("expected modified_on to be set")
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSnippet_ImportAfterUpdate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_snippet." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSnippetDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create
+			{
+				Config: testAccCloudflareSnippetConfig(rnd, zoneID),
+			},
+			// Step 2: Update content
+			{
+				Config: testAccCloudflareSnippetConfigUpdate(rnd, zoneID),
+			},
+			// Step 3: Import the updated resource
+			{
+				Config:            testAccCloudflareSnippetConfigUpdate(rnd, zoneID),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateId:     zoneID + "/" + rnd,
+				ImportStateVerify: true,
+			},
+			// Step 4: Plan after import is clean
+			{
+				Config: testAccCloudflareSnippetConfigUpdate(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareSnippetDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 

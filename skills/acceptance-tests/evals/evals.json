@@ -1,0 +1,52 @@
+{
+  "skill_name": "acceptance-tests",
+  "evals": [
+    {
+      "id": "resource-basic-import-sweeper",
+      "prompt": "Add acceptance tests for a new account-scoped Cloudflare Terraform provider resource under internal/services/example_widget. It should create, update, import, and clean up real API resources.",
+      "expected_output": "The agent inspects the service first, uses repo acceptance-test helpers, creates or updates resource_test.go and testdata, includes scoped prechecks, uses random test names, adds import verification, and adds a safe sweeper only if needed.",
+      "assertions": [
+        "Mentions inspecting internal/services/example_widget before editing",
+        "Uses acctest.LoadTestCase for testdata configs or explains why not",
+        "Uses utils.GenerateRandomResourceName for remote resource names",
+        "Includes acctest.TestAccPreCheck and acctest.TestAccPreCheck_AccountID",
+        "Includes import-state verification or explains why import is unsupported",
+        "If adding a sweeper, filters deletes through utils.ShouldSweepResource",
+        "Does not edit generated provider implementation files as the durable fix"
+      ]
+    },
+    {
+      "id": "composite-import-id",
+      "prompt": "Fix the acceptance test import step for a nested resource where the import ID is account_id/parent_id/child_id and parent_id is only known after apply.",
+      "expected_output": "The agent uses ImportStateIdFunc to read IDs from terraform.State after apply instead of guessing or precomputing the import ID.",
+      "assertions": [
+        "Uses ImportStateIdFunc",
+        "Reads parent and child IDs from terraform.State resources",
+        "Checks that state resources exist before dereferencing Primary.ID",
+        "Builds the import ID as account_id/parent_id/child_id",
+        "Adds ImportStateVerifyIgnore only for fields with a specific non-round-tripping reason"
+      ]
+    },
+    {
+      "id": "not-consumer-hcl",
+      "prompt": "Write Terraform HCL for a user who wants to create a Cloudflare DNS record in their own infrastructure repo.",
+      "expected_output": "The skill should not be used. The answer should focus on consumer Terraform configuration and provider docs, not provider acceptance-test files, sweepers, or TF_ACC.",
+      "assertions": [
+        "Does not suggest editing resource_test.go or testdata in terraform-provider-cloudflare",
+        "Does not mention TF_ACC acceptance-test execution as the main workflow",
+        "Focuses on user-facing Terraform HCL and current provider docs"
+      ]
+    },
+    {
+      "id": "not-provider-error-support",
+      "prompt": "I'm getting an unsupported argument error from terraform plan for my Cloudflare config. Can you help me fix it?",
+      "expected_output": "The skill should not be used unless the user is modifying provider acceptance tests. The answer should retrieve or inspect the provider schema/docs and help fix the user's Terraform configuration.",
+      "assertions": [
+        "Does not frame the task as writing provider acceptance tests",
+        "Does not suggest TF_ACC or acceptance-test prechecks as the main path",
+        "Focuses on provider schema/docs and the user's Terraform configuration",
+        "Mentions acceptance tests only if the user is contributing a provider fix"
+      ]
+    }
+  ]
+}
