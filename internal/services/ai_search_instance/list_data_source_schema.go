@@ -302,6 +302,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"custom_domains": schema.ListAttribute{
+									Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
 								},

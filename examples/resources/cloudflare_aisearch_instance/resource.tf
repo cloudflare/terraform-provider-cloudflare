@@ -33,6 +33,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     chat_completions_endpoint = {
       disabled = true
     }
+    custom_domains = ["search.example.com"]
     enabled = true
     mcp = {
       description = "description"

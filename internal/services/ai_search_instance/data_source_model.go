@@ -112,6 +112,7 @@ type AISearchInstanceMetadataDataSourceModel struct {
 type AISearchInstancePublicEndpointParamsDataSourceModel struct {
 	AuthorizedHosts         customfield.List[types.String]                                                                       `tfsdk:"authorized_hosts" json:"authorized_hosts,computed"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancePublicEndpointParamsChatCompletionsEndpointDataSourceModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed"`
+	CustomDomains           customfield.List[types.String]                                                                       `tfsdk:"custom_domains" json:"custom_domains,computed"`
 	Enabled                 types.Bool                                                                                           `tfsdk:"enabled" json:"enabled,computed"`
 	Mcp                     customfield.NestedObject[AISearchInstancePublicEndpointParamsMcpDataSourceModel]                     `tfsdk:"mcp" json:"mcp,computed"`
 	RateLimit               customfield.NestedObject[AISearchInstancePublicEndpointParamsRateLimitDataSourceModel]               `tfsdk:"rate_limit" json:"rate_limit,computed"`
