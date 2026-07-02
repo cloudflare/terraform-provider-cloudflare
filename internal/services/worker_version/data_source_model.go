@@ -37,6 +37,7 @@ type WorkerVersionDataSourceModel struct {
 	Annotations         customfield.NestedObject[WorkerVersionAnnotationsDataSourceModel]             `tfsdk:"annotations" json:"annotations,computed"`
 	Assets              customfield.NestedObject[WorkerVersionAssetsDataSourceModel]                  `tfsdk:"assets" json:"assets,computed"`
 	Bindings            customfield.NestedObjectList[WorkerVersionBindingsDataSourceModel]            `tfsdk:"bindings" json:"bindings,computed"`
+	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsDataSourceModel]            `tfsdk:"cache_options" json:"cache_options,computed"`
 	Containers          customfield.NestedObjectSet[WorkerVersionContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
 	Limits              customfield.NestedObject[WorkerVersionLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
 	Migrations          customfield.NestedObject[WorkerVersionMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
@@ -138,6 +139,11 @@ type WorkerVersionBindingsSimpleDataSourceModel struct {
 	Limit             types.Float64 `tfsdk:"limit" json:"limit,computed"`
 	Period            types.Int64   `tfsdk:"period" json:"period,computed"`
 	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,computed"`
+}
+
+type WorkerVersionCacheOptionsDataSourceModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
 }
 
 type WorkerVersionContainersDataSourceModel struct {

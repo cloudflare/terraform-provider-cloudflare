@@ -21,6 +21,7 @@ type EmailRoutingCatchAllDataSourceModel struct {
 	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled  types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	Name     types.String                                                              `tfsdk:"name" json:"name,computed"`
+	Source   types.String                                                              `tfsdk:"source" json:"source,computed"`
 	Tag      types.String                                                              `tfsdk:"tag" json:"tag,computed"`
 	Actions  customfield.NestedObjectList[EmailRoutingCatchAllActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`
 	Matchers customfield.NestedObjectList[EmailRoutingCatchAllMatchersDataSourceModel] `tfsdk:"matchers" json:"matchers,computed"`

@@ -417,6 +417,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
 						Optional:    true,
 					},
+					"cache_options": schema.SingleNestedAttribute{
+						Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether caching is enabled for this Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"cross_version_cache": schema.BoolAttribute{
+								Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+						},
+					},
 					"compatibility_date": schema.StringAttribute{
 						Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 						Optional:    true,
@@ -427,6 +445,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						CustomType:  customfield.NewSetType[types.String](ctx),
 						ElementType: types.StringType,
+					},
+					"exports": schema.MapNestedAttribute{
+						Description: "Declarative exports for the Worker. Worker entrypoint\nentries (`type: worker`) carry cache configuration for\nthat entrypoint.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"type": schema.StringAttribute{
+									Description: "The kind of export.\nAvailable values: \"worker\", \"durable-object\".",
+									Required:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
+									},
+								},
+								"cache": schema.SingleNestedAttribute{
+									Description: "Cache override for this entrypoint. It applies only to\n`type: worker` entries and overrides the Worker's global\n`cache_options.enabled` for that entrypoint.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"enabled": schema.BoolAttribute{
+											Description: "Whether caching is enabled for this entrypoint.",
+											Required:    true,
+										},
+									},
+								},
+							},
+						},
 					},
 					"keep_assets": schema.BoolAttribute{
 						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.",
@@ -877,6 +920,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"cache_options": schema.SingleNestedAttribute{
+				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptCacheOptionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether caching is enabled for this Worker.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"cross_version_cache": schema.BoolAttribute{
+						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+				},
 			},
 			"named_handlers": schema.ListNestedAttribute{
 				Description: "Named exports, such as Durable Object class implementations and named entrypoints.",

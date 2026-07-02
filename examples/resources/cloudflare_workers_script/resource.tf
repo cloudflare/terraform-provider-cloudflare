@@ -32,8 +32,26 @@ resource "cloudflare_workers_script" "example_workers_script" {
       type = "plain_text"
     }]
     body_part = "worker.js"
+    cache_options = {
+      enabled = true
+      cross_version_cache = true
+    }
     compatibility_date = "2021-01-01"
     compatibility_flags = ["nodejs_compat"]
+    exports = {
+      Admin = {
+        type = "worker"
+        cache = {
+          enabled = true
+        }
+      }
+      default = {
+        type = "worker"
+        cache = {
+          enabled = false
+        }
+      }
+    }
     keep_assets = false
     keep_bindings = ["string"]
     limits = {

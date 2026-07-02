@@ -30,6 +30,7 @@ type WorkerVersionModel struct {
 	Annotations         customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
 	Assets              customfield.NestedObject[WorkerVersionAssetsModel]       `tfsdk:"assets" json:"assets,computed_optional"`
 	Bindings            customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
+	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsModel] `tfsdk:"cache_options" json:"cache_options,computed_optional"`
 	Limits              customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
 	CreatedOn           timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	MigrationTag        types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
@@ -199,6 +200,11 @@ type WorkerVersionBindingsSimpleModel struct {
 	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
 	Period            types.Int64   `tfsdk:"period" json:"period,required"`
 	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
+}
+
+type WorkerVersionCacheOptionsModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed_optional"`
 }
 
 type WorkerVersionLimitsModel struct {

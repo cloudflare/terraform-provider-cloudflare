@@ -18,6 +18,10 @@ resource "cloudflare_worker_version" "example_worker_version" {
     text = "my_data"
     type = "plain_text"
   }]
+  cache_options = {
+    enabled = true
+    cross_version_cache = true
+  }
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
   containers = [{

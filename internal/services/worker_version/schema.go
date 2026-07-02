@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -668,6 +669,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplaceIfConfigured()},
+			},
+			"cache_options": schema.SingleNestedAttribute{
+				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerVersionCacheOptionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether caching is enabled for this Worker.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"cross_version_cache": schema.BoolAttribute{
+						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"limits": schema.SingleNestedAttribute{
 				Description: "Resource limits enforced at runtime.",

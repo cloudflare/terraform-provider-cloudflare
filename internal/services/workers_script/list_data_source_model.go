@@ -38,6 +38,7 @@ func (m *WorkersScriptsDataSourceModel) toListParams(_ context.Context) (params 
 
 type WorkersScriptsResultDataSourceModel struct {
 	ID                 types.String                                                             `tfsdk:"id" json:"id,computed"`
+	CacheOptions       customfield.NestedObject[WorkersScriptsCacheOptionsDataSourceModel]      `tfsdk:"cache_options" json:"cache_options,computed"`
 	CompatibilityDate  types.String                                                             `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
 	CompatibilityFlags customfield.Set[types.String]                                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	CreatedOn          timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -59,6 +60,11 @@ type WorkersScriptsResultDataSourceModel struct {
 	Tags               customfield.Set[types.String]                                            `tfsdk:"tags" json:"tags,computed"`
 	TailConsumers      customfield.NestedObjectSet[WorkersScriptsTailConsumersDataSourceModel]  `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UsageModel         types.String                                                             `tfsdk:"usage_model" json:"usage_model,computed"`
+}
+
+type WorkersScriptsCacheOptionsDataSourceModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
 }
 
 type WorkersScriptsNamedHandlersDataSourceModel struct {

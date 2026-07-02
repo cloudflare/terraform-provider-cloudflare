@@ -42,6 +42,7 @@ type WorkersScriptModel struct {
 	CompatibilityFlags customfield.Set[types.String]                                 `tfsdk:"compatibility_flags" json:"compatibility_flags,computed,no_refresh"`
 	Handlers           customfield.List[types.String]                                `tfsdk:"handlers" json:"handlers,computed,no_refresh"`
 	Tags               customfield.Set[types.String]                                 `tfsdk:"tags" json:"tags,computed,no_refresh"`
+	CacheOptions       customfield.NestedObject[WorkersScriptCacheOptionsModel]      `tfsdk:"cache_options" json:"cache_options,computed,no_refresh"`
 	NamedHandlers      customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed,no_refresh"`
 	Observability      customfield.NestedObject[WorkersScriptObservabilityModel]     `tfsdk:"observability" json:"observability,computed,no_refresh"`
 	Placement          customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed,no_refresh"`
@@ -70,8 +71,10 @@ type WorkersScriptMetadataModel struct {
 	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
 	Bindings            *[]*WorkersScriptMetadataBindingsModel            `tfsdk:"bindings" json:"bindings,optional"`
 	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,optional"`
+	CacheOptions        *WorkersScriptMetadataCacheOptionsModel           `tfsdk:"cache_options" json:"cache_options,optional"`
 	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	Exports             *map[string]WorkersScriptMetadataExportsModel     `tfsdk:"exports" json:"exports,optional"`
 	KeepAssets          types.Bool                                        `tfsdk:"keep_assets" json:"keep_assets,optional"`
 	KeepBindings        *[]types.String                                   `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
 	Limits              *WorkersScriptMetadataLimitsModel                 `tfsdk:"limits" json:"limits,optional"`
@@ -171,6 +174,20 @@ type WorkersScriptMetadataBindingsSimpleModel struct {
 	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
 }
 
+type WorkersScriptMetadataCacheOptionsModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed_optional"`
+}
+
+type WorkersScriptMetadataExportsModel struct {
+	Type  types.String                            `tfsdk:"type" json:"type,required"`
+	Cache *WorkersScriptMetadataExportsCacheModel `tfsdk:"cache" json:"cache,optional"`
+}
+
+type WorkersScriptMetadataExportsCacheModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
+}
+
 type WorkersScriptMetadataLimitsModel struct {
 	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
 	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,optional"`
@@ -266,6 +283,11 @@ type WorkersScriptMetadataTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace,optional"`
+}
+
+type WorkersScriptCacheOptionsModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
 }
 
 type WorkersScriptNamedHandlersModel struct {

@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -92,6 +93,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Routing rule name.",
 				Optional:    true,
 			},
+			"owner_worker_tag": schema.StringAttribute{
+				Description: "Public tag (script_tag) of the Worker that owns this rule. Required when\n`source` is `wrangler`.",
+				Optional:    true,
+			},
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
 				Computed:    true,
@@ -106,6 +111,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					float64validator.AtLeast(0),
 				},
 				Default: float64default.StaticFloat64(0),
+			},
+			"source": schema.StringAttribute{
+				Description: "Who manages the rule. `api` covers dashboard, generic API, and Terraform;\n`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults\nto `api` when omitted on write.\nAvailable values: \"api\", \"wrangler\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("api", "wrangler"),
+				},
+				Default: stringdefault.StaticString("api"),
 			},
 			"tag": schema.StringAttribute{
 				Description:        "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

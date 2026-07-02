@@ -277,7 +277,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"max_ttl_secs": schema.Int64Attribute{
-						Description: "Set the account-level DNS TTL cap, in seconds. Gateway rewrites DNS responses so returned record TTLs do not exceed this value. DNS locations can inherit, override, or disable this cap.",
+						Description: "Account-level cap on DNS response TTLs, in seconds. Gateway rewrites DNS responses so returned record TTLs do not exceed this value. Null means no cap. Each DNS location can inherit, override, or disable it through the location `max_ttl` setting.",
 						Optional:    true,
 						Validators: []validator.Int64{
 							int64validator.Between(60, 36000),
