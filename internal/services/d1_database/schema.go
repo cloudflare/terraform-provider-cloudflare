@@ -5,6 +5,7 @@ package d1_database
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -71,7 +72,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"read_replication": schema.SingleNestedAttribute{
 				Description: "Configuration for D1 read replication.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[D1DatabaseReadReplicationModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).\nAvailable values: \"auto\", \"disabled\".",
