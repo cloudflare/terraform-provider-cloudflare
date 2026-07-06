@@ -18,20 +18,23 @@ type DNSRecordsResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordsDataSourceModel struct {
-	ZoneID    types.String                       `tfsdk:"zone_id" path:"zone_id,required"`
-	Search    types.String                       `tfsdk:"search" query:"search,optional"`
-	Type      types.String                       `tfsdk:"type" query:"type,optional"`
-	Comment   *DNSRecordsCommentDataSourceModel  `tfsdk:"comment" query:"comment,optional"`
-	Content   *DNSRecordsContentDataSourceModel  `tfsdk:"content" query:"content,optional"`
-	Name      *DNSRecordsNameDataSourceModel     `tfsdk:"name" query:"name,optional"`
-	Tag       *DNSRecordsTagDataSourceModel      `tfsdk:"tag" query:"tag,optional"`
-	Direction types.String                       `tfsdk:"direction" query:"direction,computed_optional"`
-	Match     types.String                       `tfsdk:"match" query:"match,computed_optional"`
-	Order     types.String                       `tfsdk:"order" query:"order,computed_optional"`
-	Proxied   types.Bool                         `tfsdk:"proxied" query:"proxied,computed_optional"`
-	TagMatch  types.String                       `tfsdk:"tag_match" query:"tag_match,computed_optional"`
-	MaxItems  types.Int64                        `tfsdk:"max_items"`
-	Result    customfield.NormalizedDynamicValue `tfsdk:"result"`
+	ZoneID                types.String                       `tfsdk:"zone_id" path:"zone_id,required"`
+	Search                types.String                       `tfsdk:"search" query:"search,optional"`
+	ShadowedByName        types.String                       `tfsdk:"shadowed_by_name" query:"shadowed_by_name,optional"`
+	ShadowingName         types.String                       `tfsdk:"shadowing_name" query:"shadowing_name,optional"`
+	Type                  types.String                       `tfsdk:"type" query:"type,optional"`
+	Comment               *DNSRecordsCommentDataSourceModel  `tfsdk:"comment" query:"comment,optional"`
+	Content               *DNSRecordsContentDataSourceModel  `tfsdk:"content" query:"content,optional"`
+	Name                  *DNSRecordsNameDataSourceModel     `tfsdk:"name" query:"name,optional"`
+	Tag                   *DNSRecordsTagDataSourceModel      `tfsdk:"tag" query:"tag,optional"`
+	Direction             types.String                       `tfsdk:"direction" query:"direction,computed_optional"`
+	IncludeShadowMetadata types.Bool                         `tfsdk:"include_shadow_metadata" query:"include_shadow_metadata,computed_optional"`
+	Match                 types.String                       `tfsdk:"match" query:"match,computed_optional"`
+	Order                 types.String                       `tfsdk:"order" query:"order,computed_optional"`
+	Proxied               types.Bool                         `tfsdk:"proxied" query:"proxied,computed_optional"`
+	TagMatch              types.String                       `tfsdk:"tag_match" query:"tag_match,computed_optional"`
+	MaxItems              types.Int64                        `tfsdk:"max_items"`
+	Result                customfield.NormalizedDynamicValue `tfsdk:"result"`
 }
 
 func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.RecordListParams, diags diag.Diagnostics) {
@@ -80,6 +83,9 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Direction.ValueString()))
 	}
+	if !m.IncludeShadowMetadata.IsNull() {
+		params.IncludeShadowMetadata = cloudflare.F(m.IncludeShadowMetadata.ValueBool())
+	}
 	if !m.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Match.ValueString()))
 	}
@@ -107,6 +113,12 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
+	}
+	if !m.ShadowedByName.IsNull() {
+		params.ShadowedByName = cloudflare.F(m.ShadowedByName.ValueString())
+	}
+	if !m.ShadowingName.IsNull() {
+		params.ShadowingName = cloudflare.F(m.ShadowingName.ValueString())
 	}
 	if m.Tag != nil {
 		paramsTag := dns.RecordListParamsTag{}

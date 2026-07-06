@@ -8,9 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -395,10 +395,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"meta": schema.StringAttribute{
-				Description: "Extra Cloudflare-specific information about the record.",
+			"meta": schema.SingleNestedAttribute{
+				Description: "Extra Cloudflare-specific metadata about the record.",
 				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
+				CustomType:  customfield.NewNestedObjectType[DNSRecordMetaModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"dead_glue": schema.BoolAttribute{
+						Description: "Whether this glue record is not served because a shallower NS delegation takes precedence over the deeper delegation that needs it. Present only when true; reachable glue carries only `is_glue`. See [Unreachable glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#unreachable-glue-records).",
+						Computed:    true,
+					},
+					"is_glue": schema.BoolAttribute{
+						Description: "Whether this A or AAAA record is glue for a subdomain NS delegation. See [Glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#glue-records).",
+						Computed:    true,
+					},
+					"shadowed_by": schema.ListAttribute{
+						Description: "IDs of the NS records that shadow this record. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"shadowed_records_count": schema.Int64Attribute{
+						Description: "Number of records shadowed by this NS delegation. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(0, 10000),
+						},
+					},
+				},
 			},
 		},
 	}
