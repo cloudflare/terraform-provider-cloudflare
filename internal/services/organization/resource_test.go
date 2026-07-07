@@ -64,14 +64,13 @@ func testSweepCloudflareOrgs(_ string) error {
 
 // TestAccCloudflareOrganization_Basic tests the basic CRUD operations for organization resource
 func TestAccCloudflareOrganization_Basic(t *testing.T) {
-	t.Skip("User is not eligible to create an organization:  no_enterprise_accounts")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := rnd
 	updatedOrgName := rnd + "-updated"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t); acctest.TestAccPreCheck_Organization(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareOrganizationDestroy,
 		Steps: []resource.TestStep{
@@ -113,13 +112,12 @@ func TestAccCloudflareOrganization_Basic(t *testing.T) {
 
 // TestAccCloudflareOrganization_WithProfile tests organization creation with profile information
 func TestAccCloudflareOrganization_WithProfile(t *testing.T) {
-	t.Skip("User is not eligible to create an organization:  no_enterprise_accounts")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_organization." + rnd
 	orgName := rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t); acctest.TestAccPreCheck_Organization(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareOrganizationDestroy,
 		Steps: []resource.TestStep{
