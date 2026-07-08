@@ -39,6 +39,8 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	Claims                   *[]types.String                                                `tfsdk:"claims" json:"claims,optional"`
 	ClientID                 types.String                                                   `tfsdk:"client_id" json:"client_id,optional"`
 	ClientSecret             types.String                                                   `tfsdk:"client_secret" json:"client_secret,optional"`
+	ClientSecretWO           types.String                                                   `tfsdk:"client_secret_wo" json:"-,optional"`
+	ClientSecretWOVersion    types.Int64                                                    `tfsdk:"client_secret_wo_version" json:"-,optional"`
 	ConditionalAccessEnabled types.Bool                                                     `tfsdk:"conditional_access_enabled" json:"conditional_access_enabled,optional"`
 	DirectoryID              types.String                                                   `tfsdk:"directory_id" json:"directory_id,optional"`
 	EmailClaimName           types.String                                                   `tfsdk:"email_claim_name" json:"email_claim_name,optional"`

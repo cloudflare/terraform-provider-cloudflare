@@ -220,10 +220,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -294,6 +294,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The text value to use.",
 							Optional:    true,
 							Sensitive:   true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("text_wo")),
+							},
+						},
+						"text_wo": schema.StringAttribute{
+							Description: "Write-only text value to use. Requires Terraform 1.11+.",
+							Optional:    true,
+							Sensitive:   true,
+							WriteOnly:   true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("text")),
+							},
+						},
+						"text_wo_version": schema.Int64Attribute{
+							Description: "Version trigger for text_wo updates.",
+							Optional:    true,
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",
@@ -695,9 +711,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 							"propagation_policy": schema.StringAttribute{
-								Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" (default) honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.\nAvailable values: \"authenticated\", \"accept\".",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" (default) honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.\nAvailable values: \"authenticated\", \"accept\".",
+								Computed:      true,
+								Optional:      true,
 								PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 							},
 						},

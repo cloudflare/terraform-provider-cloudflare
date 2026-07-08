@@ -65,6 +65,8 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
 		return
 	}
 
+	applyWriteOnlyClientSecret(data)
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -118,6 +120,8 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	applyWriteOnlyClientSecret(data)
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -312,4 +316,14 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 
 func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
 	modifyPlan(ctx, req, res)
+}
+
+func applyWriteOnlyClientSecret(data *ZeroTrustAccessIdentityProviderModel) {
+	if data == nil || data.Config == nil {
+		return
+	}
+
+	if !data.Config.ClientSecretWO.IsNull() && !data.Config.ClientSecretWO.IsUnknown() {
+		data.Config.ClientSecret = data.Config.ClientSecretWO
+	}
 }
