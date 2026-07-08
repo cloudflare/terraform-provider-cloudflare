@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.22.0 (2026-07-08)
+
+Full Changelog: [v5.21.1...v5.22.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.1...v5.22.0)
+
+### Features
+
+* **d1_database:** add CRUD acceptance tests ([a752ceb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a752ceb8eea2dd80c9d47a359cbf977c393135e8))
+* **d1_database:** add CRUD acceptance tests ([a998c1f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a998c1ff99e29516a5d2ffac2ae8052a908a71ca))
+* **migration:** add v4-to-v5 state upgrade for d1_database ([2174567](https://github.com/cloudflare/terraform-provider-cloudflare/commit/217456708a1917f9c5477d8cc1c40c77a0a2414e))
+* **skills:** add acceptance tests skill ([d03adf4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d03adf41ff2a392e07c39d4ec40b903eb2c6a5d8))
+* **skills:** add Agent Skill for Cloudflare Terraform provider resource discovery ([094737b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/094737bf72a90c8d50aa4c8f5e1420e0f08a5f8a))
+* **skills:** add deprecation checking skill ([ccb3271](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ccb32715f274c2530d59f33f8ee8fa4eb367b2a0))
+
+
+### Bug Fixes
+
+* **docs:** add .md extension to migration guide links ([7546f3e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7546f3e944239ba1fd3f519536d20fa0037aaa22))
+* **skill:** add sources for replacement context ([520cbc7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/520cbc78ecc4a29c7772e0fa585f4787e4d79da3))
+* **snippet:** guard against nil Metadata in Read after import ([020a1cc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/020a1ccd3c9f5a9761ba02de30edd3df07f4d893))
+
+
+### Documentation
+
+* **v5-migration:** document session_duration behavior change for access policies ([1cbc3d9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1cbc3d9477ed818a15c008f199052e544ef3a594))
+
 ## 5.21.1 (2026-06-23)
 
 Full Changelog: [v5.21.0...v5.21.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.0...v5.21.1)
