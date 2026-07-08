@@ -388,6 +388,8 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
 					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
 					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
+					// caching block is omitted; verify defaults are applied
+					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
 					resource.TestCheckNoResourceAttr(resourceName, "caching.max_age"),
 					resource.TestCheckNoResourceAttr(resourceName, "caching.stale_while_revalidate"),
 				),
@@ -588,7 +590,7 @@ func TestAccCloudflareHyperdriveConfig_NoDiffOnConsecutiveApplyWithAccess(t *tes
 
 func testHyperdriveConfig(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
 	return acctest.LoadTestCase("hyperdriveconfig.tf",
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, cacheEnabled)
+		rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User, cacheEnabled)
 }
 
 func testHyperdriveConfigMinimum(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin) string {
@@ -604,7 +606,7 @@ func testHyperdriveConfigUpdate(rnd, accountId, name string, password string, or
 		password,
 		origin.Database,
 		origin.Host,
-		fmt.Sprintf("%d", origin.Port),
+		origin.Port,
 		origin.Scheme,
 		origin.User,
 		cacheEnabled,
@@ -619,7 +621,7 @@ func testHyperdriveConfigFullCachingSettings(rnd, accountId, name string, passwo
 		password,
 		origin.Database,
 		origin.Host,
-		fmt.Sprintf("%d", origin.Port),
+		origin.Port,
 		origin.Scheme,
 		origin.User,
 		cacheEnabled,

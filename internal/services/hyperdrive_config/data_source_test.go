@@ -1,6 +1,7 @@
 package hyperdrive_config_test
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"testing"
@@ -91,6 +92,12 @@ func TestAccCloudflareHyperdriveConfigs_ListDataSource(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result"), knownvalue.NotNull()),
 				},
+				Check: resource.TestCheckResourceAttrWith(dataSourceName, "result.#", func(value string) error {
+					if value == "0" {
+						return fmt.Errorf("expected at least one result, got 0")
+					}
+					return nil
+				}),
 			},
 		},
 	})
