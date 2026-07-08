@@ -254,6 +254,15 @@ applying the inline policy configuration.
 See the [migration guide](version-5-migration.md#application-scoped-access-policies)
 for detailed instructions.
 
+~> **`session_duration` must be set explicitly.** In v4, the API applied an
+implicit default of `24h` for `session_duration`. In v5, the provider schema
+defaults to `24h`, but some Cloudflare account-level security policies enforce
+a maximum of `18h`. If your policies relied on the implicit default and your
+account enforces a shorter maximum, add `session_duration = "18h"` (or your
+organization's required value) to every `cloudflare_zero_trust_access_policy`
+resource. Without this, `terraform apply` may fail at the API level even though
+`terraform plan` succeeds.
+
 ## cloudflare_access_rule
 
 - `configuration` is now a single nested attribute (`configuration = { ... }`) instead of a block (`configuration { ... }`).
@@ -1481,6 +1490,11 @@ This has been removed. Users should instead use the:
   section, including
   [Keeping existing policies attached (in-place migration)](version-5-migration.md#keeping-existing-policies-attached-in-place-migration)
   if your applications reference policy UUIDs.
+- `session_duration` now defaults to `24h` in the provider schema. In v4, this
+  value was set implicitly by the API and did not need to appear in HCL. If
+  your account enforces a maximum session duration shorter than `24h` (for
+  example, `18h`), you must set `session_duration` explicitly on every policy
+  resource to avoid API-level failures at apply time.
 - `approval_group` is now a list of objects (`approval_group = [{ ... }]`) instead of multiple block attribute (`approval_group { ... }`).
 - `auth_context` is now a list of objects (`auth_context = [{ ... }]`) instead of multiple block attribute (`auth_context { ... }`).
 - `azure` is now a single nested attribute (`azure = { ... }`) instead of a block (`azure { ... }`).
