@@ -97,6 +97,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Your OAuth Client Secret",
 						Optional:    true,
 						Sensitive:   true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("client_secret_wo")),
+						},
+					},
+					"client_secret_wo": schema.StringAttribute{
+						Description: "Write-only OAuth Client Secret. Requires Terraform 1.11+.",
+						Optional:    true,
+						Sensitive:   true,
+						WriteOnly:   true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("client_secret")),
+						},
+					},
+					"client_secret_wo_version": schema.Int64Attribute{
+						Description: "Version trigger for client_secret_wo updates.",
+						Optional:    true,
 					},
 					"conditional_access_enabled": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load authentication contexts from your account",

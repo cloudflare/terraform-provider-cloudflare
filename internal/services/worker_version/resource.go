@@ -122,6 +122,8 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	applyWriteOnlyBindingText(data)
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -418,4 +420,28 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 
 func (r *WorkerVersionResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+func applyWriteOnlyBindingText(data *WorkerVersionModel) {
+	if data == nil || data.Bindings.IsNull() || data.Bindings.IsUnknown() {
+		return
+	}
+
+	var bindings []WorkerVersionBindingsModel
+	diags := data.Bindings.ElementsAs(context.Background(), &bindings, true)
+	if diags.HasError() {
+		return
+	}
+
+	for i := range bindings {
+		if !bindings[i].TextWO.IsNull() && !bindings[i].TextWO.IsUnknown() {
+			bindings[i].Text = bindings[i].TextWO
+		}
+	}
+
+	updated, diags := customfield.NewObjectList(context.Background(), bindings)
+	if diags.HasError() {
+		return
+	}
+	data.Bindings = updated
 }

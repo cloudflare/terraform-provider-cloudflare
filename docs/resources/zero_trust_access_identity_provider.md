@@ -80,6 +80,8 @@ Optional:
 - `claims` (List of String) Custom claims
 - `client_id` (String) Your OAuth Client ID
 - `client_secret` (String, Sensitive) Your OAuth Client Secret
+- `client_secret_wo` (String, Sensitive, Write-Only) Write-only OAuth Client Secret. Requires Terraform 1.11+.
+- `client_secret_wo_version` (Number) Version trigger for `client_secret_wo` updates.
 - `conditional_access_enabled` (Boolean) Should Cloudflare try to load authentication contexts from your account
 - `directory_id` (String) Your Azure directory uuid
 - `email_attribute_name` (String) The attribute name for email in the SAML response.

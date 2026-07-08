@@ -555,6 +555,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The text value to use.",
 							Optional:    true,
 							Sensitive:   true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("text_wo")),
+							},
+						},
+						"text_wo": schema.StringAttribute{
+							Description: "Write-only text value to use. Requires Terraform 1.11+.",
+							Optional:    true,
+							Sensitive:   true,
+							WriteOnly:   true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("text")),
+							},
+						},
+						"text_wo_version": schema.Int64Attribute{
+							Description: "Version trigger for text_wo updates.",
+							Optional:    true,
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",
