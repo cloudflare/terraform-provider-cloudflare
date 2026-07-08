@@ -1,16 +1,16 @@
-  resource "cloudflare_hyperdrive_config" "%[1]s" {
-		account_id = "%[3]s"
-		name       = "%[4]s"
-		origin     = {
-			password             = "%[5]s"
-			database             = "%[6]s"
-			host                 = "%[7]s"
-			scheme               = "%[8]s"
-			user                 = "%[9]s"
-			access_client_id     = "%[10]s"
-			access_client_secret = "%[11]s"
-		}
-		caching = {
-			disabled               = %[12]t
-		}
+resource "cloudflare_hyperdrive_config" "%[1]s" {
+	account_id = "%[2]s"
+	name       = "%[3]s"
+	origin     = {
+		password             = "%[4]s"
+		database             = "%[5]s"
+		host                 = "%[6]s"
+		scheme               = "%[7]s"
+		user                 = "%[8]s"
+		access_client_id     = "%[9]s"
+		access_client_secret = "%[10]s"
 	}
+	caching = {
+		disabled = %[11]t
+	}
+}
