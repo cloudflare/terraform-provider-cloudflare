@@ -5,11 +5,8 @@ resource "cloudflare_hyperdrive_config" "%[1]s" {
 		password = "%[4]s"
 		database = "%[5]s"
 		host     = "%[6]s"
-		port     = "%[7]s"
+		port     = %[7]d
 		scheme   = "%[8]s"
 		user     = "%[9]s"
-	}
-	caching = {
-		disabled = %[10]t
 	}
 }
