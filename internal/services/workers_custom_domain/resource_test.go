@@ -6,15 +6,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
-	cfv3 "github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 const (
@@ -43,7 +45,7 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 	}
 
 	domains, err := client.Workers.Domains.List(ctx, workers.DomainListParams{
-		AccountID: cfv3.F(accountID),
+		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch workers custom domains: %s", err))
@@ -56,14 +58,13 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 	}
 
 	for _, domain := range domains.Result {
-		// Use standard filtering helper on the hostname field
 		if !utils.ShouldSweepResource(domain.Hostname) {
 			continue
 		}
 
 		tflog.Info(ctx, fmt.Sprintf("Deleting workers custom domain: %s (account: %s)", domain.Hostname, accountID))
 		_, err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
-			AccountID: cfv3.F(accountID),
+			AccountID: cloudflare.F(accountID),
 		})
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete workers custom domain %s: %s", domain.ID, err))
@@ -75,12 +76,11 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 	return nil
 }
 
-func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
+func TestAccCloudflareWorkersCustomDomain_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	var domain cloudflare.WorkersDomain
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_workers_custom_domain." + rnd
+	resourceName := "cloudflare_workers_custom_domain." + rnd
 	hostname := rnd + "." + zoneName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -90,80 +90,91 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareWorkerDomainDestroy,
+		CheckDestroy:             testAccCheckCloudflareWorkersCustomDomainDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerDomainExists(name, &domain),
-					resource.TestCheckResourceAttr(name, "hostname", hostname),
-					// resource.TestCheckResourceAttr(name, "service", rnd),
-					resource.TestCheckResourceAttr(name, "service", "mute-truth-fdb1"), // while we fix workers_script
-				),
+				Config: testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname, zoneID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("environment"), knownvalue.StringExact("production")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
 			},
-			// {
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// 	ResourceName:        name,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// },
+			{
+				ResourceName:        resourceName,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
 		},
 	})
 }
 
-func getDomainFromApi(accountID, domainID string) (cloudflare.WorkersDomain, error) {
-	if accountID == "" {
-		return cloudflare.WorkersDomain{}, fmt.Errorf("accountID is required to get a domain")
-	}
-	if domainID == "" {
-		return cloudflare.WorkersDomain{}, fmt.Errorf("domainID is required to get a domain")
-	}
+func TestAccCloudflareWorkersCustomDomain_WithZoneName(t *testing.T) {
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_custom_domain." + rnd
+	hostname := rnd + "." + zoneName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
-	domain, err := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), domainID)
-	if err != nil {
-		fmt.Print(err.Error())
-		return cloudflare.WorkersDomain{}, err
-	}
-
-	return domain, nil
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkersCustomDomainDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkersCustomDomainWithZoneNameConfig(rnd, accountID, hostname, zoneName),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_name"), knownvalue.StringExact(zoneName)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
 }
 
-func testAccCheckCloudflareWorkerDomainExists(resourceName string, domain *cloudflare.WorkersDomain) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
-		}
+func TestAccCloudflareWorkersCustomDomain_MinimalConfig(t *testing.T) {
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_custom_domain." + rnd
+	hostname := rnd + "." + zoneName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Worker Domain ID is set")
-		}
-
-		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-		domainID := rs.Primary.ID
-		foundDomain, err := getDomainFromApi(accountID, domainID)
-		if err != nil {
-			return err
-		}
-
-		if foundDomain.ID != domainID {
-			return fmt.Errorf("worker domain with id %s not found", domainID)
-		}
-
-		*domain = foundDomain
-		return nil
-	}
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkersCustomDomainDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkersCustomDomainMinimalConfig(rnd, accountID, hostname),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
+					// zone_id and zone_name should be computed from the hostname
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
 }
 
-func testAccCheckCloudflareWorkerDomainAttach(rnd, accountID string, hostname string, zoneID string) string {
-	return acctest.LoadTestCase("workerdomainattach.tf", rnd, scriptContent, accountID, hostname, zoneID)
-}
-
-func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
+func testAccCheckCloudflareWorkersCustomDomainDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
@@ -171,18 +182,27 @@ func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		r, _ := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
-
-		if r.ID != "" {
-			return fmt.Errorf("worker domain with id %s still exists", rs.Primary.ID)
+		_, err := client.Workers.Domains.Get(context.Background(), rs.Primary.ID, workers.DomainGetParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err == nil {
+			return fmt.Errorf("workers custom domain with id %s still exists", rs.Primary.ID)
 		}
 	}
 
 	return nil
+}
+
+func testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname, zoneID string) string {
+	return acctest.LoadTestCase("workerdomainattach.tf", rnd, scriptContent, accountID, hostname, zoneID)
+}
+
+func testAccCloudflareWorkersCustomDomainWithZoneNameConfig(rnd, accountID, hostname, zoneName string) string {
+	return acctest.LoadTestCase("workerdomainattach_zonename.tf", rnd, accountID, hostname, zoneName)
+}
+
+func testAccCloudflareWorkersCustomDomainMinimalConfig(rnd, accountID, hostname string) string {
+	return acctest.LoadTestCase("workerdomainattach_minimal.tf", rnd, accountID, hostname)
 }
 
 func TestAccUpgradeWorkersCustomDomain_FromPublishedV5(t *testing.T) {
@@ -192,7 +212,7 @@ func TestAccUpgradeWorkersCustomDomain_FromPublishedV5(t *testing.T) {
 	hostname := rnd + "." + zoneName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	config := testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname, zoneID)
+	config := testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname, zoneID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
