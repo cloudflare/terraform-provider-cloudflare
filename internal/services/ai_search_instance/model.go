@@ -93,6 +93,7 @@ type AISearchInstanceIndexingOptionsModel struct {
 type AISearchInstancePublicEndpointParamsModel struct {
 	AuthorizedHosts         *[]types.String                                                                            `tfsdk:"authorized_hosts" json:"authorized_hosts,optional"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancePublicEndpointParamsChatCompletionsEndpointModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed_optional"`
+	CustomDomains           *[]types.String                                                                            `tfsdk:"custom_domains" json:"custom_domains,optional"`
 	Enabled                 types.Bool                                                                                 `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Mcp                     customfield.NestedObject[AISearchInstancePublicEndpointParamsMcpModel]                     `tfsdk:"mcp" json:"mcp,computed_optional"`
 	RateLimit               *AISearchInstancePublicEndpointParamsRateLimitModel                                        `tfsdk:"rate_limit" json:"rate_limit,optional"`

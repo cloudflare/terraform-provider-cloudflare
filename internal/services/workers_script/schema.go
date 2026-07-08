@@ -771,6 +771,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"cache_options": schema.SingleNestedAttribute{
+				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptCacheOptionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether caching is enabled for this Worker.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"cross_version_cache": schema.BoolAttribute{
+						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+				},
+			},
 			"named_handlers": schema.ListNestedAttribute{
 				Description: "Named exports, such as Durable Object class implementations and named entrypoints.",
 				Computed:    true,

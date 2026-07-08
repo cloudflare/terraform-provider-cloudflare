@@ -21,6 +21,8 @@ data "cloudflare_dns_records" "example_dns_records" {
     startswith = "www.example"
   }
   search = "www.cloudflare.com"
+  shadowed_by_name = "sub.example.com"
+  shadowing_name = "www.sub.example.com"
   tag = {
     absent = "important"
     contains = "greeting:ello, worl"
