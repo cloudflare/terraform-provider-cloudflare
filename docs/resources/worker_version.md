@@ -206,6 +206,8 @@ Available values: "eu", "fedramp", "fedramp-high".
 - `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
+- `text_wo` (String, Sensitive, Write-Only) Write-only text value to use. Requires Terraform 1.11+.
+- `text_wo_version` (Number) Version trigger for `text_wo` updates.
 - `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 - `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.

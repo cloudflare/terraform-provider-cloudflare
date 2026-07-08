@@ -98,7 +98,7 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 }
 
 type WorkersScriptMetadataModel struct {
-	Annotations        customfield.NestedObject[WorkersScriptMetadataAnnotationsModel] `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Annotations        customfield.NestedObject[WorkersScriptMetadataAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
 	Assets             *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
 	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart           types.String                                                     `tfsdk:"body_part" json:"body_part,optional"`
@@ -154,6 +154,8 @@ type WorkersScriptMetadataBindingsModel struct {
 	Json                        jsontypes.Normalized                        `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
+	TextWO                      types.String                                `tfsdk:"text_wo" json:"-,optional"`
+	TextWOVersion               types.Int64                                 `tfsdk:"text_wo_version" json:"-,optional"`
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
 	QueueName                   types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
 	Simple                      *WorkersScriptMetadataBindingsSimpleModel   `tfsdk:"simple" json:"simple,optional"`

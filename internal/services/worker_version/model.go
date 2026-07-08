@@ -153,6 +153,8 @@ type WorkerVersionBindingsModel struct {
 	Json                        jsontypes.Normalized                `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                        `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                        `tfsdk:"text" json:"text,optional"`
+	TextWO                      types.String                        `tfsdk:"text_wo" json:"-,optional"`
+	TextWOVersion               types.Int64                         `tfsdk:"text_wo_version" json:"-,optional"`
 	Pipeline                    types.String                        `tfsdk:"pipeline" json:"pipeline,optional"`
 	QueueName                   types.String                        `tfsdk:"queue_name" json:"queue_name,optional"`
 	Simple                      *WorkerVersionBindingsSimpleModel   `tfsdk:"simple" json:"simple,optional"`

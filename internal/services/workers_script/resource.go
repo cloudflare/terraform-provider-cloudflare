@@ -107,6 +107,8 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		data.Content = types.StringValue(content)
 	}
 
+	applyWriteOnlyBindingText(data)
+
 	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -200,6 +202,8 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		}
 		data.Content = types.StringValue(content)
 	}
+
+	applyWriteOnlyBindingText(data)
 
 	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
@@ -486,4 +490,28 @@ func (r *WorkersScriptResource) ModifyPlan(ctx context.Context, req resource.Mod
 	// To prevent this, we must explicitly mark any computed attributes we know can change as unknown.
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("modified_on"), timetypes.NewRFC3339Unknown())...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("has_assets"), types.BoolUnknown())...)
+}
+
+func applyWriteOnlyBindingText(data *WorkersScriptModel) {
+	if data == nil || data.Bindings.IsNull() || data.Bindings.IsUnknown() {
+		return
+	}
+
+	var bindings []WorkersScriptMetadataBindingsModel
+	diags := data.Bindings.ElementsAs(context.Background(), &bindings, true)
+	if diags.HasError() {
+		return
+	}
+
+	for i := range bindings {
+		if !bindings[i].TextWO.IsNull() && !bindings[i].TextWO.IsUnknown() {
+			bindings[i].Text = bindings[i].TextWO
+		}
+	}
+
+	updated, diags := customfield.NewObjectList(context.Background(), bindings)
+	if diags.HasError() {
+		return
+	}
+	data.Bindings = updated
 }
