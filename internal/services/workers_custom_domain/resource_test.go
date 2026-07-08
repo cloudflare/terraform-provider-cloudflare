@@ -2,7 +2,9 @@ package workers_custom_domain_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
@@ -17,10 +19,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-)
-
-const (
-	scriptContent = `addEventListener('fetch', event => {event.respondWith(new Response('test'))});`
 )
 
 func TestMain(m *testing.M) {
@@ -44,7 +42,7 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 		return nil
 	}
 
-	domains, err := client.Workers.Domains.List(ctx, workers.DomainListParams{
+	page, err := client.Workers.Domains.List(ctx, workers.DomainListParams{
 		AccountID: cloudflare.F(accountID),
 	})
 	if err != nil {
@@ -52,31 +50,34 @@ func testSweepCloudflareWorkersCustomDomains(r string) error {
 		return fmt.Errorf("failed to fetch workers custom domains: %w", err)
 	}
 
-	if len(domains.Result) == 0 {
-		tflog.Info(ctx, "No workers custom domains to sweep")
-		return nil
-	}
+	for page != nil && len(page.Result) > 0 {
+		for _, domain := range page.Result {
+			if !utils.ShouldSweepResource(domain.Hostname) {
+				continue
+			}
 
-	for _, domain := range domains.Result {
-		if !utils.ShouldSweepResource(domain.Hostname) {
-			continue
+			tflog.Info(ctx, fmt.Sprintf("Deleting workers custom domain: %s (account: %s)", domain.Hostname, accountID))
+			_, err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete workers custom domain %s: %s", domain.ID, err))
+				continue
+			}
+			tflog.Info(ctx, fmt.Sprintf("Deleted workers custom domain: %s", domain.ID))
 		}
 
-		tflog.Info(ctx, fmt.Sprintf("Deleting workers custom domain: %s (account: %s)", domain.Hostname, accountID))
-		_, err := client.Workers.Domains.Delete(ctx, domain.ID, workers.DomainDeleteParams{
-			AccountID: cloudflare.F(accountID),
-		})
+		page, err = page.GetNextPage()
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete workers custom domain %s: %s", domain.ID, err))
-			continue
+			break
 		}
-		tflog.Info(ctx, fmt.Sprintf("Deleted workers custom domain: %s", domain.ID))
 	}
 
 	return nil
 }
 
 func TestAccCloudflareWorkersCustomDomain_Basic(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -113,7 +114,47 @@ func TestAccCloudflareWorkersCustomDomain_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkersCustomDomain_RecreateOnHostnameChange(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_custom_domain." + rnd
+	hostname1 := rnd + "." + zoneName
+	hostname2 := rnd + "-new." + zoneName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkersCustomDomainDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname1, zoneID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname1)),
+				},
+			},
+			{
+				Config: testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname2, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname2)),
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareWorkersCustomDomain_WithZoneName(t *testing.T) {
+	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_custom_domain." + rnd
@@ -143,6 +184,7 @@ func TestAccCloudflareWorkersCustomDomain_WithZoneName(t *testing.T) {
 }
 
 func TestAccCloudflareWorkersCustomDomain_MinimalConfig(t *testing.T) {
+	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_custom_domain." + rnd
@@ -188,13 +230,18 @@ func testAccCheckCloudflareWorkersCustomDomainDestroy(s *terraform.State) error 
 		if err == nil {
 			return fmt.Errorf("workers custom domain with id %s still exists", rs.Primary.ID)
 		}
+
+		var apierr *cloudflare.Error
+		if errors.As(err, &apierr) && apierr.StatusCode != http.StatusNotFound {
+			return fmt.Errorf("error checking if workers custom domain %s was destroyed: %w", rs.Primary.ID, err)
+		}
 	}
 
 	return nil
 }
 
 func testAccCloudflareWorkersCustomDomainConfig(rnd, accountID, hostname, zoneID string) string {
-	return acctest.LoadTestCase("workerdomainattach.tf", rnd, scriptContent, accountID, hostname, zoneID)
+	return acctest.LoadTestCase("workerdomainattach.tf", rnd, accountID, hostname, zoneID)
 }
 
 func testAccCloudflareWorkersCustomDomainWithZoneNameConfig(rnd, accountID, hostname, zoneName string) string {
@@ -206,6 +253,7 @@ func testAccCloudflareWorkersCustomDomainMinimalConfig(rnd, accountID, hostname 
 }
 
 func TestAccUpgradeWorkersCustomDomain_FromPublishedV5(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
