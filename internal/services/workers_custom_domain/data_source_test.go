@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccCloudflareWorkersCustomDomainDataSource_ByID(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -40,7 +41,9 @@ func TestAccCloudflareWorkersCustomDomainDataSource_ByID(t *testing.T) {
 					// Check the data source fetches the domain correctly by ID
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("environment"), knownvalue.StringExact("production")),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("domain_id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
@@ -50,6 +53,7 @@ func TestAccCloudflareWorkersCustomDomainDataSource_ByID(t *testing.T) {
 }
 
 func TestAccCloudflareWorkersCustomDomainDataSource_ByFilter(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -77,7 +81,9 @@ func TestAccCloudflareWorkersCustomDomainDataSource_ByFilter(t *testing.T) {
 					// Check the data source fetches the domain correctly by filter
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("hostname"), knownvalue.StringExact(hostname)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("environment"), knownvalue.StringExact("production")),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_name"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("domain_id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},

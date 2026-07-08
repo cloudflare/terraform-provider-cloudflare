@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccCloudflareWorkersCustomDomainsDataSource_List(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -41,8 +42,10 @@ func TestAccCloudflareWorkersCustomDomainsDataSource_List(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result"), knownvalue.ListSizeExact(1)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(hostname)),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("service"), knownvalue.StringExact("mute-truth-fdb1")),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("environment"), knownvalue.StringExact("production")),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("zone_id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("result").AtSliceIndex(0).AtMapKey("zone_name"), knownvalue.NotNull()),
 				},
 			},
 		},
