@@ -16,6 +16,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/workers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -150,19 +151,27 @@ func handleAssets(ctx context.Context, client *cloudflare.Client, data *WorkerVe
 		return nil
 	}
 
-	if data.Assets == nil {
+	if data.Assets.IsNull() || data.Assets.IsUnknown() {
 		return nil
 	}
 
-	if data.Assets.Directory.IsNull() || data.Assets.Directory.IsUnknown() {
+	assets, diags := data.Assets.Value(ctx)
+	if diags.HasError() {
+		return fmt.Errorf("failed to read assets attribute: %s", diags.Errors())
+	}
+	if assets == nil {
 		return nil
 	}
 
-	if data.Assets.JWT.ValueString() != "" {
+	if assets.Directory.IsNull() || assets.Directory.IsUnknown() {
 		return nil
 	}
 
-	directory := data.Assets.Directory.ValueString()
+	if assets.JWT.ValueString() != "" {
+		return nil
+	}
+
+	directory := assets.Directory.ValueString()
 
 	manifest, err := getAssetManifest(directory)
 	if err != nil {
@@ -207,7 +216,10 @@ func handleAssets(ctx context.Context, client *cloudflare.Client, data *WorkerVe
 		if res.JWT == "" {
 			return fmt.Errorf("failed to upload assets: no completion token received from upload session")
 		}
-		data.Assets.JWT = types.StringValue(res.JWT)
+		assets.JWT = types.StringValue(res.JWT)
+		if err := writeAssets(ctx, data, assets); err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -246,7 +258,7 @@ func handleAssets(ctx context.Context, client *cloudflare.Client, data *WorkerVe
 			return err
 		}
 		if res.JWT != "" {
-			data.Assets.JWT = types.StringValue(res.JWT)
+			assets.JWT = types.StringValue(res.JWT)
 		}
 	}
 
@@ -254,6 +266,18 @@ func handleAssets(ctx context.Context, client *cloudflare.Client, data *WorkerVe
 		return fmt.Errorf("failed to upload assets: no completion token received from upload session")
 	}
 
+	return writeAssets(ctx, data, assets)
+}
+
+// writeAssets serialises `assets` back into `data.Assets`.
+// Needed because Assets is a customfield.NestedObject value-wrapper, not a
+// pointer — mutating the extracted struct doesn't reflect back automatically.
+func writeAssets(ctx context.Context, data *WorkerVersionModel, assets *WorkerVersionAssetsModel) error {
+	obj, diags := customfield.NewObject(ctx, assets)
+	if diags.HasError() {
+		return fmt.Errorf("failed to serialize assets attribute: %s", diags.Errors())
+	}
+	data.Assets = obj
 	return nil
 }
 

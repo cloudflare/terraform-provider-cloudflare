@@ -74,7 +74,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 	}
 
 	if priorStateData.Assets != nil {
-		newStateData.Assets = &WorkerVersionAssetsModel{
+		newAssets := WorkerVersionAssetsModel{
 			JWT:                 priorStateData.Assets.JWT,
 			Directory:           priorStateData.Assets.Directory,
 			AssetManifestSHA256: priorStateData.Assets.AssetManifestSHA256,
@@ -91,13 +91,21 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 				newConfig.NotFoundHandling = config.NotFoundHandling
 				newConfig.RunWorkerFirst = customfield.RawNormalizedDynamicValueFrom(config.RunWorkerFirst)
 
-				newStateData.Assets.Config, diags = customfield.NewObject(ctx, &newConfig)
+				newAssets.Config, diags = customfield.NewObject(ctx, &newConfig)
 				resp.Diagnostics.Append(diags...)
 				if resp.Diagnostics.HasError() {
 					return
 				}
 			}
 		}
+		assetsObj, diags := customfield.NewObject(ctx, &newAssets)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		newStateData.Assets = assetsObj
+	} else {
+		newStateData.Assets = customfield.NullObject[WorkerVersionAssetsModel](ctx)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newStateData)...)
