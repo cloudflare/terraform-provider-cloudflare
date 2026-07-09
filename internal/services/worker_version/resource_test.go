@@ -552,6 +552,10 @@ func testAccCloudflareWorkerVersionConfigSensitiveBindings(rnd, accountID, conte
 	return acctest.LoadTestCase("sensitive_bindings.tf", rnd, accountID, contentFile)
 }
 
+func testAccCloudflareWorkerVersionConfigPlacementSmart(rnd, accountID, contentFile string) string {
+	return acctest.LoadTestCase("placement_smart.tf", rnd, accountID, contentFile)
+}
+
 // TestAccCloudflareWorkerVersion_SensitiveBindingsImport tests that importing
 // with sensitive bindings (plain_text/secret_text) doesn't force replacement.
 func TestAccCloudflareWorkerVersion_SensitiveBindingsImport(t *testing.T) {
@@ -753,6 +757,54 @@ func TestAccCloudflareWorkerVersion_RunWorkerFirstUpgrade(t *testing.T) {
 						plancheck.ExpectResourceAction(name, plancheck.ResourceActionDestroyBeforeCreate),
 					},
 				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerVersion_Placement verifies that placement config is
+// applied via the settings API, read back on refresh, and survives import
+// without drift. Regression test for #7206.
+func TestAccCloudflareWorkerVersion_Placement(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_worker_version." + rnd
+
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "index.js")
+
+	err := os.WriteFile(contentFile, []byte(`export default {fetch() {return new Response()}}`), 0644)
+	if err != nil {
+		t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkerVersionConfigPlacementSmart(rnd, accountID, contentFile),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
+				},
+			},
+			// Re-apply same config - expect no changes
+			{
+				Config: testAccCloudflareWorkerVersionConfigPlacementSmart(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:            resourceName,
+				ImportStateIdFunc:       testAccCloudflareWorkerVersionImportStateIdFunc(resourceName, accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"modules.0.content_file", "modules.0.content_base64"},
 			},
 		},
 	})
