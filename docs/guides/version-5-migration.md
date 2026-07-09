@@ -1337,6 +1337,7 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_workers_route` |
 | **KV** | `cloudflare_workers_kv` |
 | | `cloudflare_workers_kv_namespace` |
+| **D1** | `cloudflare_d1_database` |
 | **Pages** | `cloudflare_pages_project` |
 | **Cache** | `cloudflare_tiered_cache` |
 | **Argo** | `cloudflare_argo_smart_routing` |

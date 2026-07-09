@@ -143,12 +143,17 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
 - `body_part` (String) Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
+- `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
+the platform provisions a `cloudflare.app` zone for the Worker.
+A `type: worker` entry in the `exports` map can override this
+value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_options))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `content` (String) Module or Service Worker contents of the Worker. Conflicts with `content_file`.
 - `content_file` (String) Path to a file containing the Module or Service Worker contents of the Worker. Conflicts with `content`. Must be paired with `content_sha256`.
 - `content_sha256` (String) SHA-256 hash of the Worker contents. Used to trigger updates when source code changes. Must be provided when `content_file` is specified.
 - `content_type` (String) Content-Type of the Worker. Required if uploading a non-JavaScript Worker (e.g. "text/x-python").
+- `exports` (Attributes Map) Per-entrypoint export configuration. Keys are the export names; values describe the entrypoint's kind and per-entrypoint cache behavior. (see [below for nested schema](#nestedatt--exports))
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.
 - `keep_bindings` (Set of String) List of binding types to keep from previous_upload.
 - `limits` (Attributes) Limits to apply for this Worker. (see [below for nested schema](#nestedatt--limits))
@@ -156,6 +161,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `main_module` (String) Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
+- `package_dependencies` (Attributes List) The list of npm packages that were installed and used when this Worker was built. (see [below for nested schema](#nestedatt--package_dependencies))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--placement))
 - `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
@@ -163,10 +169,6 @@ Available values: "standard", "bundled", "unbound".
 
 ### Read-Only
 
-- `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
-the platform provisions a `cloudflare.app` zone for the Worker.
-A `type: worker` entry in the `exports` map can override this
-value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_options))
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
 - `handlers` (List of String) The names of handlers exported as part of the default export.
@@ -309,6 +311,38 @@ Optional:
 
 
 
+<a id="nestedatt--cache_options"></a>
+### Nested Schema for `cache_options`
+
+Optional:
+
+- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
+uploads. This is independent of `enabled`. It can stay true
+while caching is off, so the preference survives turning
+caching off and back on.
+- `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
+<a id="nestedatt--exports"></a>
+### Nested Schema for `exports`
+
+Required:
+
+- `type` (String) The kind of entrypoint. A `type: worker` entry overrides the top-level `cache_options` for this specific entrypoint.
+
+Optional:
+
+- `cache` (Attributes) Per-entrypoint cache override. When present, this overrides the top-level `cache_options` for this specific entrypoint. (see [below for nested schema](#nestedatt--exports--cache))
+
+<a id="nestedatt--exports--cache"></a>
+### Nested Schema for `exports.cache`
+
+Required:
+
+- `enabled` (Boolean) Whether caching is enabled for this entrypoint.
+
+
+
 <a id="nestedatt--limits"></a>
 ### Nested Schema for `limits`
 
@@ -423,6 +457,16 @@ Optional:
 
 
 
+<a id="nestedatt--package_dependencies"></a>
+### Nested Schema for `package_dependencies`
+
+Required:
+
+- `installed_version` (String) The exact version that was resolved and installed by the package manager.
+- `name` (String) The npm package name.
+- `package_json_version` (String) The version constraint as written in package.json.
+
+
 <a id="nestedatt--placement"></a>
 ### Nested Schema for `placement`
 
@@ -463,18 +507,6 @@ Optional:
 
 - `environment` (String) Optional environment if the Worker utilizes one.
 - `namespace` (String) Optional dispatch namespace the script belongs to.
-
-
-<a id="nestedatt--cache_options"></a>
-### Nested Schema for `cache_options`
-
-Read-Only:
-
-- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
-uploads. This is independent of `enabled`. It can stay true
-while caching is off, so the preference survives turning
-caching off and back on.
-- `enabled` (Boolean) Whether caching is enabled for this Worker.
 
 
 <a id="nestedatt--named_handlers"></a>

@@ -732,6 +732,17 @@ config migration.** `tf-migrate` can automatically generate a `removed` block
 to drop the old state entry without destroying the remote policy, but you still
 must rewrite the policy as inline `policies` on the application resource.
 
+!> **Applying tf-migrate output without adding inline policies is destructive.**
+`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
+generates a `removed` block, but does **not** add `policies` to the parent
+`cloudflare_zero_trust_access_application` resource. If you run
+`terraform apply` in this intermediate state, Terraform sends an empty
+`policies` value to the API, which detaches all policies from the application.
+Cloudflare then garbage-collects the orphaned app-scoped policies (they have no
+independent lifecycle). You **must** add `policies = [...]` to the parent
+application resource before applying. Recovery without this step requires
+reconstructing all policies from git history or backups.
+
 In v4, `cloudflare_access_policy` could be used for both account-level policies
 and application-scoped policies (when `application_id` was set). These two types
 use different API endpoints:
