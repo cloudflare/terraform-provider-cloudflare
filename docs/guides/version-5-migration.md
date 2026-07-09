@@ -15,11 +15,11 @@ handle Terraform state migration transparently. Combined with the
 [tf-migrate] CLI tool for HCL configuration changes, the migration process is
 significantly simpler than previous approaches.
 
-~> **Grit-based migration is deprecated.** This guide supersedes the Grit-based
-migration instructions in the [version 5 upgrade guide]. You do **not** need
-Grit to migrate. Grit patterns are no longer supported and will be removed in
-a future release. The [version 5 upgrade guide] remains a useful reference for
-per-resource attribute change details if you prefer manual HCL changes.
+~> **Grit-based migration has been removed.** This guide supersedes the
+Grit-based migration instructions in the [version 5 upgrade guide]. You do
+**not** need Grit to migrate. Grit patterns are no longer supported. The
+[version 5 upgrade guide] remains a useful reference for per-resource
+attribute change details if you prefer manual HCL changes.
 
 ## Quick Reference
 
@@ -1595,9 +1595,9 @@ before retrying.
 
 **Do I still need Grit?**
 
-No. **Grit-based migration is deprecated and will be removed in a future
-release.** `tf-migrate` replaces the Grit patterns for HCL migration, and
-state upgraders handle state automatically. Do not use Grit for new migrations.
+No. **Grit-based migration has been removed.** `tf-migrate` replaces the
+Grit patterns for HCL migration, and state upgraders handle state
+automatically. Do not use Grit for new migrations.
 
 **Do I need to manually edit my state file?**
 
@@ -1706,12 +1706,12 @@ for details. If the diff is truly just cosmetic, you can safely ignore it.
 
 - [Version 5 Upgrade Guide][version 5 upgrade guide] -- Per-resource attribute
   change details and manual migration notes.
-- [Migrating Renamed Resources](migrating-renamed-resources) -- Detailed
+- [Migrating Renamed Resources](migrating-renamed-resources.md) -- Detailed
   guide for the import, state file, and two-phase swap approaches.
 - [tf-migrate] -- Source code and documentation for the HCL migration tool.
 - [Terraform moved blocks](https://developer.hashicorp.com/terraform/language/moved) --
   HashiCorp documentation on the `moved` block syntax.
 
-[version 5 upgrade guide]: version-5-upgrade
+[version 5 upgrade guide]: version-5-upgrade.md
 [tf-migrate]: https://github.com/cloudflare/tf-migrate
-[migrating renamed resources]: migrating-renamed-resources
+[migrating renamed resources]: migrating-renamed-resources.md

@@ -7,6 +7,57 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// PropagationPolicyDefault returns a plan modifier for propagation_policy that
+// avoids sending the field to the API when the user hasn't explicitly
+// configured it. This prevents 403 errors on accounts that don't have the
+// trace propagation feature enabled.
+//
+// Behavior:
+//   - User explicitly configured a value -> use it
+//   - Prior state has a value -> copy from state (stable plans)
+//   - No config and no state (first create) -> mark unknown so the provider
+//     can accept whatever the API returns without an inconsistent-result error
+func PropagationPolicyDefault() planmodifier.String {
+	return propagationPolicyDefaultModifier{}
+}
+
+type propagationPolicyDefaultModifier struct{}
+
+func (m propagationPolicyDefaultModifier) Description(_ context.Context) string {
+	return "Use prior state for propagation_policy when not configured; mark unknown on first create"
+}
+
+func (m propagationPolicyDefaultModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m propagationPolicyDefaultModifier) PlanModifyString(_ context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	// Destroy plan -- nothing to do.
+	if req.Plan.Raw.IsNull() {
+		return
+	}
+
+	// If the user explicitly configured propagation_policy, keep their value.
+	if !req.ConfigValue.IsNull() && !req.ConfigValue.IsUnknown() {
+		return
+	}
+
+	// User did not configure it.
+
+	// First create: no prior resource state at all. Mark unknown so the
+	// provider can accept whatever the API returns without triggering an
+	// inconsistent-result error.
+	if req.State.Raw.IsNull() {
+		resp.PlanValue = types.StringUnknown()
+		return
+	}
+
+	// Resource already exists. Preserve the state value (which may itself be
+	// null if the API never returned propagation_policy). This keeps plans
+	// stable after apply.
+	resp.PlanValue = req.StateValue
+}
+
 func NormalizeFloat64() planmodifier.Float64 {
 	return normalizeFloat64Modifier{}
 }

@@ -151,6 +151,7 @@ Available values: "off", "flexible", "full", "strict", "origin_pull".
 - `transformed_request_fields` (Attributes List) The transformed request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--transformed_request_fields))
 - `uri` (Attributes) A URI rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
 - `values` (List of String) The cache tag values for set_cache_tags action.
+- `vary` (Attributes) Controls how cached responses vary based on request headers. At least one of `default` or `headers` must be set, and `default` is required when `headers` is set. (see [below for nested schema](#nestedatt--rules--action_parameters--vary))
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
@@ -634,6 +635,35 @@ Read-Only:
 
 
 
+<a id="nestedatt--rules--action_parameters--vary"></a>
+### Nested Schema for `rules.action_parameters.vary`
+
+Read-Only:
+
+- `default` (Attributes) Controls how a single request header (or the default for all headers) contributes to the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--vary--default))
+- `headers` (Attributes Map) A mapping of lowercase request header names to their vary configuration. (see [below for nested schema](#nestedatt--rules--action_parameters--vary--headers))
+
+<a id="nestedatt--rules--action_parameters--vary--default"></a>
+### Nested Schema for `rules.action_parameters.vary.default`
+
+Read-Only:
+
+- `action` (String) How the header value is treated when building the cache key.
+Available values: "bypass", "passthrough", "normalize".
+
+
+<a id="nestedatt--rules--action_parameters--vary--headers"></a>
+### Nested Schema for `rules.action_parameters.vary.headers`
+
+Read-Only:
+
+- `action` (String) How the header value is treated when building the cache key.
+Available values: "bypass", "passthrough", "normalize".
+- `languages` (List of String) The set of languages to normalize against. Only valid for the `accept-language` header.
+- `media_types` (List of String) The set of media types to normalize against. Only valid for the `accept` header.
+
+
+
 
 <a id="nestedatt--rules--exposed_credential_check"></a>
 ### Nested Schema for `rules.exposed_credential_check`
@@ -665,5 +695,4 @@ Read-Only:
 - `requests_to_origin` (Boolean) Whether counting is only performed when an origin is reached.
 - `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.
 - `score_response_header_name` (String) A response header name provided by the origin, which contains the score to increment rate limit counter with.
-
 
