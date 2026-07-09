@@ -40,8 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"oauth_client_id": schema.StringAttribute{
 				Description:   "The unique identifier for an OAuth client.",
 				Optional:      true,
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"client_name": schema.StringAttribute{
 				Description: "Human-readable name of the OAuth client.",
@@ -111,7 +110,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"visibility": schema.StringAttribute{
 				Description: "Promote the OAuth client from private to public visibility. Only `public` is accepted; demotion to `private` is not supported. Promotion requires a non-empty client name, logo URI, verified client URI host, and at least one non-identity scope.\nAvailable values: \"public\".",
 				Optional:    true,
-				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("public"),
 				},
