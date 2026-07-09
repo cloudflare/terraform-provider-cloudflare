@@ -482,6 +482,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"exports": schema.MapNestedAttribute{
+				Description: "Per-entrypoint export configuration. Keys are the export names; values describe the entrypoint's kind and per-entrypoint cache behavior.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Description: "The kind of entrypoint. A `type: worker` entry overrides the top-level `cache_options` for this specific entrypoint.",
+							Required:    true,
+						},
+						"cache": schema.SingleNestedAttribute{
+							Description: "Per-entrypoint cache override. When present, this overrides the top-level `cache_options` for this specific entrypoint.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"enabled": schema.BoolAttribute{
+									Description: "Whether caching is enabled for this entrypoint.",
+									Required:    true,
+								},
+							},
+						},
+					},
+				},
+			},
 			"keep_assets": schema.BoolAttribute{
 				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.",
 				Optional:    true,
@@ -779,17 +801,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"cache_options": schema.SingleNestedAttribute{
 				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptCacheOptionsModel](ctx),
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "Whether caching is enabled for this Worker.",
 						Computed:    true,
+						Optional:    true,
 						Default:     booldefault.StaticBool(false),
 					},
 					"cross_version_cache": schema.BoolAttribute{
 						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
 						Computed:    true,
+						Optional:    true,
 						Default:     booldefault.StaticBool(false),
 					},
 				},
@@ -809,6 +832,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the export.",
 							Computed:    true,
+						},
+					},
+				},
+			},
+			"package_dependencies": schema.ListNestedAttribute{
+				Description: "The list of npm packages that were installed and used when this Worker was built.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"installed_version": schema.StringAttribute{
+							Description: "The exact version that was resolved and installed by the package manager.",
+							Required:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The npm package name.",
+							Required:    true,
+						},
+						"package_json_version": schema.StringAttribute{
+							Description: "The version constraint as written in package.json.",
+							Required:    true,
 						},
 					},
 				},

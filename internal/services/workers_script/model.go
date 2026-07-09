@@ -53,7 +53,6 @@ type WorkersScriptModel struct {
 	PlacementStatus  types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed"`
 	StartupTimeMs    types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	Handlers         customfield.List[types.String]                                `tfsdk:"handlers" json:"handlers,computed"`
-	CacheOptions       customfield.NestedObject[WorkersScriptCacheOptionsModel]      `tfsdk:"cache_options" json:"cache_options,computed,no_refresh"`
 	NamedHandlers    customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed"`
 
 	WorkersScriptMetadataModel
@@ -313,11 +312,6 @@ type WorkersScriptMetadataTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace,optional"`
-}
-
-type WorkersScriptCacheOptionsModel struct {
-	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
-	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
 }
 
 type WorkersScriptNamedHandlersModel struct {

@@ -123,21 +123,24 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 		Handlers:         priorStateData.Handlers,
 		NamedHandlers:    priorStateData.NamedHandlers,
 		WorkersScriptMetadataModel: WorkersScriptMetadataModel{
-			Annotations:        priorStateData.Annotations,
-			Bindings:           priorStateData.Bindings,
-			BodyPart:           priorStateData.BodyPart,
-			CompatibilityDate:  priorStateData.CompatibilityDate,
-			CompatibilityFlags: priorStateData.CompatibilityFlags,
-			KeepAssets:         priorStateData.KeepAssets,
-			KeepBindings:       priorStateData.KeepBindings,
-			Limits:             priorStateData.Limits,
-			Logpush:            priorStateData.Logpush,
-			MainModule:         priorStateData.MainModule,
-			Migrations:         priorStateData.Migrations,
-			Observability:      priorStateData.Observability,
-			Placement:          priorStateData.Placement,
-			TailConsumers:      priorStateData.TailConsumers,
-			UsageModel:         priorStateData.UsageModel,
+			Annotations:         priorStateData.Annotations,
+			Bindings:            priorStateData.Bindings,
+			BodyPart:            priorStateData.BodyPart,
+			CacheOptions:        priorStateData.CacheOptions,
+			CompatibilityDate:   priorStateData.CompatibilityDate,
+			CompatibilityFlags:  priorStateData.CompatibilityFlags,
+			Exports:             priorStateData.Exports,
+			KeepAssets:          priorStateData.KeepAssets,
+			KeepBindings:        priorStateData.KeepBindings,
+			Limits:              priorStateData.Limits,
+			Logpush:             priorStateData.Logpush,
+			MainModule:          priorStateData.MainModule,
+			Migrations:          priorStateData.Migrations,
+			Observability:       priorStateData.Observability,
+			PackageDependencies: priorStateData.PackageDependencies,
+			Placement:           priorStateData.Placement,
+			TailConsumers:       priorStateData.TailConsumers,
+			UsageModel:          priorStateData.UsageModel,
 		},
 	}
 
@@ -186,21 +189,24 @@ type resourceModelV0 struct {
 	NamedHandlers    customfield.NestedObjectList[WorkersScriptNamedHandlersModel] `tfsdk:"named_handlers" json:"named_handlers,computed"`
 
 	// Embedded metadata properties
-	Annotations        customfield.NestedObject[WorkersScriptMetadataAnnotationsModel]      `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]     `tfsdk:"bindings" json:"bindings,computed_optional"`
-	BodyPart           types.String                                                         `tfsdk:"body_part" json:"body_part,optional"`
-	CompatibilityDate  types.String                                                         `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
-	CompatibilityFlags customfield.Set[types.String]                                        `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	KeepAssets         types.Bool                                                           `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings       *[]types.String                                                      `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Limits             *WorkersScriptMetadataLimitsModel                                    `tfsdk:"limits" json:"limits,optional"`
-	Logpush            types.Bool                                                           `tfsdk:"logpush" json:"logpush,computed_optional"`
-	MainModule         types.String                                                         `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]       `tfsdk:"migrations" json:"migrations,optional"`
-	Observability      *WorkersScriptMetadataObservabilityModel                             `tfsdk:"observability" json:"observability,optional"`
-	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]        `tfsdk:"placement" json:"placement,computed_optional"`
-	TailConsumers      customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
-	UsageModel         types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel]      `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]     `tfsdk:"bindings" json:"bindings,computed_optional"`
+	BodyPart            types.String                                                         `tfsdk:"body_part" json:"body_part,optional"`
+	CacheOptions        *WorkersScriptMetadataCacheOptionsModel                              `tfsdk:"cache_options" json:"cache_options,optional"`
+	CompatibilityDate   types.String                                                         `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
+	CompatibilityFlags  customfield.Set[types.String]                                        `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	Exports             *map[string]WorkersScriptMetadataExportsModel                        `tfsdk:"exports" json:"exports,optional"`
+	KeepAssets          types.Bool                                                           `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings        *[]types.String                                                      `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Limits              *WorkersScriptMetadataLimitsModel                                    `tfsdk:"limits" json:"limits,optional"`
+	Logpush             types.Bool                                                           `tfsdk:"logpush" json:"logpush,computed_optional"`
+	MainModule          types.String                                                         `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations          customfield.NestedObject[WorkersScriptMetadataMigrationsModel]       `tfsdk:"migrations" json:"migrations,optional"`
+	Observability       *WorkersScriptMetadataObservabilityModel                             `tfsdk:"observability" json:"observability,optional"`
+	PackageDependencies *[]*WorkersScriptMetadataPackageDependenciesModel                    `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
+	Placement           customfield.NestedObject[WorkersScriptMetadataPlacementModel]        `tfsdk:"placement" json:"placement,computed_optional"`
+	TailConsumers       customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
+	UsageModel          types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 
 	// Old assets type definition
 	Assets *struct {
