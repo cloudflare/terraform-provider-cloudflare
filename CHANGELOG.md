@@ -4,6 +4,19 @@
 
 Full Changelog: [v5.21.1...v5.22.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.1...v5.22.0)
 
+### ⚠ BREAKING CHANGES
+
+The following upstream API schema changes required corresponding provider schema updates. Existing state files load without user action (the plugin framework silently drops attributes that no longer exist in the schema), but Terraform **configurations** that still reference removed attributes must be updated before `terraform plan` will succeed.
+
+* **ai_search_instance:** the `source_params.web_crawler.crawl_options` block has been removed. Cloudflare's AI Search API dropped this field from its public schema in June 2026 and no longer accepts it, so keeping it in the provider would surface as a runtime API error rather than a plan-time error. Remove any `crawl_options { ... }` block from your `cloudflare_ai_search_instance` configurations. ([0843c7f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0843c7fddb))
+* **zero_trust_access_ai_controls_mcp_portal:** the `servers` attribute changed from a list to a set. HCL syntax is unchanged (`servers = [ ... ]`), but element ordering is no longer significant — Terraform will no longer plan a change when only the order of `servers` entries differs, and any code that relied on stable list ordering (e.g. `element(..., 0)`) may need to be updated. ([099fc24](https://github.com/cloudflare/terraform-provider-cloudflare/commit/099fc248c2))
+
+
+### Notes
+
+* **managed_transforms:** `managed_request_headers` and `managed_response_headers` are now `Optional` instead of `Required`. Existing configurations that set both blocks keep working unchanged; you may now omit either block if you don't need to manage those transforms. ([928173](https://github.com/cloudflare/terraform-provider-cloudflare/commit/928173931c))
+
+
 ### New Resources
 
 * **cloudflare_moq_relay:** onboard new Terraform resource for Media over QUIC (MoQ) relays ([9f2678c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9f2678c139))
