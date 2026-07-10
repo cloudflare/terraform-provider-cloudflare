@@ -54,11 +54,11 @@ resource "cloudflare_worker" "example_worker" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `name` (String) Name of the Worker.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `subdomain` (Attributes) Subdomain settings for the Worker. (see [below for nested schema](#nestedatt--subdomain))

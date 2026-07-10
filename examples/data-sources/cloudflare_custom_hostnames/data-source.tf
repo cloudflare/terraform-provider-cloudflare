@@ -6,6 +6,8 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
   direction = "desc"
   hostname = {
     contain = "example.com"
+    exact = "app.example.com"
+    starts_with = "app"
   }
   hostname_status = "provisioned"
   ssl = 0

@@ -51,6 +51,10 @@ Read-Only:
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--result--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--result--bindings))
+- `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
+the platform provisions a `cloudflare.app` zone for the Worker.
+A `type: worker` entry in the `exports` map can override this
+value for a single entrypoint. (see [below for nested schema](#nestedatt--result--cache_options))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--result--containers))
@@ -68,6 +72,8 @@ This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
 [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--result--modules))
 - `number` (Number) The integer version number, starting from one.
+- `package_dependencies` (Attributes List) The list of npm packages that were installed and used when this Worker
+version was built. (see [below for nested schema](#nestedatt--result--package_dependencies))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--result--placement))
 - `source` (String) The client used to create the version.
 - `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
@@ -195,6 +201,18 @@ Read-Only:
 
 
 
+<a id="nestedatt--result--cache_options"></a>
+### Nested Schema for `result.cache_options`
+
+Read-Only:
+
+- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
+uploads. This is independent of `enabled`. It can stay true
+while caching is off, so the preference survives turning
+caching off and back on.
+- `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
 <a id="nestedatt--result--containers"></a>
 ### Nested Schema for `result.containers`
 
@@ -285,6 +303,16 @@ Read-Only:
 - `content_base64` (String) The base64-encoded module content.
 - `content_type` (String) The content type of the module.
 - `name` (String) The name of the module.
+
+
+<a id="nestedatt--result--package_dependencies"></a>
+### Nested Schema for `result.package_dependencies`
+
+Read-Only:
+
+- `installed_version` (String) The exact version that was resolved and installed by the package manager.
+- `name` (String) The npm package name.
+- `package_json_version` (String) The version constraint as written in package.json.
 
 
 <a id="nestedatt--result--placement"></a>

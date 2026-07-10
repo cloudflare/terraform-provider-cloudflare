@@ -37,6 +37,10 @@ resource "cloudflare_worker_version" "example_worker_version" {
     text = "my_data"
     type = "plain_text"
   }]
+  cache_options = {
+    enabled = true
+    cross_version_cache = true
+  }
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
   containers = [{
@@ -68,6 +72,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
     content_type = "application/javascript+module"
     name = "index.js"
   }]
+  package_dependencies = [{
+    installed_version = "4.17.22"
+    name = "lodash"
+    package_json_version = "^4.17.21"
+  }]
   placement = {
     mode = "smart"
   }
@@ -91,6 +100,10 @@ resource "cloudflare_worker_version" "example_worker_version" {
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
+- `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
+the platform provisions a `cloudflare.app` zone for the Worker.
+A `type: worker` entry in the `exports` map can override this
+value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_options))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--containers))
@@ -103,6 +116,8 @@ This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure 
 [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--modules))
+- `package_dependencies` (Attributes List) The list of npm packages that were installed and used when this Worker
+version was built. (see [below for nested schema](#nestedatt--package_dependencies))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--placement))
 - `usage_model` (String, Deprecated) Usage model for the version.
 Available values: "standard", "bundled", "unbound".
@@ -252,6 +267,18 @@ Optional:
 
 
 
+<a id="nestedatt--cache_options"></a>
+### Nested Schema for `cache_options`
+
+Optional:
+
+- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
+uploads. This is independent of `enabled`. It can stay true
+while caching is off, so the preference survives turning
+caching off and back on.
+- `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
 <a id="nestedatt--containers"></a>
 ### Nested Schema for `containers`
 
@@ -350,6 +377,16 @@ Optional:
 Read-Only:
 
 - `content_sha256` (String) The SHA-256 hash of the module content.
+
+
+<a id="nestedatt--package_dependencies"></a>
+### Nested Schema for `package_dependencies`
+
+Required:
+
+- `installed_version` (String) The exact version that was resolved and installed by the package manager.
+- `name` (String) The npm package name.
+- `package_json_version` (String) The version constraint as written in package.json.
 
 
 <a id="nestedatt--placement"></a>

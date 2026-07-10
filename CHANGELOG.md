@@ -1,5 +1,77 @@
 # Changelog
 
+## 5.22.0 (2026-07-09)
+
+Full Changelog: [v5.21.1...v5.22.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.1...v5.22.0)
+
+### ⚠ BREAKING CHANGES
+
+The following upstream API schema changes required corresponding provider schema updates. Existing state files load without user action (the plugin framework silently drops attributes that no longer exist in the schema), but Terraform **configurations** that still reference removed attributes must be updated before `terraform plan` will succeed.
+
+* **ai_search_instance:** the `source_params.web_crawler.crawl_options` block has been removed. Cloudflare's AI Search API dropped this field from its public schema in June 2026 and no longer accepts it, so keeping it in the provider would surface as a runtime API error rather than a plan-time error. Remove any `crawl_options { ... }` block from your `cloudflare_ai_search_instance` configurations. ([0843c7f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0843c7fddb))
+* **zero_trust_access_ai_controls_mcp_portal:** the `servers` attribute changed from a list to a set. HCL syntax is unchanged (`servers = [ ... ]`), but element ordering is no longer significant — Terraform will no longer plan a change when only the order of `servers` entries differs, and any code that relied on stable list ordering (e.g. `element(..., 0)`) may need to be updated. ([099fc24](https://github.com/cloudflare/terraform-provider-cloudflare/commit/099fc248c2))
+
+
+### Notes
+
+* **managed_transforms:** `managed_request_headers` and `managed_response_headers` are now `Optional` instead of `Required`. Existing configurations that set both blocks keep working unchanged; you may now omit either block if you don't need to manage those transforms. ([928173](https://github.com/cloudflare/terraform-provider-cloudflare/commit/928173931c))
+
+
+### New Resources
+
+* **cloudflare_moq_relay:** onboard new Terraform resource for Media over QUIC (MoQ) relays ([9f2678c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9f2678c139))
+
+
+### Features
+
+* **d1_database:** add v4-to-v5 state upgrader ([32f42b1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/32f42b15e2))
+* **d1_database:** add CRUD acceptance tests ([3491e69](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3491e698c5))
+* **hyperdrive_config:** add comprehensive acceptance tests ([59399bb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/59399bb0bc))
+* **oauth:** add oauth_client resource CRUD support ([154668f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/154668f077))
+* **workers_custom_domain:** add acceptance tests for resource, data sources, and import ([26e0092](https://github.com/cloudflare/terraform-provider-cloudflare/commit/26e009263e))
+* **workers_script:** add exports and package_dependencies to schema ([c15cef1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c15cef131c))
+* **zero_trust_access_application:** add `file` as valid RDP connection_rules value ([2659e30](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2659e30cd1))
+* **zero_trust_access_short_lived_certificate:** add MoveState handler for access_ca_certificate rename (v4 -> v5 auto-migration) ([90f3324](https://github.com/cloudflare/terraform-provider-cloudflare/commit/90f3324dd4))
+
+
+### Bug Fixes
+
+* **dns_record:** dedupe schema key and drop unused import ([8faa422](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8faa422842))
+* **dns_record:** revert Meta model to jsontypes.Normalized to match schema ([c0eea18](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c0eea18adb))
+* **docs:** add .md extension to migration guide links ([7546f3e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7546f3e944))
+* **hyperdrive_config:** address review feedback ([92ce892](https://github.com/cloudflare/terraform-provider-cloudflare/commit/92ce892f1c))
+* **load_balancer_pool:** remove phantom flatten_cname from v4 source model ([baa1b92](https://github.com/cloudflare/terraform-provider-cloudflare/commit/baa1b9267b))
+* **migration:** correct v4 test configs and migration test harness for access_ca_certificate ([2c47cf7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2c47cf740f))
+* **moq_relay:** add schema Version: 500 ([890b9f9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/890b9f97e0))
+* **oauth:** remove custom oauth visibility change ([6b4a0ed](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6b4a0ed61e))
+* **ruleset:** add asset_name to v4 source schema so v4->v5 state upgrader parses correctly ([baa1b92](https://github.com/cloudflare/terraform-provider-cloudflare/commit/baa1b9267b))
+* **worker_version:** add CustomType to assets schema to match model ([7e7e0d3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7e7e0d346d))
+* **worker_version:** use NestedObject accessors for Assets field ([78d419f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/78d419f944))
+* **workers_custom_domain:** address review feedback ([3271949](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3271949dc5))
+* **workers_script:** resolve duplicate cache_options tag ([c15cef1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c15cef131c))
+* **zero_trust_list:** handle ambiguous schema_version=0 state (v4 vs v5) ([c010f78](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c010f78ee9))
+
+
+### Chores
+
+* **api:** force regen of moq_relay and email_routing_rule ([a9e500a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a9e500ac4f))
+* **ci:** add 30m timeout to unit test shards ([635637b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/635637bf38))
+* **ci:** trigger acceptance tests on release-tf-* branches ([5921d00](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5921d001ad))
+* **go.mod:** pin cloudflare-go to release-770 branch head for v5.22.0 ([05272f3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/05272f309f))
+* **internal:** codegen related update ([c7a96ca](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c7a96ca692))
+* use 'next' for Terraform builds ([30c04e6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/30c04e6241))
+
+
+### Documentation
+
+* **list:** fix missing comma in resource and data source examples ([bfe1c34](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bfe1c3471c))
+* regenerate provider docs; fix provider address and .stats.yml ([cbde062](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cbde062d62))
+* update documentation for moved blocks to Terraform 1.8 ([d93208d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d93208bdf5))
+* **v5-migration:** document session_duration behavior change for access policies ([90c58a7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/90c58a77cc))
+* **v5-upgrade:** add destructive-behavior warning for app-scoped policy migration ([1e832d6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1e832d6a33))
+* **v5-upgrade:** document zone_id removal for access policies ([831f0bb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/831f0bbef9))
+
+
 ## 5.21.1 (2026-06-23)
 
 Full Changelog: [v5.21.0...v5.21.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.0...v5.21.1)

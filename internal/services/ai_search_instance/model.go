@@ -93,6 +93,7 @@ type AISearchInstanceIndexingOptionsModel struct {
 type AISearchInstancePublicEndpointParamsModel struct {
 	AuthorizedHosts         *[]types.String                                                                            `tfsdk:"authorized_hosts" json:"authorized_hosts,optional"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancePublicEndpointParamsChatCompletionsEndpointModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed_optional"`
+	CustomDomains           *[]types.String                                                                            `tfsdk:"custom_domains" json:"custom_domains,optional"`
 	Enabled                 types.Bool                                                                                 `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Mcp                     customfield.NestedObject[AISearchInstancePublicEndpointParamsMcpModel]                     `tfsdk:"mcp" json:"mcp,computed_optional"`
 	RateLimit               *AISearchInstancePublicEndpointParamsRateLimitModel                                        `tfsdk:"rate_limit" json:"rate_limit,optional"`
@@ -137,18 +138,9 @@ type AISearchInstanceSourceParamsModel struct {
 }
 
 type AISearchInstanceSourceParamsWebCrawlerModel struct {
-	CrawlOptions *AISearchInstanceSourceParamsWebCrawlerCrawlOptionsModel `tfsdk:"crawl_options" json:"crawl_options,optional"`
 	ParseOptions *AISearchInstanceSourceParamsWebCrawlerParseOptionsModel `tfsdk:"parse_options" json:"parse_options,optional"`
 	ParseType    types.String                                             `tfsdk:"parse_type" json:"parse_type,computed_optional"`
 	StoreOptions *AISearchInstanceSourceParamsWebCrawlerStoreOptionsModel `tfsdk:"store_options" json:"store_options,optional"`
-}
-
-type AISearchInstanceSourceParamsWebCrawlerCrawlOptionsModel struct {
-	Depth                types.Float64 `tfsdk:"depth" json:"depth,optional"`
-	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed_optional"`
-	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
-	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,optional"`
-	Source               types.String  `tfsdk:"source" json:"source,computed_optional"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsModel struct {

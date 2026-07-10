@@ -66,6 +66,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(true),
 			},
+			"prefer_low_latency": schema.BoolAttribute{
+				Description: "When enabled, the live stream is delivered using Low-Latency HLS (LL-HLS), reducing glass-to-glass latency for viewers at the cost of reduced player compatibility.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"recording": schema.SingleNestedAttribute{
 				Description: "Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied.",
 				Computed:    true,
@@ -108,6 +114,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the live input was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"keys_rotated_at": schema.StringAttribute{
+				Description: "The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

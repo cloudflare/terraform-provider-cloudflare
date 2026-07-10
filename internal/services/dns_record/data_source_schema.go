@@ -8,10 +8,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -42,6 +42,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
+				Optional:    true,
+			},
+			"include_shadow_metadata": schema.BoolAttribute{
+				Description: "Whether to include shadow metadata in the `meta` field of each record in the response. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+				Computed:    true,
 				Optional:    true,
 			},
 			"comment": schema.StringAttribute{
@@ -364,6 +369,34 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"meta": schema.SingleNestedAttribute{
+				Description: "Extra Cloudflare-specific metadata about the record.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[DNSRecordMetaDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"dead_glue": schema.BoolAttribute{
+						Description: "Whether this glue record is not served because a shallower NS delegation takes precedence over the deeper delegation that needs it. Present only when true; reachable glue carries only `is_glue`. See [Unreachable glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#unreachable-glue-records).",
+						Computed:    true,
+					},
+					"is_glue": schema.BoolAttribute{
+						Description: "Whether this A or AAAA record is glue for a subdomain NS delegation. See [Glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#glue-records).",
+						Computed:    true,
+					},
+					"shadowed_by": schema.ListAttribute{
+						Description: "IDs of the NS records that shadow this record. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"shadowed_records_count": schema.Int64Attribute{
+						Description: "Number of records shadowed by this NS delegation. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(0, 10000),
+						},
+					},
+				},
+			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",
 				Computed:    true,
@@ -382,11 +415,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-			},
-			"meta": schema.StringAttribute{
-				Description: "Extra Cloudflare-specific information about the record.",
-				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
@@ -499,6 +527,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"search": schema.StringAttribute{
 						Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.",
+						Optional:    true,
+					},
+					"shadowed_by_name": schema.StringAttribute{
+						Description: "Filters to records at or below the given NS delegation name, excluding the NS records that form the delegation itself. The value must be a subdomain of the zone; the zone apex is not accepted. Requires `include_shadow_metadata=true`. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+						Optional:    true,
+					},
+					"shadowing_name": schema.StringAttribute{
+						Description: "Returns NS records that shadow the given name, searching at the name itself and each of its ancestor names within the zone, excluding the zone apex. The value must be a subdomain of the zone; the zone apex is not accepted. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
 						Optional:    true,
 					},
 					"tag": schema.SingleNestedAttribute{

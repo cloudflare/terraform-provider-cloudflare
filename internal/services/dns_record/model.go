@@ -88,3 +88,4 @@ type DNSRecordSettingsModel struct {
 	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed_optional"`
 	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 }
+

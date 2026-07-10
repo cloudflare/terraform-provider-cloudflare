@@ -50,6 +50,7 @@ Read-Only:
 - `ip` (String) Defines the automatically generated IPv6 destination IP assigned to this location. Gateway counts all DNS requests sent to this IP as requests under this location.
 - `ipv4_destination` (String) Show the primary destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.
 - `ipv4_destination_backup` (String) Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.
+- `max_ttl` (Attributes) Controls how DNS response TTLs are capped for this location relative to the account `max_ttl_secs` setting. Omitting `max_ttl` on update resets it to `inherit`. (see [below for nested schema](#nestedatt--result--max_ttl))
 - `name` (String) Specify the location name.
 - `networks` (Attributes List) Specify the list of network ranges from which requests at this location originate. The list takes effect only if it is non-empty and the IPv4 endpoint is enabled for this location. (see [below for nested schema](#nestedatt--result--networks))
 - `updated_at` (String)
@@ -123,6 +124,16 @@ Read-Only:
 - `network` (String) Specify the IPv6 address or IPv6 CIDR.
 
 
+
+
+<a id="nestedatt--result--max_ttl"></a>
+### Nested Schema for `result.max_ttl`
+
+Read-Only:
+
+- `mode` (String) `inherit` uses the account `max_ttl_secs`. `override` uses this location's `ttl_secs`. `disabled` leaves returned TTLs unchanged.
+Available values: "inherit", "override", "disabled".
+- `ttl_secs` (Number) Location-specific cap on DNS response TTLs, in seconds. Required when `mode` is `override`. Must be omitted when `mode` is `inherit` or `disabled`.
 
 
 <a id="nestedatt--result--networks"></a>

@@ -32,7 +32,7 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `created_at` (String)
 - `created_by` (String)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
 - `enable` (Boolean)
 - `engine_version` (Number)
 - `fusion_method` (String) Available values: "max", "rrf".
@@ -119,6 +119,7 @@ Read-Only:
 
 - `authorized_hosts` (List of String)
 - `chat_completions_endpoint` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--chat_completions_endpoint))
+- `custom_domains` (List of String) Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).
 - `enabled` (Boolean)
 - `mcp` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--mcp))
 - `rate_limit` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--rate_limit))
@@ -196,22 +197,9 @@ Read-Only:
 
 Read-Only:
 
-- `crawl_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--crawl_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
 - `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--store_options))
-
-<a id="nestedatt--source_params--web_crawler--crawl_options"></a>
-### Nested Schema for `source_params.web_crawler.crawl_options`
-
-Read-Only:
-
-- `depth` (Number)
-- `include_external_links` (Boolean)
-- `include_subdomains` (Boolean)
-- `max_age` (Number)
-- `source` (String) Available values: "all", "sitemaps", "links".
-
 
 <a id="nestedatt--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `source_params.web_crawler.parse_options`

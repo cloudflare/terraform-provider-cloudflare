@@ -138,13 +138,13 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 
 ### Required
 
-- `account_id` (String)
 - `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) Specify the rule name.
 
 ### Optional
 
+- `account_id` (String)
 - `description` (String) Specify the rule description.
 - `device_posture` (String) Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `enabled` (Boolean) Specify whether the rule is enabled.

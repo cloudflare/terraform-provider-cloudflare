@@ -35,8 +35,10 @@ data "cloudflare_stream_live_input" "example_stream_live_input" {
 - `created` (String) The date and time the live input was created.
 - `delete_recording_after_days` (Number) Indicates the number of days after which the live inputs recordings will be deleted. When a stream completes and the recording is ready, the value is used to calculate a scheduled deletion date for that recording. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion.
 - `enabled` (Boolean) Indicates whether the live input is enabled and can accept streams.
+- `keys_rotated_at` (String) The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.
 - `meta` (String) A user modifiable key-value store used to reference other systems of record for managing live inputs.
 - `modified` (String) The date and time the live input was last modified.
+- `prefer_low_latency` (Boolean) When enabled, the live stream is delivered using Low-Latency HLS (LL-HLS), reducing glass-to-glass latency for viewers at the cost of reduced player compatibility.
 - `recording` (Attributes) Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied. (see [below for nested schema](#nestedatt--recording))
 - `rtmps` (Attributes) Details for streaming to an live input using RTMPS. (see [below for nested schema](#nestedatt--rtmps))
 - `rtmps_playback` (Attributes) Details for playback from an live input using RTMPS. (see [below for nested schema](#nestedatt--rtmps_playback))

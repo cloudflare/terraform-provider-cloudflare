@@ -43,6 +43,7 @@ type SourceV4RuleModel struct {
 // Note: In v4, this was a ListNestedBlock (MaxItems:1), stored as array in state.
 type SourceV4ActionParametersModel struct {
 	AdditionalCacheablePorts types.Set                    `tfsdk:"additional_cacheable_ports"`
+	AssetName                types.String                 `tfsdk:"asset_name"`
 	AutomaticHTTPSRewrites   types.Bool                   `tfsdk:"automatic_https_rewrites"`
 	AutoMinify               []*SourceV4AutoMinifyModel   `tfsdk:"autominify"`
 	BIC                      types.Bool                   `tfsdk:"bic"`

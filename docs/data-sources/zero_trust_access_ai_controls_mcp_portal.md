@@ -42,7 +42,7 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_trust_a
 - `modified_by` (String)
 - `name` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
-- `servers` (Attributes List) (see [below for nested schema](#nestedatt--servers))
+- `servers` (Attributes Set) (see [below for nested schema](#nestedatt--servers))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -75,6 +75,7 @@ Read-Only:
 - `on_behalf` (Boolean)
 - `prompts` (List of Map of String)
 - `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
+- `server_id` (String) server id
 - `status` (String)
 - `tools` (List of Map of String)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_prompts))

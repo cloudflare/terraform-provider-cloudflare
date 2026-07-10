@@ -71,7 +71,6 @@ resource "cloudflare_page_rule" "example_page_rule" {
 
 - `actions` (Attributes) (see [below for nested schema](#nestedatt--actions))
 - `target` (String)
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -82,6 +81,7 @@ specific Page Rule to take precedence (rule B: `/images/special/*`),
 specify a higher priority for rule B so it overrides rule A.
 - `status` (String) The status of the Page Rule.
 Available values: "active", "disabled".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

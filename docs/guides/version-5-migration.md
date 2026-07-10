@@ -401,6 +401,46 @@ values to `null` for optional fields (`isolation_required`,
 `purpose_justification_required`, `approval_required`). This prevents drift
 since the API treats `false` and `null` as equivalent.
 
+#### Zero Trust Access Policy `session_duration`
+
+In v4, the API applied an implicit default of `24h` for `session_duration`, so
+most configurations omitted it. In v5, the provider schema defaults to `24h`,
+but some Cloudflare accounts enforce a maximum session duration shorter than
+`24h` (for example, `18h`) via account-level security policies. If your
+policies relied on the implicit default and your account enforces a shorter
+maximum, the first `terraform apply` after migration will fail at the API level
+even though `terraform plan` succeeds.
+
+To avoid this, add an explicit `session_duration` to every
+`cloudflare_zero_trust_access_policy` resource:
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "example" {
+  # ...existing attributes...
+  session_duration = "18h"  # or your organization's required maximum
+}
+```
+
+#### Zero Trust Access Policy `zone_id` removal
+
+In v4, `cloudflare_access_policy` could be scoped to a zone using `zone_id`.
+In v5, all access policies are account-level only -- `zone_id` is not a valid
+attribute on `cloudflare_zero_trust_access_policy`. `tf-migrate` removes
+`zone_id` during migration. If the resource already has `account_id`, no action
+is needed. If the resource only had `zone_id`, `tf-migrate` emits a
+**MIGRATION WARNING** and you must manually add `account_id`:
+
+```hcl
+resource "cloudflare_zero_trust_access_policy" "example" {
+  account_id = var.cloudflare_account_id  # add this — zone_id is no longer valid
+  # ...existing attributes...
+}
+```
+
+Note that a zone ID and an account ID are different values. You cannot simply
+rename the attribute; you must supply the correct account ID for the account
+that owns the zone.
+
 #### Load Balancer field renames
 
 `cloudflare_load_balancer` resources will show field renames:
@@ -563,7 +603,7 @@ automatic state transformation for the rename.
 | v4 Resource | v5 Resource | State |
 |---|---|---|
 | `cloudflare_access_application` | `cloudflare_zero_trust_access_application` | Auto |
-| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Manual |
+| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Auto |
 | `cloudflare_access_custom_page` | `cloudflare_zero_trust_access_custom_page` | Manual |
 | `cloudflare_access_group` | `cloudflare_zero_trust_access_group` | Auto |
 | `cloudflare_access_identity_provider` | `cloudflare_zero_trust_access_identity_provider` | Auto |
@@ -642,10 +682,10 @@ into the new resource type:
 
 ```bash
 # Remove the old resource from state
-terraform state rm cloudflare_access_ca_certificate.example
+terraform state rm cloudflare_access_custom_page.example
 
 # Import into the new resource type
-terraform import cloudflare_zero_trust_access_short_lived_certificate.example <account_id>/<certificate_id>
+terraform import cloudflare_zero_trust_access_custom_page.example <account_id>/<custom_page_id>
 ```
 
 Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
@@ -691,6 +731,17 @@ additional manual steps after running `tf-migrate` or updating your HCL.
 config migration.** `tf-migrate` can automatically generate a `removed` block
 to drop the old state entry without destroying the remote policy, but you still
 must rewrite the policy as inline `policies` on the application resource.
+
+!> **Applying tf-migrate output without adding inline policies is destructive.**
+`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
+generates a `removed` block, but does **not** add `policies` to the parent
+`cloudflare_zero_trust_access_application` resource. If you run
+`terraform apply` in this intermediate state, Terraform sends an empty
+`policies` value to the API, which detaches all policies from the application.
+Cloudflare then garbage-collects the orphaned app-scoped policies (they have no
+independent lifecycle). You **must** add `policies = [...]` to the parent
+application resource before applying. Recovery without this step requires
+reconstructing all policies from git history or backups.
 
 In v4, `cloudflare_access_policy` could be used for both account-level policies
 and application-scoped policies (when `application_id` was set). These two types
@@ -1286,6 +1337,7 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_workers_route` |
 | **KV** | `cloudflare_workers_kv` |
 | | `cloudflare_workers_kv_namespace` |
+| **D1** | `cloudflare_d1_database` |
 | **Pages** | `cloudflare_pages_project` |
 | **Cache** | `cloudflare_tiered_cache` |
 | **Argo** | `cloudflare_argo_smart_routing` |

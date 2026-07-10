@@ -28,11 +28,11 @@ resource "cloudflare_list_item" "example_list_item" {
 
 ### Required
 
-- `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
 ### Optional
 
+- `account_id` (String) The Account ID for this resource.
 - `asn` (Number) A non-negative 32 bit integer
 - `comment` (String) An informative summary of the list item.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))

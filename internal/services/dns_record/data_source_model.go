@@ -9,7 +9,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/dns"
 	"github.com/cloudflare/cloudflare-go/v7/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,27 +19,28 @@ type DNSRecordResultDataSourceEnvelope struct {
 }
 
 type DNSRecordDataSourceModel struct {
-	ID                types.String                                               `tfsdk:"id" path:"dns_record_id,computed"`
-	DNSRecordID       types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
-	ZoneID            types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
-	Comment           types.String                                               `tfsdk:"comment" json:"comment,computed"`
-	CommentModifiedOn timetypes.RFC3339                                          `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
-	Content           types.String                                               `tfsdk:"content" json:"content,computed"`
-	CreatedOn         timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn        timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name              types.String                                               `tfsdk:"name" json:"name,computed"`
-	Priority          types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
-	PrivateRouting    types.Bool                                                 `tfsdk:"private_routing" json:"private_routing,computed"`
-	Proxiable         types.Bool                                                 `tfsdk:"proxiable" json:"proxiable,computed"`
-	Proxied           types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
-	TagsModifiedOn    timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
-	TTL               types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
-	Type              types.String                                               `tfsdk:"type" json:"type,computed"`
-	Tags              customfield.Set[types.String]                              `tfsdk:"tags" json:"tags,computed"`
-	Data              customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
-	Settings          customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
-	Meta              jsontypes.Normalized                                       `tfsdk:"meta" json:"meta,computed"`
-	Filter            *DNSRecordFindOneByDataSourceModel                         `tfsdk:"filter"`
+	ID                    types.String                                               `tfsdk:"id" path:"dns_record_id,computed"`
+	DNSRecordID           types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
+	ZoneID                types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
+	IncludeShadowMetadata types.Bool                                                 `tfsdk:"include_shadow_metadata" query:"include_shadow_metadata,computed_optional"`
+	Comment               types.String                                               `tfsdk:"comment" json:"comment,computed"`
+	CommentModifiedOn     timetypes.RFC3339                                          `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	Content               types.String                                               `tfsdk:"content" json:"content,computed"`
+	CreatedOn             timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn            timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name                  types.String                                               `tfsdk:"name" json:"name,computed"`
+	Priority              types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
+	PrivateRouting        types.Bool                                                 `tfsdk:"private_routing" json:"private_routing,computed"`
+	Proxiable             types.Bool                                                 `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied               types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
+	TagsModifiedOn        timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL                   types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
+	Type                  types.String                                               `tfsdk:"type" json:"type,computed"`
+	Tags                  customfield.Set[types.String]                              `tfsdk:"tags" json:"tags,computed"`
+	Data                  customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
+	Meta                  customfield.NestedObject[DNSRecordMetaDataSourceModel]     `tfsdk:"meta" json:"meta,computed"`
+	Settings              customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
+	Filter                *DNSRecordFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
 func (m *DNSRecordDataSourceModel) toReadParams(_ context.Context) (params dns.RecordGetParams, diags diag.Diagnostics) {
@@ -48,6 +48,10 @@ func (m *DNSRecordDataSourceModel) toReadParams(_ context.Context) (params dns.R
 
 	if !m.ZoneID.IsNull() {
 		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	if !m.IncludeShadowMetadata.IsNull() {
+		params.IncludeShadowMetadata = cloudflare.F(m.IncludeShadowMetadata.ValueBool())
 	}
 
 	return
@@ -100,6 +104,9 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Filter.Direction.ValueString()))
 	}
+	if !m.IncludeShadowMetadata.IsNull() {
+		params.IncludeShadowMetadata = cloudflare.F(m.IncludeShadowMetadata.ValueBool())
+	}
 	if !m.Filter.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Filter.Match.ValueString()))
 	}
@@ -127,6 +134,12 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
+	}
+	if !m.Filter.ShadowedByName.IsNull() {
+		params.ShadowedByName = cloudflare.F(m.Filter.ShadowedByName.ValueString())
+	}
+	if !m.Filter.ShadowingName.IsNull() {
+		params.ShadowingName = cloudflare.F(m.Filter.ShadowingName.ValueString())
 	}
 	if m.Filter.Tag != nil {
 		paramsTag := dns.RecordListParamsTag{}
@@ -199,6 +212,13 @@ type DNSRecordDataDataSourceModel struct {
 	Fingerprint   types.String                       `tfsdk:"fingerprint" json:"fingerprint,computed"`
 }
 
+type DNSRecordMetaDataSourceModel struct {
+	DeadGlue             types.Bool                     `tfsdk:"dead_glue" json:"dead_glue,computed"`
+	IsGlue               types.Bool                     `tfsdk:"is_glue" json:"is_glue,computed"`
+	ShadowedBy           customfield.List[types.String] `tfsdk:"shadowed_by" json:"shadowed_by,computed"`
+	ShadowedRecordsCount types.Int64                    `tfsdk:"shadowed_records_count" json:"shadowed_records_count,computed"`
+}
+
 type DNSRecordSettingsDataSourceModel struct {
 	IPV4Only     types.Bool `tfsdk:"ipv4_only" json:"ipv4_only,computed"`
 	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed"`
@@ -206,15 +226,17 @@ type DNSRecordSettingsDataSourceModel struct {
 }
 
 type DNSRecordFindOneByDataSourceModel struct {
-	Comment   *DNSRecordsCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
-	Content   *DNSRecordsContentDataSourceModel `tfsdk:"content" query:"content,optional"`
-	Direction types.String                      `tfsdk:"direction" query:"direction,computed_optional"`
-	Match     types.String                      `tfsdk:"match" query:"match,computed_optional"`
-	Name      *DNSRecordsNameDataSourceModel    `tfsdk:"name" query:"name,optional"`
-	Order     types.String                      `tfsdk:"order" query:"order,computed_optional"`
-	Proxied   types.Bool                        `tfsdk:"proxied" query:"proxied,computed_optional"`
-	Search    types.String                      `tfsdk:"search" query:"search,optional"`
-	Tag       *DNSRecordsTagDataSourceModel     `tfsdk:"tag" query:"tag,optional"`
-	TagMatch  types.String                      `tfsdk:"tag_match" query:"tag_match,computed_optional"`
-	Type      types.String                      `tfsdk:"type" query:"type,optional"`
+	Comment        *DNSRecordsCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
+	Content        *DNSRecordsContentDataSourceModel `tfsdk:"content" query:"content,optional"`
+	Direction      types.String                      `tfsdk:"direction" query:"direction,computed_optional"`
+	Match          types.String                      `tfsdk:"match" query:"match,computed_optional"`
+	Name           *DNSRecordsNameDataSourceModel    `tfsdk:"name" query:"name,optional"`
+	Order          types.String                      `tfsdk:"order" query:"order,computed_optional"`
+	Proxied        types.Bool                        `tfsdk:"proxied" query:"proxied,computed_optional"`
+	Search         types.String                      `tfsdk:"search" query:"search,optional"`
+	ShadowedByName types.String                      `tfsdk:"shadowed_by_name" query:"shadowed_by_name,optional"`
+	ShadowingName  types.String                      `tfsdk:"shadowing_name" query:"shadowing_name,optional"`
+	Tag            *DNSRecordsTagDataSourceModel     `tfsdk:"tag" query:"tag,optional"`
+	TagMatch       types.String                      `tfsdk:"tag_match" query:"tag_match,computed_optional"`
+	Type           types.String                      `tfsdk:"type" query:"type,optional"`
 }

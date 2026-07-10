@@ -26,7 +26,6 @@ resource "cloudflare_registrar_domain" "example_registrar_domain" {
 
 ### Required
 
-- `account_id` (String) Identifier
 - `domain_name` (String) Fully qualified domain name (FQDN) including the extension
 (e.g., `example.com`, `mybrand.app`). The domain name uniquely
 identifies a registration — the same domain cannot be registered
@@ -34,6 +33,7 @@ twice, making it a natural idempotency key for registration requests.
 
 ### Optional
 
+- `account_id` (String) Identifier
 - `auto_renew` (Boolean) Auto-renew controls whether subscription is automatically renewed upon domain expiration.
 - `locked` (Boolean) Shows whether a registrar lock is in place for a domain.
 - `privacy` (Boolean) Privacy option controls redacting WHOIS information.

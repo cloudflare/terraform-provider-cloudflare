@@ -124,7 +124,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"embedding_model": schema.StringAttribute{
-				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -134,6 +134,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"@cf/google/embeddinggemma-300m",
 						"google-ai-studio/gemini-embedding-001",
 						"google-ai-studio/gemini-embedding-2-preview",
+						"google-ai-studio/gemini-embedding-2",
 						"openai/text-embedding-3-small",
 						"openai/text-embedding-3-large",
 						"",
@@ -355,6 +356,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"custom_domains": schema.ListAttribute{
+						Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
 					"enabled": schema.BoolAttribute{
 						Computed: true,
 					},
@@ -472,41 +479,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
-							"crawl_options": schema.SingleNestedAttribute{
-								Computed:   true,
-								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerCrawlOptionsDataSourceModel](ctx),
-								Attributes: map[string]schema.Attribute{
-									"depth": schema.Float64Attribute{
-										Computed: true,
-										Validators: []validator.Float64{
-											float64validator.Between(1, 100000),
-										},
-									},
-									"include_external_links": schema.BoolAttribute{
-										Computed: true,
-									},
-									"include_subdomains": schema.BoolAttribute{
-										Computed: true,
-									},
-									"max_age": schema.Float64Attribute{
-										Computed: true,
-										Validators: []validator.Float64{
-											float64validator.Between(0, 604800),
-										},
-									},
-									"source": schema.StringAttribute{
-										Description: `Available values: "all", "sitemaps", "links".`,
-										Computed:    true,
-										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive(
-												"all",
-												"sitemaps",
-												"links",
-											),
-										},
-									},
-								},
-							},
 							"parse_options": schema.SingleNestedAttribute{
 								Computed:   true,
 								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),

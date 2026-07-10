@@ -24,7 +24,9 @@ type StreamLiveInputDataSourceModel struct {
 	Created                  timetypes.RFC3339                                                      `tfsdk:"created" json:"created,computed" format:"date-time"`
 	DeleteRecordingAfterDays types.Float64                                                          `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,computed"`
 	Enabled                  types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	KeysRotatedAt            timetypes.RFC3339                                                      `tfsdk:"keys_rotated_at" json:"keysRotatedAt,computed" format:"date-time"`
 	Modified                 timetypes.RFC3339                                                      `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	PreferLowLatency         types.Bool                                                             `tfsdk:"prefer_low_latency" json:"preferLowLatency,computed"`
 	Status                   types.String                                                           `tfsdk:"status" json:"status,computed"`
 	UID                      types.String                                                           `tfsdk:"uid" json:"uid,computed"`
 	Recording                customfield.NestedObject[StreamLiveInputRecordingDataSourceModel]      `tfsdk:"recording" json:"recording,computed"`

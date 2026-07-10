@@ -50,6 +50,7 @@ jobs:
     name: Unit Tests (shard ${{ matrix.shard }})
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -72,5 +73,5 @@ jobs:
           # Get all packages and select this shard (1-indexed)
           packages=$(go list ./... | awk "NR % 16 == (${{ matrix.shard }} - 1)")
           if [ -n "$packages" ]; then
-            echo "$packages" | xargs go test
+            echo "$packages" | xargs go test -v -timeout 25m
           fi

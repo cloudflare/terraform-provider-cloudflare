@@ -57,10 +57,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"servers": schema.ListNestedAttribute{
+			"servers": schema.SetNestedAttribute{
 				Computed:   true,
 				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
+				CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"server_id": schema.StringAttribute{

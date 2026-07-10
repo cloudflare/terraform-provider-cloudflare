@@ -8,11 +8,14 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/hyperdrive"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
@@ -72,6 +75,30 @@ func init() {
 	})
 }
 
+func testAccCheckCloudflareHyperdriveConfigDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_hyperdrive_config" {
+			continue
+		}
+
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
+		_, err := client.Hyperdrive.Configs.Get(
+			context.Background(),
+			rs.Primary.ID,
+			hyperdrive.ConfigGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err == nil {
+			return fmt.Errorf("hyperdrive config %s still exists", rs.Primary.ID)
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -92,7 +119,6 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 		User:     databaseUser,
 	}
 
-	var configID string
 	updatedName := rnd + "-updated"
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -101,6 +127,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 			acctest.TestAccPreCheck_Hyperdrive(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testHyperdriveConfig(
@@ -114,6 +141,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -127,17 +155,16 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 					resource.TestCheckNoResourceAttr(resourceName, "caching.stale_while_revalidate"),
 				),
 			},
-			// {
-			// 	ResourceName:            resourceName,
-			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"origin.password"},
-			// },
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
+			},
 			{
 				Config: testHyperdriveConfigUpdate(
 					rnd,
-					configID,
 					accountID,
 					updatedName,
 					databasePassword,
@@ -185,6 +212,7 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 			acctest.TestAccPreCheck_Hyperdrive(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testHyperdriveConfigFullCachingSettings(
@@ -200,6 +228,7 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -213,13 +242,13 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "caching.stale_while_revalidate", "30"),
 				),
 			},
-			// {
-			// 	ResourceName:            resourceName,
-			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"origin.password"},
-			// },
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
+			},
 		},
 	})
 }
@@ -246,7 +275,6 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 		AccessClientSecret: accessClientSecret,
 	}
 
-	var configID string
 	updatedName := rnd + "-updated"
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -255,6 +283,7 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 			acctest.TestAccPreCheck_HyperdriveWithAccess(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testHyperdriveOverAccessConfig(
@@ -266,18 +295,9 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 					true,
 				),
 				Check: resource.ComposeTestCheckFunc(
-					// use a test check function to grab the id that was generated by the API
-					// func(s *terraform.State) error {
-					// 	rs, ok := s.RootModule().Resources[resourceName]
-					// 	if !ok {
-					// 		return fmt.Errorf("not found: %s", resourceName)
-					// 	}
-
-					// 	configID = rs.Primary.Attributes["id"]
-					// 	return nil
-					// },
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
@@ -289,17 +309,16 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "true"),
 				),
 			},
-			// {
-			// 	ResourceName:            resourceName,
-			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"origin.password", "origin.access_client_secret"},
-			// },
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password", "origin.access_client_secret"},
+			},
 			{
 				Config: testHyperdriveOverAccessUpdate(
 					rnd,
-					configID,
 					accountID,
 					updatedName,
 					databasePassword,
@@ -349,19 +368,76 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 			acctest.TestAccPreCheck_Hyperdrive(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
-				// Config: testHyperdriveConfigMinimum(
-				// 	rnd,
-				// 	accountID,
-				// 	rnd,
-				// 	databasePassword,
-				// 	origin,
-				// ),
-				Config: testHyperdriveConfig(
+				Config: testHyperdriveConfigMinimum(
 					rnd,
 					accountID,
 					rnd,
+					databasePassword,
+					origin,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
+					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
+					// caching block is omitted; verify defaults are applied
+					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
+					resource.TestCheckNoResourceAttr(resourceName, "caching.max_age"),
+					resource.TestCheckNoResourceAttr(resourceName, "caching.stale_while_revalidate"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareHyperdriveConfig_ConnectionLimit(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databasePort := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT")
+	port, _ := strconv.Atoi(databasePort)
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
+	resourceName := "cloudflare_hyperdrive_config." + rnd
+
+	var origin = cfv1.HyperdriveConfigOrigin{
+		Database: databaseName,
+		Host:     databaseHostname,
+		Port:     port,
+		Scheme:   "postgres",
+		User:     databaseUser,
+	}
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Hyperdrive(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testHyperdriveConfigConnectionLimit(
+					rnd,
+					accountID,
+					rnd,
+					10,
 					databasePassword,
 					origin,
 					false,
@@ -369,6 +445,8 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttr(resourceName, "origin_connection_limit", "10"),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -378,13 +456,13 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
 				),
 			},
-			// {
-			// 	ResourceName:            resourceName,
-			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"origin.password"},
-			// },
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
+			},
 		},
 	})
 }
@@ -426,6 +504,7 @@ func TestAccCloudflareHyperdriveConfig_NoDiffOnConsecutiveApply(t *testing.T) {
 			acctest.TestAccPreCheck_Hyperdrive(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Initial creation
@@ -485,6 +564,7 @@ func TestAccCloudflareHyperdriveConfig_NoDiffOnConsecutiveApplyWithAccess(t *tes
 			acctest.TestAccPreCheck_HyperdriveWithAccess(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareHyperdriveConfigDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Initial creation
@@ -506,25 +586,27 @@ func TestAccCloudflareHyperdriveConfig_NoDiffOnConsecutiveApplyWithAccess(t *tes
 	})
 }
 
+// Config helpers
+
 func testHyperdriveConfig(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
 	return acctest.LoadTestCase("hyperdriveconfig.tf",
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, cacheEnabled)
+		rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User, cacheEnabled)
 }
 
 func testHyperdriveConfigMinimum(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin) string {
-	return acctest.LoadTestCase("hyperdriveconfigminimum.tf", rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User)
+	return acctest.LoadTestCase("hyperdriveconfigminimum.tf",
+		rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User)
 }
 
-func testHyperdriveConfigUpdate(rnd, id, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
+func testHyperdriveConfigUpdate(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
 	return acctest.LoadTestCase("hyperdriveconfigupdate.tf",
 		rnd,
-		id,
 		accountId,
 		name,
 		password,
 		origin.Database,
 		origin.Host,
-		fmt.Sprintf("%d", origin.Port),
+		origin.Port,
 		origin.Scheme,
 		origin.User,
 		cacheEnabled,
@@ -539,12 +621,28 @@ func testHyperdriveConfigFullCachingSettings(rnd, accountId, name string, passwo
 		password,
 		origin.Database,
 		origin.Host,
-		fmt.Sprintf("%d", origin.Port),
+		origin.Port,
 		origin.Scheme,
 		origin.User,
 		cacheEnabled,
 		cacheMaxAge,
 		cacheStaleWhileRevalidate,
+	)
+}
+
+func testHyperdriveConfigConnectionLimit(rnd, accountId, name string, connLimit int, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
+	return acctest.LoadTestCase("hyperdriveconfigconnlimit.tf",
+		rnd,
+		accountId,
+		name,
+		connLimit,
+		password,
+		origin.Database,
+		origin.Host,
+		origin.Port,
+		origin.Scheme,
+		origin.User,
+		cacheEnabled,
 	)
 }
 
@@ -564,10 +662,9 @@ func testHyperdriveOverAccessConfig(rnd, accountId, name string, password string
 	)
 }
 
-func testHyperdriveOverAccessUpdate(rnd, id, accountId, name string, password string, origin cfv1.HyperdriveConfigOriginWithSecrets, cacheEnabled bool) string {
+func testHyperdriveOverAccessUpdate(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOriginWithSecrets, cacheEnabled bool) string {
 	return acctest.LoadTestCase("hyperdriveconfigoveraccessupdate.tf",
 		rnd,
-		id,
 		accountId,
 		name,
 		password,
@@ -579,4 +676,14 @@ func testHyperdriveOverAccessUpdate(rnd, id, accountId, name string, password st
 		origin.AccessClientSecret,
 		cacheEnabled,
 	)
+}
+
+func testHyperdriveConfigDataSource(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
+	return acctest.LoadTestCase("hyperdriveconfigdatasource.tf",
+		rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User, cacheEnabled)
+}
+
+func testHyperdriveConfigListDataSource(rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, cacheEnabled bool) string {
+	return acctest.LoadTestCase("hyperdriveconfiglistdatasource.tf",
+		rnd, accountId, name, password, origin.Database, origin.Host, origin.Port, origin.Scheme, origin.User, cacheEnabled)
 }

@@ -112,6 +112,7 @@ type AISearchInstancesMetadataDataSourceModel struct {
 type AISearchInstancesPublicEndpointParamsDataSourceModel struct {
 	AuthorizedHosts         customfield.List[types.String]                                                                        `tfsdk:"authorized_hosts" json:"authorized_hosts,computed"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancesPublicEndpointParamsChatCompletionsEndpointDataSourceModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed"`
+	CustomDomains           customfield.List[types.String]                                                                        `tfsdk:"custom_domains" json:"custom_domains,computed"`
 	Enabled                 types.Bool                                                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Mcp                     customfield.NestedObject[AISearchInstancesPublicEndpointParamsMcpDataSourceModel]                     `tfsdk:"mcp" json:"mcp,computed"`
 	RateLimit               customfield.NestedObject[AISearchInstancesPublicEndpointParamsRateLimitDataSourceModel]               `tfsdk:"rate_limit" json:"rate_limit,computed"`
@@ -156,18 +157,9 @@ type AISearchInstancesSourceParamsDataSourceModel struct {
 }
 
 type AISearchInstancesSourceParamsWebCrawlerDataSourceModel struct {
-	CrawlOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerCrawlOptionsDataSourceModel] `tfsdk:"crawl_options" json:"crawl_options,computed"`
 	ParseOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel] `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType    types.String                                                                                 `tfsdk:"parse_type" json:"parse_type,computed"`
 	StoreOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel] `tfsdk:"store_options" json:"store_options,computed"`
-}
-
-type AISearchInstancesSourceParamsWebCrawlerCrawlOptionsDataSourceModel struct {
-	Depth                types.Float64 `tfsdk:"depth" json:"depth,computed"`
-	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed"`
-	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
-	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,computed"`
-	Source               types.String  `tfsdk:"source" json:"source,computed"`
 }
 
 type AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel struct {

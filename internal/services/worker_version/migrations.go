@@ -52,29 +52,31 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 	}
 
 	newStateData := WorkerVersionModel{
-		ID:                 priorStateData.ID,
-		AccountID:          priorStateData.AccountID,
-		WorkerID:           priorStateData.WorkerID,
-		CompatibilityDate:  priorStateData.CompatibilityDate,
-		MainModule:         priorStateData.MainModule,
-		Containers:         priorStateData.Containers,
-		Migrations:         priorStateData.Migrations,
-		Modules:            priorStateData.Modules,
-		Placement:          priorStateData.Placement,
-		UsageModel:         priorStateData.UsageModel,
-		CompatibilityFlags: priorStateData.CompatibilityFlags,
-		Annotations:        priorStateData.Annotations,
-		Bindings:           priorStateData.Bindings,
-		Limits:             priorStateData.Limits,
-		CreatedOn:          priorStateData.CreatedOn,
-		Number:             priorStateData.Number,
-		Source:             priorStateData.Source,
-		MainScriptBase64:   priorStateData.MainScriptBase64,
-		StartupTimeMs:      priorStateData.StartupTimeMs,
+		ID:                  priorStateData.ID,
+		AccountID:           priorStateData.AccountID,
+		WorkerID:            priorStateData.WorkerID,
+		CompatibilityDate:   priorStateData.CompatibilityDate,
+		MainModule:          priorStateData.MainModule,
+		Containers:          priorStateData.Containers,
+		Migrations:          priorStateData.Migrations,
+		Modules:             priorStateData.Modules,
+		PackageDependencies: priorStateData.PackageDependencies,
+		Placement:           priorStateData.Placement,
+		UsageModel:          priorStateData.UsageModel,
+		CompatibilityFlags:  priorStateData.CompatibilityFlags,
+		Annotations:         priorStateData.Annotations,
+		Bindings:            priorStateData.Bindings,
+		CacheOptions:        priorStateData.CacheOptions,
+		Limits:              priorStateData.Limits,
+		CreatedOn:           priorStateData.CreatedOn,
+		Number:              priorStateData.Number,
+		Source:              priorStateData.Source,
+		MainScriptBase64:    priorStateData.MainScriptBase64,
+		StartupTimeMs:       priorStateData.StartupTimeMs,
 	}
 
 	if priorStateData.Assets != nil {
-		newStateData.Assets = &WorkerVersionAssetsModel{
+		newAssets := WorkerVersionAssetsModel{
 			JWT:                 priorStateData.Assets.JWT,
 			Directory:           priorStateData.Assets.Directory,
 			AssetManifestSHA256: priorStateData.Assets.AssetManifestSHA256,
@@ -91,41 +93,51 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 				newConfig.NotFoundHandling = config.NotFoundHandling
 				newConfig.RunWorkerFirst = customfield.RawNormalizedDynamicValueFrom(config.RunWorkerFirst)
 
-				newStateData.Assets.Config, diags = customfield.NewObject(ctx, &newConfig)
+				newAssets.Config, diags = customfield.NewObject(ctx, &newConfig)
 				resp.Diagnostics.Append(diags...)
 				if resp.Diagnostics.HasError() {
 					return
 				}
 			}
 		}
+		assetsObj, diags := customfield.NewObject(ctx, &newAssets)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		newStateData.Assets = assetsObj
+	} else {
+		newStateData.Assets = customfield.NullObject[WorkerVersionAssetsModel](ctx)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newStateData)...)
 }
 
 type resourceModelV0 struct {
-	ID                 types.String                                             `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
-	CompatibilityDate  types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	MainModule         types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
-	Modules            *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
-	Placement          *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
-	UsageModel         types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
-	CompatibilityFlags customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	Annotations        customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Assets             *resourceModelV0AssetsModel                              `tfsdk:"assets" json:"assets,optional"`
-	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
-	Limits             customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
-	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
-	Source             types.String                                             `tfsdk:"source" json:"source,computed"`
-	MigrationTag       types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
-	MainScriptBase64   types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
-	StartupTimeMs      types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
-	URLs               customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
+	ID                  types.String                                             `tfsdk:"id" json:"id,computed"`
+	AccountID           types.String                                             `tfsdk:"account_id" path:"account_id,required"`
+	WorkerID            types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
+	CompatibilityDate   types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	MainModule          types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations          *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
+	Modules             *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
+	PackageDependencies *[]*WorkerVersionPackageDependenciesModel                `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
+	Placement           *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
+	UsageModel          types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	CompatibilityFlags  customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	Annotations         customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Assets              *resourceModelV0AssetsModel                              `tfsdk:"assets" json:"assets,optional"`
+	Bindings            customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
+	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsModel] `tfsdk:"cache_options" json:"cache_options,computed_optional"`
+	Limits              customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
+	CreatedOn           timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Number              types.Int64                                              `tfsdk:"number" json:"number,computed"`
+	Source              types.String                                             `tfsdk:"source" json:"source,computed"`
+	MigrationTag        types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
+	MainScriptBase64    types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
+	StartupTimeMs       types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	Containers          *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
+	URLs                customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
 }
 
 type resourceModelV0AssetsModel struct {
