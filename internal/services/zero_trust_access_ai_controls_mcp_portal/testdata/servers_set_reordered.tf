@@ -1,22 +1,22 @@
 resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "a" {
   account_id = %[1]q
-  id         = "tf-test-srv-a"
-  name       = "tf-test-srv-a"
-  hostname   = "https://tf-test-srv-a.%[2]s/mcp"
+  id         = "%[3]s-srv-a"
+  name       = "%[3]s-srv-a"
+  hostname   = "https://%[3]s-srv-a.%[2]s/mcp"
   auth_type  = "bearer"
 }
 
 resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "b" {
   account_id = %[1]q
-  id         = "tf-test-srv-b"
-  name       = "tf-test-srv-b"
-  hostname   = "https://tf-test-srv-b.%[2]s/mcp"
+  id         = "%[3]s-srv-b"
+  name       = "%[3]s-srv-b"
+  hostname   = "https://%[3]s-srv-b.%[2]s/mcp"
   auth_type  = "bearer"
 }
 
 resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "tf-test" {
   account_id = %[1]q
-  id         = "tf-test"
+  id         = %[3]q
   hostname   = %[2]q
   name       = %[3]q
 

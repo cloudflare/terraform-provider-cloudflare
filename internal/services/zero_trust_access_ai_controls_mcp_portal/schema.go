@@ -121,13 +121,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-				// Immutable creation metadata: hold the stored value on update
-				// instead of planning it as (known after apply).
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed: true,
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,

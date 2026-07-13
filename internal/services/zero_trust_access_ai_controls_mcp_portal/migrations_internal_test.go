@@ -6,9 +6,11 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 )
 
 // TestUpgradeMcpPortalV500ToV501 verifies the list -> set state migration for the
@@ -74,37 +76,95 @@ func TestUpgradeMcpPortalV500ToV501(t *testing.T) {
 			t.Errorf("expected servers to remain null")
 		}
 	})
+
+	t.Run("unknown servers stays unknown", func(t *testing.T) {
+		prior := zeroTrustAccessAIControlsMcpPortalModelV500{
+			ID:      types.StringValue("p"),
+			Servers: customfield.UnknownObjectList[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
+		}
+
+		upgraded, diags := upgradeMcpPortalV500ToV501(ctx, prior)
+		if diags.HasError() {
+			t.Fatalf("unexpected diagnostics: %v", diags)
+		}
+		if !upgraded.Servers.IsUnknown() {
+			t.Errorf("expected servers to remain unknown")
+		}
+	})
+
+	t.Run("preserves unknown nested values", func(t *testing.T) {
+		serverType := customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx).ElementType().(types.ObjectType)
+		updatedPromptsType := serverType.AttrTypes["updated_prompts"].(types.ListType)
+		updatedToolsType := serverType.AttrTypes["updated_tools"].(types.ListType)
+		server, diags := types.ObjectValue(serverType.AttrTypes, map[string]attr.Value{
+			"server_id":        types.StringValue("alpha"),
+			"default_disabled": types.BoolValue(false),
+			"on_behalf":        types.BoolValue(true),
+			"updated_prompts":  types.ListNull(updatedPromptsType.ElemType),
+			"updated_tools":    types.ListUnknown(updatedToolsType.ElemType),
+		})
+		if diags.HasError() {
+			t.Fatalf("create server value: %v", diags)
+		}
+		servers, diags := customfield.NewObjectListFromAttributes[ZeroTrustAccessAIControlsMcpPortalServersModel](
+			ctx,
+			[]attr.Value{server},
+		)
+		if diags.HasError() {
+			t.Fatalf("create servers list: %v", diags)
+		}
+
+		upgraded, diags := upgradeMcpPortalV500ToV501(ctx, zeroTrustAccessAIControlsMcpPortalModelV500{
+			ID:      types.StringValue("p"),
+			Servers: servers,
+		})
+		if diags.HasError() {
+			t.Fatalf("unexpected diagnostics: %v", diags)
+		}
+
+		got := upgraded.Servers.Elements()[0].(types.Object)
+		if !got.Attributes()["updated_tools"].IsUnknown() {
+			t.Errorf("expected updated_tools to remain unknown")
+		}
+		if !got.Attributes()["updated_prompts"].IsNull() {
+			t.Errorf("expected updated_prompts to remain null")
+		}
+	})
 }
 
 // TestUpgradeMcpPortalV500ToV501_FrameworkDecode exercises the real upgrade path
-// that runs on user `terraform apply`: it encodes list-typed v500 state through
-// the prior schema, then runs the registered 500 upgrader, which decodes that
-// raw state via req.State.Get (the list -> NestedObjectList decode that the unit
-// test above bypasses), converts to a Set, and re-encodes into the v501 schema.
-// This de-risks the highest-blast-radius path — a type mismatch here would fail
+// that runs on user `terraform apply`: it decodes raw v500 JSON through the List
+// source schema, converts it to a Set, and re-encodes it into the v501 schema.
+// Terraform persists both List and Set values as JSON arrays, so this also covers
+// state written by v5.22.0 after the unversioned switch to Set.
+// This de-risks the highest-blast-radius path: a type mismatch here would fail
 // apply for every existing user on upgrade.
 func TestUpgradeMcpPortalV500ToV501_FrameworkDecode(t *testing.T) {
 	ctx := context.Background()
 
-	// Build list-shaped v500 state through the prior schema, the way Terraform
-	// would have persisted it before this change.
 	priorSchema := resourceSchemaV500(ctx)
-	priorState := tfsdk.State{Schema: priorSchema}
-	prior := zeroTrustAccessAIControlsMcpPortalModelV500{
-		ID:               types.StringValue("mcp-sandbox"),
-		AccountID:        types.StringValue("acct"),
-		Hostname:         types.StringValue("mcp.example.com"),
-		Name:             types.StringValue("MCP Gateway (Sandbox)"),
-		AllowCodeMode:    types.BoolValue(true),
-		SecureWebGateway: types.BoolValue(false),
-		Servers: customfield.NewObjectListMust(ctx, []ZeroTrustAccessAIControlsMcpPortalServersModel{
-			{ServerID: types.StringValue("alpha"), DefaultDisabled: types.BoolValue(true), OnBehalf: types.BoolValue(true)},
-			{ServerID: types.StringValue("beta"), DefaultDisabled: types.BoolValue(false), OnBehalf: types.BoolValue(false)},
-		}),
+	rawState := &tfprotov6.RawState{JSON: []byte(`{
+		"id":"mcp-sandbox",
+		"account_id":"acct",
+		"hostname":"mcp.example.com",
+		"name":"MCP Gateway (Sandbox)",
+		"description":null,
+		"allow_code_mode":true,
+		"secure_web_gateway":false,
+		"servers":[
+			{"server_id":"alpha","default_disabled":true,"on_behalf":true,"updated_prompts":null,"updated_tools":null},
+			{"server_id":"beta","default_disabled":false,"on_behalf":false,"updated_prompts":null,"updated_tools":null}
+		],
+		"created_at":null,
+		"created_by":null,
+		"modified_at":null,
+		"modified_by":null
+	}`)}
+	rawValue, err := rawState.Unmarshal(priorSchema.Type().TerraformType(ctx))
+	if err != nil {
+		t.Fatalf("decode prior raw state: %v", err)
 	}
-	if diags := priorState.Set(ctx, prior); diags.HasError() {
-		t.Fatalf("encode prior state: %v", diags)
-	}
+	priorState := tfsdk.State{Raw: rawValue, Schema: priorSchema}
 
 	r := &ZeroTrustAccessAIControlsMcpPortalResource{}
 	upgrader, ok := r.UpgradeState(ctx)[500]
@@ -112,7 +172,7 @@ func TestUpgradeMcpPortalV500ToV501_FrameworkDecode(t *testing.T) {
 		t.Fatal("no upgrader registered for prior version 500")
 	}
 
-	req := resource.UpgradeStateRequest{State: &priorState}
+	req := resource.UpgradeStateRequest{RawState: rawState, State: &priorState}
 	resp := resource.UpgradeStateResponse{State: tfsdk.State{Schema: ResourceSchema(ctx)}}
 	upgrader.StateUpgrader(ctx, req, &resp)
 	if resp.Diagnostics.HasError() {
@@ -167,7 +227,7 @@ func TestUpgradeMcpPortalV500ToV501_FrameworkDecode(t *testing.T) {
 
 // TestUpgradeMcpPortalV500ToV501_FrameworkDecodeNullAndEmpty covers the
 // no-attached-servers cases through the real upgrade path. A portal with a null
-// (or empty) servers list is the common case — most portals start with none — so
+// (or empty) servers list is the common case; most portals start with none, so
 // the list -> set conversion must round-trip those through req.State.Get /
 // resp.State.Set without error, rather than only being exercised for the
 // populated case.

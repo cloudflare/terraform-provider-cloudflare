@@ -116,33 +116,28 @@ func TestAccZeroTrustAccessAIControlsMcpPortal_basic(t *testing.T) {
 	})
 }
 
-// TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent covers the
-// servers drift fixes:
-//   - server_id is read back from the API (the API returns identity under "id";
-//     the schema/write path use "server_id"). Without the read-side mapping,
-//     server_id is null and every plan shows "+ server_id".
-//   - servers is a set keyed by server_id, so reordering servers[] in config
-//     produces no diff (the backend ignores client write order and returns a
-//     canonical order, so a list would churn).
+// TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent verifies
+// that reordering servers in configuration produces no diff. The backend ignores
+// client write order and returns a canonical order, so a List would churn.
 func TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_portal.tf-test"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	name := "Test Portal Servers Set"
+	name := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessAIControlsMcpPortalDestroy,
 		Steps: []resource.TestStep{
-			// Create with two servers in order [a, b]; server_id must be set.
+			// Create with two servers in order [a, b].
 			{
 				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("servers"), knownvalue.SetSizeExact(2)),
 				},
 			},
-			// Re-apply identical config: no diff (server_id stable, no "+ server_id").
+			// Re-apply identical config: no diff.
 			{
 				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -156,7 +151,7 @@ func TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent(t *tes
 					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
 				},
 			},
-			// Import round-trips with server_id populated.
+			// Import round-trips successfully.
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,

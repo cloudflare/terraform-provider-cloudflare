@@ -54,9 +54,10 @@ func (r *ZeroTrustAccessAIControlsMcpPortalResource) UpgradeState(ctx context.Co
 		},
 	}
 
-	// The resource only ever shipped at schema version 500 (servers as a List),
-	// so 500 is the real prior version. The 0 entry is kept for safety: any such
-	// state is list-shaped too and converts identically.
+	// Releases through v5.21.1 stored servers as a List at schema version 500.
+	// v5.22.0 switched to a Set without changing the version; both forms serialize
+	// servers as a JSON array, so the List source schema safely normalizes either.
+	// The 0 entry preserves the upgrader generated for early unversioned state.
 	return map[int64]resource.StateUpgrader{
 		0:   upgrader,
 		500: upgrader,
@@ -92,12 +93,10 @@ func upgradeMcpPortalV500ToV501(
 	case prior.Servers.IsUnknown():
 		upgraded.Servers = customfield.UnknownObjectSet[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx)
 	default:
-		servers, d := prior.Servers.AsStructSliceT(ctx)
-		diags.Append(d...)
-		if diags.HasError() {
-			return upgraded, diags
-		}
-		set, d := customfield.NewObjectSet(ctx, servers)
+		set, d := customfield.NewObjectSetFromAttributes[ZeroTrustAccessAIControlsMcpPortalServersModel](
+			ctx,
+			prior.Servers.Elements(),
+		)
 		diags.Append(d...)
 		if diags.HasError() {
 			return upgraded, diags
