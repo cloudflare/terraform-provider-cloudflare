@@ -12,7 +12,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -96,6 +100,58 @@ func TestAccZeroTrustAccessAIControlsMcpPortal_basic(t *testing.T) {
 				),
 			},
 			// ImportState testing
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["account_id"], rs.Primary.ID), nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent verifies
+// that reordering servers in configuration produces no diff. The backend ignores
+// client write order and returns a canonical order, so a List would churn.
+func TestAccZeroTrustAccessAIControlsMcpPortal_serversSetOrderIndependent(t *testing.T) {
+	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_portal.tf-test"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	name := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessAIControlsMcpPortalDestroy,
+		Steps: []resource.TestStep{
+			// Create with two servers in order [a, b].
+			{
+				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("servers"), knownvalue.SetSizeExact(2)),
+				},
+			},
+			// Re-apply identical config: no diff.
+			{
+				Config: acctest.LoadTestCase("servers_set.tf", accountID, domain, name),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			// Reorder servers [b, a]: set semantics => still no diff.
+			{
+				Config: acctest.LoadTestCase("servers_set_reordered.tf", accountID, domain, name),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			// Import round-trips successfully.
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,

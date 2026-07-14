@@ -19,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpPort
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: 501,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"MCP Portals Read",
