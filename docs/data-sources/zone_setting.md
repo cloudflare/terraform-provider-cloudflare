@@ -13,6 +13,8 @@ Accepted Permissions
 - `Zone Settings Read`
 - `Zone Settings Write`
 
+-> CNAME flattening is available from the [`cloudflare_zone_dns_settings`](zone_dns_settings.md) data source through its `flatten_all_cnames` attribute. It cannot be read with this data source.
+
 ## Available Setting IDs
 
 <!-- BEGIN_ZONE_SETTING_IDS -->
@@ -35,7 +37,6 @@ The following table lists all valid `setting_id` values. Some settings may requi
 | `cache_level` | `"aggressive"`, `"basic"`, `"simplified"` | Cache Level functions based off the setting level. The basic setting will cac... |
 | `challenge_ttl` | Number (14 values) | Specify how long a visitor is allowed access to your site after successfully ... |
 | `ciphers` | Array of string | An allowlist of ciphers for TLS termination. These ciphers must be in the Bor... |
-| `cname_flattening` | `"flatten_at_root"`, `"flatten_all"` | Whether or not cname flattening is on. |
 | `content_converter` | `"on"` / `"off"` | When enabled and the client sends an Accept header requesting text/markdown, ... |
 | `development_mode` | `"on"` / `"off"` | Development Mode temporarily allows you to enter development mode for your we... |
 | `early_hints` | `"on"` / `"off"` | When enabled, Cloudflare will attempt to speed up overall page loads by servi... |
@@ -117,5 +118,4 @@ data "cloudflare_zone_setting" "example_zone_setting" {
 Notes: The interval (in seconds) from when development mode expires (positive integer) or last expired (negative integer) for the domain. If development mode has never been enabled, this value is false.
 - `value` (String) Current value of the zone setting.
 Available values: "on", "off".
-
 
