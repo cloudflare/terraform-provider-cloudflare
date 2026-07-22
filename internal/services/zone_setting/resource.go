@@ -63,6 +63,10 @@ func (r *ZoneSettingResource) Create(ctx context.Context, req resource.CreateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	if isCNAMEFlatteningSetting(data.SettingID) {
+		addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
+		return
+	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -103,6 +107,10 @@ func (r *ZoneSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+	if isCNAMEFlatteningSetting(data.SettingID) {
+		addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
 		return
 	}
 
@@ -153,6 +161,10 @@ func (r *ZoneSettingResource) Read(ctx context.Context, req resource.ReadRequest
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+	if isCNAMEFlatteningSetting(data.SettingID) {
+		addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
 		return
 	}
 
@@ -210,6 +222,10 @@ func (r *ZoneSettingResource) ImportState(ctx context.Context, req resource.Impo
 
 	data.ZoneID = types.StringValue(path_zone_id)
 	data.SettingID = types.StringValue(path_setting_id)
+	if isCNAMEFlatteningSetting(data.SettingID) {
+		addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
+		return
+	}
 
 	res := new(http.Response)
 	env := ZoneSettingResultEnvelope{*data}
@@ -239,6 +255,18 @@ func (r *ZoneSettingResource) ImportState(ctx context.Context, req resource.Impo
 }
 
 func (r *ZoneSettingResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if !req.Plan.Raw.IsNull() {
+		var data *ZoneSettingModel
+		resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		if isCNAMEFlatteningSetting(data.SettingID) {
+			addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
+			return
+		}
+	}
+
 	if req.State.Raw.IsNull() {
 		resp.Diagnostics.AddWarning(
 			"Resource Destruction Considerations",

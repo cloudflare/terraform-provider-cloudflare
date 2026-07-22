@@ -15,6 +15,8 @@ Accepted Permissions
 
 -> If using the `ssl_recommender` zone setting, use the `enabled` attribute instead of `value`.
 
+-> CNAME flattening is managed by [`cloudflare_zone_dns_settings`](zone_dns_settings.md) with the `flatten_all_cnames` attribute. It cannot be managed with this resource.
+
 ## Available Setting IDs
 
 <!-- BEGIN_ZONE_SETTING_IDS -->
@@ -37,7 +39,6 @@ The following table lists all valid `setting_id` values. Some settings may requi
 | `cache_level` | `"aggressive"`, `"basic"`, `"simplified"` | Cache Level functions based off the setting level. The basic setting will cac... |
 | `challenge_ttl` | Number (14 values) | Specify how long a visitor is allowed access to your site after successfully ... |
 | `ciphers` | Array of string | An allowlist of ciphers for TLS termination. These ciphers must be in the Bor... |
-| `cname_flattening` | `"flatten_at_root"`, `"flatten_all"` | Whether or not cname flattening is on. |
 | `content_converter` | `"on"` / `"off"` | When enabled and the client sends an Accept header requesting text/markdown, ... |
 | `development_mode` | `"on"` / `"off"` | Development Mode temporarily allows you to enter development mode for your we... |
 | `early_hints` | `"on"` / `"off"` | When enabled, Cloudflare will attempt to speed up overall page loads by servi... |
@@ -327,4 +328,3 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zone_setting.example '<zone_id>/<setting_id>'
 ```
-
