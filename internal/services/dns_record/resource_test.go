@@ -220,6 +220,44 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_URI(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigURI(zoneID, rnd, domain, "0"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data.priority", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data.weight", "10"),
+					resource.TestCheckResourceAttr(resourceName, "data.target", "https://example.com/"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigURI(zoneID, rnd, domain, "20"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "priority", "20"),
+					resource.TestCheckResourceAttr(resourceName, "data.priority", "20"),
+					resource.TestCheckResourceAttr(resourceName, "data.weight", "10"),
+					resource.TestCheckResourceAttr(resourceName, "data.target", "https://example.com/"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_CAA(t *testing.T) {
 	//t.Parallel()
 	var record dns.RecordResponse
@@ -418,6 +456,8 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data.priority", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data.target", "mail.terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "content", "mail.terraform.cfapi.net"),
 				),
 			},
@@ -491,6 +531,8 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "content", "."),
 					resource.TestCheckResourceAttr(name, "priority", "0"),
+					resource.TestCheckResourceAttr(name, "data.priority", "0"),
+					resource.TestCheckResourceAttr(name, "data.target", "."),
 				),
 			},
 		},
@@ -1401,6 +1443,10 @@ func testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, name, zoneName, p
 
 func testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, name, zoneName string) string {
 	return acctest.LoadTestCase("record_config_mx_with_priority_zero.tf", zoneID, name, zoneName)
+}
+
+func testAccCheckCloudflareRecordConfigURI(zoneID, name, zoneName, priority string) string {
+	return acctest.LoadTestCase("record_config_uri.tf", zoneID, name, zoneName, priority)
 }
 
 func testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd, zoneName string) string {

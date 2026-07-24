@@ -1,0 +1,46 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
+
+## Priority-bearing records
+
+MX, SRV, and URI records must configure priority only within `data`. Do not set the top-level `priority` attribute: it is a read-only computed value that may be returned by the API and does not need to be duplicated in Terraform configuration.
+
+MX records also configure their target within `data`:
+
+```terraform
+resource "cloudflare_dns_record" "mx" {
+  zone_id = var.zone_id
+  name    = "@"
+  type    = "MX"
+  ttl     = 300
+
+  data = {
+    priority = 10
+    target   = "mail.example.com"
+  }
+}
+```
+
+SRV and URI records retain their existing structured fields and place priority alongside them in `data`.
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}

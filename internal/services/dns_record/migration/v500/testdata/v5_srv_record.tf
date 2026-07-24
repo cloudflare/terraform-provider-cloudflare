@@ -3,8 +3,6 @@ resource "cloudflare_dns_record" "%[1]s" {
   name    = "%[3]s"
   type    = "SRV"
   ttl     = 3600
-  priority = 10
-
   data = {
     priority = 10
     weight   = 60

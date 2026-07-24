@@ -21,7 +21,7 @@ type DNSRecordModel struct {
 	Type              types.String                                     `tfsdk:"type" json:"type,required"`
 	Comment           types.String                                     `tfsdk:"comment" json:"comment,optional"`
 	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
-	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
+	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,computed"`
 	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
 	PrivateRouting    types.Bool                                       `tfsdk:"private_routing" json:"private_routing,optional"`
 	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
@@ -88,4 +88,3 @@ type DNSRecordSettingsModel struct {
 	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed_optional"`
 	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 }
-

@@ -2,6 +2,7 @@ package v500
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/migrations"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -90,6 +91,8 @@ func Transform(ctx context.Context, source SourceCloudflareRecordModel) (*Target
 		}
 	}
 
+	canonicalizePriorityData(target)
+
 	// Note: The following source fields are NOT migrated (removed or deprecated):
 	// - allow_overwrite: Removed in v500
 	// - hostname: Computed field, will be refreshed from API
@@ -134,9 +137,23 @@ func transformData(sourceData SourceDataModel, recordType string) (*TargetDNSRec
 	targetData.Target = sourceData.Target
 
 	// Numeric fields: source is Int64, target is Float64
-	targetData.Priority = int64ToFloat64ZeroToNull(sourceData.Priority)
-	targetData.Weight = int64ToFloat64ZeroToNull(sourceData.Weight)
-	targetData.Port = int64ToFloat64ZeroToNull(sourceData.Port)
+	switch strings.ToUpper(recordType) {
+	case "SRV":
+		targetData.Priority = int64ToFloat64(sourceData.Priority)
+		targetData.Weight = int64ToFloat64(sourceData.Weight)
+		targetData.Port = int64ToFloat64(sourceData.Port)
+	case "URI":
+		// URI priority is a root field in legacy state. Preserve an explicit
+		// zero weight, but let canonicalizePriorityData source priority from
+		// the root instead of a synthetic zero in the old data block.
+		targetData.Priority = types.Float64Null()
+		targetData.Weight = int64ToFloat64(sourceData.Weight)
+		targetData.Port = int64ToFloat64ZeroToNull(sourceData.Port)
+	default:
+		targetData.Priority = int64ToFloat64ZeroToNull(sourceData.Priority)
+		targetData.Weight = int64ToFloat64ZeroToNull(sourceData.Weight)
+		targetData.Port = int64ToFloat64ZeroToNull(sourceData.Port)
+	}
 	targetData.Algorithm = int64ToFloat64ZeroToNull(sourceData.Algorithm)
 	targetData.KeyTag = int64ToFloat64ZeroToNull(sourceData.KeyTag)
 	targetData.Type = int64ToFloat64ZeroToNull(sourceData.Type)
@@ -175,6 +192,21 @@ func transformData(sourceData SourceDataModel, recordType string) (*TargetDNSRec
 	// - name: Removed from SRV data block
 
 	return targetData, diags
+}
+
+func canonicalizePriorityData(target *TargetDNSRecordModel) {
+	switch strings.ToUpper(target.Type.ValueString()) {
+	case "MX", "SRV", "URI":
+		if target.Data == nil {
+			target.Data = &TargetDNSRecordDataModel{}
+		}
+		if target.Data.Priority.IsNull() {
+			target.Data.Priority = target.Priority
+		}
+		if strings.EqualFold(target.Type.ValueString(), "MX") && target.Data.Target.IsNull() {
+			target.Data.Target = target.Content
+		}
+	}
 }
 
 // int64ToFloat64 converts a types.Int64 to types.Float64.
