@@ -3,7 +3,9 @@
 		zone_id  = "%[2]s"
 		type     = "MX"
 		name     = "%[1]s.%[3]s"
-		content    = "."
-		priority = 0
+		data = {
+			priority = 0
+			target = "."
+		}
 		ttl = 300
 	  }

@@ -204,7 +204,7 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		// Check if any user-configurable fields have actually changed
 		hasChanges := !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
 			contentChanged || !plan.TTL.Equal(state.TTL) ||
-			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
+			!plan.Proxied.Equal(state.Proxied) ||
 			!plan.Comment.Equal(state.Comment) || tagsChanged
 
 		// For Data field (CAA, LOC, etc records), check if it actually changed
@@ -212,6 +212,17 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			hasChanges = true
 		} else if plan.Data != nil && state.Data != nil && !plan.Data.Equal(state.Data) {
 			hasChanges = true
+		}
+
+		// Preserve the computed compatibility priority only when its canonical
+		// nested value is unchanged. If data.priority changes, leave the root
+		// value unknown so the API can return the new value consistently.
+		priorityChanged := (plan.Data == nil) != (state.Data == nil)
+		if plan.Data != nil && state.Data != nil {
+			priorityChanged = !plan.Data.Priority.Equal(state.Data.Priority)
+		}
+		if plan.Priority.IsUnknown() && !priorityChanged {
+			plan.Priority = state.Priority
 		}
 		// Note: If both have data, the contentChanged check above already covers it
 		// since content is computed from data for these record types

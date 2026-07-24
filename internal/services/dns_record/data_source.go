@@ -72,6 +72,11 @@ func (d *DNSRecordDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 
 		bytes := []byte(page.JSON.RawJSON())
+		bytes, err = normalizeDNSRecordResponseJSON(bytes)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+			return
+		}
 		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
@@ -107,6 +112,11 @@ func (d *DNSRecordDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDNSRecordResponseJSON(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())

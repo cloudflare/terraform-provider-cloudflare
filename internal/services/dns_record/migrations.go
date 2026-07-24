@@ -3,8 +3,10 @@ package dns_record
 import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record/migration/v500"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record/migration/v501"
 )
 
 var _ resource.ResourceWithMoveState = (*DNSRecordResource)(nil)
@@ -31,12 +33,13 @@ func (r *DNSRecordResource) MoveState(ctx context.Context) []resource.StateMover
 // This is triggered when users manually run `terraform state mv` (Terraform < 1.8).
 func (r *DNSRecordResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	sourceSchema := v500.SourceCloudflareRecordSchema()
-	targetSchema := ResourceSchema(ctx)
+	v500Schema := sourceSchemaV500(ctx)
 	return map[int64]resource.StateUpgrader{
-		// Handle upgrades from earlier v500 versions (no schema changes, just version bump)
+		// Handle state written by earlier v5 releases that used schema version 0
+		// with the same shape as v500.
 		0: {
-			PriorSchema:   &targetSchema,
-			StateUpgrader: v500.UpgradeFromV0,
+			PriorSchema:   &v500Schema,
+			StateUpgrader: v501.UpgradeFromV0,
 		},
 		// Handle state moved from legacy cloudflare_record (schema_version=3 from the SDKv2 provider)
 		// When users run `terraform state mv cloudflare_record.x cloudflare_dns_record.x`,
@@ -45,5 +48,19 @@ func (r *DNSRecordResource) UpgradeState(ctx context.Context) map[int64]resource
 			PriorSchema:   &sourceSchema,
 			StateUpgrader: v500.UpgradeFromLegacyV3,
 		},
+		500: {
+			PriorSchema:   &v500Schema,
+			StateUpgrader: v501.UpgradeFromV500,
+		},
 	}
+}
+
+// sourceSchemaV500 freezes the only structural difference between v500 and
+// v501: priority was configurable at the resource root. All other attributes
+// retain the same state representation.
+func sourceSchemaV500(ctx context.Context) schema.Schema {
+	prior := ResourceSchema(ctx)
+	prior.Version = 500
+	prior.Attributes["priority"] = schema.Float64Attribute{Optional: true}
+	return prior
 }

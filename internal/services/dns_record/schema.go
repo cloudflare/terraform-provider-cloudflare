@@ -28,7 +28,7 @@ var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: 501,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"DNS Read",
@@ -61,11 +61,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"priority": schema.Float64Attribute{
-				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 65535),
-				},
+				Description: "Read-only. Do not configure this attribute. The API may return it for compatibility; configure priority using `data.priority` for MX, SRV, and URI records.",
+				Computed:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
@@ -418,5 +415,5 @@ func (r *DNSRecordResource) Schema(ctx context.Context, req resource.SchemaReque
 }
 
 func (r *DNSRecordResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{DNSRecordConfigValidator{}}
 }
