@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Direction to order results.\nAvailable values: \"asc\", \"desc\".",
@@ -37,6 +37,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
+			},
+			"include_expired": schema.BoolAttribute{
+				Description: "When true, includes recently-expired tokens in the response.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

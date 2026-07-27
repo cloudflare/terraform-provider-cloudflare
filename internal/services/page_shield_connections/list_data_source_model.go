@@ -18,7 +18,7 @@ type PageShieldConnectionsListResultListDataSourceEnvelope struct {
 }
 
 type PageShieldConnectionsListDataSourceModel struct {
-	ZoneID              types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID              types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
 	Direction           types.String                                                                 `tfsdk:"direction" query:"direction,optional"`
 	ExcludeCDNCGI       types.Bool                                                                   `tfsdk:"exclude_cdn_cgi" query:"exclude_cdn_cgi,optional"`
 	ExcludeURLs         types.String                                                                 `tfsdk:"exclude_urls" query:"exclude_urls,optional"`

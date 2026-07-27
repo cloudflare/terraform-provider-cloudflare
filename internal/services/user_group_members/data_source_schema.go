@@ -48,27 +48,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
-			"members": schema.ListNestedAttribute{
-				Description: "List of members in the user group.",
+			"email": schema.StringAttribute{
+				Description: "The contact email address of the user.",
 				Computed:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Account member identifier.",
-							Computed:    true,
-						},
-						"email": schema.StringAttribute{
-							Description: "The contact email address of the user.",
-							Computed:    true,
-						},
-						"status": schema.StringAttribute{
-							Description: "The member's status in the account.\nAvailable values: \"accepted\", \"pending\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
-							},
-						},
-					},
+			},
+			"status": schema.StringAttribute{
+				Description: "The member's status in the account.\nAvailable values: \"accepted\", \"pending\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 			},
 		},

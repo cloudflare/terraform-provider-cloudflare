@@ -22,7 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*RateLimitResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version:            500,
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Firewall Services Read",

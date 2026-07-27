@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Specifies the zone associated with the API call.",
-				Optional:    true,
+				Required:    true,
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Specifies if the setting is editable.",

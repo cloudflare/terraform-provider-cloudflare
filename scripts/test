@@ -8,4 +8,4 @@ cd "$(dirname "$0")/.."
 export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go,github.com/gitlab.cfdata.org/cloudflare/sdks/cloudflare-go"
 
 echo "==> Running tests"
-go test -v ./... "$@"
+go test ./... "$@"

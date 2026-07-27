@@ -40,7 +40,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "The account id",
-				Optional:    true,
+				Required:    true,
 			},
 			"alert_interval": schema.StringAttribute{
 				Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",

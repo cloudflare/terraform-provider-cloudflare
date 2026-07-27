@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
-				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'ssh_piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.",
+				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -142,7 +142,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"totp",
 									"biometrics",
 									"security_key",
-									"ssh_piv_key",
+									"piv_key",
 								),
 							),
 						},
@@ -163,10 +163,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
-				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
+			"mfa_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures PIV key requirements for MFA using hardware security keys.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaPivKeyRequirementsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"pin_policy": schema.StringAttribute{
 						Description: "Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).\nAvailable values: \"never\", \"once\", \"always\".",
@@ -180,7 +180,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"require_fips_device": schema.BoolAttribute{
-						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Description: "Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
 						Computed:    true,
 					},
 					"ssh_key_size": schema.ListAttribute{

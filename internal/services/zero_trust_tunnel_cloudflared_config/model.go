@@ -13,13 +13,13 @@ type ZeroTrustTunnelCloudflaredConfigResultEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigModel struct {
-	ID                 types.String                                 `tfsdk:"id" json:"-,computed"`
-	TunnelID           types.String                                 `tfsdk:"tunnel_id" path:"tunnel_id,required"`
-	AccountID          types.String                                 `tfsdk:"account_id" path:"account_id,required"`
-	Config             *ZeroTrustTunnelCloudflaredConfigConfigModel `tfsdk:"config" json:"config,computed_optional"`
-	CreatedAt          timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Source             types.String                                 `tfsdk:"source" json:"source,computed_optional"`
-	Version            types.Int64                                  `tfsdk:"version" json:"version,computed"`
+	ID        types.String                                 `tfsdk:"id" json:"-,computed"`
+	TunnelID  types.String                                 `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	AccountID types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	Config    *ZeroTrustTunnelCloudflaredConfigConfigModel `tfsdk:"config" json:"config,optional"`
+	CreatedAt timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Source    types.String                                 `tfsdk:"source" json:"source,computed"`
+	Version   types.Int64                                  `tfsdk:"version" json:"version,computed"`
 }
 
 func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSON() (data []byte, err error) {
@@ -31,13 +31,12 @@ func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSONForUpdate(state ZeroTr
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
-	Ingress       *[]*ZeroTrustTunnelCloudflaredConfigConfigIngressModel `tfsdk:"ingress" json:"ingress,optional"`
+	Ingress       *[]*ZeroTrustTunnelCloudflaredConfigConfigIngressModel    `tfsdk:"ingress" json:"ingress,optional"`
 	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel `tfsdk:"origin_request" json:"originRequest,optional"`
 }
 
-
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
-	Hostname      types.String                                                     `tfsdk:"hostname" json:"hostname,optional"`
+	Hostname      types.String                                                     `tfsdk:"hostname" json:"hostname,required"`
 	Service       types.String                                                     `tfsdk:"service" json:"service,required"`
 	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel `tfsdk:"origin_request" json:"originRequest,optional"`
 	Path          types.String                                                     `tfsdk:"path" json:"path,optional"`

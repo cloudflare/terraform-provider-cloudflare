@@ -7,12 +7,11 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/stream"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 type StreamsResultListDataSourceEnvelope struct {
@@ -20,7 +19,7 @@ type StreamsResultListDataSourceEnvelope struct {
 }
 
 type StreamsDataSourceModel struct {
-	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	After         timetypes.RFC3339                                          `tfsdk:"after" query:"after,optional" format:"date-time"`
 	Before        timetypes.RFC3339                                          `tfsdk:"before" query:"before,optional" format:"date-time"`
 	Creator       types.String                                               `tfsdk:"creator" query:"creator,optional"`
@@ -96,9 +95,9 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(m.Type.ValueString())
 	}
-	//if !m.VideoName.IsNull() {
-	//	params.VideoName = cloudflare.F(m.VideoName.ValueString())
-	//}
+	if !m.VideoName.IsNull() {
+		params.VideoName = cloudflare.F(m.VideoName.ValueString())
+	}
 
 	return
 }

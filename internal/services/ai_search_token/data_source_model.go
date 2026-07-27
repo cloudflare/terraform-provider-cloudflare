@@ -18,7 +18,7 @@ type AISearchTokenResultDataSourceEnvelope struct {
 
 type AISearchTokenDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
 	CfAPIID    types.String                           `tfsdk:"cf_api_id" json:"cf_api_id,computed"`
 	CreatedAt  timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy  types.String                           `tfsdk:"created_by" json:"created_by,computed"`
@@ -41,6 +41,10 @@ func (m *AISearchTokenDataSourceModel) toReadParams(_ context.Context) (params a
 func (m *AISearchTokenDataSourceModel) toListParams(_ context.Context) (params ai_search.TokenListParams, diags diag.Diagnostics) {
 	params = ai_search.TokenListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
 	return

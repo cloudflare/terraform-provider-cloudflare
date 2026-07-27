@@ -29,16 +29,14 @@ type SecretsStoreSecretsDataSourceModel struct {
 }
 
 func (m *SecretsStoreSecretsDataSourceModel) toListParams(_ context.Context) (params secrets_store.StoreSecretListParams, diags diag.Diagnostics) {
-	mScopes := [][]string{}
+	var mScopes []secrets_store.StoreSecretListParamsScope
 	if m.Scopes != nil {
 		for _, item := range *m.Scopes {
-			mItem := []string{}
 			if item != nil {
 				for _, item := range *item {
-					mItem = append(mItem, item.ValueString())
+					mScopes = append(mScopes, secrets_store.StoreSecretListParamsScope(item.ValueString()))
 				}
 			}
-			mScopes = append(mScopes, mItem)
 		}
 	}
 

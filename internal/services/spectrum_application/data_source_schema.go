@@ -41,10 +41,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Zone identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"argo_smart_routing": schema.BoolAttribute{
-				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
+				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP or UDP applications with traffic_type set to \"direct\".",
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{

@@ -25,6 +25,13 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   -----END CERTIFICATE-----
 
   EOT
+  bundle_method = "ubiquitous"
+  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
+  deploy = "staging"
+  geo_restrictions = {
+    label = "us"
+  }
+  policy = "(country: US) or (region: EU)"
   private_key = <<EOT
   -----BEGIN RSA PRIVATE KEY-----
   MIIEowIBAAKCAQEAwQHoetcl9+5ikGzV6cMzWtWPJHqXT3wpbEkRU9Yz7lgvddmG
@@ -55,12 +62,5 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   -----END RSA PRIVATE KEY-----
 
   EOT
-  bundle_method = "ubiquitous"
-  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
-  deploy = "staging"
-  geo_restrictions = {
-    label = "us"
-  }
-  policy = "(country: US) or (region: EU)"
   type = "sni_custom"
 }

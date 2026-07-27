@@ -1086,9 +1086,6 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			if ptag.metadata {
 				continue
 			}
-			if ptag.name == "-" {
-				continue
-			}
 
 			oldFormat := d.dateFormat
 			dateFormat, ok := parseFormatStructTag(field)

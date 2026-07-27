@@ -73,7 +73,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"entries": schema.ListNestedAttribute{
 				Computed:           true,
 				Optional:           true,
-				DeprecationMessage: "This attribute is deprecated. Use enabled_entries instead.",
+				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         customfield.NewNestedObjectListType[ZeroTrustDLPPredefinedProfileEntriesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{

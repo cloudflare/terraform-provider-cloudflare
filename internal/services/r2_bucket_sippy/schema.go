@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -36,19 +35,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"jurisdiction": schema.StringAttribute{
-				Description: "Jurisdiction of the bucket",
-				Optional:    true,
-				Computed:    true,
-				Default:     stringdefault.StaticString("default"),
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"default",
-						"eu",
-						"fedramp",
-					),
-				},
-			},
 			"destination": schema.SingleNestedAttribute{
 				Description: "R2 bucket to copy objects to.",
 				Optional:    true,
@@ -57,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "ID of a Cloudflare API token.\nThis is the value labelled \"Access Key ID\" when creating an API.\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
 					},
-					"cloud_provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "r2".`,
 						Optional:    true,
 						Validators: []validator.String{
@@ -83,7 +69,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Name of the AWS S3 bucket.",
 						Optional:    true,
 					},
-					"cloud_provider": schema.StringAttribute{
+					"r2_bucket_sippy_provider": schema.StringAttribute{
 						Description: `Available values: "aws", "gcs", "s3".`,
 						Optional:    true,
 						Validators: []validator.String{

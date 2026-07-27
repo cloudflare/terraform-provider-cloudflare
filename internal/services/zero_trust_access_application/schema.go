@@ -1013,7 +1013,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Optional:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text", "file"),
+													stringvalidator.OneOfCaseInsensitive("text"),
 												),
 											},
 											ElementType: types.StringType,
@@ -1023,7 +1023,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Optional:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text", "file"),
+													stringvalidator.OneOfCaseInsensitive("text"),
 												),
 											},
 											ElementType: types.StringType,

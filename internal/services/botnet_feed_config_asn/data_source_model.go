@@ -16,7 +16,7 @@ type BotnetFeedConfigASNResultDataSourceEnvelope struct {
 }
 
 type BotnetFeedConfigASNDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	ASN       types.Int64  `tfsdk:"asn" json:"asn,computed"`
 }
 

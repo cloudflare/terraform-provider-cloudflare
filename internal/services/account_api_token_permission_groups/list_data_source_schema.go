@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Filter by the name of the permission group.\nThe value must be URL-encoded.",
@@ -55,6 +55,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Public ID.",
 							Computed:    true,
+						},
+						"category": schema.StringAttribute{
+							Description: "Product category that this permission group belongs to.\nAvailable values: \"developer_platform\", \"ai_and_machine_learning\", \"dns_and_zones\", \"app_security\", \"rules_and_configuration\", \"cloudflare_one_and_zero_trust\", \"analytics_and_logs\", \"network_services\", \"media\", \"email_and_messaging\", \"cache_and_performance\", \"account_and_billing\", \"other\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"developer_platform",
+									"ai_and_machine_learning",
+									"dns_and_zones",
+									"app_security",
+									"rules_and_configuration",
+									"cloudflare_one_and_zero_trust",
+									"analytics_and_logs",
+									"network_services",
+									"media",
+									"email_and_messaging",
+									"cache_and_performance",
+									"account_and_billing",
+									"other",
+								),
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "Permission Group Name",

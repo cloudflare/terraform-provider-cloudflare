@@ -11,7 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/logpush"
 	"github.com/cloudflare/cloudflare-go/v7/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijsoncustom"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -91,7 +91,7 @@ func (r *LogpushJobResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -116,18 +116,6 @@ func (r *LogpushJobResource) Update(ctx context.Context, req resource.UpdateRequ
 
 	if resp.Diagnostics.HasError() {
 		return
-	}
-
-	// Handle kind field: treat "" and "instant-logs" as semantically equivalent
-	// The API doesn't allow changing kind, and "instant-logs" is deprecated in v5
-	// If both plan and state have semantically equivalent values, omit kind from the update
-	planKind := data.Kind.ValueString()
-	stateKind := state.Kind.ValueString()
-
-	// Treat "" and "instant-logs" as equivalent
-	if (planKind == "" || planKind == "instant-logs") && (stateKind == "" || stateKind == "instant-logs") {
-		// Make kind null so it won't be sent in the update at all
-		data.Kind = types.StringNull()
 	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
@@ -158,18 +146,12 @@ func (r *LogpushJobResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
-
-	// Normalize instant-logs to empty string (v5 no longer supports instant-logs as a valid value)
-	// The API may still return "instant-logs" for backwards compatibility, but we treat it as ""
-	if data.Kind.ValueString() == "instant-logs" {
-		data.Kind = types.StringValue("")
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -210,18 +192,12 @@ func (r *LogpushJobResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.Unmarshal(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
-
-	// Normalize instant-logs to empty string (v5 no longer supports instant-logs as a valid value)
-	// The API may still return "instant-logs" for backwards compatibility, but we treat it as ""
-	if data.Kind.ValueString() == "instant-logs" {
-		data.Kind = types.StringValue("")
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -301,7 +277,7 @@ func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.Unmarshal(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

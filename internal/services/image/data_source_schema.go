@@ -25,17 +25,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Image unique identifier.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Required:    true,
 			},
 			"image_id": schema.StringAttribute{
 				Description: "Image unique identifier.",
 				Required:    true,
-			},
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier tag.",
-				Optional:    true,
 			},
 			"creator": schema.StringAttribute{
 				Description: "Can set the creator field with an internal user ID.",
@@ -43,6 +39,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filename": schema.StringAttribute{
 				Description: "Image file name.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Image unique identifier.",
 				Computed:    true,
 			},
 			"require_signed_urls": schema.BoolAttribute{

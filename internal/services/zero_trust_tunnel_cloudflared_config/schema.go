@@ -48,21 +48,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"config": schema.SingleNestedAttribute{
-				Description: "The tunnel configuration and ingress rules.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"ingress": schema.ListNestedAttribute{
-						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
-						Optional:    true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"hostname": schema.StringAttribute{
-									Description: "Public hostname for this service.",
-									Optional:    true,
-								},
+		"config": schema.SingleNestedAttribute{
+			Description: "The tunnel configuration and ingress rules.",
+			Computed:    true,
+			Optional:    true,
+			CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigModel](ctx),
+			Attributes: map[string]schema.Attribute{
+				"ingress": schema.ListNestedAttribute{
+					Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
+					Optional:    true,
+					NestedObject: schema.NestedAttributeObject{
+						Attributes: map[string]schema.Attribute{
+							"hostname": schema.StringAttribute{
+								Description: "Public hostname for this service.",
+								Optional:    true,
+							},
 								"service": schema.StringAttribute{
 									Description: "Protocol and address of destination server. Supported protocols: http://, https://, unix://, tcp://, ssh://, rdp://, unix+tls://, smb://. Alternatively can return a HTTP status code http_status:[code] e.g. 'http_status:404'.",
 									Required:    true,
@@ -243,7 +243,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"source": schema.StringAttribute{
 				Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.\nAvailable values: \"local\", \"cloudflare\".",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
 				},

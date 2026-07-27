@@ -18,7 +18,7 @@ type StreamWatermarksResultListDataSourceEnvelope struct {
 }
 
 type StreamWatermarksDataSourceModel struct {
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[StreamWatermarksResultDataSourceModel] `tfsdk:"result"`
 }

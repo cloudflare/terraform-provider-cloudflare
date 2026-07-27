@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"fields": schema.ListAttribute{
 				Description: "Comma-separated list of fields to include in the response. When omitted,\nall fields are returned.",

@@ -106,9 +106,6 @@ func (r *OriginCACertificateResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	csr := data.Csr
-	requestedValidity := data.RequestedValidity
-
 	res := new(http.Response)
 	env := OriginCACertificateResultEnvelope{*data}
 	_, err := r.client.OriginCACertificates.Get(
@@ -133,8 +130,6 @@ func (r *OriginCACertificateResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
-	data.Csr = csr
-	data.RequestedValidity = requestedValidity
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

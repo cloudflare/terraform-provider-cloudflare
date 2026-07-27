@@ -17,7 +17,7 @@ type ResourceGroupsResultListDataSourceEnvelope struct {
 }
 
 type ResourceGroupsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ID        types.String                                                      `tfsdk:"id" query:"id,optional"`
 	Name      types.String                                                      `tfsdk:"name" query:"name,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`

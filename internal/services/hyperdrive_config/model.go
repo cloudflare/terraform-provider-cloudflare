@@ -45,7 +45,7 @@ type HyperdriveConfigOriginModel struct {
 }
 
 type HyperdriveConfigCachingModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,optional"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,optional"`
 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,optional"`
 }

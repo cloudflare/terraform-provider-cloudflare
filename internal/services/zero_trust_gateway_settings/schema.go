@@ -143,12 +143,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"read_only": schema.BoolAttribute{
 								Description: "Indicate that this setting was shared via the Orgs API and read only for the current account.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Indicate the account tag of the account that shared this setting.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
 								Description: "Specify whether to suppress detailed information at the bottom of the block page when the mode is customized_block_page.",
@@ -161,7 +159,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version": schema.Int64Attribute{
 								Description: "Indicate the version number of the setting.",
 								Computed:    true,
-								Optional:    true,
 							},
 						},
 					},
@@ -218,11 +215,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"binding_status": schema.StringAttribute{
 								Description: "Indicate the internal certificate status.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"updated_at": schema.StringAttribute{
 								Computed:   true,
-								Optional:   true,
 								CustomType: timetypes.RFC3339Type{},
 							},
 						},

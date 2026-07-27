@@ -259,6 +259,4 @@ func (r *ZeroTrustDeviceCustomProfileResource) ImportState(ctx context.Context, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceCustomProfileResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
-}
+// ModifyPlan is defined in custom.go

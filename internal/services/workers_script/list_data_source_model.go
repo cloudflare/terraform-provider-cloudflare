@@ -18,7 +18,7 @@ type WorkersScriptsResultListDataSourceEnvelope struct {
 }
 
 type WorkersScriptsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Tags      types.String                                                      `tfsdk:"tags" query:"tags,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersScriptsResultDataSourceModel] `tfsdk:"result"`
@@ -43,6 +43,7 @@ type WorkersScriptsResultDataSourceModel struct {
 	CompatibilityFlags customfield.Set[types.String]                                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	CreatedOn          timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag               types.String                                                             `tfsdk:"etag" json:"etag,computed"`
+	Exports            customfield.NestedObjectMap[WorkersScriptsExportsDataSourceModel]        `tfsdk:"exports" json:"exports,computed"`
 	Handlers           customfield.List[types.String]                                           `tfsdk:"handlers" json:"handlers,computed"`
 	HasAssets          types.Bool                                                               `tfsdk:"has_assets" json:"has_assets,computed"`
 	HasModules         types.Bool                                                               `tfsdk:"has_modules" json:"has_modules,computed"`
@@ -65,6 +66,21 @@ type WorkersScriptsResultDataSourceModel struct {
 type WorkersScriptsCacheOptionsDataSourceModel struct {
 	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
+}
+
+type WorkersScriptsExportsDataSourceModel struct {
+	Type          types.String                                                        `tfsdk:"type" json:"type,computed"`
+	Cache         customfield.NestedObject[WorkersScriptsExportsCacheDataSourceModel] `tfsdk:"cache" json:"cache,computed"`
+	State         types.String                                                        `tfsdk:"state" json:"state,computed"`
+	Storage       types.String                                                        `tfsdk:"storage" json:"storage,computed"`
+	Container     types.String                                                        `tfsdk:"container" json:"container,computed"`
+	RenamedTo     types.String                                                        `tfsdk:"renamed_to" json:"renamed_to,computed"`
+	TransferredTo types.String                                                        `tfsdk:"transferred_to" json:"transferred_to,computed"`
+	TransferFrom  types.String                                                        `tfsdk:"transfer_from" json:"transfer_from,computed"`
+}
+
+type WorkersScriptsExportsCacheDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkersScriptsNamedHandlersDataSourceModel struct {

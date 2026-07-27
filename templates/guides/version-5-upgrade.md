@@ -456,7 +456,13 @@ resource "cloudflare_zero_trust_access_policy" "example" {
 
 ## cloudflare_worker_secret
 
-This has been removed. Users should instead use the:
+This has been removed. `tf-migrate` automatically merges each secret into the
+parent `cloudflare_workers_script` resource's `bindings` list as a
+`secret_text` binding and generates a `removed` block for state cleanup. See
+the [migration guide](version-5-migration#cloudflare_workers_secret) for
+details.
+
+If migrating manually, use one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding
@@ -1096,7 +1102,13 @@ terraform plan
 
 ## cloudflare_workers_secret
 
-This has been removed. Users should instead use the:
+This has been removed. `tf-migrate` automatically merges each secret into the
+parent `cloudflare_workers_script` resource's `bindings` list as a
+`secret_text` binding and generates a `removed` block for state cleanup. See
+the [migration guide](version-5-migration#cloudflare_workers_secret) for
+details.
+
+If migrating manually, use one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding

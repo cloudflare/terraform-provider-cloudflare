@@ -56,10 +56,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							int64validator.AtLeast(0),
 						},
 					},
+					"export_filter_id": schema.StringAttribute{
+						Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+						Optional:    true,
+					},
 					"extra_prefixes": schema.ListAttribute{
 						Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
 						Optional:    true,
 						ElementType: types.StringType,
+					},
+					"import_filter_id": schema.StringAttribute{
+						Description: "ID of the BGP filter profile applied to routes received from the customer.",
+						Optional:    true,
 					},
 					"md5_key": schema.StringAttribute{
 						Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
@@ -268,11 +276,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									int64validator.AtLeast(0),
 								},
 							},
+							"export_filter_id": schema.StringAttribute{
+								Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+								Computed:    true,
+							},
 							"extra_prefixes": schema.ListAttribute{
 								Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
 								Computed:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
+							},
+							"import_filter_id": schema.StringAttribute{
+								Description: "ID of the BGP filter profile applied to routes received from the customer.",
+								Computed:    true,
 							},
 							"md5_key": schema.StringAttribute{
 								Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
@@ -449,11 +465,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									int64validator.AtLeast(0),
 								},
 							},
+							"export_filter_id": schema.StringAttribute{
+								Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+								Computed:    true,
+							},
 							"extra_prefixes": schema.ListAttribute{
 								Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
 								Computed:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
+							},
+							"import_filter_id": schema.StringAttribute{
+								Description: "ID of the BGP filter profile applied to routes received from the customer.",
+								Computed:    true,
 							},
 							"md5_key": schema.StringAttribute{
 								Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
@@ -595,7 +619,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *MagicWANGRETunnelResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = customResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *MagicWANGRETunnelResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

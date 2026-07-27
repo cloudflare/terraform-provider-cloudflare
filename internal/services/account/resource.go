@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -63,12 +64,13 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	dataBytes, err := data.marshalCustom()
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
+	env := AccountResultEnvelope{*data}
 	_, err = r.client.Accounts.New(
 		ctx,
 		accounts.AccountNewParams{},
@@ -81,11 +83,12 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(ctx, bytes, data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -107,12 +110,13 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	dataBytes, err := data.marshalCustomForUpdate(*state)
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
+	env := AccountResultEnvelope{*data}
 	_, err = r.client.Accounts.Update(
 		ctx,
 		accounts.AccountUpdateParams{
@@ -127,11 +131,12 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(ctx, bytes, data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -146,6 +151,7 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	res := new(http.Response)
+	env := AccountResultEnvelope{*data}
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
@@ -164,11 +170,12 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(ctx, bytes, data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -214,6 +221,7 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 	data.ID = types.StringValue(path)
 
 	res := new(http.Response)
+	env := AccountResultEnvelope{*data}
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
@@ -227,11 +235,12 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	data, err = unmarshalCustom(ctx, bytes, data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

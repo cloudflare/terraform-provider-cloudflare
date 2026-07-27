@@ -27,16 +27,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Trusted domain identifier",
+				Description: "Trusted domain identifier.",
 				Computed:    true,
 			},
 			"trusted_domain_id": schema.StringAttribute{
-				Description: "Trusted domain identifier",
+				Description: "Trusted domain identifier.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"comments": schema.StringAttribute{
 				Computed: true,

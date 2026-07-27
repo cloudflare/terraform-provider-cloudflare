@@ -40,8 +40,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"foundation_dns": schema.BoolAttribute{
-				Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-				Optional:    true,
+				Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
+				Optional:           true,
+				DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
 			},
 			"multi_provider": schema.BoolAttribute{
 				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
@@ -91,11 +92,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
+						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.advanced\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"cloudflare.standard",
+								"cloudflare.advanced",
 								"custom.account",
 								"custom.tenant",
 								"custom.zone",

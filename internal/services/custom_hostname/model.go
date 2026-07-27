@@ -17,10 +17,10 @@ type CustomHostnameModel struct {
 	ID                        types.String                                                           `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,required"`
-	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,optional"`
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,optional"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,optional"`
 	CustomMetadata            *map[string]types.String                                               `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
+	SSL                       customfield.NestedObject[CustomHostnameSSLModel]                       `tfsdk:"ssl" json:"ssl,computed_optional"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
@@ -33,19 +33,12 @@ func (m CustomHostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CustomHostnameModel) MarshalJSONForUpdate(state CustomHostnameModel) (data []byte, err error) {
-	// Custom marshaling for updates to handle SSL field requirements
-	// The Cloudflare API requires both validation type and method for SSL updates
-	// Issue #3012: Use full marshaling for SSL to ensure all required fields are present
-	if m.SSL != nil {
-		// For SSL updates, use full marshaling instead of patch to include all required fields
-		return apijson.MarshalRoot(m)
-	}
 	return apijson.MarshalForPatch(m, state)
 }
 
 type CustomHostnameSSLModel struct {
 	BundleMethod         types.String                               `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	CertificateAuthority types.String                               `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
+	CertificateAuthority types.String                               `tfsdk:"certificate_authority" json:"certificate_authority,optional"`
 	CloudflareBranding   types.Bool                                 `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional,no_refresh"`
 	CustomCERTBundle     *[]*CustomHostnameSSLCustomCERTBundleModel `tfsdk:"custom_cert_bundle" json:"custom_cert_bundle,optional,no_refresh"`
 	CustomCertificate    types.String                               `tfsdk:"custom_certificate" json:"custom_certificate,optional"`

@@ -64,7 +64,7 @@ func (d *ZeroTrustTunnelCloudflaredTokenDataSource) Read(ctx context.Context, re
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope{}
+	env := ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope{*data}
 	_, err := d.client.ZeroTrust.Tunnels.Cloudflared.Token.Get(
 		ctx,
 		data.TunnelID.ValueString(),
@@ -82,7 +82,7 @@ func (d *ZeroTrustTunnelCloudflaredTokenDataSource) Read(ctx context.Context, re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Token = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -82,6 +83,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 				Optional: true,
 			},
+			"primary": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
+				Default:  booldefault.StaticBool(true),
+			},
+			"site_id": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 			"timezone": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
@@ -130,7 +140,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *MagicTransitConnectorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = CustomResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *MagicTransitConnectorResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

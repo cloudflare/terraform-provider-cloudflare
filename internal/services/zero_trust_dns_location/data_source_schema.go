@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Required: true,
 			},
 			"client_default": schema.BoolAttribute{
 				Description: "Indicate whether this location is the default location.",

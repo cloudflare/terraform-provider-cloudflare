@@ -56,7 +56,7 @@ func (r *MagicWANIPSECTunnelResource) Configure(ctx context.Context, req resourc
 }
 
 func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CustomMagicWANIPSECTunnelModel
+	var data *MagicWANIPSECTunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,7 +70,7 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	res := new(http.Response)
-	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
+	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.IPSECTunnels.New(
 		ctx,
 		magic_transit.IPSECTunnelNewParams{
@@ -79,7 +79,6 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -97,7 +96,7 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 }
 
 func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CustomMagicWANIPSECTunnelModel
+	var data *MagicWANIPSECTunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -105,7 +104,7 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	var state *CustomMagicWANIPSECTunnelModel
+	var state *MagicWANIPSECTunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -119,7 +118,7 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	res := new(http.Response)
-	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
+	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.IPSECTunnels.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -129,14 +128,13 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = unmarshalIPSECTunnelModel(bytes, &env, "modified_ipsec_tunnel", true)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -147,7 +145,7 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 }
 
 func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CustomMagicWANIPSECTunnelModel
+	var data *MagicWANIPSECTunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -156,7 +154,7 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	res := new(http.Response)
-	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
+	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -165,7 +163,6 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -177,27 +174,18 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = unmarshalIPSECTunnelModel(bytes, &env, "ipsec_tunnel", false)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-
-	// avoid unnecessary diff
-	if env.Result.ReplayProtection.IsNull() {
-		env.Result.ReplayProtection = types.BoolValue(false)
-	}
-	if env.Result.AutomaticReturnRouting.IsNull() {
-		env.Result.AutomaticReturnRouting = types.BoolValue(false)
-	}
-
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CustomMagicWANIPSECTunnelModel
+	var data *MagicWANIPSECTunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -222,7 +210,7 @@ func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicWANIPSECTunnelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomMagicWANIPSECTunnelModel = new(CustomMagicWANIPSECTunnelModel)
+	var data = new(MagicWANIPSECTunnelModel)
 
 	path_account_id := ""
 	path_ipsec_tunnel_id := ""
@@ -241,7 +229,7 @@ func (r *MagicWANIPSECTunnelResource) ImportState(ctx context.Context, req resou
 	data.ID = types.StringValue(path_ipsec_tunnel_id)
 
 	res := new(http.Response)
-	env := CustomMagicWANIPSECTunnelResultEnvelope{*data}
+	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
 		path_ipsec_tunnel_id,
@@ -250,14 +238,13 @@ func (r *MagicWANIPSECTunnelResource) ImportState(ctx context.Context, req resou
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = unmarshalIPSECTunnelModel(bytes, &env, "ipsec_tunnel", false)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

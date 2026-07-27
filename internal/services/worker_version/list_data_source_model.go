@@ -19,7 +19,7 @@ type WorkerVersionsResultListDataSourceEnvelope struct {
 }
 
 type WorkerVersionsDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID  types.String                                                      `tfsdk:"worker_id" path:"worker_id,required"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkerVersionsResultDataSourceModel] `tfsdk:"result"`
@@ -34,28 +34,30 @@ func (m *WorkerVersionsDataSourceModel) toListParams(_ context.Context) (params 
 }
 
 type WorkerVersionsResultDataSourceModel struct {
-	ID                  types.String                                                                   `tfsdk:"id" json:"id,computed"`
-	CreatedOn           timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Number              types.Int64                                                                    `tfsdk:"number" json:"number,computed"`
-	URLs                customfield.List[types.String]                                                 `tfsdk:"urls" json:"urls,computed"`
-	Annotations         customfield.NestedObject[WorkerVersionsAnnotationsDataSourceModel]             `tfsdk:"annotations" json:"annotations,computed"`
-	Assets              customfield.NestedObject[WorkerVersionsAssetsDataSourceModel]                  `tfsdk:"assets" json:"assets,computed"`
-	Bindings            customfield.NestedObjectList[WorkerVersionsBindingsDataSourceModel]            `tfsdk:"bindings" json:"bindings,computed"`
-	CacheOptions        customfield.NestedObject[WorkerVersionsCacheOptionsDataSourceModel]            `tfsdk:"cache_options" json:"cache_options,computed"`
-	CompatibilityDate   types.String                                                                   `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
-	CompatibilityFlags  customfield.Set[types.String]                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
-	Containers          customfield.NestedObjectSet[WorkerVersionsContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
-	Limits              customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
-	MainModule          types.String                                                                   `tfsdk:"main_module" json:"main_module,computed"`
-	MainScriptBase64   types.String                                                        `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
-	MigrationTag        types.String                                                                   `tfsdk:"migration_tag" json:"migration_tag,computed"`
-	Migrations          customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
-	Modules             customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]              `tfsdk:"modules" json:"modules,computed"`
-	PackageDependencies customfield.NestedObjectList[WorkerVersionsPackageDependenciesDataSourceModel] `tfsdk:"package_dependencies" json:"package_dependencies,computed"`
-	Placement           customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]               `tfsdk:"placement" json:"placement,computed"`
-	Source              types.String                                                                   `tfsdk:"source" json:"source,computed"`
-	StartupTimeMs       types.Int64                                                                    `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel          types.String                                                                   `tfsdk:"usage_model" json:"usage_model,computed"`
+	ID                    types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	CreatedOn             timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Number                types.Int64                                                                    `tfsdk:"number" json:"number,computed"`
+	URLs                  customfield.List[types.String]                                                 `tfsdk:"urls" json:"urls,computed"`
+	Annotations           customfield.NestedObject[WorkerVersionsAnnotationsDataSourceModel]             `tfsdk:"annotations" json:"annotations,computed"`
+	Assets                customfield.NestedObject[WorkerVersionsAssetsDataSourceModel]                  `tfsdk:"assets" json:"assets,computed"`
+	Bindings              customfield.NestedObjectList[WorkerVersionsBindingsDataSourceModel]            `tfsdk:"bindings" json:"bindings,computed"`
+	CacheOptions          customfield.NestedObject[WorkerVersionsCacheOptionsDataSourceModel]            `tfsdk:"cache_options" json:"cache_options,computed"`
+	CompatibilityDate     types.String                                                                   `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
+	CompatibilityFlags    customfield.Set[types.String]                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
+	Containers            customfield.NestedObjectSet[WorkerVersionsContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
+	Exports               customfield.NestedObjectMap[WorkerVersionsExportsDataSourceModel]              `tfsdk:"exports" json:"exports,computed"`
+	ExportsReconciliation customfield.NestedObject[WorkerVersionsExportsReconciliationDataSourceModel]   `tfsdk:"exports_reconciliation" json:"exports_reconciliation,computed"`
+	Limits                customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
+	MainModule            types.String                                                                   `tfsdk:"main_module" json:"main_module,computed"`
+	MainScriptBase64      types.String                                                                   `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
+	MigrationTag          types.String                                                                   `tfsdk:"migration_tag" json:"migration_tag,computed"`
+	Migrations            customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
+	Modules               customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]              `tfsdk:"modules" json:"modules,computed"`
+	PackageDependencies   customfield.NestedObjectList[WorkerVersionsPackageDependenciesDataSourceModel] `tfsdk:"package_dependencies" json:"package_dependencies,computed"`
+	Placement             customfield.NestedObject[WorkerVersionsPlacementDataSourceModel]               `tfsdk:"placement" json:"placement,computed"`
+	Source                types.String                                                                   `tfsdk:"source" json:"source,computed"`
+	StartupTimeMs         types.Int64                                                                    `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	UsageModel            types.String                                                                   `tfsdk:"usage_model" json:"usage_model,computed"`
 }
 
 type WorkerVersionsAnnotationsDataSourceModel struct {
@@ -148,6 +150,64 @@ type WorkerVersionsCacheOptionsDataSourceModel struct {
 
 type WorkerVersionsContainersDataSourceModel struct {
 	ClassName types.String `tfsdk:"class_name" json:"class_name,computed"`
+}
+
+type WorkerVersionsExportsDataSourceModel struct {
+	Type          types.String                                                        `tfsdk:"type" json:"type,computed"`
+	Cache         customfield.NestedObject[WorkerVersionsExportsCacheDataSourceModel] `tfsdk:"cache" json:"cache,computed"`
+	State         types.String                                                        `tfsdk:"state" json:"state,computed"`
+	Storage       types.String                                                        `tfsdk:"storage" json:"storage,computed"`
+	Container     types.String                                                        `tfsdk:"container" json:"container,computed"`
+	RenamedTo     types.String                                                        `tfsdk:"renamed_to" json:"renamed_to,computed"`
+	TransferredTo types.String                                                        `tfsdk:"transferred_to" json:"transferred_to,computed"`
+	TransferFrom  types.String                                                        `tfsdk:"transfer_from" json:"transfer_from,computed"`
+}
+
+type WorkerVersionsExportsCacheDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type WorkerVersionsExportsReconciliationDataSourceModel struct {
+	Created          customfield.List[types.String]                                                                  `tfsdk:"created" json:"created,computed"`
+	Deleted          customfield.List[types.String]                                                                  `tfsdk:"deleted" json:"deleted,computed"`
+	Info             customfield.NestedObjectList[WorkerVersionsExportsReconciliationInfoDataSourceModel]            `tfsdk:"info" json:"info,computed"`
+	RemovableEntries customfield.List[types.String]                                                                  `tfsdk:"removable_entries" json:"removable_entries,computed"`
+	Renamed          customfield.NestedObjectList[WorkerVersionsExportsReconciliationRenamedDataSourceModel]         `tfsdk:"renamed" json:"renamed,computed"`
+	TransferPending  customfield.NestedObjectList[WorkerVersionsExportsReconciliationTransferPendingDataSourceModel] `tfsdk:"transfer_pending" json:"transfer_pending,computed"`
+	Transferred      customfield.NestedObjectList[WorkerVersionsExportsReconciliationTransferredDataSourceModel]     `tfsdk:"transferred" json:"transferred,computed"`
+	Updated          customfield.List[types.String]                                                                  `tfsdk:"updated" json:"updated,computed"`
+	Warnings         customfield.NestedObjectList[WorkerVersionsExportsReconciliationWarningsDataSourceModel]        `tfsdk:"warnings" json:"warnings,computed"`
+}
+
+type WorkerVersionsExportsReconciliationInfoDataSourceModel struct {
+	Class              types.String                   `tfsdk:"class" json:"class,computed"`
+	Message            types.String                   `tfsdk:"message" json:"message,computed"`
+	Scenario           types.String                   `tfsdk:"scenario" json:"scenario,computed"`
+	NamespaceID        types.String                   `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	ReferencingScripts customfield.List[types.String] `tfsdk:"referencing_scripts" json:"referencing_scripts,computed"`
+}
+
+type WorkerVersionsExportsReconciliationRenamedDataSourceModel struct {
+	From types.String `tfsdk:"from" json:"from,computed"`
+	To   types.String `tfsdk:"to" json:"to,computed"`
+}
+
+type WorkerVersionsExportsReconciliationTransferPendingDataSourceModel struct {
+	Class types.String `tfsdk:"class" json:"class,computed"`
+	From  types.String `tfsdk:"from" json:"from,computed"`
+}
+
+type WorkerVersionsExportsReconciliationTransferredDataSourceModel struct {
+	Class types.String `tfsdk:"class" json:"class,computed"`
+	Phase types.String `tfsdk:"phase" json:"phase,computed"`
+	To    types.String `tfsdk:"to" json:"to,computed"`
+}
+
+type WorkerVersionsExportsReconciliationWarningsDataSourceModel struct {
+	Class       types.String `tfsdk:"class" json:"class,computed"`
+	Message     types.String `tfsdk:"message" json:"message,computed"`
+	Scenario    types.String `tfsdk:"scenario" json:"scenario,computed"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
 }
 
 type WorkerVersionsLimitsDataSourceModel struct {

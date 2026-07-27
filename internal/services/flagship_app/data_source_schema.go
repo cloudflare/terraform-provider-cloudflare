@@ -17,6 +17,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Flagship Read",
+				"Flagship Write",
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
@@ -42,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"updated_by": schema.StringAttribute{
-				Description: "Email of the actor who last modified the app, or `edge-gateway` for gateway-authenticated changes.",
+				Description: "Email of the actor who last modified the app, or `unknown` when unavailable.",
 				Computed:    true,
 			},
 		},

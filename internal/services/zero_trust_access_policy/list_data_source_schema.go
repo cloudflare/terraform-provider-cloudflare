@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -99,7 +99,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text"),
+													stringvalidator.OneOfCaseInsensitive("text", "file"),
 												),
 											},
 											CustomType:  customfield.NewListType[types.String](ctx),
@@ -110,7 +110,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text"),
+													stringvalidator.OneOfCaseInsensitive("text", "file"),
 												),
 											},
 											CustomType:  customfield.NewListType[types.String](ctx),

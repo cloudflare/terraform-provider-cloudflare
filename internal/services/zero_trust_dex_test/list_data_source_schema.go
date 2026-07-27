@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -29,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Unique identifier linked to an account.",
-				Optional:    true,
+				Required:    true,
 			},
 			"kind": schema.StringAttribute{
 				Description: "Filter by test type.\nAvailable values: \"http\", \"traceroute\".",
@@ -96,13 +97,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the DEX test. Must be unique.",
 							Computed:    true,
 						},
+						"created": schema.StringAttribute{
+							Description: "Date the test was created, in RFC 3339 format.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
 						"description": schema.StringAttribute{
 							Description: "Additional details about the test.",
 							Computed:    true,
 						},
 						"target_policies": schema.ListNestedAttribute{
 							Description: "DEX rules targeted by this test",
-							Optional:    true,
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestsTargetPoliciesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
@@ -128,6 +133,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"test_id": schema.StringAttribute{
 							Description: "The unique identifier for the test.",
 							Computed:    true,
+						},
+						"updated": schema.StringAttribute{
+							Description: "Date the test was last updated, in RFC 3339 format.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

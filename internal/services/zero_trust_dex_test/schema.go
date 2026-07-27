@@ -41,8 +41,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
 				Description:   "Unique identifier linked to an account.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
@@ -63,11 +63,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Optional:    true,
+						Required:    true,
 					},
 					"kind": schema.StringAttribute{
 						Description: "The type of test.",
-						Optional:    true,
+						Required:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP request method type.",

@@ -19,7 +19,7 @@ type ZeroTrustTunnelCloudflaredsResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
-	AccountID     types.String                                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ExcludePrefix types.String                                                                   `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
 	ExistedAt     types.String                                                                   `tfsdk:"existed_at" query:"existed_at,optional"`
 	IncludePrefix types.String                                                                   `tfsdk:"include_prefix" query:"include_prefix,optional"`
@@ -34,6 +34,10 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
+	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
+	diags.Append(errs...)
+	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
+	diags.Append(errs...)
 
 	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
@@ -61,18 +65,10 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.UUID = cloudflare.F(m.UUID.ValueString())
 	}
 	if !m.WasActiveAt.IsNull() {
-		mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
-		diags.Append(errs...)
-		if errs == nil {
-			params.WasActiveAt = cloudflare.F(mWasActiveAt)
-		}
+		params.WasActiveAt = cloudflare.F(mWasActiveAt)
 	}
 	if !m.WasInactiveAt.IsNull() {
-		mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
-		diags.Append(errs...)
-		if errs == nil {
-			params.WasInactiveAt = cloudflare.F(mWasInactiveAt)
-		}
+		params.WasInactiveAt = cloudflare.F(mWasInactiveAt)
 	}
 
 	return

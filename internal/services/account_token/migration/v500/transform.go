@@ -2,10 +2,8 @@ package v500
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Transform converts v0 source state to v500 target state.
@@ -22,37 +20,28 @@ func Transform(ctx context.Context, source SourceAccountTokenModelV0) (*TargetAc
 	// Convert policies
 	upgradedPolicies := make([]TargetPolicyV500, 0, len(source.Policies))
 	for _, oldPolicy := range source.Policies {
-		// Convert resources map to JSON string
-		resourcesMap := make(map[string]string)
-		for k, v := range oldPolicy.Resources {
-			if !v.IsNull() && !v.IsUnknown() {
-				resourcesMap[k] = v.ValueString()
-			}
-		}
-
-		resourcesJSON, err := json.Marshal(resourcesMap)
-		if err != nil {
-			diags.AddError(
-				"State Upgrade Error",
-				"Failed to convert resources to JSON: "+err.Error(),
-			)
-			return nil, diags
-		}
-
-		// Convert permission groups (removing computed fields: meta, name)
+		// Convert permission groups (preserving meta and name)
 		upgradedPermGroups := make([]TargetPermissionGroupV500, 0, len(oldPolicy.PermissionGroups))
 		for _, oldPG := range oldPolicy.PermissionGroups {
-			upgradedPermGroups = append(upgradedPermGroups, TargetPermissionGroupV500{
-				ID: oldPG.ID,
-			})
+			pg := TargetPermissionGroupV500{
+				ID:   oldPG.ID,
+				Name: oldPG.Name,
+			}
+			if oldPG.Meta != nil {
+				pg.Meta = &TargetMetaV500{
+					Key:   oldPG.Meta.Key,
+					Value: oldPG.Meta.Value,
+				}
+			}
+			upgradedPermGroups = append(upgradedPermGroups, pg)
 		}
 
 		upgradedPolicies = append(upgradedPolicies, TargetPolicyV500{
+			ID:               oldPolicy.ID,
 			Effect:           oldPolicy.Effect,
 			PermissionGroups: upgradedPermGroups,
-			Resources:        types.StringValue(string(resourcesJSON)),
+			Resources:        oldPolicy.Resources,
 		})
-		// Note: policy.ID is intentionally dropped — no longer in v500 schema
 	}
 
 	target := &TargetAccountTokenModelV500{

@@ -20,7 +20,7 @@ type DNSRecordsResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordsDataSourceModel struct {
-	ZoneID                types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
 	Search                types.String                                                  `tfsdk:"search" query:"search,optional"`
 	ShadowedByName        types.String                       `tfsdk:"shadowed_by_name" query:"shadowed_by_name,optional"`
 	ShadowingName         types.String                       `tfsdk:"shadowing_name" query:"shadowing_name,optional"`

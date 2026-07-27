@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Required: true,
 			},
 			"namespace": schema.StringAttribute{
 				Description: "Filter by namespace.",
@@ -62,57 +62,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.",
-							Computed:    true,
-						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
-						"modified_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"ai_gateway_id": schema.StringAttribute{
 							Computed: true,
 						},
 						"aisearch_model": schema.StringAttribute{
-							Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-									"@cf/zai-org/glm-4.7-flash",
-									"@cf/meta/llama-3.1-8b-instruct-fast",
-									"@cf/meta/llama-3.1-8b-instruct-fp8",
-									"@cf/meta/llama-4-scout-17b-16e-instruct",
-									"@cf/qwen/qwen3-30b-a3b-fp8",
-									"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-									"@cf/moonshotai/kimi-k2-instruct",
-									"@cf/google/gemma-3-12b-it",
-									"@cf/google/gemma-4-26b-a4b-it",
-									"@cf/moonshotai/kimi-k2.5",
-									"anthropic/claude-3-7-sonnet",
-									"anthropic/claude-sonnet-4",
-									"anthropic/claude-opus-4",
-									"anthropic/claude-3-5-haiku",
-									"cerebras/qwen-3-235b-a22b-instruct",
-									"cerebras/qwen-3-235b-a22b-thinking",
-									"cerebras/llama-3.3-70b",
-									"cerebras/llama-4-maverick-17b-128e-instruct",
-									"cerebras/llama-4-scout-17b-16e-instruct",
-									"cerebras/gpt-oss-120b",
-									"google-ai-studio/gemini-2.5-flash",
-									"google-ai-studio/gemini-2.5-pro",
-									"grok/grok-4",
-									"groq/llama-3.3-70b-versatile",
-									"groq/llama-3.1-8b-instant",
-									"openai/gpt-5",
-									"openai/gpt-5-mini",
-									"openai/gpt-5-nano",
-									"",
-								),
-							},
+							Computed: true,
 						},
 						"cache": schema.BoolAttribute{
 							Computed: true,
@@ -130,7 +86,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"cache_ttl": schema.Float64Attribute{
-							Description: "Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).\nAvailable values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.",
+							Description: "Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.",
 							Computed:    true,
 							Validators: []validator.Float64{
 								float64validator.OneOf(
@@ -147,17 +103,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"chunk_overlap": schema.Int64Attribute{
+						"chunk": schema.BoolAttribute{
 							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.Between(0, 30),
-							},
 						},
-						"chunk_size": schema.Int64Attribute{
+						"chunk_overlap": schema.Float64Attribute{
 							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(64),
-							},
+						},
+						"chunk_size": schema.Float64Attribute{
+							Computed: true,
+						},
+						"created_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"created_by": schema.StringAttribute{
 							Computed: true,
@@ -186,22 +143,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"embedding_model": schema.StringAttribute{
-							Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"@cf/qwen/qwen3-embedding-0.6b",
-									"@cf/baai/bge-m3",
-									"@cf/baai/bge-large-en-v1.5",
-									"@cf/google/embeddinggemma-300m",
-									"google-ai-studio/gemini-embedding-001",
-									"google-ai-studio/gemini-embedding-2-preview",
-									"google-ai-studio/gemini-embedding-2",
-									"openai/text-embedding-3-small",
-									"openai/text-embedding-3-large",
-									"",
-								),
-							},
+							Computed: true,
 						},
 						"enable": schema.BoolAttribute{
 							Computed: true,
@@ -217,22 +159,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"hybrid_search_enabled": schema.BoolAttribute{
-							Description:        "Deprecated — use index_method instead.",
-							Computed:           true,
-							DeprecationMessage: "This attribute is deprecated.",
+							Computed: true,
 						},
 						"index_method": schema.SingleNestedAttribute{
-							Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[AISearchInstancesIndexMethodDataSourceModel](ctx),
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[AISearchInstancesIndexMethodDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"keyword": schema.BoolAttribute{
-									Description: "Enable keyword (BM25) storage backend.",
-									Computed:    true,
+									Computed: true,
 								},
 								"vector": schema.BoolAttribute{
-									Description: "Enable vector (embedding) storage backend.",
-									Computed:    true,
+									Computed: true,
 								},
 							},
 						},
@@ -241,7 +178,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[AISearchInstancesIndexingOptionsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"keyword_tokenizer": schema.StringAttribute{
-									Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
+									Description: `Available values: "porter", "trigram".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
@@ -253,11 +190,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
-						"max_num_results": schema.Int64Attribute{
+						"max_num_results": schema.Float64Attribute{
 							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 50),
-							},
 						},
 						"metadata": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -270,6 +204,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 							},
+						},
+						"modified_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"modified_by": schema.StringAttribute{
 							Computed: true,
@@ -297,16 +235,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectType[AISearchInstancesPublicEndpointParamsChatCompletionsEndpointDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disabled": schema.BoolAttribute{
-											Description: "Disable chat completions endpoint for this public endpoint",
-											Computed:    true,
+											Computed: true,
 										},
 									},
 								},
 								"custom_domains": schema.ListAttribute{
-									Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
+								},
+								"default_domain_enabled": schema.BoolAttribute{
+									Computed: true,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
@@ -319,8 +258,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed: true,
 										},
 										"disabled": schema.BoolAttribute{
-											Description: "Disable MCP endpoint for this public endpoint",
-											Computed:    true,
+											Computed: true,
 										},
 									},
 								},
@@ -354,8 +292,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectType[AISearchInstancesPublicEndpointParamsSearchEndpointDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disabled": schema.BoolAttribute{
-											Description: "Disable search endpoint for this public endpoint",
-											Computed:    true,
+											Computed: true,
 										},
 									},
 								},
@@ -365,28 +302,34 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"reranking_model": schema.StringAttribute{
-							Description: `Available values: "@cf/baai/bge-reranker-base", "".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("@cf/baai/bge-reranker-base", ""),
-							},
+							Computed: true,
 						},
 						"retrieval_options": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[AISearchInstancesRetrievalOptionsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"boost_by": schema.ListNestedAttribute{
-									Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
-									Computed:    true,
-									CustomType:  customfield.NewNestedObjectListType[AISearchInstancesRetrievalOptionsBoostByDataSourceModel](ctx),
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectListType[AISearchInstancesRetrievalOptionsBoostByDataSourceModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"field": schema.StringAttribute{
-												Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
+												Computed: true,
+											},
+											"data_type": schema.StringAttribute{
+												Description: `Available values: "number", "datetime", "text", "boolean".`,
 												Computed:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive(
+														"number",
+														"datetime",
+														"text",
+														"boolean",
+													),
+												},
 											},
 											"direction": schema.StringAttribute{
-												Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+												Description: `Available values: "asc", "desc", "exists", "not_exists".`,
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -401,7 +344,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"keyword_match_mode": schema.StringAttribute{
-									Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.\nAvailable values: \"and\", \"or\".",
+									Description: `Available values: "and", "or".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("and", "or"),
@@ -410,51 +353,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"rewrite_model": schema.StringAttribute{
-							Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-									"@cf/zai-org/glm-4.7-flash",
-									"@cf/meta/llama-3.1-8b-instruct-fast",
-									"@cf/meta/llama-3.1-8b-instruct-fp8",
-									"@cf/meta/llama-4-scout-17b-16e-instruct",
-									"@cf/qwen/qwen3-30b-a3b-fp8",
-									"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-									"@cf/moonshotai/kimi-k2-instruct",
-									"@cf/google/gemma-3-12b-it",
-									"@cf/google/gemma-4-26b-a4b-it",
-									"@cf/moonshotai/kimi-k2.5",
-									"anthropic/claude-3-7-sonnet",
-									"anthropic/claude-sonnet-4",
-									"anthropic/claude-opus-4",
-									"anthropic/claude-3-5-haiku",
-									"cerebras/qwen-3-235b-a22b-instruct",
-									"cerebras/qwen-3-235b-a22b-thinking",
-									"cerebras/llama-3.3-70b",
-									"cerebras/llama-4-maverick-17b-128e-instruct",
-									"cerebras/llama-4-scout-17b-16e-instruct",
-									"cerebras/gpt-oss-120b",
-									"google-ai-studio/gemini-2.5-flash",
-									"google-ai-studio/gemini-2.5-pro",
-									"grok/grok-4",
-									"groq/llama-3.3-70b-versatile",
-									"groq/llama-3.1-8b-instant",
-									"openai/gpt-5",
-									"openai/gpt-5-mini",
-									"openai/gpt-5-nano",
-									"",
-								),
-							},
+							Computed: true,
 						},
 						"rewrite_query": schema.BoolAttribute{
 							Computed: true,
 						},
 						"score_threshold": schema.Float64Attribute{
 							Computed: true,
-							Validators: []validator.Float64{
-								float64validator.Between(0, 1),
-							},
 						},
 						"source": schema.StringAttribute{
 							Computed: true,
@@ -464,13 +369,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"exclude_items": schema.ListAttribute{
-									Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)",
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"include_items": schema.ListAttribute{
-									Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)",
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
@@ -490,24 +393,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"content_selector": schema.ListNestedAttribute{
-													Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
-													Computed:    true,
-													CustomType:  customfield.NewNestedObjectListType[AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
+													Computed:   true,
+													CustomType: customfield.NewNestedObjectListType[AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
 													NestedObject: schema.NestedAttributeObject{
 														Attributes: map[string]schema.Attribute{
 															"path": schema.StringAttribute{
-																Description: "Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.",
-																Computed:    true,
+																Computed: true,
 															},
 															"selector": schema.StringAttribute{
-																Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
-																Computed:    true,
+																Computed: true,
 															},
 														},
 													},
 												},
 												"include_headers": schema.MapAttribute{
-													Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
 													Computed:    true,
 													CustomType:  customfield.NewMapType[types.String](ctx),
 													ElementType: types.StringType,
@@ -516,7 +415,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Computed: true,
 												},
 												"specific_sitemaps": schema.ListAttribute{
-													Description: "List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.",
 													Computed:    true,
 													CustomType:  customfield.NewListType[types.String](ctx),
 													ElementType: types.StringType,
@@ -527,33 +425,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"parse_type": schema.StringAttribute{
-											Description: `Available values: "sitemap", "feed-rss", "crawl".`,
+											Description: `Available values: "sitemap", "crawl".`,
 											Computed:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive(
-													"sitemap",
-													"feed-rss",
-													"crawl",
-												),
-											},
-										},
-										"store_options": schema.SingleNestedAttribute{
-											Computed:   true,
-											CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel](ctx),
-											Attributes: map[string]schema.Attribute{
-												"storage_id": schema.StringAttribute{
-													Computed: true,
-												},
-												"r2_jurisdiction": schema.StringAttribute{
-													Computed: true,
-												},
-												"storage_type": schema.StringAttribute{
-													Description: `Available values: "r2".`,
-													Computed:    true,
-													Validators: []validator.String{
-														stringvalidator.OneOfCaseInsensitive("r2"),
-													},
-												},
+												stringvalidator.OneOfCaseInsensitive("sitemap", "crawl"),
 											},
 										},
 									},
@@ -563,8 +438,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"status": schema.StringAttribute{
 							Computed: true,
 						},
+						"summarization": schema.BoolAttribute{
+							Computed: true,
+						},
+						"summarization_model": schema.StringAttribute{
+							Computed: true,
+						},
 						"sync_interval": schema.Float64Attribute{
-							Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
+							Description: "Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
 							Computed:    true,
 							Validators: []validator.Float64{
 								float64validator.OneOf(
@@ -578,6 +459,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									86400,
 								),
 							},
+						},
+						"system_prompt_aisearch": schema.StringAttribute{
+							Computed: true,
+						},
+						"system_prompt_index_summarization": schema.StringAttribute{
+							Computed: true,
+						},
+						"system_prompt_rewrite_query": schema.StringAttribute{
+							Computed: true,
 						},
 						"token_id": schema.StringAttribute{
 							Computed: true,

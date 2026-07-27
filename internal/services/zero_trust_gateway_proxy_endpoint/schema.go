@@ -31,7 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"kind": schema.StringAttribute{
 				Description: "The proxy endpoint kind\nAvailable values: \"ip\", \"identity\".",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ip", "identity"),

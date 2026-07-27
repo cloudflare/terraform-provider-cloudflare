@@ -20,7 +20,7 @@ type PagesProjectResultDataSourceEnvelope struct {
 type PagesProjectDataSourceModel struct {
 	ID                   types.String                                                             `tfsdk:"id" path:"project_name,computed"`
 	ProjectName          types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
-	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID            types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn            timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Framework            types.String                                                             `tfsdk:"framework" json:"framework,computed"`
 	FrameworkVersion     types.String                                                             `tfsdk:"framework_version" json:"framework_version,computed"`
@@ -72,6 +72,7 @@ type PagesProjectCanonicalDeploymentDataSourceModel struct {
 	Source            customfield.NestedObject[PagesProjectCanonicalDeploymentSourceDataSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectCanonicalDeploymentStagesDataSourceModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                              `tfsdk:"url" json:"url,computed"`
+	SkipReason        types.String                                                                              `tfsdk:"skip_reason" json:"skip_reason,computed"`
 	UsesFunctions     types.Bool                                                                                `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 
@@ -334,6 +335,7 @@ type PagesProjectLatestDeploymentDataSourceModel struct {
 	Source            customfield.NestedObject[PagesProjectLatestDeploymentSourceDataSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectLatestDeploymentStagesDataSourceModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                           `tfsdk:"url" json:"url,computed"`
+	SkipReason        types.String                                                                           `tfsdk:"skip_reason" json:"skip_reason,computed"`
 	UsesFunctions     types.Bool                                                                             `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 

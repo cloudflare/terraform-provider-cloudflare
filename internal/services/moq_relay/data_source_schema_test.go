@@ -4,9 +4,10 @@ package moq_relay_test
 
 import (
 	"context"
+	"testing"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
-	"testing"
 )
 
 func TestMoQRelayDataSourceModelSchemaParity(t *testing.T) {

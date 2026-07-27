@@ -32,29 +32,16 @@ func (m propagationPolicyDefaultModifier) MarkdownDescription(ctx context.Contex
 }
 
 func (m propagationPolicyDefaultModifier) PlanModifyString(_ context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
-	// Destroy plan -- nothing to do.
 	if req.Plan.Raw.IsNull() {
 		return
 	}
-
-	// If the user explicitly configured propagation_policy, keep their value.
 	if !req.ConfigValue.IsNull() && !req.ConfigValue.IsUnknown() {
 		return
 	}
-
-	// User did not configure it.
-
-	// First create: no prior resource state at all. Mark unknown so the
-	// provider can accept whatever the API returns without triggering an
-	// inconsistent-result error.
 	if req.State.Raw.IsNull() {
 		resp.PlanValue = types.StringUnknown()
 		return
 	}
-
-	// Resource already exists. Preserve the state value (which may itself be
-	// null if the API never returned propagation_policy). This keeps plans
-	// stable after apply.
 	resp.PlanValue = req.StateValue
 }
 

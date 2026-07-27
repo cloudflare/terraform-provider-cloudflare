@@ -54,15 +54,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString("legacy_custom"),
 			},
 			"certificate": schema.StringAttribute{
-				Description:   "The zone's SSL certificate or certificate and the intermediate(s).",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"private_key": schema.StringAttribute{
-				Description:   "The zone's private key.",
-				Required:      true,
-				Sensitive:     true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The zone's SSL certificate or certificate and the intermediate(s).",
+				Required:    true,
 			},
 			"custom_csr_id": schema.StringAttribute{
 				Description: "The identifier for the Custom CSR that was used.",
@@ -71,6 +64,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"policy": schema.StringAttribute{
 				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.\nNote: The API accepts this field as either \"policy\" or \"policy_restrictions\" in requests. Responses return this field as \"policy_restrictions\".",
 				Optional:    true,
+			},
+			"private_key": schema.StringAttribute{
+				Description: "The zone's private key. Not required if custom_csr_id is provided, in which case the private key is retrieved from the CSR record held by Cloudflare.",
+				Optional:    true,
+				Sensitive:   true,
 			},
 			"geo_restrictions": schema.SingleNestedAttribute{
 				Description: "Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance.",
@@ -103,11 +101,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("ubiquitous"),
 			},
 			"deploy": schema.StringAttribute{
-				Description: "The environment to deploy the certificate to.\nAvailable values: \"staging\", \"production\".",
+				Description: "The environment to deploy the certificate to, defaults to production.\nAvailable values: \"staging\", \"production\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("staging", "production"),
 				},
+				Default: stringdefault.StaticString("production"),
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",

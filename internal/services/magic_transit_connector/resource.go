@@ -56,7 +56,7 @@ func (r *MagicTransitConnectorResource) Configure(ctx context.Context, req resou
 }
 
 func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CustomMagicTransitConnectorModel
+	var data *MagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,7 +70,7 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 		return
 	}
 	res := new(http.Response)
-	env := CustomMagicTransitConnectorResultEnvelope{*data}
+	env := MagicTransitConnectorResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Connectors.New(
 		ctx,
 		magic_transit.ConnectorNewParams{
@@ -96,7 +96,7 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CustomMagicTransitConnectorModel
+	var data *MagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	var state *CustomMagicTransitConnectorModel
+	var state *MagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -117,9 +117,8 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-
 	res := new(http.Response)
-	env := CustomMagicTransitConnectorResultEnvelope{*data}
+	env := MagicTransitConnectorResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Connectors.Edit(
 		ctx,
 		data.ID.ValueString(),
@@ -146,7 +145,7 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CustomMagicTransitConnectorModel
+	var data *MagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,11 +153,8 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	// Preserve the license_key from state since it's only returned on creation
-	existingLicenseKey := data.LicenseKey
-
 	res := new(http.Response)
-	env := CustomMagicTransitConnectorResultEnvelope{*data}
+	env := MagicTransitConnectorResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Connectors.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -185,14 +181,11 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 	}
 	data = &env.Result
 
-	// Restore the license_key from state since the API doesn't return it after creation
-	data.LicenseKey = existingLicenseKey
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CustomMagicTransitConnectorModel
+	var data *MagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -217,7 +210,7 @@ func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomMagicTransitConnectorModel = new(CustomMagicTransitConnectorModel)
+	var data = new(MagicTransitConnectorModel)
 
 	path_account_id := ""
 	path_connector_id := ""
@@ -236,7 +229,7 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 	data.ID = types.StringValue(path_connector_id)
 
 	res := new(http.Response)
-	env := CustomMagicTransitConnectorResultEnvelope{*data}
+	env := MagicTransitConnectorResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Connectors.Get(
 		ctx,
 		path_connector_id,

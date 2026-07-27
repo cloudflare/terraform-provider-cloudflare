@@ -3,9 +3,8 @@
 package zero_trust_access_custom_page
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustAccessCustomPageResultEnvelope struct {

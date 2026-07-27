@@ -37,7 +37,7 @@ func (m ZeroTrustAccessAIControlsMcpPortalModel) MarshalJSONForUpdate(state Zero
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersModel struct {
-	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required,no_refresh"`
+	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required"`
 	DefaultDisabled types.Bool                                                       `tfsdk:"default_disabled" json:"default_disabled,computed_optional"`
 	OnBehalf        types.Bool                                                       `tfsdk:"on_behalf" json:"on_behalf,computed_optional"`
 	UpdatedPrompts  *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional"`

@@ -88,7 +88,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"url": schema.StringAttribute{
-											Description: "Upstream MOQT server publisher URL.",
+											Description: "Upstream MOQT server publisher URL. Must be an absolute URL with a\nhost and a scheme crique can dial: moqt:// (raw QUIC) or https://\n(WebTransport). Validated on update (PUT); rejected with 21013.",
 											Computed:    true,
 										},
 									},

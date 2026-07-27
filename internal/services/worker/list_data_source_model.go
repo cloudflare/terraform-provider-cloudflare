@@ -18,7 +18,7 @@ type WorkersResultListDataSourceEnvelope struct {
 }
 
 type WorkersDataSourceModel struct {
-	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	Order     types.String                                               `tfsdk:"order" query:"order,computed_optional"`
 	OrderBy   types.String                                               `tfsdk:"order_by" query:"order_by,computed_optional"`
 	MaxItems  types.Int64                                                `tfsdk:"max_items"`

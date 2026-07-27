@@ -40,16 +40,14 @@ func (m *SecretsStoreSecretDataSourceModel) toReadParams(_ context.Context) (par
 }
 
 func (m *SecretsStoreSecretDataSourceModel) toListParams(_ context.Context) (params secrets_store.StoreSecretListParams, diags diag.Diagnostics) {
-	mFilterScopes := [][]string{}
+	var mFilterScopes []secrets_store.StoreSecretListParamsScope
 	if m.Filter.Scopes != nil {
 		for _, item := range *m.Filter.Scopes {
-			mFilterItem := []string{}
 			if item != nil {
 				for _, item := range *item {
-					mFilterItem = append(mFilterItem, item.ValueString())
+					mFilterScopes = append(mFilterScopes, secrets_store.StoreSecretListParamsScope(item.ValueString()))
 				}
 			}
-			mFilterScopes = append(mFilterScopes, mFilterItem)
 		}
 	}
 

@@ -26,23 +26,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID for this resource.",
-				Optional:    true,
-			},
-			"list_id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
 				Required:    true,
 			},
 			"item_id": schema.StringAttribute{
 				Description: "Defines the unique ID of the item in the List.",
 				Required:    true,
 			},
-
+			"list_id": schema.StringAttribute{
+				Description: "The unique ID of the list.",
+				Required:    true,
+			},
+			"asn": schema.Int64Attribute{
+				Description: "Defines a non-negative 32 bit integer.",
+				Computed:    true,
+			},
+			"comment": schema.StringAttribute{
+				Description: "Defines an informative summary of the list item.",
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the list was created.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Defines the unique ID of the item in the List.",
 				Computed:    true,
 			},
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the list was last modified.",
 				Computed:    true,
 			},
 			"hostname": schema.SingleNestedAttribute{
@@ -95,22 +110,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 				},
-			},
-			"asn": schema.Int64Attribute{
-				Description: "Defines a non-negative 32 bit integer.",
-				Computed:    true,
-			},
-			"comment": schema.StringAttribute{
-				Description: "Defines an informative summary of the list item.",
-				Computed:    true,
-			},
-			"created_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the list was created.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the list was last modified.",
-				Computed:    true,
 			},
 		},
 	}

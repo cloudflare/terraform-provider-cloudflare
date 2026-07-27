@@ -27,7 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"enforce_dns_only": schema.BoolAttribute{
 				Description: "When enabled, forces all proxied DNS records in the account to behave as DNS-only at the edge, regardless of each record's individual proxy setting. Note that this account-level override does not modify the records themselves; it only affects how they are served at the edge. See more on [Enforce DNS-only](https://developers.cloudflare.com/dns/proxy-status/enforce-dns-only).",
@@ -42,8 +42,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"foundation_dns": schema.BoolAttribute{
-						Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-						Computed:    true,
+						Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
+						Computed:           true,
+						DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
 					},
 					"internal_dns": schema.SingleNestedAttribute{
 						Description: "Settings for this internal zone.",
@@ -66,11 +67,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsNameserversDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"type": schema.StringAttribute{
-								Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\".",
+								Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.advanced\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"cloudflare.standard",
+										"cloudflare.advanced",
 										"cloudflare.standard.random",
 										"custom.account",
 										"custom.tenant",

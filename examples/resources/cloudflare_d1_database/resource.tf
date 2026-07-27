@@ -3,4 +3,7 @@ resource "cloudflare_d1_database" "example_d1_database" {
   name = "my-database"
   jurisdiction = "eu"
   primary_location_hint = "wnam"
+  read_replication = {
+    mode = "auto"
+  }
 }

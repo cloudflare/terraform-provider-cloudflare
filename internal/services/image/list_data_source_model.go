@@ -19,7 +19,7 @@ type ImagesItemsListDataSourceEnvelope struct {
 }
 
 type ImagesDataSourceModel struct {
-	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,required"`
 	Creator   types.String                                              `tfsdk:"creator" query:"creator,optional"`
 	MaxItems  types.Int64                                               `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ImagesResultDataSourceModel] `tfsdk:"result"`

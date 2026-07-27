@@ -5,7 +5,6 @@ package zero_trust_access_group
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -52,9 +51,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
-					Validators: []validator.Object{
-						customvalidator.ObjectSizeAtMost(1),
-					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -347,9 +343,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
-					Validators: []validator.Object{
-						customvalidator.ObjectSizeAtMost(1),
-					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -638,9 +631,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
-					Validators: []validator.Object{
-						customvalidator.ObjectSizeAtMost(1),
-					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,

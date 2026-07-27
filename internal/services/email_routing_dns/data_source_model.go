@@ -14,7 +14,7 @@ import (
 
 type EmailRoutingDNSDataSourceModel struct {
 	ID         types.String                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	Subdomain  types.String                                                         `tfsdk:"subdomain" query:"subdomain,optional"`
 	Success    types.Bool                                                           `tfsdk:"success" json:"success,computed"`
 	Errors     customfield.NestedObjectList[EmailRoutingDNSErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`

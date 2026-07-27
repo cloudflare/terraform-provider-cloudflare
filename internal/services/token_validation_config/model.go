@@ -45,4 +45,5 @@ type TokenValidationConfigCredentialsKeysModel struct {
 	Crv types.String `tfsdk:"crv" json:"crv,optional"`
 	X   types.String `tfsdk:"x" json:"x,optional"`
 	Y   types.String `tfsdk:"y" json:"y,optional"`
+	K   types.String `tfsdk:"k" json:"k,optional,no_refresh"`
 }

@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"tags": schema.StringAttribute{
 				Description: "Filter scripts by tags. Format: comma-separated list of tag:allowed pairs where allowed is 'yes' or 'no'.",
@@ -86,6 +86,69 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"etag": schema.StringAttribute{
 							Description: "Hashed script content, can be used in a If-None-Match header when updating.",
 							Computed:    true,
+						},
+						"exports": schema.MapNestedAttribute{
+							Description: "Declarative exports for the Worker's most recent version,\nincluding Durable Object classes (with their `storage`\nbackend) and named Worker entrypoints. Tombstoned lifecycle\nentries are omitted, so only live exports (`created` and\n`expecting-transfer`) are returned.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectMapType[WorkersScriptsExportsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"type": schema.StringAttribute{
+										Description: "Marks this entry as a Worker entrypoint export.\nAvailable values: \"worker\", \"durable-object\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
+										},
+									},
+									"cache": schema.SingleNestedAttribute{
+										Description: "Cache override for this entrypoint. Overrides the Worker's\nglobal `cache_options.enabled` for this entrypoint only.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[WorkersScriptsExportsCacheDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"enabled": schema.BoolAttribute{
+												Description: "Whether caching is enabled for this entrypoint.",
+												Computed:    true,
+											},
+										},
+									},
+									"state": schema.StringAttribute{
+										Description: "Live export. May be omitted; defaults to `created`.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"created",
+												"deleted",
+												"renamed",
+												"transferred",
+												"expecting-transfer",
+											),
+										},
+									},
+									"storage": schema.StringAttribute{
+										Description: "Durable Object storage backend. `sqlite` is the recommended (and\nonly) backend for new namespaces. `legacy-kv` is accepted only for\na class whose namespace already exists as KV-backed; the `exports`\nflow never provisions a new `legacy-kv` namespace.\nAvailable values: \"sqlite\", \"legacy-kv\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("sqlite", "legacy-kv"),
+										},
+									},
+									"container": schema.StringAttribute{
+										Description: "Name of the container (declared in the upload's\n`metadata.containers`) that backs this Durable Object. When\nset, the namespace is container-enabled. Valid only on live\nentries.",
+										Computed:    true,
+									},
+									"renamed_to": schema.StringAttribute{
+										Description: "The destination class name. Must differ from the source class\n(the map key) and must be declared as a live (`created`) entry\nin the same `exports` map. Write-only: never present in GET\nresponses.",
+										Computed:    true,
+									},
+									"transferred_to": schema.StringAttribute{
+										Description: "The destination script name. Must be in the same account and\nthe same dispatch-namespace context (or both non-dispatch).\nCross-dispatch-namespace transfers are rejected. Write-only:\nnever present in GET responses.",
+										Computed:    true,
+									},
+									"transfer_from": schema.StringAttribute{
+										Description: "The source script name to receive the namespace from. Must be\nin the same account and dispatch-namespace context. Present on\nreads for `expecting-transfer` entries.",
+										Computed:    true,
+									},
+								},
+							},
 						},
 						"handlers": schema.ListAttribute{
 							Description: "The names of handlers exported as part of the default export.",

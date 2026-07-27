@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
@@ -170,6 +170,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
+					},
+					"include_expired": schema.BoolAttribute{
+						Description: "When true, includes recently-expired tokens in the response.",
+						Computed:    true,
+						Optional:    true,
 					},
 				},
 			},

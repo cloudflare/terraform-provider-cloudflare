@@ -18,12 +18,12 @@ type CustomSSLModel struct {
 	ZoneID             types.String                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	Type               types.String                                          `tfsdk:"type" json:"type,computed_optional,no_refresh"`
 	Certificate        types.String                                          `tfsdk:"certificate" json:"certificate,required,no_refresh"`
-	PrivateKey         types.String                                          `tfsdk:"private_key" json:"private_key,required,no_refresh"`
 	CustomCsrID        types.String                                          `tfsdk:"custom_csr_id" json:"custom_csr_id,optional"`
 	Policy             types.String                                          `tfsdk:"policy" json:"policy,optional,no_refresh"`
+	PrivateKey         types.String                                          `tfsdk:"private_key" json:"private_key,optional,no_refresh"`
 	GeoRestrictions    *CustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions" json:"geo_restrictions,optional"`
 	BundleMethod       types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	Deploy             types.String                                          `tfsdk:"deploy" json:"deploy,optional,no_refresh"`
+	Deploy             types.String                                          `tfsdk:"deploy" json:"deploy,computed_optional,no_refresh"`
 	ExpiresOn          timetypes.RFC3339                                     `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer             types.String                                          `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

@@ -58,7 +58,7 @@ sections, there is the need to migrate attributes and potentially the resource r
 ### Automatic (tf-migrate)
 
 -> For the recommended migration approach using built-in state upgraders, see the
-[version 5 migration guide](version-5-migration.md).
+[version 5 migration guide](version-5-migration).
 
 For automatic configuration (HCL) migrations, use [tf-migrate], the official
 Cloudflare Terraform Provider migration tool. It handles resource renames,
@@ -156,7 +156,7 @@ completes the migration in a single pass.
 ~> `tf-migrate` handles configuration (HCL) transformations only. State migration
 is handled automatically by the v5 provider's built-in state upgraders when you
 run `terraform plan` or `terraform apply`. See the
-[version 5 migration guide](version-5-migration.md) for details.
+[version 5 migration guide](version-5-migration) for details.
 
 ~> While all efforts have been made to ease the transition, some resources require
 manual steps after migration. tf-migrate prints actionable warnings with exact
@@ -262,7 +262,7 @@ If you are not using `tf-migrate`, you can do the equivalent state removal
 manually with `terraform state rm cloudflare_access_policy.example` before
 applying the inline policy configuration.
 
-See the [migration guide](version-5-migration.md#application-scoped-access-policies)
+See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
 
 ~> **`session_duration` must be set explicitly.** In v4, the API applied an
@@ -456,7 +456,13 @@ resource "cloudflare_zero_trust_access_policy" "example" {
 
 ## cloudflare_worker_secret
 
-This has been removed. Users should instead use the:
+This has been removed. `tf-migrate` automatically merges each secret into the
+parent `cloudflare_workers_script` resource's `bindings` list as a
+`secret_text` binding and generates a `removed` block for state cleanup. See
+the [migration guide](version-5-migration#cloudflare_workers_secret) for
+details.
+
+If migrating manually, use one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding
@@ -1096,7 +1102,13 @@ terraform plan
 
 ## cloudflare_workers_secret
 
-This has been removed. Users should instead use the:
+This has been removed. `tf-migrate` automatically merges each secret into the
+parent `cloudflare_workers_script` resource's `bindings` list as a
+`secret_text` binding and generates a `removed` block for state cleanup. See
+the [migration guide](version-5-migration#cloudflare_workers_secret) for
+details.
+
+If migrating manually, use one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding
@@ -1523,9 +1535,9 @@ This has been removed. Users should instead use the:
   `cloudflare_zero_trust_access_application` carries its policies in its
   `policies` attribute, either inline or as a list of policy IDs. See the
   migration guide's
-  [Application-Scoped Access Policies](version-5-migration.md#application-scoped-access-policies)
+  [Application-Scoped Access Policies](version-5-migration#application-scoped-access-policies)
   section, including
-  [Keeping existing policies attached (in-place migration)](version-5-migration.md#keeping-existing-policies-attached-in-place-migration)
+  [Keeping existing policies attached (in-place migration)](version-5-migration#keeping-existing-policies-attached-in-place-migration)
   if your applications reference policy UUIDs.
 - `session_duration` now defaults to `24h` in the provider schema. In v4, this
   value was set implicitly by the API and did not need to appear in HCL. If

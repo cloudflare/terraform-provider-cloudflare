@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Required: true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
@@ -165,6 +165,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+					},
+				},
+			},
+			"global_acceleration": schema.SingleNestedAttribute{
+				Description: "Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfileGlobalAccelerationDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"api_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the API endpoints.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"enabled": schema.BoolAttribute{
+						Description: `Global acceleration settings are used only when "enabled".`,
+						Computed:    true,
+					},
+					"masque_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"wireguard_endpoints": schema.ListAttribute{
+						Description: "IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
 					},
 				},
 			},

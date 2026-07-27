@@ -17,7 +17,7 @@ type AccountMembersResultListDataSourceEnvelope struct {
 }
 
 type AccountMembersDataSourceModel struct {
-	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String                                                      `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String                                                      `tfsdk:"order" query:"order,optional"`
 	Status    types.String                                                      `tfsdk:"status" query:"status,optional"`

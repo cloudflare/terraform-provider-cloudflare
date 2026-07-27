@@ -18,16 +18,17 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	AccountID                  types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	Match                      types.String                                                                     `tfsdk:"match" json:"match,required"`
 	Name                       types.String                                                                     `tfsdk:"name" json:"name,required"`
-	Precedence                 types.Float64                                                                    `tfsdk:"precedence" json:"precedence,computed_optional"`
-	Description                types.String                                                                     `tfsdk:"description" json:"description,computed_optional"`
+	Precedence                 types.Float64                                                                    `tfsdk:"precedence" json:"precedence,required"`
 	LANAllowMinutes            types.Float64                                                                    `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                    `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
+	GlobalAcceleration         *ZeroTrustDeviceCustomProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	VirtualNetworks            *ZeroTrustDeviceCustomProfileVirtualNetworksModel                                `tfsdk:"virtual_networks" json:"virtual_networks,optional"`
 	AllowModeSwitch            types.Bool                                                                       `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                       `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
 	AllowedToLeave             types.Bool                                                                       `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
 	AutoConnect                types.Float64                                                                    `tfsdk:"auto_connect" json:"auto_connect,computed_optional"`
 	CaptivePortal              types.Float64                                                                    `tfsdk:"captive_portal" json:"captive_portal,computed_optional"`
+	Description                types.String                                                                     `tfsdk:"description" json:"description,computed_optional"`
 	DisableAutoFallback        types.Bool                                                                       `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
 	Enabled                    types.Bool                                                                       `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExcludeOfficeIPs           types.Bool                                                                       `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`
@@ -52,6 +53,13 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSON() (data []byte, err error
 
 func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceCustomProfileModel) (data []byte, err error) {
 	return apijson.MarshalForPatch(m, state)
+}
+
+type ZeroTrustDeviceCustomProfileGlobalAccelerationModel struct {
+	APIEndpoints       *[]types.String `tfsdk:"api_endpoints" json:"api_endpoints,required"`
+	Enabled            types.Bool      `tfsdk:"enabled" json:"enabled,required"`
+	MasqueEndpoints    *[]types.String `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
+	WireguardEndpoints *[]types.String `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
 }
 
 type ZeroTrustDeviceCustomProfileVirtualNetworksModel struct {

@@ -6,12 +6,13 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,15 +21,13 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingRulesDataSource)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"Email Routing Rules Read",
-				"Email Routing Rules Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
@@ -119,10 +118,32 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								float64validator.AtLeast(0),
 							},
 						},
+						"source": schema.StringAttribute{
+							Description: "Who manages the rule. `api` covers dashboard, generic API, and Terraform;\n`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults\nto `api` when omitted on write.\nAvailable values: \"api\", \"wrangler\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("api", "wrangler"),
+							},
+						},
 						"tag": schema.StringAttribute{
 							Description:        "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
 							Computed:           true,
 							DeprecationMessage: "This attribute is deprecated.",
+						},
+						"zone": schema.SingleNestedAttribute{
+							Description: "Zone information for the routing rule.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[EmailRoutingRulesZoneDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"name": schema.StringAttribute{
+									Description: "Zone name.",
+									Computed:    true,
+								},
+								"tag": schema.StringAttribute{
+									Description: "Zone tag.",
+									Computed:    true,
+								},
+							},
 						},
 					},
 				},
@@ -136,5 +157,7 @@ func (d *EmailRoutingRulesDataSource) Schema(ctx context.Context, req datasource
 }
 
 func (d *EmailRoutingRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
+	}
 }

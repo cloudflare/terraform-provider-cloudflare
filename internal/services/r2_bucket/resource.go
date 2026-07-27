@@ -65,7 +65,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	var state *CreateR2BucketModel
+	var state *R2BucketModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
 

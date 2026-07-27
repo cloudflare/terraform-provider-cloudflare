@@ -19,7 +19,7 @@ type AISearchInstanceResultDataSourceEnvelope struct {
 
 type AISearchInstanceDataSourceModel struct {
 	ID                   types.String                                                                  `tfsdk:"id" path:"id,computed_optional"`
-	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	AIGatewayID          types.String                                                                  `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                  `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                    `tfsdk:"cache" json:"cache,computed"`
@@ -113,6 +113,7 @@ type AISearchInstancePublicEndpointParamsDataSourceModel struct {
 	AuthorizedHosts         customfield.List[types.String]                                                                       `tfsdk:"authorized_hosts" json:"authorized_hosts,computed"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancePublicEndpointParamsChatCompletionsEndpointDataSourceModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed"`
 	CustomDomains           customfield.List[types.String]                                                                       `tfsdk:"custom_domains" json:"custom_domains,computed"`
+	DefaultDomainEnabled    types.Bool                                                                                           `tfsdk:"default_domain_enabled" json:"default_domain_enabled,computed"`
 	Enabled                 types.Bool                                                                                           `tfsdk:"enabled" json:"enabled,computed"`
 	Mcp                     customfield.NestedObject[AISearchInstancePublicEndpointParamsMcpDataSourceModel]                     `tfsdk:"mcp" json:"mcp,computed"`
 	RateLimit               customfield.NestedObject[AISearchInstancePublicEndpointParamsRateLimitDataSourceModel]               `tfsdk:"rate_limit" json:"rate_limit,computed"`
@@ -159,7 +160,6 @@ type AISearchInstanceSourceParamsDataSourceModel struct {
 type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
 	ParseOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel] `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType    types.String                                                                                `tfsdk:"parse_type" json:"parse_type,computed"`
-	StoreOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel] `tfsdk:"store_options" json:"store_options,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
@@ -173,12 +173,6 @@ type AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel struct {
 	Path     types.String `tfsdk:"path" json:"path,computed"`
 	Selector types.String `tfsdk:"selector" json:"selector,computed"`
-}
-
-type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
-	StorageID      types.String `tfsdk:"storage_id" json:"storage_id,computed"`
-	R2Jurisdiction types.String `tfsdk:"r2_jurisdiction" json:"r2_jurisdiction,computed"`
-	StorageType    types.String `tfsdk:"storage_type" json:"storage_type,computed"`
 }
 
 type AISearchInstanceFindOneByDataSourceModel struct {

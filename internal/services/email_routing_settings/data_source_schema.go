@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",
@@ -66,6 +66,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"unlocked",
 					),
 				},
+			},
+			"support_subaddress": schema.BoolAttribute{
+				Description: "Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.",
+				Computed:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",

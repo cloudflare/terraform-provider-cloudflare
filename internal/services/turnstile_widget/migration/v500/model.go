@@ -60,7 +60,9 @@ type TargetTurnstileWidgetModel struct {
 	EphemeralID    types.Bool        `tfsdk:"ephemeral_id"`    // NEW in v5 (optional computed)
 	Offlabel       types.Bool        `tfsdk:"offlabel"`
 	Region         types.String      `tfsdk:"region"`
-	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on"`  // NEW in v5 (computed timestamp)
-	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on"` // NEW in v5 (computed timestamp)
-	Secret         types.String      `tfsdk:"secret"`
+	CreatedOn       timetypes.RFC3339 `tfsdk:"created_on"`        // NEW in v5 (computed timestamp)
+	ModifiedOn      timetypes.RFC3339 `tfsdk:"modified_on"`       // NEW in v5 (computed timestamp)
+	DeployedVia     types.String      `tfsdk:"deployed_via"`      // NEW in v5 (computed)
+	LastModifiedVia types.String      `tfsdk:"last_modified_via"` // NEW in v5 (computed)
+	Secret          types.String      `tfsdk:"secret"`
 }

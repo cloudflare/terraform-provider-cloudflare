@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -43,7 +44,7 @@ func TestAccCloudflareArgoTieredCaching_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 			acctest.TestAccPreCheck_Credentials(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -58,12 +59,31 @@ func TestAccCloudflareArgoTieredCaching_Basic(t *testing.T) {
 				},
 			},
 			{
+				// Idempotency check: reapply same config, expect no changes
+				Config: testAccCheckCloudflareArgoTieredCachingBasic(zoneID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				},
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
 				Config: testAccCheckCloudflareArgoTieredCachingUpdate(zoneID, rnd),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("off")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("modified_on"), knownvalue.NotNull()),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("value"),
+							knownvalue.StringExact("off"),
+						),
+					},
 				},
 			},
 			{
@@ -83,6 +103,29 @@ func testAccCheckCloudflareArgoTieredCachingUpdate(zoneID, name string) string {
 	return acctest.LoadTestCase("update.tf", zoneID, name)
 }
 
+func TestAccCloudflareArgoTieredCaching_InvalidValue(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareArgoTieredCachingInvalidValue(zoneID, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("Invalid Attribute Value Match")),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareArgoTieredCachingInvalidValue(zoneID, name string) string {
+	return acctest.LoadTestCase("invalid_value.tf", zoneID, name)
+}
+
 func TestAccUpgradeArgoTieredCaching_FromPublishedV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -91,7 +134,7 @@ func TestAccUpgradeArgoTieredCaching_FromPublishedV5(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 			acctest.TestAccPreCheck_Credentials(t)
 		},
 		Steps: []resource.TestStep{

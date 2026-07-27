@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"after": schema.StringAttribute{
 				Description: "Alias for 'start'. Returns videos created after this date/time (RFC 3339 format).",
@@ -264,7 +264,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"pct_complete": schema.StringAttribute{
-									Description: "Indicates the size of the entire upload in bytes. The value must be a non-negative integer.",
+									Description: "Indicates the progress as a percentage between 0 and 100.",
 									Computed:    true,
 								},
 								"state": schema.StringAttribute{

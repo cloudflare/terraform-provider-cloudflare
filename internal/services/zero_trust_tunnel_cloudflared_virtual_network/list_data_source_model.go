@@ -18,7 +18,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksResultListDataSourceEnvelope struc
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
-	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	ID               types.String                                                                                 `tfsdk:"id" query:"id,optional"`
 	IsDefault        types.Bool                                                                                   `tfsdk:"is_default" query:"is_default,optional"`
 	IsDefaultNetwork types.Bool                                                                                   `tfsdk:"is_default_network" query:"is_default_network,optional"`

@@ -223,6 +223,7 @@ type TargetRuleSettingsModel struct {
 	BlockReason                     types.String                     `tfsdk:"block_reason"` // Renamed from block_page_reason
 	BypassParentRule                types.Bool                       `tfsdk:"bypass_parent_rule"`
 	CheckSession                    *TargetCheckSessionModel         `tfsdk:"check_session"`
+	DeleteHeaders                   *[]types.String                  `tfsdk:"delete_headers"`
 	DNSResolvers                    *TargetDNSResolversModel         `tfsdk:"dns_resolvers"`
 	Egress                          *TargetEgressModel               `tfsdk:"egress"`
 	ForensicCopy                    *TargetForensicCopyModel         `tfsdk:"forensic_copy"` // New in v5
@@ -239,6 +240,7 @@ type TargetRuleSettingsModel struct {
 	Redirect                        *TargetRedirectModel             `tfsdk:"redirect"`   // New in v5
 	ResolveDNSInternally            *TargetResolveDNSInternallyModel `tfsdk:"resolve_dns_internally"`
 	ResolveDNSThroughCloudflare     types.Bool                       `tfsdk:"resolve_dns_through_cloudflare"`
+	SetHeaders                      *map[string]*[]types.String      `tfsdk:"set_headers"`
 	UntrustedCERT                   *TargetUntrustedCERTModel        `tfsdk:"untrusted_cert"`
 }
 

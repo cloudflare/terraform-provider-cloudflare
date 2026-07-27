@@ -20,7 +20,7 @@ type MagicWANGRETunnelResultDataSourceEnvelope struct {
 type MagicWANGRETunnelDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" path:"gre_tunnel_id,computed"`
 	GRETunnelID types.String                                                        `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,required"`
-	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	GRETunnel   customfield.NestedObject[MagicWANGRETunnelGRETunnelDataSourceModel] `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 
@@ -51,9 +51,11 @@ type MagicWANGRETunnelGRETunnelDataSourceModel struct {
 }
 
 type MagicWANGRETunnelGRETunnelBGPDataSourceModel struct {
-	CustomerASN   types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
-	ExtraPrefixes customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
-	Md5Key        types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
+	CustomerASN    types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
+	ExportFilterID types.String                   `tfsdk:"export_filter_id" json:"export_filter_id,computed"`
+	ExtraPrefixes  customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
+	ImportFilterID types.String                   `tfsdk:"import_filter_id" json:"import_filter_id,computed"`
+	Md5Key         types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
 }
 
 type MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel struct {

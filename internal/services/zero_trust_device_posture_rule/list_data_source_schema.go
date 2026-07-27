@@ -21,7 +21,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Required: true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -42,6 +42,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Description: "The description of the device posture rule.",
+							Computed:    true,
+						},
+						"enabled": schema.BoolAttribute{
+							Description: "Whether the rule is enabled. This is a computed, read-only value. It is false for deprecated Kolide posture rules that still use the issue_count input, and true otherwise.",
 							Computed:    true,
 						},
 						"expiration": schema.StringAttribute{

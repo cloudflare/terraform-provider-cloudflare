@@ -4,8 +4,6 @@ package api_token
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -19,29 +17,6 @@ import (
 )
 
 var _ resource.ResourceWithConfigValidators = (*APITokenResource)(nil)
-
-type ResourcesValidator struct {
-}
-
-func (v ResourcesValidator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
-	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
-		return
-	}
-	value := req.ConfigValue.String()
-	valid := json.Valid([]byte(value))
-	if !valid {
-		resp.Diagnostics.AddAttributeError(req.Path, "Invalid JSON", fmt.Sprintf("String must be a valid JSON: %s", value))
-		return
-	}
-}
-
-func (v ResourcesValidator) Description(context.Context) string {
-	return "String must be valid JSON"
-}
-
-func (v ResourcesValidator) MarkdownDescription(context.Context) string {
-	return "String must be valid JSON"
-}
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -63,10 +38,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"policies": schema.ListNestedAttribute{
-				Description: "Set of access policies assigned to the token.",
+				Description: "List of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Policy identifier.",
+							Computed:    true,
+						},
 						"effect": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,
@@ -83,15 +62,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "Identifier of the permission group.",
 										Required:    true,
 									},
+									"meta": schema.SingleNestedAttribute{
+										Description: "Attributes associated to the permission group.",
+										Optional:    true,
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Optional: true,
+											},
+											"value": schema.StringAttribute{
+												Optional: true,
+											},
+										},
+									},
+									"name": schema.StringAttribute{
+										Description: "Name of the permission group.",
+										Computed:    true,
+									},
 								},
 							},
 						},
-						"resources": schema.StringAttribute{
-							Description: "A json object representing the resources that are specified to the policy.",
+						"resources": schema.MapAttribute{
+							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
-							Validators: []validator.String{
-								ResourcesValidator{},
-							},
+							ElementType: types.StringType,
 						},
 					},
 				},

@@ -44,7 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"profile_id": schema.StringAttribute{
 				Description:   "This field is not used as the owning profile.\nFor predefined entries it is already set to a predefined profile.",
 				Optional:      true,
-				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{

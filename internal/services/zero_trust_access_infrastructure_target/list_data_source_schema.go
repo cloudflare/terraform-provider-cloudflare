@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_after": schema.StringAttribute{
 				Description: "Date and time at which the target was created after (inclusive)",

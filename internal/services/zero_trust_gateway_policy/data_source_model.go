@@ -20,7 +20,7 @@ type ZeroTrustGatewayPolicyResultDataSourceEnvelope struct {
 type ZeroTrustGatewayPolicyDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"rule_id,computed"`
 	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,required"`
-	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                           `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -67,6 +67,7 @@ type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	BlockReason                     types.String                                                                                    `tfsdk:"block_reason" json:"block_reason,computed"`
 	BypassParentRule                types.Bool                                                                                      `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,computed"`
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsCheckSessionDataSourceModel]         `tfsdk:"check_session" json:"check_session,computed"`
+	DeleteHeaders                   customfield.List[types.String]                                                                  `tfsdk:"delete_headers" json:"delete_headers,computed"`
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDNSResolversDataSourceModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsEgressDataSourceModel]               `tfsdk:"egress" json:"egress,computed"`
 	ForensicCopy                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsForensicCopyDataSourceModel]         `tfsdk:"forensic_copy" json:"forensic_copy,computed"`
@@ -83,6 +84,7 @@ type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	Redirect                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsRedirectDataSourceModel]             `tfsdk:"redirect" json:"redirect,computed"`
 	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyDataSourceModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                                      `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
+	SetHeaders                      customfield.Map[customfield.List[types.String]]                                                 `tfsdk:"set_headers" json:"set_headers,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
 }
 

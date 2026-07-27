@@ -28,7 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "The sorting direction.\nAvailable values: \"asc\", \"desc\".",
@@ -73,7 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Trusted domain identifier",
+							Description: "Trusted domain identifier.",
 							Computed:    true,
 						},
 						"comments": schema.StringAttribute{

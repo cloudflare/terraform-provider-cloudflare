@@ -30,15 +30,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"flatten_all_cnames": schema.BoolAttribute{
 				Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
 				Computed:    true,
 			},
 			"foundation_dns": schema.BoolAttribute{
-				Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-				Computed:    true,
+				Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
+				Computed:           true,
+				DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
 			},
 			"multi_provider": schema.BoolAttribute{
 				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
@@ -83,11 +84,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsNameserversDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
+						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.advanced\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"cloudflare.standard",
+								"cloudflare.advanced",
 								"custom.account",
 								"custom.tenant",
 								"custom.zone",

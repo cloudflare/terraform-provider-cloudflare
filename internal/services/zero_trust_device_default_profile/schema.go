@@ -64,14 +64,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
 							Optional:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the Split Tunnel item, displayed in the client UI.",
 							Optional:    true,
+							Computed:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
 							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
@@ -90,14 +93,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.",
 							Optional:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the Split Tunnel item, displayed in the client UI.",
 							Optional:    true,
+							Computed:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
 							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
@@ -111,10 +117,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",
 						Optional:    true,
+						Computed:    true,
 					},
 					"port": schema.Float64Attribute{
 						Description: "The port number when used with proxy mode.",
 						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},

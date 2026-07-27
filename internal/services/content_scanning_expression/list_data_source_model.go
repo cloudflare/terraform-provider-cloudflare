@@ -17,7 +17,7 @@ type ContentScanningExpressionsResultListDataSourceEnvelope struct {
 }
 
 type ContentScanningExpressionsDataSourceModel struct {
-	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID   types.String                                                                  `tfsdk:"zone_id" path:"zone_id,required"`
 	MaxItems types.Int64                                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[ContentScanningExpressionsResultDataSourceModel] `tfsdk:"result"`
 }

@@ -27,6 +27,33 @@ resource "cloudflare_worker_version" "example_worker_version" {
   containers = [{
     class_name = "MyDurableObject"
   }]
+  exports = {
+    Admin = {
+      type = "worker"
+      cache = {
+        enabled = true
+      }
+      state = "created"
+    }
+    Counter = {
+      storage = "sqlite"
+      type = "durable-object"
+      container = "my-container"
+      state = "created"
+    }
+    OldCounter = {
+      renamed_to = "Counter"
+      state = "renamed"
+      type = "durable-object"
+    }
+    default = {
+      type = "worker"
+      cache = {
+        enabled = false
+      }
+      state = "created"
+    }
+  }
   limits = {
     cpu_ms = 50
     subrequests = 1000
@@ -49,7 +76,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     }]
   }
   modules = [{
-    content_file = "dist/index.js"
+    content_base64 = "ZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcXVlc3QsIGVudiwgY3R4KSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKCdIZWxsbyBXb3JsZCEnKQogIH0KfQ=="
     content_type = "application/javascript+module"
     name = "index.js"
   }]
@@ -61,4 +88,5 @@ resource "cloudflare_worker_version" "example_worker_version" {
   placement = {
     mode = "smart"
   }
+  usage_model = "standard"
 }

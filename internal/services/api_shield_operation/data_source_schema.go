@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"feature": schema.ListAttribute{
 				Description: "Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.",
@@ -281,7 +281,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"learned_available": schema.BoolAttribute{
-								Description: "True if a Cloudflare-provided learned schema is available for this endpoint.",
+								Description: "Deprecated. Always false.",
 								Computed:    true,
 							},
 							"mitigation_action": schema.StringAttribute{

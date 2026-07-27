@@ -66,26 +66,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"ip_firewall": schema.BoolAttribute{
-				Computed:    true,
-				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
-				Default:     booldefault.StaticBool(false),
-				Optional:    true,
-			},
-			"tls": schema.StringAttribute{
-				Computed:    true,
-				Description: "The type of TLS termination associated with the application.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\".",
-				Default:     stringdefault.StaticString("off"),
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"off",
-						"flexible",
-						"full",
-						"strict",
-					),
-				},
-			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
 				Optional:    true,
@@ -133,17 +113,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    customfield.NormalizedDynamicType{},
 				PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 			},
-			"argo_smart_routing": schema.BoolAttribute{
-				Computed:      true,
-				Default:       booldefault.StaticBool(false),
-				Description:   "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+		"argo_smart_routing": schema.BoolAttribute{
+			Description:   "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP or UDP applications with traffic_type set to \"direct\".",
+			Computed:      true,
+			Optional:      true,
+			Default:       booldefault.StaticBool(false),
+			PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+		},
+			"ip_firewall": schema.BoolAttribute{
+				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"proxy_protocol": schema.StringAttribute{
-				Computed:    true,
-				Default:     stringdefault.StaticString("off"),
 				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.\nAvailable values: \"off\", \"v1\", \"v2\", \"simple\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -153,7 +138,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"simple",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			Default:       stringdefault.StaticString("off"),
+			PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+		},
+		"tls": schema.StringAttribute{
+				Description: "The type of TLS termination associated with the application.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"off",
+						"flexible",
+						"full",
+						"strict",
+					),
+				},
+				Default: stringdefault.StaticString("off"),
 			},
 			"traffic_type": schema.StringAttribute{
 				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.\nAvailable values: \"direct\", \"http\", \"https\".",
@@ -166,9 +166,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"https",
 					),
 				},
-				Default:       stringdefault.StaticString("direct"),
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
+			Default:       stringdefault.StaticString("direct"),
+			PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+		},
 			"edge_ips": schema.SingleNestedAttribute{
 				Description: "The anycast edge IP configuration for the hostname of this application.",
 				Computed:    true,
@@ -193,12 +193,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),
 						},
 					},
-					"ips": schema.ListAttribute{
-						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
-						Computed:    true,
-						Optional:    true,
-						ElementType: types.StringType,
-					},
+				"ips": schema.ListAttribute{
+					Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
+					Computed:    true,
+					Optional:    true,
+					ElementType: types.StringType,
+				},
 				},
 			},
 			"created_on": schema.StringAttribute{

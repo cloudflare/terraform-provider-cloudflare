@@ -113,7 +113,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"allowed_authenticators": schema.ListAttribute{
-						Description: "Lists the MFA methods that users can authenticate with. `ssh_piv_key` is only relevant for infrastructure applications.",
+						Description: "Lists the MFA methods that users can authenticate with.",
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
@@ -121,7 +121,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"totp",
 									"biometrics",
 									"security_key",
-									"ssh_piv_key",
+									"piv_key",
 								),
 							),
 						},
@@ -141,8 +141,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
-				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
+			"mfa_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures PIV key requirements for MFA using hardware security keys.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"pin_policy": schema.StringAttribute{
@@ -157,7 +157,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"require_fips_device": schema.BoolAttribute{
-						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Description: "Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
 						Optional:    true,
 					},
 					"ssh_key_size": schema.ListAttribute{
@@ -222,15 +222,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"mfa_configuration_allowed": schema.BoolAttribute{
-				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
-				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'ssh_piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.",
+				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.",
 				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"ui_read_only_toggle_reason": schema.StringAttribute{
 				Description: "A description of the reason why the UI read only field is being toggled.",

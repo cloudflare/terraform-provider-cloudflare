@@ -1,5 +1,43 @@
 # Changelog
 
+## 5.23.0 (2026-07-27)
+
+Full Changelog: [v5.22.0...v5.23.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.22.0...v5.23.0)
+
+### New Data Sources
+
+* **cloudflare_zero_trust_dlp_custom_prompt_topic:** add data source and list data source for DLP custom prompt topics ([cf820f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cf820f8bd1))
+
+
+### Features
+
+* **argo:** add comprehensive acceptance tests ([769a23f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/769a23f204))
+* bump cloudflare-go SDK to v7.8.0
+* **hyperdrive_config:** add v4 to v5 state migration ([cdd5ca6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cdd5ca697d))
+
+
+### Bug Fixes
+
+* **d1_database:** initialize read_replication in state upgrader to prevent 400 error ([298799b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/298799b3e0))
+* **load_balancer_pool:** preserve origins order to prevent perpetual drift ([aad09cc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/aad09ccc39))
+* **zero_trust_access_policy:** resolve perpetual diff by calling normalization in CRUD ([497f06b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/497f06bdbd))
+* **zero_trust_device_custom_profile:** address review feedback on normalization ([969b35d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/969b35dbef))
+* **zero_trust_device_custom_profile:** resolve perpetual drift on default, include, target_tests, and exclude nested attributes ([f74cecf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f74cecf3ae))
+
+
+### Chores
+
+* add .terraform-registry for ownership transfer ([d33bc90](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d33bc904d8))
+* **internal:** codegen related update ([cf820f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cf820f8bd1))
+* restore docs deleted by codegen ([0aebef9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0aebef9960))
+
+
+### Documentation
+
+* add workers_secret migration guidance with tf-migrate support ([524b26a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/524b26a608))
+* **migration-guide:** add table of contents to v5 migration guide ([e11e8a4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e11e8a41b5))
+
+
 ## 5.22.0 (2026-07-09)
 
 Full Changelog: [v5.21.1...v5.22.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.21.1...v5.22.0)

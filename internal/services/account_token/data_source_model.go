@@ -20,7 +20,7 @@ type AccountTokenResultDataSourceEnvelope struct {
 type AccountTokenDataSourceModel struct {
 	ID         types.String                                                      `tfsdk:"id" path:"token_id,computed"`
 	TokenID    types.String                                                      `tfsdk:"token_id" path:"token_id,optional"`
-	AccountID  types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ExpiresOn  timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	IssuedOn   timetypes.RFC3339                                                 `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339                                                 `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
@@ -48,6 +48,9 @@ func (m *AccountTokenDataSourceModel) toListParams(_ context.Context) (params ac
 
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.IncludeExpired.IsNull() {
+		params.IncludeExpired = cloudflare.F(m.Filter.IncludeExpired.ValueBool())
 	}
 
 	return
@@ -81,5 +84,6 @@ type AccountTokenPoliciesPermissionGroupsMetaDataSourceModel struct {
 }
 
 type AccountTokenFindOneByDataSourceModel struct {
-	Direction types.String `tfsdk:"direction" query:"direction,optional"`
+	Direction      types.String `tfsdk:"direction" query:"direction,optional"`
+	IncludeExpired types.Bool   `tfsdk:"include_expired" query:"include_expired,computed_optional"`
 }

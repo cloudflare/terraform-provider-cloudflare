@@ -17,7 +17,7 @@ type AccountAPITokenPermissionGroupsResultDataSourceEnvelope struct {
 }
 
 type AccountAPITokenPermissionGroupsDataSourceModel struct {
-	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID        types.String                                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Name             types.String                                                                                 `tfsdk:"name" query:"name,optional"`
 	Scope            types.String                                                                                 `tfsdk:"scope" query:"scope,optional"`
 	PermissionGroups customfield.NestedObjectList[AccountAPITokenPermissionGroupsPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
@@ -39,7 +39,8 @@ func (m *AccountAPITokenPermissionGroupsDataSourceModel) toReadParams(_ context.
 }
 
 type AccountAPITokenPermissionGroupsPermissionGroupsDataSourceModel struct {
-	ID     types.String                   `tfsdk:"id" json:"id,computed"`
-	Name   types.String                   `tfsdk:"name" json:"name,computed"`
-	Scopes customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
+	ID       types.String                   `tfsdk:"id" json:"id,computed"`
+	Category types.String                   `tfsdk:"category" json:"category,computed"`
+	Name     types.String                   `tfsdk:"name" json:"name,computed"`
+	Scopes   customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
 }

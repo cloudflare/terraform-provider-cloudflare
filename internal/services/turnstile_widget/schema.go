@@ -68,12 +68,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).",
 				Optional:    true,
-				Computed:    true,
 			},
 			"clearance_level": schema.StringAttribute{
 				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\nAvailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\".",
 				Optional:    true,
-				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"no_clearance",
@@ -86,12 +84,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ephemeral_id": schema.BoolAttribute{
 				Description: "Return the Ephemeral ID in /siteverify (ENT only).",
 				Optional:    true,
-				Computed:    true,
 			},
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).",
 				Optional:    true,
-				Computed:    true,
 			},
 			"region": schema.StringAttribute{
 				Description: "Region where this widget can be used. This cannot be changed after creation.\nAvailable values: \"world\", \"china\".",
@@ -116,6 +112,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Secret key for this widget.",
 				Computed:    true,
 				Sensitive:   true,
+			},
+			"deployed_via": schema.StringAttribute{
+				Description: "Origin that created this widget, recorded at creation time and\nimmutable afterward. Server-derived from the create request; not\nclient-settable. Omitted from the response for widgets created\nbefore this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"wrangler",
+						"dashboard",
+						"spin",
+						"api",
+						"unknown",
+					),
+				},
+			},
+			"last_modified_via": schema.StringAttribute{
+				Description: "Origin of the most recent mutation (create, update, delete, or\nsecret rotation). Server-derived; not client-settable. Omitted for\nwidgets last mutated before this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"wrangler",
+						"dashboard",
+						"spin",
+						"api",
+						"unknown",
+					),
+				},
 			},
 		},
 	}

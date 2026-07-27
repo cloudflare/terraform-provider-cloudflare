@@ -91,7 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"jurisdiction": schema.StringAttribute{
-				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
+				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\", \"us\".",
 				Optional:    true,
 				Computed:    true,
 				Default:     stringdefault.StaticString("default"),
@@ -100,6 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"default",
 						"eu",
 						"fedramp",
+						"us",
 					),
 				},
 			},

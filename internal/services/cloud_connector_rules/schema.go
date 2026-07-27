@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed: true,
+							Optional: true,
 						},
 						"description": schema.StringAttribute{
 							Optional: true,
@@ -62,7 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"provider": schema.StringAttribute{
+						"cloud_connector_rules_provider": schema.StringAttribute{
 							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
 							Optional:    true,
 							Validators: []validator.String{

@@ -26,7 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Trusted domain identifier",
+				Description:   "Trusted domain identifier.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
@@ -37,14 +37,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_recent": schema.BoolAttribute{
 				Description: "Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.",
-				Optional:    true,
+				Required:    true,
 			},
 			"is_regex": schema.BoolAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"is_similarity": schema.BoolAttribute{
 				Description: "Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.",
-				Optional:    true,
+				Required:    true,
 			},
 			"pattern": schema.StringAttribute{
 				Required: true,

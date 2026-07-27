@@ -15,11 +15,11 @@ handle Terraform state migration transparently. Combined with the
 [tf-migrate] CLI tool for HCL configuration changes, the migration process is
 significantly simpler than previous approaches.
 
-~> **Grit-based migration has been removed.** This guide supersedes the
-Grit-based migration instructions in the [version 5 upgrade guide]. You do
-**not** need Grit to migrate. Grit patterns are no longer supported. The
-[version 5 upgrade guide] remains a useful reference for per-resource
-attribute change details if you prefer manual HCL changes.
+~> **Grit-based migration is deprecated.** This guide supersedes the Grit-based
+migration instructions in the [version 5 upgrade guide]. You do **not** need
+Grit to migrate. Grit patterns are no longer supported and will be removed in
+a future release. The [version 5 upgrade guide] remains a useful reference for
+per-resource attribute change details if you prefer manual HCL changes.
 
 ## Quick Reference
 
@@ -1216,6 +1216,114 @@ Other predefined profile changes handled by `tf-migrate`:
 - `entry` blocks replaced with `enabled_entries` list (only IDs of enabled
   entries)
 
+### `cloudflare_workers_secret`
+
+In v4, `cloudflare_workers_secret` (and its deprecated alias
+`cloudflare_worker_secret`) was a standalone resource that managed Worker
+secrets via a separate API. In v5, this resource has been removed. Secrets are
+now managed as `secret_text` bindings on the `cloudflare_workers_script`
+resource.
+
+~> **tf-migrate modifies your `.tf` files in place.** It removes each
+`cloudflare_workers_secret` resource block and merges it into the parent
+`cloudflare_workers_script` resource. Use `--dry-run` to preview changes
+before applying, and ensure your files are committed to version control (or
+use the `.bak` backups tf-migrate creates by default).
+
+#### With tf-migrate (recommended)
+
+`tf-migrate` automatically handles the full transformation. Run it as part of
+Step 2 if you have not already done so.
+
+**What tf-migrate generates** for each `cloudflare_workers_secret` resource:
+
+- Merges the secret into the parent `cloudflare_workers_script` resource's
+  `bindings` list as a `secret_text` binding
+- Generates a `removed` block so Terraform drops the old state entry without
+  destroying anything (requires Terraform 1.7+)
+- If the parent script already has bindings, wraps them in `concat()` to
+  preserve both existing bindings and the new secret binding
+
+For example, this v4 configuration:
+
+```hcl
+resource "cloudflare_workers_script" "my_worker" {
+  account_id = "abc123"
+  name       = "my-worker"
+  content    = file("worker.js")
+}
+
+resource "cloudflare_workers_secret" "api_key" {
+  account_id  = "abc123"
+  script_name = cloudflare_workers_script.my_worker.name
+  name        = "API_KEY"
+  secret_text = var.api_key
+}
+```
+
+Becomes:
+
+```hcl
+resource "cloudflare_workers_script" "my_worker" {
+  account_id  = "abc123"
+  script_name = "my-worker"
+  content     = file("worker.js")
+  bindings = [
+    {
+      type = "secret_text"
+      name = "API_KEY"
+      text = var.api_key
+    }
+  ]
+}
+
+removed {
+  from = cloudflare_workers_secret.api_key
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+#### Without tf-migrate
+
+**1.** Remove the `cloudflare_workers_secret` resource from your configuration.
+
+**2.** Add a `secret_text` binding to the parent `cloudflare_workers_script`
+resource:
+
+```hcl
+resource "cloudflare_workers_script" "my_worker" {
+  # ... existing attributes ...
+  bindings = [
+    # ... existing bindings ...
+    {
+      type = "secret_text"
+      name = "API_KEY"
+      text = var.api_key
+    }
+  ]
+}
+```
+
+**3.** Remove the old state entry:
+
+```bash
+terraform state rm cloudflare_workers_secret.api_key
+```
+
+**4.** Apply:
+
+```bash
+terraform plan
+terraform apply
+```
+
+~> **Note:** In v4, secrets were managed via a separate API and could be
+updated without redeploying the Worker script. In v5, `secret_text` bindings
+are part of the script resource, so future secret value changes will trigger a
+script redeployment.
+
 ---
 
 ## Resources Requiring Stepping-Stone Upgrades
@@ -1337,6 +1445,7 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_workers_route` |
 | **KV** | `cloudflare_workers_kv` |
 | | `cloudflare_workers_kv_namespace` |
+| **D1** | `cloudflare_d1_database` |
 | **Pages** | `cloudflare_pages_project` |
 | **Cache** | `cloudflare_tiered_cache` |
 | **Argo** | `cloudflare_argo_smart_routing` |
@@ -1646,9 +1755,9 @@ before retrying.
 
 **Do I still need Grit?**
 
-No. **Grit-based migration has been removed.** `tf-migrate` replaces the
-Grit patterns for HCL migration, and state upgraders handle state
-automatically. Do not use Grit for new migrations.
+No. **Grit-based migration is deprecated and will be removed in a future
+release.** `tf-migrate` replaces the Grit patterns for HCL migration, and
+state upgraders handle state automatically. Do not use Grit for new migrations.
 
 **Do I need to manually edit my state file?**
 
@@ -1688,9 +1797,15 @@ transform the state on the next plan/apply. See exceptions in
 [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
 for details.
 
-**What about `cloudflare_worker_secret`?**
+**What about `cloudflare_worker_secret` / `cloudflare_workers_secret`?**
 
-This resource has been removed in v5. Migrate to one of:
+This resource has been removed in v5. `tf-migrate` automatically merges
+secrets into the parent `cloudflare_workers_script` resource's `bindings` list
+as `secret_text` bindings. See the
+[`cloudflare_workers_secret`](#cloudflare_workers_secret) section under
+Resources Requiring Manual Migration for details.
+
+If you prefer not to use `tf-migrate`, migrate manually to one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the
   `secrets_store_secret` binding on `cloudflare_workers_script`

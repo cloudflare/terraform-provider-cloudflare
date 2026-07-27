@@ -19,7 +19,7 @@ type AIGatewayDynamicRoutingResultDataSourceEnvelope struct {
 }
 
 type AIGatewayDynamicRoutingDataSourceModel struct {
-	AccountID  types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID  types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	GatewayID  types.String                                                                 `tfsdk:"gateway_id" path:"gateway_id,required"`
 	ID         types.String                                                                 `tfsdk:"id" path:"id,required"`
 	CreatedAt  timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

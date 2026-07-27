@@ -18,7 +18,7 @@ type WebAnalyticsSitesResultListDataSourceEnvelope struct {
 }
 
 type WebAnalyticsSitesDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	OrderBy   types.String                                                         `tfsdk:"order_by" query:"order_by,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WebAnalyticsSitesResultDataSourceModel] `tfsdk:"result"`

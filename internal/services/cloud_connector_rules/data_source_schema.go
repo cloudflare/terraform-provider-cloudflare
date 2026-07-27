@@ -4,6 +4,8 @@ package cloud_connector_rules
 
 import (
 	"context"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,46 +30,37 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
-			"rules": schema.ListNestedAttribute{
+			"cloud_connector_rules_provider": schema.StringAttribute{
+				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"aws_s3",
+						"cloudflare_r2",
+						"gcp_storage",
+						"azure_storage",
+					),
+				},
+			},
+			"description": schema.StringAttribute{
 				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Computed: true,
-						},
-						"description": schema.StringAttribute{
-							Computed: true,
-						},
-						"enabled": schema.BoolAttribute{
-							Computed: true,
-						},
-						"expression": schema.StringAttribute{
-							Computed: true,
-						},
-						"parameters": schema.SingleNestedAttribute{
-							Description: "Parameters of Cloud Connector Rule",
-							Computed:    true,
-							Attributes: map[string]schema.Attribute{
-								"host": schema.StringAttribute{
-									Description: "Host to perform Cloud Connection to",
-									Computed:    true,
-								},
-							},
-						},
-						"provider": schema.StringAttribute{
-							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"aws_s3",
-									"cloudflare_r2",
-									"gcp_storage",
-									"azure_storage",
-								),
-							},
-						},
+			},
+			"enabled": schema.BoolAttribute{
+				Computed: true,
+			},
+			"expression": schema.StringAttribute{
+				Computed: true,
+			},
+			"parameters": schema.SingleNestedAttribute{
+				Description: "Parameters of Cloud Connector Rule",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CloudConnectorRulesParametersDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"host": schema.StringAttribute{
+						Description: "Host to perform Cloud Connection to",
+						Computed:    true,
 					},
 				},
 			},

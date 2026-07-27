@@ -13,8 +13,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
@@ -802,6 +802,41 @@ func TestAccCloudflareAccessPolicy_RequireRules(t *testing.T) {
 
 func testAccessPolicyRequireRulesConfig(resourceID, zone, accountID string) string {
 	return acctest.LoadTestCase("accesspolicyrequirerulesconfig.tf", resourceID, zone, accountID)
+}
+
+func TestAccCloudflareAccessPolicy_BypassEmptySessionDuration(t *testing.T) {
+	// Reproduces https://github.com/cloudflare/terraform-provider-cloudflare/issues/7165
+	// Perpetual diff on access policies with session_duration = "" and everyone = {}.
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessPolicyDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyBypassEmptySessionDurationConfig(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("cloudflare_zero_trust_access_policy."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue("cloudflare_zero_trust_access_policy."+rnd, tfjsonpath.New("decision"), knownvalue.StringExact("bypass")),
+					statecheck.ExpectKnownValue("cloudflare_zero_trust_access_policy."+rnd, tfjsonpath.New("session_duration"), knownvalue.StringExact("")),
+				},
+			},
+		},
+	})
+}
+
+func testAccessPolicyBypassEmptySessionDurationConfig(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accesspolicybypassemptysessionduration.tf", resourceID, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_DecisionTypes(t *testing.T) {

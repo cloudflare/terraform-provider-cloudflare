@@ -17,7 +17,7 @@ type AccountAPITokenPermissionGroupsListResultListDataSourceEnvelope struct {
 }
 
 type AccountAPITokenPermissionGroupsListDataSourceModel struct {
-	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
 	Name      types.String                                                                           `tfsdk:"name" query:"name,optional"`
 	Scope     types.String                                                                           `tfsdk:"scope" query:"scope,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`
@@ -40,7 +40,8 @@ func (m *AccountAPITokenPermissionGroupsListDataSourceModel) toListParams(_ cont
 }
 
 type AccountAPITokenPermissionGroupsListResultDataSourceModel struct {
-	ID     types.String                   `tfsdk:"id" json:"id,computed"`
-	Name   types.String                   `tfsdk:"name" json:"name,computed"`
-	Scopes customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
+	ID       types.String                   `tfsdk:"id" json:"id,computed"`
+	Category types.String                   `tfsdk:"category" json:"category,computed"`
+	Name     types.String                   `tfsdk:"name" json:"name,computed"`
+	Scopes   customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
 }

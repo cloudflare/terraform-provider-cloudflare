@@ -36,11 +36,13 @@ func Transform(ctx context.Context, source SourceCloudflareD1DatabaseModel) (*Ta
 		Jurisdiction:        types.StringNull(),
 		PrimaryLocationHint: types.StringNull(),
 
-		// read_replication is optional in v5; not present in v4 configs.
-		// The API returns a default of {mode:"disabled"} on read, which
-		// causes a perpetual plan diff since the config doesn't set it.
-		// This is a known provider-level issue, not a migration concern.
-		ReadReplication: nil,
+		// read_replication did not exist in v4. The D1 API returns
+		// {mode:"disabled"} as the default on read but rejects null on
+		// update. Initialize to the API default so the provider never
+		// sends null in a PUT request.
+		ReadReplication: &TargetD1DatabaseReadReplicationModel{
+			Mode: types.StringValue("disabled"),
+		},
 
 		// New computed fields: initialize as null, API will populate on next plan/apply
 		CreatedAt: timetypes.NewRFC3339Null(),

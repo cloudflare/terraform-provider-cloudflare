@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,12 +19,11 @@ type QueueConsumerResultDataSourceEnvelope struct {
 
 type QueueConsumerDataSourceModel struct {
 	AccountID       types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
-	ConsumerID      types.String                                                   `tfsdk:"consumer_id" json:"consumer_id,computed"`
+	ConsumerID      types.String                                                   `tfsdk:"consumer_id" path:"consumer_id,required"`
 	QueueID         types.String                                                   `tfsdk:"queue_id" path:"queue_id,required"`
-	CreatedOn       types.String                                                   `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn       timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeadLetterQueue types.String                                                   `tfsdk:"dead_letter_queue" json:"dead_letter_queue,computed"`
 	QueueName       types.String                                                   `tfsdk:"queue_name" json:"queue_name,computed"`
-	Script          types.String                                                   `tfsdk:"script" json:"script,computed"`
 	ScriptName      types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
 	Type            types.String                                                   `tfsdk:"type" json:"type,computed"`
 	Settings        customfield.NestedObject[QueueConsumerSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`

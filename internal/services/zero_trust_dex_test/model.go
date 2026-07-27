@@ -5,6 +5,7 @@ package zero_trust_dex_test
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,7 +23,9 @@ type ZeroTrustDEXTestModel struct {
 	Data           *ZeroTrustDEXTestDataModel                                        `tfsdk:"data" json:"data,required"`
 	Description    types.String                                                      `tfsdk:"description" json:"description,optional"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
+	Created        timetypes.RFC3339                                                 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,computed"`
+	Updated        timetypes.RFC3339                                                 `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 }
 
 func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {
@@ -34,8 +37,8 @@ func (m ZeroTrustDEXTestModel) MarshalJSONForUpdate(state ZeroTrustDEXTestModel)
 }
 
 type ZeroTrustDEXTestDataModel struct {
-	Host   types.String `tfsdk:"host" json:"host,optional"`
-	Kind   types.String `tfsdk:"kind" json:"kind,optional"`
+	Host   types.String `tfsdk:"host" json:"host,required"`
+	Kind   types.String `tfsdk:"kind" json:"kind,required"`
 	Method types.String `tfsdk:"method" json:"method,optional"`
 }
 
