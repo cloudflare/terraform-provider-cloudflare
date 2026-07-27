@@ -4,7 +4,7 @@ resource "cloudflare_zero_trust_organization" "%[1]s" {
   auth_domain = "%[1]s-%[3]s"
 
   mfa_config = {
-    allowed_authenticators = ["totp", "security_key", "ssh_piv_key"]
+    allowed_authenticators = ["totp", "security_key"]
     session_duration       = "24h"
   }
 }
@@ -55,7 +55,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
         }
       }
       mfa_config = {
-        allowed_authenticators = ["ssh_piv_key"]
+        allowed_authenticators = ["piv_key", "ssh_fido2_key"]
         session_duration       = "12h"
         mfa_disabled           = false
       }

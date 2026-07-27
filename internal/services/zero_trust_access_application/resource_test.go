@@ -2371,7 +2371,6 @@ func testAccCloudflareAccessApplicationMFAConfigInvalidType(rnd, accountID strin
 }
 
 func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *testing.T) {
-	t.Skip("skipping: API rejects MFA authenticator type used in test config (invalid mfa authenticator type)")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	resourceName := name
@@ -2390,7 +2389,8 @@ func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *tes
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("infrastructure")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("allowed_authenticators"), knownvalue.ListExact([]knownvalue.Check{
-						knownvalue.StringExact("ssh_piv_key"),
+						knownvalue.StringExact("piv_key"),
+						knownvalue.StringExact("ssh_fido2_key"),
 					})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("12h")),
