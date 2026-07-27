@@ -135,16 +135,19 @@ type TargetWorkersScriptModel struct {
 	Assets             *TargetAssetsModel                                    `tfsdk:"assets"`
 	Bindings           customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
 	BodyPart           types.String                                          `tfsdk:"body_part"`
+	CacheOptions       *TargetCacheOptionsModel                              `tfsdk:"cache_options"`
 	CompatibilityDate  types.String                                          `tfsdk:"compatibility_date"`
 	CompatibilityFlags customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
+	Exports            *map[string]TargetExportsModel                        `tfsdk:"exports"`
 	KeepAssets         types.Bool                                            `tfsdk:"keep_assets"`
 	KeepBindings       *[]types.String                                       `tfsdk:"keep_bindings"`
 	Limits             *TargetLimitsModel                                    `tfsdk:"limits"`
 	Logpush            types.Bool                                            `tfsdk:"logpush"`
 	MainModule         types.String                                          `tfsdk:"main_module"`
 	Migrations         customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
-	Observability      *TargetObservabilityModel                             `tfsdk:"observability"`
-	Placement          customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
+	Observability       *TargetObservabilityModel                             `tfsdk:"observability"`
+	PackageDependencies *[]*TargetPackageDependenciesModel                    `tfsdk:"package_dependencies"`
+	Placement           customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
 	TailConsumers      customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
 	UsageModel         types.String                                          `tfsdk:"usage_model"`
 }
@@ -238,6 +241,26 @@ type TargetAssetsConfigModel struct {
 type TargetLimitsModel struct {
 	CPUMs       types.Int64 `tfsdk:"cpu_ms"`
 	Subrequests types.Int64 `tfsdk:"subrequests"`
+}
+
+type TargetCacheOptionsModel struct {
+	Enabled           types.Bool `tfsdk:"enabled"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache"`
+}
+
+type TargetExportsModel struct {
+	Type  types.String             `tfsdk:"type"`
+	Cache *TargetExportsCacheModel `tfsdk:"cache"`
+}
+
+type TargetExportsCacheModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
+}
+
+type TargetPackageDependenciesModel struct {
+	InstalledVersion   types.String `tfsdk:"installed_version"`
+	Name               types.String `tfsdk:"name"`
+	PackageJsonVersion types.String `tfsdk:"package_json_version"`
 }
 
 type TargetMigrationsModel struct {

@@ -72,9 +72,12 @@ resource "cloudflare_managed_transforms" "example_managed_transforms" {
 
 ### Required
 
+- `zone_id` (String) The unique ID of the zone.
+
+### Optional
+
 - `managed_request_headers` (Attributes Set) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
 - `managed_response_headers` (Attributes Set) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
-- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 

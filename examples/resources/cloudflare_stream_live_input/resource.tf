@@ -6,6 +6,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
   meta = {
     name = "test stream 1"
   }
+  prefer_low_latency = true
   recording = {
     allowed_origins = ["example.com"]
     hide_live_viewer_count = false

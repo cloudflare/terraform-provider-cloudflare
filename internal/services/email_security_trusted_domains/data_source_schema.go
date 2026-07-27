@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"last_modified": schema.StringAttribute{
 				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
 				Computed:           true,
-				DeprecationMessage: "This attribute is deprecated.",
+				DeprecationMessage: "Use `modified_at` instead.",
 				CustomType:         timetypes.RFC3339Type{},
 			},
 			"modified_at": schema.StringAttribute{

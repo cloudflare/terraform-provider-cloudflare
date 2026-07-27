@@ -28,9 +28,12 @@ resource "cloudflare_account_dns_settings_internal_view" "example_account_dns_se
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `name` (String) The name of the view.
 - `zones` (Set of String) The list of zones linked to this view.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

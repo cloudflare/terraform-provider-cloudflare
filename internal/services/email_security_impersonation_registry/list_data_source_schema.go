@@ -99,7 +99,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"external_directory_node_id": schema.StringAttribute{
 							Computed:           true,
-							DeprecationMessage: "This attribute is deprecated.",
+							DeprecationMessage: "This field is deprecated.",
 						},
 						"is_email_regex": schema.BoolAttribute{
 							Computed: true,
@@ -107,7 +107,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"last_modified": schema.StringAttribute{
 							Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
 							Computed:           true,
-							DeprecationMessage: "This attribute is deprecated.",
+							DeprecationMessage: "Use `modified_at` instead.",
 							CustomType:         timetypes.RFC3339Type{},
 						},
 						"modified_at": schema.StringAttribute{

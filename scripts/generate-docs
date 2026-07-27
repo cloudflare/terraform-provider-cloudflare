@@ -11,6 +11,8 @@ EOT
 
 echo "==> Generating zone setting IDs from OpenAPI spec"
 python3 "$(dirname "$0")/generate-zone-setting-ids"
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go,github.com/gitlab.cfdata.org/cloudflare/sdks/cloudflare-go"
 
 echo "==> Generating Terraform provider documentation"
 

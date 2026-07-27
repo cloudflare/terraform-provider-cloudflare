@@ -19,19 +19,19 @@ type ZeroTrustAccessAIControlsMcpPortalResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessAIControlsMcpPortalDataSourceModel struct {
-	ID               types.String                                                                           `tfsdk:"id" path:"id,computed_optional"`
-	AccountID        types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
-	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
-	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`
-	Description      types.String                                                                           `tfsdk:"description" json:"description,computed"`
-	Hostname         types.String                                                                           `tfsdk:"hostname" json:"hostname,computed"`
-	ModifiedAt       timetypes.RFC3339                                                                      `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	ModifiedBy       types.String                                                                           `tfsdk:"modified_by" json:"modified_by,computed"`
-	Name             types.String                                                                           `tfsdk:"name" json:"name,computed"`
-	SecureWebGateway types.Bool                                                                             `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
-	Servers          customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel] `tfsdk:"servers" json:"servers,computed"`
-	Filter           *ZeroTrustAccessAIControlsMcpPortalFindOneByDataSourceModel                            `tfsdk:"filter"`
+	ID               types.String                                                                          `tfsdk:"id" path:"id,computed_optional"`
+	AccountID        types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
+	AllowCodeMode    types.Bool                                                                            `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
+	CreatedAt        timetypes.RFC3339                                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedBy        types.String                                                                          `tfsdk:"created_by" json:"created_by,computed"`
+	Description      types.String                                                                          `tfsdk:"description" json:"description,computed"`
+	Hostname         types.String                                                                          `tfsdk:"hostname" json:"hostname,computed"`
+	ModifiedAt       timetypes.RFC3339                                                                     `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	ModifiedBy       types.String                                                                          `tfsdk:"modified_by" json:"modified_by,computed"`
+	Name             types.String                                                                          `tfsdk:"name" json:"name,computed"`
+	SecureWebGateway types.Bool                                                                            `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed"`
+	Servers          customfield.NestedObjectSet[ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel] `tfsdk:"servers" json:"servers,computed"`
+	Filter           *ZeroTrustAccessAIControlsMcpPortalFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustAccessAIControlsMcpPortalDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessAIControlMcpPortalReadParams, diags diag.Diagnostics) {
@@ -60,6 +60,7 @@ type ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel struct {
 	Hostname                     types.String                                                                                         `tfsdk:"hostname" json:"hostname,computed"`
 	Name                         types.String                                                                                         `tfsdk:"name" json:"name,computed"`
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"prompts" json:"prompts,computed"`
+	ServerID                     types.String                                                                                         `tfsdk:"server_id" json:"server_id,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                              `tfsdk:"tools" json:"tools,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                                         `tfsdk:"created_by" json:"created_by,computed"`

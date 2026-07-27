@@ -16,13 +16,13 @@ description: |-
 
 ### Required
 
-- `account_id` (String)
 - `cf_api_id` (String)
 - `cf_api_key` (String, Sensitive)
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `legacy` (Boolean)
 
 ### Read-Only

@@ -23,6 +23,7 @@ type EmailRoutingRuleDataSourceModel struct {
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
 	Priority       types.Float64                                                         `tfsdk:"priority" json:"priority,computed"`
+	Source         types.String                                                          `tfsdk:"source" json:"source,computed"`
 	Tag            types.String                                                          `tfsdk:"tag" json:"tag,computed"`
 	Actions        customfield.NestedObjectList[EmailRoutingRuleActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`
 	Matchers       customfield.NestedObjectList[EmailRoutingRuleMatchersDataSourceModel] `tfsdk:"matchers" json:"matchers,computed"`

@@ -59,6 +59,24 @@ resource "cloudflare_ruleset" "my_ruleset" {
         serve_stale = {
           disable_stale_while_updating = false
         }
+        vary = {
+          default = {
+            action = "bypass"
+          }
+          headers = {
+            "accept" = {
+              action      = "normalize"
+              media_types = ["image/webp", "image/avif"]
+            }
+            "accept-language" = {
+              action    = "normalize"
+              languages = ["en", "de", "fr"]
+            }
+            "x-custom-header" = {
+              action = "passthrough"
+            }
+          }
+        }
       }
     }
   ]

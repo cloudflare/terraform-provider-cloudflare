@@ -113,6 +113,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	ReadTimeout              types.Int64                                                                                       `tfsdk:"read_timeout" json:"read_timeout,computed"`
 	RespectStrongEtags       types.Bool                                                                                        `tfsdk:"respect_strong_etags" json:"respect_strong_etags,computed"`
 	ServeStale               customfield.NestedObject[RulesetRulesActionParametersServeStaleDataSourceModel]                   `tfsdk:"serve_stale" json:"serve_stale,computed"`
+	Vary                     customfield.NestedObject[RulesetRulesActionParametersVaryDataSourceModel]                         `tfsdk:"vary" json:"vary,computed"`
 	StripETags               types.Bool                                                                                        `tfsdk:"strip_etags" json:"strip_etags,computed"`
 	StripLastModified        types.Bool                                                                                        `tfsdk:"strip_last_modified" json:"strip_last_modified,computed"`
 	StripSetCookie           types.Bool                                                                                        `tfsdk:"strip_set_cookie" json:"strip_set_cookie,computed"`
@@ -369,4 +370,19 @@ type RulesetRulesActionParametersSetCacheControlQualifiersDataSourceModel struct
 type RulesetRulesActionParametersSetCacheControlSimpleDataSourceModel struct {
 	Operation      types.String `tfsdk:"operation" json:"operation,computed"`
 	CloudflareOnly types.Bool   `tfsdk:"cloudflare_only" json:"cloudflare_only,computed,decode_null_to_zero"`
+}
+
+type RulesetRulesActionParametersVaryDataSourceModel struct {
+	Default customfield.NestedObject[RulesetRulesActionParametersVaryDefaultDataSourceModel]   `tfsdk:"default" json:"default,computed"`
+	Headers customfield.NestedObjectMap[RulesetRulesActionParametersVaryHeaderDataSourceModel] `tfsdk:"headers" json:"headers,computed"`
+}
+
+type RulesetRulesActionParametersVaryDefaultDataSourceModel struct {
+	Action types.String `tfsdk:"action" json:"action,computed"`
+}
+
+type RulesetRulesActionParametersVaryHeaderDataSourceModel struct {
+	Action     types.String                   `tfsdk:"action" json:"action,computed"`
+	MediaTypes customfield.List[types.String] `tfsdk:"media_types" json:"media_types,computed"`
+	Languages  customfield.List[types.String] `tfsdk:"languages" json:"languages,computed"`
 }

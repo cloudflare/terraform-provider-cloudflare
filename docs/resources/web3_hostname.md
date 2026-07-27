@@ -33,12 +33,12 @@ resource "cloudflare_web3_hostname" "example_web3_hostname" {
 - `name` (String) Specify the hostname that points to the target gateway via CNAME.
 - `target` (String) Specify the target gateway of the hostname.
 Available values: "ethereum", "ipfs", "ipfs_universal_path".
-- `zone_id` (String) Specify the identifier of the hostname.
 
 ### Optional
 
 - `description` (String) Specify an optional description of the hostname.
 - `dnslink` (String) Specify the DNSLink value used if the target is ipfs.
+- `zone_id` (String) Specify the identifier of the hostname.
 
 ### Read-Only
 

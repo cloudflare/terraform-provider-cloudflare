@@ -40,12 +40,12 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `name` (String) DNS Firewall cluster name
 - `upstream_ips` (Set of String)
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `attack_mitigation` (Attributes) Attack mitigation settings (see [below for nested schema](#nestedatt--attack_mitigation))
 - `deprecate_any_requests` (Boolean) Whether to refuse to answer queries for the ANY type
 - `dns_firewall_ip_count` (Number) Number of IPv4 addresses to assign to the DNS Firewall cluster. Only used during cluster creation and cannot be changed later.

@@ -33,6 +33,7 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 	Name                      types.String                                                              `tfsdk:"name" json:"name,computed"`
 	UpdatedAt                 timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Endpoints                 customfield.NestedObject[ZeroTrustDNSLocationEndpointsDataSourceModel]    `tfsdk:"endpoints" json:"endpoints,computed"`
+	MaxTTL                    customfield.NestedObject[ZeroTrustDNSLocationMaxTTLDataSourceModel]       `tfsdk:"max_ttl" json:"max_ttl,computed"`
 	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
 }
 
@@ -81,6 +82,11 @@ type ZeroTrustDNSLocationEndpointsIPV6DataSourceModel struct {
 
 type ZeroTrustDNSLocationEndpointsIPV6NetworksDataSourceModel struct {
 	Network types.String `tfsdk:"network" json:"network,computed"`
+}
+
+type ZeroTrustDNSLocationMaxTTLDataSourceModel struct {
+	Mode    types.String `tfsdk:"mode" json:"mode,computed"`
+	TTLSecs types.Int64  `tfsdk:"ttl_secs" json:"ttl_secs,computed"`
 }
 
 type ZeroTrustDNSLocationNetworksDataSourceModel struct {

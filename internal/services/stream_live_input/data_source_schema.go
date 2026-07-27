@@ -52,10 +52,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Indicates whether the live input is enabled and can accept streams.",
 				Computed:    true,
 			},
+			"keys_rotated_at": schema.StringAttribute{
+				Description: "The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the live input was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"prefer_low_latency": schema.BoolAttribute{
+				Description: "When enabled, the live stream is delivered using Low-Latency HLS (LL-HLS), reducing glass-to-glass latency for viewers at the cost of reduced player compatibility.",
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "The connection status of a live input.\nAvailable values: \"connected\", \"reconnected\", \"reconnecting\", \"client_disconnect\", \"ttl_exceeded\", \"failed_to_connect\", \"failed_to_reconnect\", \"new_configuration_accepted\".",

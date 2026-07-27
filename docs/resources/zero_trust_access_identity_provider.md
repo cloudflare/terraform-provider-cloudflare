@@ -62,6 +62,7 @@ Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`
 ### Read-Only
 
 - `id` (String) UUID.
+- `read_only` (Boolean) Indicates that the identity provider is immutable and cannot be updated or deleted via the API.
 - `saml_certificate_set` (Attributes) The SAML encryption certificate set details, including current and previous certificates.
 Only present for SAML identity providers with a certificate set assigned. (see [below for nested schema](#nestedatt--saml_certificate_set))
 

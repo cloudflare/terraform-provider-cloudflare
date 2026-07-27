@@ -5505,6 +5505,31 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(false),
 										}),
+										"vary": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+											"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("bypass"),
+											}),
+											"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+												"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+													"action": knownvalue.StringExact("normalize"),
+													"media_types": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("image/webp"),
+														knownvalue.StringExact("image/avif"),
+													}),
+												}),
+												"accept-language": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+													"action": knownvalue.StringExact("normalize"),
+													"languages": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("en"),
+														knownvalue.StringExact("de"),
+														knownvalue.StringExact("fr"),
+													}),
+												}),
+												"x-custom-header": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+													"action": knownvalue.StringExact("passthrough"),
+												}),
+											}),
+										}),
 									}),
 								}),
 							}),
@@ -5583,6 +5608,31 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(false),
 									}),
+									"vary": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action": knownvalue.StringExact("bypass"),
+										}),
+										"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+											"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("normalize"),
+												"media_types": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("image/webp"),
+													knownvalue.StringExact("image/avif"),
+												}),
+											}),
+											"accept-language": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("normalize"),
+												"languages": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("en"),
+													knownvalue.StringExact("de"),
+													knownvalue.StringExact("fr"),
+												}),
+											}),
+											"x-custom-header": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("passthrough"),
+											}),
+										}),
+									}),
 								}),
 							}),
 						}),
@@ -5657,6 +5707,31 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"respect_strong_etags":       knownvalue.Bool(true),
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(false),
+									}),
+									"vary": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action": knownvalue.StringExact("bypass"),
+										}),
+										"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+											"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("normalize"),
+												"media_types": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("image/webp"),
+													knownvalue.StringExact("image/avif"),
+												}),
+											}),
+											"accept-language": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("normalize"),
+												"languages": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("en"),
+													knownvalue.StringExact("de"),
+													knownvalue.StringExact("fr"),
+												}),
+											}),
+											"x-custom-header": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+												"action": knownvalue.StringExact("passthrough"),
+											}),
+										}),
 									}),
 								}),
 							}),
@@ -5721,6 +5796,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(true),
 										}),
+										"vary": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -5776,6 +5852,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
+									"vary": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -5828,6 +5905,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
+									"vary": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -5910,6 +5988,23 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 								}),
 							}),
 						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("bypass"),
+								}),
+								"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+									"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"action": knownvalue.StringExact("normalize"),
+										"media_types": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.StringExact("image/webp"),
+										}),
+									}),
+								}),
+							}),
+						),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -6043,6 +6138,40 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"read_timeout":               knownvalue.Null(),
 									"respect_strong_etags":       knownvalue.Null(),
 									"serve_stale":                knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("bypass"),
+							}),
+							"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+								"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("normalize"),
+									"media_types": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("image/webp"),
+									}),
+								}),
+							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("bypass"),
+							}),
+							"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+								"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("normalize"),
+									"media_types": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("image/webp"),
+									}),
 								}),
 							}),
 						}),

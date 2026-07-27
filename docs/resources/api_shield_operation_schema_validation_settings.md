@@ -34,7 +34,6 @@ resource "cloudflare_api_shield_operation_schema_validation_settings" "example_a
 ### Required
 
 - `operation_id` (String) UUID.
-- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -45,6 +44,7 @@ resource "cloudflare_api_shield_operation_schema_validation_settings" "example_a
   - `none` will skip mitigation for this operation
   - `null` indicates that no operation level mitigation is in place, see Zone Level Schema Validation Settings for mitigation action that will be applied
 Available values: "log", "block", "none".
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

@@ -47,6 +47,7 @@ func transformSettings(ctx context.Context, source SourceV4ZeroTrustGatewaySetti
 		// New in v5; not in v4 → null
 		HostSelector: nil,
 		Inspection:   nil,
+		MaxTTLSecs:   types.Int64Null(),
 		Sandbox:      nil,
 	}
 

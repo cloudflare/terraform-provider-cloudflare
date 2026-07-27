@@ -24,11 +24,11 @@ resource "cloudflare_zero_trust_gateway_proxy_endpoint" "example_zero_trust_gate
 
 ### Required
 
-- `account_id` (String)
 - `name` (String) Specify the name of the proxy endpoint.
 
 ### Optional
 
+- `account_id` (String)
 - `ips` (List of String) Specify the list of CIDRs to restrict ingress connections.
 - `kind` (String) The proxy endpoint kind
 Available values: "ip", "identity".

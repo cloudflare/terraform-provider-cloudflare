@@ -97,9 +97,9 @@ resource "cloudflare_old" "example" {
 At this point, you've switched over to using the new resource and should be able
 to continue using Terraform as normal.
 
-## Using moved blocks (Terraform 1.1+)
+## Using moved blocks (Terraform 1.8+)
 
--> Recommended for Terraform 1.1+ users who want to track renames in code.
+-> Recommended for Terraform 1.8+ users who want to track renames in code.
 
 Terraform's native `moved` blocks provide a declarative way to handle resource
 renames without manual state manipulation.

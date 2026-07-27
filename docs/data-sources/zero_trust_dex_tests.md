@@ -30,11 +30,11 @@ data "cloudflare_zero_trust_dex_tests" "example_zero_trust_dex_tests" {
 
 ### Optional
 
-- `account_id` (String)
-- `kind` (String) Filter by test type
+- `account_id` (String) Unique identifier linked to an account.
+- `kind` (String) Filter by test type.
 Available values: "http", "traceroute".
 - `max_items` (Number) Max items to fetch, default: 1000
-- `test_name` (String) Filter by test name
+- `test_name` (String) Filter by test name.
 
 ### Read-Only
 
@@ -63,9 +63,9 @@ Read-Only:
 
 Read-Only:
 
-- `default` (Boolean) Whether the DEX rule is the account default
-- `id` (String) API Resource UUID tag.
-- `name` (String) The name of the DEX rule
+- `default` (Boolean) Whether the DEX rule is the account default.
+- `id` (String) The id of the DEX rule.
+- `name` (String) The name of the DEX rule.
 
 
 <a id="nestedatt--result--data"></a>

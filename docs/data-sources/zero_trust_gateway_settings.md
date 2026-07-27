@@ -47,6 +47,7 @@ Read-Only:
 - `fips` (Attributes) Specify FIPS settings. (see [below for nested schema](#nestedatt--settings--fips))
 - `host_selector` (Attributes) Enable host selection in egress policies. (see [below for nested schema](#nestedatt--settings--host_selector))
 - `inspection` (Attributes) Define the proxy inspection mode. (see [below for nested schema](#nestedatt--settings--inspection))
+- `max_ttl_secs` (Number) Account-level cap on DNS response TTLs, in seconds. Gateway rewrites DNS responses so returned record TTLs do not exceed this value. Null means no cap. Each DNS location can inherit, override, or disable it through the location `max_ttl` setting.
 - `protocol_detection` (Attributes) Specify whether to detect protocols from the initial bytes of client traffic. (see [below for nested schema](#nestedatt--settings--protocol_detection))
 - `sandbox` (Attributes) Specify whether to enable the sandbox. (see [below for nested schema](#nestedatt--settings--sandbox))
 - `tls_decrypt` (Attributes) Specify whether to inspect encrypted HTTP traffic. (see [below for nested schema](#nestedatt--settings--tls_decrypt))

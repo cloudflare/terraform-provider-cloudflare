@@ -44,11 +44,11 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 
 ### Required
 
-- `account_id` (String)
 - `profile_id` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number)
 - `confidence_threshold` (String)

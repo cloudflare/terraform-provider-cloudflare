@@ -15,28 +15,30 @@ type WorkerVersionResultEnvelope struct {
 }
 
 type WorkerVersionModel struct {
-	ID                 types.String                                             `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	WorkerID           types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
-	CompatibilityDate  types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	MainModule         types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
-	Containers         *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
-	Migrations         *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
-	Modules            *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
-	Placement          *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
-	UsageModel         types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
-	CompatibilityFlags customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	Annotations        customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Assets             *WorkerVersionAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
-	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
-	Limits             customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
-	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	MigrationTag       types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
-	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
-	Source             types.String                                             `tfsdk:"source" json:"source,computed"`
+	ID                  types.String                                             `tfsdk:"id" json:"id,computed"`
+	AccountID           types.String                                             `tfsdk:"account_id" path:"account_id,required"`
+	WorkerID            types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
+	CompatibilityDate   types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	MainModule          types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
+	Containers          *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
+	Migrations          *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
+	Modules             *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
+	PackageDependencies *[]*WorkerVersionPackageDependenciesModel                `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
+	Placement           *WorkerVersionPlacementModel                             `tfsdk:"placement" json:"placement,optional"`
+	UsageModel          types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	CompatibilityFlags  customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	Annotations         customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Assets              customfield.NestedObject[WorkerVersionAssetsModel]       `tfsdk:"assets" json:"assets,optional"`
+	Bindings            customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
+	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsModel] `tfsdk:"cache_options" json:"cache_options,computed_optional"`
+	Limits              customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
+	CreatedOn           timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	MigrationTag        types.String                                             `tfsdk:"migration_tag" json:"migration_tag,computed"`
+	Number              types.Int64                                              `tfsdk:"number" json:"number,computed"`
+	Source              types.String                                             `tfsdk:"source" json:"source,computed"`
 	MainScriptBase64   types.String                                             `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
-	StartupTimeMs      types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	URLs               customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
+	StartupTimeMs       types.Int64                                              `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	URLs                customfield.List[types.String]                           `tfsdk:"urls" json:"urls,computed"`
 }
 
 func (m WorkerVersionModel) MarshalJSON() (data []byte, err error) {
@@ -98,6 +100,12 @@ type WorkerVersionModulesModel struct {
 	Name          types.String `tfsdk:"name" json:"name,required"`
 	ContentFile   types.String `tfsdk:"content_file" json:"-,optional"`
 	ContentSHA256 types.String `tfsdk:"content_sha256" json:"-,computed"`
+}
+
+type WorkerVersionPackageDependenciesModel struct {
+	InstalledVersion   types.String `tfsdk:"installed_version" json:"installedVersion,required"`
+	Name               types.String `tfsdk:"name" json:"name,required"`
+	PackageJsonVersion types.String `tfsdk:"package_json_version" json:"packageJsonVersion,required"`
 }
 
 type WorkerVersionPlacementModel struct {
@@ -197,6 +205,11 @@ type WorkerVersionBindingsSimpleModel struct {
 	Limit             types.Float64 `tfsdk:"limit" json:"limit,required"`
 	Period            types.Int64   `tfsdk:"period" json:"period,required"`
 	MitigationTimeout types.Int64   `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
+}
+
+type WorkerVersionCacheOptionsModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed_optional"`
 }
 
 type WorkerVersionLimitsModel struct {

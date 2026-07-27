@@ -27,6 +27,8 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
   }]
   enabled = true
   name = "Send to user@example.net rule."
+  owner_worker_tag = "a7e6fb77503c41d8a7f3113c6918f10c"
+  source = "api"
 }
 ```
 
@@ -43,6 +45,12 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
 
 - `enabled` (Boolean) Routing rule status.
 - `name` (String) Routing rule name.
+- `owner_worker_tag` (String) Public tag (script_tag) of the Worker that owns this rule. Required when
+`source` is `wrangler`.
+- `source` (String) Who manages the rule. `api` covers dashboard, generic API, and Terraform;
+`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults
+to `api` when omitted on write.
+Available values: "api", "wrangler".
 
 ### Read-Only
 

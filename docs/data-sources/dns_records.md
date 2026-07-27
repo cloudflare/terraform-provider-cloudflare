@@ -39,6 +39,8 @@ data "cloudflare_dns_records" "example_dns_records" {
     startswith = "www.example"
   }
   search = "www.cloudflare.com"
+  shadowed_by_name = "sub.example.com"
+  shadowing_name = "www.sub.example.com"
   tag = {
     absent = "important"
     contains = "greeting:ello, worl"
@@ -60,6 +62,7 @@ data "cloudflare_dns_records" "example_dns_records" {
 - `content` (Attributes) (see [below for nested schema](#nestedatt--content))
 - `direction` (String) Direction to order DNS records in.
 Available values: "asc", "desc".
+- `include_shadow_metadata` (Boolean) Whether to include shadow metadata in the `meta` field of each record in the response. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
 - `match` (String) Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.
 Available values: "any", "all".
 - `max_items` (Number) Max items to fetch, default: 1000
@@ -68,6 +71,8 @@ Available values: "any", "all".
 Available values: "type", "name", "content", "ttl", "proxied".
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `search` (String) Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.
+- `shadowed_by_name` (String) Filters to records at or below the given NS delegation name, excluding the NS records that form the delegation itself. The value must be a subdomain of the zone; the zone apex is not accepted. Requires `include_shadow_metadata=true`. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
+- `shadowing_name` (String) Returns NS records that shadow the given name, searching at the name itself and each of its ancestor names within the zone, excluding the zone apex. The value must be a subdomain of the zone; the zone apex is not accepted. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
 - `tag` (Attributes) (see [below for nested schema](#nestedatt--tag))
 - `tag_match` (String) Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.
 Available values: "any", "all".

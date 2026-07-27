@@ -88,6 +88,7 @@ func (r *OAuthClientResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	data = &env.Result
+	setOAuthClientID(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -109,6 +110,15 @@ func (r *OAuthClientResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
+	oAuthClientID := data.OAuthClientID.ValueString()
+	if oAuthClientID == "" {
+		oAuthClientID = state.OAuthClientID.ValueString()
+	}
+	if oAuthClientID == "" {
+		oAuthClientID = state.ClientID.ValueString()
+	}
+	clientSecret := state.ClientSecret
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -118,7 +128,7 @@ func (r *OAuthClientResource) Update(ctx context.Context, req resource.UpdateReq
 	env := OAuthClientResultEnvelope{*data}
 	_, err = r.client.IAM.OAuthClients.Update(
 		ctx,
-		data.OAuthClientID.ValueString(),
+		oAuthClientID,
 		iam.OAuthClientUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -137,6 +147,8 @@ func (r *OAuthClientResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	data = &env.Result
+	setOAuthClientID(data)
+	data.ClientSecret = clientSecret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -150,11 +162,16 @@ func (r *OAuthClientResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	oAuthClientID := data.OAuthClientID.ValueString()
+	if oAuthClientID == "" {
+		oAuthClientID = data.ClientID.ValueString()
+	}
+
 	res := new(http.Response)
 	env := OAuthClientResultEnvelope{*data}
 	_, err := r.client.IAM.OAuthClients.Get(
 		ctx,
-		data.OAuthClientID.ValueString(),
+		oAuthClientID,
 		iam.OAuthClientGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -177,6 +194,7 @@ func (r *OAuthClientResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data = &env.Result
+	setOAuthClientID(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -190,9 +208,14 @@ func (r *OAuthClientResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
+	oAuthClientID := data.OAuthClientID.ValueString()
+	if oAuthClientID == "" {
+		oAuthClientID = data.ClientID.ValueString()
+	}
+
 	_, err := r.client.IAM.OAuthClients.Delete(
 		ctx,
-		data.OAuthClientID.ValueString(),
+		oAuthClientID,
 		iam.OAuthClientDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -208,4 +231,10 @@ func (r *OAuthClientResource) Delete(ctx context.Context, req resource.DeleteReq
 
 func (r *OAuthClientResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+func setOAuthClientID(data *OAuthClientModel) {
+	if data.OAuthClientID.ValueString() == "" {
+		data.OAuthClientID = data.ClientID
+	}
 }

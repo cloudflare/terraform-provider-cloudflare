@@ -33,6 +33,9 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 ### Required
 
 - `rules` (Attributes List) Lists snippet rules. (see [below for nested schema](#nestedatt--rules))
+
+### Optional
+
 - `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Read-Only
@@ -59,5 +62,10 @@ Read-Only:
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_snippet_rules.example '<zone_id>'
+```
+
+

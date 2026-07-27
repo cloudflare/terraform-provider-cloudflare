@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -170,6 +171,31 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"ipv4_destination_backup": schema.StringAttribute{
 							Description: "Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.",
 							Computed:    true,
+						},
+						"max_ttl": schema.SingleNestedAttribute{
+							Description: "Controls how DNS response TTLs are capped for this location relative to the account `max_ttl_secs` setting. Omitting `max_ttl` on update resets it to `inherit`.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDNSLocationsMaxTTLDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"mode": schema.StringAttribute{
+									Description: "`inherit` uses the account `max_ttl_secs`. `override` uses this location's `ttl_secs`. `disabled` leaves returned TTLs unchanged.\nAvailable values: \"inherit\", \"override\", \"disabled\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"inherit",
+											"override",
+											"disabled",
+										),
+									},
+								},
+								"ttl_secs": schema.Int64Attribute{
+									Description: "Location-specific cap on DNS response TTLs, in seconds. Required when `mode` is `override`. Must be omitted when `mode` is `inherit` or `disabled`.",
+									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(60, 36000),
+									},
+								},
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "Specify the location name.",

@@ -29,11 +29,11 @@ resource "cloudflare_queue" "example_queue" {
 
 ### Required
 
-- `account_id` (String) A Resource identifier.
 - `queue_name` (String)
 
 ### Optional
 
+- `account_id` (String) A Resource identifier.
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 
 ### Read-Only

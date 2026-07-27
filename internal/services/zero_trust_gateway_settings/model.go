@@ -42,6 +42,7 @@ type ZeroTrustGatewaySettingsSettingsModel struct {
 	ExtendedEmailMatching *ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel `tfsdk:"extended_email_matching" json:"extended_email_matching,optional"`
 	HostSelector          *ZeroTrustGatewaySettingsSettingsHostSelectorModel          `tfsdk:"host_selector" json:"host_selector,optional"`
 	Inspection            *ZeroTrustGatewaySettingsSettingsInspectionModel            `tfsdk:"inspection" json:"inspection,optional"`
+	MaxTTLSecs            types.Int64                                                 `tfsdk:"max_ttl_secs" json:"max_ttl_secs,optional"`
 	Sandbox               *ZeroTrustGatewaySettingsSettingsSandboxModel               `tfsdk:"sandbox" json:"sandbox,optional"`
 	TLSDecrypt            *ZeroTrustGatewaySettingsSettingsTLSDecryptModel            `tfsdk:"tls_decrypt" json:"tls_decrypt,optional"`
 }

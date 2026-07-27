@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - "release-please**"
+      - "release-tf-*"
 
 env:
   CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe

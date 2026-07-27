@@ -35,6 +35,10 @@ data "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" {
 - `id` (String) Identifier.
 - `matchers` (Attributes List) List of matchers for the catch-all routing rule. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
+- `source` (String) Who manages the rule. `api` covers dashboard, generic API, and Terraform;
+`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults
+to `api` when omitted on write.
+Available values: "api", "wrangler".
 - `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>

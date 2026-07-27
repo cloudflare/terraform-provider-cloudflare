@@ -55,6 +55,12 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 		if !m.Hostname.Contain.IsNull() {
 			paramsHostname.Contain = cloudflare.F(m.Hostname.Contain.ValueString())
 		}
+		if !m.Hostname.Exact.IsNull() {
+			paramsHostname.Exact = cloudflare.F(m.Hostname.Exact.ValueString())
+		}
+		if !m.Hostname.StartsWith.IsNull() {
+			paramsHostname.StartsWith = cloudflare.F(m.Hostname.StartsWith.ValueString())
+		}
 		params.Hostname = cloudflare.F(paramsHostname)
 	}
 	if !m.HostnameStatus.IsNull() {
@@ -77,7 +83,9 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type CustomHostnamesHostnameDataSourceModel struct {
-	Contain types.String `tfsdk:"contain" json:"contain,optional"`
+	Contain    types.String `tfsdk:"contain" json:"contain,optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
+	StartsWith types.String `tfsdk:"starts_with" json:"startsWith,optional"`
 }
 
 type CustomHostnamesResultDataSourceModel struct {

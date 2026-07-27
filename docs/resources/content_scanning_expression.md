@@ -30,6 +30,9 @@ resource "cloudflare_content_scanning_expression" "example_content_scanning_expr
 ### Required
 
 - `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
+
+### Optional
+
 - `zone_id` (String) Defines an identifier.
 
 ### Read-Only

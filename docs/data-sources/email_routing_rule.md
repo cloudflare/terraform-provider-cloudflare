@@ -39,6 +39,10 @@ data "cloudflare_email_routing_rule" "example_email_routing_rule" {
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
+- `source` (String) Who manages the rule. `api` covers dashboard, generic API, and Terraform;
+`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults
+to `api` when omitted on write.
+Available values: "api", "wrangler".
 - `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--filter"></a>

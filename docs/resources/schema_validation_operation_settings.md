@@ -38,6 +38,9 @@ resource "cloudflare_schema_validation_operation_settings" "example_schema_valid
   - `null` - clears any mitigation action
 Available values: "log", "block", "none".
 - `operation_id` (String) UUID.
+
+### Optional
+
 - `zone_id` (String) Identifier.
 
 ## Import

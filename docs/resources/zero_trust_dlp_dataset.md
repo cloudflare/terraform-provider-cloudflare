@@ -31,11 +31,11 @@ resource "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String)
 
 ### Optional
 
+- `account_id` (String)
 - `case_sensitive` (Boolean) Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if `secret` is true or undefined

@@ -273,6 +273,16 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 	}
 }
 
+// TestAccPreCheck_Organization skips the test unless the organization test
+// credentials are configured. Only the `organization` acceptance-test matrix
+// entry injects CLOUDFLARE_ORGANIZATION_ID, so gating on it lets these tests
+// self-skip on every other runner instead of failing.
+func TestAccPreCheck_Organization(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ORGANIZATION_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_ORGANIZATION_ID is not set")
+	}
+}
+
 // Test helper method checking all required Hyperdrive configurations are present.
 func TestAccPreCheck_Hyperdrive(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME"); v == "" {

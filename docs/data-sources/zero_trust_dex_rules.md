@@ -29,12 +29,12 @@ data "cloudflare_zero_trust_dex_rules" "example_zero_trust_dex_rules" {
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Unique identifier linked to an account.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `name` (String) Filter results by rule name
-- `sort_by` (String) Which property to sort results by
+- `name` (String) Filter results by rule name.
+- `sort_by` (String) Which property to sort results by.
 Available values: "name", "created_at", "updated_at".
-- `sort_order` (String) Sort direction for sort_by property
+- `sort_order` (String) Sort direction for sort_by property.
 Available values: "ASC", "DESC".
 
 ### Read-Only

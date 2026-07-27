@@ -53,6 +53,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name used to identify the script.",
 							Computed:    true,
 						},
+						"cache_options": schema.SingleNestedAttribute{
+							Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[WorkersScriptsCacheOptionsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"enabled": schema.BoolAttribute{
+									Description: "Whether caching is enabled for this Worker.",
+									Computed:    true,
+								},
+								"cross_version_cache": schema.BoolAttribute{
+									Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+									Computed:    true,
+								},
+							},
+						},
 						"compatibility_date": schema.StringAttribute{
 							Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 							Computed:    true,

@@ -21,6 +21,7 @@ type ZeroTrustDNSLocationModel struct {
 	ClientDefault             types.Bool                                                      `tfsdk:"client_default" json:"client_default,computed_optional"`
 	DNSDestinationIPsID       types.String                                                    `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
 	ECSSupport                types.Bool                                                      `tfsdk:"ecs_support" json:"ecs_support,computed_optional"`
+	MaxTTL                    customfield.NestedObject[ZeroTrustDNSLocationMaxTTLModel]       `tfsdk:"max_ttl" json:"max_ttl,computed_optional"`
 	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 	CreatedAt                 timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DNSDestinationIPV6BlockID types.String                                                    `tfsdk:"dns_destination_ipv6_block_id" json:"dns_destination_ipv6_block_id,computed"`
@@ -76,6 +77,11 @@ type ZeroTrustDNSLocationEndpointsIPV6Model struct {
 
 type ZeroTrustDNSLocationEndpointsIPV6NetworksModel struct {
 	Network types.String `tfsdk:"network" json:"network,required"`
+}
+
+type ZeroTrustDNSLocationMaxTTLModel struct {
+	Mode    types.String `tfsdk:"mode" json:"mode,required"`
+	TTLSecs types.Int64  `tfsdk:"ttl_secs" json:"ttl_secs,optional"`
 }
 
 type ZeroTrustDNSLocationNetworksModel struct {

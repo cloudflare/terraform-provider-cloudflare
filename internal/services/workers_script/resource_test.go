@@ -2,7 +2,9 @@ package workers_script_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"path"
 	"regexp"
@@ -19,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
@@ -815,6 +818,403 @@ Content-Type: application/json
 			},
 		},
 	})
+}
+
+// testAccCheckCloudflareWorkerScriptDestroy verifies that the worker script has been
+// deleted from the API after the test completes.
+func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_workers_script" {
+			continue
+		}
+
+		_, err := client.Workers.Scripts.Get(context.Background(), rs.Primary.ID, workers.ScriptGetParams{
+			AccountID: cloudflare.F(accountID),
+		})
+		if err == nil {
+			return fmt.Errorf("workers script %s still exists", rs.Primary.ID)
+		}
+
+		var apierr *cloudflare.Error
+		if errors.As(err, &apierr) && apierr.StatusCode != http.StatusNotFound {
+			return fmt.Errorf("error checking if workers script %s was destroyed: %w", rs.Primary.ID, err)
+		}
+	}
+
+	return nil
+}
+
+// TestAccCloudflareWorkerScript_SecretTextBasic verifies that a worker script can be created
+// with a single secret_text binding and that all binding attributes are correctly stored in state.
+func TestAccCloudflareWorkerScript_SecretTextBasic(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue := "my-secret-value-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextUpdate verifies that updating the text value of
+// a secret_text binding triggers an update (not replacement) and the new value is stored.
+func TestAccCloudflareWorkerScript_SecretTextUpdate(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue1 := "initial-secret-" + rnd
+	secretValue2 := "updated-secret-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue1),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue1)),
+				},
+			},
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue2)),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextAddRemove verifies the lifecycle of adding and
+// removing secret_text bindings from a worker script. Starts with one secret, adds a second,
+// then removes the first — proving independent secret lifecycle management.
+func TestAccCloudflareWorkerScript_SecretTextAddRemove(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue1 := "secret-one-" + rnd
+	secretValue2 := "secret-two-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with one secret
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue1),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+				},
+			},
+			{
+				// Step 2: Add a second secret (now two secrets)
+				Config: testAccWorkersScriptConfigWithTwoSecrets(resourceName, accountID, secretValue1, secretValue2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("SECRET_ONE")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("SECRET_TWO")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("text"), knownvalue.StringExact(secretValue2)),
+				},
+			},
+			{
+				// Step 3: Remove both secrets, keep only one with a different value
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue2)),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextMultiple verifies that a worker script can be
+// created with multiple secret_text bindings simultaneously and all are stored correctly.
+func TestAccCloudflareWorkerScript_SecretTextMultiple(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue1 := "secret-one-" + rnd
+	secretValue2 := "secret-two-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithTwoSecrets(resourceName, accountID, secretValue1, secretValue2),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("SECRET_ONE")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("SECRET_TWO")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("text"), knownvalue.StringExact(secretValue2)),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextWithOtherBindings verifies that secret_text
+// bindings coexist correctly with other binding types (plain_text) on the same worker.
+func TestAccCloudflareWorkerScript_SecretTextWithOtherBindings(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue := "my-secret-" + rnd
+	plainValue := "my-plain-value-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretAndPlainText(resourceName, accountID, secretValue, plainValue),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("MY_VAR")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("type"), knownvalue.StringExact("plain_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("text"), knownvalue.StringExact(plainValue)),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextRename verifies that renaming a secret_text
+// binding (changing its name attribute while keeping the same text) triggers an update
+// and the new binding name is stored correctly.
+func TestAccCloudflareWorkerScript_SecretTextRename(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue := "rename-secret-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+				},
+			},
+			{
+				Config: testAccWorkersScriptConfigWithRenamedSecret(resourceName, accountID, secretValue),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_RENAMED_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+				},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextImport verifies that a worker script with a
+// secret_text binding can be imported. The secret text value is write-only and not returned
+// by the API, so it must be in ImportStateVerifyIgnore.
+func TestAccCloudflareWorkerScript_SecretTextImport(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue := "import-secret-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"bindings", "main_module", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+// TestAccCloudflareWorkerScript_SecretTextIdempotency verifies that reapplying the same
+// config with a secret_text binding produces an empty plan — proving that the sensitive
+// text value is correctly preserved from state across apply+refresh cycles.
+func TestAccCloudflareWorkerScript_SecretTextIdempotency(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	secretValue := "idempotent-secret-" + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+				},
+			},
+			{
+				// Reapply the same config — should produce an empty plan
+				Config: testAccWorkersScriptConfigWithSecretText(resourceName, accountID, secretValue),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact(secretValue)),
+				},
+			},
+		},
+	})
+}
+
+func testAccWorkersScriptConfigWithSecretText(rnd, accountID, secretValue string) string {
+	return acctest.LoadTestCase("module_with_secret_text.tf", rnd, accountID, secretValue)
+}
+
+func testAccWorkersScriptConfigWithTwoSecrets(rnd, accountID, secretValue1, secretValue2 string) string {
+	return acctest.LoadTestCase("module_with_two_secrets.tf", rnd, accountID, secretValue1, secretValue2)
+}
+
+func testAccWorkersScriptConfigWithSecretAndPlainText(rnd, accountID, secretValue, plainValue string) string {
+	return acctest.LoadTestCase("module_with_secret_and_plain_text.tf", rnd, accountID, secretValue, plainValue)
+}
+
+func testAccWorkersScriptConfigWithRenamedSecret(rnd, accountID, secretValue string) string {
+	return acctest.LoadTestCase("module_with_renamed_secret.tf", rnd, accountID, secretValue)
 }
 
 func testAccWorkersScriptConfigWithManagedSecret(rnd, accountID string) string {

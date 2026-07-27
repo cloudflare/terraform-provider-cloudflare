@@ -143,8 +143,12 @@ func transformActionParameters(ctx context.Context, src *SourceV4ActionParameter
 		Polish:                  src.Polish,
 		Ruleset:                 src.Ruleset,
 
+		// asset_name was added to the v4 provider in v4.52.8 (May 2026),
+		// so state written by any current v4 release contains it. Forward
+		// through directly rather than nulling it out.
+		AssetName: src.AssetName,
+
 		// New v5 fields absent in v4 — set to null
-		AssetName:              types.StringNull(),
 		ContentConverter:       types.BoolNull(),
 		RequestBodyBuffering:   types.StringNull(),
 		ResponseBodyBuffering:  types.StringNull(),

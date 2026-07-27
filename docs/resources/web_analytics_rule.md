@@ -27,11 +27,11 @@ resource "cloudflare_web_analytics_rule" "example_web_analytics_rule" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `ruleset_id` (String) The Web Analytics ruleset identifier.
 
 ### Optional
 
+- `account_id` (String) Identifier.
 - `host` (String)
 - `inclusive` (Boolean) Whether the rule includes or excludes traffic from being measured.
 - `is_paused` (Boolean) Whether the rule is paused or not.

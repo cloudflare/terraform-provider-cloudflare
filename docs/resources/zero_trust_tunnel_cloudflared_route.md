@@ -30,12 +30,12 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_route" "example_zero_trust_tu
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
 - `tunnel_id` (String) UUID of the tunnel.
 
 ### Optional
 
+- `account_id` (String) Cloudflare account ID
 - `comment` (String) Optional remark describing the route.
 - `virtual_network_id` (String) UUID of the virtual network.
 

@@ -41,6 +41,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Routing rule name.",
 				Computed:    true,
 			},
+			"source": schema.StringAttribute{
+				Description: "Who manages the rule. `api` covers dashboard, generic API, and Terraform;\n`wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults\nto `api` when omitted on write.\nAvailable values: \"api\", \"wrangler\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("api", "wrangler"),
+				},
+			},
 			"tag": schema.StringAttribute{
 				Description:        "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
 				Computed:           true,

@@ -468,6 +468,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"cache_options": schema.SingleNestedAttribute{
+				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerVersionCacheOptionsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether caching is enabled for this Worker.",
+						Computed:    true,
+					},
+					"cross_version_cache": schema.BoolAttribute{
+						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+						Computed:    true,
+					},
+				},
+			},
 			"containers": schema.SetNestedAttribute{
 				Description: "List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script.",
 				Computed:    true,
@@ -638,6 +653,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the module.",
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"package_dependencies": schema.ListNestedAttribute{
+				Description: "The list of npm packages that were installed and used when this Worker\nversion was built.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkerVersionPackageDependenciesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"installed_version": schema.StringAttribute{
+							Description: "The exact version that was resolved and installed by the package manager.",
+							Computed:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The npm package name.",
+							Computed:    true,
+						},
+						"package_json_version": schema.StringAttribute{
+							Description: "The version constraint as written in package.json.",
 							Computed:    true,
 						},
 					},

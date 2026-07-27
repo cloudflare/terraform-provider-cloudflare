@@ -157,6 +157,7 @@ type TargetV5SettingsModel struct {
 	Fips                  *TargetV5FipsModel                  `tfsdk:"fips"`
 	HostSelector          *TargetV5HostSelectorModel          `tfsdk:"host_selector"`
 	Inspection            *TargetV5InspectionModel            `tfsdk:"inspection"`
+	MaxTTLSecs            types.Int64                         `tfsdk:"max_ttl_secs"`
 	ProtocolDetection     *TargetV5ProtocolDetectionModel     `tfsdk:"protocol_detection"`
 	Sandbox               *TargetV5SandboxModel               `tfsdk:"sandbox"`
 	TLSDecrypt            *TargetV5TLSDecryptModel            `tfsdk:"tls_decrypt"`

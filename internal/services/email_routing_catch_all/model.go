@@ -12,13 +12,15 @@ type EmailRoutingCatchAllResultEnvelope struct {
 }
 
 type EmailRoutingCatchAllModel struct {
-	ID       types.String                          `tfsdk:"id" json:"-,computed"`
-	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id,required"`
-	Actions  *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions,required"`
-	Matchers *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers,required"`
-	Name     types.String                          `tfsdk:"name" json:"name,optional"`
-	Enabled  types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Tag      types.String                          `tfsdk:"tag" json:"tag,computed"`
+	ID             types.String                          `tfsdk:"id" json:"-,computed"`
+	ZoneID         types.String                          `tfsdk:"zone_id" path:"zone_id,required"`
+	Actions        *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions,required"`
+	Matchers       *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers,required"`
+	Name           types.String                          `tfsdk:"name" json:"name,optional"`
+	OwnerWorkerTag types.String                          `tfsdk:"owner_worker_tag" json:"owner_worker_tag,optional,no_refresh"`
+	Enabled        types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Source         types.String                          `tfsdk:"source" json:"source,computed_optional"`
+	Tag            types.String                          `tfsdk:"tag" json:"tag,computed"`
 }
 
 func (m EmailRoutingCatchAllModel) MarshalJSON() (data []byte, err error) {

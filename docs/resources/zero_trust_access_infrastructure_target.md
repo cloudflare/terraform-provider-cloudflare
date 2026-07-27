@@ -33,12 +33,15 @@ resource "cloudflare_zero_trust_access_infrastructure_target" "example_zero_trus
 
 ### Required
 
-- `account_id` (String) Account identifier
 - `hostname` (String) A non-unique field that refers to a target. Case insensitive, maximum
 length of 255 characters, supports the use of special characters dash
 and period, does not support spaces, and must start and end with an
 alphanumeric character.
 - `ip` (Attributes) The IPv4/IPv6 address that identifies where to reach a target (see [below for nested schema](#nestedatt--ip))
+
+### Optional
+
+- `account_id` (String) Account identifier
 
 ### Read-Only
 

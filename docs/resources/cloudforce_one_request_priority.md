@@ -30,12 +30,15 @@ resource "cloudflare_cloudforce_one_request_priority" "example_cloudforce_one_re
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `labels` (List of String) List of labels.
 - `priority` (Number) Priority.
 - `requirement` (String) Requirement.
 - `tlp` (String) The CISA defined Traffic Light Protocol (TLP).
 Available values: "clear", "amber", "amber-strict", "green", "red".
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

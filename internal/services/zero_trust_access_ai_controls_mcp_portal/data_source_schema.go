@@ -68,9 +68,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway",
 				Computed:    true,
 			},
-			"servers": schema.ListNestedAttribute{
+			"servers": schema.SetNestedAttribute{
 				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel](ctx),
+				CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -100,6 +100,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							ElementType: types.MapType{
 								ElemType: jsontypes.NormalizedType{},
 							},
+						},
+						"server_id": schema.StringAttribute{
+							Description: "server id",
+							Computed:    true,
 						},
 						"tools": schema.ListAttribute{
 							Computed:   true,

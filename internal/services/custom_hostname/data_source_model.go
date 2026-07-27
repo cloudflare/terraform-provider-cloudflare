@@ -64,6 +64,12 @@ func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params 
 		if !m.Filter.Hostname.Contain.IsNull() {
 			paramsHostname.Contain = cloudflare.F(m.Filter.Hostname.Contain.ValueString())
 		}
+		if !m.Filter.Hostname.Exact.IsNull() {
+			paramsHostname.Exact = cloudflare.F(m.Filter.Hostname.Exact.ValueString())
+		}
+		if !m.Filter.Hostname.StartsWith.IsNull() {
+			paramsHostname.StartsWith = cloudflare.F(m.Filter.Hostname.StartsWith.ValueString())
+		}
 		params.Hostname = cloudflare.F(paramsHostname)
 	}
 	if !m.Filter.HostnameStatus.IsNull() {

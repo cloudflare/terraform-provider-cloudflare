@@ -45,6 +45,7 @@ type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel]                  `tfsdk:"fips" json:"fips,computed"`
 	HostSelector          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel]          `tfsdk:"host_selector" json:"host_selector,computed"`
 	Inspection            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel]            `tfsdk:"inspection" json:"inspection,computed"`
+	MaxTTLSecs            types.Int64                                                                                    `tfsdk:"max_ttl_secs" json:"max_ttl_secs,computed"`
 	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed"`
 	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel]               `tfsdk:"sandbox" json:"sandbox,computed"`
 	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed"`

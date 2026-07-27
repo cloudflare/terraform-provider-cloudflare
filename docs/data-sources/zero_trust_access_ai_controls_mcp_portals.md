@@ -50,7 +50,7 @@ Read-Only:
 - `modified_by` (String)
 - `name` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
-- `servers` (Attributes List) (see [below for nested schema](#nestedatt--result--servers))
+- `servers` (Attributes Set) (see [below for nested schema](#nestedatt--result--servers))
 
 <a id="nestedatt--result--servers"></a>
 ### Nested Schema for `result.servers`
@@ -75,6 +75,7 @@ Read-Only:
 - `on_behalf` (Boolean)
 - `prompts` (List of Map of String)
 - `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
+- `server_id` (String) server id
 - `status` (String)
 - `tools` (List of Map of String)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--result--servers--updated_prompts))

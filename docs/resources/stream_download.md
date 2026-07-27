@@ -27,8 +27,11 @@ resource "cloudflare_stream_download" "example_stream_download" {
 
 ### Required
 
-- `account_id` (String) Identifier.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
+
+### Optional
+
+- `account_id` (String) Identifier.
 
 ### Read-Only
 
