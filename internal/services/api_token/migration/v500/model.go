@@ -76,6 +76,7 @@ type TargetAPITokenModel struct {
 
 // TargetPolicyModel represents a v5 policy in the policies set.
 type TargetPolicyModel struct {
+	ID               types.String                    `tfsdk:"id"`
 	Effect           types.String                    `tfsdk:"effect"`
 	PermissionGroups *[]*TargetPermissionGroupModel  `tfsdk:"permission_groups"`
 	Resources        types.String                    `tfsdk:"resources"` // JSON string
@@ -83,7 +84,15 @@ type TargetPolicyModel struct {
 
 // TargetPermissionGroupModel represents a v5 permission group object.
 type TargetPermissionGroupModel struct {
-	ID types.String `tfsdk:"id"`
+	ID   types.String                       `tfsdk:"id"`
+	Meta *TargetPermissionGroupMetaModel    `tfsdk:"meta"`
+	Name types.String                       `tfsdk:"name"`
+}
+
+// TargetPermissionGroupMetaModel represents the meta nested object on a permission group.
+type TargetPermissionGroupMetaModel struct {
+	Key   types.String `tfsdk:"key"`
+	Value types.String `tfsdk:"value"`
 }
 
 // TargetConditionModel represents a v5 condition (single nested).
