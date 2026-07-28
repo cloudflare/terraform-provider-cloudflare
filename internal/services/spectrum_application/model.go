@@ -54,5 +54,5 @@ type SpectrumApplicationOriginDNSModel struct {
 type SpectrumApplicationEdgeIPsModel struct {
 	Connectivity types.String                   `tfsdk:"connectivity" json:"connectivity,optional"`
 	Type         types.String                   `tfsdk:"type" json:"type,optional"`
-	IPs          customfield.List[types.String] `tfsdk:"ips" json:"ips,computed_optional"`
+	IPs          customfield.List[types.String] `tfsdk:"ips" json:"ips,optional"`
 }
