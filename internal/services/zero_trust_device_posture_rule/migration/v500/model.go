@@ -100,6 +100,7 @@ type TargetDevicePostureRuleModel struct {
 	Schedule    types.String         `tfsdk:"schedule"`
 	Input       *TargetInputModel    `tfsdk:"input"`
 	Match       *[]*TargetMatchModel `tfsdk:"match"`
+	Enabled     types.Bool           `tfsdk:"enabled"`
 }
 
 // TargetInputModel represents the input nested attribute in v5.
