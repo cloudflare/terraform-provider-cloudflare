@@ -87,6 +87,19 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		data.ZoneID = ts[0].ID
 	}
 
+	if data.ZoneID.IsNull() || data.ZoneID.ValueString() == "" {
+		resp.Diagnostics.AddError(
+			"Invalid zone configuration: empty or null zone ID",
+			"zone_id resolved to an empty or null value. "+
+				"This can occur when zone_id references a cloudflare_zone resource whose ID is empty or null in state.\n\n"+
+				"If specifying zone_id directly, ensure it is not empty or null.\n"+
+				"If zone_id references a cloudflare_zone resource, re-import that zone:\n"+
+				"  terraform import cloudflare_zone.<name> <zone_id>\n"+
+				"then run terraform plan again.",
+		)
+		return
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

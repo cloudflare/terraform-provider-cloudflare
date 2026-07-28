@@ -4,6 +4,8 @@ package api_token
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -15,6 +17,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+type ResourcesValidator struct {
+}
+
+func (v ResourcesValidator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+	value := req.ConfigValue.String()
+	valid := json.Valid([]byte(value))
+	if !valid {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid JSON", fmt.Sprintf("String must be a valid JSON: %s", value))
+		return
+	}
+}
+
+func (v ResourcesValidator) Description(context.Context) string {
+	return "String must be valid JSON"
+}
+
+func (v ResourcesValidator) MarkdownDescription(context.Context) string {
+	return "String must be valid JSON"
+}
 
 var _ resource.ResourceWithConfigValidators = (*APITokenResource)(nil)
 
@@ -81,11 +106,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.MapAttribute{
-							Description: "A list of resource names that the policy applies to.",
-							Required:    true,
-							ElementType: types.StringType,
+					"resources": schema.StringAttribute{
+						Description: "A json object representing the resources that are specified to the policy.",
+						Required:    true,
+						Validators: []validator.String{
+							ResourcesValidator{},
 						},
+					},
 					},
 				},
 			},

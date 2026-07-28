@@ -83,7 +83,7 @@ func (r *APITokenResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = UnmarshalComputedCustom(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -110,6 +110,8 @@ func (r *APITokenResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	token := state.Value
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -130,12 +132,13 @@ func (r *APITokenResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = UnmarshalComputedCustom(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
+	data.Value = token
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -148,6 +151,8 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	token := data.Value
 
 	res := new(http.Response)
 	env := APITokenResultEnvelope{*data}
@@ -167,12 +172,27 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = UnmarshalCustom(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
+	data.Value = token
+
+	// If the token is expired or revoked-exposed, treat it as if the resource
+	// no longer exists. Terraform will plan a Create to replace it with a fresh
+	// token. This avoids mutating the token during Read (which runs during plan)
+	// and ensures the user explicitly approves the recreation via apply.
+	status := data.Status.ValueString()
+	if status == "expired" || status == "revoked (exposed)" {
+		resp.Diagnostics.AddWarning(
+			"Token expired or revoked",
+			fmt.Sprintf("Token %q is in %q status and is no longer usable. It will be removed from state and recreated on the next apply.", data.Name.ValueString(), status),
+		)
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

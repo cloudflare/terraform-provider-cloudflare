@@ -64,6 +64,7 @@ type TargetZeroTrustOrganizationModel struct {
 	LoginDesign                            *TargetLoginDesignModel `tfsdk:"login_design"`
 	MfaConfig                              *TargetMfaConfigModel                `tfsdk:"mfa_config"`
 	MfaSSHPivKeyRequirements               *TargetMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements"`
+	MfaPivKeyRequirements                  *TargetMfaPivKeyRequirementsModel    `tfsdk:"mfa_piv_key_requirements"`
 	AllowAuthenticateViaWARP               types.Bool              `tfsdk:"allow_authenticate_via_warp"`
 	AutoRedirectToIdentity                 types.Bool              `tfsdk:"auto_redirect_to_identity"`
 	IsUIReadOnly                           types.Bool              `tfsdk:"is_ui_read_only"`
@@ -100,6 +101,15 @@ type TargetMfaConfigModel struct {
 
 // TargetMfaSSHPivKeyRequirementsModel represents the mfa_ssh_piv_key_requirements nested structure in v5.
 type TargetMfaSSHPivKeyRequirementsModel struct {
+	PinPolicy         types.String    `tfsdk:"pin_policy"`
+	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device"`
+	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size"`
+	SSHKeyType        *[]types.String `tfsdk:"ssh_key_type"`
+	TouchPolicy       types.String    `tfsdk:"touch_policy"`
+}
+
+// TargetMfaPivKeyRequirementsModel represents the mfa_piv_key_requirements nested structure in v5.
+type TargetMfaPivKeyRequirementsModel struct {
 	PinPolicy         types.String    `tfsdk:"pin_policy"`
 	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device"`
 	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size"`

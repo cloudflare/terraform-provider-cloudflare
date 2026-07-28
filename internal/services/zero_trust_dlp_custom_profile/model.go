@@ -19,7 +19,7 @@ type ZeroTrustDLPCustomProfileModel struct {
 	Description         types.String                                        `tfsdk:"description" json:"description,optional"`
 	DataClasses         *[]types.String                                     `tfsdk:"data_classes" json:"data_classes,optional"`
 	DataTags            *[]types.String                                     `tfsdk:"data_tags" json:"data_tags,optional"`
-	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel     `tfsdk:"context_awareness" json:"context_awareness,optional"`
+	ContextAwareness    *ZeroTrustDLPCustomProfileContextAwarenessModel     `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
 	Entries             *[]*ZeroTrustDLPCustomProfileEntriesModel           `tfsdk:"entries" json:"entries,optional"`
 	SensitivityLevels   *[]*ZeroTrustDLPCustomProfileSensitivityLevelsModel `tfsdk:"sensitivity_levels" json:"sensitivity_levels,optional"`
 	SharedEntries       *[]*ZeroTrustDLPCustomProfileSharedEntriesModel     `tfsdk:"shared_entries" json:"shared_entries,optional"`
@@ -42,12 +42,12 @@ func (m ZeroTrustDLPCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPC
 }
 
 type ZeroTrustDLPCustomProfileContextAwarenessModel struct {
-	Enabled types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
-	Skip    *ZeroTrustDLPCustomProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip,required"`
+	Enabled types.Bool                                          `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Skip    *ZeroTrustDLPCustomProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileContextAwarenessSkipModel struct {
-	Files types.Bool `tfsdk:"files" json:"files,required"`
+	Files types.Bool `tfsdk:"files" json:"files,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileEntriesModel struct {
@@ -69,6 +69,7 @@ type ZeroTrustDLPCustomProfileSensitivityLevelsModel struct {
 }
 
 type ZeroTrustDLPCustomProfileSharedEntriesModel struct {
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
-	EntryID types.String `tfsdk:"entry_id" json:"entry_id,required,no_refresh"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,required"`
+	EntryID   types.String `tfsdk:"entry_id" json:"entry_id,required,no_refresh"`
+	EntryType types.String `tfsdk:"entry_type" json:"entry_type,required"`
 }
