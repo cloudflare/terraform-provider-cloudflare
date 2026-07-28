@@ -16,7 +16,7 @@ type ZeroTrustTunnelCloudflaredConfigModel struct {
 	ID        types.String                                 `tfsdk:"id" json:"-,computed"`
 	TunnelID  types.String                                 `tfsdk:"tunnel_id" path:"tunnel_id,required"`
 	AccountID types.String                                 `tfsdk:"account_id" path:"account_id,required"`
-	Config    *ZeroTrustTunnelCloudflaredConfigConfigModel `tfsdk:"config" json:"config,optional"`
+	Config    *ZeroTrustTunnelCloudflaredConfigConfigModel `tfsdk:"config" json:"config,computed_optional"`
 	CreatedAt timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source    types.String                                 `tfsdk:"source" json:"source,computed"`
 	Version   types.Int64                                  `tfsdk:"version" json:"version,computed"`
@@ -36,7 +36,7 @@ type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
-	Hostname      types.String                                                     `tfsdk:"hostname" json:"hostname,required"`
+	Hostname      types.String                                                     `tfsdk:"hostname" json:"hostname,optional"`
 	Service       types.String                                                     `tfsdk:"service" json:"service,required"`
 	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel `tfsdk:"origin_request" json:"originRequest,optional"`
 	Path          types.String                                                     `tfsdk:"path" json:"path,optional"`
