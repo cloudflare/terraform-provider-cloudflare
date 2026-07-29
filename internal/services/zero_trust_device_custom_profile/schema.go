@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -288,8 +289,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"default": schema.BoolAttribute{
-				Description: "Whether the policy is the default policy for an account.",
-				Computed:    true,
+				Description:   "Whether the policy is the default policy for an account.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"gateway_unique_id": schema.StringAttribute{
 				Computed:      true,

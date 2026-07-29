@@ -23,7 +23,6 @@ type APITokenModelV500 struct {
 
 // PolicyV500 represents a policy in v500 state.
 type PolicyV500 struct {
-	ID               types.String          `tfsdk:"id"`
 	Effect           types.String          `tfsdk:"effect"`
 	PermissionGroups []PermissionGroupV500 `tfsdk:"permission_groups"`
 	Resources        types.String          `tfsdk:"resources"`
