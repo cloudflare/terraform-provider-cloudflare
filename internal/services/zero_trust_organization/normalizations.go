@@ -69,6 +69,10 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 		data.AutoRedirectToIdentity = types.BoolValue(false)
 	}
 
+	if data.MfaRequiredForAllApps.IsNull() {
+		data.MfaRequiredForAllApps = types.BoolValue(false)
+	}
+
 	// Set LoginDesign to nil if all fields are empty/null
 	if data.LoginDesign != nil {
 		allEmpty := true
