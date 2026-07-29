@@ -54,6 +54,7 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.AllowAuthenticateViaWARP, sourceData.AllowAuthenticateViaWARP)
 	normalizeFalseAndNullBool(&data.IsUIReadOnly, sourceData.IsUIReadOnly)
 	normalizeFalseAndNullBool(&data.DenyUnmatchedRequests, sourceData.DenyUnmatchedRequests)
+	normalizeFalseAndNullBool(&data.MfaRequiredForAllApps, sourceData.MfaRequiredForAllApps)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
 	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
 	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)

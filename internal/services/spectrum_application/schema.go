@@ -177,6 +177,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"connectivity": schema.StringAttribute{
 						Description: "The IP versions supported for inbound connections on Spectrum anycast IPs.\nAvailable values: \"all\", \"ipv4\", \"ipv6\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -188,6 +189,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.\nAvailable values: \"dynamic\", \"static\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),

@@ -93,6 +93,12 @@ func (r *WorkerResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 	data = &env.Result
 
+	synthetic := importStateWithPropagationPolicyDefault(ctx)
+	resp.Diagnostics.Append(preservePropagationPolicy(ctx, data, synthetic)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

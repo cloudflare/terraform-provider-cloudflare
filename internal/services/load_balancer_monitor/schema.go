@@ -41,10 +41,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"consecutive_down": schema.Int64Attribute{
 				Description: "To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"consecutive_up": schema.Int64Attribute{
 				Description: "To be marked healthy the monitored origin must pass this healthcheck N consecutive times.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"port": schema.Int64Attribute{
