@@ -12,7 +12,7 @@ import (
 )
 
 type ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope struct {
-	Result ZeroTrustTunnelCloudflaredTokenDataSourceModel `json:"result,computed"`
+	Result types.String `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredTokenDataSourceModel struct {

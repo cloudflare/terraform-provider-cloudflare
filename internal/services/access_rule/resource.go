@@ -5,6 +5,7 @@ package access_rule
 import (
 	"context"
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 
@@ -198,6 +199,11 @@ func (r *AccessRuleResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 	data = &env.Result
+
+	// Decode HTML entities in notes field - API returns HTML-encoded strings
+	if !data.Notes.IsNull() && !data.Notes.IsUnknown() {
+		data.Notes = types.StringValue(html.UnescapeString(data.Notes.ValueString()))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

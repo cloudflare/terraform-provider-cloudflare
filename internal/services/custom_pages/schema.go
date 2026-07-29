@@ -89,7 +89,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"url": schema.StringAttribute{
 				Description: "The URL associated with the custom page.",
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,

@@ -66,25 +66,21 @@ type SourceAccountTokenModelV0 struct {
 // Target Models (v500 — current schema)
 // ============================================================================
 
-// TargetMetaV500 represents the permission group meta object in v500 state.
-type TargetMetaV500 struct {
-	Key   types.String `tfsdk:"key"`
-	Value types.String `tfsdk:"value"`
-}
-
 // TargetPermissionGroupV500 represents a permission group in v500 state.
+// Only contains id (meta and name are removed).
 type TargetPermissionGroupV500 struct {
-	ID   types.String    `tfsdk:"id"`
-	Meta *TargetMetaV500 `tfsdk:"meta"`
-	Name types.String    `tfsdk:"name"`
+	ID types.String `tfsdk:"id"`
 }
 
 // TargetPolicyV500 represents a policy in v500 state.
+// Key differences from v0:
+// - No ID field
+// - Resources is types.String (JSON-encoded)
+// - PermissionGroups only has id
 type TargetPolicyV500 struct {
-	ID               types.String                `tfsdk:"id"`
 	Effect           types.String                `tfsdk:"effect"`
 	PermissionGroups []TargetPermissionGroupV500 `tfsdk:"permission_groups"`
-	Resources        map[string]types.String     `tfsdk:"resources"`
+	Resources        types.String                `tfsdk:"resources"`
 }
 
 // TargetAccountTokenModelV500 represents the full account_token state in v500.

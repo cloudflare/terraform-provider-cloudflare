@@ -2,6 +2,7 @@ package v500
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -50,6 +51,8 @@ type ZeroTrustDEXTestModel struct {
 	ID             types.String                                                      `tfsdk:"id"`
 	TestID         types.String                                                      `tfsdk:"test_id"`
 	AccountID      types.String                                                      `tfsdk:"account_id"`
+	Created        timetypes.RFC3339                                                 `tfsdk:"created"`
+	Updated        timetypes.RFC3339                                                 `tfsdk:"updated"`
 	Enabled        types.Bool                                                        `tfsdk:"enabled"`
 	Interval       types.String                                                      `tfsdk:"interval"`
 	Name           types.String                                                      `tfsdk:"name"`

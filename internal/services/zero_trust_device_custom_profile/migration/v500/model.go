@@ -72,6 +72,14 @@ type TargetCustomProfileModel struct {
 	GatewayUniqueID            types.String                                                                      `tfsdk:"gateway_unique_id"`
 	FallbackDomains            customfield.NestedObjectList[TargetCustomProfileFallbackDomainsModel]             `tfsdk:"fallback_domains"`
 	TargetTests                customfield.NestedObjectList[TargetCustomProfileTargetTestsModel]                 `tfsdk:"target_tests"`
+	GlobalAcceleration         *TargetCustomProfileGlobalAccelerationModel                                      `tfsdk:"global_acceleration"`
+}
+
+type TargetCustomProfileGlobalAccelerationModel struct {
+	APIEndpoints       *[]types.String `tfsdk:"api_endpoints"`
+	Enabled            types.Bool      `tfsdk:"enabled"`
+	MasqueEndpoints    *[]types.String `tfsdk:"masque_endpoints"`
+	WireguardEndpoints *[]types.String `tfsdk:"wireguard_endpoints"`
 }
 
 type TargetCustomProfileExcludeModel struct {

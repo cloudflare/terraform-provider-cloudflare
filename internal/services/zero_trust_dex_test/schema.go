@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -39,6 +40,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The unique identifier for the test.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"created": schema.StringAttribute{
+				Description: "Timestamp of when the DEX test was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"updated": schema.StringAttribute{
+				Description: "Timestamp of when the DEX test was last updated.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Unique identifier linked to an account.",
