@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -335,6 +336,64 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 						knownvalue.StringExact("My updated ruleset"),
 					),
 				},
+			},
+		},
+	})
+}
+
+var missingRulesetErrorPattern = regexp.MustCompile(`20226`)
+
+func TestAccCloudflareRuleset_DryRunPlanValidation(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunPlanValidationOnUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("phase"),
+						knownvalue.StringExact("http_request_firewall_managed"),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenPlanIsUnknown(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
