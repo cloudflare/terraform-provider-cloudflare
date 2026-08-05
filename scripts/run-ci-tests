@@ -457,7 +457,7 @@ resolve_dependencies() {
 set -e
 
 # Configuration
-PARALLEL_JOBS=${PARALLEL_JOBS:-3}  # Number of parallel jobs (can be overridden)
+PARALLEL_JOBS=${PARALLEL_JOBS:-1}  # Number of parallel jobs (can be overridden)
 LOG_DIR="./test-logs"
 SWEEP_TIMEOUT="5m"
 TEST_TIMEOUT="15m"
@@ -817,6 +817,10 @@ main() {
         while sleep 30; do
             completed=$(find "$LOG_DIR" -name "*-combined.log" -exec grep -l "✓ Completed:\|⏭ Skipped:\|✗ Failed:" {} \; 2>/dev/null | wc -l | tr -d ' ')
             total=${#SERVICES[@]}
+            echo "=== CPU ===" && lscpu
+            echo "=== Memory ===" && free -h
+            echo "=== Disk ===" && df -h
+            echo "=== Live top snapshot ===" && top -bn1 | head -20
             log "${WHITE}Progress: $completed/$total services completed${NC}"
         done
     ) &
